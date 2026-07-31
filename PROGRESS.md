@@ -49,9 +49,9 @@ chapter.
 ## Book 4 — Build and CI/CD Security (`book-04-build-cicd/`)
 
 - [x] 4.01 Build Systems: Architecture and Threat Model — `ch01-build-threat-model.md`
-- [ ] 4.02 Hermetic and Reproducible Builds — `ch02-hermetic-reproducible-builds.md`
-- [ ] 4.03 SLSA Build Levels and Provenance — `ch03-slsa-provenance.md`
-- [ ] 4.04 CI/CD Platform Threat Models: Actions, GitLab, Jenkins, Tekton — `ch04-cicd-platform-threats.md`
+- [x] 4.02 Hermetic and Reproducible Builds — `ch02-hermetic-reproducible-builds.md`
+- [x] 4.03 SLSA Build Levels and Provenance — `ch03-slsa-provenance.md`
+- [x] 4.04 CI/CD Platform Threat Models: Actions, GitLab, Jenkins, Tekton — `ch04-cicd-platform-threats.md`
 - [ ] 4.05 Hardening GitHub Actions — `ch05-hardening-github-actions.md`
 - [ ] 4.06 Secrets Management in CI/CD — `ch06-secrets-in-cicd.md`
 - [ ] 4.07 Pipeline Poisoning: PPE, Cache, and Artifact Attacks — `ch07-pipeline-poisoning.md`
