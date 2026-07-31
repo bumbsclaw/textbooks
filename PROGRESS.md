@@ -31,12 +31,12 @@ chapter.
 - [x] 2.06 Software Composition Analysis in Depth — `ch06-sca-in-depth.md`
 - [x] 2.07 Reachability, Exploitability, and Prioritization — `ch07-reachability-prioritization.md`
 - [x] 2.08 Vendoring, Mirroring, and Internal Registries — `ch08-vendoring-internal-registries.md`
-- [ ] 2.09 Dependency Update Strategy and Automation — `ch09-update-automation.md`
-- [ ] 2.10 Evaluating Dependencies: Scorecards, Signals, and Policy — `ch10-evaluating-dependencies.md`
+- [x] 2.09 Dependency Update Strategy and Automation — `ch09-update-automation.md`
+- [x] 2.10 Evaluating Dependencies: Scorecards, Signals, and Policy — `ch10-evaluating-dependencies.md`
 
 ## Book 3 — SBOMs and Software Transparency (`book-03-sboms/`)
 
-- [ ] 3.01 Why SBOMs: Transparency and the Regulatory Landscape — `ch01-why-sboms.md`
+- [x] 3.01 Why SBOMs: Transparency and the Regulatory Landscape — `ch01-why-sboms.md`
 - [ ] 3.02 SPDX in Depth — `ch02-spdx.md`
 - [ ] 3.03 CycloneDX in Depth — `ch03-cyclonedx.md`
 - [ ] 3.04 SBOM Generation: Tools, Techniques, and Accuracy — `ch04-sbom-generation.md`
@@ -316,3 +316,4 @@ until then their paths are as listed above).
 - 2026-07-31: Vol 0 Book 1 Ch 4–5 done and pushed; Ch 6 in progress.
 - 2026-07-31: Batch 3 done (1.07–1.09). Next batch: 1.10 (finish Book 1) + 2.01 + 2.02.
 - 2026-07-31: Book 1 complete (10/10). Batch 4 done (1.10, 2.01, 2.02). Next: 2.03, 2.04, 2.05.
+- 2026-07-31: Book 2 complete (10/10). Batch 7 done (2.09, 2.10, 3.01). Next: 3.02, 3.03, 3.04.
