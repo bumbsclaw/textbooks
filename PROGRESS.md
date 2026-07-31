@@ -52,9 +52,9 @@ chapter.
 - [x] 4.02 Hermetic and Reproducible Builds — `ch02-hermetic-reproducible-builds.md`
 - [x] 4.03 SLSA Build Levels and Provenance — `ch03-slsa-provenance.md`
 - [x] 4.04 CI/CD Platform Threat Models: Actions, GitLab, Jenkins, Tekton — `ch04-cicd-platform-threats.md`
-- [ ] 4.05 Hardening GitHub Actions — `ch05-hardening-github-actions.md`
-- [ ] 4.06 Secrets Management in CI/CD — `ch06-secrets-in-cicd.md`
-- [ ] 4.07 Pipeline Poisoning: PPE, Cache, and Artifact Attacks — `ch07-pipeline-poisoning.md`
+- [x] 4.05 Hardening GitHub Actions — `ch05-hardening-github-actions.md`
+- [x] 4.06 Secrets Management in CI/CD — `ch06-secrets-in-cicd.md`
+- [x] 4.07 Pipeline Poisoning: PPE, Cache, and Artifact Attacks — `ch07-pipeline-poisoning.md`
 - [ ] 4.08 Ephemeral and Isolated Build Environments — `ch08-ephemeral-build-environments.md`
 - [ ] 4.09 Build Observability and Anomaly Detection — `ch09-build-observability.md`
 - [ ] 4.10 Designing a Secure Build Platform at Scale — `ch10-secure-build-platform.md`
