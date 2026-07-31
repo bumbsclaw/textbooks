@@ -19,7 +19,7 @@ chapter.
 - [x] 1.07 Risk Frameworks and Maturity Models: SLSA, SSDF, S2C2F — `ch07-frameworks-overview.md`
 - [x] 1.08 The Open Source Ecosystem: Sustainability, Maintainership, and Risk — `ch08-open-source-ecosystem.md`
 - [x] 1.09 Supply Chain Security in Distributed Backend Systems — `ch09-distributed-systems-lens.md`
-- [ ] 1.10 Building a Supply Chain Security Program — `ch10-building-a-program.md`
+- [x] 1.10 Building a Supply Chain Security Program — `ch10-building-a-program.md`
 
 ## Book 2 — Dependency Management and Open Source Risk (`book-02-dependencies/`)
 
