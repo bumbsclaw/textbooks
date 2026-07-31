@@ -43,12 +43,12 @@ chapter.
 - [x] 3.05 SBOM Distribution, Storage, and Querying at Scale — `ch05-sbom-at-scale.md`
 - [x] 3.06 VEX and Vulnerability Correlation — `ch06-vex.md`
 - [x] 3.07 SBOM Quality, Completeness, and Limitations — `ch07-sbom-quality-limitations.md`
-- [ ] 3.08 SBOMs for Services: Containers, Serverless, and SaaS — `ch08-sboms-for-services.md`
-- [ ] 3.09 Operationalizing SBOMs in the Enterprise — `ch09-operationalizing-sboms.md`
+- [x] 3.08 SBOMs for Services: Containers, Serverless, and SaaS — `ch08-sboms-for-services.md`
+- [x] 3.09 Operationalizing SBOMs in the Enterprise — `ch09-operationalizing-sboms.md`
 
 ## Book 4 — Build and CI/CD Security (`book-04-build-cicd/`)
 
-- [ ] 4.01 Build Systems: Architecture and Threat Model — `ch01-build-threat-model.md`
+- [x] 4.01 Build Systems: Architecture and Threat Model — `ch01-build-threat-model.md`
 - [ ] 4.02 Hermetic and Reproducible Builds — `ch02-hermetic-reproducible-builds.md`
 - [ ] 4.03 SLSA Build Levels and Provenance — `ch03-slsa-provenance.md`
 - [ ] 4.04 CI/CD Platform Threat Models: Actions, GitLab, Jenkins, Tekton — `ch04-cicd-platform-threats.md`
@@ -317,3 +317,4 @@ until then their paths are as listed above).
 - 2026-07-31: Batch 3 done (1.07–1.09). Next batch: 1.10 (finish Book 1) + 2.01 + 2.02.
 - 2026-07-31: Book 1 complete (10/10). Batch 4 done (1.10, 2.01, 2.02). Next: 2.03, 2.04, 2.05.
 - 2026-07-31: Book 2 complete (10/10). Batch 7 done (2.09, 2.10, 3.01). Next: 3.02, 3.03, 3.04.
+- 2026-07-31: Book 3 complete (9/9). Batch 10 done (3.08, 3.09, 4.01). Next: 4.02, 4.03, 4.04.
