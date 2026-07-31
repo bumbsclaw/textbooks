@@ -61,9 +61,9 @@ chapter.
 
 ## Book 5 — Signing, Provenance, and Attestation (`book-05-signing-attestation/`)
 
-- [ ] 5.01 Cryptographic Foundations for Supply Chain Security — `ch01-crypto-foundations.md`
-- [ ] 5.02 Classic Code Signing and Its Failure Modes — `ch02-classic-code-signing.md`
-- [ ] 5.03 Sigstore Architecture: Cosign, Fulcio, Rekor — `ch03-sigstore-architecture.md`
+- [x] 5.01 Cryptographic Foundations for Supply Chain Security — `ch01-crypto-foundations.md`
+- [x] 5.02 Classic Code Signing and Its Failure Modes — `ch02-classic-code-signing.md`
+- [x] 5.03 Sigstore Architecture: Cosign, Fulcio, Rekor — `ch03-sigstore-architecture.md`
 - [ ] 5.04 Keyless Signing and Workload Identity — `ch04-keyless-signing.md`
 - [ ] 5.05 Transparency Logs: Merkle Trees, Rekor, and CT Lessons — `ch05-transparency-logs.md`
 - [ ] 5.06 in-toto: Attestations, Layouts, and Policies — `ch06-in-toto.md`
