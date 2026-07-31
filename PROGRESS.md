@@ -40,9 +40,9 @@ chapter.
 - [x] 3.02 SPDX in Depth — `ch02-spdx.md`
 - [x] 3.03 CycloneDX in Depth — `ch03-cyclonedx.md`
 - [x] 3.04 SBOM Generation: Tools, Techniques, and Accuracy — `ch04-sbom-generation.md`
-- [ ] 3.05 SBOM Distribution, Storage, and Querying at Scale — `ch05-sbom-at-scale.md`
-- [ ] 3.06 VEX and Vulnerability Correlation — `ch06-vex.md`
-- [ ] 3.07 SBOM Quality, Completeness, and Limitations — `ch07-sbom-quality-limitations.md`
+- [x] 3.05 SBOM Distribution, Storage, and Querying at Scale — `ch05-sbom-at-scale.md`
+- [x] 3.06 VEX and Vulnerability Correlation — `ch06-vex.md`
+- [x] 3.07 SBOM Quality, Completeness, and Limitations — `ch07-sbom-quality-limitations.md`
 - [ ] 3.08 SBOMs for Services: Containers, Serverless, and SaaS — `ch08-sboms-for-services.md`
 - [ ] 3.09 Operationalizing SBOMs in the Enterprise — `ch09-operationalizing-sboms.md`
 
