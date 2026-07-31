@@ -131,7 +131,7 @@ flowchart TD
     D --> E["Lasse Collin, burned out and time-limited,<br/>is pushed toward sharing the load"]
     E --> F["2022-2023: Jia Tan elevated to<br/>co-maintainer with merge authority"]
     F --> G["2023: Jia Tan gains effective release authority<br/>(can cut and sign release tarballs)"]
-    G --> H["Feb-Mar 2024: backdoor staged and shipped<br/>in xz 5.6.0 and 5.6.1 release tarballs"]
+    G --> H["Feb-Mar 2024: backdoor staged and shipped<br/>in xz 5.6.0 (Feb 24) and 5.6.1 (Mar 9) tarballs"]
 ```
 
 Notice how little of this is technical. There is no exploit in the social-engineering phase,
@@ -265,7 +265,7 @@ working. No scanner flagged the tarball; no reproducible-build check caught the 
 from git; no SBOM tooling raised an alarm. The backdoor was found because one unusually
 capable person was bothered by a performance regression and happened to have both the skill
 and the stubbornness to chase it into the crypto internals of `sshd`. The timing compounds
-the luck: the backdoored 5.6.0 (late February 2024) and 5.6.1 (March 2024) releases had
+the luck: the backdoored 5.6.0 (February 24, 2024) and 5.6.1 (March 9, 2024) releases had
 reached rolling and testing distributions — Debian sid, Fedora Rawhide/40 betas, openSUSE
 Tumbleweed, Kali, some Arch derivatives — but had **not** yet propagated into the stable
 enterprise releases (Debian stable, RHEL, Ubuntu LTS) where they would have sat, exploitable,
@@ -343,7 +343,7 @@ side effect of collecting coverage.
 sequenceDiagram
     participant Atk as Attacker
     participant Docker as Codecov Docker image build
-    participant CI as Codecov infra (hosts uploader)
+    participant CI as Codecov infra - hosts uploader
     participant Cust as Customer CI pipeline
     participant Exf as Attacker server
     Atk->>Docker: Extract credential exposed by image build error
