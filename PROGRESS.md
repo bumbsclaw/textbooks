@@ -13,9 +13,9 @@ chapter.
 - [x] 1.01 The Software Supply Chain: Anatomy and Attack Surface — `ch01-anatomy-attack-surface.md`
 - [x] 1.02 A Taxonomy of Supply Chain Attacks — `ch02-attack-taxonomy.md`
 - [x] 1.03 Case Studies I: Build System Compromise — SolarWinds and 3CX — `ch03-case-studies-build-compromise.md`
-- [ ] 1.04 Case Studies II: Dependency Attacks — event-stream, ua-parser-js, node-ipc, PyTorch — `ch04-case-studies-dependency-attacks.md`
-- [ ] 1.05 Case Studies III: xz-utils, Codecov, and Log4Shell — `ch05-case-studies-xz-codecov-log4shell.md`
-- [ ] 1.06 Trust, Threat Models, and the Economics of Supply Chain Risk — `ch06-trust-threat-models.md`
+- [x] 1.04 Case Studies II: Dependency Attacks — event-stream, ua-parser-js, node-ipc, PyTorch — `ch04-case-studies-dependency-attacks.md`
+- [x] 1.05 Case Studies III: xz-utils, Codecov, and Log4Shell — `ch05-case-studies-xz-codecov-log4shell.md`
+- [~] 1.06 Trust, Threat Models, and the Economics of Supply Chain Risk — `ch06-trust-threat-models.md`
 - [ ] 1.07 Risk Frameworks and Maturity Models: SLSA, SSDF, S2C2F — `ch07-frameworks-overview.md`
 - [ ] 1.08 The Open Source Ecosystem: Sustainability, Maintainership, and Risk — `ch08-open-source-ecosystem.md`
 - [ ] 1.09 Supply Chain Security in Distributed Backend Systems — `ch09-distributed-systems-lens.md`
@@ -107,7 +107,210 @@ chapter.
 - [ ] 8.07 Threat Intelligence and Information Sharing — `ch07-threat-intelligence.md`
 - [ ] 8.08 Metrics, Audits, and Executive Reporting — `ch08-metrics-reporting.md`
 
+---
+
+# Volumes 1–15 — Broad Backend Curriculum
+
+Scope expanded per user request to cover all topics a FAANG-level senior backend engineer
+should know. Directory naming for new volumes: `vol-NN-<slug>/chNN-<slug>.md`. Full chapter
+descriptions in `CURRICULUM.md`. Volume 0 above is the supply-chain-security series (its
+existing dirs `book-01`…`book-08` may be regrouped under `vol-00-supply-chain-security/` later;
+until then their paths are as listed above).
+
+## Volume 1 — Computer Architecture for Backend Engineers (`vol-01-computer-architecture/`)
+
+- [ ] 1.01 Why Architecture Matters: Mechanical Sympathy — `ch01-mechanical-sympathy.md`
+- [ ] 1.02 The Modern CPU: Pipelines, OoO, Speculation — `ch02-modern-cpu.md`
+- [ ] 1.03 The Memory Hierarchy and Caches — `ch03-memory-hierarchy.md`
+- [ ] 1.04 Cache Coherence and Hardware Memory Consistency — `ch04-cache-coherence.md`
+- [ ] 1.05 Storage Hardware: HDD, SSD, NVMe, PMEM — `ch05-storage-hardware.md`
+- [ ] 1.06 Multi-Socket Systems and NUMA — `ch06-numa.md`
+- [ ] 1.07 Data Parallelism: SIMD, Vectorization, GPUs — `ch07-data-parallelism.md`
+- [ ] 1.08 Performance Anti-Patterns — `ch08-performance-antipatterns.md`
+- [ ] 1.09 Number Representation and Floating Point — `ch09-number-representation.md`
+- [ ] 1.10 Hardware Support for Virtualization and Isolation — `ch10-hardware-virtualization.md`
+
+## Volume 2 — Operating Systems and Linux (`vol-02-operating-systems-linux/`)
+
+- [ ] 2.01 The Process Model — `ch01-process-model.md`
+- [ ] 2.02 CPU Scheduling: CFS, Real-Time, cgroups — `ch02-scheduling.md`
+- [ ] 2.03 Virtual Memory and Paging — `ch03-virtual-memory.md`
+- [ ] 2.04 Memory in Practice: Allocators, Page Cache, Huge Pages, OOM — `ch04-memory-practice.md`
+- [ ] 2.05 System Calls and the Kernel Boundary — `ch05-system-calls.md`
+- [ ] 2.06 File Systems and the VFS — `ch06-filesystems-vfs.md`
+- [ ] 2.07 Linux I/O: Blocking, epoll, io_uring — `ch07-linux-io.md`
+- [ ] 2.08 Signals, Pipes, and IPC — `ch08-ipc.md`
+- [ ] 2.09 Namespaces, cgroups, and Container Internals — `ch09-namespaces-cgroups.md`
+- [ ] 2.10 The Linux Network Stack — `ch10-linux-network-stack.md`
+- [ ] 2.11 Performance Analysis: perf, ftrace, eBPF — `ch11-perf-ebpf.md`
+- [ ] 2.12 Boot, init, and systemd — `ch12-boot-systemd.md`
+
+## Volume 3 — Networking for Backend Engineers (`vol-03-networking/`)
+
+- [ ] 3.01 The Journey of a Packet — `ch01-journey-of-a-packet.md`
+- [ ] 3.02 IP, Routing, Subnetting, NAT — `ch02-ip-routing-nat.md`
+- [ ] 3.03 TCP in Depth — `ch03-tcp-in-depth.md`
+- [ ] 3.04 UDP and QUIC — `ch04-udp-quic.md`
+- [ ] 3.05 DNS in Depth — `ch05-dns.md`
+- [ ] 3.06 TLS 1.3 and the Web PKI — `ch06-tls-pki.md`
+- [ ] 3.07 HTTP/1.1, HTTP/2, HTTP/3 — `ch07-http.md`
+- [ ] 3.08 gRPC and RPC Framework Internals — `ch08-grpc-rpc.md`
+- [ ] 3.09 Load Balancing: L4, L7, Algorithms — `ch09-load-balancing.md`
+- [ ] 3.10 Proxies, Service Mesh, and CDNs — `ch10-proxies-mesh-cdn.md`
+- [ ] 3.11 Network Reliability: Timeouts, Retries, Backoff, Hedging — `ch11-network-reliability.md`
+- [ ] 3.12 Debugging and Observing Networks — `ch12-network-debugging.md`
+
+## Volume 4 — Concurrency and Parallelism (`vol-04-concurrency/`)
+
+- [ ] 4.01 Models of Concurrency — `ch01-models.md`
+- [ ] 4.02 Threads, Mutual Exclusion, and Locks — `ch02-threads-locks.md`
+- [ ] 4.03 Memory Models and Happens-Before — `ch03-memory-models.md`
+- [ ] 4.04 Atomics, CAS, and Lock-Free Data Structures — `ch04-lock-free.md`
+- [ ] 4.05 Deadlock, Livelock, and Starvation — `ch05-deadlock.md`
+- [ ] 4.06 Asynchronous I/O and Event Loops — `ch06-async-io.md`
+- [ ] 4.07 The Actor Model, CSP, and Channels — `ch07-actors-csp.md`
+- [ ] 4.08 Coroutines and Structured Concurrency — `ch08-structured-concurrency.md`
+- [ ] 4.09 Concurrency Patterns for Backend Services — `ch09-patterns.md`
+- [ ] 4.10 Testing and Debugging Concurrent Systems — `ch10-testing-concurrency.md`
+
+## Volume 5 — Databases and Storage Systems (`vol-05-databases/`)
+
+- [ ] 5.01 The Relational Model and SQL Semantics — `ch01-relational-sql.md`
+- [ ] 5.02 Storage Engines: B-Trees vs LSM-Trees — `ch02-storage-engines.md`
+- [ ] 5.03 Indexing in Depth — `ch03-indexing.md`
+- [ ] 5.04 Query Processing and Optimization — `ch04-query-optimization.md`
+- [ ] 5.05 Transactions and ACID — `ch05-transactions-acid.md`
+- [ ] 5.06 Isolation Levels and MVCC — `ch06-isolation-mvcc.md`
+- [ ] 5.07 Write-Ahead Logging and Crash Recovery — `ch07-wal-recovery.md`
+- [ ] 5.08 Replication: Physical, Logical, Sync, Async — `ch08-replication.md`
+- [ ] 5.09 Partitioning and Sharding — `ch09-partitioning-sharding.md`
+- [ ] 5.10 Distributed Transactions: 2PC, Sagas — `ch10-distributed-transactions.md`
+- [ ] 5.11 NoSQL: KV, Document, Wide-Column, Graph — `ch11-nosql.md`
+- [ ] 5.12 NewSQL and Distributed SQL — `ch12-newsql.md`
+- [ ] 5.13 Specialized Stores: Search, Time-Series, Analytics — `ch13-specialized-stores.md`
+- [ ] 5.14 Operating Databases: Pooling, Migrations, Scaling — `ch14-operating-databases.md`
+
+## Volume 6 — Distributed Systems (`vol-06-distributed-systems/`)
+
+- [ ] 6.01 Foundations: Models, Failures, Assumptions — `ch01-foundations.md`
+- [ ] 6.02 Time, Clocks, and Ordering — `ch02-time-clocks.md`
+- [ ] 6.03 Replication and Consistency Models — `ch03-consistency-models.md`
+- [ ] 6.04 CAP, PACELC, and Trade-Offs — `ch04-cap-pacelc.md`
+- [ ] 6.05 Consensus I: Paxos — `ch05-paxos.md`
+- [ ] 6.06 Consensus II: Raft — `ch06-raft.md`
+- [ ] 6.07 Quorum Systems and Dynamo-Style Replication — `ch07-quorums-dynamo.md`
+- [ ] 6.08 Coordination Services: ZooKeeper and etcd — `ch08-coordination.md`
+- [ ] 6.09 Idempotency, Deduplication, Exactly-Once — `ch09-idempotency.md`
+- [ ] 6.10 Failure Detection and Membership: Gossip, SWIM — `ch10-failure-detection.md`
+- [ ] 6.11 CRDTs and Eventual Consistency — `ch11-crdts.md`
+- [ ] 6.12 Testing Distributed Systems: Jepsen, Chaos, Simulation — `ch12-testing.md`
+
+## Volume 7 — System Design and Architecture (`vol-07-system-design/`)
+
+- [ ] 7.01 Principles of Scalable System Design — `ch01-principles.md`
+- [ ] 7.02 Estimation and Capacity Planning — `ch02-estimation.md`
+- [ ] 7.03 Caching Strategies at Scale — `ch03-caching.md`
+- [ ] 7.04 Load Balancing and Traffic Management — `ch04-traffic-management.md`
+- [ ] 7.05 Data Modeling for Scale — `ch05-data-modeling.md`
+- [ ] 7.06 Monolith, Microservices, and Between — `ch06-monolith-microservices.md`
+- [ ] 7.07 Event-Driven Architecture — `ch07-event-driven.md`
+- [ ] 7.08 API Gateways, BFF, and Edge — `ch08-gateways-edge.md`
+- [ ] 7.09 Rate Limiting, Quotas, and Fairness — `ch09-rate-limiting.md`
+- [ ] 7.10 Multi-Region and Geo-Distributed Systems — `ch10-multi-region.md`
+- [ ] 7.11 Designing for Failure — `ch11-designing-for-failure.md`
+- [ ] 7.12 Design Case Studies — `ch12-case-studies.md`
+
+## Volume 8 — APIs and Service Design (`vol-08-apis/`)
+
+- [ ] 8.01 API Design Principles and Contracts — `ch01-principles.md`
+- [ ] 8.02 REST in Depth — `ch02-rest.md`
+- [ ] 8.03 gRPC and Protobuf Schema Design — `ch03-grpc-protobuf.md`
+- [ ] 8.04 GraphQL for Backend Engineers — `ch04-graphql.md`
+- [ ] 8.05 Versioning and Evolution — `ch05-versioning.md`
+- [ ] 8.06 Idempotency, Pagination, Filtering — `ch06-idempotency-pagination.md`
+- [ ] 8.07 Error Handling and Status Semantics — `ch07-error-handling.md`
+- [ ] 8.08 Compatibility and Wire Formats — `ch08-compatibility.md`
+
+## Volume 9 — Security, Authentication, and Cryptography (`vol-09-security-auth/`)
+
+- [ ] 9.01 Applied Cryptography for Engineers — `ch01-applied-crypto.md`
+- [ ] 9.02 Hashing, MACs, KDFs, Password Storage — `ch02-hashing-passwords.md`
+- [ ] 9.03 Symmetric and Asymmetric Encryption in Practice — `ch03-encryption.md`
+- [ ] 9.04 Certificates, PKI, and TLS Operations — `ch04-pki-tls-ops.md`
+- [ ] 9.05 Authentication: Sessions, Tokens, JWTs — `ch05-authentication.md`
+- [ ] 9.06 OAuth 2.0 and OpenID Connect — `ch06-oauth-oidc.md`
+- [ ] 9.07 Authorization: RBAC, ABAC, ReBAC (Zanzibar) — `ch07-authorization.md`
+- [ ] 9.08 Secrets Management — `ch08-secrets-management.md`
+- [ ] 9.09 Application Security: OWASP, Injection, SSRF — `ch09-appsec.md`
+- [ ] 9.10 Zero Trust and Service-to-Service Auth: mTLS, SPIFFE — `ch10-zero-trust-mtls.md`
+- [ ] 9.11 Threat Modeling and Secure Design — `ch11-threat-modeling.md`
+
+## Volume 10 — Messaging, Streaming, and Event Systems (`vol-10-messaging-streaming/`)
+
+- [ ] 10.01 Messaging Fundamentals: Queues, Logs, Pub/Sub — `ch01-fundamentals.md`
+- [ ] 10.02 Delivery Semantics — `ch02-delivery-semantics.md`
+- [ ] 10.03 Apache Kafka Architecture — `ch03-kafka.md`
+- [ ] 10.04 Stream Processing — `ch04-stream-processing.md`
+- [ ] 10.05 Event Sourcing and CQRS — `ch05-event-sourcing-cqrs.md`
+- [ ] 10.06 The Outbox Pattern and the Dual-Write Problem — `ch06-outbox.md`
+- [ ] 10.07 Backpressure and Flow Control — `ch07-backpressure.md`
+- [ ] 10.08 Dead Letters, Retries, Poison Messages — `ch08-dead-letters.md`
+
+## Volume 11 — Reliability, Observability, and SRE (`vol-11-reliability-sre/`)
+
+- [ ] 11.01 SLIs, SLOs, and Error Budgets — `ch01-slos.md`
+- [ ] 11.02 Metrics and the Golden Signals — `ch02-metrics.md`
+- [ ] 11.03 Logging at Scale — `ch03-logging.md`
+- [ ] 11.04 Distributed Tracing and OpenTelemetry — `ch04-tracing.md`
+- [ ] 11.05 Incident Response and On-Call — `ch05-incident-response.md`
+- [ ] 11.06 Blameless Postmortems — `ch06-postmortems.md`
+- [ ] 11.07 Load Testing and Capacity Planning — `ch07-load-testing.md`
+- [ ] 11.08 Chaos Engineering — `ch08-chaos.md`
+- [ ] 11.09 Deployment Strategies: Blue/Green, Canary, Flags — `ch09-deployment-strategies.md`
+- [ ] 11.10 Resilience Patterns in Production — `ch10-resilience-patterns.md`
+
+## Volume 12 — Cloud, Containers, and Infrastructure (`vol-12-cloud-infra/`)
+
+- [ ] 12.01 Containers Deep Dive — `ch01-containers.md`
+- [ ] 12.02 Kubernetes Architecture — `ch02-kubernetes-architecture.md`
+- [ ] 12.03 Kubernetes Workloads, Networking, Storage — `ch03-kubernetes-workloads.md`
+- [ ] 12.04 Infrastructure as Code — `ch04-iac.md`
+- [ ] 12.05 Cloud Primitives: Compute, Storage, Network — `ch05-cloud-primitives.md`
+- [ ] 12.06 Managed Data and Platform Services — `ch06-managed-services.md`
+- [ ] 12.07 Multi-Tenancy and Isolation — `ch07-multi-tenancy.md`
+- [ ] 12.08 Cloud Cost and Capacity Engineering — `ch08-cost-capacity.md`
+
+## Volume 13 — Language Runtimes for Backend (`vol-13-runtimes/`)
+
+- [ ] 13.01 The JVM: Memory, GC, JIT — `ch01-jvm.md`
+- [ ] 13.02 The Go Runtime: Scheduler, Memory Model, GC — `ch02-go-runtime.md`
+- [ ] 13.03 Rust for Backend Systems — `ch03-rust.md`
+- [ ] 13.04 Garbage Collection Across Runtimes — `ch04-gc.md`
+- [ ] 13.05 Profiling and Performance Tuning — `ch05-profiling.md`
+
+## Volume 14 — Data Structures and Algorithms for Backend (`vol-14-algorithms/`)
+
+- [ ] 14.01 Complexity That Matters in Practice — `ch01-complexity.md`
+- [ ] 14.02 Hashing and Hash Tables at Scale — `ch02-hashing.md`
+- [ ] 14.03 Balanced Trees and Ordered Structures — `ch03-trees.md`
+- [ ] 14.04 Probabilistic Structures: Bloom, HLL, Count-Min — `ch04-probabilistic.md`
+- [ ] 14.05 Consistent Hashing and Rendezvous Hashing — `ch05-consistent-hashing.md`
+- [ ] 14.06 Sorting, External Sorting, Streaming — `ch06-sorting.md`
+- [ ] 14.07 Graphs in Systems — `ch07-graphs.md`
+- [ ] 14.08 Rate-Limiting and Scheduling Algorithms — `ch08-rate-limiting-scheduling.md`
+
+## Volume 15 — Software Engineering Practice (`vol-15-swe-practice/`)
+
+- [ ] 15.01 Testing Strategy — `ch01-testing-strategy.md`
+- [ ] 15.02 Design Docs, RFCs, Decision-Making — `ch02-design-docs.md`
+- [ ] 15.03 Domain-Driven Design for Backend — `ch03-ddd.md`
+- [ ] 15.04 Design Patterns and Anti-Patterns for Services — `ch04-patterns.md`
+- [ ] 15.05 Refactoring and Managing Technical Debt — `ch05-refactoring.md`
+- [ ] 15.06 Code Review and Engineering Culture — `ch06-code-review.md`
+
 ## Log
 
 - 2026-07-31: Repo initialized; plan, style guide, and book scaffolding created.
 - 2026-07-31: Batch 1 done (1.01–1.03), committed and pushed. Next: batch 2 = 1.04, 1.05, 1.06.
+- 2026-07-31: Scope expanded to full backend curriculum (Volumes 1–15 added; supply chain = Vol 0).
+- 2026-07-31: Vol 0 Book 1 Ch 4–5 done and pushed; Ch 6 in progress.
