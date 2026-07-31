@@ -1,13 +1,41 @@
-# Software Supply Chain Security — A Textbook Suite
+# The Backend Engineer's Library
 
-**Audience:** Senior backend software engineers working on distributed backend systems.
+**Audience:** FAANG-level senior backend software engineers working on distributed backend
+systems.
 
-This suite is a comprehensive, in-depth treatment of software supply chain security — from
-threat landscape and dependency risk through build integrity, signing and attestation,
-cloud-native deployment, and governance. Each book stands alone but the suite is designed
-to be read in order. Diagrams are provided as Mermaid blocks (rendered natively by GitHub).
+A comprehensive, in-depth textbook program covering the full breadth of knowledge a senior
+backend engineer is expected to command — computer architecture, operating systems and Linux,
+networking, concurrency, databases, distributed systems, system design, APIs, security and
+authentication, messaging, reliability/SRE, cloud and containers, language runtimes,
+algorithms, and software-engineering practice — plus a deep eight-book treatment of
+**software supply chain security**. Every chapter is written to graduate-course depth with
+Mermaid diagrams (rendered natively by GitHub), real code and config, and a
+distributed-systems lens.
 
-## The Books
+The full program is laid out in **[`CURRICULUM.md`](CURRICULUM.md)**: 16 volumes.
+
+## Volumes
+
+| Vol | Title | Location |
+|-----|-------|----------|
+| 0 | Software Supply Chain Security (8 books) | Volume 0 books, below |
+| 1 | Computer Architecture for Backend Engineers | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 2 | Operating Systems and Linux | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 3 | Networking for Backend Engineers | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 4 | Concurrency and Parallelism | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 5 | Databases and Storage Systems | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 6 | Distributed Systems | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 7 | System Design and Architecture | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 8 | APIs and Service Design | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 9 | Security, Authentication, and Cryptography | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 10 | Messaging, Streaming, and Event Systems | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 11 | Reliability, Observability, and SRE | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 12 | Cloud, Containers, and Infrastructure | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 13 | Language Runtimes for Backend | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 14 | Data Structures and Algorithms for Backend | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 15 | Software Engineering Practice | see [`CURRICULUM.md`](CURRICULUM.md) |
+
+## Volume 0 — Software Supply Chain Security (the books)
 
 | # | Book | Directory |
 |---|------|-----------|
@@ -20,14 +48,8 @@ to be read in order. Diagrams are provided as Mermaid blocks (rendered natively 
 | 7 | Source, Code, and Insider Threat Security | [`book-07-source-security/`](book-07-source-security/) |
 | 8 | Governance, Compliance, and Incident Response | [`book-08-governance-ir/`](book-08-governance-ir/) |
 
-## Reading Guide
-
-- **New to the domain?** Start with Book 1 end-to-end.
-- **Platform/build engineers:** Books 4, 5, 6.
-- **Application teams:** Books 2, 3, 7.
-- **Tech leads / staff engineers driving a program:** Books 1, 8, then dip into the rest.
-
 ## Status
 
 Writing progress is tracked in [`PROGRESS.md`](PROGRESS.md). Style and quality conventions
-for authors are in [`STYLE.md`](STYLE.md).
+for authors are in [`STYLE.md`](STYLE.md). Volume 0 is furthest along; the remaining volumes
+are written in small resumable batches.
