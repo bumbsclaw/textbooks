@@ -25,9 +25,9 @@ chapter.
 
 - [x] 2.01 Package Managers and Registries: Architecture and Trust Models — `ch01-registries-trust-models.md`
 - [x] 2.02 Versioning, Resolution, and Lockfiles — `ch02-versioning-resolution-lockfiles.md`
-- [ ] 2.03 Dependency Confusion, Typosquatting, and Namespace Attacks — `ch03-confusion-typosquatting.md`
-- [ ] 2.04 Malicious Packages: Anatomy, Detection, and Analysis — `ch04-malicious-packages.md`
-- [ ] 2.05 Vulnerability Databases and Identifiers: CVE, NVD, OSV, GHSA — `ch05-vulnerability-databases.md`
+- [x] 2.03 Dependency Confusion, Typosquatting, and Namespace Attacks — `ch03-confusion-typosquatting.md`
+- [x] 2.04 Malicious Packages: Anatomy, Detection, and Analysis — `ch04-malicious-packages.md`
+- [x] 2.05 Vulnerability Databases and Identifiers: CVE, NVD, OSV, GHSA — `ch05-vulnerability-databases.md`
 - [ ] 2.06 Software Composition Analysis in Depth — `ch06-sca-in-depth.md`
 - [ ] 2.07 Reachability, Exploitability, and Prioritization — `ch07-reachability-prioritization.md`
 - [ ] 2.08 Vendoring, Mirroring, and Internal Registries — `ch08-vendoring-internal-registries.md`
