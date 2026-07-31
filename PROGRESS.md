@@ -10,9 +10,9 @@ chapter.
 
 ## Book 1 — Foundations of Software Supply Chain Security (`book-01-foundations/`)
 
-- [ ] 1.01 The Software Supply Chain: Anatomy and Attack Surface — `ch01-anatomy-attack-surface.md`
-- [ ] 1.02 A Taxonomy of Supply Chain Attacks — `ch02-attack-taxonomy.md`
-- [ ] 1.03 Case Studies I: Build System Compromise — SolarWinds and 3CX — `ch03-case-studies-build-compromise.md`
+- [x] 1.01 The Software Supply Chain: Anatomy and Attack Surface — `ch01-anatomy-attack-surface.md`
+- [x] 1.02 A Taxonomy of Supply Chain Attacks — `ch02-attack-taxonomy.md`
+- [x] 1.03 Case Studies I: Build System Compromise — SolarWinds and 3CX — `ch03-case-studies-build-compromise.md`
 - [ ] 1.04 Case Studies II: Dependency Attacks — event-stream, ua-parser-js, node-ipc, PyTorch — `ch04-case-studies-dependency-attacks.md`
 - [ ] 1.05 Case Studies III: xz-utils, Codecov, and Log4Shell — `ch05-case-studies-xz-codecov-log4shell.md`
 - [ ] 1.06 Trust, Threat Models, and the Economics of Supply Chain Risk — `ch06-trust-threat-models.md`
@@ -110,3 +110,4 @@ chapter.
 ## Log
 
 - 2026-07-31: Repo initialized; plan, style guide, and book scaffolding created.
+- 2026-07-31: Batch 1 done (1.01–1.03), committed and pushed. Next: batch 2 = 1.04, 1.05, 1.06.
