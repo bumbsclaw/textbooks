@@ -55,9 +55,9 @@ chapter.
 - [x] 4.05 Hardening GitHub Actions — `ch05-hardening-github-actions.md`
 - [x] 4.06 Secrets Management in CI/CD — `ch06-secrets-in-cicd.md`
 - [x] 4.07 Pipeline Poisoning: PPE, Cache, and Artifact Attacks — `ch07-pipeline-poisoning.md`
-- [ ] 4.08 Ephemeral and Isolated Build Environments — `ch08-ephemeral-build-environments.md`
-- [ ] 4.09 Build Observability and Anomaly Detection — `ch09-build-observability.md`
-- [ ] 4.10 Designing a Secure Build Platform at Scale — `ch10-secure-build-platform.md`
+- [x] 4.08 Ephemeral and Isolated Build Environments — `ch08-ephemeral-build-environments.md`
+- [x] 4.09 Build Observability and Anomaly Detection — `ch09-build-observability.md`
+- [x] 4.10 Designing a Secure Build Platform at Scale — `ch10-secure-build-platform.md`
 
 ## Book 5 — Signing, Provenance, and Attestation (`book-05-signing-attestation/`)
 
@@ -318,3 +318,4 @@ until then their paths are as listed above).
 - 2026-07-31: Book 1 complete (10/10). Batch 4 done (1.10, 2.01, 2.02). Next: 2.03, 2.04, 2.05.
 - 2026-07-31: Book 2 complete (10/10). Batch 7 done (2.09, 2.10, 3.01). Next: 3.02, 3.03, 3.04.
 - 2026-07-31: Book 3 complete (9/9). Batch 10 done (3.08, 3.09, 4.01). Next: 4.02, 4.03, 4.04.
+- 2026-07-31: Book 4 complete (10/10). Batch 13 done (4.08, 4.09, 4.10). Next: 5.01, 5.02, 5.03.
