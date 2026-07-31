@@ -24,7 +24,7 @@ chapter.
 ## Book 2 — Dependency Management and Open Source Risk (`book-02-dependencies/`)
 
 - [x] 2.01 Package Managers and Registries: Architecture and Trust Models — `ch01-registries-trust-models.md`
-- [ ] 2.02 Versioning, Resolution, and Lockfiles — `ch02-versioning-resolution-lockfiles.md`
+- [x] 2.02 Versioning, Resolution, and Lockfiles — `ch02-versioning-resolution-lockfiles.md`
 - [ ] 2.03 Dependency Confusion, Typosquatting, and Namespace Attacks — `ch03-confusion-typosquatting.md`
 - [ ] 2.04 Malicious Packages: Anatomy, Detection, and Analysis — `ch04-malicious-packages.md`
 - [ ] 2.05 Vulnerability Databases and Identifiers: CVE, NVD, OSV, GHSA — `ch05-vulnerability-databases.md`
@@ -315,3 +315,4 @@ until then their paths are as listed above).
 - 2026-07-31: Scope expanded to full backend curriculum (Volumes 1–15 added; supply chain = Vol 0).
 - 2026-07-31: Vol 0 Book 1 Ch 4–5 done and pushed; Ch 6 in progress.
 - 2026-07-31: Batch 3 done (1.07–1.09). Next batch: 1.10 (finish Book 1) + 2.01 + 2.02.
+- 2026-07-31: Book 1 complete (10/10). Batch 4 done (1.10, 2.01, 2.02). Next: 2.03, 2.04, 2.05.
