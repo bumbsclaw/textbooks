@@ -37,9 +37,9 @@ chapter.
 ## Book 3 — SBOMs and Software Transparency (`book-03-sboms/`)
 
 - [x] 3.01 Why SBOMs: Transparency and the Regulatory Landscape — `ch01-why-sboms.md`
-- [ ] 3.02 SPDX in Depth — `ch02-spdx.md`
-- [ ] 3.03 CycloneDX in Depth — `ch03-cyclonedx.md`
-- [ ] 3.04 SBOM Generation: Tools, Techniques, and Accuracy — `ch04-sbom-generation.md`
+- [x] 3.02 SPDX in Depth — `ch02-spdx.md`
+- [x] 3.03 CycloneDX in Depth — `ch03-cyclonedx.md`
+- [x] 3.04 SBOM Generation: Tools, Techniques, and Accuracy — `ch04-sbom-generation.md`
 - [ ] 3.05 SBOM Distribution, Storage, and Querying at Scale — `ch05-sbom-at-scale.md`
 - [ ] 3.06 VEX and Vulnerability Correlation — `ch06-vex.md`
 - [ ] 3.07 SBOM Quality, Completeness, and Limitations — `ch07-sbom-quality-limitations.md`
