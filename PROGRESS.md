@@ -28,9 +28,9 @@ chapter.
 - [x] 2.03 Dependency Confusion, Typosquatting, and Namespace Attacks — `ch03-confusion-typosquatting.md`
 - [x] 2.04 Malicious Packages: Anatomy, Detection, and Analysis — `ch04-malicious-packages.md`
 - [x] 2.05 Vulnerability Databases and Identifiers: CVE, NVD, OSV, GHSA — `ch05-vulnerability-databases.md`
-- [ ] 2.06 Software Composition Analysis in Depth — `ch06-sca-in-depth.md`
-- [ ] 2.07 Reachability, Exploitability, and Prioritization — `ch07-reachability-prioritization.md`
-- [ ] 2.08 Vendoring, Mirroring, and Internal Registries — `ch08-vendoring-internal-registries.md`
+- [x] 2.06 Software Composition Analysis in Depth — `ch06-sca-in-depth.md`
+- [x] 2.07 Reachability, Exploitability, and Prioritization — `ch07-reachability-prioritization.md`
+- [x] 2.08 Vendoring, Mirroring, and Internal Registries — `ch08-vendoring-internal-registries.md`
 - [ ] 2.09 Dependency Update Strategy and Automation — `ch09-update-automation.md`
 - [ ] 2.10 Evaluating Dependencies: Scorecards, Signals, and Policy — `ch10-evaluating-dependencies.md`
 
