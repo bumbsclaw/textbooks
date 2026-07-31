@@ -64,9 +64,9 @@ chapter.
 - [x] 5.01 Cryptographic Foundations for Supply Chain Security — `ch01-crypto-foundations.md`
 - [x] 5.02 Classic Code Signing and Its Failure Modes — `ch02-classic-code-signing.md`
 - [x] 5.03 Sigstore Architecture: Cosign, Fulcio, Rekor — `ch03-sigstore-architecture.md`
-- [ ] 5.04 Keyless Signing and Workload Identity — `ch04-keyless-signing.md`
-- [ ] 5.05 Transparency Logs: Merkle Trees, Rekor, and CT Lessons — `ch05-transparency-logs.md`
-- [ ] 5.06 in-toto: Attestations, Layouts, and Policies — `ch06-in-toto.md`
+- [x] 5.04 Keyless Signing and Workload Identity — `ch04-keyless-signing.md`
+- [x] 5.05 Transparency Logs: Merkle Trees, Rekor, and CT Lessons — `ch05-transparency-logs.md`
+- [x] 5.06 in-toto: Attestations, Layouts, and Policies — `ch06-in-toto.md`
 - [ ] 5.07 TUF: The Update Framework — `ch07-tuf.md`
 - [ ] 5.08 Provenance Verification in Practice — `ch08-provenance-verification.md`
 - [ ] 5.09 Key Management and PKI for the Enterprise — `ch09-key-management.md`
