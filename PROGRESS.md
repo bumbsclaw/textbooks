@@ -23,7 +23,7 @@ chapter.
 
 ## Book 2 — Dependency Management and Open Source Risk (`book-02-dependencies/`)
 
-- [ ] 2.01 Package Managers and Registries: Architecture and Trust Models — `ch01-registries-trust-models.md`
+- [x] 2.01 Package Managers and Registries: Architecture and Trust Models — `ch01-registries-trust-models.md`
 - [ ] 2.02 Versioning, Resolution, and Lockfiles — `ch02-versioning-resolution-lockfiles.md`
 - [ ] 2.03 Dependency Confusion, Typosquatting, and Namespace Attacks — `ch03-confusion-typosquatting.md`
 - [ ] 2.04 Malicious Packages: Anatomy, Detection, and Analysis — `ch04-malicious-packages.md`
