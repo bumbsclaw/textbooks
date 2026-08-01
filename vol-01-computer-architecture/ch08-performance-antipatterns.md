@@ -725,4 +725,3 @@ chapter is its practical core.
 - Paul E. McKenney, *Is Parallel Programming Hard, And, If So, What Can You Do About It?* —
   https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html — per-CPU
   data, `LongAdder`-style striping, RCU, and why sharding beats contended atomics.
-```
