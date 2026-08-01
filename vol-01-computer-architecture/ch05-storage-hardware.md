@@ -9,10 +9,9 @@ persistent-memory module. And the *physics* of those media is not a curiosity: i
 premise behind almost every design decision in a data system. Append-only logs, LSM trees, B-tree
 node sizes, the obsession with `fsync`, the difference between a "committed" write and a durable
 one — none of these make sense until you understand what the hardware underneath is actually doing.
-This chapter explains how each storage technology works mechanically, what performance and
-durability guarantees it really provides (as opposed to the ones marketing implies), and how those
-guarantees propagate up into the correctness of distributed systems. It is, deliberately, the
-hardware chapter that sets up Volume 5 (Databases).
+This chapter explains how each storage technology works mechanically, what performance and durability
+guarantees it really provides, and how those guarantees propagate up into the correctness of
+distributed systems. It is, deliberately, the hardware chapter that sets up Volume 5 (Databases).
 
 Learning goals — after this chapter you should be able to:
 
@@ -37,21 +36,19 @@ Learning goals — after this chapter you should be able to:
 
 ## The storage tier: below DRAM, and persistent
 
-Chapter 3's hierarchy had a floor of DRAM at ~100 ns. Storage sits below that floor, and it
-differs from every tier above it in one categorical way that dwarfs all the quantitative
-differences: **it is non-volatile.** DRAM forgets everything the instant power drops; storage
-remembers. That single property is why storage exists, and it is also why storage is slow — the
-physical mechanisms that make a bit *stick* (magnetizing a region of a platter, trapping charge in
-a floating gate) are inherently more expensive to write and read than flipping the state of an SRAM
-cell or refreshing a DRAM capacitor.
+Chapter 3's hierarchy had a floor of DRAM at ~100 ns. Storage sits below that floor and differs from
+every tier above it in one categorical way that dwarfs all the quantitative differences: **it is
+non-volatile.** DRAM forgets everything the instant power drops; storage remembers. That single
+property is why storage exists, and also why it is slow — the mechanisms that make a bit *stick*
+(magnetizing a platter region, trapping charge on a floating gate) are inherently costlier to read and
+write than flipping an SRAM cell or refreshing a DRAM capacitor.
 
-The result is a chasm. Where the memory hierarchy spans roughly registers (sub-nanosecond) to DRAM
-(~100 ns) — three orders of magnitude — the jump from DRAM to storage adds several more. A local
-NVMe SSD read is on the order of **tens of microseconds**; a random HDD read is on the order of
-**milliseconds**. From an L1 hit (~1 ns) to an HDD seek (~10 ms) is roughly **seven orders of
-magnitude** — the difference between one second and four months. Nothing else in a computer spans
-that range. It is why the entire discipline of data systems is, at bottom, the art of not going to
-storage, and when you must, of going there in the cheapest possible way.
+The result is a chasm. Where the memory hierarchy spans registers (sub-nanosecond) to DRAM (~100 ns) —
+three orders of magnitude — the jump from DRAM to storage adds several more. A local NVMe SSD read is
+on the order of **tens of microseconds**; a random HDD read is **milliseconds**. From an L1 hit (~1 ns)
+to an HDD seek (~10 ms) is roughly **seven orders of magnitude** — the difference between one second
+and four months. It is why data systems are, at bottom, the art of not going to storage — and of going
+there cheaply when forced to.
 
 ```mermaid
 flowchart TB
@@ -85,16 +82,16 @@ Read the IOPS column against the latency column and a pattern jumps out that gov
 this chapter: **the gap between random and sequential access widens as the medium gets slower.** On
 DRAM, random vs sequential differs by a small factor (prefetching, row buffers). On an SSD, random
 4K reads are slower than sequential but still respectable. On an HDD, random access is *two to three
-orders of magnitude* worse than sequential, because a spinning disk has to physically move to reach
-a random location. Storage physics does not just make storage slow; it makes *access-pattern
-discipline* the single highest-leverage decision in a storage engine's design.
+orders of magnitude* worse than sequential, because a spinning disk must physically move to reach a
+random location. Storage physics does not just make storage slow; it makes *access-pattern discipline*
+the single highest-leverage decision in a storage engine's design.
 
 ## HDDs: mechanical latency and the tyranny of the seek
 
-A hard disk drive is the last electromechanical component in a modern server, and understanding it
-matters even though flash has displaced it for hot data — because the design lessons HDDs burned
-into database engineering are still with us, and because HDDs remain the economical choice for
-cold, bulk, and archival storage where capacity per dollar dominates.
+A hard disk drive is the last electromechanical component in a modern server. It matters even though
+flash has displaced it for hot data — because the design lessons HDDs burned into database engineering
+are still with us, and because HDDs remain the economical choice for cold, bulk, and archival storage
+where capacity per dollar dominates.
 
 An HDD stores bits as magnetized regions on the surfaces of rigid **platters** that spin on a
 **spindle** at a constant rate — commonly 5,400, 7,200, or (in enterprise parts) 10,000 or 15,000
@@ -137,8 +134,8 @@ single most important fact about the HDD:
 
 ### What the HDD taught databases
 
-This one asymmetry shaped the storage-engine designs you will study in depth in Volume 5. Every
-classic technique is, at root, a strategy to turn random I/O into sequential I/O:
+This one asymmetry shaped the storage-engine designs you study in depth in Volume 5. Every classic
+technique is, at root, a strategy to turn random I/O into sequential I/O:
 
 - **Append-only logs and write-ahead logging (WAL).** Writing new data by *appending* to the end of
   a file keeps the head in one place, converting a stream of updates into one long sequential write.
@@ -156,10 +153,9 @@ classic technique is, at root, a strategy to turn random I/O into sequential I/O
   background. On an HDD this is close to optimal: you only ever pay for sequential writes plus
   periodic sequential compaction.
 
-The enduring lesson generalizes past HDDs and even past storage. Chapter 3 showed that sequential
-memory access beats random by a large factor because of prefetching. Storage takes the same lesson
-and multiplies the stakes: **sequential beats random at every tier, and the slower the tier, the
-more extreme the penalty for ignoring it.** Design your access patterns for the slowest tier your
+The enduring lesson generalizes past HDDs. Chapter 3 showed sequential memory access beats random
+because of prefetching; storage multiplies the stakes: **sequential beats random at every tier, and
+the slower the tier, the more extreme the penalty.** Design access patterns for the slowest tier your
 data touches.
 
 ## SSDs: NAND flash and the erase-before-write problem
@@ -220,12 +216,12 @@ device to the host while hiding all of NAND's quirks. It is, in effect, a tiny l
 storage engine embedded in the drive. It does several jobs at once.
 
 **Logical-to-physical mapping and out-of-place writes.** The host addresses the drive by *logical*
-block address (LBA). The FTL keeps a mapping table from LBAs to *physical* NAND locations. When the
-host "overwrites" LBA 42, the FTL does **not** touch the old physical page. It writes the new data to
-a fresh, already-erased page somewhere else, updates the mapping so LBA 42 now points there, and
-marks the old physical page **stale** (invalid). Overwrite-in-place becomes write-elsewhere-and-
-remap. This is why an SSD's random-write pattern, as seen by the NAND, is actually sequential
-appends into erased blocks — the FTL is doing log-structuring for you.
+block address (LBA); the FTL keeps a mapping table from LBAs to *physical* NAND locations. When the
+host "overwrites" LBA 42, the FTL does **not** touch the old physical page — it writes the new data to
+a fresh, already-erased page elsewhere, remaps LBA 42 to it, and marks the old page **stale**.
+Overwrite-in-place becomes write-elsewhere-and-remap, which is why an SSD's random-write pattern, as
+seen by the NAND, is actually sequential appends into erased blocks — the FTL is log-structuring for
+you.
 
 **Wear leveling.** Because each block tolerates only a limited number of program/erase (P/E) cycles,
 the FTL spreads writes evenly across all blocks — rotating writes and occasionally relocating cold data
@@ -283,10 +279,9 @@ budget, quoted two ways on the datasheet:
   for the warranty period (typically 5 years). A 2 TB drive at 1 DWPD tolerates 2 TB/day; at 3 DWPD,
   6 TB/day.
 
-Read-optimized QLC drives may be rated well below 1 DWPD; write-intensive enterprise drives (often
-with more over-provisioning and sometimes MLC/SLC) reach 3-10 DWPD. Sizing a database or Kafka fleet
-means checking that your *actual* write rate, multiplied by real-world WAF, fits under the drives'
-DWPD — or you will replace drives on an unplanned schedule.
+Read-optimized QLC drives may be rated well below 1 DWPD; write-intensive enterprise drives reach
+3-10 DWPD. Sizing a database or Kafka fleet means checking that your *actual* write rate, times
+real-world WAF, fits under the drives' DWPD — or you replace drives on an unplanned schedule.
 
 **GC-induced tail latency.** This is the one that bites backend engineers in production and rarely
 appears in benchmarks. Garbage collection runs *concurrently with host I/O*, contending for the same
@@ -424,19 +419,18 @@ memory write *durable* required an explicit sequence:
    promised that data reaching the memory controller's write pending queue would be flushed to media
    on power failure (backed by capacitors/reserve energy).
 
-Getting this ordering right — so that a crash never leaves a half-updated persistent data structure —
-is exactly as hard as crash-consistent on-disk formats, minus the block granularity. Libraries like
-Intel's **PMDK** (Persistent Memory Development Kit) existed to give programmers transactional
-primitives over this model. It was powerful and genuinely difficult to use correctly.
+Getting this ordering right — so a crash never leaves a half-updated persistent structure — is exactly
+as hard as crash-consistent on-disk formats, minus the block granularity. Intel's **PMDK** (Persistent
+Memory Development Kit) gave programmers transactional primitives over this model: powerful, and
+genuinely difficult to use correctly.
 
 ### Status: discontinued
 
 Despite the promise, adoption stayed limited — the programming model was demanding, it required
-specific Intel platforms, the price/capacity story never clearly beat DRAM-plus-fast-SSD for most
-workloads, and relatively little software was rewritten to exploit App Direct mode. **Micron exited
-the 3D XPoint business and sold its fab in 2021, and Intel announced it was winding down the Optane
-business in 2022.** The product line is discontinued. Treat any Optane latency/capacity figures here
-as historical.
+specific Intel platforms, the price/capacity story never clearly beat DRAM-plus-fast-SSD, and little
+software was rewritten for App Direct mode. **Micron exited the 3D XPoint business and sold its fab in
+2021, and Intel announced it was winding down the Optane business in 2022.** The product line is
+discontinued; treat any Optane figures here as historical.
 
 The *concept* — non-volatile, byte-addressable memory on or near the memory bus — has not gone away.
 The industry's current vehicle for memory expansion and pooling is **CXL (Compute Express Link)**, a
@@ -449,12 +443,10 @@ tier is the NVMe SSD, and durability there flows through the block I/O stack —
 ## Durability: what "the write is persistent" actually costs
 
 This is the section a backend engineer must not skim, because it is where correctness lives. A
-distributed database, a message queue, a consensus log — all of them make promises of the form "once
-I acknowledge your write, it will survive a crash." That promise is only as good as the weakest link
-in the physical path the write takes, and that path has more volatile stages than most engineers
-realize.
-
-Consider what happens when your application calls `write()` to append a record to a file:
+distributed database, a message queue, a consensus log all promise "once I acknowledge your write, it
+will survive a crash." That promise is only as good as the weakest link in the physical path the write
+takes — and that path has more volatile stages than most engineers realize. Consider `write()`
+appending a record to a file:
 
 ```mermaid
 flowchart TB
@@ -484,16 +476,15 @@ onto the platter are they durable. Everything above this line is volatile.
 
 ### Making it durable: fsync and friends
 
-To force the write down through the volatile stages, the application must call **`fsync(fd)`**. `fsync`
-does two things: it flushes the file's dirty page-cache pages to the device, *and* it issues a **cache-
+To force the write down through the volatile stages, the application must call **`fsync(fd)`**, which
+does two things: it flushes the file's dirty page-cache pages to the device, *and* issues a **cache-
 flush command** (SATA `FLUSH CACHE`, NVMe `Flush`) telling the drive to push its volatile write cache
-to non-volatile media, and it waits for the drive to confirm. Only after `fsync` returns has the write
-plausibly reached durable media. **`fdatasync`** is a cheaper variant that flushes the file *data* and
-only the metadata strictly needed to read it back (e.g., a size change) but skips non-essential
-metadata updates (like `mtime`), saving an extra metadata write — which is why databases that manage
-their own file layout prefer it. An alternative to a separate flush is the **FUA (Force Unit Access)**
-flag on a write, which tells the drive "this specific write must go to media before you acknowledge
-it," bypassing the volatile cache for that write.
+to non-volatile media, waiting for confirmation. Only after `fsync` returns has the write plausibly
+reached durable media. **`fdatasync`** is a cheaper variant that flushes the file *data* plus only the
+metadata needed to read it back (e.g., a size change), skipping non-essential updates like `mtime` —
+which is why databases that manage their own file layout prefer it. The **FUA (Force Unit Access)**
+flag is an alternative: it tells the drive a specific write must reach media before acknowledgment,
+bypassing the volatile cache for that write.
 
 `fsync` is **slow** — it turns an asynchronous, batchable operation into a synchronous round trip that
 blocks until the media confirms. That is precisely why databases *obsess* over it. The write-ahead
@@ -514,11 +505,11 @@ data acknowledged into the drive's cache is effectively safe even without waitin
 NAND, because the capacitors guarantee it will get there. This makes `fsync` dramatically faster
 (the drive can honor a flush from its protected cache) *and* keeps the durability guarantee intact.
 
-**Consumer SSDs typically have no PLP.** Their volatile cache really is volatile. Worse, some
-consumer drives (and some misconfigured systems) have historically **ignored or lied about cache-flush
-commands** to win benchmarks — acknowledging a flush without actually committing to media. On such
-hardware, `fsync` returns, your database believes the write is durable, and a power cut proves it was
-not. This is the durability trap:
+**Consumer SSDs typically have no PLP** — their volatile cache really is volatile. Worse, some consumer
+drives (and misconfigured systems) have historically **ignored or lied about cache-flush commands** to
+win benchmarks, acknowledging a flush without committing to media. On such hardware `fsync` returns,
+your database believes the write is durable, and a power cut proves otherwise. This is the durability
+trap:
 
 > Building a database or replicated log on **consumer SSDs without power-loss protection** — or on any
 > device that does not honor flush/FUA — means your durability guarantee is a fiction. The layer above
@@ -536,8 +527,7 @@ The table summarizes where durability is and is not guaranteed:
 
 ## Reasoning about storage performance
 
-With the mechanisms in hand, here are the metrics an engineer actually reasons with, and how they
-relate.
+With the mechanisms in hand, here are the metrics an engineer reasons with.
 
 **Latency, IOPS, and bandwidth are three views of the same device, and they trade off.**
 
@@ -560,10 +550,10 @@ against latency: deeper queues raise throughput *and* per-op latency (requests w
 Choosing a queue depth is choosing a point on the throughput-vs-latency curve.
 
 **Random vs sequential — still real, less extreme.** On flash the random/sequential gap shrank
-dramatically from the HDD's 100-1000x, but it did not vanish. Sequential access still wins: large
-sequential writes are far friendlier to the FTL (less write amplification, easier GC), and sequential
-reads benefit from read-ahead and larger transfers that amortize per-op overhead. The HDD-era instinct
-to batch and sequentialize is still correct on flash; it is just no longer life-or-death for reads.
+dramatically from the HDD's 100-1000x but did not vanish. Sequential still wins: large sequential
+writes are far friendlier to the FTL (less write amplification, easier GC), and sequential reads
+benefit from read-ahead and larger transfers. The HDD-era instinct to batch and sequentialize is still
+correct on flash; it is just no longer life-or-death for reads.
 
 ### Cloud storage inherits — and taxes — the physics
 
@@ -601,11 +591,10 @@ correctness and cost of distributed data systems.
 
 **Append-only and log-structured designs are storage physics made architecture.** Kafka (Volume 10)
 stores each partition as an append-only sequence of segment files and gets much of its throughput from
-never doing random writes — it rides the same "sequential ≫ random" fact the HDD taught, and its
-consumers' sequential reads are cheap for the same reason. LSM-based stores (Volume 5) exist because
-buffering writes and flushing them as large sequential runs is the pattern flash rewards. The log is
-not just a convenient abstraction; it is the shape of write that storage hardware is fastest at, at
-every tier.
+never doing random writes — riding the same "sequential ≫ random" fact the HDD taught, with cheap
+sequential consumer reads for the same reason. LSM stores (Volume 5) exist because buffering writes and
+flushing them as large sequential runs is the pattern flash rewards. The log is not just a convenient
+abstraction; it is the shape of write that storage hardware is fastest at, at every tier.
 
 **Durability is the foundation under consensus correctness.** This is the sharpest connection in the
 chapter. Consensus protocols — Raft, Paxos, Viewstamped Replication (Volume 6) — are proven correct on
@@ -622,26 +611,23 @@ lost data exactly here, by trusting an acknowledgment the hardware never earned.
 
 **The durability-vs-latency trade-off is a core design axis.** Because `fsync` is slow, every
 replicated data system chooses where to sit on a spectrum: `fsync` on every write (maximally durable,
-slowest) versus batching writes and flushing periodically (faster, with a window of un-flushed data at
-risk on crash) versus relying on replication to *N* nodes' memory instead of any single node's disk
-(fast, durable only against uncorrelated failures — and vulnerable to correlated power loss). Group
-commit, `synchronous_commit=off`-style modes, and "flush every N ms" knobs are all points on this
-axis, and choosing among them *is* choosing a durability guarantee. There is no free lunch: you are
-trading acknowledged-write latency against the size of the data-loss window on failure.
+slowest); batching writes and flushing periodically (faster, with a window of un-flushed data at risk
+on crash); or replicating to *N* nodes' memory instead of any single disk (fast, durable only against
+uncorrelated failures — vulnerable to correlated power loss). Group commit, `synchronous_commit=off`
+modes, and "flush every N ms" knobs are all points on this axis, and choosing among them *is* choosing
+a durability guarantee — trading acknowledged-write latency against the data-loss window on failure.
 
-**Write amplification and endurance are fleet-economics problems.** At one machine, WAF and DWPD are
-curiosities. Across a fleet of thousands of write-heavy nodes, they set the drive-replacement rate and
-a real slice of the storage bill. A storage engine whose compaction strategy halves write
-amplification does not just run faster — it doubles drive lifetime across the fleet, which is a
-capacity-planning and cost line item. This is why database and streaming teams at scale measure
+**Write amplification and endurance are fleet-economics problems.** On one machine, WAF and DWPD are
+curiosities; across thousands of write-heavy nodes they set the drive-replacement rate and a real slice
+of the storage bill. A compaction strategy that halves write amplification does not just run faster —
+it doubles drive lifetime across the fleet. This is why database and streaming teams at scale measure
 device-level write amplification, not just application write rate.
 
 **Disaggregation and the network-storage tax reshape architecture.** NVMe-oF and cloud block storage
-let compute and storage scale independently and let a database survive the loss of any single compute
-node — at the cost of a network round trip on every I/O. Newer "compute-storage separation" databases
-(and object-storage-backed engines) accept higher per-I/O latency in exchange for elastic,
-independently-scalable, durable storage, then claw back latency with aggressive caching of hot data on
-local NVMe and DRAM. It is Chapter 3's hierarchy at datacenter scale, with the same rule: keep the
+let compute and storage scale independently and let a database survive the loss of any compute node —
+at the cost of a network round trip on every I/O. Newer "compute-storage separation" databases accept
+higher per-I/O latency in exchange for elastic, durable storage, then claw it back by caching hot data
+on local NVMe and DRAM. It is Chapter 3's hierarchy at datacenter scale, with the same rule: keep the
 working set in the fast local tier; go to the slow, shared, durable tier as rarely as possible.
 
 The through-line from Chapter 3 holds all the way down: hierarchies of tiers with growing latency and
@@ -671,8 +657,8 @@ exact moment a write becomes durable, because distributed correctness is built o
   overhead matters (`io_uring`, SPDK). **NVMe-oF** extends the protocol over a network for
   disaggregated storage.
 - **Persistent memory** (Optane / 3D XPoint) offered byte-addressable persistence at ~100s of ns with
-  a cache-flush durability model (`CLWB`/`SFENCE`/ADR), but is **discontinued** (Micron exited 2021;
-  Intel wound down Optane 2022). The concept lives on around CXL; treat its figures as historical.
+  a cache-flush durability model (`CLWB`/`SFENCE`/ADR), but is **discontinued** (Micron exited 2021,
+  Intel wound down Optane 2022); the concept lives on around CXL. Treat its figures as historical.
 - **Durability requires reaching non-volatile media, not just returning from `write()`** (which only
   reaches the volatile page cache). `fsync`/`fdatasync` flushes to the device and issues a cache-flush;
   the drive's own DRAM cache is **volatile unless it has capacitor-backed power-loss protection**.
@@ -694,7 +680,7 @@ exact moment a write becomes durable, because distributed correctness is built o
   for the NVMe queueing model, command set, Flush/FUA semantics, and NVMe-oF transports.
 - Cai, Ghose, Haratsch, Luo, Mutlu, "Error Characterization, Mitigation, and Recovery in Flash-Memory-
   Based Solid-State Drives" (Proceedings of the IEEE, 2017) — a rigorous survey of NAND cell physics,
-  wear, and FTL techniques (also on arXiv).
+  wear, and FTL techniques.
 - "The Unwritten Contract of Solid State Drives" — Jun He et al., EuroSys 2017 — how SSD internals
   (GC, mapping, write amplification) leak into application performance, and what software must do to
   cooperate.

@@ -72,8 +72,7 @@ flowchart LR
     L10 -.->|"write-back deferred"| DRAM
 ```
 
-A memory system is **coherent** if it upholds two invariants, stated here the way architecture
-texts state them:
+A memory system is **coherent** if it upholds two invariants:
 
 1. **Write propagation.** A write to a location by one core eventually becomes visible to every
    other core. No copy stays stale indefinitely.
@@ -163,11 +162,10 @@ shared+clean; Invalid is no copy. (There is no "shared+dirty" state in plain MES
 the state MOESI adds, below.)
 
 The **E** state is what makes MESI better than the older MSI protocol. When a core reads a line no
-one else holds, it lands in **E**, not S — no need to tell anyone, it has the only copy. If it then
-writes, it transitions **E → M silently**, no bus transaction, because it already holds the line
-exclusively. This is the common case for thread-local data: read then write, no contention, no
-coherence traffic. Had the read landed in S, the write would have needed a bus transaction to
-invalidate copies that do not even exist. E makes the uncontended case free.
+one else holds, it lands in **E**, not S. If it then writes, it transitions **E → M silently**, no
+bus transaction, because it already holds the line exclusively — the common case for thread-local
+data: read then write, no coherence traffic. Had the read landed in S, the write would have needed a
+bus transaction to invalidate copies that do not even exist. E makes the uncontended case free.
 
 ### The transitions
 
@@ -290,10 +288,10 @@ chapter, MESI is the model; MESIF/MOESI are the production refinements.
 
 ## The cost of coherence
 
-Coherence is correct and automatic, but it is not free, and its cost is not spread evenly. It
-concentrates precisely where multiple cores touch the same cache lines — which is precisely where
-concurrent backend code lives. Two phenomena dominate: true sharing and false sharing. They have the
-same mechanism (coherence traffic on a contended line) and completely different cures.
+Coherence is correct and automatic, but not free, and its cost concentrates precisely where multiple
+cores touch the same cache lines — which is where concurrent backend code lives. Two phenomena
+dominate: true and false sharing. Same mechanism (coherence traffic on a contended line), completely
+different cures.
 
 ### True sharing and cache-line ping-ponging
 
@@ -315,14 +313,13 @@ combining trees, or partitioning so each core owns its slice. Volume 4 develops 
 
 ### False sharing: the subtle killer
 
-**False sharing** is the one that catches good engineers, because the code *looks* contention-free.
-Two threads update two *different* variables — no shared state in the program's logic — but the two
-variables happen to sit on the *same 64-byte cache line*. Coherence operates on lines, not
-variables (Chapter 3: the line is the atomic unit). So even though the threads never touch the same
-datum, every write by one thread invalidates the *whole line* in the other thread's cache,
-including the byte the other thread cares about. The hardware cannot tell that the writes are
-logically independent; it sees two cores writing the same line, and it ping-pongs the line between
-them exactly as if they were truly sharing.
+**False sharing** catches good engineers because the code *looks* contention-free. Two threads update
+two *different* variables — no shared state in the program's logic — but the variables happen to sit
+on the *same 64-byte cache line*. Coherence operates on lines, not variables (Chapter 3: the line is
+the atomic unit), so even though the threads never touch the same datum, every write by one thread
+invalidates the *whole line* in the other's cache, including the byte the other cares about. The
+hardware cannot tell the writes are logically independent; it sees two cores writing the same line
+and ping-pongs it between them exactly as if they were truly sharing.
 
 ```mermaid
 flowchart TB
@@ -401,14 +398,13 @@ hold the line containing `x` in **M** (exclusive, dirty) for the entire duration
 and it must prevent any other core from stealing the line in the middle. There are two hardware
 strategies:
 
-- **x86: the `LOCK` prefix.** Instructions like `lock xadd`, `lock cmpxchg`, `lock inc` acquire the
-  cache line exclusively (RFO to M) and hold it locked against snoops for the duration of the RMW,
-  so no other core can observe or modify the line mid-operation. On any line that fits within a
-  cache line (the normal case), the lock is a **cache lock** — cheap-ish, local to the coherence
-  fabric. Only pathological cases — an atomic that straddles two cache lines — fall back to a **bus
-  lock** that locks the whole memory subsystem, which is catastrophically slow and why you keep
-  atomics naturally aligned. Modern Intel parts even fault or heavily penalize split-lock (bus-lock)
-  operations to protect the system from a noisy neighbor holding the bus.
+- **x86: the `LOCK` prefix.** `lock xadd`, `lock cmpxchg`, `lock inc` acquire the line exclusively
+  (RFO to M) and hold it locked against snoops for the RMW's duration, so no other core observes or
+  modifies it mid-operation. When the operand fits within one cache line (the normal case) this is a
+  **cache lock** — cheap-ish, local to the coherence fabric. Only a split operand straddling two
+  lines falls back to a **bus lock** that locks the whole memory subsystem — catastrophically slow,
+  and why you keep atomics naturally aligned. Modern Intel parts fault or heavily penalize such
+  split-lock operations to protect against a noisy neighbor holding the bus.
 
 - **ARM / RISC / POWER: load-linked / store-conditional (LL/SC).** Rather than locking, these
   architectures use an *optimistic* pair. `LL` (load-linked / load-exclusive, `LDXR` on ARM) reads
@@ -531,27 +527,24 @@ sequenceDiagram
 Real architectures sit on a spectrum from SC (strongest, unimplemented) to very weak. Two points on
 that spectrum matter for backend work.
 
-**x86-TSO (Total Store Order)** is the memory model of Intel and AMD x86. It is *relatively strong*.
-Its one significant relaxation is the store buffer's: **a load may be reordered before an earlier
-store to a different location** (store→load reordering). Everything else is kept in order:
-store→store ordering is preserved (stores become visible in program order — hence "Total Store
-Order"), load→load ordering is preserved, and load→store ordering is preserved. The store buffer is
-also **FIFO and drains in order**, and a core sees its *own* stores immediately (store forwarding
-from its buffer). TSO is close enough to SC that a large amount of racy-but-lucky x86 code happens to
-work — which is a trap when the same code is ported to ARM.
+**x86-TSO (Total Store Order)** is the memory model of Intel and AMD x86 — *relatively strong*. Its
+one significant relaxation is the store buffer's: **a load may be reordered before an earlier store
+to a different location** (store→load). Everything else is kept in order: store→store is preserved
+(stores become visible in program order — hence "Total Store Order"), and so are load→load and
+load→store. The store buffer is FIFO and drains in order, and a core sees its *own* stores
+immediately (store forwarding). TSO is close enough to SC that much racy-but-lucky x86 code happens
+to work — a trap when the same code is ported to ARM.
 
-**ARM and POWER are weakly ordered.** They relax *almost all* orderings: store→store, load→load,
-load→store, and store→load can *all* be reordered, subject only to preserving single-thread data
-dependencies (a load that feeds an address for a later access, and coherence per-location). Two
-independent stores can become visible to other cores in the opposite order from program order; two
-independent loads can complete out of order. This gives the hardware far more freedom to reorder for
-performance (and simpler, lower-power out-of-order machinery), at the cost of demanding that software
-insert explicit ordering instructions wherever it actually needs order. POWER is weaker still in some
-respects (it does not even guarantee a single global store order the way simpler models do). The
-practical upshot for backend engineers is the porting hazard: **code that is accidentally correct on
-x86-TSO because TSO only reorders store→load will break on ARM Graviton**, where load→load and
-store→store reorder freely. As ARM servers went mainstream in the datacenter (Chapter 2), this
-stopped being an academic concern and became a real source of bugs surfacing only on the ARM fleet.
+**ARM and POWER are weakly ordered.** They relax *almost all* orderings — store→store, load→load,
+load→store, and store→load can all be reordered — subject only to single-thread data dependencies and
+per-location coherence. Two independent stores can become visible in the opposite order from program
+order; two independent loads can complete out of order. This gives the hardware far more reordering
+freedom (and simpler, lower-power machinery), at the cost of demanding software insert explicit
+ordering wherever it needs order. POWER is weaker still (it does not even guarantee a single global
+store order). The practical upshot is the porting hazard: **code accidentally correct on x86-TSO
+because TSO only reorders store→load will break on ARM Graviton**, where load→load and store→store
+reorder freely. As ARM servers went mainstream (Chapter 2), this became a real source of bugs
+surfacing only on the ARM fleet.
 
 | Reordering allowed? | Sequential Consistency | x86-TSO | ARM / POWER (weak) |
 |---------------------|:----------------------:|:-------:|:------------------:|
@@ -576,25 +569,22 @@ constrains the reordering of memory operations around it. Fences are how a progr
 as much ordering as it needs and no more, paying the performance cost only at the specific points
 where correctness demands it.
 
-**x86 fences.** Because x86-TSO already preserves most orderings, x86 needs few fences. The
-important one is **`mfence`** (full memory fence): it prevents *any* memory operation before it from
-reordering with *any* after it, and in particular it **drains the store buffer** — all buffered
-stores become globally visible before any later load executes. `mfence` is precisely the instruction
-that forbids the store→load reorder, closing the `r1==0 && r2==0` hole. `sfence` (store fence)
-orders stores and `lfence` (load fence) orders loads and also serializes execution; both are rarely
-needed on TSO for ordinary code but appear around non-temporal stores (Chapter 3's streaming writes,
-which are *not* TSO-ordered) and in speculation-control contexts. Note: on x86 a `lock`-prefixed
-atomic (`lock xadd`, etc.) *also* acts as a full fence — which is why atomics carry an ordering cost
-on top of their coherence cost, and why you rarely need a separate `mfence` next to one.
+**x86 fences.** Because x86-TSO already preserves most orderings, x86 needs few fences. The important
+one is **`mfence`** (full fence): it prevents any memory operation before it from reordering with any
+after it, and in particular **drains the store buffer** — all buffered stores become globally visible
+before any later load executes. `mfence` is precisely what forbids the store→load reorder, closing
+the `r1==0 && r2==0` hole. `sfence`/`lfence` order stores/loads respectively and are rarely needed on
+TSO for ordinary code (they appear around non-temporal streaming stores, which are *not* TSO-ordered,
+and in speculation control). Note that a `lock`-prefixed atomic *also* acts as a full fence — which
+is why atomics carry an ordering cost on top of coherence, and why you rarely need a separate
+`mfence` beside one.
 
 **ARM fences.** Weak ordering means ARM needs fences far more often. **`DMB`** (Data Memory Barrier)
-orders memory accesses around it (with options for the scope and which accesses — e.g. `DMB ISH` for
-inner-shareable). **`DSB`** (Data Synchronization Barrier) is stronger: it not only orders but blocks
-execution until prior memory accesses *complete*. **`ISB`** (Instruction Synchronization Barrier)
-flushes the pipeline for self-modifying-code and system-register changes. In practice, ARMv8 also
-provides ordered load/store variants — **load-acquire (`LDAR`)** and **store-release (`STLR`)** —
-that bake the common ordering directly into the memory instruction, which is usually cheaper and
-more precise than a standalone `DMB`.
+orders memory accesses around it (scoped, e.g. `DMB ISH`). **`DSB`** (Data Synchronization Barrier)
+is stronger — it blocks execution until prior accesses *complete*. **`ISB`** flushes the pipeline for
+self-modifying code and system-register changes. ARMv8 also provides ordered load/store variants —
+**load-acquire (`LDAR`)** and **store-release (`STLR`)** — that bake the common ordering into the
+memory instruction, usually cheaper and more precise than a standalone `DMB`.
 
 **Acquire and release semantics** are the ordering vocabulary you will actually think in, because
 they are what language memory models expose (Volume 4). They are *one-way* barriers, which is what
@@ -688,10 +678,9 @@ The constants differ by twelve orders of magnitude; the theory — Lamport's —
 
 ## Key takeaways
 
-- **Coherence** keeps the many cached copies of a *single* memory location in agreement. It
-  guarantees **write propagation** (writes eventually become visible) and **write serialization**
-  (all cores see writes to one location in the same order). It is automatic on all commodity
-  hardware; software does not opt in.
+- **Coherence** keeps the many cached copies of a *single* location in agreement, guaranteeing
+  **write propagation** (writes eventually become visible) and **write serialization** (all cores see
+  writes to one location in the same order). It is automatic on all commodity hardware.
 - **MESI** is the canonical protocol: **M**odified (exclusive dirty), **E**xclusive (exclusive
   clean — enables the silent E→M write with no bus traffic), **S**hared (clean, possibly-shared,
   write needs an invalidate), **I**nvalid. Writes use **Read-For-Ownership** to invalidate other
@@ -707,9 +696,9 @@ The constants differ by twelve orders of magnitude; the theory — Lamport's —
   slowdowns**; fix it by **padding/aligning** hot per-thread fields to separate cache lines (Chapter
   8). The `perf` fingerprint is cross-core snoop hits on modified lines (HITM).
 - **Atomic RMW** (CAS, fetch-add) must acquire the line **exclusively** (M) and enforce ordering:
-  x86 `LOCK`-prefix (cache lock; a full fence too), ARM **LL/SC** or LSE atomics. They cost coherence
-  *plus* ordering, and **contended atomics serialize cores** — a scalability killer that motivates
-  per-CPU data and queue locks (Volume 4).
+  x86 `LOCK`-prefix (cache lock, also a full fence), ARM **LL/SC** or LSE atomics. They cost coherence
+  *plus* ordering, and **contended atomics serialize cores** — the scalability killer behind per-CPU
+  data and queue locks (Volume 4).
 - **Coherence ≠ consistency.** Coherence is per-location; **consistency** is the ordering of
   operations to *different* locations as seen by other cores. The `r1==0 && r2==0` litmus test is
   legal on real hardware without violating coherence.
@@ -723,8 +712,8 @@ The constants differ by twelve orders of magnitude; the theory — Lamport's —
   atomics) compile down to.
 - **The distributed-systems parallel is exact.** Coherence ≈ single-object **linearizability**;
   hardware consistency models ≈ distributed consistency models (SC/TSO/weak ↔ sequential/causal/
-  eventual), with **Lamport** underneath both. Atomics-are-expensive ↔ coordination-is-expensive;
-  false sharing ↔ accidental co-partitioning; the cure in both worlds is **stop sharing the unit of
+  eventual), **Lamport** underneath both. Atomics-are-expensive ↔ coordination-is-expensive; false
+  sharing ↔ accidental co-partitioning; the cure in both worlds is **stop sharing the unit of
   coordination** — partition, per-core/per-node state, share-nothing (Volumes 6 and 7).
 
 ## Further reading
