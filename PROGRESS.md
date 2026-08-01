@@ -103,9 +103,9 @@ chapter.
 - [x] 8.03 Vendor and Third-Party Software Risk — `ch03-vendor-risk.md`
 - [x] 8.04 Policy as Code and Continuous Compliance — `ch04-policy-as-code.md`
 - [x] 8.05 Detecting Supply Chain Compromise — `ch05-detecting-compromise.md`
-- [ ] 8.06 Incident Response for Supply Chain Events — `ch06-incident-response.md`
-- [ ] 8.07 Threat Intelligence and Information Sharing — `ch07-threat-intelligence.md`
-- [ ] 8.08 Metrics, Audits, and Executive Reporting — `ch08-metrics-reporting.md`
+- [x] 8.06 Incident Response for Supply Chain Events — `ch06-incident-response.md`
+- [x] 8.07 Threat Intelligence and Information Sharing — `ch07-threat-intelligence.md`
+- [x] 8.08 Metrics, Audits, and Executive Reporting — `ch08-metrics-reporting.md`
 
 ---
 
@@ -322,3 +322,5 @@ until then their paths are as listed above).
 - 2026-07-31: Book 5 complete (10/10). Batch 17 done (5.10, 6.01, 6.02). Next: 6.03, 6.04, 6.05.
 - 2026-07-31: Book 6 complete (10/10). Batch 20 done (6.09, 6.10, 7.01). Next: 7.02, 7.03, 7.04.
 - 2026-07-31: Book 7 complete (8/8). Batch 23 done (7.08, 8.01, 8.02). Next: 8.03, 8.04, 8.05.
+- 2026-07-31: *** VOLUME 0 (Software Supply Chain Security) COMPLETE — all 8 books, 75 chapters. ***
+- 2026-07-31: Batch 25 done (8.06, 8.07, 8.08). Next: begin Volume 1 (Computer Architecture): 1.01, 1.02, 1.03.
