@@ -119,9 +119,9 @@ until then their paths are as listed above).
 
 ## Volume 1 — Computer Architecture for Backend Engineers (`vol-01-computer-architecture/`)
 
-- [ ] 1.01 Why Architecture Matters: Mechanical Sympathy — `ch01-mechanical-sympathy.md`
-- [ ] 1.02 The Modern CPU: Pipelines, OoO, Speculation — `ch02-modern-cpu.md`
-- [ ] 1.03 The Memory Hierarchy and Caches — `ch03-memory-hierarchy.md`
+- [x] 1.01 Why Architecture Matters: Mechanical Sympathy — `ch01-mechanical-sympathy.md`
+- [x] 1.02 The Modern CPU: Pipelines, OoO, Speculation — `ch02-modern-cpu.md`
+- [x] 1.03 The Memory Hierarchy and Caches — `ch03-memory-hierarchy.md`
 - [ ] 1.04 Cache Coherence and Hardware Memory Consistency — `ch04-cache-coherence.md`
 - [ ] 1.05 Storage Hardware: HDD, SSD, NVMe, PMEM — `ch05-storage-hardware.md`
 - [ ] 1.06 Multi-Socket Systems and NUMA — `ch06-numa.md`
