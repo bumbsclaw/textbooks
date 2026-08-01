@@ -136,8 +136,8 @@ until then their paths are as listed above).
 - [x] 2.02 CPU Scheduling: CFS, Real-Time, cgroups — `ch02-scheduling.md`
 - [x] 2.03 Virtual Memory and Paging — `ch03-virtual-memory.md`
 - [x] 2.04 Memory in Practice: Allocators, Page Cache, Huge Pages, OOM — `ch04-memory-practice.md`
-- [ ] 2.05 System Calls and the Kernel Boundary — `ch05-system-calls.md`
-- [ ] 2.06 File Systems and the VFS — `ch06-filesystems-vfs.md`
+- [x] 2.05 System Calls and the Kernel Boundary — `ch05-system-calls.md`
+- [x] 2.06 File Systems and the VFS — `ch06-filesystems-vfs.md`
 - [ ] 2.07 Linux I/O: Blocking, epoll, io_uring — `ch07-linux-io.md`
 - [ ] 2.08 Signals, Pipes, and IPC — `ch08-ipc.md`
 - [ ] 2.09 Namespaces, cgroups, and Container Internals — `ch09-namespaces-cgroups.md`
@@ -327,3 +327,4 @@ until then their paths are as listed above).
 - 2026-07-31: Vol 1 batch 27 done (1.04, 1.05, 1.06). Next: 1.07, 1.08, 1.09.
 - 2026-07-31: *** VOLUME 1 (Computer Architecture) COMPLETE — 10 chapters. *** Vol 2 started (2.01 done).
 - 2026-07-31: Batches 28-29 done (1.07-1.10, 2.01). Next: 2.02, 2.03, 2.04.
+- 2026-07-31: Vol 2 batch 31 done (2.05, 2.06, 2.07). Next: 2.08, 2.09, 2.10.
