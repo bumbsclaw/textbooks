@@ -122,9 +122,9 @@ until then their paths are as listed above).
 - [x] 1.01 Why Architecture Matters: Mechanical Sympathy — `ch01-mechanical-sympathy.md`
 - [x] 1.02 The Modern CPU: Pipelines, OoO, Speculation — `ch02-modern-cpu.md`
 - [x] 1.03 The Memory Hierarchy and Caches — `ch03-memory-hierarchy.md`
-- [ ] 1.04 Cache Coherence and Hardware Memory Consistency — `ch04-cache-coherence.md`
-- [ ] 1.05 Storage Hardware: HDD, SSD, NVMe, PMEM — `ch05-storage-hardware.md`
-- [ ] 1.06 Multi-Socket Systems and NUMA — `ch06-numa.md`
+- [x] 1.04 Cache Coherence and Hardware Memory Consistency — `ch04-cache-coherence.md`
+- [x] 1.05 Storage Hardware: HDD, SSD, NVMe, PMEM — `ch05-storage-hardware.md`
+- [x] 1.06 Multi-Socket Systems and NUMA — `ch06-numa.md`
 - [ ] 1.07 Data Parallelism: SIMD, Vectorization, GPUs — `ch07-data-parallelism.md`
 - [ ] 1.08 Performance Anti-Patterns — `ch08-performance-antipatterns.md`
 - [ ] 1.09 Number Representation and Floating Point — `ch09-number-representation.md`
@@ -324,3 +324,4 @@ until then their paths are as listed above).
 - 2026-07-31: Book 7 complete (8/8). Batch 23 done (7.08, 8.01, 8.02). Next: 8.03, 8.04, 8.05.
 - 2026-07-31: *** VOLUME 0 (Software Supply Chain Security) COMPLETE — all 8 books, 75 chapters. ***
 - 2026-07-31: Batch 25 done (8.06, 8.07, 8.08). Next: begin Volume 1 (Computer Architecture): 1.01, 1.02, 1.03.
+- 2026-07-31: Vol 1 batch 27 done (1.04, 1.05, 1.06). Next: 1.07, 1.08, 1.09.
