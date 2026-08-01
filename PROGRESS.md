@@ -91,9 +91,9 @@ chapter.
 - [x] 7.02 Commit Signing and Developer Identity — `ch02-commit-signing-identity.md`
 - [x] 7.03 Branch Protection, Review, and Two-Person Rules — `ch03-branch-protection-review.md`
 - [x] 7.04 Secrets in Source: Detection and Remediation — `ch04-secrets-in-source.md`
-- [ ] 7.05 Backdoors and Malicious Code: From Underhanded C to Trusting Trust — `ch05-backdoors-malicious-code.md`
-- [ ] 7.06 Insider Threats and Account Takeover — `ch06-insider-threats-ato.md`
-- [ ] 7.07 AI-Generated Code and the Model Supply Chain — `ch07-ai-code-model-supply-chain.md`
+- [x] 7.05 Backdoors and Malicious Code: From Underhanded C to Trusting Trust — `ch05-backdoors-malicious-code.md`
+- [x] 7.06 Insider Threats and Account Takeover — `ch06-insider-threats-ato.md`
+- [x] 7.07 AI-Generated Code and the Model Supply Chain — `ch07-ai-code-model-supply-chain.md`
 - [ ] 7.08 Repository Integrity at Scale — `ch08-repo-integrity-at-scale.md`
 
 ## Book 8 — Governance, Compliance, and Incident Response (`book-08-governance-ir/`)
