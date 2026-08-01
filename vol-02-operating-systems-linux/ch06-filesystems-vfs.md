@@ -404,7 +404,7 @@ flowchart TB
     PC -->|kernel writeback:<br/>dirty ratio / 30s / fsync| BL["Block layer + I/O scheduler<br/>*** NOT DURABLE ***"]
     BL --> DC["Device write cache (on the drive)<br/>*** usually NOT DURABLE ***"]
     DC -->|FLUSH / FUA| MEDIA["Media: platter / NAND<br/>=== DURABLE ==="]
-    FS["fsync(fd) / fdatasync(fd)"] -.->|forces page cache -> media<br/>and issues FLUSH/FUA| MEDIA
+    FS["fsync(fd) / fdatasync(fd)"] -.->|forces page cache to media<br/>and issues FLUSH/FUA| MEDIA
     style PC fill:#fdd
     style BL fill:#fdd
     style DC fill:#fdd
