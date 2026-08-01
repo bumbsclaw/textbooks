@@ -94,12 +94,12 @@ chapter.
 - [x] 7.05 Backdoors and Malicious Code: From Underhanded C to Trusting Trust — `ch05-backdoors-malicious-code.md`
 - [x] 7.06 Insider Threats and Account Takeover — `ch06-insider-threats-ato.md`
 - [x] 7.07 AI-Generated Code and the Model Supply Chain — `ch07-ai-code-model-supply-chain.md`
-- [ ] 7.08 Repository Integrity at Scale — `ch08-repo-integrity-at-scale.md`
+- [x] 7.08 Repository Integrity at Scale — `ch08-repo-integrity-at-scale.md`
 
 ## Book 8 — Governance, Compliance, and Incident Response (`book-08-governance-ir/`)
 
-- [ ] 8.01 The Regulatory Landscape: EO 14028, NIST SSDF, EU CRA — `ch01-regulatory-landscape.md`
-- [ ] 8.02 Adopting SLSA and S2C2F: Roadmaps That Work — `ch02-adopting-slsa-s2c2f.md`
+- [x] 8.01 The Regulatory Landscape: EO 14028, NIST SSDF, EU CRA — `ch01-regulatory-landscape.md`
+- [x] 8.02 Adopting SLSA and S2C2F: Roadmaps That Work — `ch02-adopting-slsa-s2c2f.md`
 - [ ] 8.03 Vendor and Third-Party Software Risk — `ch03-vendor-risk.md`
 - [ ] 8.04 Policy as Code and Continuous Compliance — `ch04-policy-as-code.md`
 - [ ] 8.05 Detecting Supply Chain Compromise — `ch05-detecting-compromise.md`
@@ -321,3 +321,4 @@ until then their paths are as listed above).
 - 2026-07-31: Book 4 complete (10/10). Batch 13 done (4.08, 4.09, 4.10). Next: 5.01, 5.02, 5.03.
 - 2026-07-31: Book 5 complete (10/10). Batch 17 done (5.10, 6.01, 6.02). Next: 6.03, 6.04, 6.05.
 - 2026-07-31: Book 6 complete (10/10). Batch 20 done (6.09, 6.10, 7.01). Next: 7.02, 7.03, 7.04.
+- 2026-07-31: Book 7 complete (8/8). Batch 23 done (7.08, 8.01, 8.02). Next: 8.03, 8.04, 8.05.
