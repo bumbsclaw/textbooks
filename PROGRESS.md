@@ -88,9 +88,9 @@ chapter.
 ## Book 7 — Source, Code, and Insider Threat Security (`book-07-source-security/`)
 
 - [x] 7.01 Source Code Management: Threat Model and Integrity — `ch01-scm-threat-model.md`
-- [ ] 7.02 Commit Signing and Developer Identity — `ch02-commit-signing-identity.md`
-- [ ] 7.03 Branch Protection, Review, and Two-Person Rules — `ch03-branch-protection-review.md`
-- [ ] 7.04 Secrets in Source: Detection and Remediation — `ch04-secrets-in-source.md`
+- [x] 7.02 Commit Signing and Developer Identity — `ch02-commit-signing-identity.md`
+- [x] 7.03 Branch Protection, Review, and Two-Person Rules — `ch03-branch-protection-review.md`
+- [x] 7.04 Secrets in Source: Detection and Remediation — `ch04-secrets-in-source.md`
 - [ ] 7.05 Backdoors and Malicious Code: From Underhanded C to Trusting Trust — `ch05-backdoors-malicious-code.md`
 - [ ] 7.06 Insider Threats and Account Takeover — `ch06-insider-threats-ato.md`
 - [ ] 7.07 AI-Generated Code and the Model Supply Chain — `ch07-ai-code-model-supply-chain.md`
