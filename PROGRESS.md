@@ -76,9 +76,9 @@ chapter.
 
 - [x] 6.01 Container Images: OCI Format, Layers, and Attack Surface — `ch01-oci-images.md`
 - [x] 6.02 Registries: Architecture, Trust, and Threats — `ch02-registries.md`
-- [ ] 6.03 Base Image Strategy: Minimal, Distroless, Hardened — `ch03-base-images.md`
-- [ ] 6.04 Image Scanning and Vulnerability Management — `ch04-image-scanning.md`
-- [ ] 6.05 Image Signing and Verification in Kubernetes — `ch05-image-signing-k8s.md`
+- [x] 6.03 Base Image Strategy: Minimal, Distroless, Hardened — `ch03-base-images.md`
+- [x] 6.04 Image Scanning and Vulnerability Management — `ch04-image-scanning.md`
+- [x] 6.05 Image Signing and Verification in Kubernetes — `ch05-image-signing-k8s.md`
 - [ ] 6.06 Admission Control and Policy Engines: OPA and Kyverno — `ch06-admission-policy.md`
 - [ ] 6.07 Kubernetes Delivery Chains: Helm, Operators, GitOps — `ch07-k8s-delivery-chains.md`
 - [ ] 6.08 Infrastructure as Code Supply Chain Risks — `ch08-iac-risks.md`
