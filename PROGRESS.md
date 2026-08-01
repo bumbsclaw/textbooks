@@ -125,14 +125,14 @@ until then their paths are as listed above).
 - [x] 1.04 Cache Coherence and Hardware Memory Consistency — `ch04-cache-coherence.md`
 - [x] 1.05 Storage Hardware: HDD, SSD, NVMe, PMEM — `ch05-storage-hardware.md`
 - [x] 1.06 Multi-Socket Systems and NUMA — `ch06-numa.md`
-- [ ] 1.07 Data Parallelism: SIMD, Vectorization, GPUs — `ch07-data-parallelism.md`
-- [ ] 1.08 Performance Anti-Patterns — `ch08-performance-antipatterns.md`
-- [ ] 1.09 Number Representation and Floating Point — `ch09-number-representation.md`
-- [ ] 1.10 Hardware Support for Virtualization and Isolation — `ch10-hardware-virtualization.md`
+- [x] 1.07 Data Parallelism: SIMD, Vectorization, GPUs — `ch07-data-parallelism.md`
+- [x] 1.08 Performance Anti-Patterns — `ch08-performance-antipatterns.md`
+- [x] 1.09 Number Representation and Floating Point — `ch09-number-representation.md`
+- [x] 1.10 Hardware Support for Virtualization and Isolation — `ch10-hardware-virtualization.md`
 
 ## Volume 2 — Operating Systems and Linux (`vol-02-operating-systems-linux/`)
 
-- [ ] 2.01 The Process Model — `ch01-process-model.md`
+- [x] 2.01 The Process Model — `ch01-process-model.md`
 - [ ] 2.02 CPU Scheduling: CFS, Real-Time, cgroups — `ch02-scheduling.md`
 - [ ] 2.03 Virtual Memory and Paging — `ch03-virtual-memory.md`
 - [ ] 2.04 Memory in Practice: Allocators, Page Cache, Huge Pages, OOM — `ch04-memory-practice.md`
@@ -325,3 +325,5 @@ until then their paths are as listed above).
 - 2026-07-31: *** VOLUME 0 (Software Supply Chain Security) COMPLETE — all 8 books, 75 chapters. ***
 - 2026-07-31: Batch 25 done (8.06, 8.07, 8.08). Next: begin Volume 1 (Computer Architecture): 1.01, 1.02, 1.03.
 - 2026-07-31: Vol 1 batch 27 done (1.04, 1.05, 1.06). Next: 1.07, 1.08, 1.09.
+- 2026-07-31: *** VOLUME 1 (Computer Architecture) COMPLETE — 10 chapters. *** Vol 2 started (2.01 done).
+- 2026-07-31: Batches 28-29 done (1.07-1.10, 2.01). Next: 2.02, 2.03, 2.04.
