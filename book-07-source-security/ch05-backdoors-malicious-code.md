@@ -12,8 +12,7 @@ kernel `uid = 0` attempt, Trojan Source, xz-utils), map the review blind spots w
 actually live, and then descend to the theoretical floor: Ken Thompson's "Reflections on Trusting
 Trust," the demonstration that a backdoor can live in a *binary compiler* with no trace in any
 source anyone can read. Book 1, Chapter 6 introduced that argument; here we give it the full
-treatment it deserves, get the self-propagation mechanism exactly right, and then present the two
-practical answers that break the regress — David A. Wheeler's Diverse Double-Compilation and the
+treatment it deserves and then present the two practical answers that break the regress — David A. Wheeler's Diverse Double-Compilation and the
 Bootstrappable Builds project. The through-line is uncomfortable and important: **source review
 has a floor it cannot see below**, and the only defenses that reach beneath it are diversity,
 reproducibility, and a minimized trusted base — not more careful reading.
@@ -550,18 +549,17 @@ in the *same way* — to make `cA` also recognize `sT` and inject the identical 
 an independent implementation with a different codebase, that is a dramatically higher bar than
 subverting one compiler.
 
-Read carefully what DDC does and does not assume. It does **not** assume a trusted compiler — `cA`
-may be old, weak, slow, or itself of uncertain provenance. It assumes only that `cA` and `cT` are
-not backdoored *identically*, i.e. that two independent toolchain lineages do not both contain the
-same trigger-and-payload. DDC therefore does not *eliminate* trust; it **relocates** it — from
-"trust this compiler binary" to "trust that two diverse compilers are not identically compromised"
-— and makes any failure of *that* assumption detectable. And it depends utterly on **reproducible
-builds** (Book 4, Chapter 2): "reproduces bit-for-bit" is only a meaningful test if an honest
-compilation is deterministic in the first place. DDC is, in the deepest sense, *reproducibility
-applied to the trust-the-toolchain problem* — the same bit-for-bit comparison that catches a
-build-inserted backdoor like xz, turned on the compiler itself. Wheeler carried the procedure out
-in practice, using tcc as a diverse compiler to verify a build of GCC, demonstrating that the koan
-has an engineering answer.
+Note what DDC does and does not assume. It does **not** assume a trusted compiler — `cA` may be
+old, weak, slow, or itself of uncertain provenance. It assumes only that `cA` and `cT` are not
+backdoored *identically*, i.e. that two independent lineages do not both contain the same
+trigger-and-payload. DDC therefore does not *eliminate* trust; it **relocates** it — from "trust
+this compiler binary" to "trust that two diverse compilers are not identically compromised" — and
+makes any failure of *that* assumption detectable. And it depends utterly on **reproducible builds**
+(Book 4, Chapter 2): "reproduces bit-for-bit" is only meaningful if an honest compilation is
+deterministic. DDC is, in the deepest sense, *reproducibility applied to the trust-the-toolchain
+problem* — the same bit-for-bit comparison that catches a build-inserted backdoor like xz, turned
+on the compiler itself. Wheeler carried it out in practice, using tcc to verify a build of GCC,
+demonstrating that the koan has an engineering answer.
 
 ## Breaking the regress II: bootstrappable builds
 
@@ -594,16 +592,14 @@ whose root of trust is a seed measured in *bytes*, not megabytes. GNU Guix adopt
 then full-source bootstrap to shrink its binary seed from hundreds of megabytes toward that tiny,
 inspectable base. The claim is not that the result is *proven* free of Thompson attacks — it is that
 the *amount you must trust blindly* has collapsed from an un-auditable binary compiler to a few
-hundred bytes of hex a human can read, which is a categorical improvement in the size of the
-problem. Combine it with DDC and reproducible builds and you have both halves: a trusted base small
-enough to inspect, and a method to detect an implant if one is inserted above it.
+hundred bytes of hex a human can read. Combine it with DDC and reproducible builds and you have both
+halves: a trusted base small enough to inspect, and a method to detect an implant inserted above it.
 
 ## Synthesis: what the engineer actually does
 
-You cannot *solve* Trusting Trust — there is no final, self-evidently trustworthy layer, and there
-never will be. But the argument that trust is unavoidable is not an argument that trust is
-unmanageable. Every practical defense in this chapter reduces to one of four moves, and together
-they are a coherent program:
+You cannot *solve* Trusting Trust — there is no final, self-evidently trustworthy layer. But the
+argument that trust is unavoidable is not an argument that trust is unmanageable. Every practical
+defense in this chapter reduces to one of four moves, and together they are a coherent program:
 
 - **Reduce the trusted base.** Fewer dependencies (Book 2, Chapter 10). No unexplained binaries in
   the tree. A minimized, ideally bootstrappable toolchain. Build from version-controlled source,
