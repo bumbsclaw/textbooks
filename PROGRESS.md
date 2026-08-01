@@ -70,12 +70,12 @@ chapter.
 - [x] 5.07 TUF: The Update Framework — `ch07-tuf.md`
 - [x] 5.08 Provenance Verification in Practice — `ch08-provenance-verification.md`
 - [x] 5.09 Key Management and PKI for the Enterprise — `ch09-key-management.md`
-- [ ] 5.10 Designing Attestation-Based Deployment Gates — `ch10-deployment-gates.md`
+- [x] 5.10 Designing Attestation-Based Deployment Gates — `ch10-deployment-gates.md`
 
 ## Book 6 — Container and Cloud-Native Supply Chain Security (`book-06-cloud-native/`)
 
-- [ ] 6.01 Container Images: OCI Format, Layers, and Attack Surface — `ch01-oci-images.md`
-- [ ] 6.02 Registries: Architecture, Trust, and Threats — `ch02-registries.md`
+- [x] 6.01 Container Images: OCI Format, Layers, and Attack Surface — `ch01-oci-images.md`
+- [x] 6.02 Registries: Architecture, Trust, and Threats — `ch02-registries.md`
 - [ ] 6.03 Base Image Strategy: Minimal, Distroless, Hardened — `ch03-base-images.md`
 - [ ] 6.04 Image Scanning and Vulnerability Management — `ch04-image-scanning.md`
 - [ ] 6.05 Image Signing and Verification in Kubernetes — `ch05-image-signing-k8s.md`
@@ -319,3 +319,4 @@ until then their paths are as listed above).
 - 2026-07-31: Book 2 complete (10/10). Batch 7 done (2.09, 2.10, 3.01). Next: 3.02, 3.03, 3.04.
 - 2026-07-31: Book 3 complete (9/9). Batch 10 done (3.08, 3.09, 4.01). Next: 4.02, 4.03, 4.04.
 - 2026-07-31: Book 4 complete (10/10). Batch 13 done (4.08, 4.09, 4.10). Next: 5.01, 5.02, 5.03.
+- 2026-07-31: Book 5 complete (10/10). Batch 17 done (5.10, 6.01, 6.02). Next: 6.03, 6.04, 6.05.
