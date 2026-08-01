@@ -82,12 +82,12 @@ chapter.
 - [x] 6.06 Admission Control and Policy Engines: OPA and Kyverno — `ch06-admission-policy.md`
 - [x] 6.07 Kubernetes Delivery Chains: Helm, Operators, GitOps — `ch07-k8s-delivery-chains.md`
 - [x] 6.08 Infrastructure as Code Supply Chain Risks — `ch08-iac-risks.md`
-- [ ] 6.09 Serverless, Managed Services, and the Cloud Provider Chain — `ch09-serverless-managed.md`
-- [ ] 6.10 A Cloud-Native Supply Chain Reference Architecture — `ch10-reference-architecture.md`
+- [x] 6.09 Serverless, Managed Services, and the Cloud Provider Chain — `ch09-serverless-managed.md`
+- [x] 6.10 A Cloud-Native Supply Chain Reference Architecture — `ch10-reference-architecture.md`
 
 ## Book 7 — Source, Code, and Insider Threat Security (`book-07-source-security/`)
 
-- [ ] 7.01 Source Code Management: Threat Model and Integrity — `ch01-scm-threat-model.md`
+- [x] 7.01 Source Code Management: Threat Model and Integrity — `ch01-scm-threat-model.md`
 - [ ] 7.02 Commit Signing and Developer Identity — `ch02-commit-signing-identity.md`
 - [ ] 7.03 Branch Protection, Review, and Two-Person Rules — `ch03-branch-protection-review.md`
 - [ ] 7.04 Secrets in Source: Detection and Remediation — `ch04-secrets-in-source.md`
@@ -320,3 +320,4 @@ until then their paths are as listed above).
 - 2026-07-31: Book 3 complete (9/9). Batch 10 done (3.08, 3.09, 4.01). Next: 4.02, 4.03, 4.04.
 - 2026-07-31: Book 4 complete (10/10). Batch 13 done (4.08, 4.09, 4.10). Next: 5.01, 5.02, 5.03.
 - 2026-07-31: Book 5 complete (10/10). Batch 17 done (5.10, 6.01, 6.02). Next: 6.03, 6.04, 6.05.
+- 2026-07-31: Book 6 complete (10/10). Batch 20 done (6.09, 6.10, 7.01). Next: 7.02, 7.03, 7.04.
