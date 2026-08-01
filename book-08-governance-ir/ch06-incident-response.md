@@ -12,11 +12,11 @@ consumed it* (potentially your entire fleet), and remediation is not eviction bu
 *rebuilding trust*: rotate the credentials the bad thing could have seen, rebuild every artifact that
 embedded it, re-verify the rebuild, and make sure the bad version cannot come back. This chapter walks
 the incident-response lifecycle — Preparation, Identification/Scoping, Containment, Eradication,
-Recovery, Lessons Learned — with the supply-chain-specific action at each stage, and grounds every stage
-in the real incidents: Log4Shell, SolarWinds, Codecov, event-stream. The through-line is a single,
-unglamorous claim: supply chain IR at fleet scale is won or lost in *preparation*, and the single most
-valuable thing you can build in peacetime is the ability to query your whole fleet for "where is this
-component, vendor, or artifact?"
+Recovery, Lessons Learned — with the supply-chain-specific action at each stage, grounded in the real
+incidents: Log4Shell, SolarWinds, Codecov, event-stream. The through-line is a single, unglamorous
+claim: supply chain IR at fleet scale is won or lost in *preparation*, and the most valuable thing you
+can build in peacetime is the ability to query your whole fleet for "where is this component, vendor, or
+artifact?"
 
 Learning goals — after this chapter you should be able to:
 
@@ -70,8 +70,8 @@ from a running fleet; you have to rebuild every image that layered on top of it,
 build you have re-verified, and redeploy them. You cannot "un-see" the CI secrets a malicious uploader
 exfiltrated; you have to assume they are all compromised and rotate every one. If a signing key leaked,
 you cannot trust anything it signed while it was exposed; you revoke it, re-issue, and re-sign. The work
-is *restorative* — rotate, rebuild, re-verify — and it is proportional to how widely the trusted thing
-was used, which is why it is so much larger than ordinary eradication.
+is *restorative* — rotate, rebuild, re-verify — and proportional to how widely the trusted thing was
+used, which is why it dwarfs ordinary eradication.
 
 ### Two modes: consumer and producer
 
@@ -287,11 +287,11 @@ artifacts until it is cleaned — Book 4, Chapter 7), and isolate affected syste
 hands-on-keyboard adversary is a risk (SolarWinds). Isolation here is ordinary IR; the supply-chain twist
 is deciding *which* systems, which comes from the scoping list.
 
-A caution specific to supply chain: containment can break production. Blocking a bad version at the
-registry may block a version that half your fleet currently depends on; isolating a system running a
-trojanized vendor product may take down a monitoring platform the rest of your response depends on. The
-scoping list and the exposure tiers are what let you contain surgically — block the bad version but
-stage the rollout of the fix, isolate the exploited hosts but not the merely-exposed ones.
+A caution specific to supply chain: containment can break production. Blocking a bad version may block
+one that half your fleet currently depends on; isolating a system running a trojanized vendor product may
+take down a monitoring platform the rest of your response depends on. The scoping list and exposure tiers
+are what let you contain surgically — block the bad version but stage the fix, isolate the exploited hosts
+but not the merely-exposed ones.
 
 ### Eradication: remove the malicious component
 
@@ -431,10 +431,10 @@ this is a cleanup or a full intrusion response.
 compromised — run the consumer response on your own environment) and the source of everyone else's
 incident. The producer obligations: notify affected customers with accurate scope and IOCs; remediate
 the build system so it is provably clean before you ship again; produce and sign a clean release;
-publish the indicators for downstream hunting; and undertake the long rebuild of trust in your
-distribution channel (which for a build compromise means demonstrating build integrity — provenance,
-hermeticity, tamper-evidence — you could not demonstrate before). And, under a regime like the EU CRA
-(Book 8, Chapter 1), the disclosure clock is legal, not just ethical.
+publish indicators for downstream hunting; and undertake the long rebuild of trust in your distribution
+channel (which for a build compromise means demonstrating the build integrity — provenance, hermeticity,
+tamper-evidence — you could not demonstrate before). And under a regime like the EU CRA (Book 8, Chapter
+1), the disclosure clock is legal, not just ethical.
 
 ### Codecov — mass credential rotation
 
@@ -600,16 +600,15 @@ instead of a bounded one.
 
 The deep point is that **the same platform capabilities the suite builds for prevention *are* the IR
 capabilities**, viewed under load. An SBOM inventory is a compliance artifact in peacetime and a scoping
-engine in an incident. A registry chokepoint is a policy-enforcement point in peacetime and a containment
-control in an incident. Golden base images with auto-rebuild are a patch-hygiene mechanism in peacetime
-and a mass-eradication mechanism in an incident. Short-lived workload identity is a least-privilege
-control in peacetime and a rotate-at-scale mechanism in an incident. This is why the incident is where
-the whole program is tested: the night the CVE drops, you find out whether the inventory is complete,
-whether the registry block actually stops every build, whether "rebuild everything" has a completion
-metric, whether "rotate everything" is bounded. The organizations that respond in hours are not the ones
-with better runbooks; they are the ones whose peacetime platform can be pointed at an incident question
-and answer it. IR is the load test for the entire supply chain security program, and it is graded on the
-work you did months before the pager went off.
+engine in an incident; a registry chokepoint is a policy-enforcement point and a containment control;
+golden base images with auto-rebuild are patch hygiene and mass eradication; short-lived workload
+identity is least privilege and rotate-at-scale. This is why the incident is where the whole program is
+tested: the night the CVE drops, you find out whether the inventory is complete, whether the registry
+block actually stops every build, whether "rebuild everything" has a completion metric, whether "rotate
+everything" is bounded. The organizations that respond in hours are not the ones with better runbooks;
+they are the ones whose peacetime platform can be pointed at an incident question and answer it. IR is
+the load test for the entire supply chain security program, graded on work done months before the pager
+went off.
 
 ## Key takeaways
 
