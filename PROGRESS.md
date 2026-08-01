@@ -100,9 +100,9 @@ chapter.
 
 - [x] 8.01 The Regulatory Landscape: EO 14028, NIST SSDF, EU CRA — `ch01-regulatory-landscape.md`
 - [x] 8.02 Adopting SLSA and S2C2F: Roadmaps That Work — `ch02-adopting-slsa-s2c2f.md`
-- [ ] 8.03 Vendor and Third-Party Software Risk — `ch03-vendor-risk.md`
-- [ ] 8.04 Policy as Code and Continuous Compliance — `ch04-policy-as-code.md`
-- [ ] 8.05 Detecting Supply Chain Compromise — `ch05-detecting-compromise.md`
+- [x] 8.03 Vendor and Third-Party Software Risk — `ch03-vendor-risk.md`
+- [x] 8.04 Policy as Code and Continuous Compliance — `ch04-policy-as-code.md`
+- [x] 8.05 Detecting Supply Chain Compromise — `ch05-detecting-compromise.md`
 - [ ] 8.06 Incident Response for Supply Chain Events — `ch06-incident-response.md`
 - [ ] 8.07 Threat Intelligence and Information Sharing — `ch07-threat-intelligence.md`
 - [ ] 8.08 Metrics, Audits, and Executive Reporting — `ch08-metrics-reporting.md`
