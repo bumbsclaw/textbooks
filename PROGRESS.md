@@ -133,9 +133,9 @@ until then their paths are as listed above).
 ## Volume 2 — Operating Systems and Linux (`vol-02-operating-systems-linux/`)
 
 - [x] 2.01 The Process Model — `ch01-process-model.md`
-- [ ] 2.02 CPU Scheduling: CFS, Real-Time, cgroups — `ch02-scheduling.md`
-- [ ] 2.03 Virtual Memory and Paging — `ch03-virtual-memory.md`
-- [ ] 2.04 Memory in Practice: Allocators, Page Cache, Huge Pages, OOM — `ch04-memory-practice.md`
+- [x] 2.02 CPU Scheduling: CFS, Real-Time, cgroups — `ch02-scheduling.md`
+- [x] 2.03 Virtual Memory and Paging — `ch03-virtual-memory.md`
+- [x] 2.04 Memory in Practice: Allocators, Page Cache, Huge Pages, OOM — `ch04-memory-practice.md`
 - [ ] 2.05 System Calls and the Kernel Boundary — `ch05-system-calls.md`
 - [ ] 2.06 File Systems and the VFS — `ch06-filesystems-vfs.md`
 - [ ] 2.07 Linux I/O: Blocking, epoll, io_uring — `ch07-linux-io.md`
