@@ -141,9 +141,9 @@ until then their paths are as listed above).
 - [x] 2.07 Linux I/O: Blocking, epoll, io_uring — `ch07-linux-io.md`
 - [x] 2.08 Signals, Pipes, and IPC — `ch08-ipc.md`
 - [x] 2.09 Namespaces, cgroups, and Container Internals — `ch09-namespaces-cgroups.md`
-- [ ] 2.10 The Linux Network Stack — `ch10-linux-network-stack.md`
-- [ ] 2.11 Performance Analysis: perf, ftrace, eBPF — `ch11-perf-ebpf.md`
-- [ ] 2.12 Boot, init, and systemd — `ch12-boot-systemd.md`
+- [x] 2.10 The Linux Network Stack — `ch10-linux-network-stack.md`
+- [x] 2.11 Performance Analysis: perf, ftrace, eBPF — `ch11-perf-ebpf.md`
+- [x] 2.12 Boot, init, and systemd — `ch12-boot-systemd.md`
 
 ## Volume 3 — Networking for Backend Engineers (`vol-03-networking/`)
 
