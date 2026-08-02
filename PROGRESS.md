@@ -151,10 +151,10 @@ until then their paths are as listed above).
 - [ ] 3.02 IP, Routing, Subnetting, NAT — `ch02-ip-routing-nat.md`
 - [x] 3.03 TCP in Depth — `ch03-tcp-in-depth.md`
 - [x] 3.04 UDP and QUIC — `ch04-udp-quic.md`
-- [ ] 3.05 DNS in Depth — `ch05-dns.md`
-- [ ] 3.06 TLS 1.3 and the Web PKI — `ch06-tls-pki.md`
-- [ ] 3.07 HTTP/1.1, HTTP/2, HTTP/3 — `ch07-http.md`
-- [ ] 3.08 gRPC and RPC Framework Internals — `ch08-grpc-rpc.md`
+- [x] 3.05 DNS in Depth — `ch05-dns.md`
+- [x] 3.06 TLS 1.3 and the Web PKI — `ch06-tls-pki.md`
+- [x] 3.07 HTTP/1.1, HTTP/2, HTTP/3 — `ch07-http.md`
+- [x] 3.08 gRPC and RPC Framework Internals — `ch08-grpc-rpc.md`
 - [ ] 3.09 Load Balancing: L4, L7, Algorithms — `ch09-load-balancing.md`
 - [ ] 3.10 Proxies, Service Mesh, and CDNs — `ch10-proxies-mesh-cdn.md`
 - [ ] 3.11 Network Reliability: Timeouts, Retries, Backoff, Hedging — `ch11-network-reliability.md`
