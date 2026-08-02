@@ -147,10 +147,10 @@ until then their paths are as listed above).
 
 ## Volume 3 — Networking for Backend Engineers (`vol-03-networking/`)
 
-- [ ] 3.01 The Journey of a Packet — `ch01-journey-of-a-packet.md`
+- [x] 3.01 The Journey of a Packet — `ch01-journey-of-a-packet.md`
 - [ ] 3.02 IP, Routing, Subnetting, NAT — `ch02-ip-routing-nat.md`
-- [ ] 3.03 TCP in Depth — `ch03-tcp-in-depth.md`
-- [ ] 3.04 UDP and QUIC — `ch04-udp-quic.md`
+- [x] 3.03 TCP in Depth — `ch03-tcp-in-depth.md`
+- [x] 3.04 UDP and QUIC — `ch04-udp-quic.md`
 - [ ] 3.05 DNS in Depth — `ch05-dns.md`
 - [ ] 3.06 TLS 1.3 and the Web PKI — `ch06-tls-pki.md`
 - [ ] 3.07 HTTP/1.1, HTTP/2, HTTP/3 — `ch07-http.md`
