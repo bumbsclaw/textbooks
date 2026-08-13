@@ -155,10 +155,10 @@ until then their paths are as listed above).
 - [x] 3.06 TLS 1.3 and the Web PKI — `ch06-tls-pki.md`
 - [x] 3.07 HTTP/1.1, HTTP/2, HTTP/3 — `ch07-http.md`
 - [x] 3.08 gRPC and RPC Framework Internals — `ch08-grpc-rpc.md`
-- [ ] 3.09 Load Balancing: L4, L7, Algorithms — `ch09-load-balancing.md`
-- [ ] 3.10 Proxies, Service Mesh, and CDNs — `ch10-proxies-mesh-cdn.md`
-- [ ] 3.11 Network Reliability: Timeouts, Retries, Backoff, Hedging — `ch11-network-reliability.md`
-- [ ] 3.12 Debugging and Observing Networks — `ch12-network-debugging.md`
+- [x] 3.09 Load Balancing: L4, L7, Algorithms — `ch09-load-balancing.md`
+- [x] 3.10 Proxies, Service Mesh, and CDNs — `ch10-proxies-mesh-cdn.md`
+- [x] 3.11 Network Reliability: Timeouts, Retries, Backoff, Hedging — `ch11-network-reliability.md`
+- [x] 3.12 Debugging and Observing Networks — `ch12-network-debugging.md`
 
 ## Volume 4 — Concurrency and Parallelism (`vol-04-concurrency/`)
 

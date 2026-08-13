@@ -5,34 +5,29 @@ else. Between a browser and your handler there is a CDN edge, an anycast load ba
 terminator, an API gateway, an ingress proxy, and — if you run a mesh — a sidecar on each end of
 every internal hop. Each of these is a *proxy*: a process that terminates one connection, makes
 a policy decision, and originates another. This chapter is about that layer. We start with the
-taxonomy that people routinely muddle — forward proxies (client-side egress control) versus
-reverse proxies (server-side ingress) — and then treat the reverse proxy as what it has become:
-the universal front door where TLS termination (Chapter 6), HTTP routing (Chapter 7), load
-balancing (Chapter 9), buffering, timeouts, and observability are implemented once instead of a
-hundred times. We go deep on Envoy, because its listener/filter/cluster model and its xDS
-dynamic-configuration APIs are the reason the service mesh became buildable at all. Then the
-main event: the service mesh — the problem it solves (mTLS, retries, timeouts, load balancing,
-and telemetry re-implemented inconsistently in every language's client library), the mechanism
-(a sidecar data plane, transparent interception, a control plane pushing xDS), what it buys you,
-and — honestly — what it costs, including the sidecar-less designs (Istio ambient, Cilium's eBPF
-data plane) built to reduce that cost. Finally, CDNs: PoPs and anycast (Chapter 2), cache
-hierarchies and origin shielding, cache keys and `Cache-Control` semantics (Chapter 7), purging,
-edge compute, and TLS/QUIC termination at the edge (Chapters 4 and 6).
+taxonomy people routinely muddle — forward proxies (client-side egress control) versus reverse
+proxies (server-side ingress) — and then treat the reverse proxy as what it has become: the
+universal front door where TLS termination (Chapter 6), HTTP routing (Chapter 7), load balancing
+(Chapter 9), buffering, timeouts, and observability are implemented once instead of a hundred
+times. We go deep on Envoy, whose listener/filter/cluster model and xDS dynamic-configuration APIs
+are the reason the service mesh became buildable. Then the mesh itself: the problem it solves, the
+mechanism, what it buys you, and — honestly — what it costs, including the sidecar-less designs
+built to reduce that cost. Finally, CDNs: PoPs and anycast (Chapter 2), cache hierarchies and
+origin shielding, cache keys and `Cache-Control` semantics (Chapter 7), purging, edge compute, and
+TLS/QUIC termination at the edge (Chapters 4 and 6).
 
 Learning goals — after this chapter you should be able to:
 
-- Distinguish forward from reverse proxying precisely, and explain what each buys operationally
-  (egress control and DLP versus ingress policy and offload).
+- Distinguish forward from reverse proxying precisely, and explain what each buys operationally.
 - Configure a reverse proxy correctly for a production HTTP service: timeouts at every stage,
   buffering choices, connection reuse, client-IP preservation, and failure semantics.
 - Describe Envoy's architecture — listeners, filter chains, HTTP filters, routes, clusters,
   endpoints — and explain the xDS protocol including ACK/NACK, versioning, ADS, and delta xDS.
 - Explain what an API gateway adds over a plain reverse proxy, and where those concerns belong.
-- Explain, mechanically, how a sidecar mesh intercepts traffic, how identity is issued and
-  rotated, and how the control plane programs the data plane.
-- Decide whether your organization needs a mesh, using latency, resource, and operational cost
-  as inputs rather than fashion.
-- Describe sidecar-less mesh designs and their trade-offs accurately and without overclaiming.
+- Explain mechanically how a sidecar mesh intercepts traffic, how identity is issued and rotated,
+  and how the control plane programs the data plane.
+- Decide whether your organization needs a mesh, using latency, resource, and operational cost as
+  inputs rather than fashion, and describe sidecar-less designs without overclaiming.
 - Reason about CDN behavior: cache key composition, TTL and revalidation semantics, request
   collapsing, invalidation strategies, origin shield topology, and what edge compute is for.
 
@@ -50,28 +45,26 @@ then blindly tunnels bytes. That `CONNECT` tunnel is why forward proxies see so 
 encrypted traffic: unless they perform TLS interception with a private CA installed on every
 client (a "MITM proxy", used by corporate DLP stacks and by tools like mitmproxy), all they
 observe is the SNI in the ClientHello, the destination address, and byte counts. Encrypted
-ClientHello (ECH, Chapter 6) removes even the SNI where deployed.
+Client Hello (ECH, Chapter 6) removes even the SNI where deployed.
 
 Backend engineers meet forward proxies mostly as **egress control**. In a serious production
-network, workloads have no default route to the internet. Outbound traffic goes through an egress
-proxy or NAT gateway that enforces an allowlist of destinations, logs every connection, and
-applies per-destination rate limits. The security value is containment: if an attacker achieves
-code execution in a pod, an egress allowlist is the difference between quiet exfiltration and a
-blocked connection with an alert (this is the network half of the supply-chain story in Book 4
-and Book 7 — a compromised build step that cannot reach an arbitrary host cannot ship your
-secrets to it). The operational value is dependency management: one place that knows every
-external service your fleet depends on. `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` environment
-variables are the lingua franca; most HTTP clients honor them, which is both convenient and a
-trap — `NO_PROXY` matching semantics differ subtly between runtimes, and a service that silently
-bypasses the proxy on one platform but not another produces genuinely baffling incidents.
+network, workloads have no default route to the internet: outbound traffic goes through an egress
+proxy or NAT gateway that enforces a destination allowlist, logs every connection, and rate-limits
+per destination. The security value is containment — if an attacker achieves code execution in a
+pod, an egress allowlist is the difference between quiet exfiltration and a blocked connection
+with an alert — the network half of the containment story Volume 0 tells about compromised build
+and runtime environments. The operational value
+is one place that knows every external service your fleet depends on. `HTTP_PROXY`, `HTTPS_PROXY`,
+and `NO_PROXY` are the lingua franca; most HTTP clients honor them, which is both convenient and a
+trap, since `NO_PROXY` matching semantics differ subtly between runtimes: whether a leading dot is
+required for suffix matches, whether ports and CIDRs are honored, whether matching is
+case-sensitive. Verify per runtime rather than assuming your string means what you intended.
 
 A **reverse proxy** acts for the server and is chosen by the server operator. Clients believe
 they are talking to the origin; they address `api.example.com` and the proxy answers. This
-inversion is what makes the reverse proxy the natural place to put every cross-cutting concern:
-it is on the path of every request, it is operated by the platform team, and it can be changed
-without touching application code. TLS termination, HTTP version negotiation, routing,
-authentication, rate limiting, compression, caching, request logging, and load balancing all
-migrate there because that is the only place they can be done once.
+inversion is what makes the reverse proxy the natural place for every cross-cutting concern: it is
+on the path of every request, it is operated by the platform team, and it can be changed without
+touching application code.
 
 ```mermaid
 flowchart LR
@@ -100,9 +93,8 @@ enforces *what may be reached*; a reverse proxy hides many servers behind one na
 
 ## The reverse proxy as universal front door
 
-Once you accept that a reverse proxy sits in front of everything, the question becomes what it
-should do. The honest answer is: quite a lot, because each of these things is done badly when
-scattered across services.
+Once a reverse proxy sits in front of everything, the question is what it should do. The honest
+answer is: quite a lot, because each of these things is done badly when scattered across services.
 
 **TLS termination and origination.** The proxy holds the certificates, negotiates TLS 1.3,
 selects ALPN (`h2`, `http/1.1`, and for QUIC `h3`), and pins the cipher policy fleet-wide.
@@ -116,9 +108,9 @@ HTTP/2's connection pinning problem tractable (Chapters 7 and 9). A well-configu
 maintains long-lived keepalive pools upstream, sparing backends the connection churn that would
 otherwise arrive from the internet.
 
-**Routing.** Host, path, header, method, query, and weight-based matching. This is where a
-monolith gets carved up: `/checkout/*` goes to the new service while everything else keeps hitting
-the legacy app, and neither client nor legacy app knows.
+**Routing.** Host, path, header, method, query, and weight-based matching — where a monolith gets
+carved up: `/checkout/*` goes to the new service while everything else keeps hitting the legacy
+app, and neither client nor legacy app knows.
 
 **Buffering and flow control.** Whether the proxy buffers a request body before contacting the
 upstream is one of the most consequential and least-understood settings on the box. Buffering
@@ -144,19 +136,18 @@ supported by NGINX, Envoy, HAProxy, and every major cloud NLB.
 
 **Compression, caching, and observability.** Content-encoding negotiation, a local response cache,
 and a uniform access log carrying latency, upstream selection, retry counts, and failure reason
-codes. That last item matters more than people expect: a proxy's structured access log is often
-the highest-fidelity telemetry in the system, because it sees every request — including the ones
-that never reached an application.
+codes. That log is often the highest-fidelity telemetry in the system, because it sees every
+request — including the ones that never reached an application.
 
 ### The field
 
 | Proxy | Config model | Strengths | Notable limits |
 |---|---|---|---|
-| NGINX | Static file, reload on change | Ubiquitous, fast, excellent static/file serving, huge module ecosystem | Dynamic upstream reconfiguration API is a commercial feature; no native xDS |
-| HAProxy | Static file plus Runtime API | Outstanding L4 and L7 balancing, deep health checking, mature observability | Configuration language is idiosyncratic; less extensible in-process |
-| Envoy | Static bootstrap plus xDS | Fully dynamic config, rich L7 filter chain, first-class gRPC and observability | Heavier memory and CPU footprint; configuration surface is large |
-| Caddy | Caddyfile or JSON API | Automatic HTTPS via ACME, simple defaults | Smaller ecosystem for exotic L7 needs |
-| Traefik | Dynamic providers from Kubernetes, Docker labels, files | Auto-discovery in container platforms | Fewer low-level knobs than Envoy or HAProxy |
+| NGINX | Static file, reload on change | Ubiquitous, fast, huge module ecosystem | Dynamic upstream API is a commercial feature; no native xDS |
+| HAProxy | Static file plus Runtime API | Outstanding L4/L7 balancing, deep health checking | Idiosyncratic config language; less extensible in-process |
+| Envoy | Static bootstrap plus xDS | Fully dynamic config, rich L7 filters, first-class gRPC | Heavier footprint; large configuration surface |
+| Caddy | Caddyfile or JSON API | Automatic HTTPS via ACME, sane defaults | Smaller ecosystem for exotic L7 needs |
+| Traefik | Dynamic providers (Kubernetes, labels, files) | Auto-discovery in container platforms | Fewer low-level knobs than Envoy or HAProxy |
 
 A concrete NGINX front door, with every timeout named:
 
@@ -200,11 +191,16 @@ server {
 }
 ```
 
-Two details deserve emphasis. `proxy_set_header Connection ""` is required for upstream keepalive
-to work at all with HTTP/1.1, because NGINX otherwise forwards `Connection: close`. And
-`proxy_next_upstream` is a *retry* policy hiding in plain sight — retrying `http_503` on a
-non-idempotent POST is a duplicate-order bug waiting to happen (Chapter 11). The HAProxy
-equivalent, showing its health-check model:
+Two details matter. `proxy_set_header Connection ""` is required for upstream keepalive to work at
+all, because NGINX otherwise sends `Connection: close` upstream and the connection is torn down
+after each request; it must be paired with `proxy_http_version 1.1`, since the default upstream
+version is 1.0. And `proxy_next_upstream` is a *retry* policy hiding in plain sight.
+NGINX is conservative here by default: once a request has been sent upstream, it will not be
+replayed to another server if the method is non-idempotent (POST, LOCK, PATCH) unless you add the
+`non_idempotent` parameter. Do not add it casually — that parameter is how `http_503` on a POST
+becomes a duplicate order (Chapter 11). Other proxies are less cautious: Envoy's `retry_on` applies
+to any method, so an Envoy retry policy needs the same scrutiny without a safety net. The HAProxy
+equivalent, which by default retries only connection-establishment failures:
 
 ```haproxy
 defaults
@@ -238,10 +234,10 @@ the client claimed, then assert the truth.
 
 ## Envoy in depth: the programmable proxy
 
-Envoy, originally built at Lyft and open-sourced in 2016 (a CNCF graduated project since 2018),
-matters here for two reasons: its configuration model is a clean decomposition of what a proxy
-actually does, and it was designed from the start to be configured by a remote control plane
-rather than by a file. The second point is the load-bearing one — without it there is no mesh.
+Envoy, built at Lyft and open-sourced in 2016 (a CNCF graduated project since 2018), matters here
+for two reasons: its configuration model is a clean decomposition of what a proxy actually does,
+and it was designed from the start to be configured by a remote control plane rather than a file.
+The second point is load-bearing — without it there is no mesh.
 
 ### The object model
 
@@ -357,9 +353,9 @@ admin:
     socket_address: { address: 127.0.0.1, port_value: 15000 }
 ```
 
-Note `use_remote_address: true` with `xff_num_trusted_hops: 1`: this tells Envoy how many
-trusted proxies sit in front of it so it can compute the real client address correctly rather than
-trusting an arbitrary XFF chain.
+Note `use_remote_address: true` with `xff_num_trusted_hops: 1`: that tells Envoy how many trusted
+proxies sit in front of it, so it computes the real client address instead of trusting an
+arbitrary XFF chain.
 
 ### xDS: configuration as an eventually-consistent subscription
 
@@ -373,7 +369,7 @@ plane streams configuration to a proxy. Each resource type has its own service:
 | CDS | Cluster | What upstream services exist and how do I talk to them? |
 | EDS | ClusterLoadAssignment | Which endpoints are in this cluster right now? |
 | SDS | Secret | What certificates and trust bundles should I use? |
-| Others | VHDS, SRDS, ECDS, RTDS | On-demand virtual hosts, scoped routes, extension configs, runtime flags |
+| Others | VHDS, SRDS, ECDS, RTDS | On-demand virtual hosts, scoped routes, extensions, runtime flags |
 
 Mechanically, the proxy opens a bidirectional gRPC stream and sends a `DiscoveryRequest` naming a
 type URL (for example `type.googleapis.com/envoy.config.cluster.v3.Cluster`), the resource names
@@ -387,9 +383,13 @@ always a NACK nobody looked for.
 
 Two refinements matter in practice. **ADS (Aggregated Discovery Service)** multiplexes all
 resource types onto one stream to one management server, which is the only way to get ordering
-guarantees: Envoy will not accept a route referencing an unknown cluster, so updates must be
-sequenced make-before-break (CDS, EDS, LDS, RDS on the way in; reverse on the way out), and
-separate streams cannot provide that. **Delta (incremental) xDS** sends only changed resources and
+guarantees. The resources are cross-referential — a route names a cluster, a cluster's endpoints
+arrive by EDS — and xDS is only eventually consistent, so a route that arrives before the cluster
+it names fails requests with a 503 and the `NC` ("no cluster found") response flag until the
+cluster shows up. Envoy's documented sequencing is therefore make-before-break: CDS, then EDS,
+then LDS, then RDS on the way in, and the reverse on the way out. Independent per-type streams,
+possibly to different management servers, cannot provide that ordering. **Delta (incremental)
+xDS** sends only changed resources and
 explicit removals instead of the full state of the world. In a mesh with tens of thousands of
 churning endpoints, state-of-the-world pushes dominate both control-plane and proxy CPU; delta is
 what keeps large meshes affordable.
@@ -401,19 +401,15 @@ configuration into a *subscription to a stream of changes* — the correct model
 whose topology is itself a stream of changes. It is also deliberately a universal API: gRPC
 clients implement xDS directly, giving client-side balancing with no proxy at all (Chapter 9).
 
-One runtime note. Envoy uses a small number of worker threads, each running an independent event
-loop over its own connection set; configuration updates reach workers without locking the data
-path, and listeners drain gracefully. This share-nothing design is why Envoy scales with cores —
-and why its per-instance memory is dominated by the *size of its configuration*. A sidecar told
-about every service in the cluster costs far more than one scoped to what its application
-actually calls, which is why config scoping (Istio's `Sidecar` resource, ambient's waypoint
-model) is among the most effective mesh optimizations available.
+One runtime note: Envoy runs a small number of worker threads, each an independent event loop over
+its own connection set, so it scales with cores — but its per-instance memory is dominated by the
+*size of its configuration*, which makes config scoping a first-order mesh optimization.
 
 ## API gateways: a reverse proxy with product concerns
 
-An API gateway is a reverse proxy, plus a set of concerns that are about the *API as a product*
-rather than about transport. The distinction is fuzzy by design — most gateways are Envoy or NGINX
-underneath — but the concerns are real:
+An API gateway is a reverse proxy plus a set of concerns about the *API as a product* rather than
+about transport. The distinction is fuzzy — most gateways are Envoy or NGINX underneath — but the
+concerns are real:
 
 - **Authentication and authorization at the edge.** Validating JWTs against a JWKS endpoint,
   introspecting opaque tokens, verifying mTLS client certs, mapping API keys to consumers.
@@ -425,13 +421,14 @@ underneath — but the concerns are real:
   external service over gRPC per request, trading latency for correctness.
 - **Transformation and aggregation.** Rewriting between external and internal schemas, protocol
   bridging (JSON/HTTP to gRPC transcoding), and fan-out aggregation for clients that cannot make
-  five round trips. Aggregation at the gateway slides easily into business logic in the proxy;
-  keep it mechanical and prefer a backend-for-frontend service once the logic grows.
-- **Lifecycle concerns**: API versioning, deprecation headers, developer portals, usage metering.
+  five round trips. Aggregation slides easily into business logic in the proxy; keep it mechanical
+  and prefer a backend-for-frontend service once it grows.
+- **Lifecycle concerns**: versioning, deprecation headers, developer portals, usage metering.
 
-Authorization policy, token formats, and least privilege connect to Volume 7's identity material
-and Volume 8's governance material; the gateway is the enforcement point, not the policy source.
-Below, Envoy validates JWTs and calls an external authorizer, as HTTP filters ahead of the router:
+Token formats and authorization models belong to Volume 9 — Security, Authentication, and
+Cryptography (Chapter 5 on tokens and JWTs, Chapter 6 on OAuth 2.0 and OIDC, Chapter 7 on
+authorization models); the gateway is the enforcement point, not the policy source. Below, Envoy
+validates JWTs and calls an external authorizer, as HTTP filters ahead of the router:
 
 ```yaml
 http_filters:
@@ -480,49 +477,48 @@ split matches how platform teams actually divide responsibility.
 ## The service mesh: the problem before the solution
 
 Consider what a *correct* service-to-service call requires in a large fleet. It must discover
-healthy instances and balance across them per request, not per connection. It must apply a
-deadline and propagate it. It must retry idempotent failures with jittered backoff and a retry
-budget, and must not retry anything else. It must shed load when the upstream is saturated and
-eject hosts that are failing. It must authenticate both ends cryptographically and authorize the
-call. It must emit request-rate, error-rate, and latency-distribution metrics with consistent
-labels, and propagate trace context.
+healthy instances and balance across them per request, not per connection. It must apply and
+propagate a deadline. It must retry idempotent failures with jittered backoff and a retry budget,
+and must not retry anything else. It must shed load when the upstream is saturated and eject
+failing hosts. It must authenticate both ends cryptographically and authorize the call. It must
+emit rate, error, and latency metrics with consistent labels, and propagate trace context.
 
-Now consider the pre-mesh way to get all that: a client library. Twitter's Finagle, Netflix's
-Ribbon/Hystrix/Eureka stack, and Google's internal Stubby all did exactly this, and did it well —
-in one language. The moment your fleet has Java, Go, Python, Node, and Rust services, you need
-five implementations that agree on retry semantics, load-balancing behavior, metric names, header
-formats, and certificate handling. They will not agree. Worse, changing any of them — tightening
-a default timeout, fixing a retry-storm bug, rotating a trust anchor — requires every team to
-upgrade a dependency and redeploy, which in a fleet of hundreds of services is a quarter-long
-migration you will run repeatedly. The cross-cutting concern is not the hard part; the *uniform,
-independently-upgradable rollout* of the cross-cutting concern is the hard part.
+Now consider the pre-mesh way to get all that: a client library. Twitter's Finagle and Netflix's
+Ribbon/Hystrix/Eureka stack did exactly this, and did it well — on the JVM. Google's internal
+Stubby (gRPC's ancestor) did it across several languages, but only because a dedicated
+infrastructure team was funded to keep those implementations in agreement, which is precisely the
+resource most organizations do not have. The moment your fleet has Java, Go, Python, Node, and Rust
+services, you need five implementations that agree on retry semantics, load-balancing behavior,
+metric names, header formats, and certificate handling. They will not agree. Worse, changing any of
+them — tightening a default timeout, fixing a retry-storm bug, rotating a trust anchor — requires
+every team to bump a dependency and redeploy, which across hundreds of services is a quarter-long
+migration you will run repeatedly. The cross-cutting concern is not the hard part; its *uniform,
+independently upgradable rollout* is.
 
-The mesh's proposition is: move that logic out of the process and into a proxy that sits beside
-it, and control all such proxies from one place. The application then makes a plain, naive HTTP or
-gRPC call to a service name, and the proxy on the way out does the discovery, balancing, retrying,
-encrypting, and measuring.
+The mesh's proposition: move that logic out of the process into a proxy beside it, and control all
+such proxies from one place. The application makes a plain call to a service name; the proxy does
+the discovery, balancing, retrying, encrypting, and measuring.
 
 ## Data plane and control plane
 
-The **data plane** is the set of proxies on the request path. In the classic design there is one
-per workload instance — a *sidecar* container in the same pod, sharing the pod's network namespace
-and therefore its loopback interface and IP. The sidecar is normally Envoy (Istio, Consul, most
-commercial meshes) or a purpose-built proxy (Linkerd's `linkerd2-proxy`, written in Rust and
-deliberately minimal — it does not aim for Envoy's extensibility, which is precisely how it stays
-small and fast).
+The **data plane** is the set of proxies on the request path. Classically there is one per workload
+instance — a *sidecar* container in the same pod, sharing its network namespace and therefore its
+loopback interface and IP. The sidecar is normally Envoy (Istio, Consul, most commercial meshes) or
+a purpose-built proxy (Linkerd's `linkerd2-proxy`, written in Rust and deliberately minimal — it
+does not chase Envoy's extensibility, which is how it stays small and fast).
 
-Interception is the mechanical crux. The application is not modified and does not know the proxy
-exists, so its traffic must be redirected. Istio's default approach installs iptables rules in the
-pod's network namespace at startup, either from an init container with `NET_ADMIN` or, preferably,
-from a node-level CNI plugin that avoids granting that capability to every workload. Abridged, the
-`nat` table looks like this:
+Interception is the mechanical crux. The application is unmodified and does not know the proxy
+exists, so its traffic must be redirected. Istio installs iptables rules in the pod's network
+namespace at startup, either from an init container with `NET_ADMIN` or, preferably, from a
+node-level CNI plugin that avoids granting that capability to every workload. Abridged, the `nat`
+table looks like this:
 
 ```text
 # Inbound: everything arriving at the pod goes to the sidecar's inbound port
 -A PREROUTING  -p tcp -j ISTIO_INBOUND
--A ISTIO_INBOUND -p tcp --dport 15008 -j RETURN     # HBONE / tunnel port
 -A ISTIO_INBOUND -p tcp --dport 15020 -j RETURN     # agent, merged metrics
 -A ISTIO_INBOUND -p tcp --dport 15021 -j RETURN     # health probes
+-A ISTIO_INBOUND -p tcp --dport 15090 -j RETURN     # Envoy Prometheus telemetry
 -A ISTIO_INBOUND -p tcp -j ISTIO_IN_REDIRECT
 -A ISTIO_IN_REDIRECT -p tcp -j REDIRECT --to-ports 15006
 
@@ -534,21 +530,20 @@ from a node-level CNI plugin that avoids granting that capability to every workl
 -A ISTIO_REDIRECT -p tcp -j REDIRECT --to-ports 15001
 ```
 
-The `--uid-owner 1337` exclusion is what prevents an infinite redirect loop: the proxy runs as
-that UID, so its own outbound connections are not re-captured. `REDIRECT` rewrites the destination
-to the local port while the kernel preserves the original destination, retrievable via
-`SO_ORIGINAL_DST` — that is how Envoy's `ORIGINAL_DST` listener knows where the application was
-actually trying to go, and can therefore apply the right route and cluster.
+The `--uid-owner 1337` exclusion prevents an infinite redirect loop: the proxy runs as that UID, so
+its own outbound connections are not re-captured. `REDIRECT` rewrites the destination to the local
+port while the kernel preserves the original, retrievable via `SO_ORIGINAL_DST` — that is how
+Envoy's `ORIGINAL_DST` listener learns where the application was actually going, and applies the
+right route and cluster.
 
-The **control plane** computes configuration and pushes it via xDS. In Istio this is `istiod`, a
-single binary that absorbed the older Pilot/Citadel/Galley split. It watches the Kubernetes API
-(Services, EndpointSlices, Pods) plus Istio's own CRDs, translates that model into Envoy listeners,
-routes, clusters, and endpoints, and streams it to every sidecar over ADS. It is also the
-certificate authority: workloads request certificates over the SDS API on the same channel, and
-the agent alongside each proxy handles key generation and rotation without ever writing a private
-key to disk. Linkerd's control plane is architecturally similar in intent (a destination service, an
-identity service, and a policy controller) while pushing a much smaller configuration surface to a
-much smaller proxy.
+The **control plane** computes configuration and pushes it via xDS. In Istio this is `istiod`, one
+binary that absorbed the older Pilot/Citadel/Galley split. It watches the Kubernetes API (Services,
+EndpointSlices, Pods) plus Istio's CRDs, translates that model into Envoy listeners, routes,
+clusters, and endpoints, and streams it to every sidecar over ADS. It is also the certificate
+authority: workloads request certificates over SDS on the same channel, and the agent beside each
+proxy handles key generation and rotation without ever writing a private key to disk. Linkerd's
+control plane is similar in intent (destination, identity, and policy controllers) while pushing a
+much smaller configuration surface to a much smaller proxy.
 
 ```mermaid
 flowchart TB
@@ -576,10 +571,10 @@ flowchart TB
     class SCA,SCB dp
 ```
 
-The dotted lines are the control path and the doubled line is the data path — and the separation is
-the whole point. A control-plane outage stops *changes* from propagating; it does not, in a
-correctly designed mesh, stop traffic, because each proxy keeps serving its last known-good
-configuration. Verify that property in your own mesh with a game day rather than assuming it.
+The dotted lines are the control path, the doubled line the data path, and the separation is the
+whole point: a control-plane outage stops *changes* from propagating but should not stop traffic,
+because each proxy keeps serving its last known-good configuration. Verify that property with a
+game day rather than assuming it.
 
 ## What the mesh actually gives you
 
@@ -588,13 +583,13 @@ configuration. Verify that property in your own mesh with a game day rather than
 This is the strongest single argument for a mesh. Each workload receives a short-lived X.509
 certificate whose SAN is a **SPIFFE ID** URI — for example
 `spiffe://cluster.local/ns/payments/sa/checkout` — derived from its Kubernetes namespace and
-service account. This is a *workload* identity, not a network identity: it does not depend on IP
-addresses, which are ephemeral and reassigned, and it survives rescheduling. The SPIFFE
-specification defines the ID format and the X.509-SVID document; SPIRE is the reference issuing
-implementation, and Istio's built-in CA issues SPIFFE-compatible SVIDs directly. Book 5, Chapter 4
-covers the identity and attestation model in depth; the relevant point here is that certificates
-are issued automatically on workload startup, are short-lived (Istio's default workload
-certificate lifetime is on the order of a day, rotated well before expiry), and are delivered over
+service account. That is a *workload* identity, not a network identity: it does not depend on
+ephemeral IP addresses and it survives rescheduling. SPIFFE specifies the ID format and the
+X.509-SVID document, SPIRE is the reference implementation of an issuer, and Istio's built-in CA
+issues SPIFFE-compatible SVIDs directly (Volume 9, Chapter 10 — Zero Trust and Service-to-Service
+Auth — covers workload identity in depth).
+Certificates are issued at workload startup, are short-lived — Istio's default workload
+certificate lifetime is on the order of a day, rotated well before expiry — and are delivered over
 SDS into proxy memory rather than mounted as secrets.
 
 With that in place, mTLS between every pair of workloads is a policy toggle rather than a project,
@@ -629,17 +624,17 @@ spec:
         paths: ["/v1/checkout"]
 ```
 
-`PERMISSIVE` mode is the migration mechanism and deserves respect: it lets a service accept both
-plaintext and mTLS while callers are converted, and forgetting to move to `STRICT` afterwards is
-the most common way organizations end up with a mesh that provides *encryption in principle* and
-plaintext in practice. Audit it.
+`PERMISSIVE` mode is the migration mechanism: it lets a service accept both plaintext and mTLS
+while callers are converted, and forgetting to move to `STRICT` afterwards is the most common way
+organizations end up with a mesh that provides *encryption in principle* and plaintext in
+practice. Audit it.
 
 ### Traffic management
 
 Per-request L7 load balancing (Chapter 9) comes free, including the fix for HTTP/2 and gRPC
 connection pinning, since the sidecar balances individual streams across endpoints. Retries,
-timeouts, and outlier-detection-based circuit breaking (Chapter 11) become declarative. Traffic
-splitting enables canary and blue/green releases without a deployment-tool-specific hack
+timeouts, and outlier-detection-based circuit breaking (Chapter 11) become declarative, and
+traffic splitting enables canary and blue/green releases without a deployment-tool hack
 (Volume 11):
 
 ```yaml
@@ -687,23 +682,22 @@ spec:
     labels: { version: v2 }
 ```
 
-Note the header-based override *before* the weighted split: that ordering gives you deterministic
-canary testing (send `x-canary: true` and always hit v2) alongside probabilistic rollout. The
-Gateway API's GAMMA initiative is standardizing an equivalent expression of east-west routing, so
-expect this to become portable across meshes.
+Note the header-based override *before* the weighted split: that ordering gives deterministic
+canary testing (send `x-canary: true`, always hit v2) alongside probabilistic rollout. The Gateway
+API's GAMMA initiative is standardizing an equivalent expression of east-west routing.
 
 ### Telemetry
 
-Every sidecar emits the same metrics with the same labels for every service, regardless of
-language: request count, error count by response code, request duration histograms, TCP bytes,
-and connection counts, all dimensioned by source and destination workload, namespace, and service.
-That uniformity is worth more than any individual metric, because it makes fleet-wide SLO
-dashboards and a service dependency graph derivable rather than hand-built (Volume 11). One
-critical caveat, stated plainly because it is routinely misunderstood: **a mesh cannot give you
-distributed tracing for free.** The sidecar can generate and forward spans, but it cannot know
-that inbound request X caused outbound request Y unless the application copies the trace context
-headers (`traceparent`, or the B3 family) from the request it is handling to the requests it
-makes. Without in-process propagation you get disconnected single-hop spans, not traces.
+Every sidecar emits the same metrics with the same labels for every service regardless of
+language: request and error counts by response code, duration histograms, TCP bytes, connection
+counts — all dimensioned by source and destination workload, namespace, and service. That
+uniformity is worth more than any individual metric, because it makes fleet-wide SLO dashboards
+and a service dependency graph derivable rather than hand-built (Volume 11). One caveat, stated
+plainly because it is routinely misunderstood: **a mesh cannot give you distributed tracing for
+free.** A sidecar can generate and forward spans, but it cannot know that inbound request X caused
+outbound request Y unless the application copies trace context headers (`traceparent`, or the B3
+family) from the request it handles onto the requests it makes. Without in-process propagation you
+get disconnected single-hop spans, not traces.
 
 ## The costs, honestly
 
@@ -711,10 +705,9 @@ makes. Without in-process propagation you get disconnected single-hop spans, not
 callee's — each adding kernel crossings, a userspace parse and policy evaluation, and TLS work.
 Vendor benchmarks generally report per-hop overhead in the sub-millisecond to
 low-single-digit-millisecond range at moderate load; treat every published number as approximate
-and specific to a version and workload, and measure your own. The structure, however, is not
-approximate: the tax is per hop, so a call graph seven services deep pays it fourteen times, and
-it lands hardest on services whose own p50 is a few hundred microseconds. Meshing a chatty,
-ultra-low-latency internal path is where meshes disappoint people.
+and specific to a version and workload, and measure your own. The structure is not approximate,
+though: the tax is per hop, so a chain of seven services makes six calls and pays it twelve times,
+and it lands hardest on services whose own p50 is a few hundred microseconds.
 
 **Resources.** A sidecar's memory is dominated by its configuration — the clusters, routes, and
 endpoints it knows about — and its CPU scales with request rate and TLS work. In a cluster with
@@ -755,46 +748,41 @@ kubectl exec deploy/checkout -c istio-proxy -- \
   curl -s localhost:15000/config_dump > dump.json
 ```
 
-**So do you need one?** A defensible decision rule: you probably want a mesh when you have enough
-services that per-language libraries have become a coordination problem (say, dozens of services
-across three or more languages), when you have a hard requirement for encryption in transit and
-identity-based authorization between internal workloads (regulatory or zero-trust mandates), and
-when you have a platform team that can own it as a product. You probably do not want one when you
-have a handful of services in one language — a good library, or gRPC's built-in xDS support, gets
-you most of the value at a fraction of the cost — or when your latency budget cannot absorb two
-extra hops, or when nobody is funded to operate it. "We might need it later" is not a reason;
-adopting a mesh incrementally (start with mTLS and telemetry in one namespace; add traffic
-policy later) is entirely possible and is the right sequencing when you do adopt.
+**So do you need one?** A defensible rule: adopt a mesh when per-language libraries have become a
+coordination problem (dozens of services across three or more languages), when encryption in
+transit and identity-based authorization between internal workloads is a hard requirement, and
+when a platform team can own it as a product. Skip it when a handful of services share one
+language — a good library, or gRPC's built-in xDS support, delivers most of the value far cheaper
+— when your latency budget cannot absorb two extra hops, or when nobody is funded to operate it.
+"We might need it later" is not a reason; incremental adoption works, and mTLS plus telemetry in
+one namespace before any traffic policy is the right sequencing when you do adopt.
 
 ## Sidecar-less designs: ambient and eBPF
 
-The sidecar tax — one proxy per pod, its memory, its CPU, its lifecycle coupling — motivated a
-generation of designs that keep the mesh's guarantees while moving the proxy out of the pod.
-This area is evolving; the descriptions below reflect the architecture as documented by the
-projects, and specific performance claims should be verified against current releases.
+The sidecar tax — one proxy per pod, its memory, its CPU, its lifecycle coupling — motivated
+designs that keep the mesh's guarantees while moving the proxy out of the pod. This area is
+evolving; the descriptions below reflect the projects' documented architecture, and specific
+performance and maturity claims should be verified against current releases.
 
-**Istio ambient mode** splits the data plane into two layers. A per-node `ztunnel` (a Rust proxy
-running as a DaemonSet) handles the L4 layer for all pods on that node: it holds each local
-workload's identity, establishes mutual TLS, and carries traffic inside **HBONE** — an
-HTTP/2 `CONNECT` tunnel over TLS on port 15008 — to the ztunnel on the destination node. Because
-ztunnel handles only L4 and mTLS, it is far smaller than an Envoy sidecar and shared across the
-node. Workloads that need L7 features — HTTP routing, header-based canaries, per-request
-authorization policy, retries — are additionally routed through a **waypoint proxy**, a real Envoy
-deployed per namespace or per service and configured via the Gateway API with an
-`istio-waypoint` gateway class. The trade is explicit: you pay for L7 only where you use it, at
-the cost of an extra network hop through the waypoint when you do. Ambient mode was declared
-production-ready in Istio 1.24 (late 2024) and continues to evolve.
+**Istio ambient mode** splits the data plane in two. A per-node `ztunnel` (a Rust proxy running as
+a DaemonSet) handles L4 for all pods on that node: it holds each local workload's identity,
+establishes mutual TLS, and carries traffic inside **HBONE** — an HTTP/2 `CONNECT` tunnel over TLS
+on port 15008 — to the ztunnel on the destination node. Handling only L4 and mTLS keeps it far
+smaller than an Envoy sidecar, and it is shared across the node. Workloads needing L7 features —
+HTTP routing, header-based canaries, request-level authorization, retries — are additionally
+routed through a **waypoint proxy**, a real Envoy deployed per namespace or per service and
+configured via the Gateway API with an `istio-waypoint` gateway class. The trade is explicit: you
+pay for L7 only where you use it, at the cost of an extra hop when you do. Ambient mode was
+declared production-ready in Istio 1.24 (late 2024).
 
-**Cilium** approaches it from the kernel. Its dataplane is eBPF programs attached at the socket,
-tc, and XDP layers, which lets it implement service load balancing, network policy, and
-observability without iptables and — for pods on the same node — without traversing the full
-network stack at all (socket-level load balancing rewrites the destination at `connect()` time,
-eliminating per-packet NAT). Encryption between nodes is provided transparently by WireGuard or
-IPsec rather than by per-connection TLS, which is a different trust model: it secures the
-node-to-node path rather than authenticating individual workloads end-to-end. Cilium's service
-mesh adds a per-node Envoy for L7 features, and its mutual authentication feature integrates
-SPIFFE/SPIRE identities; check current documentation for the maturity of each piece, as this has
-been moving quickly.
+**Cilium** approaches it from the kernel. Its datapath is eBPF programs attached at the socket,
+tc, and XDP layers, implementing service load balancing, network policy, and observability without
+iptables — and for same-node pods without traversing the full network stack at all, since
+socket-level load balancing rewrites the destination at `connect()` time and eliminates per-packet
+NAT. Encryption between nodes is transparent WireGuard or IPsec rather than per-connection TLS,
+which is a *different trust model*: it secures the node-to-node path rather than authenticating
+individual workloads end to end. Cilium's service mesh adds a per-node Envoy for L7, and its
+mutual authentication feature integrates SPIFFE/SPIRE identities.
 
 ```mermaid
 flowchart LR
@@ -814,11 +802,10 @@ flowchart LR
 ```
 
 The honest summary: sidecar-less designs move cost rather than deleting it, and they change the
-failure domain. A crashing sidecar affects one pod; a crashing node-level proxy affects every pod
-on that node. A sidecar upgrade is a pod restart; a node proxy upgrade touches everything
-scheduled there. In exchange you get dramatically lower aggregate overhead, no per-pod lifecycle
-coupling, and the ability to enroll workloads without restarting them. Both models are defensible;
-choose with your blast-radius tolerance in mind.
+failure domain. A crashing sidecar affects one pod; a crashing node proxy affects every pod on that
+node, and a node proxy upgrade touches everything scheduled there. In exchange you get much lower
+aggregate overhead, no per-pod lifecycle coupling, and enrollment without restarting workloads.
+Both models are defensible; choose with your blast-radius tolerance in mind.
 
 ## CDNs: pushing the work outward
 
@@ -832,13 +819,17 @@ A CDN operates points of presence (PoPs) in many metros, each a cluster of proxy
 caches. Two mechanisms steer a client to one. **Anycast** (Chapter 2) announces the same IP prefix
 from every PoP via BGP, so the internet's own routing delivers each client to a topologically near
 PoP — no client logic, instant failover when a PoP withdraws its announcement, and inherent DDoS
-dispersion because an attack splits across every site announcing the prefix. Its weakness is that
-BGP optimizes for AS-path length, not latency, and a routing change can in principle move a client
-mid-connection (a non-issue for short HTTP connections, and mitigated for QUIC by connection IDs
-that survive path changes, Chapter 4). **DNS-based steering** resolves a hostname to different
-addresses per client, using resolver location or ECS (EDNS Client Subnet, Chapter 5) as a hint; it
-offers finer policy control at the cost of TTL-bound agility and resolver-location error. Most
-large CDNs use both.
+dispersion. Its weaknesses are that BGP optimizes for AS-path length and local policy rather than
+latency — so the topologically near PoP is not always the fastest one — and that a routing change
+can move a client to a different PoP mid-connection. For short HTTP transactions that is a
+non-issue. For long-lived QUIC connections it is worse than it looks: QUIC connection IDs let a
+connection survive a *client-side* path change such as NAT rebinding, and CDNs encode server
+routing hints in the connection ID so packets reach the right machine within a PoP, but neither
+helps if packets arrive at a PoP that holds none of the connection state — the server replies with
+a stateless reset and the client starts over. **DNS-based steering**
+resolves a hostname to different addresses per client, using resolver location or ECS (EDNS Client
+Subnet, Chapter 5) as a hint; it offers finer policy control at the cost of TTL-bound agility and
+resolver-location error. Most large CDNs use both.
 
 ### The cache hierarchy and origin shield
 
@@ -848,10 +839,12 @@ replicated across all of them. On a miss, the naive design fetches from origin; 
 PoPs, a cold object or a purge then produces hundreds of simultaneous origin requests for the same
 resource.
 
-Two mechanisms fix it. **Request collapsing** (Varnish's term; also called coalescing) turns
-concurrent misses for the same key within one cache into a single upstream fetch, with the other
-requests waiting on its result — the most important stampede defense a cache has. **Origin
-shield** (Fastly's and CloudFront's term; Akamai calls the equivalent tiered distribution)
+Two mechanisms fix it. **Request collapsing** — Varnish documentation calls the same behavior
+request coalescing — turns concurrent misses for the same key within one cache into a single
+upstream fetch, with the other requests waiting on its result. It is the most important stampede
+defense a cache has, and it is per-cache-node, which is exactly why a hierarchy is needed to
+collapse across PoPs. **Origin shield**, CloudFront's name for it (Fastly calls the feature
+shielding; Akamai's equivalent is tiered distribution),
 designates a PoP, usually near your origin, as a mid-tier cache that all edge PoPs fetch through,
 so the origin sees at most one request per object per shield rather than one per PoP. It
 substantially cuts origin load and egress for cacheable workloads, at the cost of an extra hop on
@@ -894,13 +887,13 @@ sequenceDiagram
 ### Cache keys, TTLs, and the semantics that matter
 
 The **cache key** determines what counts as "the same object". By default it is roughly scheme +
-host + path + query string, and every part of that default is a hazard. Marketing query parameters
+host + path + query string, and every part of that is a hazard. Marketing query parameters
 (`utm_source` and friends) fragment the cache into thousands of identical copies unless stripped;
 a key that *omits* a parameter your origin varies on serves the wrong content to everybody. The
 `Vary` response header extends the key by named request headers — `Vary: Accept-Encoding` is
 correct and necessary, `Vary: User-Agent` is cache-destroying given that header's cardinality, and
-`Vary: Cookie` on a page with a per-user session cookie yields a hit rate near zero. Modern CDNs
-let you write the key explicitly; do so deliberately.
+`Vary: Cookie` with a per-user session cookie yields a hit rate near zero. Modern CDNs let you
+write the key explicitly; do so deliberately.
 
 Freshness is governed by HTTP caching semantics (RFC 9111, Chapter 7), and the split between
 browser and CDN is what most people get wrong:
@@ -951,10 +944,9 @@ curl -X POST -H "Fastly-Key: $FASTLY_API_TOKEN" \
 ```
 
 Soft purge deserves emphasis: hard-purging a hot object across a global fleet converts a cache hit
-into a synchronized global miss — a self-inflicted stampede. Soft purge marks the object stale, so
-the first request revalidates while everyone else is briefly served the old copy. Cache-tag
-purging is offered by most major CDNs, though sometimes only on higher plans; check before
-designing around it.
+into a synchronized global miss — a self-inflicted stampede — whereas soft purge marks the object
+stale, so the first request revalidates while everyone else is briefly served the old copy.
+Cache-tag purging is offered by most major CDNs, sometimes only on higher plans.
 
 ### Dynamic content, edge compute, and what the backend gets
 
@@ -968,136 +960,127 @@ safe, idempotent requests (RFC 8470 defines the HTTP handling and the `425 Too E
 
 **Edge compute** — Cloudflare Workers, Fastly Compute, AWS Lambda@Edge and CloudFront Functions,
 Akamai EdgeWorkers — runs your code in the PoP. The good use cases are those where running at the
-edge changes the network shape rather than merely relocating logic: request normalization and
-cache-key rewriting, A/B bucketing and personalization that would otherwise make a page
-uncacheable, token validation before a request costs an origin hop, redirects, signed-URL checks,
-and response assembly from cached fragments. The bad use case is business logic that needs your
-database, which lives in one region: you have moved compute away from its data.
+edge changes the network shape rather than merely relocating logic: cache-key rewriting, A/B
+bucketing and personalization that would otherwise make a page uncacheable, token validation
+before a request costs an origin hop, redirects, signed-URL checks, and response assembly from
+cached fragments. The bad use case is business logic that needs your database, which lives in one
+region: you have moved compute away from its data.
 
-Summarizing what the backend gets: **origin offload** (a well-tuned cache removes the large
-majority of requests from origin — directly a capacity argument), **latency reduction** for cached
-and uncached traffic alike, **DDoS absorption** because volumetric attacks land on anycast capacity
-rather than your origin, and a natural home for **WAF and bot management**. In exchange you accept
-a third party in the request path, a cache that serves wrong content if you misconfigure keys, and
-the discipline of **origin locking** — if your origin stays directly reachable, attackers will find
-it and bypass every edge control. Lock it with mTLS from the CDN, a shared secret header, or IP
+What the backend gets: **origin offload** (a well-tuned cache removes the large majority of
+requests from origin — directly a capacity argument), **latency reduction** for cached and uncached
+traffic alike, **DDoS absorption** because volumetric attacks land on anycast capacity rather than
+your origin, and a natural home for **WAF and bot management**. In exchange you accept a third
+party in the request path, a cache that serves wrong content if you misconfigure keys, and the
+discipline of **origin locking** — if your origin stays directly reachable, attackers will find it
+and bypass every edge control. Lock it with mTLS from the CDN, a shared secret header, or IP
 allowlists of the CDN's published ranges.
 
 Caches are also attack surface. **Web cache poisoning** exploits *unkeyed inputs* — a header that
 influences the response but is not part of the cache key — to store an attacker-controlled
-response that is then served to everyone; James Kettle's 2018 PortSwigger research popularized the
-technique and it remains a live bug class. **Cache deception** works the other way: trick the
-origin into treating a private response as a static asset (`/account/settings.css`) so the cache
-stores it. One discipline prevents both: keys must include every input the response varies on, and
-nothing whose content depends on an authenticated session may be cached unless the session is part
-of the key.
+response then served to everyone; James Kettle's 2018 PortSwigger research popularized the class
+and his later work on cache-key normalization extended it. **Web cache deception**, described by
+Omer Gil in 2017, works the other way: trick the origin into treating a
+private response as a static asset (`/account/settings.css`) so the cache stores it. One discipline
+prevents both: keys must include every input the response varies on, and nothing whose content
+depends on an authenticated session may be cached unless that session is part of the key.
 
 ## The distributed-systems lens
 
 **The proxy layer is where the paved road is paved.** In an organization with hundreds of services
 and dozens of teams, any policy you cannot enforce in shared infrastructure is a policy you have
-merely recommended. Mandating TLS 1.3, a maximum request timeout, a standard access log schema,
-or per-tenant rate limits by asking teams to update libraries is a multi-quarter negotiation with
-a long tail of non-compliance. Implementing it in the proxy layer is a config rollout with a
-canary and a rollback. This is the single most valuable property of the entire layer, and it is an
-organizational property as much as a technical one.
+merely recommended. Mandating TLS 1.3, a maximum request timeout, a standard access log schema, or
+per-tenant rate limits by asking teams to update libraries is a multi-quarter negotiation with a
+long tail of non-compliance. Implementing it in the proxy layer is a config rollout with a canary
+and a rollback. That is an organizational property as much as a technical one, and it is the
+strongest argument this layer has.
 
 **The mesh relocates reliability primitives from N libraries to one data plane.** Every pattern in
 Chapter 11 — timeouts, budgeted retries with jitter, circuit breaking, outlier ejection, load
-shedding — exists because networks fail partially. Implemented per-language, they diverge and
-decay; a retry bug in one library becomes a retry storm that takes down a shared dependency, and
-fixing it requires everyone to upgrade. Implemented in the data plane, semantics are uniform and
-upgradable centrally. The caveat is real, though: the mesh cannot fix what it cannot see. It does
-not know which of your operations are idempotent, so an incorrectly configured retry policy will
-happily duplicate a payment; and it cannot propagate trace context or deadlines *through* your
-application code. The mesh handles the transport; correctness at the application boundary remains
-yours.
+shedding — exists because networks fail partially. Implemented per-language they diverge and
+decay, and a retry bug in one library becomes a storm that takes down a shared dependency.
+Implemented in the data plane, semantics are uniform and centrally upgradable. But the mesh cannot
+fix what it cannot see: it does not know which operations are idempotent, so a careless retry
+policy will duplicate a payment, and it cannot propagate trace context or deadlines *through* your
+code. The mesh handles transport; correctness at the application boundary remains yours.
 
-**Every proxy hop is latency and a failure domain.** Count the hops in the CDN sequence diagram
-above: edge, shield, gateway, ingress, caller sidecar, callee sidecar, application. Each adds
-latency (small individually, compounding across a deep call graph, and disproportionately visible
-at p99 where queuing at any single hop dominates), and each is a component that can fail, be
-misconfigured, exhaust a connection pool, or hold a stale certificate. Mesh control-plane outages,
-sidecar bugs, and CDN configuration errors are all real incident classes with public postmortems
-behind them. The correct posture is neither avoidance nor faith: measure the added latency at p99
-rather than p50, design so that control-plane unavailability degrades change-propagation rather
-than traffic, run game days that kill the control plane and the sidecars, and hold the layer to
-the same SLO scrutiny as any service you write.
+**Every proxy hop is latency and a failure domain.** Count the hops in the CDN sequence diagram:
+edge, shield, gateway, ingress, caller sidecar, callee sidecar, application. Each adds latency —
+small individually, compounding across a deep call graph, and disproportionately visible at p99
+where queuing at any one hop dominates — and each can fail, be misconfigured, exhaust a connection
+pool, or hold a stale certificate. The correct posture is neither avoidance nor faith: measure
+added latency at p99 rather than p50, design so control-plane unavailability degrades
+change-propagation rather than traffic, run game days that kill the control plane and the
+sidecars, and hold this layer to the same SLO scrutiny as any service you write.
 
 **CDNs move work to where the users are.** Every request answered at an edge PoP is a request your
-origin never sees, a database query never executed, and roughly a hundred milliseconds of
-round-trip time never spent. Caching is the cheapest scaling mechanism in existence when the
-content model permits it — and the work of making it permit it (stable cache keys, correct
-`Cache-Control`, tag-based invalidation, `stale-if-error` as an availability layer) is
-application design work, not a CDN vendor's setting. Volume 12's material on operating systems at
-scale and Volume 11's on observability both apply here: you cannot manage a cache you do not
-measure, so treat hit ratio, `Age` distribution, origin offload percentage, and purge rate as
-first-class SLIs.
+origin never sees, a query never executed, and a long round trip never spent. Caching is the
+cheapest scaling mechanism in existence when the content model permits it — and making it permit
+that (stable cache keys, correct `Cache-Control`, tag-based invalidation, `stale-if-error` as an
+availability layer) is application design work, not a vendor setting. You cannot manage a cache
+you do not measure: treat hit ratio, `Age` distribution, origin offload percentage, and purge rate
+as first-class SLIs (Volume 11), and see Volume 12 for operating shared infrastructure of this
+kind at scale.
 
 ## Key takeaways
 
-- Forward proxies act for clients and enforce *what may be reached* (egress control, filtering,
-  caching); reverse proxies act for servers and enforce *what may be served*. Same machinery,
-  opposite direction, different threat model.
+- Forward proxies act for clients and enforce *what may be reached*; reverse proxies act for
+  servers and enforce *what may be served*. Same machinery, opposite direction, different threat
+  model.
 - The reverse proxy is the correct home for TLS termination, protocol translation, routing,
-  compression, buffering, timeouts, client-IP normalization, and uniform access logging — because
-  those are the things that must be identical everywhere.
-- Destroy client-supplied `X-Forwarded-For`/`Forwarded` at the trust boundary and set them
-  yourself, or your rate limiting and audit logs are forgeable.
+  buffering, timeouts, client-IP normalization, and uniform access logging — the things that must
+  be identical everywhere. Destroy client-supplied `X-Forwarded-For`/`Forwarded` at the trust
+  boundary and set them yourself, or rate limiting and audit logs are forgeable.
 - Envoy's model — listeners, filter chains, HTTP filters, routes, clusters, endpoints — plus xDS
   turned proxy configuration into a streaming subscription. ADS gives ordering, delta xDS gives
-  scale, and NACKs mean a bad push leaves the last good config running (and silently ignored).
+  scale, and a NACK leaves the last good config running (and your push silently ignored).
 - A service mesh exists because cross-cutting concerns implemented in N language-specific
-  libraries cannot be kept consistent or upgraded in lockstep. The sidecar plus control plane
+  libraries cannot be kept consistent or upgraded in lockstep; the sidecar plus control plane
   moves them into infrastructure.
 - Automatic mTLS with SPIFFE workload identity is the mesh's strongest single benefit; per-request
   L7 balancing, declarative retries and circuit breaking, traffic splitting, and uniform golden
   signals follow. Trace *propagation* still requires application cooperation.
-- The costs are per-hop latency, per-sidecar resources, operational complexity (version skew,
-  CA expiry, container lifecycle), and harder debugging. Learn the proxy response flags and the
+- The costs are per-hop latency, per-sidecar resources, operational complexity (version skew, CA
+  expiry, container lifecycle), and harder debugging. Learn the proxy response flags and the
   config-inspection commands before the incident, not during it.
-- Ambient and eBPF data planes reduce the sidecar tax by moving proxies to the node and paying for
+- Ambient and eBPF data planes cut the sidecar tax by moving proxies to the node and charging for
   L7 only where used — trading a smaller per-pod cost for a larger per-node blast radius.
 - CDNs combine anycast reach, a cache hierarchy with origin shielding, and request collapsing to
   remove most traffic from your origin. Cache keys and `Cache-Control` are application design
-  decisions; `stale-while-revalidate` and `stale-if-error` are availability features.
-- Prefer versioned immutable URLs, use surrogate-key (tag) purging with soft purge for the rest,
-  and lock your origin so the edge cannot be bypassed.
+  decisions; `stale-while-revalidate` and `stale-if-error` are availability features. Prefer
+  versioned immutable URLs, use tag-based soft purge for the rest, and lock your origin so the
+  edge cannot be bypassed.
 
 ## Further reading
 
-- Envoy documentation — <https://www.envoyproxy.io/docs/envoy/latest/> — particularly the
-  architecture overview (listeners, filters, clusters) and the xDS protocol reference at
+- Envoy documentation — <https://www.envoyproxy.io/docs/envoy/latest/> — the architecture overview
+  and the xDS protocol reference at
   <https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol>, which specifies ACK/NACK,
   versioning, ADS, and incremental xDS.
-- Matt Klein, "Introducing Envoy" and the follow-on Lyft engineering posts — background on why
-  Envoy was built as a universal, dynamically configurable data plane.
-- Istio documentation — <https://istio.io/latest/docs/> — the architecture, security (identity and
-  mTLS), traffic-management, and performance-and-scalability pages; and the ambient-mode
-  documentation at <https://istio.io/latest/docs/ambient/> for ztunnel, HBONE, and waypoints.
-- Linkerd documentation — <https://linkerd.io/2/overview/> — and the project's writing on why it
+- Istio documentation — <https://istio.io/latest/docs/> — architecture, security (identity and
+  mTLS), traffic management, and performance-and-scalability; plus
+  <https://istio.io/latest/docs/ambient/> for ztunnel, HBONE, and waypoints.
+- Linkerd documentation — <https://linkerd.io/docs/> — and the project's writing on why it
   built a purpose-specific Rust micro-proxy instead of adopting Envoy.
 - SPIFFE and SPIRE — <https://spiffe.io/docs/latest/spiffe-about/overview/> — the SPIFFE ID and
-  X.509-SVID specifications; see also Book 5, Chapter 4 of this suite for workload identity and
-  attestation.
+  X.509-SVID specifications; see also Volume 9, Chapter 10 for zero trust and service-to-service
+  authentication.
 - Kubernetes Gateway API — <https://gateway-api.sigs.k8s.io/> — including the GAMMA initiative for
   expressing east-west (mesh) routing with the same resources.
 - Cilium documentation — <https://docs.cilium.io/> — eBPF datapath, socket-level load balancing,
-  transparent encryption with WireGuard or IPsec, and the service-mesh and mutual-authentication
-  features.
-- RFC 9110 (*HTTP Semantics*) and RFC 9111 (*HTTP Caching*) — the normative caching model;
-  RFC 5861 (`stale-while-revalidate`, `stale-if-error`), RFC 9211 (`Cache-Status`), and RFC 9213
-  (targeted cache-control fields such as `CDN-Cache-Control`).
-- RFC 7239 — *Forwarded HTTP Extension* — the standardized alternative to `X-Forwarded-For`; and
-  the PROXY protocol specification published by HAProxy Technologies for L4 client-IP preservation.
-- RFC 8470 — *Using Early Data in HTTP* — the replay considerations and `425 Too Early` status for
-  TLS 1.3 and QUIC 0-RTT at the edge.
+  transparent encryption, and the service-mesh and mutual-authentication features.
+- RFC 9110 (*HTTP Semantics*) and RFC 9111 (*HTTP Caching*); RFC 5861 (`stale-while-revalidate`,
+  `stale-if-error`), RFC 9211 (`Cache-Status`), and RFC 9213 (targeted cache-control fields such
+  as `CDN-Cache-Control`).
+- RFC 7239 (*Forwarded HTTP Extension*) and the PROXY protocol specification published by HAProxy
+  Technologies — client-IP preservation at L7 and L4 respectively.
+- RFC 8470 — *Using Early Data in HTTP* — replay considerations and `425 Too Early` for TLS 1.3
+  and QUIC 0-RTT at the edge.
 - NGINX documentation (<https://nginx.org/en/docs/>) and the HAProxy configuration manual
   (<https://docs.haproxy.org/>) — authoritative references for the directives used above.
 - Fastly and Cloudflare developer documentation on cache keys, surrogate keys/cache tags, soft
   purge, origin shielding, and edge compute — the clearest public writing on CDN cache mechanics.
-- James Kettle, "Practical Web Cache Poisoning" (PortSwigger Research, 2018) — the definitive
-  treatment of unkeyed inputs, and the companion research on web cache deception.
-- Chapter 2 (anycast and BGP), Chapter 6 (TLS and PKI), Chapter 7 (HTTP semantics and caching),
-  Chapter 9 (load-balancing algorithms), and Chapter 11 (timeouts, retries, hedging) of this
-  volume supply the primitives this chapter assembles.
+- James Kettle, "Practical Web Cache Poisoning" (PortSwigger Research, 2018) and the follow-up "Web
+  Cache Entanglement" (2020) — unkeyed inputs and cache-key normalization flaws. For the inverse
+  bug class, Omer Gil's 2017 write-up of web cache deception.
+- Chapters 2, 6, 7, 9, and 11 of this volume supply the anycast, TLS, HTTP-caching, balancing, and
+  reliability primitives this chapter assembles.
