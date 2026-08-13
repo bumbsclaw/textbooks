@@ -42,17 +42,15 @@ A proxy is an intermediary that terminates a connection from one party and opens
 another on its behalf. That is the whole idea. Everything interesting follows from a single
 question: *on whose behalf does it act, and who chose it?*
 
-A **forward proxy** acts for the client and is configured by the client (or imposed on it
-transparently by the network). The client knows it is talking to a proxy; the origin server
-generally does not know the client's identity beyond what the proxy reveals. In HTTP terms, an
-explicitly configured forward proxy receives requests with an *absolute-form* request target —
-`GET http://example.com/api HTTP/1.1` — rather than the origin-form path you see at a server, and
-for TLS it receives `CONNECT example.com:443 HTTP/1.1` and then blindly tunnels bytes. That
-`CONNECT` tunnel is why forward proxies see so little of encrypted traffic: unless they perform
-TLS interception with a private CA installed on every client (a "MITM proxy", used by corporate
-DLP stacks and by tools like mitmproxy), all they observe is the SNI in the ClientHello, the
-destination address, and byte counts. Encrypted ClientHello (ECH, Chapter 6) removes even the SNI
-where deployed, which is exactly why network-based filtering vendors dislike it.
+A **forward proxy** acts for the client and is configured by the client (or imposed transparently
+by the network). In HTTP terms, an explicitly configured forward proxy receives requests with an
+*absolute-form* request target — `GET http://example.com/api HTTP/1.1` — rather than the
+origin-form path a server sees, and for TLS it receives `CONNECT example.com:443 HTTP/1.1` and
+then blindly tunnels bytes. That `CONNECT` tunnel is why forward proxies see so little of
+encrypted traffic: unless they perform TLS interception with a private CA installed on every
+client (a "MITM proxy", used by corporate DLP stacks and by tools like mitmproxy), all they
+observe is the SNI in the ClientHello, the destination address, and byte counts. Encrypted
+ClientHello (ECH, Chapter 6) removes even the SNI where deployed.
 
 Backend engineers meet forward proxies mostly as **egress control**. In a serious production
 network, workloads have no default route to the internet. Outbound traffic goes through an egress
@@ -98,9 +96,7 @@ flowchart LR
 
 The symmetry is worth internalizing: a forward proxy hides many clients behind one identity and
 enforces *what may be reached*; a reverse proxy hides many servers behind one name and enforces
-*what may be served*. A single Envoy binary can be either, and in a mesh it is simultaneously
-both — the outbound listener is a forward proxy for the local application, the inbound listener
-is a reverse proxy for it.
+*what may be served*. In a mesh, one sidecar is simultaneously both.
 
 ## The reverse proxy as universal front door
 
@@ -109,11 +105,10 @@ should do. The honest answer is: quite a lot, because each of these things is do
 scattered across services.
 
 **TLS termination and origination.** The proxy holds the certificates, negotiates TLS 1.3,
-selects ALPN (`h2`, `http/1.1`, and for QUIC `h3`), and pins the cipher policy for the whole
-fleet. Rotating a certificate or disabling a protocol version becomes a proxy-config change
-instead of a fleet-wide redeploy. The proxy may then re-encrypt to the backend (mTLS in a mesh) or
-speak cleartext inside a trusted network segment — a decision that should be made explicitly, not
-by accident.
+selects ALPN (`h2`, `http/1.1`, and for QUIC `h3`), and pins the cipher policy fleet-wide.
+Rotating a certificate or disabling a protocol version becomes a config change instead of a
+fleet-wide redeploy. The proxy may then re-encrypt to the backend (mTLS in a mesh) or speak
+cleartext inside a trusted segment — decide that explicitly, not by accident.
 
 **Protocol translation.** Clients speak HTTP/2 or HTTP/3 to the edge; backends often speak
 HTTP/1.1. The proxy demultiplexes streams into separate upstream requests, which is what makes
@@ -250,23 +245,21 @@ rather than by a file. The second point is the load-bearing one — without it t
 
 ### The object model
 
-- **Listener** — a bound address and port, plus a chain of **network filters**. Listeners can also
-  be created dynamically by the *original destination* mechanism, which is how a sidecar handles
-  traffic redirected to it for arbitrary destinations.
+- **Listener** — a bound address and port plus a chain of **network filters**.
 - **Filter chain** — an ordered list of L4 filters selected by a *filter chain match* (SNI,
-  transport protocol, source/destination IP, ALPN). The chain terminates in something that either
-  proxies bytes (`tcp_proxy`) or parses HTTP (`http_connection_manager`, universally "HCM").
+  transport protocol, source/destination IP, ALPN), terminating in something that either proxies
+  bytes (`tcp_proxy`) or parses HTTP (`http_connection_manager`, universally "HCM").
 - **HTTP filters** — inside HCM, an ordered chain of L7 filters: JWT authentication, external
   authorization, rate limiting, CORS, fault injection, compression, WASM or Lua extensions, and
   finally the terminal `router` filter. Ordering is semantic; the router must be last.
 - **Route configuration** — virtual hosts matched by `:authority`, each with routes matched by
-  path/header/query, each specifying a cluster (or a weighted set of clusters), a timeout, a retry
-  policy, header mutations, and hedging.
-- **Cluster** — a logical upstream service: a discovery type (STATIC, STRICT_DNS, LOGICAL_DNS,
-  EDS, ORIGINAL_DST), a load-balancing policy, circuit-breaker thresholds, outlier detection,
-  health checks, and a transport socket (TLS parameters for upstream connections).
-- **Endpoints** — the individual host:port members of a cluster, with locality, weight, and health
-  status. In a mesh these come from EDS and change constantly.
+  path/header/query, each naming a cluster (or a weighted set), a timeout, a retry policy, header
+  mutations, and hedging.
+- **Cluster** — a logical upstream: a discovery type (STATIC, STRICT_DNS, LOGICAL_DNS, EDS,
+  ORIGINAL_DST), a load-balancing policy, circuit-breaker thresholds, outlier detection, health
+  checks, and a transport socket for upstream TLS.
+- **Endpoints** — a cluster's host:port members with locality, weight, and health status. In a
+  mesh these arrive by EDS and change constantly.
 
 A static bootstrap that terminates TLS, routes, and gets its endpoints dynamically:
 

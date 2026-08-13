@@ -227,28 +227,26 @@ single long-lived TCP connection, and that clients are strongly encouraged to us
 connection per origin. gRPC (Chapter 8) inherits this: a `grpc.ClientConn` maintains a persistent
 HTTP/2 connection and issues every RPC as a stream on it.
 
-Now place an L4 balancer in front. The L4 balancer picks a backend once, at connection
-establishment, and every stream on that connection — thousands of RPCs per second, for hours —
-lands on that one backend. The consequences compound:
+Now place an L4 balancer in front. It picks a backend once, at connection establishment, and every
+stream on that connection — thousands of RPCs per second, for hours — lands on that one backend.
+The consequences compound:
 
-- **Load is distributed per client, not per request.** With 10 clients and 20 backends, at most
-  10 backends receive traffic; the other 10 are idle regardless of how much capacity you provision.
+- **Load is distributed per client, not per request.** With 10 clients and 20 backends, at most 10
+  backends receive traffic, no matter how much capacity you provision.
 - **New backends receive nothing.** Scale up during an incident and the new replicas sit empty,
   because no client has a reason to open a new connection. The autoscaler adds pods, the metrics
-  do not improve, and the on-call engineer concludes autoscaling is broken.
-- **Imbalance is sticky.** A client that happens to be assigned to a slow or degraded backend
-  stays there until the connection breaks. Request-cost heterogeneity across clients (a batch job
-  vs. a UI service) is projected directly onto backends.
-- **Deploys are lumpy.** Draining a backend forces all its clients to reconnect simultaneously,
-  and they all rehash onto the remaining set at once.
+  do not move, and the on-call engineer concludes autoscaling is broken.
+- **Imbalance is sticky.** A client assigned to a degraded backend stays there until the connection
+  breaks, and request-cost heterogeneity across clients (a batch job vs. a UI service) projects
+  directly onto backends.
+- **Deploys are lumpy.** Draining a backend forces all its clients to reconnect at once.
 
 There are three real fixes, and one non-fix.
 
-**Fix 1 — terminate HTTP/2 at an L7 proxy.** Envoy, NGINX, HAProxy, and cloud ALBs all parse
-HTTP/2 and make a fresh upstream selection for each stream. The proxy holds its own connection
-pool to the backends and multiplexes your streams across it. This is the standard answer for
-north-south (ingress) traffic and for east-west traffic in a sidecar mesh (Chapter 10) — where
-the "proxy" is a localhost hop and the extra latency is small.
+**Fix 1 — terminate HTTP/2 at an L7 proxy.** Envoy, NGINX, HAProxy, and cloud ALBs parse HTTP/2
+and make a fresh upstream selection per stream, multiplexing your streams across their own backend
+connection pool. This is the standard answer for north-south ingress and for east-west traffic in
+a sidecar mesh (Chapter 10), where the "proxy" is a localhost hop.
 
 **Fix 2 — client-side / subchannel balancing.** Let the client resolve *all* backend addresses
 and maintain a subchannel (one HTTP/2 connection) to each, choosing per RPC. In gRPC this is a
@@ -263,11 +261,11 @@ conn, err := grpc.NewClient(
 ```
 
 The default policy is `pick_first`, which connects to one resolved address and stays there —
-exactly the pinned behavior, just without a middlebox to blame. `round_robin` (or an xDS-supplied
-policy such as `weighted_round_robin`) opens a subchannel per endpoint and rotates per RPC. Note
-that the address set is only as fresh as the resolver: the default DNS resolver re-resolves on a
-minimum interval (30 seconds by default in grpc-go) and on connection failure, so headless
-Services (Chapter 5) plus a short TTL is the usual Kubernetes pairing.
+exactly the pinned behavior, without a middlebox to blame. `round_robin` (or an xDS-supplied policy
+such as `weighted_round_robin`) opens a subchannel per endpoint and chooses per RPC. The address
+set is only as fresh as the resolver: grpc-go's DNS resolver re-resolves on a minimum interval
+(30 seconds by default) and on connection failure, which is why headless Services (Chapter 5) with
+a short TTL are the usual Kubernetes pairing.
 
 **Fix 3 — bound connection lifetime.** Even with L7 in the path, connections that live forever
 prevent rebalancing after a scale-up. Servers should periodically retire connections with a
@@ -679,16 +677,16 @@ compilation of hot paths).
 ```mermaid
 stateDiagram-v2
   [*] --> Starting
-  Starting --> Warming: "readiness passes"
-  Warming --> Serving: "slow-start window elapsed, full weight"
-  Serving --> Probation: "outlier detection: 5 consecutive 5xx"
-  Probation --> Serving: "base_ejection_time elapsed, probes pass"
-  Probation --> Ejected: "repeat offender, ejection time grows"
-  Ejected --> Warming: "active health check passes, rise threshold met"
-  Serving --> Draining: "SIGTERM or deregistration"
-  Draining --> [*]: "in-flight requests complete or drain timeout"
-  Serving --> PanicMode: "cluster healthy fraction below 50 percent"
-  PanicMode --> Serving: "health recovers"
+  Starting --> Warming: readiness passes
+  Warming --> Serving: slow-start window elapsed
+  Serving --> Probation: outlier detection trips
+  Probation --> Serving: ejection time elapsed and probes pass
+  Probation --> Ejected: repeat offender so ejection time grows
+  Ejected --> Warming: active health check meets rise threshold
+  Serving --> Draining: SIGTERM or deregistration
+  Draining --> [*]: in-flight requests done or drain timeout
+  Serving --> PanicMode: healthy fraction below threshold
+  PanicMode --> Serving: health recovers
 ```
 
 ## Session affinity
@@ -1009,24 +1007,23 @@ without breaking flows.
 - GitHub Engineering, "GLB: GitHub's open source load balancer" (2018) and the `github/glb-director`
   repository — the second-chance GUE forwarding design that survives simultaneous balancer and
   backend membership changes.
-- Cloudflare blog posts on Unimog, their edge L4 load balancer built on eBPF with GUE
+- Cloudflare's blog posts on Unimog, their edge L4 load balancer built on eBPF with GUE
   encapsulation — <https://blog.cloudflare.com/unimog-cloudflares-edge-load-balancer/>.
 - Linkerd documentation on proxy load balancing — <https://linkerd.io/2/features/load-balancing/> —
-  and Twitter's Finagle client documentation
-  <https://twitter.github.io/finagle/guide/Clients.html> for the P2C and peak-EWMA balancers.
+  and Finagle's client documentation <https://twitter.github.io/finagle/guide/Clients.html> for the
+  P2C and peak-EWMA balancers.
 - RFC 4786 (BCP 126), *Operation of Anycast Services* (2006) — the operational model behind anycast
   VIPs and site draining via BGP.
 - Linux Virtual Server / IPVS documentation and `ipvsadm(8)`, plus the kernel's `mh` (Maglev
-  hashing) scheduler introduced in Linux 4.18; and Volume 2, Chapter 10 for how these sit in the
+  hashing) scheduler introduced in Linux 4.18; and Volume 2, Chapter 10 for where these sit in the
   Linux network stack.
 - AWS documentation for Application and Network Load Balancers — target groups, health check
-  parameters, `deregistration_delay.timeout_seconds`, and stickiness — and Google Cloud's
-  external Application Load Balancer overview for the anycast/GFE architecture.
+  parameters, `deregistration_delay.timeout_seconds`, stickiness — and Google Cloud's external
+  Application Load Balancer overview for the anycast/GFE architecture.
 
-Load balancing rewards precision. The algorithms are simple enough to implement in an afternoon
-and the forwarding modes are documented in a page, but the interactions — a multiplexed protocol
-meeting a per-connection balancer, a dependency check inside a liveness probe, a cold replica
-meeting a load-aware algorithm, a retry policy meeting an aggressive ejector — are where systems
-actually fail. Read the next two chapters with that in mind: Chapter 10 puts these balancers into
+Load balancing rewards precision. The algorithms are simple enough to implement in an afternoon,
+but the interactions are where systems fail: a multiplexed protocol meeting a per-connection
+balancer, a dependency check inside a liveness probe, a cold replica meeting a load-aware
+algorithm, a retry policy meeting an aggressive ejector. Chapter 10 places these balancers into
 proxy, mesh, and CDN topologies, and Chapter 11 supplies the timeout, retry, and hedging policies
 that decide whether a slow backend is a blip or an outage.
