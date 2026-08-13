@@ -93,27 +93,23 @@ per second per host is routine for a kernel-bypass or XDP-based implementation.
 How the packet actually reaches the backend, and how the reply reaches the client, is the single
 most important L4 design decision.
 
-**NAT mode (masquerading).** The balancer rewrites the destination IP (and possibly port) from
-the virtual IP (VIP) to the real server, and the backend replies to the client's address. For the
-reply to be un-NATed correctly, it *must* traverse the balancer again — either because the
-balancer is the backend's default gateway, or because the balancer also rewrote the source IP
-(SNAT), making itself the apparent client. NAT mode is simple and works across L3 boundaries, but
-it puts both directions of traffic through the balancer. Since typical HTTP responses are far
-larger than requests, the return path dominates, and the balancer's bandwidth becomes the fleet's
-bandwidth. SNAT additionally destroys the client IP (you must recover it via `X-Forwarded-For` or
-the PROXY protocol) and consumes a source-port keyspace per backend — the classic "ephemeral port
-exhaustion at the load balancer" failure at roughly 64K concurrent flows per (source IP, backend
-IP, backend port) tuple.
+**NAT mode (masquerading).** The balancer rewrites the destination IP (and possibly port) from the
+virtual IP (VIP) to the real server. For the reply to be un-NATed correctly it *must* traverse the
+balancer again — either because the balancer is the backend's default gateway, or because the
+balancer also rewrote the source IP (SNAT), making itself the apparent client. NAT mode is simple
+and works across L3 boundaries, but it puts both directions through the balancer. Since HTTP
+responses dwarf requests, the return path dominates and the balancer's bandwidth becomes the
+fleet's bandwidth. SNAT additionally destroys the client IP (recover it via `X-Forwarded-For` or
+the PROXY protocol) and consumes a source-port keyspace per backend — the classic ephemeral port
+exhaustion failure at roughly 64K concurrent flows per source-IP/backend-IP/backend-port tuple.
 
 **Direct server return (DSR / direct routing).** The balancer rewrites only the destination MAC
-address and puts the frame back on the wire; the IP header is untouched. The backend must own the
-VIP on a loopback interface, with ARP suppressed so that it does not answer for the VIP, and it
-replies to the client *directly*, bypassing the balancer entirely. This is asymmetric routing by
-design. The balancer sees only inbound packets — typically 10–20% of the byte volume — so a small
-balancer tier can front an enormous fleet. The costs: the balancer and backends must be on the
-same L2 segment (a real constraint in cloud VPCs, where you usually cannot do this at all); you
-cannot rewrite ports; and the balancer cannot observe the response, so it has no idea whether the
-backend returned 200 or 500 — passive health detection is impossible.
+address and puts the frame back on the wire; the IP header is untouched. The backend owns the VIP
+on a loopback interface with ARP suppressed, and replies to the client *directly*, bypassing the
+balancer — asymmetric routing by design. The balancer sees only inbound packets, typically 10–20%
+of the byte volume, so a small tier can front an enormous fleet. The costs: balancer and backends
+must share an L2 segment (usually impossible in cloud VPCs); ports cannot be rewritten; and the
+balancer never sees responses, so passive health detection is impossible.
 
 **Tunneling (IPIP or GRE, or GUE over UDP).** The balancer encapsulates the original packet in an
 outer IP header addressed to the backend, and the backend decapsulates and processes the inner
@@ -467,21 +463,20 @@ same key must reach the same backend, so that the backend's local cache is warm,
 session lives in one process, or so that per-key ordering is preserved.
 
 Naive `hash(key) mod N` is catastrophic under membership change: adding one backend to a fleet of
-20 remaps roughly 95% of keys. **Consistent hashing** (Karger et al., STOC 1997; see Volume 14,
-Chapter 5 for the full treatment) places both keys and backends on a ring and assigns each key to
-the next backend clockwise, so adding or removing a backend moves only ~`1/N` of keys. To get
-acceptable balance you need many **virtual nodes** per backend — typically 100–1000 — because the
-variance of a small number of random ring positions is large. Envoy's `RING_HASH` exposes this as
-`minimum_ring_size` (default 1024).
+20 remaps roughly 95% of keys. **Consistent hashing** (Karger et al., STOC 1997; Volume 14,
+Chapter 5 for the full treatment) places keys and backends on a ring and assigns each key to the
+next backend clockwise, so a membership change moves only about `1/N` of keys. Acceptable balance
+requires many **virtual nodes** per backend — typically hundreds — because the variance of a few
+random ring positions is large; Envoy's `RING_HASH` exposes this as `minimum_ring_size` (default
+1024).
 
 **Maglev hashing** (Eisenbud et al., *Maglev: A Fast and Reliable Software Network Load Balancer*,
-NSDI 2016) takes a different approach: precompute a fixed lookup table of size `M` (a prime, e.g.
-65537), where each entry names a backend, and look up `table[hash(key) mod M]`. Each backend
-generates a preference permutation over table slots from two hashes of its name, and backends take
-turns claiming their most-preferred free slot until the table is full. The result is *near-perfect*
-balance — every backend gets `M/N` entries, ±1 — with minimal (though, unlike ring hashing, not
-strictly optimal) disruption on membership change. Lookup is a single array index, which is why it
-suits a packet-rate datapath.
+NSDI 2016) instead precomputes a fixed lookup table of size `M` (a prime, e.g. 65537) whose entries
+name backends, and looks up `table[hash(key) mod M]`. Each backend derives a preference permutation
+over slots from two hashes of its name, and backends take turns claiming their most-preferred free
+slot until the table is full. The result is *near-perfect* balance — every backend gets `M/N`
+entries, ±1 — with minimal, though not strictly optimal, disruption on membership change. Lookup
+is a single array index, which is why it suits a packet-rate datapath.
 
 ```python
 def maglev_populate(backends, M=65537):
@@ -532,15 +527,12 @@ route:
 ```
 
 That `hash_balance_factor` is **consistent hashing with bounded loads** (Mirrokni, Thorup, and
-Zadimoghaddam; arXiv 2016, SODA 2018), and it is the fix for hashing's fundamental weakness: a hot
-key or a skewed key distribution overloads one backend, and pure hashing has no escape valve. With
-a bound of `c × mean`, an overloaded target forwards the key to the next host on the ring,
-preserving most affinity while capping the damage. Use it whenever your key space might be skewed
-— which is to say, almost always.
-
-Kubernetes note: `kube-proxy` in IPVS mode can be configured with the `mh` (Maglev hashing)
-scheduler, and IPVS added `mh` in Linux 4.18. This is how you get consistent-hash behavior for
-ClusterIP Services without deploying a userspace proxy.
+Zadimoghaddam; arXiv 2016, SODA 2018), and it fixes hashing's fundamental weakness: a hot key or a
+skewed key distribution overloads one backend and pure hashing has no escape valve. With a bound of
+`c × mean`, an overloaded target spills the key to the next host on the ring, preserving most
+affinity while capping the damage. Use it whenever your key space might be skewed — that is,
+almost always. (Kubernetes note: `kube-proxy` in IPVS mode can use the `mh` scheduler, which is
+how you get consistent-hash behavior for ClusterIP Services without a userspace proxy.)
 
 ## Health checking
 
@@ -733,20 +725,19 @@ at any time.
 ## Connection draining and graceful shutdown
 
 A rolling deploy replaces every instance in your fleet. If that shows up as a spike of 502s, your
-draining is broken. The correct sequence, for a backend behind an L7 balancer:
+draining is broken. The correct sequence for a backend behind an L7 balancer:
 
-1. **Announce departure before dying.** The instance starts failing readiness/health checks (or is
+1. **Announce departure before dying.** The instance starts failing readiness checks (or is
    deregistered from discovery) *while continuing to serve*. This is the critical inversion: fail
    the probe first, keep working second.
-2. **Wait for the balancer to notice.** This takes at least one probe interval times the unhealthy
-   threshold, plus propagation through service discovery. In Kubernetes, endpoint removal is
-   eventually consistent across every kubelet and every proxy — it is not instantaneous, and the
-   pod may receive traffic for seconds after `SIGTERM`.
+2. **Wait for the balancer to notice** — at least one probe interval times the unhealthy threshold,
+   plus discovery propagation. In Kubernetes, endpoint removal is eventually consistent across
+   every kubelet and proxy, so a pod may receive traffic for seconds after `SIGTERM`.
 3. **Stop accepting new work, finish in-flight work.** For HTTP/1.1, respond with
-   `Connection: close`. For HTTP/2, send `GOAWAY` — Envoy and gRPC servers implement the
-   two-stage variant: a first `GOAWAY` with a maximal last-stream-ID as a "stop sending me new
-   streams" hint, then after a drain interval a real `GOAWAY` that closes.
-4. **Hard-close after a drain timeout** so that a hung request cannot block the deploy forever.
+   `Connection: close`. For HTTP/2, send `GOAWAY` — Envoy and gRPC servers implement the two-stage
+   variant: a first `GOAWAY` with a maximal last-stream-ID as a "stop sending me new streams" hint,
+   then after a drain interval a real `GOAWAY` that closes.
+4. **Hard-close after a drain timeout** so a hung request cannot block the deploy forever.
 
 In Kubernetes the race in step 2 is the usual bug, and the standard mitigation is a `preStop` hook
 that delays `SIGTERM` long enough for endpoint removal to propagate:
@@ -893,49 +884,47 @@ to lose P2C's benefits and to make single-backend failures visible to specific c
 
 ## Distributed-systems lens
 
-**The balancer is a control plane, and its inputs are the risk.** Endpoint discovery, health
-state, and policy are three separate data flows, each with its own staleness and its own failure
-mode. A correct algorithm operating on a stale or wrong endpoint set produces a confidently wrong
-answer. When you debug a balancing problem, check the inputs before the algorithm: is the endpoint
-list current, is health state plausible, is the config the one you think it is (`envoy config_dump`,
-`haproxy -c`, the ALB target-health API).
+**The balancer is a control plane, and its inputs are the risk.** Endpoint discovery, health state,
+and policy are three separate data flows, each with its own staleness. A correct algorithm on a
+stale endpoint set produces a confidently wrong answer. When debugging a balancing problem, check
+the inputs before the algorithm: is the endpoint list current, is health state plausible, is the
+running config the one you think it is (`envoy config_dump`, `haproxy -c`, the ALB target-health
+API)?
 
 **L4-vs-L7 and proxy-vs-client-side are latency, cost, and blast-radius decisions.** Each L7 hop
 adds a queue and a parse; each shared proxy tier adds a correlated failure domain; each client-side
-implementation adds language surface area. The reason meshes won for east-west traffic is that a
-localhost sidecar gives you L7 policy with client-side topology, at the cost of one extra process
-per pod. The reason L4 tiers persist at the edge is that nothing else forwards 20 Mpps per host.
+implementation adds language surface area. Meshes won east-west traffic because a localhost sidecar
+gives L7 policy with client-side topology, at the cost of one process per pod. L4 tiers persist at
+the edge because nothing else forwards tens of millions of packets per second per host.
 
-**P2C plus EWMA is the modern mesh default precisely because it needs no global state.** In a
-system with hundreds of independent choosers, any algorithm requiring a consistent global view of
-load will either be stale (and herd) or expensive (and be a coordination bottleneck). P2C's
-guarantee holds under purely local information. If you take one algorithmic idea from this chapter
-into design reviews, take this one: *sampling two and comparing beats both global optimization and
-naive randomness, and it scales without coordination.*
+**P2C plus EWMA is the modern mesh default precisely because it needs no global state.** With
+hundreds of independent choosers, any algorithm requiring a consistent global view of load is
+either stale (and herds) or expensive (and becomes a coordination bottleneck). P2C's guarantee
+holds under purely local information. If you take one algorithmic idea from this chapter into
+design reviews, take this one: *sampling two and comparing beats both global optimization and naive
+randomness, and it scales without coordination.*
 
-**Health checking is the mechanism by which load balancers cause correlated failure.** Every
-health system faces the same trade-off: eject aggressively and you convert a transient blip into a
-capacity crisis; eject conservatively and you serve errors from dead backends. The asymmetry to
-internalize is that *ejecting too much is unbounded and ejecting too little is bounded*. A
-too-conservative health check costs you the error rate of the broken fraction. A too-aggressive one
-can take the whole service to zero. Hence `max_ejection_percent`, hence panic thresholds, hence
-shallow health endpoints. Combine bad health checks with retries (Chapter 11) and you get the full
-cascade: ejections shrink capacity, remaining backends overload, retries multiply the load,
-more backends are ejected. Retry budgets, circuit breakers, and health-ejection caps are all the
-same defense — bounding the amplification factor of a feedback loop.
+**Health checking is the mechanism by which load balancers cause correlated failure.** Eject
+aggressively and you convert a transient blip into a capacity crisis; eject conservatively and you
+serve errors from dead backends. The asymmetry to internalize is that *ejecting too little is
+bounded and ejecting too much is not*: a conservative check costs you the error rate of the broken
+fraction, while an aggressive one can take the service to zero. Hence `max_ejection_percent`, hence
+panic thresholds, hence shallow health endpoints. Combine bad health checks with retries (Chapter
+11) and you get the full cascade: ejections shrink capacity, survivors overload, retries multiply
+load, more backends are ejected. Retry budgets, circuit breakers, and ejection caps are the same
+defense — bounding the amplification factor of a feedback loop.
 
-**Consistent hashing turns a fleet's caches into one cache.** The economics are worth stating
-explicitly: with N replicas and random balancing, each replica caches the full hot set and your
-effective cache is one replica's memory. With consistent hashing on the cache key, each replica
-caches 1/N of the key space and your effective cache is N times larger. This is why cache tiers,
-CDN mid-tiers (Chapter 10), and shard-aware clients all hash. Always pair it with bounded loads,
-because real key distributions are Zipfian and hashing has no answer to a hot key on its own.
+**Consistent hashing turns a fleet's caches into one cache.** With N replicas and random balancing,
+every replica caches the full hot set and your effective cache is one replica's memory. Hash on the
+cache key and each replica caches 1/N of the key space, making the effective cache N times larger.
+This is why cache tiers, CDN mid-tiers (Chapter 10), and shard-aware clients all hash — always with
+bounded loads, because real key distributions are Zipfian.
 
-**Anycast + ECMP + Maglev is the hyperscale ingress pattern**, and its elegance is that each layer
+**Anycast + ECMP + Maglev is the hyperscale ingress pattern**, and its elegance is that every layer
 is stateless and independently scalable: BGP handles geography, ECMP handles balancer-tier
-distribution, deterministic hashing handles backend selection, and encapsulation handles the
-return path. No layer needs to know what the others decided, and any layer can lose members
-without breaking flows.
+distribution, deterministic hashing handles backend selection, encapsulation handles the return
+path. No layer needs to know what the others decided, and any layer can lose members without
+breaking flows.
 
 ## Key takeaways
 

@@ -377,24 +377,22 @@ plane streams configuration to a proxy. Each resource type has its own service:
 
 Mechanically, the proxy opens a bidirectional gRPC stream and sends a `DiscoveryRequest` naming a
 type URL (for example `type.googleapis.com/envoy.config.cluster.v3.Cluster`), the resource names
-it wants (empty means "all", a wildcard subscription), and the last `version_info` and
-`response_nonce` it accepted. The server replies with a `DiscoveryResponse` containing a
-`version_info`, a `nonce`, and the resources. The proxy then **ACKs** by sending a new request
-echoing that version and nonce, or **NACKs** by echoing the *previous* good version along with an
-`error_detail`. This is the single most useful fact about xDS for debugging: a proxy that rejects
-bad config keeps running the last good config, and the rejection shows up as a NACK on the control
-plane, not as an outage — but also not as a visible change, which is why "I pushed the config and
-nothing happened" is nearly always a NACK you have not looked for.
+it wants (empty means "all"), and the last `version_info` and `response_nonce` it accepted. The
+server replies with a `DiscoveryResponse` carrying a `version_info`, a `nonce`, and the resources.
+The proxy then **ACKs** by echoing that version and nonce, or **NACKs** by echoing the *previous*
+good version plus an `error_detail`. That is the single most useful xDS fact for debugging: a
+proxy rejecting bad config keeps running the last good config, so the failure appears as a NACK on
+the control plane rather than an outage — and "I pushed config and nothing happened" is nearly
+always a NACK nobody looked for.
 
 Two refinements matter in practice. **ADS (Aggregated Discovery Service)** multiplexes all
 resource types onto one stream to one management server, which is the only way to get ordering
-guarantees: because Envoy will not accept a route referencing an unknown cluster, or a cluster
-whose endpoints have not arrived, updates must be sequenced (make-before-break: CDS then EDS then
-LDS then RDS on the way in, reverse on the way out). Separate streams to separate servers cannot
-provide that. **Delta (incremental) xDS** sends only changed resources and explicit removals
-rather than the full state of the world on every update. For a mesh with tens of thousands of
-endpoints churning constantly, state-of-the-world pushes are the dominant cost on both control
-plane CPU and proxy CPU; delta is what keeps large meshes affordable.
+guarantees: Envoy will not accept a route referencing an unknown cluster, so updates must be
+sequenced make-before-break (CDS, EDS, LDS, RDS on the way in; reverse on the way out), and
+separate streams cannot provide that. **Delta (incremental) xDS** sends only changed resources and
+explicit removals instead of the full state of the world. In a mesh with tens of thousands of
+churning endpoints, state-of-the-world pushes dominate both control-plane and proxy CPU; delta is
+what keeps large meshes affordable.
 
 This is why xDS made the mesh possible. Every prior generation of proxy needed a config file and
 a reload to learn that an endpoint appeared or vanished; in a cluster where pods churn
@@ -710,40 +708,36 @@ makes. Without in-process propagation you get disconnected single-hop spans, not
 ## The costs, honestly
 
 **Latency.** Every meshed call traverses two extra proxies — the caller's sidecar and the
-callee's. Each hop adds a kernel-crossing pair, a userspace parse and policy evaluation, and TLS
-processing. Vendor benchmarks generally report per-hop overhead in the sub-millisecond to
-low-single-digit-millisecond range at moderate load, and both Istio and Linkerd publish their
-methodology; treat every published number as approximate and specific to a version and workload,
-and measure your own. What is not approximate is the structure: the tax is per hop, so a
-call graph seven services deep pays it fourteen times, and it lands hardest on services whose own
-p50 is a few hundred microseconds. Meshing a chatty, ultra-low-latency internal path is where
-meshes disappoint people.
+callee's — each adding kernel crossings, a userspace parse and policy evaluation, and TLS work.
+Vendor benchmarks generally report per-hop overhead in the sub-millisecond to
+low-single-digit-millisecond range at moderate load; treat every published number as approximate
+and specific to a version and workload, and measure your own. The structure, however, is not
+approximate: the tax is per hop, so a call graph seven services deep pays it fourteen times, and
+it lands hardest on services whose own p50 is a few hundred microseconds. Meshing a chatty,
+ultra-low-latency internal path is where meshes disappoint people.
 
-**Resources.** A sidecar's memory is dominated by its configuration — the number of clusters,
-routes, and endpoints it knows about — and its CPU scales with request rate and TLS work. In a
-cluster with thousands of pods and no scoping, every sidecar holding config for every service is a
-real, avoidable expense. Istio's `Sidecar` resource, which restricts a workload's config to a
-declared set of dependencies, routinely produces large reductions; so does turning on delta xDS.
-Multiply the residual per-pod cost by pod count before you sign off.
+**Resources.** A sidecar's memory is dominated by its configuration — the clusters, routes, and
+endpoints it knows about — and its CPU scales with request rate and TLS work. In a cluster with
+thousands of pods and no scoping, every sidecar holding config for every service is a real,
+avoidable expense; Istio's `Sidecar` resource and delta xDS both cut it substantially. Multiply
+the residual per-pod cost by pod count before you sign off.
 
 **Operational complexity.** The mesh is a distributed system you now operate in addition to your
 own. Version skew between control plane and data plane must be managed (both Istio and Linkerd
 publish supported skew windows and canary-upgrade procedures). Certificate expiry in the mesh CA
 is a fleet-wide outage class that did not previously exist. And container lifecycle interacts
-badly with sidecars in ways that generated years of workarounds: an application container that
-starts before the sidecar is ready sees connection failures, and a `Job` whose sidecar never exits
-never completes. Kubernetes' native sidecar support — init containers with `restartPolicy: Always`,
-which start before and terminate after regular containers — addresses this properly; it went beta
-and on by default in Kubernetes 1.29 and has since stabilized, and meshes have adopted it. If you
-are on older versions you are living with the workarounds (`holdApplicationUntilProxyStarts`,
-lifecycle-hook shutdown hacks).
+badly with sidecars: an application container that starts before its sidecar is ready sees
+connection failures, and a `Job` whose sidecar never exits never completes. Kubernetes' native
+sidecar support — init containers with `restartPolicy: Always`, which start before and terminate
+after regular containers — addresses this properly; it went beta and on by default in Kubernetes
+1.29 and has since stabilized. On older versions you live with the workarounds
+(`holdApplicationUntilProxyStarts` and lifecycle-hook shutdown hacks).
 
-**Debuggability.** A mesh inserts hops that engineers cannot see with the tools they know. A
-`503` may originate at the application, at the callee sidecar, or at the caller sidecar, and only
-the proxy's response flags distinguish them: `UF` upstream connection failure, `UO` upstream
-overflow (circuit breaker tripped), `NR` no route configured, `URX` retry limit exceeded, `UAEX`
-external authorization denied. Teach these to your on-call engineers, and make the following
-commands muscle memory:
+**Debuggability.** A mesh inserts hops engineers cannot see with the tools they know. A `503` may
+originate at the application, the callee sidecar, or the caller sidecar, and only the proxy's
+response flags distinguish them: `UF` upstream connection failure, `UO` upstream overflow (circuit
+breaker tripped), `NR` no route configured, `URX` retry limit exceeded, `UAEX` external
+authorization denied. Teach these to on-call, and make these commands muscle memory:
 
 ```bash
 # Which proxies are in sync with the control plane?
@@ -900,15 +894,13 @@ sequenceDiagram
 ### Cache keys, TTLs, and the semantics that matter
 
 The **cache key** determines what counts as "the same object". By default it is roughly scheme +
-host + path + query string, and every part of that default is a hazard. Marketing query
-parameters (`utm_source` and friends) fragment the cache into thousands of identical copies unless
-you strip them; a key that *omits* a parameter your origin varies on serves the wrong content to
-everybody. The `Vary` response header extends the key by named request headers — `Vary:
-Accept-Encoding` is correct and necessary, `Vary: User-Agent` is a cache-destroying mistake given
-the cardinality of that header, and `Vary: Cookie` on a page with a per-user session cookie means
-a hit rate of approximately zero. Modern CDNs let you write the key explicitly (normalize the
-`Accept-Encoding` header to a small set, include a device-class variable, include a currency,
-exclude everything else); do it deliberately.
+host + path + query string, and every part of that default is a hazard. Marketing query parameters
+(`utm_source` and friends) fragment the cache into thousands of identical copies unless stripped;
+a key that *omits* a parameter your origin varies on serves the wrong content to everybody. The
+`Vary` response header extends the key by named request headers — `Vary: Accept-Encoding` is
+correct and necessary, `Vary: User-Agent` is cache-destroying given that header's cardinality, and
+`Vary: Cookie` on a page with a per-user session cookie yields a hit rate near zero. Modern CDNs
+let you write the key explicitly; do so deliberately.
 
 Freshness is governed by HTTP caching semantics (RFC 9111, Chapter 7), and the split between
 browser and CDN is what most people get wrong:
@@ -923,34 +915,28 @@ Vary: Accept-Encoding
 ```
 
 `max-age` binds private caches (the browser); `s-maxage` overrides it for shared caches;
-`CDN-Cache-Control` (a targeted cache-control field, per RFC 9213) overrides both for the CDN
-specifically, letting you keep an object for an hour at the edge while telling browsers to
-recheck every minute. `stale-while-revalidate` (RFC 5861) permits the cache to serve a stale copy
-immediately while it refreshes asynchronously — a latency win that also decouples user-visible
-latency from origin latency. `stale-if-error` permits serving stale content when the origin
-returns 5xx or is unreachable, which is one of the cheapest availability improvements available to
-any web system: your origin can be down and your catalog pages still render. Distinguish
-`no-cache` (may store, must revalidate before reuse) from `no-store` (must not persist at all);
-they are not synonyms, and using `no-store` where you meant `no-cache` throws away all
-revalidation benefit. Diagnostics are increasingly standardized too: the `Cache-Status` response
-header (RFC 9211) reports hit/miss and remaining TTL per cache in the chain, e.g.
-`Cache-Status: ExampleCDN; hit; ttl=376`.
+`CDN-Cache-Control` (a targeted cache-control field, RFC 9213) overrides both for the CDN
+specifically, letting you hold an object for an hour at the edge while browsers recheck every
+minute. `stale-while-revalidate` (RFC 5861) lets a cache serve a stale copy immediately and
+refresh asynchronously, decoupling user-visible latency from origin latency. `stale-if-error`
+permits serving stale content when the origin returns 5xx or is unreachable — one of the cheapest
+availability improvements available to any web system: your origin can be down and catalog pages
+still render. Distinguish `no-cache` (may store, must revalidate before reuse) from `no-store`
+(must not persist at all); using the latter where you meant the former throws away all
+revalidation benefit. Diagnostics are standardized too: `Cache-Status` (RFC 9211) reports hit/miss
+and remaining TTL per cache in the chain, e.g. `Cache-Status: ExampleCDN; hit; ttl=376`.
 
 ### Invalidation
 
-Two hard problems in computer science, and this is one of them. Three strategies, in increasing
-order of sophistication:
+Three strategies, in increasing order of sophistication:
 
 1. **Versioned URLs.** Put a content hash in the path (`/static/app.4f9c2a.js`) and cache
    immutably (`Cache-Control: public, max-age=31536000, immutable`). Never invalidate; publish a
-   new URL. This is correct for build artifacts and should be the default for anything your
-   bundler produces.
-2. **Purge by URL.** Explicit, exact, and unusable at scale when one data change affects a hundred
-   URLs.
+   new URL. This should be the default for anything your bundler produces.
+2. **Purge by URL.** Exact, and unusable at scale when one data change affects a hundred URLs.
 3. **Purge by surrogate key / cache tag.** Tag responses with content identifiers on the way out
-   and purge by tag when the underlying entity changes. A product page, the category listing that
-   embeds it, and the API response that serves it all carry `product-42`; one purge invalidates
-   all three:
+   and purge by tag when the entity changes. A product page, the category listing embedding it,
+   and the API response serving it all carry `product-42`; one purge invalidates all three:
 
 ```bash
 # Fastly: purge everything tagged product-42, service-wide
@@ -965,21 +951,20 @@ curl -X POST -H "Fastly-Key: $FASTLY_API_TOKEN" \
 ```
 
 Soft purge deserves emphasis: hard-purging a hot object across a global fleet converts a cache hit
-into a synchronized global miss — a self-inflicted stampede. Soft purge marks the object stale so
-the first request triggers revalidation while everyone else is served the old copy for a moment.
-Cache-tag purging is offered by most major CDNs (Fastly's `Surrogate-Key`, Cloudflare's cache tags
-on higher plans, Akamai's cache tags); check availability for your plan before designing around it.
+into a synchronized global miss — a self-inflicted stampede. Soft purge marks the object stale, so
+the first request revalidates while everyone else is briefly served the old copy. Cache-tag
+purging is offered by most major CDNs, though sometimes only on higher plans; check before
+designing around it.
 
 ### Dynamic content, edge compute, and what the backend gets
 
 Uncacheable responses still benefit from a CDN. Terminating TLS and TCP/QUIC at a PoP 10 ms away
-instead of 150 ms away removes most of the handshake cost from the critical path: the expensive
-round trips happen over the short leg, while the long leg to origin rides a pre-warmed,
-congestion-window-open, persistent connection the CDN maintains. TLS 1.3 (Chapter 6) and QUIC
-(Chapter 4) amplify this — 1-RTT handshakes, 0-RTT resumption for repeat visitors, and no
-head-of-line blocking on lossy mobile paths. If you enable 0-RTT, understand the replay exposure:
-early data can be replayed by an attacker, so it must be restricted to safe, idempotent requests
-(RFC 8470 defines the HTTP handling, including the `425 Too Early` status).
+instead of 150 ms away removes most handshake cost from the critical path: the expensive round
+trips happen over the short leg, while the long leg to origin rides a pre-warmed, persistent
+connection the CDN already maintains. TLS 1.3 (Chapter 6) and QUIC (Chapter 4) amplify this —
+1-RTT handshakes, 0-RTT resumption, no head-of-line blocking on lossy mobile paths. If you enable
+0-RTT, understand the replay exposure: early data can be replayed, so it must be restricted to
+safe, idempotent requests (RFC 8470 defines the HTTP handling and the `425 Too Early` status).
 
 **Edge compute** — Cloudflare Workers, Fastly Compute, AWS Lambda@Edge and CloudFront Functions,
 Akamai EdgeWorkers — runs your code in the PoP. The good use cases are those where running at the
