@@ -176,14 +176,14 @@ until then their paths are as listed above).
 ## Volume 5 — Databases and Storage Systems (`vol-05-databases/`)
 
 - [x] 5.01 The Relational Model and SQL Semantics — `ch01-relational-sql.md`
-- [ ] 5.02 Storage Engines: B-Trees vs LSM-Trees — `ch02-storage-engines.md`
+- [x] 5.02 Storage Engines: B-Trees vs LSM-Trees — `ch02-storage-engines.md`
 - [x] 5.03 Indexing in Depth — `ch03-indexing.md`
 - [x] 5.04 Query Processing and Optimization — `ch04-query-optimization.md`
 - [x] 5.05 Transactions and ACID — `ch05-transactions-acid.md`
 - [x] 5.06 Isolation Levels and MVCC — `ch06-isolation-mvcc.md`
-- [ ] 5.07 Write-Ahead Logging and Crash Recovery — `ch07-wal-recovery.md`
-- [ ] 5.08 Replication: Physical, Logical, Sync, Async — `ch08-replication.md`
-- [ ] 5.09 Partitioning and Sharding — `ch09-partitioning-sharding.md`
+- [x] 5.07 Write-Ahead Logging and Crash Recovery — `ch07-wal-recovery.md`
+- [x] 5.08 Replication: Physical, Logical, Sync, Async — `ch08-replication.md`
+- [x] 5.09 Partitioning and Sharding — `ch09-partitioning-sharding.md`
 - [ ] 5.10 Distributed Transactions: 2PC, Sagas — `ch10-distributed-transactions.md`
 - [ ] 5.11 NoSQL: KV, Document, Wide-Column, Graph — `ch11-nosql.md`
 - [ ] 5.12 NewSQL and Distributed SQL — `ch12-newsql.md`
