@@ -202,7 +202,7 @@ until then their paths are as listed above).
 - [ ] 6.08 Coordination Services: ZooKeeper and etcd — `ch08-coordination.md`
 - [x] 6.09 Idempotency, Deduplication, Exactly-Once — `ch09-idempotency.md`
 - [ ] 6.10 Failure Detection and Membership: Gossip, SWIM — `ch10-failure-detection.md`
-- [ ] 6.11 CRDTs and Eventual Consistency — `ch11-crdts.md`
+- [x] 6.11 CRDTs and Eventual Consistency — `ch11-crdts.md`
 - [ ] 6.12 Testing Distributed Systems: Jepsen, Chaos, Simulation — `ch12-testing.md`
 
 ## Volume 7 — System Design and Architecture (`vol-07-system-design/`)
