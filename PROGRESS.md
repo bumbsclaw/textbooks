@@ -185,10 +185,10 @@ until then their paths are as listed above).
 - [x] 5.08 Replication: Physical, Logical, Sync, Async — `ch08-replication.md`
 - [x] 5.09 Partitioning and Sharding — `ch09-partitioning-sharding.md`
 - [ ] 5.10 Distributed Transactions: 2PC, Sagas — `ch10-distributed-transactions.md`
-- [ ] 5.11 NoSQL: KV, Document, Wide-Column, Graph — `ch11-nosql.md`
-- [ ] 5.12 NewSQL and Distributed SQL — `ch12-newsql.md`
-- [ ] 5.13 Specialized Stores: Search, Time-Series, Analytics — `ch13-specialized-stores.md`
-- [ ] 5.14 Operating Databases: Pooling, Migrations, Scaling — `ch14-operating-databases.md`
+- [x] 5.11 NoSQL: KV, Document, Wide-Column, Graph — `ch11-nosql.md`
+- [x] 5.12 NewSQL and Distributed SQL — `ch12-newsql.md`
+- [x] 5.13 Specialized Stores: Search, Time-Series, Analytics — `ch13-specialized-stores.md`
+- [x] 5.14 Operating Databases: Pooling, Migrations, Scaling — `ch14-operating-databases.md`
 
 ## Volume 6 — Distributed Systems (`vol-06-distributed-systems/`)
 
