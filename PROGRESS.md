@@ -193,14 +193,14 @@ until then their paths are as listed above).
 ## Volume 6 — Distributed Systems (`vol-06-distributed-systems/`)
 
 - [x] 6.01 Foundations: Models, Failures, Assumptions — `ch01-foundations.md`
-- [ ] 6.02 Time, Clocks, and Ordering — `ch02-time-clocks.md`
+- [x] 6.02 Time, Clocks, and Ordering — `ch02-time-clocks.md`
 - [x] 6.03 Replication and Consistency Models — `ch03-consistency-models.md`
 - [x] 6.04 CAP, PACELC, and Trade-Offs — `ch04-cap-pacelc.md`
 - [x] 6.05 Consensus I: Paxos — `ch05-paxos.md`
 - [x] 6.06 Consensus II: Raft — `ch06-raft.md`
-- [ ] 6.07 Quorum Systems and Dynamo-Style Replication — `ch07-quorums-dynamo.md`
+- [x] 6.07 Quorum Systems and Dynamo-Style Replication — `ch07-quorums-dynamo.md`
 - [ ] 6.08 Coordination Services: ZooKeeper and etcd — `ch08-coordination.md`
-- [ ] 6.09 Idempotency, Deduplication, Exactly-Once — `ch09-idempotency.md`
+- [x] 6.09 Idempotency, Deduplication, Exactly-Once — `ch09-idempotency.md`
 - [ ] 6.10 Failure Detection and Membership: Gossip, SWIM — `ch10-failure-detection.md`
 - [ ] 6.11 CRDTs and Eventual Consistency — `ch11-crdts.md`
 - [ ] 6.12 Testing Distributed Systems: Jepsen, Chaos, Simulation — `ch12-testing.md`
