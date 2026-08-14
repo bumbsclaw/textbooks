@@ -166,21 +166,21 @@ until then their paths are as listed above).
 - [x] 4.02 Threads, Mutual Exclusion, and Locks — `ch02-threads-locks.md`
 - [x] 4.03 Memory Models and Happens-Before — `ch03-memory-models.md`
 - [x] 4.04 Atomics, CAS, and Lock-Free Data Structures — `ch04-lock-free.md`
-- [ ] 4.05 Deadlock, Livelock, and Starvation — `ch05-deadlock.md`
-- [ ] 4.06 Asynchronous I/O and Event Loops — `ch06-async-io.md`
-- [ ] 4.07 The Actor Model, CSP, and Channels — `ch07-actors-csp.md`
-- [ ] 4.08 Coroutines and Structured Concurrency — `ch08-structured-concurrency.md`
-- [ ] 4.09 Concurrency Patterns for Backend Services — `ch09-patterns.md`
-- [ ] 4.10 Testing and Debugging Concurrent Systems — `ch10-testing-concurrency.md`
+- [x] 4.05 Deadlock, Livelock, and Starvation — `ch05-deadlock.md`
+- [x] 4.06 Asynchronous I/O and Event Loops — `ch06-async-io.md`
+- [x] 4.07 The Actor Model, CSP, and Channels — `ch07-actors-csp.md`
+- [x] 4.08 Coroutines and Structured Concurrency — `ch08-structured-concurrency.md`
+- [x] 4.09 Concurrency Patterns for Backend Services — `ch09-patterns.md`
+- [x] 4.10 Testing and Debugging Concurrent Systems — `ch10-testing-concurrency.md`
 
 ## Volume 5 — Databases and Storage Systems (`vol-05-databases/`)
 
-- [ ] 5.01 The Relational Model and SQL Semantics — `ch01-relational-sql.md`
+- [x] 5.01 The Relational Model and SQL Semantics — `ch01-relational-sql.md`
 - [ ] 5.02 Storage Engines: B-Trees vs LSM-Trees — `ch02-storage-engines.md`
-- [ ] 5.03 Indexing in Depth — `ch03-indexing.md`
-- [ ] 5.04 Query Processing and Optimization — `ch04-query-optimization.md`
-- [ ] 5.05 Transactions and ACID — `ch05-transactions-acid.md`
-- [ ] 5.06 Isolation Levels and MVCC — `ch06-isolation-mvcc.md`
+- [x] 5.03 Indexing in Depth — `ch03-indexing.md`
+- [x] 5.04 Query Processing and Optimization — `ch04-query-optimization.md`
+- [x] 5.05 Transactions and ACID — `ch05-transactions-acid.md`
+- [x] 5.06 Isolation Levels and MVCC — `ch06-isolation-mvcc.md`
 - [ ] 5.07 Write-Ahead Logging and Crash Recovery — `ch07-wal-recovery.md`
 - [ ] 5.08 Replication: Physical, Logical, Sync, Async — `ch08-replication.md`
 - [ ] 5.09 Partitioning and Sharding — `ch09-partitioning-sharding.md`
@@ -330,3 +330,5 @@ until then their paths are as listed above).
 - 2026-07-31: Vol 2 batch 31 done (2.05, 2.06, 2.07). Next: 2.08, 2.09, 2.10.
 - 2026-08-14: Vol 4 batch 1 done (4.01-4.04). Written directly after the Workflow subagent
   harness failed three runs with permission-handler errors. Next: 4.05, 4.06, 4.07.
+- 2026-08-14: *** VOLUME 4 (Concurrency) COMPLETE — 10 chapters. *** Vol 5 started: 5.01, 5.03-5.06 done
+  (agent batch interrupted by session limit; 5.02, 5.07-5.10 to re-run). Volumes 5-15 scaffolded.
