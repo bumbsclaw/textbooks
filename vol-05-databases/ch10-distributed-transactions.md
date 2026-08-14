@@ -43,18 +43,18 @@ Learning goals — after this chapter you should be able to:
 ## The problem: local ACID does not compose
 
 Everything in Chapter 5 rested on a single moment: the forced write of the commit record to the
-WAL. Before that write, a crash means the transaction never happened; after it, a crash means
-recovery replays it to completion. Atomicity is real because there is exactly one bit, in one
-place, whose durable transition *is* the commit.
+WAL. Before that write, a crash means the transaction never happened; after it, recovery replays
+it to completion. Atomicity is real because there is exactly one bit, in one place, whose
+durable transition *is* the commit.
 
 Now put a second transactional resource into the operation. An order service writes its
-PostgreSQL database and publishes an `OrderPaid` event to Kafka. A payment flow debits one bank's
-ledger and credits another's. A checkout updates the orders shard and the inventory shard —
-which, after Chapter 9, may be two different PostgreSQL clusters that merely look like one
-logical database. Each resource still has its own commit point, its own log, its own recovery.
-But there are now *two* bits in *two* places, and no machine instruction flips both at once. Any
-protocol you build must issue two separate commits, and between them the process can crash, the
-network can partition, or the second resource can simply say no.
+PostgreSQL database and publishes an `OrderPaid` event to Kafka. A payment flow debits one
+bank's ledger and credits another's. A checkout updates the orders shard and the inventory shard
+— which, after Chapter 9, may be two PostgreSQL clusters that merely look like one logical
+database. Each resource still has its own commit point, its own log, its own recovery. But there
+are now *two* bits in *two* places, and no machine instruction flips both at once. Any protocol
+you build must issue two separate commits, and between them the process can crash, the network
+can partition, or the second resource can simply say no.
 
 This is not an edge case; it is the default condition of service-oriented architecture. The
 moment you split data across services — each owning its store — every business operation that
@@ -267,18 +267,17 @@ Set the crashes aside; the sunny-day protocol is expensive too.
 
 **Latency.** Two sequential network round trips, plus at least two forced-write points on the
 critical path: every participant's prepare record, then the coordinator's decision record —
-each an `fsync` (Chapter 7 taught you what those cost). Commit latency is governed by the
-*slowest* participant in each phase, so the p99 of the distributed commit is roughly the max of
-the participants' p99s, plus the coordinator's write, plus the round trips.
+each an `fsync` (Chapter 7 taught you what those cost). Each phase waits for the *slowest*
+participant, so the distributed commit's p99 is roughly the max of the participants' p99s, plus
+the coordinator's write, plus the round trips.
 
 **Availability.** A 2PC transaction can commit only when the coordinator *and every participant*
 are simultaneously up and reachable. Availability multiplies: five participants at 99.5% each,
 with a 99.5% coordinator, yields roughly `0.995^6 ≈ 0.970` — about 2.6 days of unavailability a
-year for the composed operation, an order of magnitude worse than any single component. The more
-resources you enroll, the worse both numbers get. This is the precise, quantitative sense in
-which distributed transactions "don't scale": each additional participant multiplies the failure
-probability and takes a max over latencies, while the blocking window puts all participants at
-the mercy of any one of them.
+year for the composed operation, an order of magnitude worse than any single component. This is
+the precise sense in which distributed transactions "don't scale": each added participant
+multiplies the failure probability and takes a max over latencies, while the blocking window
+puts every participant at the mercy of any one of them.
 
 ### XA, and why app-server XA fell out of favor
 
@@ -334,9 +333,9 @@ Volume 6's subject.
 
 If 2PC's price is unacceptable and the operation still spans resources, the alternative is to
 stop pretending the operation is one transaction and engineer it as several. Hector
-Garcia-Molina and Kenneth Salem named this pattern **sagas** in 1987 — originally for *long-lived
-transactions* inside a single database, where holding locks for the duration of a multi-hour
-batch job was intolerable. The microservices world rediscovered the paper because its problem is
+Garcia-Molina and Kenneth Salem named this pattern **sagas** in 1987 — originally for
+*long-lived transactions* inside a single database, where holding locks for a multi-hour batch
+job was intolerable. The microservices world rediscovered the paper because its problem is
 structurally identical: a multi-step business operation where holding cross-resource locks for
 the duration is impossible.
 
@@ -363,14 +362,13 @@ flowchart TB
 
 ### What a saga is not: the missing I
 
-Here is the sentence to tattoo somewhere visible: **a saga is not a transaction.** It preserves a
-weak form of atomicity — eventually, all-or-compensated — and each step is individually durable.
-It provides **no isolation whatsoever.** Between `T1` and the saga's end, every intermediate
-state is committed and visible to the entire world: other transactions, other sagas, users. In
-Chapter 6's vocabulary, running your operation as a saga is running it below READ UNCOMMITTED
-with respect to the saga as a whole — other work reads and *writes against* your intermediate
-states, and those are not even dirty reads you could blame on an isolation level, because every
-one of them is a committed local transaction.
+Here is the sentence to tattoo somewhere visible: **a saga is not a transaction.** It preserves
+a weak form of atomicity — eventually, all-or-compensated — and each step is individually
+durable. It provides **no isolation whatsoever.** Between `T1` and the saga's end, every
+intermediate state is committed and visible to the entire world: other transactions, other
+sagas, users. Other work reads and *writes against* your intermediate states, and these are not
+even dirty reads you could blame on an isolation level (Chapter 6) — every one of them is a
+committed local transaction.
 
 The anomalies are concrete. *Lost updates between steps*: the inventory your saga reserved in
 `T2` is released by a concurrent cancellation saga that read stale order state, and your `T4`
@@ -438,12 +436,11 @@ position. The two answers differ in where that knowledge lives.
 **Orchestration** makes it explicit: a coordinator — a persistent state machine — invokes each
 step, records the result durably, and decides what happens next. The saga's definition is code
 you can read in one place, and the saga's *state* is a row you can query. This is conceptually
-what Temporal and AWS Step Functions provide as infrastructure: the workflow engine persists the
-state machine's position (Temporal by durably logging every event in the workflow's history and
-replaying it to reconstruct state; Step Functions as a managed state-machine execution), so the
-orchestrator itself is no longer a singular process whose crash loses the saga — the pattern's
-own coordinator-death problem, solved by making coordinator state durable and resumable rather
-than by consensus.
+what Temporal and AWS Step Functions provide as infrastructure: the engine persists the state
+machine's position (Temporal by durably logging the workflow's event history and replaying it to
+reconstruct state; Step Functions as a managed state-machine execution), so the orchestrator is
+not a singular process whose crash loses the saga — the pattern's own coordinator-death problem,
+solved by making coordinator state durable and resumable rather than by consensus.
 
 ```python
 # Orchestrated saga as a persisted state machine (conceptual pseudo-code).
@@ -570,36 +567,35 @@ COMMIT;
 Two consequences are load-bearing. First, delivery is **at-least-once**, irreducibly: the relay
 can crash after publishing and before marking `published_at`, and will re-publish on restart.
 The outbox therefore *requires* its other half — **idempotent consumers** that deduplicate on
-`event_id` (Volume 6, Chapter 9); the pair is the pattern, and deploying the outbox without
-consumer idempotency merely trades missing events for duplicate ones. Second, ordering is per
-aggregate at best: publish keyed by `aggregate_id` so one entity's events land in one partition
-in order, and note that `SKIP LOCKED` with multiple competing relays can reorder across batches —
-if per-aggregate order matters, shard relays by aggregate rather than racing them.
+`event_id` (Volume 6, Chapter 9); deploying the outbox without consumer idempotency merely
+trades missing events for duplicate ones. Second, ordering is per aggregate at best: publish
+keyed by `aggregate_id` so one entity's events land in one partition in order, and note that
+`SKIP LOCKED` with competing relays can reorder across batches — if per-aggregate order matters,
+shard relays by aggregate rather than racing them.
 
 The polling relay's tail latency and load have a sharper alternative: a **CDC-based relay**
 (Debezium is the canonical one) tails the database's WAL through the replication protocol —
 literally the logical-decoding interface of Chapters 7 and 8 — and streams committed outbox
 inserts to the broker with no polling at all. The commit record in the WAL *is* the event's
-release; the same forced write that made the transaction durable makes the event eligible for
-publication, which is as close as this architecture gets to poetry. Relay operations, exactly-once
-niceties, topic routing, and outbox table hygiene get their full treatment in Volume 10,
-Chapter 6; event sourcing — where the log stops being a side-channel and becomes the store —
-is Volume 10, Chapter 5.
+release: the same forced write that made the transaction durable makes the event eligible for
+publication. Relay operations, topic routing, and outbox hygiene get their full treatment in
+Volume 10, Chapter 6; event sourcing — where the log stops being a side-channel and becomes the
+store — is Volume 10, Chapter 5.
 
 ## Try-Confirm-Cancel, briefly
 
-TCC deserves a short honest note because it recurs in payments architectures. It is 2PC lifted
-out of the database and into the business layer: **Try** executes a *reservation* — an
-application-level prepare that sets aside resources in a business-visible pending state (an
-authorization hold on a card, a seat hold with a 10-minute expiry) — then **Confirm** makes all
-reservations final, or **Cancel** releases them. The improvement over XA is that the "prepared"
-state is not a database lock but a first-class business object with a **timeout**: an unconfirmed
-hold expires on its own, so a dead coordinator inconveniences rather than blocks. The costs are
-that every participating service must design and expose all three operations, Confirm/Cancel must
-be idempotent (the coordinator retries them), and expiry races confirmation — the hold that
-expires just as Confirm arrives must be handled explicitly. TCC is best understood as a saga
-whose first phase is deliberately shaped like 2PC's prepare — reservations instead of locks,
-expiry instead of blocking.
+TCC recurs in payments architectures and deserves a short honest note. It is 2PC lifted out of
+the database and into the business layer: **Try** executes a *reservation* — an application-level
+prepare that sets aside resources in a business-visible pending state (an authorization hold on
+a card, a seat hold with a 10-minute expiry) — then **Confirm** makes all reservations final, or
+**Cancel** releases them. The improvement over XA is that the "prepared" state is not a database
+lock but a first-class business object with a **timeout**: an unconfirmed hold expires on its
+own, so a dead coordinator inconveniences rather than blocks. The costs: every participating
+service must design and expose all three operations, Confirm and Cancel must be idempotent (the
+coordinator retries them), and expiry races confirmation — the hold that expires just as Confirm
+arrives must be handled explicitly. TCC is best understood as a saga whose first phase is
+deliberately shaped like 2PC's prepare — reservations instead of locks, expiry instead of
+blocking.
 
 ## Choosing honestly: the decision ladder
 
@@ -623,20 +619,18 @@ problem, and the outbox is its complete solution. No new infrastructure beyond a
 relay; failure modes are duplicates, not inconsistency.
 
 **Rung 3 — a saga, for genuine multi-service workflows.** When distinct services must each
-commit local state and the business flow has real intermediate states, model it as a saga —
-orchestrated unless it is trivially short — with pending states, a consciously placed pivot,
-idempotent compensations, deadlines, and an escalation drawer. Accept, explicitly and in
-writing, that intermediate states are visible and that the anomaly countermeasures are now part
-of your domain model.
+commit local state, model the flow as a saga — orchestrated unless it is trivially short — with
+pending states, a consciously placed pivot, idempotent compensations, deadlines, and an
+escalation drawer. Accept, explicitly and in writing, that intermediate states are visible and
+that the anomaly countermeasures are now part of your domain model.
 
 **Rung 4 — 2PC, within one administrative domain, on infrastructure built for it.** Cross-shard
 transactions inside a distributed SQL engine whose commit protocol runs over replicated
-coordinators (Chapter 12), or a mature XA deployment between a database and a broker you operate
-yourself with tested recovery runbooks. What earns 2PC its place on the ladder at all is
-strength: it *does* provide atomicity and isolation across resources, which no rung above it
-does. What puts it last is everything this chapter established — blocking, availability
-multiplication, heuristics — costs that are manageable inside one team's blast radius and
-unmanageable across organizational boundaries.
+coordinators (Chapter 12), or a mature XA deployment you operate yourself with tested recovery
+runbooks. What earns 2PC its place on the ladder at all is strength: it *does* provide atomicity
+across resources, which no rung above it does. What puts it last is everything this chapter
+established — blocking, availability multiplication, heuristics — costs manageable inside one
+team's blast radius and unmanageable across organizational boundaries.
 
 ## The distributed-systems lens
 
@@ -656,10 +650,9 @@ discipline — every task has an owner; a scope does not exit until its children
 of one child triggers deliberate cancellation of its siblings; nothing leaks — is exactly the
 orchestrated saga's discipline with "task" replaced by "local transaction" and "cancel" replaced
 by "compensate," because committed work cannot be cancelled, only counteracted. The orchestrator
-is the scope; the in-flight-forever saga is the leaked goroutine; the escalation drawer is the
-unjoined thread you were warned about. Choreography, in this frame, is unstructured concurrency —
-fire-and-forget with the ownership question unanswered — and it earns the same verdict for the
-same reasons.
+is the scope; the in-flight-forever saga is the leaked goroutine. Choreography, in this frame,
+is unstructured concurrency — fire-and-forget with the ownership question unanswered — and it
+earns the same verdict for the same reasons.
 
 **Exactly-once delivery is an end-to-end fiction; at-least-once plus idempotency is the real
 contract.** Every hop in this chapter — 2PC's phase-2 retries, the saga's step retries, the

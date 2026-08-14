@@ -184,7 +184,7 @@ until then their paths are as listed above).
 - [x] 5.07 Write-Ahead Logging and Crash Recovery — `ch07-wal-recovery.md`
 - [x] 5.08 Replication: Physical, Logical, Sync, Async — `ch08-replication.md`
 - [x] 5.09 Partitioning and Sharding — `ch09-partitioning-sharding.md`
-- [ ] 5.10 Distributed Transactions: 2PC, Sagas — `ch10-distributed-transactions.md`
+- [x] 5.10 Distributed Transactions: 2PC, Sagas — `ch10-distributed-transactions.md`
 - [x] 5.11 NoSQL: KV, Document, Wide-Column, Graph — `ch11-nosql.md`
 - [x] 5.12 NewSQL and Distributed SQL — `ch12-newsql.md`
 - [x] 5.13 Specialized Stores: Search, Time-Series, Analytics — `ch13-specialized-stores.md`
@@ -192,12 +192,12 @@ until then their paths are as listed above).
 
 ## Volume 6 — Distributed Systems (`vol-06-distributed-systems/`)
 
-- [ ] 6.01 Foundations: Models, Failures, Assumptions — `ch01-foundations.md`
+- [x] 6.01 Foundations: Models, Failures, Assumptions — `ch01-foundations.md`
 - [ ] 6.02 Time, Clocks, and Ordering — `ch02-time-clocks.md`
-- [ ] 6.03 Replication and Consistency Models — `ch03-consistency-models.md`
-- [ ] 6.04 CAP, PACELC, and Trade-Offs — `ch04-cap-pacelc.md`
-- [ ] 6.05 Consensus I: Paxos — `ch05-paxos.md`
-- [ ] 6.06 Consensus II: Raft — `ch06-raft.md`
+- [x] 6.03 Replication and Consistency Models — `ch03-consistency-models.md`
+- [x] 6.04 CAP, PACELC, and Trade-Offs — `ch04-cap-pacelc.md`
+- [x] 6.05 Consensus I: Paxos — `ch05-paxos.md`
+- [x] 6.06 Consensus II: Raft — `ch06-raft.md`
 - [ ] 6.07 Quorum Systems and Dynamo-Style Replication — `ch07-quorums-dynamo.md`
 - [ ] 6.08 Coordination Services: ZooKeeper and etcd — `ch08-coordination.md`
 - [ ] 6.09 Idempotency, Deduplication, Exactly-Once — `ch09-idempotency.md`
