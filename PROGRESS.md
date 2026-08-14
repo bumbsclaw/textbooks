@@ -199,9 +199,9 @@ until then their paths are as listed above).
 - [x] 6.05 Consensus I: Paxos — `ch05-paxos.md`
 - [x] 6.06 Consensus II: Raft — `ch06-raft.md`
 - [x] 6.07 Quorum Systems and Dynamo-Style Replication — `ch07-quorums-dynamo.md`
-- [ ] 6.08 Coordination Services: ZooKeeper and etcd — `ch08-coordination.md`
+- [x] 6.08 Coordination Services: ZooKeeper and etcd — `ch08-coordination.md`
 - [x] 6.09 Idempotency, Deduplication, Exactly-Once — `ch09-idempotency.md`
-- [ ] 6.10 Failure Detection and Membership: Gossip, SWIM — `ch10-failure-detection.md`
+- [x] 6.10 Failure Detection and Membership: Gossip, SWIM — `ch10-failure-detection.md`
 - [x] 6.11 CRDTs and Eventual Consistency — `ch11-crdts.md`
 - [x] 6.12 Testing Distributed Systems: Jepsen, Chaos, Simulation — `ch12-testing.md`
 
@@ -332,3 +332,4 @@ until then their paths are as listed above).
   harness failed three runs with permission-handler errors. Next: 4.05, 4.06, 4.07.
 - 2026-08-14: *** VOLUME 4 (Concurrency) COMPLETE — 10 chapters. *** Vol 5 started: 5.01, 5.03-5.06 done
   (agent batch interrupted by session limit; 5.02, 5.07-5.10 to re-run). Volumes 5-15 scaffolded.
+- 2026-08-14: *** VOLUME 6 (Distributed Systems) COMPLETE — 12 chapters. *** Vol 7 batch 1 (7.01-7.06) in flight.
