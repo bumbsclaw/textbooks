@@ -1,0 +1,26 @@
+# Volume 6 — Distributed Systems
+
+## Contents
+
+1. [Container Images: OCI Format, Layers, and Attack Surface](ch01-oci-images.md)
+1. [Foundations: Models, Failures, Assumptions](ch01-foundations.md)
+2. [Registries: Architecture, Trust, and Threats](ch02-registries.md)
+2. [Time, Clocks, and Ordering](ch02-time-clocks.md)
+3. [Base Image Strategy: Minimal, Distroless, Hardened](ch03-base-images.md)
+3. [Replication and Consistency Models](ch03-consistency-models.md)
+4. [CAP, PACELC, and Trade-Offs](ch04-cap-pacelc.md)
+4. [Image Scanning and Vulnerability Management](ch04-image-scanning.md)
+5. [Consensus I: Paxos](ch05-paxos.md)
+5. [Image Signing and Verification in Kubernetes](ch05-image-signing-k8s.md)
+6. [Admission Control and Policy Engines: OPA and Kyverno](ch06-admission-policy.md)
+6. [Consensus II: Raft](ch06-raft.md)
+7. [Kubernetes Delivery Chains: Helm, Operators, GitOps](ch07-k8s-delivery-chains.md)
+7. [Quorum Systems and Dynamo-Style Replication](ch07-quorums-dynamo.md)
+8. [Coordination Services: ZooKeeper and etcd](ch08-coordination.md)
+8. [Infrastructure as Code Supply Chain Risks](ch08-iac-risks.md)
+9. [Idempotency, Deduplication, Exactly-Once](ch09-idempotency.md)
+9. [Serverless, Managed Services, and the Cloud Provider Chain](ch09-serverless-managed.md)
+10. [A Cloud-Native Supply Chain Reference Architecture](ch10-reference-architecture.md)
+10. [Failure Detection and Membership: Gossip, SWIM](ch10-failure-detection.md)
+11. [CRDTs and Eventual Consistency](ch11-crdts.md)
+12. [Testing Distributed Systems: Jepsen, Chaos, Simulation](ch12-testing.md)

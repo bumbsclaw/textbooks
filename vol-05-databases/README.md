@@ -1,0 +1,28 @@
+# Volume 5 — Databases and Storage Systems
+
+## Contents
+
+1. [Cryptographic Foundations for Supply Chain Security](ch01-crypto-foundations.md)
+1. [The Relational Model and SQL Semantics](ch01-relational-sql.md)
+2. [Classic Code Signing and Its Failure Modes](ch02-classic-code-signing.md)
+2. [Storage Engines: B-Trees vs LSM-Trees](ch02-storage-engines.md)
+3. [Indexing in Depth](ch03-indexing.md)
+3. [Sigstore Architecture: Cosign, Fulcio, Rekor](ch03-sigstore-architecture.md)
+4. [Keyless Signing and Workload Identity](ch04-keyless-signing.md)
+4. [Query Processing and Optimization](ch04-query-optimization.md)
+5. [Transactions and ACID](ch05-transactions-acid.md)
+5. [Transparency Logs: Merkle Trees, Rekor, and CT Lessons](ch05-transparency-logs.md)
+6. [Isolation Levels and MVCC](ch06-isolation-mvcc.md)
+6. [in-toto: Attestations, Layouts, and Policies](ch06-in-toto.md)
+7. [TUF: The Update Framework](ch07-tuf.md)
+7. [Write-Ahead Logging and Crash Recovery](ch07-wal-recovery.md)
+8. [Provenance Verification in Practice](ch08-provenance-verification.md)
+8. [Replication: Physical, Logical, Sync, Async](ch08-replication.md)
+9. [Key Management and PKI for the Enterprise](ch09-key-management.md)
+9. [Partitioning and Sharding](ch09-partitioning-sharding.md)
+10. [Designing Attestation-Based Deployment Gates](ch10-deployment-gates.md)
+10. [Distributed Transactions: 2PC, Sagas](ch10-distributed-transactions.md)
+11. [NoSQL: KV, Document, Wide-Column, Graph](ch11-nosql.md)
+12. [NewSQL and Distributed SQL](ch12-newsql.md)
+13. [Specialized Stores: Search, Time-Series, Analytics](ch13-specialized-stores.md)
+14. [Operating Databases: Pooling, Migrations, Scaling](ch14-operating-databases.md)
