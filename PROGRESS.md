@@ -162,10 +162,10 @@ until then their paths are as listed above).
 
 ## Volume 4 — Concurrency and Parallelism (`vol-04-concurrency/`)
 
-- [ ] 4.01 Models of Concurrency — `ch01-models.md`
-- [ ] 4.02 Threads, Mutual Exclusion, and Locks — `ch02-threads-locks.md`
-- [ ] 4.03 Memory Models and Happens-Before — `ch03-memory-models.md`
-- [ ] 4.04 Atomics, CAS, and Lock-Free Data Structures — `ch04-lock-free.md`
+- [x] 4.01 Models of Concurrency — `ch01-models.md`
+- [x] 4.02 Threads, Mutual Exclusion, and Locks — `ch02-threads-locks.md`
+- [x] 4.03 Memory Models and Happens-Before — `ch03-memory-models.md`
+- [x] 4.04 Atomics, CAS, and Lock-Free Data Structures — `ch04-lock-free.md`
 - [ ] 4.05 Deadlock, Livelock, and Starvation — `ch05-deadlock.md`
 - [ ] 4.06 Asynchronous I/O and Event Loops — `ch06-async-io.md`
 - [ ] 4.07 The Actor Model, CSP, and Channels — `ch07-actors-csp.md`
@@ -328,3 +328,5 @@ until then their paths are as listed above).
 - 2026-07-31: *** VOLUME 1 (Computer Architecture) COMPLETE — 10 chapters. *** Vol 2 started (2.01 done).
 - 2026-07-31: Batches 28-29 done (1.07-1.10, 2.01). Next: 2.02, 2.03, 2.04.
 - 2026-07-31: Vol 2 batch 31 done (2.05, 2.06, 2.07). Next: 2.08, 2.09, 2.10.
+- 2026-08-14: Vol 4 batch 1 done (4.01-4.04). Written directly after the Workflow subagent
+  harness failed three runs with permission-handler errors. Next: 4.05, 4.06, 4.07.
