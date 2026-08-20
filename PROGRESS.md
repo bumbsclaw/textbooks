@@ -228,8 +228,8 @@ until then their paths are as listed above).
 - [x] 8.04 GraphQL for Backend Engineers — `ch04-graphql.md`
 - [x] 8.05 Versioning and Evolution — `ch05-versioning.md`
 - [x] 8.06 Idempotency, Pagination, Filtering — `ch06-idempotency-pagination.md`
-- [ ] 8.07 Error Handling and Status Semantics — `ch07-error-handling.md`
-- [ ] 8.08 Compatibility and Wire Formats — `ch08-compatibility.md`
+- [x] 8.07 Error Handling and Status Semantics — `ch07-error-handling.md`
+- [x] 8.08 Compatibility and Wire Formats — `ch08-compatibility.md`
 
 ## Volume 9 — Security, Authentication, and Cryptography (`vol-09-security-auth/`)
 
@@ -242,7 +242,7 @@ until then their paths are as listed above).
 - [x] 9.07 Authorization: RBAC, ABAC, ReBAC (Zanzibar) — `ch07-authorization.md`
 - [x] 9.08 Secrets Management — `ch08-secrets-management.md`
 - [x] 9.09 Application Security: OWASP, Injection, SSRF — `ch09-appsec.md`
-- [ ] 9.10 Zero Trust and Service-to-Service Auth: mTLS, SPIFFE — `ch10-zero-trust-mtls.md`
+- [x] 9.10 Zero Trust and Service-to-Service Auth: mTLS, SPIFFE — `ch10-zero-trust-mtls.md`
 - [ ] 9.11 Threat Modeling and Secure Design — `ch11-threat-modeling.md`
 
 ## Volume 10 — Messaging, Streaming, and Event Systems (`vol-10-messaging-streaming/`)
@@ -338,4 +338,5 @@ until then their paths are as listed above).
 - 2026-08-20: Vol08 ch04-ch06 done (GraphQL, versioning, idempotency/pagination — ~4.1-5.0kw each, 3-4 Mermaid). Next: 8.07-8.09.
 - 2026-08-20: Vol07 ch07-ch09 done (event-driven/Kafka/CDC/outbox/Saga, gateways/BFF/edge, rate limiting/quotas/fairness — ~4.4-5.4kw each, 4 Mermaid). Next: 7.10-7.12.
 - 2026-08-20: Vol09 ch07-ch09 done (authorization RBAC/ABAC/ReBAC Zanzibar/SpiceDB, secrets management Vault, AppSec OWASP/injection/SSRF/deserialization — ~4.9-5.1kw each, 3-6 Mermaid). Next: 9.10-9.11.
-- 2026-08-20: *** VOLUME 7 (System Design) COMPLETE — 12 chapters. *** Vol07 ch10-ch12 done (multi-region/geo-distributed, designing for failure bulkheads/breakers/shedding, case studies feed/chat/notifications/global KV — ~4.0-6.3kw each, 4-6 Mermaid). Next: 8.07-8.11.
+- 2026-08-20: *** VOLUME 7 (System Design) COMPLETE — 12 chapters. *** Vol07 ch10-ch12 done (multi-region/geo-distributed, designing for failure bulkheads/breakers/shedding, case studies feed/chat/notifications/global KV — ~4.0-6.3kw each, 4-6 Mermaid). Next: 8.07-8.09 + 9.10 batch.
+- 2026-08-20: Vol08 ch07-ch08 + Vol09 ch10 done (error handling/status semantics, compatibility/wire formats, zero trust/mTLS/SPIFFE — ~5.5-6.5kw each, 4-6 Mermaid). Next: 8.09-8.11 + 9.11.
