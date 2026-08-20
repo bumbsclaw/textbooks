@@ -11,39 +11,71 @@ each chapter targets 4,000–7,000 words with diagrams (Mermaid), real code/conf
 distributed-systems lens (see [`STYLE.md`](STYLE.md)). Volumes can be read independently, but
 within a volume chapters build on each other.
 
-> **Scope note.** This started as an 8-book suite on software supply chain security (now
-> **Volume 0**) and was expanded to the full backend curriculum. Volume 0's chapters are the
-> most mature; other volumes are written in batches. See [`PROGRESS.md`](PROGRESS.md) for live
-> status and the resumable batch plan.
+> **Scope note.** This started as an 8-book suite on software supply chain security (now the
+> **Companion Series**, 75 chapters, 8 books under `book-01`…`book-08`). That work is retained
+> as a companion — see *Companion Series* below. The main library is Volumes 1–15 plus an 8-ch
+> Supply-Chain Essentials distillate. Security as a backend topic lives in Volume 9 (11 ch);
+> the companion is for readers who want depth on supply-chain security. See
+> [`PROGRESS.md`](PROGRESS.md) for live status and the resumable batch plan.
 
-## Volumes
+## Reading Paths and Suggested Order
 
-| Vol | Title | Focus |
-|-----|-------|-------|
-| 0 | Software Supply Chain Security (8 books, 75 ch) | Threats, dependencies, SBOMs, build/CI-CD, signing, cloud-native, source, governance |
-| 1 | Computer Architecture for Backend Engineers | CPU, memory hierarchy, storage, NUMA, mechanical sympathy |
-| 2 | Operating Systems and Linux | Processes, scheduling, VM, syscalls, I/O, cgroups/namespaces, perf/eBPF |
-| 3 | Networking for Backend Engineers | TCP/IP, TLS, HTTP/1-2-3, gRPC, DNS, load balancing, service mesh |
-| 4 | Concurrency and Parallelism | Threads, locks, memory models, lock-free, async, actors/CSP |
-| 5 | Databases and Storage Systems | Storage engines, indexing, transactions, MVCC, replication, sharding, NoSQL/NewSQL |
-| 6 | Distributed Systems | Clocks, consistency, consensus (Paxos/Raft), quorums, CRDTs, testing |
-| 7 | System Design and Architecture | Scalability, caching, event-driven, multi-region, resilience, design cases |
-| 8 | APIs and Service Design | REST, gRPC, GraphQL, versioning, idempotency, contracts |
-| 9 | Security, Authentication, and Cryptography | Applied crypto, authN/Z, OAuth/OIDC, RBAC/ABAC/ReBAC, zero trust, appsec |
-| 10 | Messaging, Streaming, and Event Systems | Queues vs logs, Kafka, delivery semantics, event sourcing, outbox, backpressure |
-| 11 | Reliability, Observability, and SRE | SLOs, metrics/traces/logs, incident response, chaos, deployment strategies |
-| 12 | Cloud, Containers, and Infrastructure | Container/K8s internals, IaC, cloud primitives, multi-tenancy, cost |
-| 13 | Language Runtimes for Backend | JVM, Go runtime, Rust, GC, JIT, profiling |
-| 14 | Data Structures and Algorithms for Backend | Complexity, hashing, probabilistic structures, consistent hashing, external algorithms |
-| 15 | Software Engineering Practice | Testing, design docs, DDD, patterns, refactoring, code review |
+Volume numbers are stable (to avoid breaking links and git history). Suggested reading order
+differs from numeric order to respect dependencies:
+
+- **Foundations track:** Vol 1 → 2 → 3 → 4 → 5 → 6 → 9 → 7 → 8 → 10 → 12 → 11 → 13 → 14 → 15
+- **Distributed Systems track:** Vol 4 → 6 → 10 → 7 → 11
+- **Platform track:** Vol 2 → 9 → 12 → 11
+- **Security track:** Vol 9 → Companion Series (Books 1–8) for depth
+
+Security (Vol 9) is a prerequisite for System Design (Vol 7) and APIs (Vol 8); Cloud (Vol 12)
+is a prerequisite for SRE (Vol 11). Chapters note these explicitly.
+
+## Part Structure
+
+- **Part I — Execution:** Vol 1 (Architecture), Vol 2 (OS/Linux), Vol 3 (Networking), Vol 4 (Concurrency)
+- **Part II — State:** Vol 5 (Databases), Vol 6 (Distributed Systems)
+- **Part III — Security:** Vol 9 (Security/Auth/Crypto) + Companion Series (supply-chain depth)
+- **Part IV — Systems:** Vol 7 (System Design), Vol 8 (APIs), Vol 10 (Messaging), Vol 12 (Cloud/Infra), Vol 11 (Reliability/SRE)
+- **Part V — Fundamentals:** Vol 13 (Runtimes), Vol 14 (Algorithms), Vol 15 (SWE Practice)
+
+## Volumes — At a Glance
+
+| Vol | Title | Chapters | Focus |
+|-----|-------|----------|-------|
+| — | **Companion: Supply Chain Security** (8 books, 75 ch) | 75 | Threats, dependencies, SBOMs, build/CI-CD, signing, cloud-native, source, governance — see below |
+| — | Supply-Chain Security Essentials (distillate) | 8 | Threat model, SLSA/S2C2F, SBOMs, signing, CI/CD hardening, K8s policy, IR (for the generalist) |
+| 1 | Computer Architecture for Backend Engineers | 10 | CPU, memory hierarchy, storage, NUMA, mechanical sympathy |
+| 2 | Operating Systems and Linux | 12 | Processes, scheduling, VM, syscalls, I/O, cgroups/namespaces, perf/eBPF |
+| 3 | Networking for Backend Engineers | 12 | TCP/IP, TLS, HTTP/1-2-3, gRPC, DNS, load balancing, service mesh |
+| 4 | Concurrency and Parallelism | 10 | Threads, locks, memory models, lock-free, async, actors/CSP |
+| 5 | Databases and Storage Systems | 14 | Storage engines, indexing, transactions, MVCC, replication, sharding, NoSQL/NewSQL |
+| 6 | Distributed Systems | 12 | Clocks, consistency, consensus (Paxos/Raft), quorums, CRDTs, testing |
+| 7 | System Design and Architecture | 12 | Scalability, caching, event-driven, multi-region, resilience, design cases |
+| 8 | APIs and Service Design | 11 | REST, gRPC, GraphQL, versioning, idempotency, contracts, governance, contract testing |
+| 9 | Security, Authentication, and Cryptography | 11 | Applied crypto, authN/Z, OAuth/OIDC, RBAC/ABAC/ReBAC, zero trust, appsec |
+| 10 | Messaging, Streaming, and Event Systems | 8 | Queues vs logs, Kafka, delivery semantics, event sourcing, outbox, backpressure |
+| 11 | Reliability, Observability, and SRE | 10 | SLOs, metrics/traces/logs, incident response, chaos, deployment strategies |
+| 12 | Cloud, Containers, and Infrastructure | 11 | Container/K8s internals, IaC, cloud primitives, multi-tenancy, cost, platform eng |
+| 13 | Language Runtimes for Backend | 9 | JVM, Go, Rust, Python/Node/Wasm, GC, JIT, profiling, runtime selection |
+| 14 | Data Structures and Algorithms for Backend | 8 | Complexity, hashing, probabilistic structures, consistent hashing, external algorithms |
+| 15 | Software Engineering Practice | 10 | Testing (3 ch), design docs, DDD, patterns, refactoring, code review, teams |
+
+**Main library total:** ~142 chapters (Vols 1–15 + 8-ch Essentials). Companion adds 75 ch for reference.
 
 ---
 
-## Volume 0 — Software Supply Chain Security
+## Companion Series — Supply Chain Security (75 ch, retained as reference)
 
-Eight books, 75 chapters. Full breakdown in [`PROGRESS.md`](PROGRESS.md). Books: Foundations;
-Dependency Management; SBOMs; Build & CI/CD; Signing & Attestation; Cloud-Native; Source &
-Insider; Governance & IR.
+Eight books, 75 chapters (dirs `book-01`…`book-08`). Full breakdown in [`PROGRESS.md`](PROGRESS.md).
+Books: Foundations; Dependency Management; SBOMs; Build & CI/CD; Signing & Attestation;
+Cloud-Native; Source & Insider; Governance & IR. Cross-referenced from Vol 9, Vol 11, Vol 12
+as "for deeper study, see Companion Book X." Not part of the main-library page count.
+
+**Relationship to Vol 9:** Vol 9 is the 11-ch generalist treatment every backend engineer reads.
+The Companion is the specialist reference. Vol 9 ch 11 and Vol 12 ch 4 cross-ref the Companion.
+
+---
 
 ## Volume 1 — Computer Architecture for Backend Engineers
 
@@ -73,6 +105,9 @@ Insider; Governance & IR.
 11. Performance Analysis: perf, ftrace, and eBPF
 12. Boot, init, and systemd
 
+> **Boundary note:** Vol 2 ch 9 covers kernel mechanisms (namespaces/cgroups) as the substrate.
+> Vol 12 ch 1 covers their *platform usage* (images, runtimes, isolation at fleet scale).
+
 ## Volume 3 — Networking for Backend Engineers
 
 1. The Journey of a Packet: The Stack End to End
@@ -88,6 +123,12 @@ Insider; Governance & IR.
 11. Network Reliability: Timeouts, Retries, Backoff, and Hedging
 12. Debugging and Observing Networks
 
+> **Boundary notes:**
+> - TLS/PKI mechanics → Vol 3 ch 6 (wire); TLS operations/PKI lifecycle → Vol 9 ch 4.
+> - gRPC internals (HTTP/2 framing, flow control) → Vol 3 ch 8; gRPC schema/design → Vol 8 ch 3.
+> - L4/L7 algorithms (wire) → Vol 3 ch 9; traffic policy at system scale → Vol 7 ch 4.
+> - Timeouts/retries/hedging primitives → Vol 3 ch 11; resilience patterns (bulkheads, breakers) → Vol 11 ch 10 and Vol 7 ch 11.
+
 ## Volume 4 — Concurrency and Parallelism
 
 1. Models of Concurrency: A Map of the Territory
@@ -100,6 +141,9 @@ Insider; Governance & IR.
 8. Coroutines and Structured Concurrency
 9. Concurrency Patterns for Backend Services
 10. Testing and Debugging Concurrent Systems
+
+> **Boundary note:** Concurrency-specific testing (determinism, races, linearizability) → Vol 4 ch 10;
+> general testing strategy → Vol 15 ch 1–2.
 
 ## Volume 5 — Databases and Storage Systems
 
@@ -133,6 +177,9 @@ Insider; Governance & IR.
 11. CRDTs and Eventual Consistency
 12. Testing Distributed Systems: Jepsen, Chaos, and Simulation
 
+> **Boundary note:** Vol 6 ch 9 covers theory (idempotency, exactly-once reasoning); Vol 10 ch 2/6
+> covers broker mechanics (Kafka semantics, outbox).
+
 ## Volume 7 — System Design and Architecture
 
 1. Principles of Scalable System Design
@@ -148,6 +195,10 @@ Insider; Governance & IR.
 11. Designing for Failure: Bulkheads, Circuit Breakers, Load Shedding
 12. Design Case Studies: Feed, Chat, Notifications, and a Global KV Store
 
+> **Boundary notes:** Rate limiting algorithms (token bucket, leaky bucket) at system scale → Vol 7 ch 9;
+> algorithmic analysis of rate-limiting/scheduling → Vol 14 ch 8. Capacity math (Little's Law,
+> queueing) is introduced here and analyzed in Vol 14.
+
 ## Volume 8 — APIs and Service Design
 
 1. API Design Principles and Contracts
@@ -158,6 +209,11 @@ Insider; Governance & IR.
 6. Idempotency, Pagination, and Filtering
 7. Error Handling and Status Semantics
 8. Compatibility: Backward, Forward, and Wire Formats
+9. API Governance, Linting, and Breaking-Change Detection
+10. Schema Registry, Code Generation, and SDK Delivery
+11. Contract Testing and API Evolution in Practice
+
+> **Boundary note:** Vol 3 ch 8 = gRPC wire mechanics; Vol 8 ch 3 = gRPC service/schema design.
 
 ## Volume 9 — Security, Authentication, and Cryptography
 
@@ -172,6 +228,9 @@ Insider; Governance & IR.
 9. Application Security: OWASP, Injection, SSRF, and Deserialization
 10. Zero Trust and Service-to-Service Auth: mTLS and SPIFFE/SPIRE
 11. Threat Modeling and Secure Design
+
+> **Dependency note:** Read Vol 9 before Vol 7–8. System design and API chapters assume authN/Z,
+> TLS, and secrets knowledge. For supply-chain depth, see Companion Books 1–8.
 
 ## Volume 10 — Messaging, Streaming, and Event Systems
 
@@ -197,6 +256,10 @@ Insider; Governance & IR.
 9. Deployment Strategies: Blue/Green, Canary, and Feature Flags
 10. Resilience Patterns in Production
 
+> **Boundary note:** Vol 6 ch 12 covers Jepsen/chaos as *verification of distributed correctness*;
+> Vol 11 ch 8 covers chaos as *operational practice* (game days, fault injection in prod).
+> Vol 0 / Companion IR is supply-chain-specific; this volume is general SRE.
+
 ## Volume 12 — Cloud, Containers, and Infrastructure
 
 1. Containers Deep Dive: Images, Runtimes, and Isolation
@@ -206,7 +269,12 @@ Insider; Governance & IR.
 5. Cloud Primitives: Compute, Storage, and Network
 6. Managed Data and Platform Services
 7. Multi-Tenancy and Isolation
-8. Cloud Cost and Capacity Engineering
+8. Cloud Cost Engineering and FinOps
+9. Capacity Planning and Performance at Cloud Scale
+10. Cloud Networking, IAM, and Security Foundations
+11. Platform Engineering: Paved Roads and Internal Developer Platforms
+
+> **Boundary note:** Vol 2 ch 9 = kernel mechanism; Vol 12 ch 1 = platform usage at scale.
 
 ## Volume 13 — Language Runtimes for Backend
 
@@ -215,6 +283,10 @@ Insider; Governance & IR.
 3. Rust for Backend Systems
 4. Garbage Collection Across Runtimes
 5. Profiling and Performance Tuning
+6. Python and Node.js Runtimes for Backend
+7. WebAssembly and Emerging Runtimes
+8. FFI, Native Extensions, and Polyglot Interop
+9. Runtime Selection and Performance Trade-offs
 
 ## Volume 14 — Data Structures and Algorithms for Backend
 
@@ -230,8 +302,12 @@ Insider; Governance & IR.
 ## Volume 15 — Software Engineering Practice
 
 1. Testing Strategy: Unit, Integration, E2E, and Property-Based
-2. Design Docs, RFCs, and Technical Decision-Making
-3. Domain-Driven Design for Backend
-4. Design Patterns and Anti-Patterns for Services
-5. Refactoring and Managing Technical Debt
-6. Code Review and Engineering Culture
+2. Contract Testing, Test Doubles, and Testability Design
+3. Load, Performance, and Chaos Testing for Backend
+4. Design Docs, RFCs, and Technical Decision-Making
+5. Domain-Driven Design for Backend
+6. Design Patterns and Anti-Patterns for Services
+7. Refactoring and Managing Technical Debt
+8. Code Review and Engineering Culture
+9. Debugging and Incident-Driven Learning
+10. Building High-Performing Engineering Teams and Processes
