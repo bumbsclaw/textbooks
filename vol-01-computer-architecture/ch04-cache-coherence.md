@@ -18,28 +18,6 @@ engineer who understands one already understands the other.
 
 Learning goals — after this chapter you should be able to:
 
-- State the **coherence problem** precisely and give the two invariants (write propagation and
-  write serialization) that any coherent system must satisfy.
-- Explain **snooping** versus **directory-based** coherence, and why the choice tracks system
-  size — bus snooping for a few cores, directories for many-core and multi-socket (Chapter 6).
-- Walk the **MESI** state machine cold: the four states, the transitions on local and remote reads
-  and writes, how an invalidate protocol propagates writes, and how a read of a Modified line gets
-  the freshest data. Place **MESIF** (Intel) and **MOESI** (AMD) as the real-world variants.
-- Diagnose **true sharing** (contention on genuinely shared data) and **false sharing** (distinct
-  data colliding on one 64-byte line), quantify the latter's cost, and fix it with padding and
-  alignment (Chapter 8).
-- Explain how **atomic read-modify-write** operations (CAS, fetch-add) are implemented on top of
-  coherence — the x86 `LOCK` prefix, ARM's LL/SC — and why contended atomics are a scalability
-  killer.
-- Draw the **sharp line between coherence and consistency**: coherence is per-location agreement;
-  consistency is the ordering of operations across *different* locations.
-- Compare **sequential consistency**, **x86-TSO**, and **ARM/POWER weak ordering**; explain the
-  store buffer as the root cause of store→load reordering; and place **fences** (`mfence`, `dmb`)
-  and acquire/release semantics as the tools that restore the ordering software needs — the
-  hardware substrate that Volume 4's software memory models compile down to.
-- See the exact analogy between hardware and distributed consistency — coherence ≈ single-object
-  linearizability, consistency ≈ multi-object ordering, Lamport underneath both (Volume 6).
-
 ## The coherence problem
 
 Return to the machine Chapter 3 built. Each core has a private L1 (split instruction/data) and
@@ -97,30 +75,6 @@ To keep copies consistent, the caches must communicate: when a core wants to wri
 other cores holding that line must find out and drop or update their copies. There are two
 architectural families for that communication, and the choice tracks system scale.
 
-**Snooping (broadcast) coherence.** Historically the caches shared a common bus, and every cache
-controller *snoops* — watches — every transaction on it. When core 0 wants exclusive ownership of a
-line to write, it broadcasts an invalidation for that address; every other cache checks whether it
-holds the line and, if so, invalidates its copy. Reads work the same way: a read request is
-broadcast, and whichever cache holds the freshest copy (or memory) responds. Snooping is simple and
-low-latency for small systems because the broadcast *is* the coordination — everyone hears
-everything. Its fatal flaw is bandwidth: broadcast traffic grows with the number of participants,
-and a shared bus becomes a bottleneck. Modern chips do not use a literal shared bus but a ring or
-mesh interconnect with a snoop filter; the logical model — coherence requests are broadcast (or
-filtered-broadcast) and observed by all — is still snooping, and it dominates within a single
-socket's handful-to-dozens of cores.
-
-**Directory-based coherence.** Instead of broadcasting to everyone, the system keeps a
-**directory**: metadata, distributed alongside memory, recording *which caches hold each line and in
-what state*. To write a line, a core consults the directory (a point-to-point message to the line's
-home node), which knows exactly which cores have copies and sends invalidations only to *those*
-cores — not a broadcast. This trades latency and complexity (an extra indirection, a directory to
-maintain) for scalability: coherence traffic is proportional to the number of *sharers* of a line,
-not the number of cores in the machine. Directories are how coherence scales to many-core chips and,
-crucially, across **sockets**. On a multi-socket server the inter-socket links (Intel UPI, AMD
-Infinity Fabric) carry directory-based coherence traffic, and the non-uniform cost of that traffic
-is exactly the NUMA effect Chapter 6 develops: touching a line owned by another socket's cache means
-a cross-socket coherence round trip.
-
 ```mermaid
 flowchart TB
     subgraph SNOOP["Snooping: broadcast, everyone listens"]
@@ -136,12 +90,6 @@ flowchart TB
       DHome -->|"invalidate L"| DC["Core C"]
     end
 ```
-
-The two families are not mutually exclusive. Large systems are hierarchical: snooping (or a snoop
-filter) within a socket, directories between sockets. The mental model to keep is that coherence is
-a *messaging protocol between caches* whose cost is the messages it must send — a framing that is the
-through-line to the distributed-systems lens at the end of the chapter. It is not a metaphor.
-Coherence *is* a consensus protocol implemented in silicon.
 
 ## MESI in depth
 
@@ -416,17 +364,6 @@ strategies:
   `CAS`, `SWP`) add true single-instruction atomics on top, which scale better than LL/SC retry
   loops under contention.
 
-**Why atomics are expensive** has two components that map onto the two halves of this chapter.
-First, **coherence**: an atomic RMW *must* acquire the line exclusively (M), so it can never be
-satisfied by a shared copy the way a plain read can — every atomic is at least an RFO, and a
-coherence transfer if another core holds the line. Second, **ordering**: atomics carry
-memory-ordering semantics (below), and enforcing them constrains the store buffer and the
-out-of-order engine (Chapter 2), draining pipelines and blocking reordering the core would otherwise
-do for speed. An uncontended atomic on a line already in M costs a few to a couple dozen cycles
-(mostly ordering); a *contended* atomic — the line bouncing between cores — costs a full cross-core
-coherence round trip *per operation*, tens to hundreds of cycles, and serializes the cores on the
-line.
-
 **Contended atomics are a scalability killer** for the same reason true sharing is: they force the
 line to ping-pong and add ordering fences on top. A spinlock hammered by 32 cores spends almost all
 its cycles moving the lock line between caches, not working. This is why modern concurrency avoids
@@ -453,17 +390,6 @@ Make the distinction sharp with the two questions:
 | **Guaranteed by** | Cache coherence protocol (MESI) — always, on all commodity hardware | The memory **consistency model** (SC, TSO, weak) — varies by architecture |
 | **Analogy (Vol 6)** | Single-object linearizability | Multi-object / cross-key ordering |
 
-The classic program that exposes the gap: two locations `x` and `y`, both initially 0; core 0 runs
-`x = 1; r1 = y;` and core 1 runs `y = 1; r2 = x;`. Coherence guarantees each location behaves sanely
-on its own. But it does *not* forbid the outcome `r1 == 0 && r2 == 0`: both cores read the *old*
-value of the other's variable, as if each store had not happened when the other's load ran. On a
-sequentially consistent machine that is impossible (no interleaving of the four operations produces
-it); on real x86, ARM, and POWER hardware, **it happens** — and coherence is not violated, because
-coherence never promised anything about the *cross-location* ordering of `x`'s write relative to
-`y`'s read. That is a *consistency* question, answered by the memory model. Coherence is necessary
-but not sufficient: a machine can be perfectly coherent and still reorder operations across
-locations in ways that break naive concurrent code. The rest of the chapter is about that reordering.
-
 ## Memory consistency models
 
 A **memory consistency model** is the contract between the hardware and software specifying which
@@ -472,14 +398,6 @@ is, which outcomes a multithreaded program can legally observe. It is the formal
 another core see, and in what order?"
 
 ### Sequential consistency: the intuitive ideal
-
-**Sequential consistency (SC)**, defined by Leslie Lamport in 1979, is the model programmers
-intuitively assume. Its definition: the result of any execution is the same as if all cores'
-operations were executed in *some single sequential order*, and each core's operations appear in
-that order *in the order the program issued them*. In plain terms: pick some interleaving of all the
-threads' memory operations that respects each thread's program order; the machine behaves as if that
-interleaving actually happened. No operation appears to move before an earlier operation from the
-same thread.
 
 SC makes the `r1==0 && r2==0` outcome impossible, and it is what you *wish* the machine gave you. The
 problem is performance. SC effectively forbids the store buffer and most of the reordering the
@@ -534,17 +452,6 @@ to a different location** (store→load). Everything else is kept in order: stor
 load→store. The store buffer is FIFO and drains in order, and a core sees its *own* stores
 immediately (store forwarding). TSO is close enough to SC that much racy-but-lucky x86 code happens
 to work — a trap when the same code is ported to ARM.
-
-**ARM and POWER are weakly ordered.** They relax *almost all* orderings — store→store, load→load,
-load→store, and store→load can all be reordered — subject only to single-thread data dependencies and
-per-location coherence. Two independent stores can become visible in the opposite order from program
-order; two independent loads can complete out of order. This gives the hardware far more reordering
-freedom (and simpler, lower-power machinery), at the cost of demanding software insert explicit
-ordering wherever it needs order. POWER is weaker still (it does not even guarantee a single global
-store order). The practical upshot is the porting hazard: **code accidentally correct on x86-TSO
-because TSO only reorders store→load will break on ARM Graviton**, where load→load and store→store
-reorder freely. As ARM servers went mainstream (Chapter 2), this became a real source of bugs
-surfacing only on the ARM fleet.
 
 | Reordering allowed? | Sequential Consistency | x86-TSO | ARM / POWER (weak) |
 |---------------------|:----------------------:|:-------:|:------------------:|
@@ -606,23 +513,7 @@ two-directional store-buffer drain of `mfence`/`DMB`. On x86-TSO, acquire/releas
 are often *free* (plain `mov`) because TSO already provides the ordering; on ARM they compile to
 `LDAR`/`STLR`. Same source, different cost, because the memory model differs.
 
-**This is the hardware substrate for Volume 4.** High-level languages do not make you write `mfence`
-or `DMB`. They define a *software* memory model — `std::memory_order_acquire`/`release`/`seq_cst` in
-C++11, the happens-before edges of the Java Memory Model, Go's `sync/atomic`, Rust's `Ordering` — and
-the *compiler* lowers those abstractions to the right fences per target: the same acquire/release
-C++ source emits nothing on the load path on x86-TSO but `LDAR`/`STLR` on ARM, the minimum barriers
-that honor the language's promised ordering. Volume 4 is entirely about that upper layer — data
-races, happens-before, the C++/Java/Go memory models, lock-free algorithms — and it *compiles down to
-the fences on this page*. When Volume 4 says a release-store synchronizes-with an acquire-load, the
-machine underneath is doing store-buffer discipline and `STLR`/`LDAR` or `mov`. Coherence and
-consistency are the floor; the software memory model is the language you reason in on top of it.
-
 ## Distributed-systems lens
-
-The reason this chapter belongs in a backend engineer's education is not that you will hand-tune
-MESI transitions. It is that **the entire problem — and its entire theory — is the distributed
-systems problem, one abstraction layer down.** The parallels are not analogies of convenience; they
-are the same mathematics applied at different scales, and seeing that is a genuine unlock.
 
 **Coherence is distributed consensus in hardware.** Cores with private caches that must agree on the
 current value of a location are *replicas* that must agree on the current value of an object. The

@@ -19,22 +19,6 @@ why `fork` is cheap to why a PID namespace's init must reap zombies.
 
 Learning goals — after this chapter you should be able to:
 
-- Define a Linux process as the tuple of an *address space*, one or more *threads of
-  execution*, a set of *resources* (file descriptors, etc.), and *metadata* (PID,
-  credentials, namespaces), and explain why the process is the unit of resource ownership
-  and isolation.
-- Describe the kernel's actual representation — the `task_struct` per schedulable entity —
-  and the distinction between a kernel task PID and the userspace PID/TID (`getpid` vs
-  `gettid`, `pid` vs `tgid`).
-- Explain the `fork`/`exec`/`wait` lifecycle precisely: copy-on-write, why Unix splits
-  process creation from program loading, what a zombie is, and why some process must reap.
-- State the unifying insight: `fork` and `pthread_create` are both `clone` with different
-  sharing flags, and place "process" and "thread" as two points on a spectrum of sharing.
-- Reason about the threads-vs-processes-vs-async decision for a backend service, and about
-  context-switch cost (including TLB effects) as a real performance factor.
-- Read a process's virtual-memory map and its credentials, and connect PID 1 / zombie
-  reaping to a concrete container gotcha.
-
 ## What a process is
 
 Ask ten engineers what a process is and you get "a running program." That is true and
@@ -134,11 +118,6 @@ Now the mapping to what userspace calls things:
   threads in a process see the same `getpid()`.
 - `gettid()` returns the **`pid`** — the unique per-thread kernel task ID, what tools and
   `/proc` call the *thread ID* (TID).
-
-So the kernel's `pid` is the userspace TID, and the kernel's `tgid` is the userspace PID.
-The naming is historically backwards, but the model is clean: a process is a thread group,
-identified by the leader's TID, and every thread has its own TID. You can see this directly:
-`/proc/<pid>/task/` lists one directory per thread, each named by its TID.
 
 ```
 $ ps -T -p 4217
@@ -304,21 +283,6 @@ stateDiagram-v2
   end note
 ```
 
-**The container gotcha.** This is not academic trivia — it is one of the most common
-container bugs. In a container, the process the runtime launches becomes **PID 1 inside the
-container's PID namespace** (Chapter 9). If your entrypoint is an application that was never
-written to be an init — say, a shell script that execs your server, or a server that spawns
-subprocesses — then *it* is PID 1, and it inherits PID 1's reaping duty. Most applications
-never call `wait` for children they did not directly create, so any process that reparents to
-them becomes an immortal zombie. Over time the container accumulates zombies and can exhaust
-PIDs. PID 1 also has *special signal semantics*: the kernel does not apply default signal
-dispositions to PID 1, so a naive PID 1 that installs no handler will ignore `SIGTERM`
-entirely — which is why `docker stop` on such a container hangs for ten seconds and then
-`SIGKILL`s it. The fix is a tiny real init as PID 1: `tini` (shipped as Docker's `--init`),
-`dumb-init`, or `s6`. They do two jobs: reap orphaned zombies in a `wait` loop, and forward
-signals to the real application. We revisit this in Book 6 on cloud-native security and in
-Chapter 9; for now, remember: **a container's PID 1 must reap.**
-
 ## clone(): the primitive under fork and threads
 
 We have described `fork` (new process) and, shortly, `pthread_create` (new thread) as if they
@@ -481,16 +445,6 @@ A few real architectures make the trade-offs concrete:
   processes at the granularity where it matters (a core) and the efficiency of shared-memory
   concurrency inside each unit.
 
-The connecting idea — the distributed-systems lens on all of this — is that **multi-process
-isolation at the node is the same idea as fault isolation across the distributed system, one
-level down.** A distributed system partitions work across nodes so that one node's failure
-does not take down the service; a multi-process server partitions work across worker
-processes so that one worker's segfault does not take down the node. nginx workers,
-PostgreSQL backends, and Python multiprocessing pools are node-level bulkheads, mirroring the
-bulkheads you draw between services. The threads-vs-processes-vs-async choice is not a
-micro-optimization; it sets the fault-domain granularity and the scaling ceiling of every
-node your distributed system runs on.
-
 ## Context switching and its cost
 
 The scheduler (Chapter 2) multiplexes many tasks over few CPUs by *switching* between them. A
@@ -499,19 +453,6 @@ Understanding what it costs is essential, because "too many runnable threads" is
 common performance failure, and the cost is the reason.
 
 What actually happens on a context switch from task A to task B:
-
-1. **Enter the kernel.** A switch happens in kernel mode — triggered by A blocking (a syscall
-   that must wait), A being preempted (its timeslice expired, or a higher-priority task woke),
-   or an interrupt.
-2. **Save A's register state** into A's `task_struct` (kernel stack): general registers,
-   program counter, stack pointer, and the FPU/SIMD state.
-3. **Switch address space *if B is in a different process*.** If A and B belong to different
-   processes, the kernel loads B's page-table base into the MMU — on x86-64, writing the
-   `CR3` register. **This is the expensive part.** A naive `CR3` reload *flushes the TLB*
-   (the translation lookaside buffer, Volume 1, Chapter 3 / Chapter 10), because the cached
-   virtual-to-physical translations belonged to A's address space and are now wrong. After
-   the switch, B runs into a cold TLB and pays page-walk costs on its early memory accesses.
-4. **Restore B's register state** and return to userspace, resuming B where it left off.
 
 ```mermaid
 sequenceDiagram
@@ -575,17 +516,6 @@ switch (tens of nanoseconds to a few hundred, versus a microsecond-plus), though
 even mode switches pricier. Every context switch involves kernel entry, but most kernel
 entries are *not* context switches.
 
-The distributed-systems consequence closes the loop with the concurrency-model section:
-**context-switch cost is why thread-per-request does not scale to C10K, and why the industry
-moved to event loops and bounded thread pools.** If every one of ten thousand connections
-owns a thread, and thousands are runnable, the core spends its time switching and polluting
-caches instead of serving requests. An event loop (Chapter 7) inverts this: one thread stays
-resident, keeps its caches warm, and multiplexes thousands of connections with *no* context
-switch between them — you switch stack frames and state machines in userspace, not tasks in
-the kernel. Sizing thread pools to roughly the core count, rather than the connection count,
-is the same insight applied to threaded servers. The process model is what makes the cost
-real; the I/O model (Chapter 7) is how you dodge it.
-
 ## The process memory layout
 
 A process's address space is not an undifferentiated blob; it is a set of **regions** (the
@@ -611,31 +541,6 @@ flowchart TB
 ```
 
 Region by region:
-
-- **Text (code).** The machine instructions, mapped read-only and executable from the binary.
-  Read-only so the code cannot be rewritten, and so the same physical pages are shared across
-  every process running the same binary — run a hundred copies of a server and they share one
-  physical copy of the text.
-- **Rodata / Data / BSS.** Read-only constants (`rodata`); initialized global and static
-  variables (`data`, loaded from the binary); and **BSS**, the zero-initialized globals,
-  which take *no space in the file* (the loader just maps zero-filled pages) but do take
-  address space and memory once touched.
-- **Heap.** Dynamically allocated memory, classically grown *upward* by moving the "program
-  break" with `brk`/`sbrk`. In practice `malloc` (Chapter 4) also uses `mmap` for large
-  allocations and per-thread arenas, so the neat "heap grows up" picture is only part of the
-  story — but the brk-managed heap still exists.
-- **mmap region.** Where shared libraries (`libc.so` and friends), large `malloc` chunks,
-  file mappings, and **the stacks of non-main threads** live. When you `pthread_create`, the
-  new thread's stack is `mmap`ed here, not carved from the main stack. This region typically
-  grows downward from below the stack.
-- **Stack.** The main thread's call stack, growing *downward*. Each function call pushes a
-  frame (return address, saved registers, locals); it unwinds on return. It grows on demand
-  up to a limit (`RLIMIT_STACK`, commonly 8 MB); overrun that and you get the segfault every
-  engineer has met via infinite recursion — or, historically, a stack-clash attack.
-- **Kernel space.** The top of the address space is reserved for the kernel and simply not
-  accessible from user mode; a user access there faults. It is mapped into every process so
-  that syscalls and interrupts can run without a full address-space switch (a design that
-  Meltdown/KPTI complicated, as noted above).
 
 **ASLR** (Address Space Layout Randomization) randomizes the base of the stack, the mmap
 region, the heap, and — for position-independent executables — the text, so that an attacker

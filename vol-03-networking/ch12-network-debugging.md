@@ -13,22 +13,6 @@ capture is the last resort, not the first move.
 
 Learning goals — after this chapter you should be able to:
 
-- Run a layered triage — resolution, connectivity, transport, TLS, application — and bisect client
-  versus network versus server, stating at each step what a result would *falsify*.
-- Read `curl`'s `--write-out` timing breakdown as a protocol-phase oscilloscope, and interrogate
-  DNS with `dig`, `resolvectl`, and `getent` while knowing why those paths differ from your
-  application's.
-- Explain the mechanism behind `ping`, `traceroute`, and `mtr`, and the ways ECMP, anycast, ICMP
-  rate limiting, and asymmetric paths make their output misleading.
-- Read `ss -ti` as a window into the per-connection TCP control block, and kernel and NIC counters
-  (`nstat`, `ethtool -S`, `conntrack -S`) as proof or disproof of drop hypotheses without a capture.
-- Write correct BPF filters, capture safely in production including inside container network
-  namespaces, and decrypt TLS with `SSLKEYLOGFILE`.
-- Recognize the classic signatures on sight: refused versus timeout, accept-queue overflow, PMTU
-  blackholes, certificate and SNI failures, stale DNS, port and conntrack exhaustion, asymmetric
-  routing, `ndots` amplification, retry storms, and HTTP/2 connection pinning.
-- Design always-on telemetry that localizes the failing hop before anyone reaches for a capture.
-
 ## Debugging is hypothesis testing, not tool trivia
 
 The engineers who are fast at this are not the ones who have memorized the most flags. They keep an
@@ -40,15 +24,6 @@ address, complete a transport handshake, complete a TLS handshake, and exchange 
 messages. Each stage depends on all the previous ones, so a failure at stage *n* makes every test
 at stage *n+1* meaningless. Testing HTTP semantics while DNS returns a decommissioned address is
 not debugging; it is generating noise. Test in order, and stop at the first stage that misbehaves.
-
-**Bisect the path.** A modern request crosses many hops: client → resolver → CDN edge → anycast L4
-LB → L7 proxy → sidecar → server sidecar → server → database. The layered method tells you *which
-protocol stage* fails; bisection tells you *where*. Run the same test from progressively closer
-vantage points — your laptop, a pod in the same cluster, the node hosting the server, the server's
-own network namespace, `localhost` on the server. The first vantage point at which the failure
-disappears brackets the fault between it and the previous one. That turns "checkout is broken" into
-"checkout is broken from eu-west but not from the same-zone canary, and not from the node itself" —
-most of a root cause.
 
 **Change one variable.** When a test differs from production in five ways — different source IP,
 different DNS path, no mesh sidecar, HTTP/1.1 instead of HTTP/2, no client certificate — a negative
@@ -84,15 +59,6 @@ DNS sits on the critical path of every call while being the layer with the most 
 the loosest failure semantics, and the least visibility. Three structural reasons keep it at the top
 of the suspect list.
 
-First, **caching is layered and none of it is yours**. An answer may be cached in the application
-process (JVM `networkaddress.cache.ttl`, a client library's own cache; Go's resolver does not cache
-at all), in a node-local cache (NodeLocal DNSCache, `nscd`, `systemd-resolved`), in the cluster
-resolver (CoreDNS), and in an upstream recursive resolver — each with its own TTL accounting.
-Changing a record does not change behavior; it starts a countdown whose length you control only
-partly, and any layer that ignores or floors TTLs extends it. The resulting failure is usually
-latency or staleness rather than an error: a resolver answering in 5 seconds instead of 5
-milliseconds produces "the service is slow," not "DNS is broken."
-
 Second, **the transport is fragile in ways that hide**. Classic DNS is UDP-first; a response larger
 than the advertised EDNS(0) buffer comes back truncated with the TC bit set and the resolver retries
 over TCP. If a firewall permits UDP/53 and quietly drops TCP/53 — a common misconfiguration —
@@ -120,15 +86,6 @@ curl -sS -o /dev/null \
 ```
 dns=0.004132 tcp=0.005871 tls=0.031004 pre=0.031120 ttfb=0.284517 total=0.284790 code=200 ver=2 ip=10.42.7.19:443 conns=1 verify=0
 ```
-
-Every `time_*` variable is **cumulative from the start of the request**, so the phases are
-*differences*, not the raw numbers — the single most common misreading. Here: DNS 4.1 ms, TCP
-handshake 1.7 ms, TLS handshake 25.1 ms, request send ~0.1 ms, then **253 ms waiting for the first
-response byte**, with the body arriving in the following 0.3 ms. That is a server-side (or
-downstream-of-server) latency problem; no amount of network work will fix it. Had `tcp - dns` been
-200 ms instead, you would be looking at handshake latency: an over-long path, a SYN retransmit
-(Linux's initial RTO is 1 s, so a lost SYN produces a suspiciously round ~1 s or ~3 s step), or a
-saturated middlebox.
 
 Keep the format string in a file (`-w "@$HOME/curl-format.txt"`) so it is readable and reusable.
 curl 7.70.0 and later also accept `-w '%{json}'`, which dumps every write-out variable as a JSON
@@ -226,11 +183,6 @@ resolvectl statistics                     # cache hits/misses, transactions
 resolvectl flush-caches                   # prove or disprove "it's a stale cache"
 ```
 
-Alpine images complicate this further: musl's resolver has historically differed from glibc's —
-notably the absence of TCP fallback for truncated responses (added only in musl 1.2.4, released in
-2023) and querying the configured nameservers in parallel rather than in order. If a bug reproduces
-on Alpine and not on Debian with the same code, suspect the resolver implementation.
-
 Finally, the `ndots:5` trap from Chapter 5: in Kubernetes, `example.com` (one dot, fewer than five)
 is tried against every search domain — `example.com.<ns>.svc.cluster.local`,
 `example.com.svc.cluster.local`, `example.com.cluster.local`, and any node domains — before being
@@ -264,20 +216,6 @@ ICMP Port Unreachable, an ICMP Echo probe an Echo Reply, a TCP SYN probe a SYN/A
 
 That default is a problem in modern networks, and understanding why is the difference between
 reading a traceroute correctly and being fooled by one:
-
-- **ECMP hashes on the 5-tuple.** Because classic traceroute varies the destination port per probe,
-  consecutive probes hash to *different* paths, so the output is a superposition of several.
-  `paris-traceroute` and `dublin-traceroute` hold the flow identifier constant so you trace one
-  path; `traceroute -T -p 443` gets closer to the real flow, but its source port still varies.
-- **ICMP generation is rate-limited and deprioritized.** A middle hop showing 40% loss while every
-  subsequent hop shows 0% is not losing your traffic; it is declining to generate ICMP as fast as
-  you are asking. Loss is meaningful only if it persists at that hop **and all hops after it**.
-- **Anycast means "the hop" is not one machine.** Successive probes may be answered by different
-  routers or PoPs (Chapters 2 and 10).
-- **The return path is invisible.** Traceroute conflates the forward path with the return path of
-  the ICMP errors, and asymmetric routing is normal.
-- **MPLS and layer-2 clouds hide hops.** A "hop" that appears to add 30 ms may be a label-switched
-  path crossing a continent.
 
 `mtr` is traceroute run continuously with per-hop statistics, which distinguishes steady loss from
 a blip:
@@ -391,27 +329,6 @@ ESTAB 0 0  10.42.7.19:51234  10.42.9.4:443
 ```
 
 Read it as the TCP control block from Chapter 3:
-
-- `cubic` — the congestion control algorithm actually in use for this socket.
-- `rtt:33.412/2.107` — smoothed RTT and its mean deviation (`rttvar`), in milliseconds; `minrtt` is
-  the lowest RTT seen, the closest thing to the propagation floor. `rtt` much larger than `minrtt`
-  means queueing somewhere (bufferbloat, an overloaded middlebox, or a busy receiver).
-- `cwnd:12` with `ssthresh:12` — the congestion window has been cut and is in congestion avoidance.
-  A cwnd stuck near the initial window (10 segments on Linux) on a long-lived, high-throughput
-  connection means repeated loss.
-- `retrans:0/31` — currently outstanding / total retransmits on this socket. `bytes_retrans:41940`
-  against `bytes_sent:918273` is a ~4.6% retransmission rate, which is severe.
-- `send 4.2Mbps` is derived, roughly `cwnd × mss × 8 / rtt`: what the congestion window permits,
-  not what happened. `delivery_rate` is what the kernel measured by rate sampling (the mechanism
-  BBR is built on). `app_limited` is crucial — the connection was *not* limited by the network but
-  by the application not supplying data, so do not diagnose bandwidth on an app-limited socket.
-- `skmem:(...,d17)` — the `d` field is `sk_drops`: packets dropped on this socket, usually because
-  the receive buffer was full. Non-zero `d` on a UDP socket is the canonical "my UDP receiver is
-  too slow" evidence.
-- `pmtu:1500` and `mss:1448` — the path MTU the stack believes in and the resulting MSS (1500 less
-  20 bytes of IPv4 header, 20 of TCP header, and 12 for the timestamp option). A low `pmtu` on a
-  tunnelled path is normal; watching `pmtu` collapse mid-connection is the fingerprint of PMTU
-  discovery reacting to an ICMP "fragmentation needed" or ICMPv6 "Packet Too Big."
 
 `lsof` answers the inverse question — which process owns a socket, and what else it has open — and
 catches file-descriptor exhaustion, which presents as connection failures that are not network
@@ -711,27 +628,7 @@ application level (HTTP/2 PING, gRPC keepalive).
 
 ### Intermittent timeouts under load: accept-queue overflow
 
-Symptom: at low traffic everything is fine; above some request rate a small fraction of connections
-take ~1 s or ~3 s and some fail, while the application logs show no slow request — from its point of
-view those connections were never accepted. Evidence: `ss -tlnp` shows `Recv-Q` at `Send-Q`, and
-`nstat` shows `TcpExtListenOverflows` and `TcpExtListenDrops` climbing in lockstep. Mechanism
-(Volume 2, Chapter 10): the handshake completed in the kernel, the accept queue was full, so the
-kernel dropped the client's final ACK. Fixes, in order of correctness: make the application accept
-faster (it is stalled, often on a lock, a GC pause, or a synchronous dependency); raise
-`net.core.somaxconn` *and* the `backlog` the runtime passes to `listen()`, since raising one without
-the other does nothing; add capacity. `net.ipv4.tcp_abort_on_overflow=1` converts silent drops into
-resets — worse for users, better for diagnosis, so use it as a temporary instrument.
-
 ### Retransmissions and real packet loss
-
-Retransmissions are normal in small quantities; the question is always *rate* and *kind*. Fast
-retransmit (triggered by duplicate ACKs and SACK) costs a fraction of an RTT and is barely visible.
-RTO-based retransmission (`TcpExtTCPTimeouts`) costs at least the RTO — Linux clamps the minimum at
-200 ms — and is the mechanism behind the classic "p99 is 200 ms above p50 for no reason." Tail loss
-is especially punishing because no later packets exist to generate duplicate ACKs; the tail loss
-probe (RFC 8985) mitigates it. Localize loss by comparing `nstat` retransmit deltas at the two
-endpoints and looking for an `mtr` hop whose loss persists through the destination. Do not forget
-the boring causes: a NIC ring overrun (`rx_missed_errors`), a saturated link, a duplex mismatch.
 
 ### The MTU/PMTU blackhole
 
@@ -739,14 +636,6 @@ The signature is unmistakable once you know it: **small requests succeed, large 
 health check returns instantly; a 4 KB POST or a large response body stalls and eventually times
 out. TLS handshakes may fail specifically at the certificate message, because that is the first
 large flight.
-
-The mechanism: the sender emits a full-size segment with the IPv4 Don't Fragment bit set (Linux
-sets DF by default because it does Path MTU Discovery). Somewhere on the path — a VXLAN or GENEVE
-overlay, a WireGuard or IPsec tunnel, a PPPoE link — the effective MTU is smaller. That router drops
-the packet and returns ICMP Type 3 Code 4 ("fragmentation needed and DF set") carrying the next-hop
-MTU; IPv6 routers do not fragment at all, and the equivalent is ICMPv6 Type 2 ("Packet Too Big").
-If a firewall blocks that ICMP — a depressingly common "hardening" choice — the sender never learns
-and retransmits the same oversized segment forever. Small packets fit, so everything *looks* healthy.
 
 Confirm and fix:
 
@@ -763,39 +652,9 @@ ip route get 10.42.9.4
 ss -ti dst 10.42.9.4 | grep -o 'pmtu:[0-9]*'
 ```
 
-Mitigations, best first: **allow the ICMP** (Type 3 Code 4 and ICMPv6 Type 2 are part of IP, not an
-optional extra). **Clamp MSS** at the tunnel ingress: `iptables -t mangle -A FORWARD -p tcp
---tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu`. **Enable packetization-layer PMTUD**
-(`net.ipv4.tcp_mtu_probing=1` probes when a blackhole is suspected, `=2` always) — RFC 4821's
-approach of discovering MTU from TCP's own behavior rather than from ICMP; QUIC (Chapter 4) uses
-DPLPMTUD (RFC 8899) for the same reason. And set consistent MTUs on overlay interfaces rather than
-discovering the mismatch in production.
-
 ### TLS handshake and certificate failures
 
 The families are few and each has a distinct fingerprint:
-
-- **Expired certificate** — sudden, total, simultaneous across all clients, at a round timestamp.
-  `Verify return code: 10`. The subtle variant is a *root* expiring: IdenTrust's DST Root CA X3, the
-  root that cross-signed Let's Encrypt's ISRG Root X1, expired on 30 September 2021, breaking
-  clients with old trust stores or old path-building code (OpenSSL 1.0.2 was the notorious case)
-  while up-to-date clients were unaffected. "Fails on *some* clients" is much harder to read than a
-  uniform outage.
-- **Incomplete chain** — the server does not send intermediates. Browsers often paper over this by
-  fetching the issuer via the certificate's AIA extension; most server-side clients (Go, Java,
-  Python) do not. Signature: "works in my browser, fails from the service." `openssl s_client
-  -showcerts` shows a chain of length one; `Verify return code: 21`.
-- **SNI mismatch** — the client sent no SNI, or the wrong name, and a shared L7 endpoint returned a
-  default certificate or routed to the wrong virtual host. Always test with `-servername` or
-  `--resolve`.
-- **Version or cipher mismatch** — an old client against a TLS-1.2-minimum server, or a server
-  requiring a curve or cipher the client lacks: alert `handshake_failure` (40) or
-  `protocol_version` (70).
-- **ALPN mismatch** — `no_application_protocol` (120): the client offered only `h2` and the server
-  only `http/1.1`.
-- **mTLS client-certificate problems** — expired workload identities, clock skew larger than the
-  certificate's validity window (mesh certificates often live only hours, so minutes of skew are
-  fatal), or an untrusted issuing CA after a root rotation. Check `timedatectl` before theorizing.
 
 Under TLS 1.3 the certificate is encrypted, so a capture no longer shows the chain; the ClientHello
 (including SNI, unless ECH is in use) and the alert codes remain visible, and the alert alone
@@ -803,28 +662,7 @@ usually tells you which family you are in.
 
 ### Stale DNS and failover that did not fail over
 
-Symptom: a database or service failover "completed," but a fraction of clients keep hitting the old
-address for minutes or hours. Mechanism: some caching layer ignored or floored the TTL. The classic
-offender is the JVM, which historically cached successful lookups **forever** when a security
-manager was installed (`networkaddress.cache.ttl=-1`); modern JDKs default to a finite value
-(commonly 30 seconds), but pin it explicitly anyway. Connection pools are the other half: a pooled
-connection is *never* re-resolved, so even a perfect TTL story leaves long-lived connections pinned
-to the dead address until they close. Evidence: `dig` on the affected host shows the new address
-while `ss -tanp` shows established connections to the old one. The fix is protocol-level, not
-DNS-level — bounded connection lifetime, health-check-driven eviction, and, for gRPC,
-name-resolution-aware load balancing (Chapters 8 and 9).
-
 ### Ephemeral port and conntrack exhaustion
-
-A client making many short-lived outbound connections to the *same* destination consumes 4-tuples.
-The ephemeral range (`net.ipv4.ip_local_port_range`, typically 32768–60999, about 28,000 ports)
-bounds concurrent connections to one destination address and port, and `TIME_WAIT` holds each tuple
-for 60 seconds after close on Linux. Signature: connection setup fails at a suspiciously consistent
-rate, `ss -s` shows tens of thousands of `TIME_WAIT`, and `nstat` shows `TcpExtTW` churn. Real
-fixes: connection reuse (keep-alive and a properly sized pool — the actual bug is almost always
-that the client library is not pooling), spreading across more destination addresses, widening
-`ip_local_port_range`, and `net.ipv4.tcp_tw_reuse=1` where timestamps are available. Do not go
-looking for `tcp_tw_recycle`: it was dangerous with NAT and was removed in Linux 4.12.
 
 Behind a shared SNAT device — a cloud NAT gateway, or a node masquerading pod traffic — the same
 limit applies to the *aggregate* of all clients sharing that source address, one of the most common
@@ -842,27 +680,7 @@ arriving on an interface the routing table would not use to reply.
 
 ### Retry storms and metastable failure
 
-Signature: a brief backend slowdown becomes a total outage that does not recover once the original
-trigger is gone. Mechanism (Chapter 11): every layer retries and the multiplier compounds — a client
-retrying 3 times through a gateway retrying 3 times through a mesh sidecar retrying 3 times is up
-to 27 requests per user action. Once the backend is saturated, retries keep it saturated: a
-metastable failure sustained by its own load. Evidence: server-side request rate several times the
-client-side rate; a spike in `URX` or `UO` response flags in mesh access logs; load that does not
-fall when upstream traffic does. Remediation is architectural — retry budgets rather than fixed
-counts, retries at one layer only, jittered exponential backoff, circuit breaking, load shedding.
-
 ### HTTP/2 connection pinning imbalance
-
-Signature: a fleet of identical backends where a few replicas run hot and the rest idle, and scaling
-out does not help. Mechanism (Chapters 7, 8, 9): HTTP/2 and gRPC multiplex many requests over one
-long-lived TCP connection, and an L4 load balancer balances *connections* — so once a client's
-connection lands on a backend, every request on it lands there too for the life of the connection.
-Add a client fleet that opens connections at startup and never rotates them and the assignment
-freezes, including across a scale-out, since new replicas receive no existing connections. Fixes:
-balance at L7, so a proxy distributes individual streams; force rebalancing with server-side
-connection age limits (gRPC's `MAX_CONNECTION_AGE` plus `MAX_CONNECTION_AGE_GRACE` sends `GOAWAY`
-and lets clients re-resolve); or use client-side, xDS-driven balancing so the client knows all
-endpoints.
 
 ```mermaid
 flowchart LR
@@ -886,13 +704,6 @@ assumption fails three ways at once: the failure is a fraction of a percent, so 
 attach it has moved; there are thousands of candidate machines; and pods are ephemeral, so the
 container that failed was replaced before you finished typing. Interactive debugging does not
 scale. Make the network *continuously observable*, so the interactive step, when it comes, is aimed.
-
-**Instrument every hop, not just the ends.** The minimum viable network telemetry is RED metrics
-(rate, errors, duration) *per hop*, emitted by the intermediaries themselves — CDN, edge LB, API
-gateway, ingress proxy, sidecars on both sides of every internal call — plus USE-style saturation
-signals for the resources that silently drop traffic (accept queues, conntrack tables, connection
-pools, NIC rings). The point is arithmetic: when hop *n* reports 12,000 rps and hop *n+1* reports
-11,400, you have localized 600 lost requests to one link in seconds, without a capture.
 
 **The proxy layer is your richest per-hop telemetry, and it is free.** A mesh sidecar or L7 proxy
 sees, for every request, the upstream it chose, whether the connection was reused, TLS details,

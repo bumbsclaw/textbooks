@@ -63,16 +63,6 @@ across every team and every environment. The blast-radius question is not "how f
 "how far did the component spread through our build graph?", and you cannot answer it by looking at
 network logs. You answer it by querying inventory.
 
-**Remediation is rebuilding trust, not eviction.** When an attacker is evicted, the system returns to a
-known-good state that predates them. A supply chain compromise has no such state to return to, because
-the compromise was *inside the thing you trusted*. You cannot simply "remove" a trojanized base image
-from a running fleet; you have to rebuild every image that layered on top of it, from clean source, on a
-build you have re-verified, and redeploy them. You cannot "un-see" the CI secrets a malicious uploader
-exfiltrated; you have to assume they are all compromised and rotate every one. If a signing key leaked,
-you cannot trust anything it signed while it was exposed; you revoke it, re-issue, and re-sign. The work
-is *restorative* — rotate, rebuild, re-verify — and proportional to how widely the trusted thing was
-used, which is why it dwarfs ordinary eradication.
-
 ### Two modes: consumer and producer
 
 Every supply chain incident puts you in one of two roles, and they demand different responses. Most
@@ -156,34 +146,6 @@ build during peacetime, and the entire thesis of this chapter — and of this bo
 are the *same* capabilities the prevention program builds. You do not stand up a separate IR platform.
 You discover, at 2 a.m. on the night the CVE drops, whether the platform you built for prevention can
 also answer incident questions. Here is the checklist, each item tied to where the suite builds it.
-
-- **A queryable inventory / SBOM across the whole fleet.** The capability to answer "where is component
-  X, at what version, in which service, in which environment?" as a *query*, not a survey. This is the
-  Log4Shell capability, and it is built in Book 3, Chapter 5 (SBOMs at scale) — a central store of SBOMs
-  for every built artifact, joined to deploy state so a component name resolves to a list of running
-  services. Without it, scoping is a fleet-wide email asking teams to grep their `pom.xml` files, which
-  is how the weeks-long version of Log4Shell happened.
-- **Asset and vendor mapping.** For vendor incidents (SolarWinds), you need to know which systems run
-  which third-party products, and which vendors have which access into your environment — the vendor
-  register and third-party risk inventory of Book 8, Chapter 3. "Do we run Orion, and where?" must be
-  answerable in minutes.
-- **Detection wired to response.** The telemetry layer of Chapter 5 — integrity checks as tripwires,
-  egress monitoring, transparency-log monitoring — is what tells you an incident exists and feeds the
-  initial scope. Detection without a response path is just an alarm nobody can act on.
-- **The ability to rapidly patch, rebuild, and redeploy the fleet.** Update automation (Book 2, Chapter
-  9) to bump a dependency across hundreds of repos; a paved-road build platform (Book 4, Chapter 10) and
-  golden base images with automatic rebuild (Book 6, Chapter 3) so that "rebuild everything that used
-  the bad thing" is a platform operation, not a per-team scramble; fast, safe deploy/rollback.
-- **The ability to rotate credentials at scale.** Centralized secrets management and short-lived
-  workload identity (Book 4, Chapter 6; and the broader secrets discipline of Book 7, Chapter 4) so that
-  "rotate every CI secret" is a bounded operation. If your secrets are long-lived and scattered across
-  team-owned config, mass rotation is itself a multi-week incident.
-- **Registry chokepoints you can block at.** An internal registry / proxy (Book 2, Chapter 8; Book 6,
-  Chapter 2) that every build pulls through, so that "no build may consume the bad version" is one
-  policy change at one place, not a plea to every team.
-- **Runbooks for the supply-chain scenarios.** Pre-written, rehearsed playbooks for each incident type —
-  vulnerable-dependency, trojanized-vendor-update, compromised-CI-tool, malicious-package,
-  signing-key-compromise — with the specific queries, block commands, and rotation scopes filled in.
 
 The Log4Shell lesson is entirely a preparation lesson. When CVE-2021-44228 dropped on 9 December 2021,
 the technical fix was trivial — bump `log4j-core` to a fixed version, or set a mitigation flag. The
@@ -287,36 +249,10 @@ artifacts until it is cleaned — Book 4, Chapter 7), and isolate affected syste
 hands-on-keyboard adversary is a risk (SolarWinds). Isolation here is ordinary IR; the supply-chain twist
 is deciding *which* systems, which comes from the scoping list.
 
-A caution specific to supply chain: containment can break production. Blocking a bad version may block
-one that half your fleet currently depends on; isolating a system running a trojanized vendor product may
-take down a monitoring platform the rest of your response depends on. The scoping list and exposure tiers
-are what let you contain surgically — block the bad version but stage the fix, isolate the exploited hosts
-but not the merely-exposed ones.
-
 ### Eradication: remove the malicious component
 
 Eradication is removing the bad thing from everywhere it is — and in supply chain IR this is the phase
 that is often enormous, because "everywhere" is defined by the blast radius, not by a foothold.
-
-- **Patch or update the dependency.** For a vulnerable or malicious package, bump to a fixed/clean
-  version across every affected repo. Update automation (Book 2, Chapter 9) is what makes this a
-  fleet operation — open the version-bump PRs across hundreds of repos programmatically rather than by
-  hand. Log4Shell's cruelty was that the fix had to be applied hundreds of times.
-- **Rebuild artifacts from clean source on a verified build.** Removing the component from source is not
-  enough; the *built artifacts* still embed it. Every artifact that consumed the bad component must be
-  rebuilt from clean source on a build you trust (Book 4). For a compromised base image, build tool, or
-  widely-used internal library, this can mean rebuilding a huge swath of the fleet — the
-  rebuild-everything problem, addressed below. Crucially, if the build system *itself* was the point of
-  compromise (SolarWinds, Codecov), you must first establish a clean build environment, or you will
-  faithfully rebuild the trojan.
-- **Remove trojanized artifacts.** Delete the bad artifacts from registries and caches so they cannot be
-  pulled again, and purge them from any mirror or CDN.
-- **Rotate every potentially-exposed secret.** This is the eradication step teams most often
-  under-scope. If a malicious component ran in an environment, assume it saw every secret in that
-  environment. The Codecov response is the canonical example: because the Bash Uploader ran inside
-  customers' CI with access to the CI environment, the correct response was to rotate *every credential,
-  token, and key that had been exposed to that CI* — not just the ones you think it used (Book 4, Chapter
-  6; Book 7, Chapter 4). You do not know what it exfiltrated; you assume it took everything it could see.
 
 The eradication list is, again, the scoping list — every artifact and every secret in the blast radius —
 which is why an incomplete inventory produces an incomplete eradication, and an incomplete eradication is
@@ -326,25 +262,6 @@ how attackers persist.
 
 Recovery restores service on clean, trusted artifacts and confirms the compromise is actually gone. The
 supply-chain-specific discipline here is *verify before you trust the rebuild*.
-
-- **Verify provenance and signatures on the clean rebuild.** Before redeploying, verify that the new
-  artifacts have valid provenance from the clean build and pass signature verification (Book 5, Chapter
-  8). You are re-establishing the trust the incident destroyed; do it by checking the same integrity
-  evidence you would demand of any artifact, not by assuming the rebuild is clean because you did it.
-- **Redeploy and restore service** on the verified artifacts, using your normal safe-deploy path
-  (canary, staged rollout) so a bad rebuild does not become a second incident.
-- **Confirm the bad version cannot return.** The registry block and a policy-as-code rule (Book 8,
-  Chapter 4) that denies the affected version range must remain in force, so a stale lockfile or a
-  cached layer cannot silently reintroduce it. This is what turns eradication into permanent removal.
-- **Hunt for persistence.** Supply chain attackers plant follow-on access. SUNBURST's whole purpose was
-  to be a *foothold* — for the ~100 selected victims it delivered second-stage implants (TEARDROP) and
-  the attacker moved hands-on-keyboard, forged SAML tokens (the "Golden SAML" technique against ADFS),
-  and established independent persistence that survived removing Orion. Removing the trojanized component
-  does not remove the attacker who used it as a door. Recovery must include threat-hunting for that
-  follow-on access — new accounts, anomalous federation trust, credential misuse — informed by the fact
-  that eradicating the *supply chain* vector and eradicating the *intrusion it enabled* are two different
-  jobs. For a stealthy targeted implant, recovery is not done when the component is gone; it is done when
-  you have confirmed the adversary is gone.
 
 ### Lessons learned: close the gaps that let it in and slowed the response
 
@@ -456,12 +373,6 @@ saw everything in that environment" is the default eradication posture for any c
 your build.
 
 ### event-stream — malicious dependency, targeted payload
-
-In 2018, the popular npm package `event-stream` gained a new maintainer who added a dependency,
-`flatmap-stream`, containing an obfuscated payload that targeted a *specific* downstream — the Copay
-bitcoin wallet — attempting to steal wallet keys (Book 1, Chapter 4). It is the archetypal
-malicious-dependency incident and the archetype of a *targeted* payload: most consumers of event-stream
-were unaffected because they were not the target, which again makes presence-vs-impact scoping essential.
 
 The consumer response: **scope** which builds pulled `event-stream`/`flatmap-stream` — the registry
 audit log (Book 2, Chapter 8) tells you which builds resolved it and when — and which shipped artifacts

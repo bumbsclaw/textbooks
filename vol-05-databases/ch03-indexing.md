@@ -20,23 +20,6 @@ distributed-consistency problem.
 
 Learning goals — after this chapter you should be able to:
 
-- State precisely what an index is and account for its cost on every `INSERT`, `UPDATE`, and
-  `DELETE`, not just its benefit on reads.
-- Explain the difference between a clustered index and a secondary index, trace a lookup through
-  each, and predict from the model why a fat or random primary key hurts InnoDB in ways it does
-  not hurt Postgres.
-- Apply the leftmost-prefix rule to decide which predicates a composite index can serve, and order
-  columns correctly: equality first, then range, then sort.
-- Design covering indexes that serve queries without touching the table, and explain why a
-  Postgres index-only scan sometimes still fetches heap pages.
-- Choose among B-tree, hash, partial, expression, GiST, GIN, and BRIN indexes based on the query
-  shape and data distribution, and explain what a bitmap index scan is doing.
-- Build indexes online with `CREATE INDEX CONCURRENTLY`, know its failure modes, and detect the
-  invalid indexes it can leave behind.
-- Explain why secondary indexes become fundamentally harder under sharding, and compare local
-  scatter-gather indexes with global asynchronously-maintained ones — with DynamoDB GSIs as the
-  worked example.
-
 ## What an index actually is
 
 Strip away the syntax and an index is three things at once:
@@ -148,19 +131,6 @@ table — not just the new one. The `n_tup_hot_upd` versus `n_tup_upd` columns o
 `pg_stat_user_tables` tell you your HOT ratio; a common operational trick is lowering a hot
 table's `fillfactor` so pages retain the free space HOT needs.
 
-**Index-only scans and the visibility map.** If a query needs only columns present in the index,
-the engine would like to answer it from the index alone. In Postgres there is a complication:
-index entries carry no visibility information — you cannot tell from the index whether a tuple is
-visible to your snapshot (Chapter 6). Checking would require fetching the heap tuple, defeating
-the purpose. The escape hatch is the **visibility map**, a bitmap with one bit per heap page
-meaning "every tuple on this page is visible to all transactions." Vacuum sets the bit; any
-subsequent write to the page clears it. An index-only scan consults the map: pages marked
-all-visible are skipped entirely; others force a heap fetch for that tuple. This is why `EXPLAIN
-ANALYZE` reports `Heap Fetches` for an index-only scan, and why an index-only scan on a
-freshly-loaded, never-vacuumed table performs like a plain index scan: the visibility map is
-empty until vacuum runs. If you are counting on index-only scans, you are also counting on vacuum
-keeping up.
-
 ```mermaid
 flowchart TD
   subgraph INNO["InnoDB — clustered"]
@@ -215,21 +185,6 @@ Consider `CREATE INDEX ON orders (customer_id, status, placed_at)`:
 | `customer_id > 100 AND status = 'shipped'` | No — range on the first column, so `status` order restarts within each customer | Seek to `customer_id = 100`, scan the range, filter on `status` |
 
 Three rules crystallize out of the table:
-
-1. **The leftmost-prefix rule.** The index serves seeks on `(a)`, `(a,b)`, `(a,b,c)` — prefixes —
-   not on `(b)`, `(c)`, or `(b,c)`. An index on `(a,b,c)` is a strictly better version of an index
-   on `(a)` and largely subsumes `(a,b)`; separate indexes on those prefixes are usually redundant
-   (an anti-pattern we return to).
-2. **A range predicate stops the seek.** Columns after the first range-compared column can no
-   longer narrow the descent; they can only filter entries already being scanned. (Postgres will
-   still pass later-column conditions into the index scan as filter conditions — cheaper than heap
-   filtering — but the run being scanned is sized by the columns up to and including the range.)
-3. **Therefore: equality columns first, then the range column, then sort columns.** For `WHERE
-   customer_id = ? AND status = ? AND placed_at > ? ORDER BY placed_at`, the right index is
-   `(customer_id, status, placed_at)`: two equality columns narrow the run, and within that run
-   entries are already sorted by `placed_at` — the range and the `ORDER BY` are served by the same
-   trailing column, and the sort disappears from the plan entirely. Put `placed_at` second and you
-   get a larger scan plus a filter; put it first and the index barely helps at all.
 
 The equality/range/sort ordering heuristic resolves most composite-index design questions, but
 note the tension it hides: when different queries need different orders, one index cannot serve
@@ -536,22 +491,6 @@ the same choice that is severe in InnoDB is merely wasteful in Postgres.
 
 ### Bloat: MVCC's tax on indexes
 
-In MVCC engines (Chapter 6), deleted and updated rows leave dead versions behind, and dead heap
-tuples imply dead index entries pointing at them. Postgres indexes shed dead entries in three
-ways: opportunistically, when a scan discovers a dead tuple and sets a hint (the `LP_DEAD` "killed
-tuple" bit) so future scans skip it; in bulk, when `VACUUM` scans each index and removes entries
-for the dead TIDs it collected (often the dominant cost of vacuuming a big table); and
-structurally never — **B-tree pages do not merge**. A page emptied by deletes can be recycled
-whole, but a tree that once held 500M rows and now holds 50M retains its inflated structure,
-half-empty pages and all. That persistent inflation is **bloat**, it degrades cache efficiency
-and scan cost, and the fix is a rebuild: `REINDEX CONCURRENTLY` (Postgres 12+) or, in MySQL,
-rebuilding via `OPTIMIZE TABLE`/online DDL. Postgres 13's B-tree deduplication and 14's bottom-up
-deletion substantially blunted the classic version-churn bloat, but did not repeal it: a
-monitoring page for index bloat (via `pgstattuple` or the community bloat queries) belongs in any
-serious Postgres operation. High-churn queue tables — small, hot, constantly inserted and
-deleted — are the classic worst case, sometimes carrying indexes a hundred times larger than
-their live data.
-
 ### Building indexes online — and the invalid-index failure mode
 
 A plain `CREATE INDEX` takes a lock that blocks all writes to the table for the duration of the
@@ -577,39 +516,12 @@ that happens to be slow.
 
 ### The cost of too many indexes
 
-The failure mode at the portfolio level is accumulation. Indexes are added by many hands over
-years — one per incident, one per ORM annotation, one per "just in case" — and almost never
-removed, because removal feels risky and benefit is invisible. The compounding costs are the ones
-from the opening accounting: write amplification (every write touches every index — twelve
-indexes means a single-row insert performs twelve tree descents and up to twelve splits),
-buffer-pool dilution (each index's hot pages evict something else's), doubled vacuum work in
-Postgres, and — less obviously — **optimizer confusion**: more indexes mean more plans to
-consider, more near-tie decisions made on estimated costs, and more opportunities for a plan to
-flip to a subtly worse index after a statistics refresh (Chapter 4). Redundant near-duplicates —
-`(a)` alongside `(a, b)` alongside `(a) INCLUDE (b)` — are pure waste on the write side and
-plan-instability fuel on the read side. Index count is a budget; spend it on evidence.
-
 ## Designing indexes from queries, not tables
 
 Everything above converges on one method, and it inverts the way indexes are usually created.
 Indexes designed by staring at the schema — "customers will be looked up by email, index email" —
 accumulate into the portfolio problem just described. Indexes designed from the *query workload*
 stay few and earn their keep. The method:
-
-1. **Extract the access patterns.** From `pg_stat_statements`, MySQL's performance schema
-   digests, or your APM: the queries that dominate load or matter for latency, with their real
-   predicate shapes, sorts, and limits. Ten queries usually cover the great majority of load.
-2. **Design composite keys around the critical predicate + sort.** Per query: equality columns
-   first, then the range column, then sort columns; then decide whether covering (INCLUDE or a
-   wider key) is worth the write cost for that path. Then *merge*: find the smallest index set
-   where one index serves several queries via prefixes, and delete every index another subsumes.
-3. **Verify with `EXPLAIN`, then with `EXPLAIN (ANALYZE, BUFFERS)`** — first that the plan uses
-   the index as designed (seek, not filter; sort absorbed, not re-sorted), then that the actual
-   row counts and buffer touches match the theory. Chapter 4 teaches plan-reading in earnest; the
-   two lines that matter here are `Index Cond` (predicates that narrowed the descent — your seek)
-   versus `Filter` (predicates applied per-row after the fact — index not helping), and the
-   presence or absence of a `Sort` node above the scan.
-4. **Audit continuously for unused indexes.** The database counts index usage for you:
 
 ```sql
 -- Postgres: indexes never or rarely used since stats reset

@@ -14,11 +14,6 @@ anti-patterns catalog — the recurring shapes of production incidents — and w
 that ties this volume to the rest of the suite: every pattern here has a fleet-scale twin, and
 fleet pathologies are usually process pathologies amplified.
 
-None of these patterns is novel. That is precisely their value: they are the survivors of several
-decades of production selection pressure. What is usually missing from their presentation is the
-*why* underneath — why bounded, why jittered, why shed early, why drain before exit. The why is
-Chapters 1 through 8, and this chapter cites back into them relentlessly.
-
 Learning goals — after this chapter you should be able to:
 
 - Size a worker pool from measured arrival rate, service time, and wait/compute ratio, and explain
@@ -92,38 +87,9 @@ engineering, and it *is* a default: Java's `Executors.newFixedThreadPool` uses a
 `LinkedBlockingQueue`, and an unbuffered-channel-fed goroutine spawner has the same effect if you
 spawn per item.
 
-The argument is short. If arrival rate exceeds service rate, the difference accumulates somewhere.
-An unbounded queue accumulates it in memory: the queue grows without limit, and the process
-eventually dies of OOM — an **unbounded queue is deferred OOM**. Worse, it dies *late* and
-*uselessly*: by Little's Law, a queue of length L in front of a server draining at rate μ imposes
-waiting time L/μ on every new arrival, so long before the OOM, every queued request is waiting
-tens of seconds — far past its client's timeout. The server is faithfully processing work whose
-requesters have already given up, which is negative work: it consumes capacity and produces
-nothing. **The queue is where latency hides.** Throughput metrics look fine — the pool is running
-flat out — while residence time W = L/μ climbs linearly with queue depth. If you remember one
-sentence from this chapter: a long queue is not a buffer, it is a promise of latency you have
-already broken.
-
 A bounded queue converts this silent failure into an explicit, immediate decision: the queue is
 full, an arrival cannot be accepted — now what? That decision is the **rejection policy**, and
 there are three honest answers:
-
-- **Block the submitter.** The producer waits until space frees. This is backpressure in its
-  purest form: the slowdown propagates upstream to whoever is generating work, which is correct
-  for internal producers (a file reader feeding a parser pool *should* slow to the parser's pace).
-  It is wrong at the edge of a request-serving system, where "the submitter" is an accepted
-  connection and blocking it just moves the unbounded queue into the kernel's socket buffers.
-- **Drop — reject with an error.** Fail the submission immediately (`RejectedExecutionException`,
-  HTTP 503, a full-channel `select` default case). This is load shedding at the pool boundary: the
-  caller learns *now*, while its own deadline still has budget to try elsewhere or degrade. For
-  work that must not be lost, "drop" means "divert to durable storage," which is the async-handoff
-  pattern below.
-- **Caller-runs.** The submitting thread executes the task itself (Java's `CallerRunsPolicy`).
-  This has an elegant emergent property: while the caller is busy running the task, it is not
-  submitting new ones, so the submission rate automatically throttles to what the system can
-  absorb. It is a gentle backpressure valve — but note it runs the task on a thread that was not
-  sized for it, so it is unsuitable when the submitter is an event loop (Chapter 6: never block
-  the loop).
 
 Java's `ThreadPoolExecutor` ships all of these (`AbortPolicy`, `DiscardPolicy`,
 `DiscardOldestPolicy`, `CallerRunsPolicy`); in Go you build them from channel operations — a
@@ -264,18 +230,6 @@ when nobody writes condvars anymore, the answer is: every buffered channel and b
 *is* one, and its behavior under contention — who wakes, in what order, at what cost — is
 Chapter 2's behavior.
 
-When throughput demands exceed what a lock-based queue delivers — remember from Chapter 2 that
-every `put` and `take` contends on the same mutex and bounces the same cache lines — the
-escalation path is the **ring buffer** of Chapter 4: a fixed-size array with head and tail
-indices advanced by atomic operations, single-producer/single-consumer variants requiring no
-atomics at all beyond memory ordering, and multi-producer variants using CAS. The LMAX Disruptor
-popularized this in trading systems; Go's channel and the io_uring submission/completion rings
-(Chapter 6) are ring buffers under the hood. The trade-off is flexibility: a ring buffer's
-capacity is fixed at a power of two, and blocking semantics must be layered on with parking or
-spinning. For nearly all backend services, the lock-based blocking queue is enough — the queue is
-rarely the bottleneck; the work is — but knowing the escalation path exists keeps you from
-inventing one.
-
 One design rule carries over from the pool discussion: **the buffer's bound is a latency policy,
 not a tuning knob.** Deep buffers absorb bursts but hide sustained rate mismatch; by Little's Law
 the hiding shows up as residence time. Prefer a small bound plus an explicit policy at the full
@@ -321,18 +275,6 @@ concurrency by N; under load this multiplies connection counts, memory, and pres
 downstream. Use a semaphore (Chapter 2) or a bounded worker pool to cap concurrent sub-calls —
 per request if N is large (fetch 500 objects, but at most 16 at a time), and globally per
 downstream (the bulkhead, below).
-
-**Per-call timeouts, and a plan for partial results.** Fan-in's latency is the *max* of the
-branches, which means scatter-gather is a tail-latency amplifier: if each of 10 branches is slow
-1% of the time, roughly 1 − 0.99¹⁰ ≈ 10% of requests hit at least one slow branch. Dean and
-Barroso's "The Tail at Scale" (CACM, 2013) is the definitive treatment of this arithmetic at
-fleet width — with 100 servers involved, a 1-in-100 slow response becomes the common case. The
-first defense is a timeout on every branch, shorter than the request's overall deadline, plus a
-decision made *at design time* about what to do when a branch misses it: fail the whole request
-(only when the branch is essential), or return a **partial result** — the page without
-recommendations, the search results from 9 of 10 shards with a `partial: true` flag. Degrading to
-partial results is usually right and needs product agreement, which is why it must be designed
-rather than improvised during an incident.
 
 **Hedged requests**, from the same paper, address the tail more aggressively: send the request to
 one replica; if no reply arrives within a threshold (say, the observed 95th-percentile latency),
@@ -493,17 +435,6 @@ client's own deadline still has budget to back off or fail over. **Prefer reject
 failing expensive** — a shed request costs almost nothing; a timed-out request costs everything it
 consumed plus a retry.
 
-**Shed on a leading signal.** CPU utilization is a lagging, noisy trigger. The best signals are
-the ones queueing theory points at: your own queue depth and in-flight count against measured
-capacity (Little's Law again — if sustainable in-flight is 100 and you are at 100, admission of
-the 101st only adds latency), and request staleness (if a request has already waited past the
-point where a useful response is possible — its deadline is spent — drop it unprocessed; this
-"expired on arrival" check is the cheapest shed of all). Prioritized shedding — drop low-priority
-traffic classes first, keep health checks and payments — is the natural refinement. The Google SRE
-book's "Handling Overload" and "Addressing Cascading Failures" chapters are the standard field
-guides; Volume 11 develops shedding as a reliability practice, and Volume 11, Chapter 10 covers
-the pattern catalog around it.
-
 ## Bulkheads: isolating the blast radius
 
 The term is naval: a ship's hull is partitioned so one flooded compartment does not sink the
@@ -602,30 +533,6 @@ kills processes *constantly* — a service that drops in-flight work on exit tur
 an incident. Graceful shutdown is not cleanup code; it is a pattern with a strict ordering, and
 the ordering is the point.
 
-1. **Catch the signal.** Kubernetes and every orchestrator send `SIGTERM` first, then `SIGKILL`
-   after a grace period (default 30 s). Handle `SIGTERM`; you cannot handle `SIGKILL`. Your entire
-   shutdown must fit inside the grace period — know what it is, and set
-   `terminationGracePeriodSeconds` to match your drain budget, not vice versa.
-2. **Stop accepting new work — and tell the world first.** Flip the readiness probe to failing
-   *before* closing the listener, and keep serving briefly while the load balancer notices and
-   stops routing to you (Volume 12 covers probe mechanics and endpoint propagation delay; a small
-   sleep between probe-flip and listener-close is the pragmatic standard, because endpoint removal
-   is asynchronous and eventually consistent). Closing the listener first means the LB keeps
-   sending requests to a closed port — visible errors during every deploy. Also stop pulling from
-   queues and pause background schedulers.
-3. **Drain in-flight work, with a deadline.** Let running requests finish: `Server.Shutdown(ctx)`
-   in Go, `awaitTermination` in Java. The deadline matters because drain time is bounded by your
-   longest request, and a stuck request must not hold the process past the orchestrator's grace
-   period — at which point `SIGKILL` drops *everything* still running, not just the straggler.
-4. **Cancel stragglers.** When the drain deadline passes, cancel the remaining work's contexts
-   (Chapter 8) so it stops cleanly — releasing locks, aborting transactions — rather than being
-   killed mid-write.
-5. **Flush and close.** Buffered telemetry, batched writes (see write-behind, below), outbound
-   connections, the database pool. This is where the debounce/batch buffers of the next section
-   get their contents persisted; a process that batches writes and skips this step silently loses
-   the last batch on every deploy.
-6. **Exit zero.** So the orchestrator can tell a clean stop from a crash.
-
 ```mermaid
 sequenceDiagram
     participant K as Orchestrator
@@ -667,17 +574,6 @@ interval (e.g., uniform in [0.5, 1.5] × period), so the fleet's ticks decorrela
 decorrelated even after synchronized restarts. The same jitter principle reappears in retry
 backoff below, and for the same reason: synchronized fleets are load spikes.
 
-**Debounce and batching.** Many operations have a large per-invocation cost and a small per-item
-cost — a database round trip, an fsync, an HTTP call to a metrics API. Batching amortizes: buffer
-items and flush when either the batch reaches size K or an age limit T expires, whichever comes
-first. The size bound caps memory and downstream request size; the time bound caps the latency an
-item spends waiting for peers — flushing on size-or-time is the whole trick, and both bounds are
-mandatory (size alone starves trickles forever; time alone lets bursts build huge batches). This
-is **write-behind** when the buffered items are writes: acknowledge fast, persist in batches, and
-accept the trade — a crash loses the unflushed window. That loss window is why write-behind
-buffers appear by name in the shutdown flush step, and why data that cannot tolerate the window
-needs the next pattern instead.
-
 **Async handoff to durable queues.** An in-memory queue dies with the process; "graceful"
 shutdown narrows the window but cannot close it (kernel panics do not drain). Work that must
 survive — the order confirmation email, the billing event — must be handed off to storage that
@@ -690,31 +586,6 @@ Volume 10 — including the outbox pattern (Volume 10, Chapter 6), which makes t
 
 An in-process cache is a shared mutable map read by every request thread — a concentrated dose of
 everything Chapters 2–4 warned about, so the pattern deserves its own treatment.
-
-**The map itself.** The design space from Chapter 2 applies directly. A single mutex around a map
-is correct and fine at moderate rates. `ConcurrentHashMap` — striped/per-bin locking with CAS
-fast paths — is the JVM default answer at essentially all rates and is hard to beat. Go's
-`sync.Map` is more specialized than its name suggests: it maintains a read-only map reached
-without locking plus a dirty map behind a mutex, and its own documentation scopes it to two
-cases — keys written once and read many times (caches), or disjoint key sets per goroutine. For
-write-heavy or mixed workloads a plain `map` under `sync.RWMutex` (mind Chapter 2's RW-lock
-caveats) or a sharded map (Chapter 2's striping, verbatim) typically wins; benchmark with your
-actual read/write mix rather than assuming "concurrent map" means "faster map." Production caches
-also need eviction and TTLs, which is why the real answer is usually a purpose-built library —
-Caffeine on the JVM (which also supplies per-key coalescing loads, as noted above), Ristretto or
-groupcache-style libraries in Go.
-
-**The stampede, revisited and completed.** Singleflight collapses concurrent misses for one key,
-but two more failure shapes remain. *Synchronized expiry*: entries cached at the same moment with
-the same TTL expire at the same moment — a deploy warms the cache, and exactly TTL later, a miss
-storm across many keys at once. Fix with **TTL jitter**: TTL × uniform[0.9, 1.1], so expiries
-decorrelate — the thundering-herd fix again, applied to cache metadata. *Hot-key expiry cost*:
-for a very hot key, even one coalesced refresh means every request briefly waits on a miss. Fix
-with **early refresh**: when a read finds an entry past a soft threshold (say 80% of TTL),
-trigger one background refresh (guarded by singleflight so it is exactly one) while still serving
-the stale-but-valid value. Requests never wait on the refresh at all. The full defense is the
-stack: singleflight + TTL jitter + early refresh, and Volume 7, Chapter 3 places it in the
-broader caching architecture.
 
 ## State machines under concurrency: confine or lock
 
@@ -733,18 +604,6 @@ construction, the owner can safely fire callbacks and do I/O mid-command without
 and the command channel gives ordering, a natural audit log, and a bounded mailbox for
 backpressure. This is the actor pattern stripped to one actor.
 
-When does each win? **Locking** wins when operations are short, simple, and latency-critical —
-an uncontended mutex is tens of cycles (Chapter 2), while a channel round trip to another
-goroutine costs two handoffs and possibly two context switches, easily microseconds. It also wins
-when many independent instances exist (a million sessions do not want a million goroutines — or
-rather, they can have them in Go, but a striped lock over a session map is simpler). **Confinement**
-wins when transitions are complex or multi-step, when transitions involve I/O or callbacks, when
-ordering of operations matters, or when the lock discipline has already failed audit once. A
-useful default: guard *data* with locks; give *processes* (things with lifecycle and ordered
-transitions) an owner. And confinement composes with everything above: the owner goroutine is a
-worker pool of size one with a bounded queue, and every rule about bounds, rejection, and drain
-applies to its mailbox.
-
 ## Idempotency as a concurrency property
 
 Timeouts are ambiguous (the work may have happened), shutdowns cancel mid-flight (the client will
@@ -753,19 +612,6 @@ chapter therefore manufactures the same phenomenon: **the same logical operation
 than once, possibly concurrently.** A system built from these patterns must make re-execution
 safe — idempotency is not a distributed-systems nicety bolted on later; it is a local consequence
 of retries plus ambiguity.
-
-Some operations are naturally idempotent (set field to X; delete row). The rest are made
-idempotent with a **dedupe key**: the client attaches a unique idempotency key to the operation;
-the server records the key with the outcome and returns the recorded outcome for any repeat.
-Note the in-process concurrency content of that sentence: two requests bearing the same key can
-arrive *simultaneously*, so "check whether the key exists, then execute" is a textbook
-check-then-act race (Chapter 2). The check-and-claim must be atomic — `putIfAbsent` on a
-concurrent map, an atomic insert with a unique constraint — and the second arrival must then
-either wait for the first's result or receive "in progress." If that structure sounds familiar,
-it should: an idempotency-key store is singleflight with a persistent result, and both are the
-same shape as `computeIfAbsent`. Deduplication windows, key design, and exactly-once semantics
-across process boundaries are Volume 6, Chapter 9's subject; the point here is that you cannot
-implement even the local half correctly without this volume's tools.
 
 ## Anti-patterns: a field catalog
 

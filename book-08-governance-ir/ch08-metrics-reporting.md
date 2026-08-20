@@ -154,56 +154,10 @@ map of the whole volume. For each dimension we name the *meaningful* metrics —
 best-instrumented, because the internal proxy of Book 2, Chapter 6 sees every fetch. The metrics that
 matter:
 
-- **% of dependencies pulled through the internal proxy** — the single most important dependency
-  metric, because a dependency that bypasses the proxy bypasses every control the proxy applies
-  (scanning, allowlisting, malicious-package blocking). This is a *coverage* metric and it is
-  leading: a low number predicts future incidents. Measure it as a fraction of *fetch traffic* and
-  of *services*, and hunt the direct-to-upstream tail.
-- **Dependency freshness / staleness** — the distribution of how far behind current your dependencies
-  run (Book 2, Chapter 8). Staleness is a leading risk indicator: stale trees are where known-vulnerable
-  versions live and where the next disclosed CVE will land you.
-- **MTTR-to-patch a vulnerable dependency across the fleet** — the flagship lagging indicator, and the
-  one that most directly measures the Log4Shell response capability leadership cares about. How many
-  days from "a critical vuln in a widely-used dependency is disclosed" to "every affected service in
-  the fleet is patched"? This is a fleet-scale distributed metric, and it is the number that turns
-  "are we exposed?" into an answer.
-- **% of dependencies meeting policy** — e.g., passing the OpenSSF Scorecard thresholds set at intake
-  (Book 2, Chapter 10; Scorecard from Book 2, Chapter 9's health assessment). Leading.
-- **Malicious-package blocks** — count of intake attempts blocked as known-malicious or
-  policy-violating. Handle with care: this is easily a *vanity* metric (see below). A big block count
-  is only meaningful as a trend and in context; a *rising* block rate against typosquats can indicate
-  either better detection or heavier targeting, and you must say which.
-
 **SBOM and transparency (Book 3).** The recurring warning of the whole suite lives here in its
 sharpest form. The naive metric is "% of artifacts with an SBOM," and it is close to worthless.
 
-- **SBOM coverage as % of artifacts with a *current, high-quality* SBOM** — not "an SBOM." An SBOM
-  generated once at onboarding and never regenerated describes a build that no longer exists. Coverage
-  must mean *fresh, per-build, complete* SBOMs (Book 3, Chapter 4 on generation, Chapter 5 on
-  distribution). Leading.
-- **SBOM quality score** — completeness of component identity (are there real PURLs and hashes, or
-  `UNKNOWN` fields?), transitive depth, license and supplier fields. A low-quality SBOM fails the one
-  job an SBOM has: answering "where is component X?" A metric here (e.g., NTIA minimum-elements
-  conformance, or an org quality rubric) prevents the coverage number from being a lie.
-- **MTTR-to-inventory** — the time to answer "which of our artifacts contain component X at version
-  Y?" across the fleet. This is *the* SBOM payoff metric and one of the two or three most
-  leadership-relevant numbers in the entire program, because it is the first half of the Log4Shell
-  test. In December 2021, organizations that could answer this in minutes and those that spent weeks
-  grepping build logs experienced fundamentally different incidents. Lagging-flavored but measurable
-  proactively by running the query as a drill.
-
 **Build and CI/CD (Book 4).**
-
-- **% of builds on the secure/hardened platform** — the paved-road coverage metric for builds (Book 4,
-  Chapter 10). A build off the paved road inherits none of the platform's guarantees: no hermeticity,
-  no provenance, no isolation. Leading, and a direct measure of the platform thesis.
-- **% of artifacts with provenance** — carrying SLSA provenance (Book 4, Chapter 3). Leading.
-- **SLSA level distribution across pipelines** — not a single "our SLSA level" (there is no such
-  thing for a heterogeneous fleet) but a *distribution*: what fraction of pipelines meet SLSA v1.0
-  Build L1 / L2 / L3 (Book 8, Chapter 2). Report the distribution and its movement; the useful goal is
-  moving mass up the levels, especially getting the critical-service pipelines to L3.
-- **Build-security-control coverage** — per-control adoption (isolated runners, ephemeral credentials,
-  two-person review of pipeline config), each a leading indicator.
 
 **Signing and attestation (Book 5).**
 
@@ -289,18 +243,6 @@ skeleton of the program scorecard.
 
 Two organizing ideas run through that table, and both recur from Book 1, Chapter 10.
 
-**Leading vs lagging.** Lagging indicators measure outcomes: incidents, MTTD, MTTR, drift events.
-They are what actually happened, and they are what leadership feels — but they arrive *after* the
-risk materialized, and against rare catastrophic events (the reason the program exists), they are
-statistically silent most of the time. You cannot run a program on lagging indicators alone; a year
-with zero supply-chain incidents tells you almost nothing about whether you were protected or lucky.
-Leading indicators measure the *conditions* that produce outcomes: coverage, control adoption,
-staleness, verified-deploy rate. They are predictive and controllable — you can move them this
-sprint. The discipline is to *balance* both: leading indicators to steer, lagging indicators to
-validate that the steering worked. A program heavy on leading indicators with no lagging validation
-is measuring activity and hoping; a program with only lagging indicators is flying blind between
-crashes.
-
 ```mermaid
 flowchart LR
     subgraph LEAD["Leading — predictive, controllable"]
@@ -321,36 +263,11 @@ flowchart LR
     LAG -->|"validates"| META
 ```
 
-**Coverage as the meta-metric.** For a platform-based program — which is the whole suite's thesis —
-the single most important measurement is *coverage of the paved road*: what fraction of the fleet
-inherits each control by being on the platform (Book 1, Chapter 10; Book 4, Chapter 10). This
-subsumes almost every leading indicator above, because in a platform model you do not secure services
-one at a time; you build the control into the paved road once and then *measure how much of the fleet
-is on it*. The internal proxy secures dependencies — for the services that route through it. Hermetic
-builds produce provenance — for the pipelines on the platform. Admission control rejects unsigned
-images — in the clusters where it enforces. In every case the control's *value equals its coverage*,
-and capability without adoption is worth zero. A perfect signing pipeline that 30% of teams use is a
-30% signing program, not a signing program with an adoption problem to mention in passing. This
-reframing is the most important measurement idea in the chapter: **do not measure whether the control
-exists; measure what fraction of the fleet it actually covers.** The uncovered tail is not an
-asterisk. It is the attack surface.
-
 ## Vanity, gaming, and measuring real risk
 
 Now the honest part, and the part that separates a measurement program from a measurement theater.
 Metrics are not neutral. The moment a number becomes a target, it starts to distort the behavior it
 measures — Goodhart's law, and it is savage in security. Three failure modes recur.
-
-**Vanity metrics** are big impressive numbers that do not reflect risk. "We scanned 4.2 million
-components this quarter." "Our scanner found 1.1 million vulnerabilities." "100% of repositories have
-an SBOM." Each is technically true and tells leadership nothing about whether the organization is
-safer. Scanning four million components is an activity count, not a risk statement — it says nothing
-about how many *reachable, exploitable* vulnerabilities in *production* were *fixed*. "1.1 million
-vulnerabilities found" is arguably a *negative* signal dressed as a positive one: it is a backlog, and
-raw vuln counts are dominated by unreachable, unexploitable, or already-mitigated findings (Book 2,
-Chapter 7). "100% have an SBOM" is the canonical suite warning — meaningless if the SBOMs are
-low-quality or, worse, if nothing ever *consumes* them. The tell of a vanity metric is that it
-measures the *program's activity* rather than the *fleet's risk*, and that it can only ever go up.
 
 **Gaming** is teams optimizing the metric instead of the outcome, and it is provoked by well-meaning
 targets. The classic self-inflicted wound is the mandate "close all criticals within 7 days." It
@@ -428,37 +345,6 @@ posture, and it is exactly what an auditor and a board both want to hear.
 Metrics feed audits, and audits are where the program's claims meet an adversarial reviewer. Three
 kinds matter, and the volume's evidence corpus changes the character of all three.
 
-**Internal audits and self-assessments** measure the program against the frameworks — the SLSA, S2C2F,
-and SSDF gap assessments of Book 8, Chapter 2. The one non-negotiable rule here is *honesty*, and it
-is the direct application of the cargo-cult warning from Book 1, Chapter 7. A self-assessment exists
-to find gaps, and a self-assessment that grades generously to look good has inverted its own purpose —
-it produces a document that says you are secure while leaving you insecure, which is strictly worse
-than no assessment because it manufactures false confidence. Grade to the enforced-and-evidenced
-standard: a control counts as met only if it is enforced (Chapter 4) and you can show the evidence,
-not if someone wrote a runbook describing it. The honest internal audit is the one that surfaces the
-uncovered tail and the gamed metrics *before* an external auditor or an attacker does.
-
-**External audits** are the formal attestations third parties and regulators require: **SOC 2**
-(Type II especially, which tests that controls operated effectively over a period, not just existed at
-a point) and **ISO/IEC 27001** certification against an information-security management system (both
-Book 8, Chapters 1 and 3). Historically these are punctuated crises: the audit window approaches and
-the organization scrambles to reconstruct months of evidence — screenshots, log exports, ticket
-archaeology — to prove that controls it *claims* to run actually ran. The scramble is expensive,
-disruptive, and — this is the important part — it proves point-in-time compliance, which is nearly
-orthogonal to being secure the *other* 51 weeks of the year.
-
-**Continuous compliance** is the modern replacement, and it is the payoff of Book 8, Chapter 4. Because
-in a policy-as-code program *enforcement is the evidence* — every admission decision, every signature
-verification, every policy evaluation is logged as it happens — the compliance state is queryable at
-every instant, not reconstructed annually. The audit stops being a scramble and becomes a *query
-against an always-current evidence store*. This is not merely more convenient; it changes what
-compliance *means*, from "we passed an inspection last March" to "we can demonstrate, for any moment
-in the period, that the control was enforced on every artifact." NIST's **OSCAL** (the Open Security
-Controls Assessment Language) is the machine-readable substrate for this: it expresses control
-catalogs, the profile of controls you claim, the mapping to your components, and the assessment
-results, so that "compliance" is a data structure you can generate and diff rather than a binder you
-assemble (Chapter 4).
-
 ```mermaid
 flowchart LR
     subgraph EVID["Evidence corpus — produced as a byproduct"]
@@ -504,23 +390,6 @@ requires a translation most engineering teams do badly. Leadership does not care
 Rego policies, or SBOM formats — not out of ignorance, but because those are *implementation*, and
 leadership's job is *risk and capital allocation*. The report that lands frames the same data in four
 currencies:
-
-1. **Risk exposure and its trend.** Not "we're at SLSA L2 on 60% of pipelines" but "our exposure to a
-   compromised-build attack is *falling*: the fraction of production traffic served by
-   provenance-verified artifacts went from 55% to 82% this year, and here is the curve." Leadership
-   thinks in exposure and trend. Give them the trend line, risk-weighted so that the payments service
-   moves the number more than the internal wiki.
-2. **Response capability — the Log4Shell answer.** "If a critical vulnerability in a ubiquitous
-   dependency is disclosed tomorrow, we can identify every affected service in *minutes* (SBOM
-   inventory) and patch the fleet in *days* (MTTR-to-patch), down from *weeks* two years ago." This is
-   the metric that matters most to a board, and we return to why below.
-3. **Compliance and regulatory posture.** "We can sign the CISA SSDF attestation without qualification,
-   and we are on track for CRA obligations in the EU market, which represents X% of revenue." This
-   frames security as *market access*, which is a revenue conversation, not a cost one.
-4. **Where investment reduces the most risk.** The ask. "The uncovered tail is 40 legacy services off
-   the paved road; migrating them is the single highest-risk-reduction investment available, and here
-   is the cost and the risk-reduction estimate." Leadership funds specific risk reductions with
-   estimated returns, not "more security."
 
 ### The scorecard and dashboard
 

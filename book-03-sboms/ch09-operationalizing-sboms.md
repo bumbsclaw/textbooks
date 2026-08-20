@@ -294,27 +294,6 @@ jobs:
 
 Four properties of this arrangement matter more than the exact commands:
 
-1. **Inherited, not copied.** The steps live in the shared template. When you improve SBOM
-   generation — add a source-plus-binary diff (Chapter 4), tighten the quality threshold, switch
-   generators — every service inherits the improvement on its next build. If instead each team
-   had pasted these steps into its own pipeline, you would be filing five hundred pull requests to
-   change anything, and the fleet's SBOMs would drift into five hundred versions.
-2. **The quality gate is in the pipeline (Chapter 7).** A build that produces a garbage SBOM
-   fails, the same way a build that fails tests fails. This is what keeps the *distribution* of
-   quality healthy rather than letting the long tail of unqueryable SBOMs accumulate silently.
-   Start the threshold low (warn only), raise it as the fleet improves — the rollout discipline of
-   the next section.
-3. **It is signed and attached, keyed to the digest.** The SBOM is a signed in-toto attestation
-   (Book 5, Chapter 3) attached to the image via OCI referrers, so provenance travels with it and
-   the store can trust what it ingests. An unsigned SBOM in a bucket has no defense against
-   tampering or against simple staleness.
-4. **Shipping without an SBOM is made impossible by policy, not by request.** The final lever is
-   admission control (Book 6, Chapter 6): a Kyverno or OPA/Gatekeeper policy in the deploy path
-   that *refuses to admit an image that lacks a valid, signed SBOM attestation*. This is what
-   converts "please generate SBOMs" from a request every busy team can defer into an invariant of
-   the platform. You cannot deploy without one, so you have one, so the fleet inventory is
-   complete by construction.
-
 ```yaml
 # Kyverno policy (Book 6, Ch 6): no SBOM attestation, no admission.
 apiVersion: kyverno.io/v1
@@ -365,32 +344,6 @@ flowchart TD
     classDef s fill:#1e293b,stroke:#94a3b8,color:#fff;
     class L1,L2,L3,L4 s;
 ```
-
-- **Stage 1 — visibility.** Turn on generation and storage in warn mode. No build fails; SBOMs
-  are produced and ingested. The single deliverable is that you can query the store and get an
-  answer to "where do we use component X." This alone is more than most orgs have, and it is
-  enough to justify the next stage. Do not gate anything yet — you are measuring coverage and
-  fixing generation bugs, not punishing teams.
-- **Stage 2 — correlation.** Wire the store to vulnerability feeds (OSV, NVD, GHSA — Book 2,
-  Chapter 5) so the inventory becomes a live "are we affected by CVE-Y" query. Now the platform is
-  useful during an incident, and you have your first real value demonstration. It is also, without
-  the next stage, unbearably noisy: every transitive dependency with an unreachable CVE lights up.
-- **Stage 3 — VEX and reachability.** Add VEX (Chapter 6) so triaged not-affected findings are
-  suppressed, and reachability (Book 2, Chapter 7) so exploitable findings float to the top.
-  Without this stage teams learn to ignore the platform's alerts — the worst possible outcome,
-  because an ignored alerting system is indistinguishable from no system during the incident that
-  matters. De-noise before you make anyone accountable to the alerts.
-- **Stage 4 — enforce and deliver.** Only now do you turn the quality gate from warn to enforce,
-  turn the admission policy from Audit to Enforce, and stand up the outbound-delivery and
-  inbound-intake flows for compliance and procurement. Enforcement is last because it is only fair
-  once the paved road reliably produces a passing SBOM with near-zero team effort — otherwise you
-  are punishing teams for a platform gap.
-
-The discipline throughout is *warn, measure, fix the platform, then enforce.* Every gate ships in
-audit mode, runs long enough to surface the surprises (the team building firmware whose SBOM the
-generator can't see; the legacy service that doesn't use the shared build at all), and flips to
-enforce only when the dashboard shows the fleet already passing. Enforcement should be a
-formality that breaks almost nothing, because the warn period already drove the number to green.
 
 ## Use cases realized
 
@@ -601,32 +554,6 @@ model keeps the treatments separate.
 ## Common pitfalls
 
 The failure modes cluster, and naming them is cheaper than living them:
-
-- **Sprawl without a query platform.** Generating SBOMs into a bucket with no ingestion,
-  normalization, or query layer. You have paid the generation cost and captured none of the value,
-  because the value is *only* in aggregate query (Chapter 5). This is the checkbox with extra
-  storage bills.
-- **Generating but never consuming.** The pipeline runs, the store fills, and no human or system
-  ever queries it — no correlation, no alerting, no drill. The tell is that no one would notice if
-  generation broke. If nobody queries, stop generating or start consuming; the middle is pure cost.
-- **False confidence from poor quality.** Trusting a fleet of SBOMs that are schema-valid and
-  substantively incomplete (Chapter 7). The Log4Shell query returns "clean" for a service that
-  shaded log4j into an uber-JAR the generator never saw, and you stand down while still exposed.
-  This is the most dangerous pitfall because it fails silently and specifically at the moment of
-  need. The quality gate and the explicit blind-spot catalog exist to bound it.
-- **Optimizing the outbound flow while ignoring the internal one.** Pouring effort into
-  regulator-ready, signed, conformant outbound SBOMs — the compliance deliverable — while never
-  standing up the internal vuln-management capability that actually reduces risk. This is the
-  checkbox at its most seductive, because it produces impressive audit artifacts while leaving you
-  exactly as slow to respond as before. The internal flow is where the value is; lead with it.
-- **No VEX, so drowning in noise.** Correlation without VEX (Chapter 6) produces so many
-  unreachable false positives that teams tune out the alerts, and a tuned-out alerting system is
-  worse than none because it gives false assurance that someone is watching. De-noise before you
-  hold anyone accountable to the signal.
-- **No link to runtime truth.** An inventory of what you *built*, not what you *run*. During an
-  incident you query it and get a list padded with services long since decommissioned and missing
-  services deployed from images the store never saw. The build-to-runtime join is not optional; it
-  is what makes the inventory operational.
 
 Every one of these is a way of having the parts without the capability. The program is precisely
 the work of assembling the parts so the capability emerges.

@@ -16,26 +16,6 @@ specific failure mode this chapter exists to prevent.
 
 Learning goals — after this chapter you should be able to:
 
-- Decompose "SBOM quality" into its distinct dimensions — **completeness, accuracy,
-  identifier validity, required-field presence, graph fidelity, freshness, and provenance**
-  — and explain why **conformance, completeness, and accuracy are three different things** an
-  SBOM can pass or fail independently.
-- Use the real measurement tools — **sbomqs, ntia-conformance-checker, the CycloneDX/SPDX
-  validators, eBay's sbom-scorecard** — and state precisely what each one checks and, more
-  importantly, what none of them can check.
-- Confront the **completeness measurement problem**: you can validate what is present, but
-  you cannot in general know what is missing without ground truth you rarely have; and know
-  the comparison-based techniques that partially substitute for that ground truth.
-- Enumerate the **systematic accuracy failures** — static linking, vendoring, shaded JARs,
-  bundled JavaScript, stripped binaries, firmware, broken identifiers — and explain why
-  *false negatives* (a present component absent from the SBOM) are the dangerous class.
-- State the **fundamental limits**: an SBOM does not tell you whether you are exploitable,
-  whether a component is malicious, whether you have first-party bugs, whether the build was
-  honest, or anything about zero-days — and map each limit to the mechanism that *does*
-  address it.
-- Design a **fitness-for-purpose** quality bar and a CI **quality gate**, and track quality
-  as a fleet-wide distribution rather than a binary coverage checkbox.
-
 A boundary note. This chapter builds directly on Chapter 4's account of generation and its
 hard cases, and on Chapter 4's "measurement problem" — here both are deepened. It assumes
 Book 2's identifier model (purl versus CPE, Book 2, Chapter 5), its SCA pipeline (Book 2,
@@ -325,21 +305,6 @@ flowchart TD
     class GAP bad;
 ```
 
-Read the four quadrants. Components **in both** are corroborated from independent vantages —
-your highest-confidence rows. Components **only in the source SBOM** are usually build-time or
-dev dependencies that never made it into the runtime image (expected, and a way to *shrink*
-your reported attack surface honestly) — but occasionally they signal a packaging bug where
-something you depend on was silently dropped. Components **only in the binary SBOM** are
-almost always OS and base-layer packages the source vantage structurally cannot see
-(expected). The lethal quadrant is the one the diagram cannot draw a box around cleanly:
-components **in neither** — statically linked libraries, vendored C compiled straight into a
-binary, a shaded JAR whose original coordinates were rewritten. Neither vantage sees them, so
-the diff cannot surface them either. Comparison narrows uncertainty; it does not eliminate
-it. Your known blind spots remain blind to every observation you make with the same class of
-tool, which is why the last resort is not measurement but *documentation*: write down, per
-build system, which classes of component your pipeline is structurally unable to see, and
-carry that list into incident response (Book 8).
-
 ## Systematic accuracy failures
 
 Random errors average out at scale; systematic errors replicate. The accuracy problems that
@@ -355,35 +320,6 @@ These are components that physically exist in the artifact but carry no metadata
 can read, so they are either absent from the SBOM or listed under a wrong or meaningless
 identity.
 
-- **Statically linked libraries.** A C/C++/Rust/Go binary that statically links `zlib` or
-  `openssl` contains that code with no package database entry, no manifest, and — once
-  stripped — often no symbol table. The binary *is* vulnerable to a `zlib` CVE; the SBOM
-  shows one component (the binary) and `zlib` is simply gone. Go is the partial exception:
-  `go version -m` reads the module list the toolchain embeds, so Go binaries self-describe.
-  C static linking has no such convention, and this is the archetypal invisible-but-present
-  case.
-- **Vendored / copied code.** A project that copies a third-party source tree into its own
-  repository (a `vendor/` directory of C, an inlined header, a pasted utility file) presents
-  that code to the compiler as first-party source. No package manager knows it exists, so no
-  source or binary scanner attributes it to its upstream. It carries the upstream's
-  vulnerabilities under your name.
-- **Shaded / relocated JARs.** Java "shading" (via the Maven Shade plugin) rewrites a
-  dependency's package namespace — `org.apache.commons` becomes
-  `com.myapp.shaded.org.apache.commons` — and merges it into an uber-JAR. The classes are
-  present and vulnerable; the coordinates that would identify them are deliberately erased.
-  This is how Log4Shell hid: a shaded Log4j inside a fat JAR matched no naive scan for
-  `log4j-core`.
-- **Minified / bundled JavaScript.** A webpack or esbuild bundle concatenates and minifies
-  dozens of npm packages into one `main.min.js`. The original package boundaries and versions
-  are gone; a scanner sees one file. The npm lockfile at build time is the only place the
-  identities survive — which is exactly why Chapter 4 insisted on source-side generation for
-  this ecosystem.
-- **Stripped binaries and firmware.** Stripping removes symbols; firmware images pack code,
-  data, and filesystems into opaque blobs with no package metadata at all. Binary composition
-  analysis here degrades to fuzzy matching and heuristics — informative, but a guess, not an
-  inventory. Do not let an SBOM present a heuristic firmware guess with the same confidence as
-  a lockfile-derived component.
-
 The common thread: **each of these makes a component present in the artifact but absent or
 misidentified in the SBOM**, and that is precisely the error class that produces a
 false-negative vulnerability result — the dangerous kind, discussed next.
@@ -393,24 +329,6 @@ false-negative vulnerability result — the dangerous kind, discussed next.
 A component can be listed and still be useless downstream if its identifier is wrong,
 missing, or ambiguous. Book 2, Chapter 5 is the reference for the identifier model; here is
 what breaks in practice:
-
-- **Missing or fallback purls.** A generator that cannot confidently determine a component's
-  ecosystem emits `pkg:generic/something@1.0` or no purl at all. OSV and GHSA match on purl;
-  no purl means no match.
-- **Wrong purls.** A subtler failure: a purl with the wrong ecosystem, a normalized name that
-  does not match the advisory's, or an epoch/qualifier mismatch. The component looks
-  identified but silently matches nothing.
-- **CPE ambiguity.** CPEs are human-assigned NVD strings with notorious vendor/product
-  inconsistency (`openssl:openssl` versus `openssl_project:openssl`). A near-miss CPE fails to
-  match NVD advisories that use the other form. Book 2, Chapter 5 covered why purl↔CPE
-  translation is lossy.
-- **Version mismatches.** `1.2.3` versus `1.2.3-r0` versus `1.2.3.el8` — distro-patched
-  versions, epochs, and build suffixes routinely defeat naive version-range matching, causing
-  both false negatives (patched-but-flagged) and, worse, false negatives where a vulnerable
-  version reads as something the matcher does not recognize.
-- **Empty supplier fields.** NTIA mandates a supplier, but many generators emit an empty or
-  placeholder value. It passes some conformance checks weakly and provides no help
-  disambiguating a component with a common name.
 
 ### Why false negatives are the dangerous class
 
@@ -449,21 +367,6 @@ generation path across the paved road is as much a *quality* decision as an oper
 Even a tool that captures its ecosystem perfectly faces scoping questions with no
 format-mandated answer, and different answers produce SBOMs that are not wrong so much as
 *differently scoped* — which is its own comparability hazard:
-
-- **Dev versus prod dependencies.** Does the SBOM include test frameworks and build tools, or
-  only what ships? Both are defensible; a consumer comparing two SBOMs that made opposite
-  choices will misread the difference as a completeness gap.
-- **Multi-stage build losses.** A builder stage installs a compiler and dev headers; the final
-  stage copies only the binary. An SBOM generated against the final image legitimately omits
-  the builder's toolchain — but if you needed to know the compiler version for a build-integrity
-  question, it is gone (Chapter 4).
-- **Base-layer and OS components.** How deep does the SBOM go into the base image — every
-  `apk`/`dpkg` package, or only what the application directly links? Chapter 4's source vantage
-  cannot see these at all; a source-only SBOM is *scoped* to exclude them, which is fine only
-  if the consumer knows that.
-- **Dynamically loaded plugins.** Code loaded at runtime via `dlopen`, JVM classpath scanning,
-  or a plugin directory may not be present at build time and thus not in a build SBOM. Runtime
-  generation (Chapter 4) is the only vantage that sees it.
 
 None of these has a universally correct answer. The point is that the *transitive closure
 boundary* — how deep, how wide, dev-inclusive or not — is a decision, and an SBOM that does

@@ -19,22 +19,6 @@ balancers, DNS-based distribution (Chapter 5), BGP anycast with ECMP and XDP/eBP
 
 Learning goals — after this chapter you should be able to:
 
-- Explain what an L4 balancer rewrites and what it does not; choose between NAT, DSR, and IPIP/GRE
-  tunneling on return-path bandwidth, L2 adjacency, and MTU; and say what terminating at L7 buys
-  and costs instead.
-- Diagnose and fix HTTP/2 and gRPC connection pinning behind an L4 tier, using L7 proxies,
-  client-side/subchannel balancing, or bounded connection lifetimes.
-- Reason about load-balancing algorithms from first principles: why round robin fails under
-  heterogeneous request cost, why global least-loaded herds, and why power-of-two-choices with an
-  EWMA cost estimate is the modern default for meshes.
-- Configure consistent hashing and Maglev hashing, and state their disruption and balance
-  properties.
-- Design health checking that degrades safely: active vs passive detection, hysteresis, panic
-  thresholds, slow start, and health endpoints that do not couple the fleet to one dependency.
-- Drain connections correctly during a deploy so that a rollout does not show up as errors.
-- Choose an ingress topology — cloud LB, anycast + ECMP + Maglev/Katran, DNS, or client-side — and
-  explain its failure modes.
-
 ## Why load balance at all
 
 There are four distinct reasons, and conflating them leads to bad designs.
@@ -70,14 +54,6 @@ topology choice largely independent of the algorithms themselves.
 
 ## L4: balancing at the transport layer
 
-An L4 load balancer forwards TCP connections and UDP flows without understanding the bytes they
-carry. Its unit of decision is the **flow**, keyed by the 5-tuple: source IP, source port,
-destination IP, destination port, protocol. The first packet of a flow (a TCP SYN, or the first
-datagram of a UDP flow) triggers a backend selection; every subsequent packet must go to the same
-backend, because that backend holds the TCP state machine (Chapter 3). An L4 balancer therefore
-needs a **connection tracking table** mapping flows to backends, a **deterministic hash** that
-yields the same answer for the same 5-tuple, or — in the best designs — both.
-
 Because it never parses a payload, an L4 balancer is protocol-agnostic (TCP, UDP, QUIC, the
 PostgreSQL wire protocol, Redis, SMTP), does not need your TLS private keys, and costs very little
 per packet: a hash, a table lookup, a header rewrite. Millions of packets per second per host is
@@ -87,36 +63,6 @@ routine for a kernel-bypass or XDP-based implementation.
 
 How the packet actually reaches the backend, and how the reply reaches the client, is the single
 most important L4 design decision.
-
-**NAT mode (masquerading).** The balancer rewrites the destination IP (and possibly port) from the
-virtual IP (VIP) to the real server. For the reply to be un-NATed correctly it *must* traverse the
-balancer again — either because the balancer is the backend's default gateway, or because the
-balancer also rewrote the source IP (SNAT), making itself the apparent client. NAT mode is simple
-and works across L3 boundaries, but it puts both directions through the balancer, and since HTTP
-responses dwarf requests the balancer's bandwidth becomes the fleet's bandwidth. SNAT additionally
-destroys the client IP (recover it via `X-Forwarded-For` or the PROXY protocol) and burns a
-source-port keyspace: at most 65,535 concurrent flows per (SNAT source IP, backend IP, backend
-port), of which Linux's default ephemeral range (`net.ipv4.ip_local_port_range`, 32768–60999)
-offers roughly 28,000. That is the classic ephemeral-port-exhaustion failure.
-
-**Direct server return (DSR / direct routing).** The balancer rewrites only the destination MAC
-address and puts the frame back on the wire; the IP header is untouched. The backend owns the VIP
-on a loopback interface with ARP suppressed, and replies to the client *directly*, bypassing the
-balancer — asymmetric routing by design. The balancer sees only inbound packets, which for a
-response-heavy workload is a small fraction of the byte volume, so a small tier can front an
-enormous fleet. The costs: balancer and backends must share an L2 segment (usually impossible in
-cloud VPCs); ports cannot be rewritten; and the balancer never sees responses, so passive health
-detection is impossible.
-
-**Tunneling (IPIP, GRE, or GUE over UDP).** The balancer encapsulates the packet in an outer IP
-header addressed to the backend, which decapsulates, processes the inner packet, and replies
-directly to the client — DSR semantics without the L2 adjacency requirement. This is what
-hyperscale L4 balancers use: Maglev encapsulates with GRE, Meta's Katran with IPIP, GitHub's GLB
-and Cloudflare's Unimog with GUE (Generic UDP Encapsulation), whose UDP source port carries entropy
-so intermediate routers' ECMP hashing still spreads tunneled traffic. The price is MTU: over IPv4,
-IPIP costs 20 bytes of outer header, GRE 24 (20 + a 4-byte minimum GRE header), and GUE at least
-32 (20 + 8 UDP + 4 GUE), with more for optional GUE fields. You must lower the backend's advertised
-MSS accordingly or accept fragmentation and PMTUD pain (Chapter 2).
 
 ```mermaid
 flowchart LR
@@ -169,19 +115,6 @@ An L7 balancer is a **terminating proxy**. It completes the TCP and TLS handshak
 Postgres — and opens or reuses its *own* connections to backends. There are two connections, not
 one, and the proxy is a full participant in both. That unlocks everything an L4 balancer cannot do:
 
-- **Per-request routing** by path, method, `Host`, header, cookie, or gRPC service and method
-  (`/checkout.v1.Checkout/PlaceOrder`) — which makes the L7 tier the natural home for API gateways,
-  header-based canary splits, and per-tenant routing.
-- **Per-request load balancing** — the property that saves you under HTTP/2 (next section).
-- **Retries, timeouts, hedging, and circuit breaking** (Chapter 11) applied uniformly, in one
-  place, without touching application code.
-- **Rewriting**: paths, headers, `X-Forwarded-For` and `X-Request-Id`, trace context (Volume 11,
-  Chapter 4), stripping internal headers on the way out.
-- **Protocol translation**: HTTP/1.1 to HTTP/2 backends, HTTP/3 at the edge to HTTP/1.1 internally,
-  gRPC-Web to gRPC, WebSocket upgrades.
-- **Rich observability**: per-route status distributions, upstream latency histograms, per-backend
-  success rates — the raw material for passive health detection.
-
 The costs are equally structural. TLS termination and HTTP parsing cost CPU (asymmetric handshake
 crypto being the expensive part; use session resumption and keepalive aggressively). The proxy adds
 a hop with its own queueing — typically sub-millisecond for a well-tuned Envoy or HAProxy on the
@@ -220,22 +153,7 @@ Now place an L4 balancer in front. It picks a backend once, at connection establ
 stream on that connection — thousands of RPCs per second, for hours — lands on that one backend.
 The consequences compound:
 
-- **Load is distributed per client, not per request.** With 10 clients and 20 backends, at most 10
-  backends receive traffic, no matter how much capacity you provision.
-- **New backends receive nothing.** Scale up during an incident and the new replicas sit empty,
-  because no client has a reason to open a new connection. The autoscaler adds pods, the metrics do
-  not move, and the on-call engineer concludes autoscaling is broken.
-- **Imbalance is sticky.** A client assigned to a degraded backend stays there until the connection
-  breaks, and request-cost heterogeneity across clients (a batch job vs. a UI service) projects
-  straight onto backends.
-- **Deploys are lumpy.** Draining a backend forces all its clients to reconnect at once.
-
 There are three real fixes, and one non-fix.
-
-**Fix 1 — terminate HTTP/2 at an L7 proxy.** Envoy, NGINX, HAProxy, and cloud ALBs parse HTTP/2
-and make a fresh upstream selection per stream, multiplexing your streams across their own backend
-connection pool. This is the standard answer for north-south ingress and for east-west traffic in
-a sidecar mesh (Chapter 10), where the "proxy" is a localhost hop.
 
 **Fix 2 — client-side / subchannel balancing.** Let the client resolve *all* backend addresses
 and maintain a subchannel (one HTTP/2 connection) to each, choosing per RPC. In gRPC this is a
@@ -322,15 +240,6 @@ chapter accordingly treats round robin as a baseline to improve on, not a target
 
 ### Weighted round robin
 
-Attach a weight to each endpoint and give it a proportional share. The naive implementation — emit
-`w` consecutive picks for weight `w` — produces bursts, so production implementations smooth the
-sequence. NGINX uses *smooth weighted round robin*, maintaining a current-weight accumulator per
-peer and selecting the maximum, which yields interleaved sequences like `A B A C A B A` rather than
-`A A A A B B C`. Envoy uses an **earliest-deadline-first (EDF) scheduler**: each host sits in a
-priority queue with a deadline of `1/weight`, and the earliest is popped and re-inserted with its
-deadline advanced. EDF generalizes cleanly to *dynamic* weights, which is what slow start and
-utilization-based weighting need.
-
 Where do weights come from? Static configuration (instance size), locality (prefer same-zone
 endpoints to avoid cross-AZ latency and charges), canary percentages, or — most interestingly —
 backend-reported load. gRPC and Envoy both support **ORCA** (Open Request Cost Aggregation), where
@@ -395,17 +304,6 @@ flowchart LR
 ```
 
 ### P2C with EWMA cost (peak-EWMA)
-
-The refinement that makes P2C excellent rather than merely good is *what* you compare. Counting
-in-flight requests treats all requests as equal. Instead, maintain a per-endpoint
-exponentially-weighted moving average of observed latency and score each candidate as roughly
-`EWMA_latency × (outstanding_requests + 1)` — an estimate of the queueing delay a new request would
-meet there. This is Finagle's "peak EWMA" balancer and Linkerd's default, and it is why a sidecar
-notices a backend entering a GC pause within milliseconds: latency spikes, the EWMA rises, and the
-endpoint loses nearly every comparison until it recovers. Two implementation details matter. Decay
-the EWMA on *time*, not on request count, or an idle endpoint keeps a stale score forever. And
-treat a zero-observation endpoint optimistically enough to be sampled but not so optimistically
-that it is flooded — which is exactly what slow start (below) is for.
 
 Configuring P2C is usually a single knob. Envoy:
 
@@ -513,16 +411,6 @@ route:
     # alternatives: cookie (with ttl, to have Envoy mint one), connection_properties (source IP),
     # query_parameter, filter_state
 ```
-
-That `hash_balance_factor` is **consistent hashing with bounded loads** (Mirrokni, Thorup, and
-Zadimoghaddam; arXiv 2016, later SODA 2018), and it fixes hashing's fundamental weakness: a hot key
-or a skewed key distribution overloads one backend and pure hashing has no escape valve. With a
-bound of `c × mean`, an overloaded target spills the key to the next host on the ring, preserving
-most affinity while capping the damage. Envoy leaves the factor unset (unbounded) by default,
-accepts a minimum of 100, and documents 120–200 as the useful range; it applies to `RING_HASH` and
-`MAGLEV` alike. Use it whenever your key space might be skewed — that is, almost always.
-(Kubernetes note: `kube-proxy` in IPVS mode can be configured with the `mh` scheduler, which is how
-you get consistent-hash behavior for ClusterIP Services without a userspace proxy.)
 
 ## Health checking
 
@@ -716,19 +604,6 @@ locality optimization you can disable at any time.
 A rolling deploy replaces every instance in your fleet. If that shows up as a spike of 502s, your
 draining is broken. The correct sequence behind an L7 balancer:
 
-1. **Announce departure before dying.** The instance starts failing readiness checks (or is
-   deregistered from discovery) *while continuing to serve*. This is the critical inversion: fail
-   the probe first, keep working second.
-2. **Wait for the balancer to notice** — at least one probe interval times the unhealthy threshold,
-   plus discovery propagation. In Kubernetes, endpoint removal is eventually consistent across
-   every kubelet and proxy, so a pod may receive traffic for seconds after `SIGTERM`.
-3. **Stop accepting new work, finish in-flight work.** For HTTP/1.1, respond with
-   `Connection: close`. For HTTP/2, send `GOAWAY` — Envoy and gRPC servers implement the two-stage
-   graceful shutdown that RFC 9113 §6.8 describes: a first `GOAWAY` with `NO_ERROR` and a
-   last-stream-ID of 2^31 - 1 as a "stop sending me new streams" hint, then after a drain interval a
-   second `GOAWAY` naming the highest stream the server will actually finish.
-4. **Hard-close after a drain timeout** so a hung request cannot block the deploy forever.
-
 In Kubernetes the race in step 2 is the usual bug, and the standard mitigation is a `preStop` hook
 that delays `SIGTERM` long enough for endpoint removal to propagate:
 
@@ -759,16 +634,6 @@ entries live out their timeout.
 
 ### Software proxies
 
-**HAProxy** is a mature, very fast L4/L7 proxy with a multi-threaded event loop and excellent
-observability — the default choice for a dedicated LB tier with file-based configuration. **NGINX**
-balances competently, but its open source build omits active health checks, `slow_start`, and
-`sticky` cookies, which require NGINX Plus. **Envoy** is the proxy designed for dynamic
-environments: clusters, endpoints, routes, listeners, and secrets are all pushed at runtime over
-the **xDS** APIs from a control plane, which is what makes service meshes possible (Chapter 10).
-Its balancing feature set — locality-aware routing, subsetting, outlier detection, panic
-thresholds, retry budgets — is the most complete in open source, which is why this chapter uses it
-for most examples.
-
 ### Cloud load balancers
 
 AWS **NLB** is L4: flow-hash based, preserves the client IP for instance-registered targets, and
@@ -791,25 +656,6 @@ tool for coarse geographic distribution and a bad one for per-request balancing 
 ### Anycast, ECMP, and hyperscale L4
 
 The hyperscale ingress pattern composes three mechanisms:
-
-1. **BGP anycast** — the same VIP is announced from many sites. Internet routing delivers each
-   client to (approximately) the topologically nearest site. Draining a site is a BGP withdrawal.
-   See RFC 4786 for the operational guidance.
-2. **ECMP** — inside the site, the routers see multiple next-hops for the VIP (one per balancer
-   node, which announces the VIP over BGP from the host itself) and hash each packet's 5-tuple
-   across them. This spreads traffic across the balancer tier with no balancer in front of the
-   balancers.
-3. **A consistent-hashing L4 forwarder** — Maglev, Katran, GLB, Unimog — on each balancer node,
-   which maps the 5-tuple to a backend and encapsulates.
-
-The composition is what makes it work. ECMP's hash is *stateless per router*, so when a balancer
-node joins or leaves, routers rehash and existing flows may land on a node that does not hold their
-conntrack entry. If that node chose backends by a plain hash over a changing set, the flow would
-break. Because every node runs the *same deterministic consistent hash over the same backend set*,
-a rerouted packet reaches the same backend anyway, and connection tracking becomes an optimization
-rather than a requirement. GitHub's GLB went further, encoding a *second* candidate backend in the
-GUE header so that a proxy which does not recognize a flow forwards it to the alternate instead of
-resetting it — surviving simultaneous balancer and backend membership changes.
 
 Katran (Meta) implements this datapath as an **XDP/eBPF** program attached at the driver level, so
 packets are classified, hashed, and encapsulated before the kernel allocates an `sk_buff` — a large

@@ -28,29 +28,6 @@ as durable as the local `fsync` underneath it.
 
 Learning goals — after this chapter you should be able to:
 
-- Explain the **VFS object model** — superblock, inode, dentry, file — and how the layered
-  indirection from a file descriptor down to on-disk blocks enables one syscall API over many
-  file systems.
-- Describe **path resolution** and the **dentry cache**, and why name lookup is cached
-  separately from inode data.
-- State precisely the **inode-versus-name model**: why a file's name lives in its directory,
-  not its inode; how hardlinks, link counts, `unlink`, and open file descriptors interact; and
-  why "I deleted the file but the disk is still full" happens.
-- Compare **ext4, XFS, Btrfs/ZFS, and tmpfs** on-disk designs — extents, allocation groups,
-  copy-on-write, checksums — and pick the right one for a database or log workload.
-- Explain the **crash-consistency problem** and the two families of solutions: **journaling**
-  (ext4 `data=ordered`/`journal`/`writeback`) and **copy-on-write** (Btrfs/ZFS), plus what
-  `fsck` is for and why journaling mostly retired it.
-- Trace the **durability write path** end to end and state exactly where data becomes safe:
-  `write()` → page cache → writeback → block layer → device cache → media, with `fsync` /
-  `fdatasync` / FUA as the barriers.
-- Explain **fsyncgate (Postgres, 2018)** accurately, the directory-fsync requirement, and
-  `O_DIRECT`, and connect all of it to why different file systems give different crash
-  guarantees ("All File Systems Are Not Created Equal").
-- Reason about the **breadth topics** — file locking, extended attributes, FD/open-file-table
-  semantics, `/proc` and `/sys`, FUSE, and NFS close-to-open consistency — well enough to
-  avoid their classic footguns.
-
 ## The VFS: one API, many file systems
 
 A backend service opens a config file on ext4, reads a log segment on XFS, and stats a value
@@ -252,18 +229,6 @@ be lost or reordered around a crash unless you `fsync`.
 
 ### XFS: allocation groups and scalability
 
-XFS, originally from SGI and now the RHEL default, is built for parallelism and size. It
-partitions the device into several **allocation groups (AGs)**, each with its own free-space
-and inode B+ trees, and each independently lockable. Two threads allocating in two different
-AGs do not contend, so XFS scales allocation throughput with cores in a way a single-locked
-allocator cannot — which is exactly why it is favored for busy databases and large storage
-arrays. Everything internal is a **B+ tree** (free space indexed by both offset and size,
-inodes, directories), giving logarithmic operations at very large scale. XFS allocates inodes
-dynamically rather than in fixed tables, so it does not hit ext4's fixed-inode-count wall. Its
-journal covers metadata only; XFS never offered full data journaling, betting instead on
-delayed allocation plus a metadata-only journal for speed. For large-file, high-concurrency,
-sequential-heavy workloads — logs, database data files — XFS is frequently the right default.
-
 ### Btrfs and ZFS: copy-on-write, checksums, snapshots
 
 Btrfs (Linux) and ZFS (from Solaris, widely used via OpenZFS) take a fundamentally different
@@ -312,12 +277,6 @@ allocator may hand to another file — silent cross-file corruption). Media and 
 guarantee neither the *order* in which independent writes reach the platter nor atomicity across
 sectors, so the file system must impose that guarantee itself.
 
-Historically the answer was **`fsck`** (file system check): after an unclean shutdown, scan
-the *entire* file system at boot, cross-check bitmaps against inodes, and repair discrepancies.
-This works but does not scale — a full `fsck` of a multi-terabyte volume can take many
-minutes to hours, an unacceptable recovery time for a server. Two modern approaches make the
-common-case crash recover in seconds instead.
-
 ### Journaling (ext4, XFS)
 
 A **journal** (a write-ahead log for the file system's own metadata) turns a multi-write
@@ -344,12 +303,6 @@ sequenceDiagram
         FS->>FS: DISCARD partial transaction (as if it never happened)
     end
 ```
-
-On recovery the file system reads only the journal, not the whole volume: replay every
-committed transaction (idempotently — hence *redo*), discard any transaction lacking a commit
-record. Recovery is proportional to the journal size, not the file system size — seconds, not
-hours. That is why a modern Linux box boots cleanly after a power cut without a long `fsck`
-(though `fsck` still exists as a last-resort repair for corruption the journal cannot cover).
 
 ext4 (via the JBD2 journaling layer) offers three modes, and the distinction is a genuine
 durability/performance lever:
@@ -412,24 +365,6 @@ flowchart TB
 ```
 
 Trace each hop and note exactly where durability is *not* yet achieved:
-
-1. **`write()` → page cache.** Your bytes become *dirty pages* in RAM. Fast, and volatile.
-   Nothing has been persisted. The kernel will eventually flush them via **writeback**, driven
-   by the dirty-page thresholds (`vm.dirty_ratio` / `dirty_background_ratio`) and a periodic
-   timer (`dirty_expire_centisecs`, ~30 s) — Chapter 4's machinery. "Eventually" is the enemy
-   of durability.
-2. **Page cache → block layer.** Writeback hands dirty pages to the block layer and I/O
-   scheduler, which orders and merges requests. Still in transit, still not durable.
-3. **Block layer → device cache.** The drive accepts the write into its own **volatile write
-   cache** (DRAM on the controller) and, by default, acknowledges *immediately* — before the
-   bits reach the platter or flash. Fast, and a lie about durability, which is the whole reason
-   the next step exists.
-4. **Device cache → media, via FLUSH / FUA.** To force the drive to move data from its volatile
-   cache to non-volatile media, the kernel issues a **cache-flush** command, or tags the write
-   **FUA** (Force Unit Access — "do not acknowledge until this specific write is on media").
-   These are the *write barriers* of Volume 1 Chapter 5. Only after a successful flush/FUA is
-   the data genuinely safe against power loss (absent power-loss-protected drive caps, which
-   enterprise SSDs have and consumer drives usually do not).
 
 `fsync(fd)` is the syscall that drives this whole chain to completion: it writes back all of
 that file's dirty pages, waits for them, and issues the cache flush, returning only when the
@@ -525,15 +460,6 @@ description and reach every `fsync` caller since the file was opened. Postgres c
 than retry — because after such a failure the page-cache state is untrustworthy and WAL replay
 is the only path back to a known-good state.
 
-The distributed-systems lesson is the load-bearing one for the rest of this suite: a database's
-"committed" and a consensus protocol's "durable log entry" (Volume 6) are *defined* in terms of
-a successful local persist. If the local persist can silently fail, the entire correctness
-argument built on top of it — replication that trusts each replica's durable state, a Raft
-leader that has "committed" an entry because a quorum reported it fsynced — rests on a false
-premise. fsyncgate was not a performance bug; it was a **distributed-correctness bug rooted in
-local file-system semantics.** It is why serious storage engineers treat fsync error handling
-as a first-class correctness concern, not a detail.
-
 ### `O_DIRECT`: opting out of the page cache
 
 Databases that manage their own buffer pool often do not want the kernel's page cache: it
@@ -577,20 +503,6 @@ The VFS surfaces several more features that a backend engineer meets regularly. 
 sharp edge worth knowing.
 
 ### File locking is advisory, and does not cross machines
-
-Linux offers two classic locking APIs. **`flock()`** takes a whole-file shared or exclusive
-lock tied to the open file *description*. **`fcntl()`** byte-range locks (POSIX record locks)
-lock a range and are tied to the *(pid, inode)* pair — with famously error-prone semantics: a
-POSIX lock is released when the process closes *any* descriptor to that inode, which makes them
-treacherous in libraries. Both are **advisory**: they coordinate only among processes that
-*choose* to check. Nothing stops a process that ignores locking from writing through a
-"locked" file. (Mandatory locking existed but was unreliable and is effectively gone.) Linux
-`OFD` locks (`F_OFD_SETLK`) fix the worst POSIX semantics by tying the lock to the open file
-description like `flock`, and are what new range-locking code should use. The distributed
-caveat: **none of this coordinates across machines.** File locks are a single-kernel construct;
-two nodes locking "the same file" on a shared NFS mount get, at best, unreliable server-side
-emulation. Cross-node mutual exclusion needs a real distributed lock (etcd, ZooKeeper, a
-lease) — a file lock is not it.
 
 ### Extended attributes
 

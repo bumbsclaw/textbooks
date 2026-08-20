@@ -34,14 +34,6 @@ Learning goals — after this chapter you should be able to:
 
 ## The fallacies, and what they actually cost
 
-The standard framing is the *fallacies of distributed computing*, a list assembled at Sun
-Microsystems over the first half of the 1990s: the earliest items are usually attributed to Bill Joy
-and Tom Lyon, the list as commonly quoted to L. Peter Deutsch, and the eighth — "the network is
-homogeneous" — to James Gosling; Arnon Rotem-Gal-Oz later wrote the standard explanatory treatment.
-The eight assumptions distributed programs make and that are all false: the network is reliable;
-latency is zero; bandwidth is infinite; the network is secure; topology doesn't change; there is one
-administrator; transport cost is zero; the network is homogeneous.
-
 Quoting the list is easy; the useful move is converting each fallacy into the line of code it
 invalidates. "The network is reliable" invalidates any call site without an error path — and, more
 subtly, any error path that assumes the call *didn't happen*. "Latency is zero" invalidates any call
@@ -59,25 +51,10 @@ Everything else in this chapter depends on timeouts, so we start there.
 
 ### An unbounded call is a resource leak
 
-Consider a synchronous service with 200 request-handling threads, each making one call to a
-dependency that normally responds in 20 ms. By Little's Law — concurrency equals arrival rate times
-latency, `L = λW` — 200 threads at 20 ms occupancy sustain 10,000 requests per second. That capacity
-is a consequence of the *downstream* call's latency, not of your own code.
-
 Now the dependency degrades to 2 seconds: no errors, no crashes, nothing a health check notices. The
 same 200 threads now sustain 100 requests per second, so from the outside your service is down — pool
 fully occupied, queue growing without bound. If the call has no timeout at all and the downstream has
 stopped responding entirely, the threads are gone permanently.
-
-That is the whole argument, and it has three corollaries. First, **the timeout value is a capacity
-decision**: timeout `T` against a pool of `N` workers bounds worst-case throughput at `N/T`, so
-`T = 10s` on a 200-thread pool declares that you will fall to 20 rps under stress while `T = 200ms`
-sets the floor at 1,000. Sizing a timeout without knowing `N` is guessing. Second, **asynchronous
-runtimes change the constant, not the shape**: Go and Netty do not burn an OS thread per in-flight
-call, but connections and heap are finite and the pending queue still grows without bound — async
-raises the ceiling and hides the collapse behind memory growth rather than a thread dump. Third,
-**the caller's timeout is the only defense you control**: you cannot make the dependency fast, only
-decide how much of your capacity you will lend it.
 
 ### The timeout ladder: connect, TLS, per-attempt, total
 
@@ -182,13 +159,6 @@ server. Configure the two ends as a pair, or you get mysterious resets under loa
 
 ### Choosing the number
 
-Do not guess, and do not copy from another service. Take it from the observed distribution of the
-dependency's latency *as seen by the client*, over a period including at least one peak. The
-heuristic: **set the per-attempt timeout between p99 and p99.9 of healthy latency, rounded up, then
-check the capacity implication.** A timeout is a claim about what "abnormal" means — set it at the
-median and you time out half your traffic; set it at 20× p99 and you have effectively no timeout,
-because by the time it fires the pool is gone.
-
 Then check the arithmetic in three directions. **Capacity floor:** with `N` slots and timeout `T` the
 throughput floor is `N/T`, and if that is below your traffic a full stall takes you down regardless.
 **Budget fit:** if your handler makes four sequential calls under a 300 ms p99 target, no single call
@@ -215,12 +185,6 @@ cosmetic; it is the single highest-leverage change most call chains can make.
 
 ### Why per-hop timeouts multiply
 
-In a chain A → B → C → D, suppose each hop gets a 1-second timeout because 1 second "seems
-reasonable". Add two attempts at each hop and A's worst case becomes 2 × (2 × (2 × 1 s)) = 8 s,
-because each layer's retries multiply the layer below — but A's own timeout is 1 second, so A gave up
-seven seconds before D finished. Everything B, C, and D did after that first second was waste: CPU
-spent, connections held, rows locked, producing a response nobody reads.
-
 That waste is the mechanism of collapse. Every abandoned-but-still-running request occupies capacity
 a live request could use, so useful work falls, so more requests time out, so more work is
 abandoned-but-running — the positive feedback that lets an overloaded system sit at 100 % CPU while
@@ -246,22 +210,6 @@ flowchart TB
 ```
 
 ### The mechanism
-
-gRPC implements this natively, and it is the model to copy even if you speak HTTP. The client sets a
-deadline; the library encodes the *remaining* time into the `grpc-timeout` header — a value plus a
-unit character, so `grpc-timeout: 800m` means 800 milliseconds. The server reads it, creates a
-context cancelled at that point, and every downstream call under that context carries a freshly
-computed, smaller remaining time. On expiry the RPC fails with `DEADLINE_EXCEEDED` (status 4), and
-gRPC sends `RST_STREAM` so the server learns the client has gone (Chapters 7 and 8).
-
-Two design details are worth stealing. First, **it propagates a relative duration, not an absolute
-timestamp**, which sidesteps clock skew: a D whose clock ran 300 ms fast would cancel work that still
-had budget, and machines routinely disagree by single-digit milliseconds under good NTP and by far
-more when NTP breaks (Volume 6, Chapter 2). Each hop converts the received duration against its own
-monotonic clock, so only that clock has to be sane; the cost is that transit time is charged to the
-caller, the conservative direction. Second, **cancellation is explicit and propagates**: expiry is
-not merely "the caller stopped listening" but a signal the callee acts on — abort the query, release
-the lock, skip the write.
 
 In Go this is `context.Context`, and the discipline is mechanical:
 
@@ -302,18 +250,6 @@ func (s *Server) GetFeed(ctx context.Context, req *pb.GetFeedRequest) (*pb.GetFe
 
 Three rules follow:
 
-1. **Never call `context.Background()` in a request path.** Every one in a handler is a severed
-   deadline chain whose work outlives the request; linters enforce this (`contextcheck`, `noctx`).
-   Deliberately detached background work is the exception and needs its own explicit timeout.
-2. **Pass the context all the way to the syscall** — `db.QueryContext`, not `db.Query`. Cancellation
-   there is best-effort: the driver stops waiting and, at most, sends an out-of-band cancel request
-   the server may ignore. Push the budget into the server too — for PostgreSQL, `SET LOCAL
-   statement_timeout = 800` inside the transaction (milliseconds) — so the backend process and the
-   snapshot it pins are released whether or not the cancel lands.
-3. **Reserve budget.** A hop that spends its whole budget downstream has no time to serialize a
-   response or run a fallback. Reserving a slice, and refusing work that arrives with too little
-   budget, converts a guaranteed timeout into a cheap rejection.
-
 Plain HTTP has no standardized deadline header, which is a real gap. Adopt a `grpc-timeout`-style
 relative header fleet-wide, or lean on the mesh — Envoy sets `x-envoy-expected-rq-timeout-ms` on
 upstream requests and honors `x-envoy-upstream-rq-timeout-ms` from clients (Chapter 10). What you
@@ -343,18 +279,6 @@ distinguishing these from the client is impossible in general, the ambiguity tha
 delivery a fiction at the network layer (Volume 6, Chapter 9; Volume 10, Chapter 2).
 
 So the practical taxonomy has three buckets, not two:
-
-- **Definitely not executed** — retry is safe regardless of idempotency, and the signal comes from the
-  transport: connection refused; an HTTP/2 `REFUSED_STREAM`, which RFC 9113 defines as the server not
-  having processed the stream; any stream above the `last-stream-id` in a `GOAWAY` frame, the
-  graceful-shutdown promise that those streams were not acted on. Envoy exposes these as the
-  `connect-failure`, `reset`, and `refused-stream` retry conditions — `GOAWAY` semantics are a
-  reliability feature, not housekeeping.
-- **Definitely final** — 400, 403, 404, gRPC `INVALID_ARGUMENT` or `PERMISSION_DENIED`. The server
-  reached a verdict; the second attempt gets the same one. A client that retries its own bugs triples
-  its load for zero chance of success.
-- **Ambiguous** — timeouts, 5xx after the request was written, resets mid-response. These require
-  idempotency, which you build rather than hope for.
 
 RFC 9110 defines GET, HEAD, PUT, DELETE, OPTIONS, and TRACE as idempotent and POST as not, so a
 generic client may auto-retry the former only. The application-level answer is an **idempotency
@@ -403,14 +327,6 @@ are failing**, because retries only fire on failure. The leaf sees normal load r
 starts to struggle, at which point offered load jumps by an order of magnitude or two. No capacity
 plan survives that.
 
-Then the loop closes: the leaf, now at 27×, times out more requests, producing more retries. The
-system settles into a stable failed state where retry traffic alone exceeds capacity — a **retry
-storm** — and critically *it does not recover when the original trigger is removed*: restart the leaf
-and the standing wave knocks it over during warmup. The AWS EC2/EBS disruption in US-East in April
-2011 is the best-documented self-sustaining example, with EBS nodes losing connectivity after a
-network change and re-mirroring aggressively until cluster capacity was exhausted and stayed
-exhausted; the DynamoDB disruption in the same region in September 2015 had a broadly similar shape.
-
 And amplification is usually counted in requests per second when the more dangerous multiplication is
 in **concurrency**: a retry after a timeout means the client held a slot for the full timeout and
 then took another. Connection pools, not just CPUs, run out.
@@ -420,13 +336,6 @@ then took another. Connection pools, not just CPUs, run out.
 The fix is making the retry rate a *bounded fraction of the request rate* instead of a per-request
 multiplier. If retries never exceed 10 % of traffic, worst-case amplification is 1.1× no matter how
 bad things get, while still recovering every transient failure in a healthy system.
-
-gRPC specifies this in gRFC A6 as **retry throttling**: a token bucket per server name, shared across
-all methods on the channel. `token_count` starts at `maxTokens` and is capped there; every failed RPC
-decrements it by 1 and every success increments it by `tokenRatio`; when `token_count <= maxTokens/2`
-retries stop entirely. The bucket is fed by *successes*, so the retry allowance tracks how the
-dependency is actually doing: when a backend is broadly failing, tokens drain and retries stop within
-a fraction of a second, with no threshold to tune per incident.
 
 A complete gRPC service config, shippable as a channel default:
 
@@ -471,16 +380,6 @@ conn, err := grpc.NewClient(
     grpc.WithDefaultCallOptions(grpc.WaitForReady(false)),
 )
 ```
-
-Three details repay attention. `maxAttempts` counts the initial attempt, so `3` means two retries.
-gRPC's backoff is *fully jittered* by specification — each delay is drawn uniformly from
-`[0, current_backoff)`, after which `current_backoff` is multiplied by `backoffMultiplier` up to
-`maxBackoff` — so you get correct jitter for free, which is not true of most hand-rolled retry loops.
-And `WaitForReady(false)`, the default, makes an RPC issued while the channel is in
-`TRANSIENT_FAILURE` fail immediately rather than queue until reconnect; `true` suits only background
-work with generous deadlines. Note also that retrying `Authorize` at all presumes the method takes an
-idempotency key: gRPC stops retrying once response headers arrive, but `UNAVAILABLE` can still be
-returned after the server has done the work.
 
 Envoy implements the same idea as a **retry budget** on the cluster, expressed as a percentage of
 active requests:
@@ -562,17 +461,6 @@ Retrying immediately *and in lockstep with thousands of peers* is actively harmf
 
 ### Exponential backoff, and why it is not enough
 
-The standard formula, capped so delays do not grow without bound, is
-`delay = min(cap, base * 2^attempt)`. It spaces attempts out and lets a struggling dependency
-recover, but it has a fatal property in a fleet: it is **deterministic**. If 10,000 clients observe a
-failure at time `t` — exactly what happens when a service restarts, a leader fails over, a deploy
-rolls, or a partition heals — all 10,000 retry at `t + base`, all fail, and all retry at `t + 3·base`.
-That is a synchronized standing wave that keeps the recovering dependency pinned: the **thundering
-herd**. Exponential growth alone does not break the synchronization — it only spreads the same bursts
-further apart, so the dependency alternates between spikes it cannot absorb and idle capacity it
-cannot use. Backoff without randomization changes *when* the herd arrives, not that it arrives
-together.
-
 ```mermaid
 sequenceDiagram
     autonumber
@@ -627,31 +515,10 @@ def decorrelated_jitter(prev_sleep):
     return min(CAP, random.uniform(BASE, prev_sleep * 3))
 ```
 
-The differences are not arbitrary. **Full jitter** draws uniformly from `[0, backoff)`, maximizing
-spread; in the post's simulations it reduced both contention and total work relative to unjittered
-backoff. Its one drawback is that late in a sequence it can produce a very short delay. It is what
-gRPC and Envoy implement, and it is the right default. **Equal jitter** keeps half the delay
-deterministic, guaranteeing minimum spacing — useful when a too-early retry is genuinely expensive.
-**Decorrelated jitter** is stateful, deriving each delay from the previous one; it climbs faster in
-expectation, avoids full jitter's collapse toward zero, and the post found it competitive. The robust
-claim is qualitative — jitter reduces both contention and total work — so pick one and move on.
-
 ### Jitter everything periodic, not just retries
 
 Synchronization is not a retry problem; it is a *timing* problem, arising anywhere many processes
 share a schedule.
-
-- **Cache expiry.** Keys written together with a 1-hour TTL expire together an hour later. Jitter the
-  TTL (`ttl * uniform(0.9, 1.1)`) and coalesce concurrent misses per key — single-flight in the
-  client, request collapsing in the CDN (Chapter 10).
-- **Cron, health checks, and metric scrapes.** Everything at `0 * * * *` fires fleet-wide at once, as
-  do Chapter 9's active checks from 500 proxies at a fixed interval; spread both by a hash of the
-  hostname.
-- **Reconnects after a proxy restart.** Dropping 20,000 connections means 20,000 simultaneous
-  handshakes, whose CPU cost (Chapter 6) dwarfs steady state; gRPC's connection-backoff specification
-  jitters exactly this.
-- **Token and certificate refresh.** Credentials issued together expire together; refresh at a
-  jittered fraction of the lifetime, not a fixed offset from expiry.
 
 ## Circuit breakers
 
@@ -682,13 +549,6 @@ stateDiagram-v2
   returning straight to full traffic re-breaks a service that has just come back.
 
 ### What to count, and over what window
-
-A breaker that counts only errors misses the most common way a dependency kills you: not failing, but
-getting slow. Count **slow calls as failures** — resilience4j's slow-call rate threshold is the single
-most valuable setting in the library. Prefer a **time-based** window for anything with variable
-traffic: a 100-call window covers hours on a quiet endpoint and 50 ms on a busy one, so the breaker
-is alternately senile and hypersensitive. And require a **minimum call count** before the rate means
-anything, or two failed calls after startup give you a 100 % failure rate on a healthy dependency.
 
 ```yaml
 resilience4j.circuitbreaker:
@@ -721,30 +581,11 @@ Per-*host* breakers are the wrong tool; that job belongs to outlier detection in
 (Chapter 9). The two compose: ejection handles "one host is bad", the breaker handles "the dependency
 is bad".
 
-Be honest about the failure modes. Breakers are **all-or-nothing**: an open breaker takes a service
-from degraded to hard-down for that dependency, so if your fallback is worse than a slow response you
-have made things worse — adaptive throttling, below, degrades continuously instead. They **flap** when
-thresholds sit near steady-state error rates, so use hysteresis and generous minimum call counts.
-Their state is **local but the decision is global**: with 1,000 replicas each sampling a few calls per
-second, individual breakers are noisy, which argues for the sidecar or shared client (Chapter 10).
-And a breaker is **no substitute for a timeout** — without timeouts there are no observed failures,
-only hangs.
-
 Netflix's Hystrix popularized the pattern and has been in maintenance mode since roughly 2018, its
 README pointing users toward resilience4j; Envoy, Istio, and Linkerd provide mesh-layer equivalents.
 The pattern predates all of them — Michael Nygard's *Release It!* (2007) is canonical.
 
 ## Hedged requests: buying tail latency
-
-Everything so far is about failure. Hedging addresses a different problem: **the tail**. In a service
-that fans out, the slowest component sets user-visible latency, and "slow" happens for reasons that
-have nothing to do with your request — a GC pause, a compaction, a noisy neighbor, a queue you
-arrived behind. Jeff Dean and Luiz André Barroso's *The Tail at Scale* (CACM, February 2013) is the
-definitive treatment, and its essential observation is that at scale rare slowness is not rare: if
-one request in a hundred is slow and you wait for 100 backends, roughly two-thirds of user requests
-hit at least one slow backend. The technique: send to one replica; if nothing has arrived after
-roughly the p95 of expected latency, send the same request to a *different* replica; take whichever
-responds first and cancel the other.
 
 ```mermaid
 sequenceDiagram
@@ -763,14 +604,6 @@ sequenceDiagram
     Note over C,R2: extra load is bounded by<br/>the fraction of calls exceeding p95,<br/>roughly 5 percent
 ```
 
-The cost accounting is what makes hedging attractive: hedge only after the p95 and, by construction,
-only about 5 % of requests are ever hedged — while p99 and p99.9 improve sharply, because the request
-is now slow only if *both* replicas are slow. Dean and Barroso report a benchmark reading 1,000 keys
-spread across a hundred BigTable servers: hedging after 10 ms cut the 99.9th-percentile latency from
-roughly 1,800 ms to roughly 74 ms while sending about 2 % additional requests. Treat those figures as
-illustrative — and note the caveat implied by "both replicas": the gain collapses when slowness is
-*correlated* across replicas, as it is under fleet-wide overload or a shared-dependency stall.
-
 The paper also describes **tied requests**: send to two replicas immediately, each tagged with the
 identity of the other, and have whichever server *dequeues* the request first cancel its counterpart.
 That removes the hedge delay entirely, at the cost of server-side support, and attacks queueing delay
@@ -779,18 +612,6 @@ specifically.
 ### When hedging is safe, and when it is a loaded gun
 
 Hedging is retrying before failure, so every retry precondition applies, plus more:
-
-1. **Idempotency is mandatory** — both requests may execute. Reads are the natural fit; mutations
-   need idempotency keys and deduplication.
-2. **You need capacity headroom.** Hedging adds load, so it must share the retry budget and disable
-   itself when the dependency is unhealthy — otherwise the tail-latency tool becomes the amplifier.
-   gRPC's retry throttling covers hedging too, which is the correct design.
-3. **The hedge must go to a different replica** — Envoy's `previous_hosts` predicate again, plus the
-   power-of-two-choices selection from Chapter 9.
-4. **Cancellation must actually work,** or hedging costs a full 2×. gRPC and HTTP/2 make it cheap via
-   `RST_STREAM`; the server must then honor `ctx.Done()` all the way into the database.
-5. **Set the delay from data and adapt it.** A fixed delay that drifts below the current p95 hedges
-   nearly everything and doubles your load — a self-inflicted retry storm.
 
 gRPC supports hedging natively in the service config (hedging and retry are mutually exclusive per
 method):
@@ -900,17 +721,6 @@ unbounded queues — a default-constructed `LinkedBlockingQueue`, an accept back
 executor with an unbounded work channel — are a reliability anti-pattern (Volume 7, Chapter 11;
 Volume 10, Chapter 7).
 
-Three shedding signals, in rough order of quality. **Queue delay** is the best: measure
-arrival-to-dispatch time and shed when it exceeds a target — the CoDel (Controlled Delay) algorithm
-from network queue management, applied to application queues. Ben Maurer's *Fail at Scale* (ACM
-Queue, 2015) describes CoDel-style management at Facebook with a small target delay, plus switching
-from FIFO to **adaptive LIFO** under overload: when you are shedding anyway, the newest request is
-the better one to serve, because queued requests are near their deadline while a fresh one has its
-full budget. **Concurrency limits** come second: cap in-flight requests and reject beyond it,
-preferring adaptive limits (Netflix's `concurrency-limits`, whose TCP-Vegas- and gradient-style
-controllers infer the limit from observed latency versus its minimum) over static ones.
-**Utilization** thresholds are simplest and worst: laggy and confounded by noisy neighbors.
-
 ### Prioritize, don't just reject
 
 A user-facing read outranks a batch backfill, and a first attempt outranks a retry. Google's internal
@@ -1018,27 +828,11 @@ degraded path must be a first-class code path with its own metrics, so you can a
 rather than only on error rate, and it must be exercised continuously — a path that runs once a
 quarter during an incident does not work (Volume 11, Chapter 8).
 
-**Fallbacks deserve suspicion.** Amazon's Builders' Library article *Avoiding fallback in distributed
-systems* argues it bluntly: fallback logic is rarely exercised so it is rarely correct; it fires when
-the system is already stressed; and it is frequently *correlated* with the failure it is meant to
-handle — the fallback store is in the same AZ, the fallback path calls the same overloaded metadata
-service. Prefer making the primary path robust. If you must have a fallback, run it continuously
-rather than conditionally, so it is always warm and always tested.
-
 **Serving stale is usually the best degradation available.** Data ten minutes old during an outage
 beats an error, and `stale-while-revalidate` and `stale-if-error` (RFC 5861) express that at the HTTP
 layer without writing code (Chapter 10).
 
 ## Composing one coherent policy
-
-These patterns interact, and configuring them independently is how you get a system that is
-individually reasonable and collectively suicidal. The decisions have a fixed order. The deadline
-comes first, set once at the entry point from the product SLO and partitioned across the hops below
-it; per-attempt timeouts follow from data and must fit inside that budget, retries included, because
-when the arithmetic does not fit you get fewer attempts and never a longer deadline. Only then do the
-protective mechanisms attach: budgeted retries at exactly one layer, full jitter with server hints
-overriding your computation, a breaker composed with per-host ejection, hedging only where there is
-headroom, and shedding underneath all of it.
 
 Written as a per-dependency specification — the artifact that should live next to the code and be
 reviewed like an API:

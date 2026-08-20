@@ -18,23 +18,6 @@ message passing is not a design choice but the physics of the situation.
 
 Learning goals — after this chapter you should be able to:
 
-- State the three actor axioms precisely and explain what asynchronous sends and location
-  transparency buy — and what they cost.
-- Explain how Erlang/OTP turns the actor model into a reliability discipline: process
-  isolation, links versus monitors, supervision trees, restart strategies, and the actual
-  argument behind "let it crash."
-- State classical CSP's core commitments — anonymous processes, named channels,
-  synchronous rendezvous — and trace their lineage into occam and Go.
-- Give the precise semantics of Go channels: unbuffered rendezvous and its happens-before
-  edge, the buffered-channel capacity rule, `select`'s pseudo-random choice, and the exact
-  behavior of nil and closed channels.
-- Build and recognize the standard channel patterns: pipeline, fan-out/fan-in, worker
-  pool, cancellation via done channel or `context`, and semaphore-via-buffered-channel.
-- Enumerate the failure modes message passing does *not* remove — memory exhaustion,
-  leaks, deadlock, ordering surprises, logical races — and know the mitigation for each.
-- Choose between actors, CSP, and shared memory from workload characteristics rather than
-  fashion.
-
 ## Message passing: the other half of the map
 
 Recall the split from Chapter 1's taxonomy. Shared-memory models let threads mutate common
@@ -218,33 +201,6 @@ ancestor's restart genuinely clears the fault, or the root is reached and the no
 restarts. Recovery is not a code path someone remembered to write; it is a property of the
 tree's shape, declared in data.
 
-**Why "let it crash" actually works.** The philosophy is routinely quoted and rarely
-argued, so here is the argument. When a process encounters a state it was not written to
-handle — a pattern match fails, an invariant is violated, a dependency returns garbage —
-there are two options. Defensive programming tries to handle the anomaly in place: catch
-it, log it, guess a corrective action, continue. But by hypothesis the process is now in a
-state *its author did not anticipate*; code written from inside that state is guessing,
-and a wrong guess continues execution with corrupted state, converting a loud, local,
-immediate failure into a quiet, spreading, delayed one. The Erlang position: the process
-should die at the first sign of anomaly, and its supervisor should restart it **from its
-initial, known-good state**. A restart is a transition from an *unknown* state to a
-*known* one — that is the entire trick, and it is the same reason "turn it off and on
-again" genuinely works for most equipment.
-
-Three preconditions make the trick sound, and each maps to an Erlang design decision.
-The failing unit must be *small*, so a crash loses one request's worth of work, not the
-node's — hence ultra-lightweight processes. The crash must be *contained*, unable to
-corrupt survivors — hence heap isolation and no shared mutable state. And restart must be
-*cheap and lead to a good state* — hence supervisors that respawn a process in
-microseconds from declared initial arguments. Remove any leg and the stool falls: crashing
-a 4 GB shared-heap JVM to clear one request's bad state is not "let it crash," it is an
-outage. Armstrong's thesis adds an empirical observation worth internalizing: a large
-fraction of production failures are *transient* — triggered by a rare interleaving, a
-peculiar input, a momentary resource state — and for transient faults a clean retry from a
-fresh state is not a workaround but a genuine cure. Chapter 5's deadlock discussion and
-Volume 11's metastable-failure material both echo this: the cheapest path out of a bad
-state is often not repair but rebirth.
-
 **Behaviours.** OTP factors the actor patterns that recur — a server processing
 request/response (`gen_server`), a finite state machine (`gen_statem`), event handling,
 supervision itself — into **behaviours**: library modules that own the generic machinery
@@ -325,21 +281,6 @@ on a long-standing weakness by giving `ActorRef[T]` a message-type parameter, so
 an actor a message it cannot handle is a compile error rather than a dead letter. Actors
 are multiplexed onto a small thread pool by **dispatchers**, so the lightweight-process
 economics broadly hold.
-
-The caveat is the runtime underneath. The JVM is a shared-memory machine, and Akka's
-isolation is a *convention*, not a guarantee. Messages are passed by reference, not
-copied. Send a mutable object and keep a reference to it, and two actors now share
-mutable state — every hazard of Chapters 2 and 3 walks back in through a door the model
-claims not to have, and it is worse than plain shared-memory code because *nobody is
-locking*, since the programming model promised locks were unnecessary. The same accident
-happens by closing over the actor's own mutable state in a `Future` callback or a message
-lambda: the closure executes on some pool thread concurrently with the actor processing
-its next message. The discipline is well known — messages must be immutable, never close
-over `this` or mutable fields, use `pipeTo`-style patterns to re-enter the actor —
-but it is a discipline, enforced by review rather than by the runtime. Erlang enforces it
-with per-process heaps and immutable terms; that enforcement, more than any single
-feature, is the gap between the two. There is no free path to actor safety on a
-shared-memory runtime: you buy it with copying, with immutability, or with vigilance.
 
 ## CSP: Communicating Sequential Processes
 
@@ -448,20 +389,6 @@ line is a production incident somewhere:
 | Send `ch <- v` | Blocks forever | Blocks until receiver/space | **Panics** |
 | Receive `<-ch` | Blocks forever | Blocks until value/close | Returns zero value immediately, `ok = false` |
 | `close(ch)` | Panics | Closes it | Panics (double close) |
-
-The design is coherent once you see the intent. Close is a *broadcast of completion* from
-sender to receivers: after close, every pending and future receive completes — draining
-any buffered values first, then yielding zero values with `ok == false` — which is why
-`for v := range ch` terminates on close and why a done-channel (below) works: closing it
-releases *every* waiter at once, the only broadcast primitive channels have. From that
-intent the rules follow: only senders know when sending is finished, so **only the sender
-side may close**; a send on a closed channel is a protocol violation with no sane meaning,
-so it panics loudly rather than silently discarding data. And the nil channel's
-block-forever behavior, which looks like a footgun, is a load-bearing idiom: **a nil
-channel in a `select` disables that case**, since a case that can never proceed is simply
-never chosen. Setting a channel variable to nil after it closes is the standard way to
-take a finished input out of a multi-source merge loop without restructuring the select —
-we use it in the fan-in below.
 
 **Directional channel types** round out the toolkit: `chan<- T` is send-only, `<-chan T`
 receive-only, and a bidirectional channel converts implicitly to either. The conversion is
@@ -644,18 +571,6 @@ generalizes it.
 Both models are routinely oversold. Here is the honest ledger; each entry names the
 migration of a Chapter 1 hazard, not a new species.
 
-**Unbounded mailboxes are unbounded memory.** The actor model's asynchronous send has a
-hidden operand: the mailbox that absorbs the send is a queue, and in Erlang and Akka it is
-*unbounded by default*. A producer that outruns its consumer by even a few percent grows
-that queue without limit — and the failure is doubly vicious because it is slow (minutes
-or hours of creep before the OOM) and self-worsening (in Erlang, a `receive` with
-selective pattern matching scans the mailbox, so a long mailbox makes the consumer
-*slower*, which grows the mailbox faster). The remedies are the standard flow-control
-ones: bound the queue and choose a policy for the full case — block the sender
-(backpressure, the CSP default recovered), shed load, or drop with a metric — or move to
-credit/pull-based schemes where consumers grant send permission. This is the in-process
-shadow of Volume 10, Chapter 7's backpressure story, and the design pressure is identical.
-
 ```mermaid
 flowchart TB
   P["Producer at 1100 msg/s"] --> Q{"Mailbox or channel"}
@@ -698,18 +613,6 @@ DAGs by construction — one reason the pattern is so durable), timeouts on sync
 calls (OTP's default 5-second call timeout is this, institutionalized), and `select` with
 done channels as the escape hatch.
 
-**Ordering is guaranteed less than you assume.** What you get: a Go channel is a FIFO
-queue — values are received in the order sent. Erlang guarantees that messages between one
-sender and one receiver arrive in send order — **per-pair FIFO**. What you do not get, in
-either model: any ordering across *pairs*. If A sends to C and then, afterward, B sends to
-C, C may still receive B's message first — nothing ordered the two senders. If A sends to
-B and then to C, nothing constrains which lands first. Two goroutines receiving from one
-channel may be scheduled such that the later value is *processed* first even though it was
-received second. Any protocol that needs cross-source ordering must build it — sequence
-numbers, a single serializing actor, an explicit barrier — and the "must build it" clause
-is Volume 6's causality material (Lamport clocks, vector clocks) making its first
-appearance at millimeter scale.
-
 **Race conditions survive in full.** Chapter 1 was emphatic that data races and race
 conditions are different bugs, and message passing eliminates only the former. Every
 check-then-act split across two messages is still a race: read an actor's value with one
@@ -736,21 +639,6 @@ is the honest claim, not "no races."
 | Failure handling | Links, monitors, supervision trees — first-class | None; explicit `error` values, `errgroup`, panics kill the process |
 | Distribution | Native; the same send crosses machines | In-process; crossing machines means changing tools |
 | Enforcement of isolation | Erlang: by the runtime. Akka: by convention | By convention (sharing via closures/pointers is possible) |
-
-Two rows deserve emphasis. **Distribution** is the actor model's structural advantage:
-because sends were *always* asynchronous, failable-in-principle, and addressed to an
-opaque identity, the same primitive extends across a network — Erlang's `Pid ! Msg` is
-the same expression whether `Pid` is local or on another node, and OTP's distribution
-layer has worked this way for decades. A Go channel, by contrast, is a memory object;
-there is no "remote channel," and moving a CSP design across machines means re-plumbing
-onto gRPC streams or a message broker — at which point you have rebuilt asynchronous
-addressed messaging, i.e., actors. **Supervision** is the other asymmetry: OTP has a
-complete, declarative failure-recovery architecture, while Go offers `if err != nil`,
-`recover` at goroutine top-level (an unrecovered panic in any goroutine kills the whole
-process — there is no blast-radius containment), and conventions like errgroup. That is
-not an oversight so much as a difference in ambition — Go builds servers whose
-orchestrator (systemd, Kubernetes) is the supervisor — but within the process, the
-Erlang story is simply richer.
 
 **Choosing, from the workload** — extending Chapter 1's table rather than replacing it.
 Reach for **actors** when the domain decomposes into many long-lived stateful identities
