@@ -291,12 +291,12 @@ until then their paths are as listed above).
 - [x] 13.01 The JVM: Memory, GC, JIT — `ch01-jvm.md`
 - [x] 13.02 The Go Runtime: Scheduler, Memory Model, GC — `ch02-go-runtime.md`
 - [x] 13.03 Rust for Backend Systems — `ch03-rust.md`
-- [ ] 13.04 Garbage Collection Across Runtimes — `ch04-gc.md`
-- [ ] 13.05 Profiling and Performance Tuning — `ch05-profiling.md`
-- [ ] 13.06 Python and Node.js Runtimes for Backend — `ch06-python-node.md`
-- [ ] 13.07 WebAssembly and Emerging Runtimes — `ch07-wasm.md`
-- [ ] 13.08 FFI, Native Extensions, and Polyglot Interop — `ch08-ffi.md`
-- [ ] 13.09 Runtime Selection and Performance Trade-offs — `ch09-runtime-selection.md`
+- [x] 13.04 Garbage Collection Across Runtimes — `ch04-gc.md`
+- [x] 13.05 Profiling and Performance Tuning — `ch05-profiling.md`
+- [x] 13.06 Python and Node.js Runtimes for Backend — `ch06-python-node.md`
+- [x] 13.07 WebAssembly and Emerging Runtimes — `ch07-wasm.md`
+- [x] 13.08 FFI, Native Extensions, and Polyglot Interop — `ch08-ffi.md`
+- [x] 13.09 Runtime Selection and Performance Trade-offs — `ch09-runtime-selection.md`
 
 ## Volume 14 — Data Structures and Algorithms for Backend (`vol-14-algorithms/`)
 
@@ -365,3 +365,4 @@ until then their paths are as listed above).
 - 2026-08-20: Vol12 ch04-ch06 done (IaC declarative/HCL/Terraform+OpenTofu/state/pipeline/policy/testing/secrets, cloud primitives EC2/S3+EBS+EFS/VPC+ALB+CloudFront, managed RDS+Aurora+ElastiCache+OpenSearch+SQS+SNS+Kinesis+Secrets+ECR+AppConfig — ~5.7-6.1kw each, 4-6 Mermaid). Next: 12.09-12.11.
 - 2026-08-20: Vol12 ch09-ch11 done (capacity planning Little/USL/queueing + HPA/KEDA/Karpenter/ASG + Graviton, cloud networking VPC/subnets/PrivateLink + IAM least-privilege/IRSA/SPIFFE + GuardDuty, platform engineering paved roads/IDP/Backstage templates+TechDocs+scorecards — ~4.1-4.6kw each, 3-5 Mermaid). Vol 12 remaining tail: 12.07-12.08 (multi-tenancy, cost/FinOps).
 - 2026-08-20: *** VOLUME 11 (Reliability/SRE) COMPLETE — 10 chapters. *** *** VOLUME 12 (Cloud/Infra) COMPLETE — 11 chapters. *** Vol11 ch10 done (resilience: timeouts/deadlines/hedging, retries with jitter+budgets, circuit breakers Resilience4j+Istio+Envoy state machine, bulkheads, adaptive concurrency limiting, fallbacks, composition order, chaos validation — ~5.5kw, 4 Mermaid). Vol12 ch07-ch08 done (multi-tenancy silo/pool/bridge/cells + K8s tenancy quotas/NetworkPolicy/gVisor/Kata + RLS/per-tenant KMS + noisy-neighbor; cloud cost CUR/Athena+tagging, pricing models RI/SP/spot/Graviton, right-sizing VPA/HPA/Karpenter, storage/transfer/managed costs, capacity math USL/Little's Law, FinOps budgets+OPA — ~4.2-4.6kw each, 3-4 Mermaid). Next: Vol13 13.04-13.09 + Vol14 14.04-14.08 + Vol15 15.01-15.10 (remaining 21).
+- 2026-08-20: *** VOLUME 13 (Runtimes) COMPLETE — 9 chapters. *** Vol13 ch04-ch06 done (GC across runtimes G1/ZGC/Shenandoah/Go tri-color/V8 Orinoco/CPython/.NET generational, profiling sampling/eBPF perf/async-profiler/pprof/py-spy/clinic, Python GIL+free-threaded 3.13t/asyncio+ASGI and Node V8+libuv/event loop/workers/cluster — ~3.8-5.5kw each, 3-6 Mermaid). Vol13 ch07-ch09 done (Wasm sandbox/Component Model/WASI Wasmtime/WasmEdge/Spin+Fastly, FFI JNI/Panama/cgo/pyo3/N-API ownership+signal+thread failure modes, runtime selection benchmarks/TCO/selection matrix/strangler+shadow migration — ~4.3-6.2kw each, 2-4 Mermaid, real Wasm/JNI/FFI/bench configs).
