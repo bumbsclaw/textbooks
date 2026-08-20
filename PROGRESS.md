@@ -317,9 +317,9 @@ until then their paths are as listed above).
 - [x] 15.04 Design Docs, RFCs, and Technical Decision-Making — `ch04-design-docs.md`
 - [x] 15.05 Domain-Driven Design for Backend — `ch05-ddd.md`
 - [x] 15.06 Design Patterns and Anti-Patterns for Services — `ch06-patterns.md`
-- [ ] 15.07 Refactoring and Managing Technical Debt — `ch07-refactoring.md`
-- [ ] 15.08 Code Review and Engineering Culture — `ch08-code-review.md`
-- [ ] 15.09 Debugging and Incident-Driven Learning — `ch09-debugging.md`
+- [x] 15.07 Refactoring and Managing Technical Debt — `ch07-refactoring.md`
+- [x] 15.08 Code Review and Engineering Culture — `ch08-code-review.md`
+- [x] 15.09 Debugging and Incident-Driven Learning — `ch09-debugging.md`
 - [ ] 15.10 Building High-Performing Engineering Teams — `ch10-teams.md`
 
 ## Log
@@ -370,3 +370,4 @@ until then their paths are as listed above).
 - 2026-08-20: *** VOLUME 14 (Algorithms) COMPLETE — 8 chapters. *** Vol14 ch07-ch08 done (graphs: adj list/matrix/edge/CSR + BFS/DFS + Dijkstra/Bellman-Ford/Floyd comparison + topo sort Kahn+DFS + cycle/SCC Kosaraju + Union-Find+Kruskal MST; rate limiting: fixed/sliding log/sliding counter/token bucket/leaky bucket/GCRA TAT + distributed Redis GCRA Lua + local/hybrid sharding + concurrency+adaptive Vegas + scheduling FIFO/priority/WFQ/DRR/EDF — 6 Mermaid ch07, 7 Mermaid ch08, real runnable code each). Next: Vol15 15.01-15.10 (remaining 10).
 - 2026-08-20: Vol15 ch01-ch03 done (testing strategy pyramid/diamond/trophy+unit table-driven/Testcontainers/Playwright E2E/property-based Hypothesis/fast-check/gopter+flakiness/CI staging; contract testing test-double taxonomy fakes> mocks+Pact consumer/provider/Broker can-i-deploy+OpenAPI/buf breaking/WireMock; load/perf/chaos k6/Vegeta/Gatling open/closed workload models+profiling hierarchy+Chaos Mesh/Litmus/Toxiproxy+Istio fault injection+staged pipeline — 3 Mermaid ch01, 4 Mermaid ch02, 4 Mermaid ch03, runnable k6/Pact/Chaos configs each). Next: 15.04-15.10 (remaining 7).
 - 2026-08-20: Vol15 ch04-ch06 done (design docs/RFCs decision matrix+RFC lifecycle+full RFC+ADR templates+DACI/consent/lazy-consensus+async-first review+case study; DDD ubiquitous language+entities/value objects/aggregates+bounded contexts/context map 7 relationships+ACL translator+domain events outbox+strangler-fig decomposition+when-not-to-use; patterns/anti-patterns catalog hexagonal/clean ports-and-adapters+layered vs vertical slice+gateway/BFF/sidecar+idempotency+resilience composition order+outbox/saga/CQRS+strategy/decorator/observer+distributed-monolith/shared-DB/god-service/chatty/golden-hammer — 3 Mermaid ch04, 6 Mermaid ch05, 6 Mermaid ch06, real RFC/DDD/pattern templates each). Next: 15.07-15.10 (remaining 4).
+- 2026-08-20: Vol15 ch07-ch09 done (refactoring catalog+branch-by-abstraction/expand-contract/strangler fig/flag-guarded cutover+schema/event/API expand-contract+hotspot×churn debt register+cost-of-delay+fitness functions+case study god-service strangling; code review authoring/PR template+layered reading+tiered checklists+automation gates/CODEOWNERS/SLAs+conventional comments+anti-patterns+DORA/psychological safety/paved road+rituals; debugging hypothesis log+trace/metrics/logs/profiles+eBPF/bpftrace/pprof+prod-safe flag/shadow+timeline/postmortem taxonomy+runbooks+knowledge base — 6 Mermaid ch07, 3 Mermaid ch08, 5 Mermaid ch09, ~5.5-8.2kw each, real templates each). Next: 15.10 (remaining 1).
