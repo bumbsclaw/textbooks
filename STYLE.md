@@ -39,8 +39,7 @@ Every chapter in this suite must follow these conventions.
 
 - Use **Mermaid** fenced blocks (```` ```mermaid ````) for diagrams; GitHub renders them.
 - Use diagrams wherever they genuinely aid explanation: attack flows (`sequenceDiagram`),
-  architectures (`flowchart`/`graph`), state machines, trust relationships. Aim for at
-  least 2–4 meaningful diagrams per chapter — but only where they help.
+  architectures (`flowchart`/`graph`), state machines, trust relationships. Aim for 6-8 meaningful diagrams per chapter where they help illustrate concepts (architectures, flows, state machines, trust boundaries, sequences).
 - Keep Mermaid syntax simple and valid. Avoid exotic features that GitHub's renderer may
   not support. Quote node labels containing special characters. Avoid `&`, `(`, `)` in
   unquoted labels.

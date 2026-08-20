@@ -73,8 +73,8 @@ The schema below is a complete, `buf lint`-clean example covering the patterns y
 
 ```protobuf
 // proto/acme/orders/v1/order.proto
-// Protobuf: 4.25.x / 5.x  (protoc 24.x or buf 1.32.2 bundled compiler)
-// Lint: buf 1.32.2 (buf lint), breaking: buf breaking against main
+// Protobuf: 4.25.x / 5.x  (protoc 24.x or buf 1.40.2 bundled compiler)
+// Lint: buf 1.40.2 (buf lint), breaking: buf breaking against main
 // gRPC: grpc-go 1.64.0, grpc-java 1.64.0, grpc-node 1.9.0
 syntax = "proto3";
 
@@ -567,12 +567,12 @@ Retries are opt-in per method and must be paired with idempotency. Retrying a no
 
 ## buf workflow — lint, breaking, format, generate
 
-`buf` (1.32.2) is the de-facto toolchain for Protobuf at scale. It replaces the ad-hoc `protoc` + shell-scripts setup with versioned, reproducible operations. Pin it — `buf` compatibility checks are only as good as the version that runs in CI.
+`buf` (1.40.2) is the de-facto toolchain for Protobuf at scale. It replaces the ad-hoc `protoc` + shell-scripts setup with versioned, reproducible operations. Pin it — `buf` compatibility checks are only as good as the version that runs in CI.
 
 `buf.yaml` — workspace and lint/breaking config:
 
 ```yaml
-# buf.yaml — buf 1.32.2
+# buf.yaml — buf 1.40.2
 version: v1
 name: buf.build/acme/apis
 deps:
@@ -584,8 +584,7 @@ breaking:
 lint:
   use:
     - DEFAULT
-  except:
-    - PACKAGE_VERSION_SUFFIX # allow acme.orders.v1 — buf expects version suffix by default; this disables suffix check if you use custom versioning
+    - PACKAGE_VERSION_SUFFIX  # require version suffix (acme.orders.v1); needed because DEFAULT does not include it
   # forbid hand-written JSON names that diverge from proto naming
   allow_comment_ignores: false
 ```
@@ -593,7 +592,7 @@ lint:
 `buf.gen.yaml` — code generation:
 
 ```yaml
-# buf.gen.yaml — buf 1.32.2
+# buf.gen.yaml — buf 1.40.2
 version: v1
 plugins:
   - plugin: buf.build/protocolbuffers/go:v1.34.2
@@ -632,7 +631,7 @@ jobs:
 ```
 
 ```bash
-# Local equivalents — buf 1.32.2
+# Local equivalents — buf 1.40.2
 buf lint
 buf format -w          # format in place
 buf breaking --against '.git#branch=main'
@@ -726,13 +725,13 @@ sequenceDiagram
 - `update_mask` + field presence (`optional` or `FieldMask`) is the correct partial-update pattern; without it, absent fields are misinterpreted as intentional clears.
 - Choose unary by default; use server-streaming for tail/watch, client-streaming for bulk upload, and bidirectional only when both directions are genuinely independent.
 - Deadlines propagate as `grpc-timeout` — treat them as a global budget, honour `ctx.Done()`, and map retryability to `codes.Code` (`UNAVAILABLE`/`ABORTED` retryable, `INVALID_ARGUMENT`/`NOT_FOUND` not).
-- `buf` 1.32.2 gives you `lint`, `breaking`, `format`, and `generate` as a single versioned gate; wire it into CI with `fetch-depth: 0` and fail the PR on any break that is not a new package version.
+- `buf` 1.40.2 gives you `lint`, `breaking`, `format`, and `generate` as a single versioned gate; wire it into CI with `fetch-depth: 0` and fail the PR on any break that is not a new package version.
 
 ## Further reading
 
 - Protocol Buffers Language Specification (proto3) — https://protobuf.dev/programming-guides/proto3/ — the authoritative reference for field presence, `oneof`, maps, and well-known types.
 - gRPC Core Concepts — https://grpc.io/docs/what-is-grpc/ — service definitions, the four call shapes, status codes, and metadata.
-- Buf Documentation — https://buf.build/docs/ — especially *Lint*, *Breaking Changes*, and *Code Generation* (buf 1.32.2).
+- Buf Documentation — https://buf.build/docs/ — especially *Lint*, *Breaking Changes*, and *Code Generation* (buf 1.40.2).
 - Google Cloud. *API Improvement Proposals (AIPs)* — https://aip.dev/ — especially AIP-122 (resource names), AIP-132 (parent/collection), AIP-158 (pagination), AIP-234 (batch). Resource-oriented Protobuf conventions; even outside Google they prevent the most common design drift.
 - Vol 3, Chapter 8 — gRPC and RPC Framework Internals — the wire companion to this chapter: HTTP/2 framing, varint encoding, HPACK, and the Fallacies of Distributed Computing.
 - Souppaya et al. *Protovalidate* (buf.build/protovalidate) — declarative field constraints for Protobuf as a complement to service-side validation.

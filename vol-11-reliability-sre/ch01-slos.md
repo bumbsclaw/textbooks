@@ -491,7 +491,7 @@ groups:
       # Warning: burning at 6x — budget gone in ~4.7 days
       - alert: HighErrorBudgetBurnWarning
         expr: |
-          sli:http_avability:burn_rate_1h > 6
+          sli:http_availability:burn_rate_1h > 6
           and
           sli:http_availability:burn_rate_6h > 6
         for: 15m

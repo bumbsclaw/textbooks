@@ -378,7 +378,7 @@ java \
 
 ```bash
 java \
-  -XX:+UseZGC --enable-preview -XX:+ZGenerational \
+  -XX:+UseZGC -XX:+ZGenerational \
   -XX:MaxGCPauseMillis=10 \
   -XX:+ZUncommit \
   -Xlog:gc*:file=/var/log/app/gc.log:time,uptime:filecount=10,filesize=20M \

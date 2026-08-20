@@ -340,7 +340,7 @@ flowchart LR
 
   L0 -->|"+ generate provenance"| L1
   L1 -->|"+ hosted builder signs it"| L2
-  L2 -->|"+ isolation & non-forgeability"| L3
+  L2 -->|"+ isolation &amp; non-forgeability"| L3
 
   L1 -. "defends: nothing strong;\nestablishes transparency,\ncatches mistakes" .-> D1[" "]
   L2 -. "defends: forged provenance,\npost-hoc tampering,\n'built on my laptop'" .-> D2[" "]
@@ -742,7 +742,7 @@ sequenceDiagram
     participant Verifier as Verifier / Admission
     Src->>Builder: Source + pinned deps
     Builder->>Builder: Hermetic build
-    Builder->>Prov: Generate provenance (materials, outputs, builder ID)
+    Builder->>Prov: Generate provenance (buildDefinition, resolvedDependencies, runDetails)
     Builder->>Prov: Sign with ephemeral key (Fulcio)
     Prov->>Registry: Publish artifact + signed provenance
     Registry->>Verifier: Fetch artifact + provenance
@@ -756,12 +756,13 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     PROV["SLSA Provenance<br/>(in-toto predicate)"] --> SUBJ["Subject<br/>— artifact hash (sha256)"]
-    PROV --> BUILDER["Builder<br/>— builder.id (trusted)"]
-    PROV --> MATERIALS["Materials<br/>— source repo + commit<br/>+ dep digests"]
-    PROV --> RECIPE["Recipe / BuildConfig<br/>— entry point, params"]
-    PROV --> META["Metadata<br/>— build start/finish,<br/>reproducible?"]
+    PROV --> BD["buildDefinition<br/>— buildType + externalParameters<br/>— entry point, params"]
+    PROV --> RD["resolvedDependencies<br/>— source repo + commit<br/>+ dep digests"]
+    PROV --> RUN["runDetails<br/>— builder.id (trusted)<br/>— metadata, byproducts"]
 
-    MATERIALS --> VERIFY["Verifier checks:<br/>expected source?<br/>expected builder?<br/>hermetic?"]
+    RD --> VERIFY["Verifier checks:<br/>expected source?<br/>expected builder?<br/>hermetic?"]
+    BD --> VERIFY
+    RUN --> VERIFY
     style PROV fill:#b6d7ff,stroke:#333
     style VERIFY fill:#b6f0b6,stroke:#333
 ```
@@ -777,9 +778,9 @@ flowchart TD
     BUILDER -->|No| REJECT
     BUILDER -->|Yes| SOURCE{"Source repo<br/>expected?"}
     SOURCE -->|No| REJECT
-    SOURCE -->|Yes| MATS{"Materials<br/>pinned?"}
-    MATS -->|No| WARN["WARN / REJECT<br/>per policy"]
-    MATS -->|Yes| ALLOW["ALLOW deploy"]
+    SOURCE -->|Yes| RD{"resolvedDependencies<br/>pinned?"}
+    RD -->|No| WARN["WARN / REJECT<br/>per policy"]
+    RD -->|Yes| ALLOW["ALLOW deploy"]
     style REJECT fill:#f88,stroke:#900
     style ALLOW fill:#b6f0b6,stroke:#333
 ```

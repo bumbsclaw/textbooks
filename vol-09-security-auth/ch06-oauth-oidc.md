@@ -164,6 +164,7 @@ import (
     "fmt"
     "log"
     "net/http"
+    "strings"
     "sync"
     "time"
 
@@ -367,21 +368,7 @@ func containsScope(scope, want string) bool {
     return false
 }
 func splitScope(s string) []string {
-    var out []string
-    for _, p := range base64.StdEncoding.EncodeToString([]byte(s)) {
-        _ = p
-    }
-    // Simple split on space — replace with strings.Fields in production
-    start := 0
-    for i := 0; i <= len(s); i++ {
-        if i == len(s) || s[i] == ' ' {
-            if start < i {
-                out = append(out, s[start:i])
-            }
-            start = i + 1
-        }
-    }
-    return out
+    return strings.Fields(s)
 }
 
 func main() {

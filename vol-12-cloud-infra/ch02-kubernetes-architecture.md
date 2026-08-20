@@ -214,7 +214,7 @@ Flow-control (APF — API Priority and Fairness, GA since 1.26) prevents a singl
 
 ```yaml
 # FlowSchema — boring workloads get lower priority
-apiVersion: flowcontrol.apiserver.k8s.io/v1beta3
+apiVersion: flowcontrol.apiserver.k8s.io/v1
 kind: FlowSchema
 metadata:
   name: low-priority-batch
@@ -234,7 +234,7 @@ spec:
       group:
         name: system:serviceaccounts:batch
 ---
-apiVersion: flowcontrol.apiserver.k8s.io/v1beta3
+apiVersion: flowcontrol.apiserver.k8s.io/v1
 kind: PriorityLevelConfiguration
 metadata:
   name: low-priority

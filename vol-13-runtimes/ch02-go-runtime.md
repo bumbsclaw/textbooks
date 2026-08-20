@@ -294,7 +294,7 @@ flowchart TB
 ```
 
 1. **Mark setup (STW, ~10–100 µs):** stop-the-world to enable write barriers and scan stacks.
-2. **Concurrent mark:** GC workers (25% of `GOMAXPROCS` by default) traverse the heap concurrently with mutators. Write barriers (`hybrid barrier` since 1.18) ensure no live object is lost when mutators mutate concurrently.
+2. **Concurrent mark:** GC workers (25% of `GOMAXPROCS` by default) traverse the heap concurrently with mutators. Write barriers (`hybrid barrier` since Go 1.8) ensure no live object is lost when mutators mutate concurrently.
 3. **Mark termination (STW, ~10–100 µs):** second STW to finish marking and flush buffers.
 4. **Concurrent sweep:** reclaim white objects and return memory to allocator (proportional sweep by mutators + background sweeper).
 
