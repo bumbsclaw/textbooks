@@ -633,16 +633,16 @@ reliability practices of Volume 11 are the same habit with dashboards attached.
 
 - Fischer, M. J., Lynch, N. A., and Paterson, M. S., "Impossibility of Distributed Consensus with
   One Faulty Process," *Journal of the ACM* 32(2), April 1985 — the FLP result; short, readable,
-  and worth the effort. <https://dl.acm.org/doi/10.1145/3149.214121>
+  and worth the effort. https://dl.acm.org/doi/10.1145/3149.214121
 - Dwork, C., Lynch, N., and Stockmeyer, L., "Consensus in the Presence of Partial Synchrony,"
   *Journal of the ACM* 35(2), 1988 — the partial-synchrony model and consensus protocols within
-  it. <https://dl.acm.org/doi/10.1145/42282.42283>
+  it. https://dl.acm.org/doi/10.1145/42282.42283
 - Chandra, T. D. and Toueg, S., "Unreliable Failure Detectors for Reliable Distributed Systems,"
   *Journal of the ACM* 43(2), 1996 — failure detector classes including ◇P, and consensus built
-  on them. <https://dl.acm.org/doi/10.1145/226643.226647>
+  on them. https://dl.acm.org/doi/10.1145/226643.226647
 - Lamport, L., email of 28 May 1987, distributed at DEC SRC — source of the "computer you didn't
   even know existed" definition; reproduced in the "distribution" entry of Lamport's *My Writings*
-  page. <https://lamport.azurewebsites.net/pubs/distributed-system.txt>
+  page. https://lamport.azurewebsites.net/pubs/distributed-system.txt
 - Deutsch, L. P. (with Gosling's eighth), "The Eight Fallacies of Distributed Computing," Sun
   Microsystems, 1994–1997 — discussed at length in Rotem-Gal-Oz, A., "Fallacies of Distributed
   Computing Explained."

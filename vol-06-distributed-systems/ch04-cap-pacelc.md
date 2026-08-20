@@ -612,19 +612,19 @@ will do when the medium misbehaves.
 
 - Gilbert, S. and Lynch, N., "Brewer's Conjecture and the Feasibility of Consistent, Available,
   Partition-Tolerant Web Services," *ACM SIGACT News* 33(2), 2002 — the proof itself; four pages,
-  read the definitions closely. <https://dl.acm.org/doi/10.1145/564585.564601>
+  read the definitions closely. https://dl.acm.org/doi/10.1145/564585.564601
 - Brewer, E., "CAP Twelve Years Later: How the 'Rules' Have Changed," *IEEE Computer* 45(2),
   February 2012 — the author's own corrections: "2 of 3" is misleading, and partition mode /
-  recovery is the real design problem. <https://ieeexplore.ieee.org/document/6133253>
+  recovery is the real design problem. https://ieeexplore.ieee.org/document/6133253
 - Brewer, E., "Towards Robust Distributed Systems," PODC keynote, 2000 — where the conjecture was
   posed.
 - Abadi, D., "Consistency Tradeoffs in Modern Distributed Database System Design: CAP is Only
   Part of the Story," *IEEE Computer* 45(2), February 2012 — PACELC and the system
-  classifications discussed above. <https://ieeexplore.ieee.org/document/6127847>
+  classifications discussed above. https://ieeexplore.ieee.org/document/6127847
 - Fox, A. and Brewer, E., "Harvest, Yield, and Scalable Tolerant Systems," *HotOS-VII*, 1999 —
   the two-dial vocabulary for graceful degradation.
 - Bailis, P. and Kingsbury, K., "The Network is Reliable," *ACM Queue* 12(7), 2014 — the
-  evidence survey on real-world partitions. <https://queue.acm.org/detail.cfm?id=2655736>
+  evidence survey on real-world partitions. https://queue.acm.org/detail.cfm?id=2655736
 - Kleppmann, M., "A Critique of the CAP Theorem," 2015, arXiv:1509.05393 — a careful examination
   of the theorem's definitions and their mismatch with practice; proposes sharper vocabulary.
 - Gill, P., Jain, N., and Nagappan, N., "Understanding Network Failures in Data Centers,"

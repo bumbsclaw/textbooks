@@ -610,21 +610,21 @@ signature, "authored by" is just a string on an envelope.
 ## Further reading
 
 - **Pro Git**, 2nd ed., Chapter 10 — "Git Internals" (Chacon & Straub). The authoritative account
-  of git's object model, references, and packfiles. <https://git-scm.com/book/en/v2>
+  of git's object model, references, and packfiles. https://git-scm.com/book/en/v2
 - **Git documentation — object format and hash function transition.** `gitformat-hash(5)` /
   "Git's SHA-256 support" and the transition plan in the git source tree
-  (`Documentation/technical/hash-function-transition.txt`). <https://git-scm.com/docs>
+  (`Documentation/technical/hash-function-transition.txt`). https://git-scm.com/docs
 - **SHAttered** — "The first collision for full SHA-1," Stevens, Bursztein, Karpman, Albertini,
-  Markov (CWI Amsterdam / Google, 2017). <https://shattered.io>
+  Markov (CWI Amsterdam / Google, 2017). https://shattered.io
 - **sha1collisiondetection** — Marc Stevens & Dan Shumow, the hardened-SHA-1 library git uses.
-  <https://github.com/cr-marcstevens/sha1collisiondetection>
+  https://github.com/cr-marcstevens/sha1collisiondetection
 - **PHP git.php.net incident (March 2021)** — the php.net news post and mailing-list postmortem
-  describing the malicious commits and the move to GitHub. <https://news-web.php.net/php.internals/113838>
+  describing the malicious commits and the move to GitHub. https://news-web.php.net/php.internals/113838
 - **SLSA v1.0** — the specification, threat model, and the (in-development) Source track.
-  <https://slsa.dev/spec/v1.0/> and <https://slsa.dev/spec/draft/source-requirements>
+  https://slsa.dev/spec/v1.0/ and https://slsa.dev/spec/draft/source-requirements
 - **OpenSSF / GitHub — securing repositories:** GitHub's documentation on branch protection,
   rulesets, secret scanning, and required reviews, and the OpenSSF Scorecard checks that assess
-  these controls programmatically. <https://securityscorecards.dev>
+  these controls programmatically. https://securityscorecards.dev
 - **Book 1, Chapter 2 — Attack Taxonomy** and **Chapter 7 — Frameworks Overview** (SLSA threat
   "A", source integrity); **Book 4, Chapter 3 — SLSA Provenance** and **Chapter 7 — Pipeline
   Poisoning**; **Book 5, Chapter 1 — Cryptographic Foundations** (hashes, Merkle trees) and

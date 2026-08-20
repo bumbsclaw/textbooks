@@ -717,7 +717,7 @@ choice among consistency models. One relation, learned once, load-bearing in bot
 
 - Lamport, L., "Time, Clocks, and the Ordering of Events in a Distributed System," *CACM* 21(7),
   1978 — the happens-before relation, logical clocks, and the mutual-exclusion example; arguably
-  the most influential paper in distributed systems. <https://dl.acm.org/doi/10.1145/359545.359563>
+  the most influential paper in distributed systems. https://dl.acm.org/doi/10.1145/359545.359563
 - Fidge, C., "Timestamps in Message-Passing Systems That Preserve the Partial Ordering," *Proc.
   11th Australian Computer Science Conference*, 1988 — vector clocks, one of the two independent
   inventions.
@@ -726,21 +726,21 @@ choice among consistency models. One relation, learned once, load-bearing in bot
 - Kulkarni, S., Demirbas, M., Madappa, D., Avva, B., and Leone, M., "Logical Physical Clocks and
   Consistent Snapshots in Globally Distributed Databases" (Hybrid Logical Clocks), *OPODIS*,
   2014 — the HLC construction, bounds, and 64-bit encoding.
-  <https://cse.buffalo.edu/tech-reports/2014-04.pdf>
+  https://cse.buffalo.edu/tech-reports/2014-04.pdf
 - Corbett, J. et al., "Spanner: Google's Globally-Distributed Database," *OSDI*, 2012 — TrueTime,
   commit wait, and external consistency.
-  <https://research.google/pubs/spanner-googles-globally-distributed-database/>
+  https://research.google/pubs/spanner-googles-globally-distributed-database/
 - Graham-Cumming, J., "How and why the leap second affected Cloudflare DNS," Cloudflare blog,
   January 2017 — the canonical wall-clock-duration postmortem.
-  <https://blog.cloudflare.com/how-and-why-the-leap-second-affected-cloudflare-dns/>
-- Google, "Leap Smear" — <https://developers.google.com/time/smear> — the 24-hour linear smear
+  https://blog.cloudflare.com/how-and-why-the-leap-second-affected-cloudflare-dns/
+- Google, "Leap Smear" — https://developers.google.com/time/smear — the 24-hour linear smear
   used by time.google.com, with the history of the earlier cosine smear.
 - Kleppmann, M., "How to do distributed locking," 2016 —
-  <https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html> — the fencing-token
+  https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html — the fencing-token
   argument in full, including why clock assumptions alone cannot make locks safe.
 - Preguiça, N., Baquero, C., et al., "Dotted Version Vectors: Logical Clocks for Optimistic
   Replication," 2010 — the fix for actor-churn growth in version vectors.
-- *The Go Time Package* — <https://pkg.go.dev/time> — the documented wall/monotonic dual
+- *The Go Time Package* — https://pkg.go.dev/time — the documented wall/monotonic dual
   representation added in Go 1.9.
 - Volume 4, Chapter 3 — Memory Models and Happens-Before — the same relation inside one process.
 - Volume 5, Chapters 11 and 12 — Cassandra's LWW mechanics, and Spanner/CockroachDB's use of

@@ -606,30 +606,30 @@ exists.
 
 ## Further reading
 
-- **NIST SP 800-55, *Measurement Guide for Information Security*** — <https://csrc.nist.gov/pubs/sp/800/55/v1/final> —
+- **NIST SP 800-55, *Measurement Guide for Information Security*** — https://csrc.nist.gov/pubs/sp/800/55/v1/final —
   the foundational treatment of security metrics: measures, targets, and the distinction between
   implementation, effectiveness, and impact metrics.
-- **NIST SP 800-218 (SSDF)** — <https://csrc.nist.gov/pubs/sp/800/218/final> — the practice set that
+- **NIST SP 800-218 (SSDF)** — https://csrc.nist.gov/pubs/sp/800/218/final — the practice set that
   regulatory attestation (the CISA form) maps to; the measurement target for the compliance dimension.
-- **CISA Secure Software Development Attestation Form** — <https://www.cisa.gov/resources-tools/resources/secure-software-development-attestation-form> —
+- **CISA Secure Software Development Attestation Form** — https://www.cisa.gov/resources-tools/resources/secure-software-development-attestation-form —
   the executive-signed regulatory attestation that makes real metrics non-optional.
-- **NIST OSCAL** — <https://pages.nist.gov/OSCAL/> — the machine-readable control/assessment format
+- **NIST OSCAL** — https://pages.nist.gov/OSCAL/ — the machine-readable control/assessment format
   that turns compliance from a binder into a diffable data structure (revisited from Chapter 4).
-- **SLSA v1.0 specification** — <https://slsa.dev/spec/v1.0/> — for the build-level distribution
+- **SLSA v1.0 specification** — https://slsa.dev/spec/v1.0/ — for the build-level distribution
   metric and the provenance-verification structural test.
-- **OpenSSF Scorecard** — <https://github.com/ossf/scorecard> — automated, comparable repository
+- **OpenSSF Scorecard** — https://github.com/ossf/scorecard — automated, comparable repository
   posture checks for org-wide benchmarking (revisited from Book 2, Chapters 9–10).
 - **OpenSSF Security Metrics / Security Insights** and the **OpenSSF Best Practices Badge** —
-  <https://openssf.org/> — community efforts on comparable open-source security measurement.
-- **CycloneDX VEX** and the **CISA VEX** documents — <https://www.cisa.gov/vulnerability-exploitability-exchange-vex> —
+  https://openssf.org/ — community efforts on comparable open-source security measurement.
+- **CycloneDX VEX** and the **CISA VEX** documents — https://www.cisa.gov/vulnerability-exploitability-exchange-vex —
   the auditable, evidence-backed way to express "present but not exploitable," and the antidote to
   suppression-driven metric gaming.
 - **SOC 2 (AICPA Trust Services Criteria)** and **ISO/IEC 27001:2022** — for the external-audit
   framings (revisited from Book 8, Chapters 1 and 3); Type II and the ISMS test *operating
   effectiveness over a period*, which is what continuous compliance delivers cheaply.
-- **EU Cyber Resilience Act** — <https://eur-lex.europa.eu/eli/reg/2024/2847> — the ongoing SBOM and
+- **EU Cyber Resilience Act** — https://eur-lex.europa.eu/eli/reg/2024/2847 — the ongoing SBOM and
   vulnerability-handling obligations that make measurement a market-access requirement (Chapter 1).
-- Marks & Meunier and the SRE literature on **SLIs/SLOs** (Google SRE Book, <https://sre.google/books/>) —
+- Marks & Meunier and the SRE literature on **SLIs/SLOs** (Google SRE Book, https://sre.google/books/) —
   the discipline of choosing indicators that reflect what you actually care about, directly transferable
   from reliability to security measurement.
 - Cross-references within this suite: Book 1, Chapters 6, 7, 10 (threat modeling, cargo-cult, metrics

@@ -5,7 +5,7 @@ chain was positioned to answer: *did the build faithfully transform the reviewed
 the shipped artifact?* Chapter 2 made that question *answerable* by making builds hermetic and
 reproducible. This chapter is about the artifact that finally *answers* it —
 **provenance** — and the framework that grades how much you can trust that answer:
-**SLSA v1.0**, the Supply-chain Levels for Software Artifacts. Book 1, Chapter 7 introduced
+**SLSA v1.0** (as of early 2026; see https://slsa.dev/spec/v1.0/ for the latest point releases and track updates), the Supply-chain Levels for Software Artifacts. Book 1, Chapter 7 introduced
 SLSA as one framework among several (alongside SSDF and S2C2F). Here we take the Build track
 apart mechanically. We define exactly what provenance *is* as a data structure — an in-toto
 attestation carrying the `https://slsa.dev/provenance/v1` predicate, wrapped in a DSSE
@@ -40,7 +40,7 @@ Learning goals — after this chapter you should be able to:
 
 **SLSA** (pronounced "salsa") is *Supply-chain Levels for Software Artifacts*, a specification
 stewarded by the **OpenSSF** (Open Source Security Foundation). Version **1.0** was published in
-**April 2023**, a substantial restructuring of the earlier v0.1 draft (which Google had
+**April 2023** (current as of early 2026 — consult https://slsa.dev/spec/v1.0/ for errata and any post-1.0 tracks), a substantial restructuring of the earlier v0.1 draft (which Google had
 open-sourced in 2021). The single most important structural change in v1.0 is that SLSA is now
 organized into **tracks** — independent ladders of increasing rigor, each covering a different
 part of the supply chain. v1.0 defines exactly one track normatively: the **Build track**,
@@ -733,19 +733,19 @@ hopeful assertion.
 ## Further reading
 
 - **SLSA v1.0** — the specification, especially *Build track / levels* and the *Provenance*
-  format pages. <https://slsa.dev/spec/v1.0/> and <https://slsa.dev/provenance/v1>.
+  format pages. https://slsa.dev/spec/v1.0/ and https://slsa.dev/provenance/v1.
 - **SLSA v1.0 Threats & mitigations** — how the Build levels map to supply-chain threats
-  (B)/(C)/(E). <https://slsa.dev/spec/v1.0/threats>.
+  (B)/(C)/(E). https://slsa.dev/spec/v1.0/threats.
 - **in-toto Attestation Framework** — the Statement/predicate model and the `ResourceDescriptor`
-  type. <https://github.com/in-toto/attestation> (developed in Book 5, Chapter 6).
+  type. https://github.com/in-toto/attestation (developed in Book 5, Chapter 6).
 - **DSSE — Dead Simple Signing Envelope** — the envelope and PAE that provenance is signed under.
-  <https://github.com/secure-systems-lab/dsse>.
+  https://github.com/secure-systems-lab/dsse.
 - **`slsa-framework/slsa-github-generator`** — reusable workflows for SLSA L3 provenance on GitHub
-  Actions. <https://github.com/slsa-framework/slsa-github-generator>.
+  Actions. https://github.com/slsa-framework/slsa-github-generator.
 - **GitHub — `actions/attest-build-provenance`** and *Artifact Attestations* documentation —
   native Sigstore-backed build provenance.
 - **Tekton Chains** — provenance generation for Tekton pipelines.
-  <https://tekton.dev/docs/chains/>.
+  https://tekton.dev/docs/chains/.
 - **`slsa-framework/slsa-verifier`** — verification of SLSA provenance from known builders; and
   **Sigstore `cosign` `verify-attestation`** — general attestation verification.
 - Book 1, Chapter 7 (Risk Frameworks: SLSA, SSDF, S2C2F); Book 4, Chapter 1 (build threat model)

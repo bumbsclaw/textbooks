@@ -736,19 +736,19 @@ for everything you ship.
 ## Further reading
 
 - **SLSA v1.0 — Build track and Threats & mitigations.** The normative basis for "everything built
-  here is SLSA L3" as a platform property. <https://slsa.dev/spec/v1.0/> and
-  <https://slsa.dev/spec/v1.0/threats>.
+  here is SLSA L3" as a platform property. https://slsa.dev/spec/v1.0/ and
+  https://slsa.dev/spec/v1.0/threats.
 - **Ken Thompson, *Reflections on Trusting Trust* (1984 Turing Award lecture).** The founding
-  statement of the "who builds the builder" problem. <https://dl.acm.org/doi/10.1145/358198.358210>.
+  statement of the "who builds the builder" problem. https://dl.acm.org/doi/10.1145/358198.358210.
   See also David A. Wheeler, *Fully Countering Trusting Trust through Diverse Double-Compiling* (2009)
   for the reproducibility-based countermeasure.
 - **Reproducible Builds project.** The practical foundation for verifying — rather than trusting —
-  the platform's own components. <https://reproducible-builds.org/>.
+  the platform's own components. https://reproducible-builds.org/.
 - **Sigstore (Cosign, Fulcio, Rekor) documentation and the sigstore policy-controller.** Keyless
-  signing and admission-time verification — the produce-and-verify loop. <https://docs.sigstore.dev/>.
+  signing and admission-time verification — the produce-and-verify loop. https://docs.sigstore.dev/.
 - **NIST SP 800-218, Secure Software Development Framework (SSDF v1.1)** and **CISA/NIST guidance on
   securing the software supply chain for build systems.** The control catalog a platform's required
-  controls map to. <https://csrc.nist.gov/publications/detail/sp/800-218/final>.
+  controls map to. https://csrc.nist.gov/publications/detail/sp/800-218/final.
 - **Google, *BeyondProd* and SLSA origins**; **Netflix and Spotify engineering on "paved road" /
   "golden path" platform models.** The organizational pattern of secure-by-default internal
   platforms.

@@ -782,14 +782,14 @@ the ones that survive their coordination service's bad days.
 - Junqueira, F., Reed, B., and Serafini, M., "Zab: High-performance broadcast for primary-backup
   systems," *DSN 2011* — the ZAB protocol paper.
 - Kleppmann, M., "How to do distributed locking" (2016) — the fencing-token argument this chapter's
-  central section builds on. <https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html>
+  central section builds on. https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html
 - etcd documentation — API guarantees, KV/Watch/Lease APIs, and the operations guide (compaction,
-  defragmentation, quotas, metrics). <https://etcd.io/docs/>
+  defragmentation, quotas, metrics). https://etcd.io/docs/
 - Apache ZooKeeper documentation — the programmer's guide (sessions, watches, consistency
-  guarantees) and the recipes page. <https://zookeeper.apache.org/doc/current/>
+  guarantees) and the recipes page. https://zookeeper.apache.org/doc/current/
 - Kubernetes documentation — "Operating etcd clusters for Kubernetes" and the API concepts page
   covering resourceVersion, watch semantics, and the list+watch pattern.
-  <https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/>
+  https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/
 - Ongaro, D. and Ousterhout, J., "In Search of an Understandable Consensus Algorithm," *USENIX ATC
   2014* — the protocol under etcd; read alongside Chapter 6.
 - Volume 4, Chapter 2 — Threads, Mutual Exclusion, and Locks — the in-process primitives whose

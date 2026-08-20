@@ -603,7 +603,7 @@ into "IPC 1.28, back-end bound on L2 misses in `parseRecord`."
   (Morgan Kaufmann, 2017) — the standard reference; Chapters 3 (ILP, OoO, speculation) and Appendix C
   (pipelining) cover this chapter's core material rigorously.
 - Agner Fog, *The Microarchitecture of Intel, AMD and VIA CPUs* and *Instruction Tables* —
-  <https://www.agner.org/optimize/> — the definitive open reference on real port layouts, uop breakdowns,
+  https://www.agner.org/optimize/ — the definitive open reference on real port layouts, uop breakdowns,
   and latencies per microarchitecture.
 - R. M. Tomasulo, "An Efficient Algorithm for Exploiting Multiple Arithmetic Units," *IBM Journal of Research
   and Development*, 1967 — the origin of register renaming and reservation-station scheduling.
@@ -612,8 +612,8 @@ into "IPC 1.28, back-end bound on L2 misses in `parseRecord`."
 - David W. Wall, "Limits of Instruction-Level Parallelism," DEC WRL Research Report 93/6, 1993 — the classic
   empirical study of how much ILP real programs actually contain.
 - Kocher et al., "Spectre Attacks: Exploiting Speculative Execution," and Lipp et al., "Meltdown: Reading
-  Kernel Memory from User Space" — the 2018 disclosures; see also <https://meltdownattack.com/>.
-- van Schaik et al. (RIDL) and the MDS disclosures — <https://mdsattacks.com/> — for the SMT-shared-buffer
+  Kernel Memory from User Space" — the 2018 disclosures; see also https://meltdownattack.com/.
+- van Schaik et al. (RIDL) and the MDS disclosures — https://mdsattacks.com/ — for the SMT-shared-buffer
   side channels (ZombieLoad, RIDL, Fallout).
 - Ulrich Drepper, "What Every Programmer Should Know About Memory," 2007 — dated in specifics but excellent on
   how the OoO core interacts with the memory hierarchy.

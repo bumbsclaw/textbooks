@@ -708,28 +708,28 @@ the design's argument; it cannot substitute for the design having one.
 
 - Serebryany, K. and Iskhodzhanov, T., "ThreadSanitizer — Data Race Detection in Practice,"
   *WBIA*, 2009 — the original TSan design and the case against lockset detection.
-  <https://research.google/pubs/threadsanitizer-data-race-detection-in-practice/>
-- Clang documentation, *ThreadSanitizer* — <https://clang.llvm.org/docs/ThreadSanitizer.html> —
+  https://research.google/pubs/threadsanitizer-data-race-detection-in-practice/
+- Clang documentation, *ThreadSanitizer* — https://clang.llvm.org/docs/ThreadSanitizer.html —
   supported platforms, flags, and the published overhead ranges.
 - Flanagan, C. and Freund, S., "FastTrack: Efficient and Precise Dynamic Race Detection," *PLDI*,
   2009 — the epoch optimization that makes happens-before detection affordable.
 - Vyukov, D. and Gerrand, A., "Introducing the Go Race Detector," Go blog, 2013 —
-  <https://go.dev/blog/race-detector> — and the reference page <https://go.dev/doc/articles/race_detector>.
+  https://go.dev/blog/race-detector — and the reference page https://go.dev/doc/articles/race_detector.
 - Savage, S. et al., "Eraser: A Dynamic Data Race Detector for Multithreaded Programs," *ACM TOCS*,
   1997 — the lockset approach; historically important, and instructive on false positives.
-- The jcstress project and wiki — <https://github.com/openjdk/jcstress> — samples are the best
+- The jcstress project and wiki — https://github.com/openjdk/jcstress — samples are the best
   tutorial on JMM litmus testing.
 - Koval, N., Fedorov, A., et al., "Lincheck: A Practical Framework for Testing Concurrent Data
   Structures on JVM," *CAV*, 2023 — and the project docs at
-  <https://github.com/JetBrains/lincheck>.
-- The loom crate documentation — <https://docs.rs/loom> — including its honest discussion of state
+  https://github.com/JetBrains/lincheck.
+- The loom crate documentation — https://docs.rs/loom — including its honest discussion of state
   explosion and test-size limits.
 - Musuvathi, M. et al., "Finding and Reproducing Heisenbugs in Concurrent Programs," *OSDI*, 2008 —
   CHESS and iterative context bounding, the foundation of managed-schedule testing.
 - Wilson, W., "Testing Distributed Systems with Deterministic Simulation," Strange Loop, 2014 —
-  the FoundationDB testing story; see also <https://apple.github.io/foundationdb/testing.html>.
-- uber-go/goleak — <https://github.com/uber-go/goleak> — goroutine leak assertions for Go tests.
+  the FoundationDB testing story; see also https://apple.github.io/foundationdb/testing.html.
+- uber-go/goleak — https://github.com/uber-go/goleak — goroutine leak assertions for Go tests.
 - Kleppmann-adjacent but essential: Jepsen analyses and the Knossos checker —
-  <https://jepsen.io/analyses> — the distributed continuation, with Volume 6, Chapter 12.
+  https://jepsen.io/analyses — the distributed continuation, with Volume 6, Chapter 12.
 - Volume 2, Chapter 11 — the profiling and tracing tools referenced throughout the production
   section; Volume 15, Chapter 1 — where these lanes fit an overall testing strategy.

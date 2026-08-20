@@ -674,19 +674,19 @@ meaning "reachable and credentialed" and starts meaning "verified."
 ## Further reading
 
 - SLSA v1.0 specification, especially the threat model ("Supply chain threats"):
-  <https://slsa.dev/spec/v1.0/threats>
+  https://slsa.dev/spec/v1.0/threats
 - Ken Thompson, "Reflections on Trusting Trust," Turing Award lecture, *Communications
-  of the ACM* 27(8), 1984: <https://dl.acm.org/doi/10.1145/358198.358210>
+  of the ACM* 27(8), 1984: https://dl.acm.org/doi/10.1145/358198.358210
 - Zimmermann, Staicu, Tenny, Pradel, "Small World with High Risks: A Study of Security
   Threats in the npm Ecosystem," USENIX Security 2019:
-  <https://www.usenix.org/conference/usenixsecurity19/presentation/zimmerman>
+  https://www.usenix.org/conference/usenixsecurity19/presentation/zimmerman
 - Ohm, Plate, Sykosch, Meier, "Backstabber's Knife Collection: A Review of Open Source
-  Software Supply Chain Attacks," DIMVA 2020: <https://arxiv.org/abs/2005.09535>
+  Software Supply Chain Attacks," DIMVA 2020: https://arxiv.org/abs/2005.09535
 - NIST SP 800-218, "Secure Software Development Framework (SSDF) Version 1.1":
-  <https://csrc.nist.gov/publications/detail/sp/800-218/final>
+  https://csrc.nist.gov/publications/detail/sp/800-218/final
 - Executive Order 14028, "Improving the Nation's Cybersecurity," May 2021:
-  <https://www.federalregister.gov/documents/2021/05/17/2021-10460/improving-the-nations-cybersecurity>
+  https://www.federalregister.gov/documents/2021/05/17/2021-10460/improving-the-nations-cybersecurity
 - ENISA, "Threat Landscape for Supply Chain Attacks," 2021:
-  <https://www.enisa.europa.eu/publications/threat-landscape-for-supply-chain-attacks>
+  https://www.enisa.europa.eu/publications/threat-landscape-for-supply-chain-attacks
 - CNCF Security TAG, "Software Supply Chain Best Practices" white paper:
-  <https://github.com/cncf/tag-security/blob/main/community/working-groups/supply-chain-security/supply-chain-security-paper/CNCF_SSCP_v1.pdf>
+  https://github.com/cncf/tag-security/blob/main/community/working-groups/supply-chain-security/supply-chain-security-paper/CNCF_SSCP_v1.pdf

@@ -715,25 +715,25 @@ sure you never mistake it for two.
   secondary indexes under partitioning.
 - Chang, F. et al., "Bigtable: A Distributed Storage System for Structured Data," *OSDI*, 2006 —
   the range-sharded tablet design, including the row-key locality model this chapter's range
-  section descends from. <https://research.google/pubs/pub27898/>
+  section descends from. https://research.google/pubs/pub27898/
 - Corbett, J. C. et al., "Spanner: Google's Globally-Distributed Database," *OSDI*, 2012 —
   range sharding plus placement plus distributed transactions, previewing Chapters 10 and 12.
-  <https://research.google/pubs/pub39966/>
+  https://research.google/pubs/pub39966/
 - PostgreSQL documentation, "Table Partitioning" — declarative partitioning, pruning, the
   unique-constraint rule, and the project's own guidance on partition counts.
-  <https://www.postgresql.org/docs/current/ddl-partitioning.html>
+  https://www.postgresql.org/docs/current/ddl-partitioning.html
 - MySQL 8.4 Reference Manual, "Partitioning" — including "Partitioning Keys, Primary Keys, and
   Unique Keys" for the every-unique-key rule.
-  <https://dev.mysql.com/doc/refman/8.4/en/partitioning.html>
+  https://dev.mysql.com/doc/refman/8.4/en/partitioning.html
 - Redis Cluster specification — the 16,384-slot design, hash tags, and live slot migration with
-  `MOVED`/`ASK`. <https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/>
+  `MOVED`/`ASK`. https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/
 - Vitess documentation, "Resharding" — the split-backfill-verify-switch workflow (VReplication,
-  VDiff, SwitchTraffic) as productized playbook. <https://vitess.io/docs/reference/vreplication/>
+  VDiff, SwitchTraffic) as productized playbook. https://vitess.io/docs/reference/vreplication/
 - Citus documentation — distributed tables, reference tables, and co-located joins on Postgres.
-  <https://docs.citusdata.com/>
+  https://docs.citusdata.com/
 - DynamoDB Developer Guide, "Global Secondary Indexes" — the canonical honest documentation of
   asynchronously-maintained global indexes and their consistency.
-  <https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html>
+  https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html
 - Twitter Engineering, "Announcing Snowflake" (2010) — the original coordination-free ID-allocator
   design this chapter sketches.
 - Volume 4, Chapter 2 — Threads, Mutual Exclusion, and Locks — lock striping, the in-process

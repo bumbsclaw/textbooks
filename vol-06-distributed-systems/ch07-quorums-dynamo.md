@@ -652,27 +652,27 @@ not yet a delivered one — durability at an intermediary is not visibility at t
 ## Further reading
 
 - DeCandia, G. et al., "Dynamo: Amazon's Highly Available Key-value Store," *SOSP*, 2007 — the
-  paper this chapter walks. <https://dl.acm.org/doi/10.1145/1294261.1294281>
+  paper this chapter walks. https://dl.acm.org/doi/10.1145/1294261.1294281
 - Attiya, H., Bar-Noy, A., and Dolev, D., "Sharing Memory Robustly in Message-Passing Systems,"
   *JACM* 42(1), 1995 — the ABD register: linearizability from quorums via read write-back.
-  <https://dl.acm.org/doi/10.1145/200836.200869>
+  https://dl.acm.org/doi/10.1145/200836.200869
 - Lakshman, A. and Malik, P., "Cassandra: A Decentralized Structured Storage System," *ACM SIGOPS
   Operating Systems Review* 44(2), 2010 — Dynamo's distribution under Bigtable's data model.
 - Elhemali, M. et al., "Amazon DynamoDB: A Scalable, Predictably Performant, and Fully Managed
   NoSQL Database Service," *USENIX ATC*, 2022 — the service's actual architecture: Multi-Paxos
-  leaders per partition. <https://www.usenix.org/conference/atc22/presentation/elhemali>
+  leaders per partition. https://www.usenix.org/conference/atc22/presentation/elhemali
 - Kleppmann, M., *Designing Data-Intensive Applications*, O'Reilly, 2017 — Chapter 5's treatment
   of leaderless replication and the quorum-anomaly figures; Chapter 9 for why quorums alone are
   not linearizable.
-- Jepsen analyses — <https://jepsen.io/analyses> and the early aphyr.com Cassandra and Riak
+- Jepsen analyses — https://jepsen.io/analyses and the early aphyr.com Cassandra and Riak
   posts — empirical demonstrations of lost updates under LWW and of strict-quorum anomalies.
-- Apache Cassandra documentation — <https://cassandra.apache.org/doc/latest/> — consistency
+- Apache Cassandra documentation — https://cassandra.apache.org/doc/latest/ — consistency
   levels, hinted handoff, read repair, repair and `gc_grace_seconds` operational guidance.
 - Riak documentation on causal context and dotted version vectors —
-  <https://docs.riak.com/riak/kv/latest/learn/concepts/causal-context/> — the sibling machinery
+  https://docs.riak.com/riak/kv/latest/learn/concepts/causal-context/ — the sibling machinery
   in its most faithful production form.
 - Preguiça, N., Baquero, C. et al., "Dotted Version Vectors: Logical Clocks for Optimistic
-  Replication," 2010 — the fix for sibling explosion. <https://arxiv.org/abs/1011.5808>
+  Replication," 2010 — the fix for sibling explosion. https://arxiv.org/abs/1011.5808
 - Volume 6: Chapter 2 (clocks and fencing), Chapter 4 (PACELC), Chapters 5–6 (consensus),
   Chapter 10 (gossip and failure detection), Chapter 11 (CRDTs). Volume 5: Chapter 8
   (single-system replication), Chapter 11 (Cassandra and DynamoDB surfaces). Volume 14,

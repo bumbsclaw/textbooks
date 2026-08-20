@@ -667,30 +667,30 @@ problem. It was, and remains, the thing worth paying for.
 
 - Härder, T. and Reuter, A., "Principles of Transaction-Oriented Database Recovery," *ACM Computing
   Surveys* 15(4), 1983 — the paper that coined ACID; the definitions of A, C, I, D in their
-  original form. <https://dl.acm.org/doi/10.1145/289.291>
+  original form. https://dl.acm.org/doi/10.1145/289.291
 - Gray, J., "The Transaction Concept: Virtues and Limitations," *VLDB*, 1981 — Gray's own framing
   of the transaction as an abstraction, including its limits, a decade before it was folklore.
 - Gray, J. and Reuter, A., *Transaction Processing: Concepts and Techniques*, Morgan Kaufmann,
   1993 — the encyclopedic reference for everything in this chapter and Chapters 6–7.
 - Eswaran, K., Gray, J., Lorie, R., and Traiger, I., "The Notions of Consistency and Predicate
   Locks in a Database System," *CACM* 19(11), 1976 — two-phase locking, the 2PL theorem, and the
-  first identification of phantoms. <https://dl.acm.org/doi/10.1145/360363.360369>
+  first identification of phantoms. https://dl.acm.org/doi/10.1145/360363.360369
 - Kung, H.T. and Robinson, J., "On Optimistic Methods for Concurrency Control," *ACM TODS* 6(2),
   1981 — the original OCC read/validate/write design.
 - Bernstein, P., Hadzilacos, V., and Goodman, N., *Concurrency Control and Recovery in Database
   Systems*, Addison-Wesley, 1987 — the rigorous treatment of serializability theory; freely
-  available. <https://www.microsoft.com/en-us/research/people/philbe/book/>
+  available. https://www.microsoft.com/en-us/research/people/philbe/book/
 - Berenson, H. et al., "A Critique of ANSI SQL Isolation Levels," *SIGMOD*, 1995 — the anomaly
   definitions used here (including write skew), and the bridge into Chapter 6.
 - PostgreSQL documentation: *Transaction Isolation*
-  (<https://www.postgresql.org/docs/current/transaction-iso.html>), *Explicit Locking*
-  (<https://www.postgresql.org/docs/current/explicit-locking.html>), and the
+  (https://www.postgresql.org/docs/current/transaction-iso.html), *Explicit Locking*
+  (https://www.postgresql.org/docs/current/explicit-locking.html), and the
   `synchronous_commit` discussion in *Write-Ahead Log* configuration
-  (<https://www.postgresql.org/docs/current/wal-async-commit.html>) — precise, honest, and the
+  (https://www.postgresql.org/docs/current/wal-async-commit.html) — precise, honest, and the
   ground truth for the Postgres behaviors cited in this chapter.
 - Pritchett, D., "BASE: An ACID Alternative," *ACM Queue* 6(3), 2008 — the origin of the BASE
   framing, worth reading in the original before judging it.
-  <https://queue.acm.org/detail.cfm?id=1394128>
+  https://queue.acm.org/detail.cfm?id=1394128
 - Volume 4, Chapters 2–5 — locks and I/O discipline, memory models and DRF-SC, optimistic
   concurrency and CAS, deadlock theory — the shared-memory versions of every idea here.
 - Chapter 6 — Isolation Levels and MVCC, and Chapter 7 — WAL and Crash Recovery — the two deep

@@ -758,7 +758,7 @@ happens-before in Chapter 3, is one concept you learn once and bill twice.
 - Agha, G., *Actors: A Model of Concurrent Computation in Distributed Systems* (MIT
   Press, 1986) — the rigorous semantics; the standard theoretical reference.
 - Hoare, C. A. R., "Communicating Sequential Processes," *Communications of the ACM*
-  21(8), 1978 — the paper. <https://dl.acm.org/doi/10.1145/359576.359585> The 1985 book
+  21(8), 1978 — the paper. https://dl.acm.org/doi/10.1145/359576.359585 The 1985 book
   of the same name develops the full process algebra and is freely available at
   <http://www.usingcsp.com/>.
 - Armstrong, J., *Making Reliable Distributed Systems in the Presence of Software Errors*
@@ -767,14 +767,14 @@ happens-before in Chapter 3, is one concept you learn once and bill twice.
 - Armstrong, J., *Programming Erlang: Software for a Concurrent World*, 2nd ed.
   (Pragmatic Bookshelf, 2013) — the practical companion to the thesis.
 - Erlang/OTP documentation, *OTP Design Principles* — supervision trees, behaviours, and
-  gen_server as actually specified. <https://www.erlang.org/doc/system/design_principles.html>
+  gen_server as actually specified. https://www.erlang.org/doc/system/design_principles.html
 - The Go Programming Language Specification — channel types, send/receive/close
-  semantics, and `select`'s uniform pseudo-random choice. <https://go.dev/ref/spec>
+  semantics, and `select`'s uniform pseudo-random choice. https://go.dev/ref/spec
 - *The Go Memory Model* — the happens-before guarantees for unbuffered and buffered
-  channels stated precisely. <https://go.dev/ref/mem>
+  channels stated precisely. https://go.dev/ref/mem
 - "Go Concurrency Patterns: Pipelines and cancellation" (Go blog, 2014) — the canonical
   treatment of pipeline, fan-out/fan-in, and done-channel cancellation.
-  <https://go.dev/blog/pipelines>
+  https://go.dev/blog/pipelines
 - Cox-Buday, K., *Concurrency in Go* (O'Reilly, 2017) — or-done, fan-in, and the pattern
   vocabulary developed at book length.
 - Deutsch, P. et al., "The Eight Fallacies of Distributed Computing" — the checklist

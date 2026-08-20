@@ -725,4 +725,4 @@ reason you weight your human attention that way.
 - The Open Policy Agent / Rego documentation, for expressing dependency and provenance policy as code
   (https://www.openpolicyagent.org/docs/latest/).
 - SLSA v1.0 and npm/PyPI provenance — for the `Signed-Releases`/provenance requirements referenced here,
-  treated fully in Book 5 (https://slsa.dev/).
+  treated fully in Book 5 (https://slsa.dev/spec/v1.0/).

@@ -698,29 +698,29 @@ spend it.**
 
 - Berenson, H., Bernstein, P., Gray, J., Melton, J., O'Neil, E., O'Neil, P., "A Critique of ANSI
   SQL Isolation Levels," *SIGMOD*, 1995 — the paper that fixed the vocabulary; still the best
-  single read on this chapter's first half. <https://dl.acm.org/doi/10.1145/223784.223785>
+  single read on this chapter's first half. https://dl.acm.org/doi/10.1145/223784.223785
 - Adya, A., *Weak Consistency: A Generalized Theory and Optimistic Implementations for
   Distributed Transactions*, MIT PhD thesis, 1999 — the dependency-graph formalization of
   isolation levels that replaced the ANSI phenomena.
 - Cahill, M., Röhm, U., Fekete, A., "Serializable Isolation for Snapshot Databases," *SIGMOD*,
-  2008 — the SSI algorithm. <https://dl.acm.org/doi/10.1145/1376616.1376690>
+  2008 — the SSI algorithm. https://dl.acm.org/doi/10.1145/1376616.1376690
 - Ports, D. R. K., and Grittner, K., "Serializable Snapshot Isolation in PostgreSQL," *VLDB*,
   2012 — the production implementation, including SIREAD locks, granularity promotion, and
-  safe snapshots. <https://arxiv.org/abs/1208.4179>
+  safe snapshots. https://arxiv.org/abs/1208.4179
 - Kleppmann, M., *Designing Data-Intensive Applications*, O'Reilly, 2017, Chapter 7 — the best
   book-length treatment of anomalies and levels for practitioners, including the doctors-on-call
   example this chapter uses.
-- Jepsen, *Consistency Models* — <https://jepsen.io/consistency> — the clickable map of isolation
+- Jepsen, *Consistency Models* — https://jepsen.io/consistency — the clickable map of isolation
   and distributed-consistency levels and their relationships, with Adya-style definitions.
 - PostgreSQL documentation: *Transaction Isolation* —
-  <https://www.postgresql.org/docs/current/transaction-iso.html> — precise per-level semantics,
+  https://www.postgresql.org/docs/current/transaction-iso.html — precise per-level semantics,
   including the READ UNCOMMITTED aliasing and SSI behavior; and *Routine Vacuuming* —
-  <https://www.postgresql.org/docs/current/routine-vacuuming.html> — the horizon, bloat, and
+  https://www.postgresql.org/docs/current/routine-vacuuming.html — the horizon, bloat, and
   wraparound mechanics.
 - MySQL 8.0 Reference Manual: *InnoDB Transaction Isolation Levels* —
-  <https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html> — and
+  https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html — and
   *InnoDB Multi-Versioning* —
-  <https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html> — undo logs, ReadViews,
+  https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html — undo logs, ReadViews,
   and purge.
 - Fekete, A., Liarokapis, D., O'Neil, E., O'Neil, P., Shasha, D., "Making Snapshot Isolation
   Serializable," *ACM TODS* 30(2), 2005 — the static-analysis approach to finding write-skew-

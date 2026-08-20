@@ -769,30 +769,30 @@ the fleet trends secure without heroics.
 ## Further reading
 
 - **SLSA v1.0 specification and the (in-development) Source track** — the reviewed-changes and
-  source-integrity expectations. <https://slsa.dev/spec/v1.0/> and
-  <https://slsa.dev/spec/draft/source-requirements>
+  source-integrity expectations. https://slsa.dev/spec/v1.0/ and
+  https://slsa.dev/spec/draft/source-requirements
 - **GitHub docs — About protected branches, About rulesets, and About code owners.** The
   authoritative reference for classic protection, org/repo rulesets, bypass lists, and CODEOWNERS
-  syntax. <https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository>
+  syntax. https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository
 - **GitLab docs — Protected branches, Merge request approvals, and Code Owners.** Access levels,
   approval rules, prevent-author/committer-approval, and reset-on-push.
-  <https://docs.gitlab.com/ee/user/project/protected_branches.html> and
-  <https://docs.gitlab.com/ee/user/project/merge_requests/approvals/>
+  https://docs.gitlab.com/ee/user/project/protected_branches.html and
+  https://docs.gitlab.com/ee/user/project/merge_requests/approvals/
 - **Allstar (OpenSSF)** — continuous enforcement of branch protection and other repo security
   policies across a GitHub org, with log/issue/fix actions.
-  <https://github.com/ossf/allstar>
+  https://github.com/ossf/allstar
 - **safe-settings (GitHub)** — reconcile repository and branch settings from central config.
-  <https://github.com/github/safe-settings>
+  https://github.com/github/safe-settings
 - **OpenSSF Scorecard** — programmatic checks including Branch-Protection and Code-Review; run
-  across an org to detect drift. <https://securityscorecards.dev>
+  across an org to detect drift. https://securityscorecards.dev
 - **Terraform GitHub provider** — `github_branch_protection`, `github_repository_ruleset`, and
   related resources for protection-as-code.
-  <https://registry.terraform.io/providers/integrations/github/latest/docs>
+  https://registry.terraform.io/providers/integrations/github/latest/docs
 - **The Underhanded C Contest** — demonstrations that deliberately-hidden malicious code survives
   careful review. <http://www.underhanded-c.org/>
 - **The xz-utils backdoor (CVE-2024-3094)** — the trusted-contributor / social-engineering limit
   of review, analyzed in Book 1, Chapter 5. See Andres Freund's original oss-security disclosure
-  and subsequent analyses. <https://www.openwall.com/lists/oss-security/2024/03/29/4>
+  and subsequent analyses. https://www.openwall.com/lists/oss-security/2024/03/29/4
 - **Book cross-references:** Book 7, Chapter 1 — SCM Threat Model; Chapter 2 — Commit Signing and
   Developer Identity; Chapter 5 — Backdoors and Malicious Code; Chapter 6 — Insider Threats and
   Account Takeover; Chapter 8 — Repository Integrity at Scale. **Book 4, Chapters 5 and 7** —

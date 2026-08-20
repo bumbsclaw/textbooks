@@ -615,22 +615,22 @@ change.
 
 - **Git documentation** — `git commit` (`-S`, `commit.gpgsign`), `git tag` (`-s`), `git verify-commit`,
   `git verify-tag`, and the `gpg.format` / `gpg.ssh.allowedSignersFile` configuration:
-  <https://git-scm.com/docs/git-config>.
+  https://git-scm.com/docs/git-config.
 - **Git 2.34 release notes** — introduction of SSH-based commit/tag signing:
-  <https://github.blog/open-source/git/highlights-from-git-2-34/>.
+  https://github.blog/open-source/git/highlights-from-git-2-34/.
 - **`ssh-keygen(1)` — `-Y sign` / `-Y verify` and the `allowed_signers` format** (OpenSSH), the
-  machinery beneath git SSH signing: <https://man.openbsd.org/ssh-keygen.1>.
+  machinery beneath git SSH signing: https://man.openbsd.org/ssh-keygen.1.
 - **GitHub Docs — Commit signature verification**, including SSH/GPG/S-MIME, vigilant mode, and the
   web-flow signing key:
-  <https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification>.
+  https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification.
 - **GitHub Docs — Require signed commits** (branch protection / rulesets):
-  <https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches>.
+  https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches.
 - **GitLab Docs — Signing commits** (GPG, SSH, X.509) and the reject-unsigned-commits push rule:
-  <https://docs.gitlab.com/ee/user/project/repository/signed_commits/>.
-- **gitsign** (Sigstore) — keyless git commit signing: <https://github.com/sigstore/gitsign>.
-- **Sigstore** — Fulcio and Rekor architecture (context for gitsign): <https://www.sigstore.dev/>.
+  https://docs.gitlab.com/ee/user/project/repository/signed_commits/.
+- **gitsign** (Sigstore) — keyless git commit signing: https://github.com/sigstore/gitsign.
+- **Sigstore** — Fulcio and Rekor architecture (context for gitsign): https://www.sigstore.dev/.
 - **SLSA v1.0 — Source track** (developing) and the threat model tying source to build provenance:
-  <https://slsa.dev/spec/v1.0/>.
+  https://slsa.dev/spec/v1.0/.
 - Cross-references in this suite: Book 5, Chapter 2 (Classic Code Signing and Its Failure Modes),
   Chapter 3 (Sigstore Architecture), Chapter 4 (Keyless Signing and Workload Identity), Chapter 5
   (Transparency Logs), Chapter 8 (Provenance Verification in Practice), Chapter 9 (Key Management and PKI

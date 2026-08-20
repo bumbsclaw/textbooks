@@ -886,21 +886,21 @@ kind at scale.
 
 ## Further reading
 
-- Envoy documentation — <https://www.envoyproxy.io/docs/envoy/latest/> — the architecture overview
+- Envoy documentation — https://www.envoyproxy.io/docs/envoy/latest/ — the architecture overview
   and the xDS protocol reference at
-  <https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol>, which specifies ACK/NACK,
+  https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol, which specifies ACK/NACK,
   versioning, ADS, and incremental xDS.
-- Istio documentation — <https://istio.io/latest/docs/> — architecture, security (identity and
+- Istio documentation — https://istio.io/latest/docs/ — architecture, security (identity and
   mTLS), traffic management, and performance-and-scalability; plus
-  <https://istio.io/latest/docs/ambient/> for ztunnel, HBONE, and waypoints.
-- Linkerd documentation — <https://linkerd.io/docs/> — and the project's writing on why it
+  https://istio.io/latest/docs/ambient/ for ztunnel, HBONE, and waypoints.
+- Linkerd documentation — https://linkerd.io/docs/ — and the project's writing on why it
   built a purpose-specific Rust micro-proxy instead of adopting Envoy.
-- SPIFFE and SPIRE — <https://spiffe.io/docs/latest/spiffe-about/overview/> — the SPIFFE ID and
+- SPIFFE and SPIRE — https://spiffe.io/docs/latest/spiffe-about/overview/ — the SPIFFE ID and
   X.509-SVID specifications; see also Volume 9, Chapter 10 for zero trust and service-to-service
   authentication.
-- Kubernetes Gateway API — <https://gateway-api.sigs.k8s.io/> — including the GAMMA initiative for
+- Kubernetes Gateway API — https://gateway-api.sigs.k8s.io/ — including the GAMMA initiative for
   expressing east-west (mesh) routing with the same resources.
-- Cilium documentation — <https://docs.cilium.io/> — eBPF datapath, socket-level load balancing,
+- Cilium documentation — https://docs.cilium.io/ — eBPF datapath, socket-level load balancing,
   transparent encryption, and the service-mesh and mutual-authentication features.
 - RFC 9110 (*HTTP Semantics*) and RFC 9111 (*HTTP Caching*); RFC 5861 (`stale-while-revalidate`,
   `stale-if-error`), RFC 9211 (`Cache-Status`), and RFC 9213 (targeted cache-control fields such
@@ -909,8 +909,8 @@ kind at scale.
   Technologies — client-IP preservation at L7 and L4 respectively.
 - RFC 8470 — *Using Early Data in HTTP* — replay considerations and `425 Too Early` for TLS 1.3
   and QUIC 0-RTT at the edge.
-- NGINX documentation (<https://nginx.org/en/docs/>) and the HAProxy configuration manual
-  (<https://docs.haproxy.org/>) — authoritative references for the directives used above.
+- NGINX documentation (https://nginx.org/en/docs/) and the HAProxy configuration manual
+  (https://docs.haproxy.org/) — authoritative references for the directives used above.
 - Fastly and Cloudflare developer documentation on cache keys, surrogate keys/cache tags, soft
   purge, origin shielding, and edge compute — the clearest public writing on CDN cache mechanics.
 - James Kettle, "Practical Web Cache Poisoning" (PortSwigger Research, 2018) and the follow-up "Web

@@ -650,24 +650,24 @@ policies you write at the gate.
 
 ## Further reading
 
-- **in-toto specification** — the layout, link, and artifact-rule model. <https://github.com/in-toto/docs>
+- **in-toto specification** — the layout, link, and artifact-rule model. https://github.com/in-toto/docs
   and the in-toto website. The formal grammar of `MATCH`/`CREATE`/`DELETE`/`ALLOW`/`DISALLOW`/`REQUIRE`
   lives here.
 - **in-toto Attestation Framework** (`in-toto/attestation`) — the Statement v1 schema, the DSSE
   envelope binding, and the **predicate-type registry** with JSON schemas for the standard predicates.
-  <https://github.com/in-toto/attestation>. The authority on field names; do not guess.
+  https://github.com/in-toto/attestation. The authority on field names; do not guess.
 - **"in-toto: Providing farm-to-table guarantees for bytes and binaries"** — Torres-Arias, Afzali,
   Kuppusamy, Curtmola, Cappos, *USENIX Security 2019* — the original design and threat model.
 - **SLSA v1.0** — provenance (`https://slsa.dev/provenance/v1`) and the **VSA**
   (`https://slsa.dev/verification_summary/v1`) specs, and the levels/requirements around producing
-  provenance. <https://slsa.dev/> (developed in Book 4, Chapter 3).
+  provenance. https://slsa.dev/spec/v1.0/ (developed in Book 4, Chapter 3).
 - **DSSE — Dead Simple Signing Envelope** — the envelope and PAE that wrap and sign every attestation.
-  <https://github.com/secure-systems-lab/dsse> (mechanics in Chapter 1).
+  https://github.com/secure-systems-lab/dsse (mechanics in Chapter 1).
 - **Cosign attestations** — `cosign attest` / `cosign verify-attestation`, predicate types, and OCI
-  storage. <https://docs.sigstore.dev/> and <https://github.com/sigstore/cosign> (Chapter 3).
+  storage. https://docs.sigstore.dev/ and https://github.com/sigstore/cosign (Chapter 3).
 - **Witness / go-witness and Archivista** (TestifySec, in the in-toto org) — in-pipeline attestation
-  generation and storage. <https://github.com/in-toto/witness> and
-  <https://github.com/in-toto/archivista>.
+  generation and storage. https://github.com/in-toto/witness and
+  https://github.com/in-toto/archivista.
 - **SPDX 3.0** and **CycloneDX 1.6** — the SBOM predicate formats carried as attestations (Book 3).
 - **sigstore/policy-controller** and **Kyverno** — admission-time attestation verification for
   Kubernetes. Applied in Chapter 10 and Book 6, Chapters 5–6.

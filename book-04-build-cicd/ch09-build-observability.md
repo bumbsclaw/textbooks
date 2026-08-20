@@ -670,22 +670,22 @@ platform**, and it has the same shape as production observability:
 - **Codecov — post-incident disclosure and security bulletin (April 2021).** The company's own account
   of the Bash Uploader modification, the credential origin, the ~2-month window, and the customer
   checksum discovery. See also the SEC/press coverage for scope.
-- **eBPF** — the kernel mechanism underlying modern runtime security. <https://ebpf.io>. Read this
+- **eBPF** — the kernel mechanism underlying modern runtime security. https://ebpf.io. Read this
   before the tool docs; it explains what all of the agents share.
-- **Falco** (CNCF) — rules engine over syscall events. <https://falco.org>. See the default ruleset for
+- **Falco** (CNCF) — rules engine over syscall events. https://falco.org. See the default ruleset for
   concrete build-relevant rules (shell in container, sensitive file read, unexpected outbound connection).
 - **Tetragon** (Cilium) — eBPF process and syscall observability with in-kernel filtering and enforcement.
-  <https://tetragon.io>.
+  https://tetragon.io.
 - **StepSecurity Harden-Runner** — egress control and runtime detection for GitHub Actions runners.
-  <https://github.com/step-security/harden-runner>. The audit-then-block egress model in practice.
+  https://github.com/step-security/harden-runner. The audit-then-block egress model in practice.
 - **GitHub — Audit log streaming** and **GitLab — Audit events** — the control-plane telemetry to stream
-  to your SIEM. <https://docs.github.com/organizations/keeping-your-organization-secure/managing-your-organizations-audit-log>.
+  to your SIEM. https://docs.github.com/organizations/keeping-your-organization-secure/managing-your-organizations-audit-log.
 - **SLSA v1.0 — Threats & mitigations and Provenance.** Provenance verification as a detective control.
-  <https://slsa.dev/spec/v1.0/threats> and <https://slsa.dev/provenance/v1>.
+  https://slsa.dev/spec/v1.0/threats and https://slsa.dev/provenance/v1.
 - **Reproducible Builds** and **rebuilderd** — independent rebuild-and-compare as tamper detection at
-  distribution scale. <https://reproducible-builds.org> and <https://github.com/kpcyrd/rebuilderd>.
+  distribution scale. https://reproducible-builds.org and https://github.com/kpcyrd/rebuilderd.
 - **OWASP Top 10 CI/CD Security Risks (2022)** — the attack taxonomy this chapter's detection maps back
-  to. <https://owasp.org/www-project-top-10-ci-cd-security-risks/>.
+  to. https://owasp.org/www-project-top-10-ci-cd-security-risks/.
 - Book 1, Chapter 3 (SolarWinds / build-system compromise) and Chapter 9 (build system as tier-0,
   blast radius); Book 2, Chapters 3–4 (malicious packages and dependency confusion); Book 4, Chapter 2
   (hermetic and reproducible builds), Chapter 3 (SLSA provenance), Chapters 4–7 (platform threats,

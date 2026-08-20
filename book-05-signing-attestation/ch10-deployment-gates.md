@@ -646,31 +646,31 @@ problem.
 ## Further reading
 
 - **sigstore/policy-controller** — `ClusterImagePolicy` reference, keyless authorities, attestation
-  policies (CUE/Rego), and enforce/warn modes. <https://docs.sigstore.dev/policy-controller/overview/>.
+  policies (CUE/Rego), and enforce/warn modes. https://docs.sigstore.dev/policy-controller/overview/.
 - **Kyverno** — image verification (`verifyImages`), attestation checks and conditions, and
-  `validationFailureAction`. <https://kyverno.io/docs/writing-policies/verify-images/> and
-  <https://kyverno.io/policies/> (the "verify-image" samples).
+  `validationFailureAction`. https://kyverno.io/docs/writing-policies/verify-images/ and
+  https://kyverno.io/policies/ (the "verify-image" samples).
 - **OPA/Gatekeeper** and **Ratify** — Gatekeeper constraints plus Ratify as an external-data
   verification engine for signatures, SBOMs, and vulnerability reports.
-  <https://open-policy-agent.github.io/gatekeeper/> and <https://ratify.dev/docs/>.
+  https://open-policy-agent.github.io/gatekeeper/ and https://ratify.dev/docs/.
 - **Connaisseur** — admission controller for container image signature verification (Sigstore/Notary).
-  <https://github.com/sse-secure-systems/connaisseur>.
+  https://github.com/sse-secure-systems/connaisseur.
 - **Google Binary Authorization** — attestation-based deploy gating on GKE/Cloud Run: policies,
-  attestors, dry-run vs enforced modes. <https://cloud.google.com/binary-authorization/docs>.
+  attestors, dry-run vs enforced modes. https://cloud.google.com/binary-authorization/docs.
 - **AWS Signer** — managed signing for container images and Lambda code, and its verification model.
-  <https://docs.aws.amazon.com/signer/>.
+  https://docs.aws.amazon.com/signer/.
 - **Cosign** — `cosign verify` / `cosign verify-attestation`, `--certificate-identity(-regexp)`,
-  `--certificate-oidc-issuer`, `--type`, `--policy`. <https://docs.sigstore.dev/cosign/verifying/verify/>.
+  `--certificate-oidc-issuer`, `--type`, `--policy`. https://docs.sigstore.dev/cosign/verifying/verify/.
 - **SLSA v1.0** — provenance predicate, build levels (L1–L3), and verification guidance.
-  <https://slsa.dev/spec/v1.0/>.
+  https://slsa.dev/spec/v1.0/.
 - **in-toto attestation framework** and predicate types (provenance, SBOM, test, vuln).
-  <https://github.com/in-toto/attestation>.
+  https://github.com/in-toto/attestation.
 - **Kubernetes admission control** — validating/mutating admission webhooks and `failurePolicy`.
-  <https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/> and
-  <https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/>.
+  https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/ and
+  https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/.
 - **Flux** (source-controller Sigstore/keyless verification) and **Argo CD** deployment gating —
   GitOps verification of OCI artifacts and manifests (developed in Book 6, Chapter 7).
-  <https://fluxcd.io/flux/components/source/> and <https://argo-cd.readthedocs.io/>.
+  https://fluxcd.io/flux/components/source/ and https://argo-cd.readthedocs.io/.
 - Cross-references: Book 5, Chapter 4 (keyless signing, expected identity), Chapter 5 (Rekor
   transparency), Chapter 6 (in-toto attestations), Chapter 8 (verification checklist, fail-open/
   closed), Chapter 9 (key management/HA for the gate's trust roots); Book 4, Chapter 3 (SLSA

@@ -663,25 +663,25 @@ constraint is not arbitrary; it is the cost accounting of this chapter, applied 
 
 - PostgreSQL documentation, Chapter 11 "Indexes" — index types, partial and expression indexes,
   index-only scans and the visibility map, `CREATE INDEX CONCURRENTLY` and its recovery notes.
-  <https://www.postgresql.org/docs/current/indexes.html>
+  https://www.postgresql.org/docs/current/indexes.html
 - MySQL 8.4 Reference Manual, "InnoDB Index Types" and "How MySQL Uses Indexes" — clustered index
   behavior, secondary indexes storing PK values, multiple-column indexes and leftmost prefixes.
-  <https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html>
+  https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html
 - Winand, M., *SQL Performance Explained* / *Use The Index, Luke!* — the best sustained treatment
   of index design from the query's point of view, across Oracle, SQL Server, Postgres, and MySQL.
-  <https://use-the-index-luke.com/>
+  https://use-the-index-luke.com/
 - Graefe, G., "Modern B-Tree Techniques," *Foundations and Trends in Databases* 3(4), 2011 — the
   comprehensive survey: page structure, splits, fence keys, online index building, maintenance.
 - Amazon DynamoDB Developer Guide, "Using Global Secondary Indexes" — the authoritative statement
   of GSI eventual consistency, projections, and throughput coupling with the base table.
-  <https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html>
+  https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html
 - PostgreSQL documentation, "GIN Indexes" and "BRIN Indexes" internals chapters — posting trees,
   the pending list, block-range summarization.
-  <https://www.postgresql.org/docs/current/gin.html>
+  https://www.postgresql.org/docs/current/gin.html
 - Davoudian, A., Chen, L., and Liu, M., "A Survey on NoSQL Stores," *ACM Computing Surveys* 50(2),
   2018 — context for secondary-index strategies across distributed stores.
 - RFC 9562, "Universally Unique IDentifiers" (2024) — UUIDv7 and the time-ordered layout that
-  makes UUIDs index-friendly. <https://www.rfc-editor.org/rfc/rfc9562>
+  makes UUIDs index-friendly. https://www.rfc-editor.org/rfc/rfc9562
 - Chapter 2 — Storage Engines — B+ tree and LSM mechanics beneath everything here; Chapter 4 —
   Query Processing and Optimization — how the planner costs and chooses among these indexes;
   Chapter 6 — Isolation and MVCC — the versioning machinery behind HOT, vacuum, and the

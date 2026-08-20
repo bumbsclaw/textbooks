@@ -583,25 +583,25 @@ implementations — a lesson worth carrying well beyond databases.
 
 - Corbett, J. C., Dean, J., et al., "Spanner: Google's Globally-Distributed Database," *OSDI*,
   2012 — the archetype paper: Paxos groups, TrueTime, commit-wait, external consistency.
-  <https://research.google/pubs/spanner-googles-globally-distributed-database/>
+  https://research.google/pubs/spanner-googles-globally-distributed-database/
 - Kulkarni, S., Demirbas, M., Madappa, D., Avva, B., and Leone, M., "Logical Physical Clocks and
   Consistent Snapshots in Globally Distributed Databases" (Hybrid Logical Clocks), 2014 — the HLC
-  design CockroachDB and YugabyteDB build on. <https://cse.buffalo.edu/tech-reports/2014-04.pdf>
+  design CockroachDB and YugabyteDB build on. https://cse.buffalo.edu/tech-reports/2014-04.pdf
 - Taft, R., et al., "CockroachDB: The Resilient Geo-Distributed SQL Database," *SIGMOD*, 2020 —
   the peer-reviewed architecture description, including transactions, parallel commits, and clock
   handling.
 - CockroachDB documentation and engineering blog — the architecture overview, "Living Without
   Atomic Clocks," and the multi-region and follower-reads guides.
-  <https://www.cockroachlabs.com/docs/> and <https://www.cockroachlabs.com/blog/living-without-atomic-clocks/>
+  https://www.cockroachlabs.com/docs/ and https://www.cockroachlabs.com/blog/living-without-atomic-clocks/
 - Verbitski, A., et al., "Amazon Aurora: Design Considerations for High Throughput Cloud-Native
   Relational Databases," *SIGMOD*, 2017 — "the log is the database," 6-way/4-of-6 quorum storage.
-  <https://dl.acm.org/doi/10.1145/3035918.3056101>
+  https://dl.acm.org/doi/10.1145/3035918.3056101
 - TiDB documentation — architecture (TiDB/TiKV/PD), the Percolator-derived transaction model, and
-  the timestamp oracle. <https://docs.pingcap.com/>
+  the timestamp oracle. https://docs.pingcap.com/
 - YugabyteDB documentation — DocDB architecture and the reuse of the PostgreSQL query layer.
-  <https://docs.yugabyte.com/>
-- Vitess documentation <https://vitess.io/docs/> and Citus documentation
-  <https://docs.citusdata.com/> — the sharding-middleware path.
+  https://docs.yugabyte.com/
+- Vitess documentation https://vitess.io/docs/ and Citus documentation
+  https://docs.citusdata.com/ — the sharding-middleware path.
 - Peng, D. and Dabek, F., "Large-scale Incremental Processing Using Distributed Transactions and
   Notifications" (Percolator), *OSDI*, 2010 — the ancestor of TiDB's transaction protocol.
 - Volume 6, Chapters 2, 3, 5, 6, 7 — clocks, consistency models, Paxos, Raft, quorums: the

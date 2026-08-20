@@ -661,13 +661,13 @@ consistent, probably fast" is a hope.
 
 - Herlihy, M. and Wing, J., "Linearizability: A Correctness Condition for Concurrent Objects,"
   *ACM TOPLAS* 12(3), 1990 — the definition, and the locality theorem.
-  <https://dl.acm.org/doi/10.1145/78969.78972>
+  https://dl.acm.org/doi/10.1145/78969.78972
 - Lamport, L., "How to Make a Multiprocessor Computer That Correctly Executes Multiprocess
   Programs," *IEEE Trans. Computers* C-28(9), 1979 — sequential consistency, the shared original
   of Volume 4, Chapter 3 and this chapter.
 - Lamport, L., "Time, Clocks, and the Ordering of Events in a Distributed System," *CACM* 21(7),
   1978 — happens-before, the backbone of causal consistency.
-  <https://dl.acm.org/doi/10.1145/359545.359563>
+  https://dl.acm.org/doi/10.1145/359545.359563
 - Terry, D. et al., "Session Guarantees for Weakly Consistent Replicated Data," *PDIS*, 1994 —
   read-your-writes, monotonic reads, monotonic writes, writes-follow-reads, from the Bayou
   project.
@@ -681,7 +681,7 @@ consistent, probably fast" is a hope.
 - Viotti, P. and Vukolić, M., "Consistency in Non-Transactional Distributed Storage Systems," *ACM
   Computing Surveys* 49(1), 2016 — the exhaustive survey and taxonomy of the models in this
   chapter.
-- Jepsen, *Consistency Models* — <https://jepsen.io/consistency> — the standard map of the model
+- Jepsen, *Consistency Models* — https://jepsen.io/consistency — the standard map of the model
   hierarchy with availability classes, plus the per-system analyses referenced throughout.
 - Kleppmann, M., *Designing Data-Intensive Applications*, O'Reilly, 2017 — Chapter 5 (replication
   and its anomalies) and Chapter 9 (linearizability and ordering); the best book-length informal

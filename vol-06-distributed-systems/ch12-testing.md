@@ -680,33 +680,33 @@ that have merely worked so far.
 
 ## Further reading
 
-- Kingsbury, K., the Jepsen analyses and methodology docs — <https://jepsen.io/analyses> — the
+- Kingsbury, K., the Jepsen analyses and methodology docs — https://jepsen.io/analyses — the
   primary record of the findings characterized in this chapter, with per-system reports.
 - Kingsbury, K. and Alvaro, P., "Elle: Inferring Isolation Anomalies from Experimental
   Observations," *VLDB*, 2020 — cycle-based transactional checking;
-  <https://github.com/jepsen-io/elle>.
+  https://github.com/jepsen-io/elle.
 - Herlihy, M. and Wing, J., "Linearizability: A Correctness Condition for Concurrent Objects,"
   *ACM TOPLAS*, 1990 — the definition every checker implements.
 - Wing, J. and Gong, C., "Testing and Verifying Concurrent Objects," *JPDC*, 1993 — the WGL
   checking algorithm; Gibbons, P. and Korach, E., "Testing Shared Memories," *SIAM J. Computing*,
   1997 — the NP-completeness result.
-- Knossos — <https://github.com/jepsen-io/knossos>; Porcupine (Athalye) —
-  <https://github.com/anishathalye/porcupine> — practical linearizability checkers.
+- Knossos — https://github.com/jepsen-io/knossos; Porcupine (Athalye) —
+  https://github.com/anishathalye/porcupine — practical linearizability checkers.
 - Wilson, W., "Testing Distributed Systems with Deterministic Simulation," Strange Loop, 2014 —
   the FoundationDB story; and the FDB testing documentation,
-  <https://apple.github.io/foundationdb/testing.html>.
+  https://apple.github.io/foundationdb/testing.html.
 - TigerBeetle, "VOPR" and simulation testing docs —
-  <https://docs.tigerbeetle.com/> — a contemporary DST implementation with storage-fault depth.
-- Antithesis documentation — <https://antithesis.com/docs/> — hypervisor-level deterministic
+  https://docs.tigerbeetle.com/ — a contemporary DST implementation with storage-fault depth.
+- Antithesis documentation — https://antithesis.com/docs/ — hypervisor-level deterministic
   testing of unmodified stacks.
-- madsim — <https://github.com/madsim-rs/madsim> — and turmoil —
-  <https://github.com/tokio-rs/turmoil> — deterministic simulation for Rust services.
+- madsim — https://github.com/madsim-rs/madsim — and turmoil —
+  https://github.com/tokio-rs/turmoil — deterministic simulation for Rust services.
 - Newcombe, C. et al., "How Amazon Web Services Uses Formal Methods," *CACM* 58(4), 2015 — the
   industrial TLA+ experience report cited throughout the formal-methods section.
 - Lamport, L., *Specifying Systems* and the TLA+ home —
-  <https://lamport.azurewebsites.net/tla/tla.html>; the P language —
-  <https://p-org.github.io/P/>; Alloy — <https://alloytools.org/>.
-- Shopify Toxiproxy — <https://github.com/Shopify/toxiproxy>; Linux `tc-netem` man page — the
+  https://lamport.azurewebsites.net/tla/tla.html; the P language —
+  https://p-org.github.io/P/; Alloy — https://alloytools.org/.
+- Shopify Toxiproxy — https://github.com/Shopify/toxiproxy; Linux `tc-netem` man page — the
   fault-injection workhorses.
 - Volume 4, Chapter 10 — Testing and Debugging Concurrent Systems — the single-machine sibling;
   Volume 11, Chapter 8 — chaos engineering as practice and culture; Volume 15, Chapter 1 — where

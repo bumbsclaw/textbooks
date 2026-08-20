@@ -648,7 +648,7 @@ in Chains.
 
 - **OWASP**, *Top 10 CI/CD Security Risks* (2022) — the canonical taxonomy used throughout this
   chapter, with detailed write-ups and recommendations per risk.
-  <https://owasp.org/www-project-top-10-ci-cd-security-risks/>
+  https://owasp.org/www-project-top-10-ci-cd-security-risks/
 - **GitHub Docs**, *Security hardening for GitHub Actions* — the authoritative reference on
   `pull_request_target`, `GITHUB_TOKEN` permissions, OIDC, and self-hosted runner risks
   (developed further in Chapter 5).

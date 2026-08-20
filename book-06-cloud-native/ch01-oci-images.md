@@ -658,22 +658,22 @@ because the format defines it precisely.
 
 - **OCI Image Format Specification** — manifest, config, descriptor, index, and layer media types and
   the content-addressing model; the `subject` field and `artifactType` in v1.1.
-  <https://github.com/opencontainers/image-spec>.
+  https://github.com/opencontainers/image-spec.
 - **OCI Distribution Specification** — the `/v2/` pull/push API, pulling by tag vs digest, and the
-  **Referrers API** and its tag-schema fallback (v1.1). <https://github.com/opencontainers/distribution-spec>.
+  **Referrers API** and its tag-schema fallback (v1.1). https://github.com/opencontainers/distribution-spec.
   Registry architecture and threats are Chapter 2.
 - **OCI Runtime Specification** — the on-disk bundle and `config.json` a runtime executes.
-  <https://github.com/opencontainers/runtime-spec>.
+  https://github.com/opencontainers/runtime-spec.
 - **go-containerregistry / `crane`** — `crane manifest`, `crane config`, `crane digest`,
   `crane referrers`, `crane blob`, `crane export`; the cleanest way to inspect the format directly.
-  <https://github.com/google/go-containerregistry>.
+  https://github.com/google/go-containerregistry.
 - **Docker `history` and image spec** — `docker history --no-trunc` for reading the build record and
-  spotting secret-leak layers. <https://docs.docker.com/reference/cli/docker/image/history/>.
+  spotting secret-leak layers. https://docs.docker.com/reference/cli/docker/image/history/.
 - **BuildKit build secrets and multi-stage builds** — `RUN --mount=type=secret` and `COPY --from`;
-  the correct way to keep secrets and toolchains out of shipped layers. <https://docs.docker.com/build/>.
+  the correct way to keep secrets and toolchains out of shipped layers. https://docs.docker.com/build/.
   Reproducibility and hermeticity are Book 4, Chapter 2.
 - **cosign and the OCI referrers/sig conventions** — how signatures, attestations, and SBOMs are stored
-  against an image digest. <https://docs.sigstore.dev/> (Book 5, Chapter 3 — Sigstore Architecture).
+  against an image digest. https://docs.sigstore.dev/ (Book 5, Chapter 3 — Sigstore Architecture).
 - Cross-references: Book 5, Chapter 1 (content addressing, digests), Chapters 3 and 8 (signing and
   verifying by digest); Book 4, Chapters 2–3 (reproducible builds, SLSA provenance); Book 3
   (SBOMs — Chapters 5, 6, 9); Book 2 (dependency supply chain); Book 1, Chapter 9 (distributed-systems

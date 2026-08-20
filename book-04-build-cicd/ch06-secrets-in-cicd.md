@@ -661,19 +661,19 @@ notifications and had almost nothing to rotate.
 - **HashiCorp Vault**, *Dynamic Secrets*, *Database Secrets Engine*, and *JWT/OIDC Auth Method*
   documentation — the authoritative reference for ephemeral credentials and for authenticating CI
   jobs by OIDC identity rather than a stored token.
-  <https://developer.hashicorp.com/vault/docs/secrets>
+  https://developer.hashicorp.com/vault/docs/secrets
 - **GitHub Docs**, *About security hardening with OpenID Connect* and *Configuring OpenID Connect
   in cloud providers* — the mechanism, claim format, and trust-policy configuration for OIDC
   federation from Actions to AWS/GCP/Azure (developed further in Chapter 5).
-  <https://docs.github.com/actions/deployment/security-hardening-your-deployments>
+  https://docs.github.com/actions/deployment/security-hardening-your-deployments
 - **GitLab Docs**, *CI/CD variables — protected and masked variables* and *ID tokens / OIDC* — the
   primary source for GitLab's secrets model and the documented limits of masking.
 - **SPIFFE / SPIRE**, *SPIFFE specification* and *SPIRE documentation* — workload identity as a
   first-class primitive (SPIFFE IDs and SVIDs), the generalization of the OIDC-to-cloud pattern
-  (see also Book 5, Chapter 4 and Book 9). <https://spiffe.io/docs/>
+  (see also Book 5, Chapter 4 and Book 9). https://spiffe.io/docs/
 - **Sigstore**, *Fulcio* and *Rekor* documentation, and the **`cosign`** reference — keyless
   signing, the ephemeral-key/short-lived-certificate model, and transparency logging (architecture
-  in Book 5, Chapters 3–4). <https://docs.sigstore.dev/>
+  in Book 5, Chapters 3–4). https://docs.sigstore.dev/
 - **AWS**, *IAM roles for identity providers and federation* and **GCP**, *Workload Identity
   Federation* — the cloud-side trust-policy and short-lived-credential mechanics that OIDC
   federation targets.

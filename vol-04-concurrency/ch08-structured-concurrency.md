@@ -760,28 +760,28 @@ capacity leaks, and shutdown hangs.
 
 - Smith, N. J., *Notes on Structured Concurrency, or: Go Statement Considered Harmful* (2018) —
   the essay that made the argument general.
-  <https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/>
+  https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/
 - Sústrik, M., *Structured Concurrency* (2016) and the libdill documentation — the origin of the
   term and the earliest deliberate implementation. <http://libdill.org/structured-concurrency.html>
 - Nystrom, B., *What Color Is Your Function?* (2015) — the canonical statement of the coloring
-  problem. <https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/>
+  problem. https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/
 - Trio documentation, *Tasks and Cancellation* — nurseries and cancel scopes from their source.
-  <https://trio.readthedocs.io/en/stable/reference-core.html>
+  https://trio.readthedocs.io/en/stable/reference-core.html
 - Elizarov, R., *Structured Concurrency* (2018) — the Kotlin team's account of adopting the model
-  and deprecating unstructured launch. <https://elizarov.medium.com/structured-concurrency-722d765aa952>
+  and deprecating unstructured launch. https://elizarov.medium.com/structured-concurrency-722d765aa952
 - Kotlin coroutines guide, *Coroutine Context and Jobs*, *Exception Handling* — the Job hierarchy
-  and supervisor semantics. <https://kotlinlang.org/docs/coroutines-guide.html>
+  and supervisor semantics. https://kotlinlang.org/docs/coroutines-guide.html
 - JEP 444: *Virtual Threads* (final, Java 21); JEP 453 / JEP 505: *Structured Concurrency*
   (preview line); JEP 491: *Synchronize Virtual Threads without Pinning* (JDK 24).
-  <https://openjdk.org/jeps/444>, <https://openjdk.org/jeps/505>
+  https://openjdk.org/jeps/444, https://openjdk.org/jeps/505
 - Go blog: *Go Concurrency Patterns: Context* (2014) — the context-plumbing discipline from its
-  authors. <https://go.dev/blog/context>; `errgroup` package docs:
-  <https://pkg.go.dev/golang.org/x/sync/errgroup>
+  authors. https://go.dev/blog/context; `errgroup` package docs:
+  https://pkg.go.dev/golang.org/x/sync/errgroup
 - Clements, A., *Proposal: Non-cooperative goroutine preemption* (Go proposal 24543) — the design
-  behind Go 1.14's signal-based preemption. <https://go.googlesource.com/proposal/+/master/design/24543-non-cooperative-preemption.md>
+  behind Go 1.14's signal-based preemption. https://go.googlesource.com/proposal/+/master/design/24543-non-cooperative-preemption.md
 - Tokio documentation, *Tutorial* and the `tokio::task` module — a work-stealing stackless
-  executor in production form. <https://tokio.rs/tokio/tutorial>
+  executor in production form. https://tokio.rs/tokio/tutorial
 - gRPC documentation, *Deadlines* — deadline propagation across services.
-  <https://grpc.io/docs/guides/deadlines/>
+  https://grpc.io/docs/guides/deadlines/
 - Volume 4, Chapter 6 — Async I/O and Event Loops — the substrate coroutines schedule onto.
 - Volume 13, Chapter 2 — The Go Runtime — the G-M-P scheduler in full depth.

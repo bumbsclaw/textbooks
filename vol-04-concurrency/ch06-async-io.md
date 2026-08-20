@@ -772,7 +772,7 @@ blocked event loop often enough that loop-lag dashboards should be the first tab
   Technical Conference (FREENIX Track)*, 2001 — the kqueue design paper.
 - Axboe, J., "Efficient IO with io_uring" — the original design document; and the `liburing`
   repository and man pages (`io_uring_setup(2)`, `io_uring_enter(2)`, `io_uring_register(2)`).
-  <https://kernel.dk/io_uring.pdf>
+  https://kernel.dk/io_uring.pdf
 - Google Security Blog, "Learning to navigate the risks of io_uring" and related kCTF
   disclosures (2023) — the security posture behind fleet restrictions on io_uring.
 - Schmidt, D., Stal, M., Rohnert, H., Buschmann, F., *Pattern-Oriented Software Architecture,
@@ -781,7 +781,7 @@ blocked event loop often enough that loop-lag dashboards should be the first tab
 - Varghese, G. and Lauck, T., "Hashed and Hierarchical Timing Wheels: Data Structures for the
   Efficient Implementation of a Timer Facility," *SOSP*, 1987 — the timer-wheel paper.
 - libuv documentation, "Design overview" — the loop phases and the thread pool, from the
-  source. <https://docs.libuv.org/en/v1.x/design.html>
+  source. https://docs.libuv.org/en/v1.x/design.html
 - Node.js documentation, "The Node.js Event Loop" guide and `perf_hooks.monitorEventLoopDelay`
   — phases, microtasks, and measuring loop delay.
 - nginx documentation, "Inside NGINX: How We Designed for Performance & Scale" and the

@@ -601,24 +601,24 @@ year, without touching the API contract.
 
 ## Further reading
 
-- RFC 9110 — *HTTP Semantics* (2022), the version-independent core. <https://www.rfc-editor.org/rfc/rfc9110>
-- RFC 9111 — *HTTP Caching* (2022). <https://www.rfc-editor.org/rfc/rfc9111>
-- RFC 9112 — *HTTP/1.1* (2022, message syntax). <https://www.rfc-editor.org/rfc/rfc9112>
-- RFC 9113 — *HTTP/2* (2022, obsoletes RFC 7540). <https://www.rfc-editor.org/rfc/rfc9113>
-- RFC 9114 — *HTTP/3* (2022). <https://www.rfc-editor.org/rfc/rfc9114>
-- RFC 7541 — *HPACK: Header Compression for HTTP/2*. <https://www.rfc-editor.org/rfc/rfc7541>
-- RFC 9204 — *QPACK: Field Compression for HTTP/3*. <https://www.rfc-editor.org/rfc/rfc9204>
-- RFC 9218 — *Extensible Prioritization Scheme for HTTP*. <https://www.rfc-editor.org/rfc/rfc9218>
-- RFC 9000 — *QUIC: A UDP-Based Multiplexed and Secure Transport* (see also Chapter 4). <https://www.rfc-editor.org/rfc/rfc9000>
+- RFC 9110 — *HTTP Semantics* (2022), the version-independent core. https://www.rfc-editor.org/rfc/rfc9110
+- RFC 9111 — *HTTP Caching* (2022). https://www.rfc-editor.org/rfc/rfc9111
+- RFC 9112 — *HTTP/1.1* (2022, message syntax). https://www.rfc-editor.org/rfc/rfc9112
+- RFC 9113 — *HTTP/2* (2022, obsoletes RFC 7540). https://www.rfc-editor.org/rfc/rfc9113
+- RFC 9114 — *HTTP/3* (2022). https://www.rfc-editor.org/rfc/rfc9114
+- RFC 7541 — *HPACK: Header Compression for HTTP/2*. https://www.rfc-editor.org/rfc/rfc7541
+- RFC 9204 — *QPACK: Field Compression for HTTP/3*. https://www.rfc-editor.org/rfc/rfc9204
+- RFC 9218 — *Extensible Prioritization Scheme for HTTP*. https://www.rfc-editor.org/rfc/rfc9218
+- RFC 9000 — *QUIC: A UDP-Based Multiplexed and Secure Transport* (see also Chapter 4). https://www.rfc-editor.org/rfc/rfc9000
 - RFC 6265 — *HTTP State Management Mechanism* (cookies); RFC 8446 — *TLS 1.3*.
 - Ilya Grigorik, *High Performance Browser Networking*, O'Reilly, 2013 — free online at
-  <https://hpbn.co>; the chapters on HTTP/1.x, HTTP/2, and connection management remain an
+  https://hpbn.co; the chapters on HTTP/1.x, HTTP/2, and connection management remain an
   excellent mechanism-level treatment.
-- Daniel Stenberg, "HTTP/3 Explained" — <https://http3-explained.haxx.se> — an open,
+- Daniel Stenberg, "HTTP/3 Explained" — https://http3-explained.haxx.se — an open,
   maintained explainer of HTTP/3 and QUIC by the curl author and community.
 - Envoy Proxy documentation on HTTP/2 upstream connection management and load balancing
-  (<https://www.envoyproxy.io/docs>) and the gRPC blog post "gRPC Load Balancing"
-  (<https://grpc.io/blog/grpc-load-balancing/>) — the authoritative operational treatment of the
+  (https://www.envoyproxy.io/docs) and the gRPC blog post "gRPC Load Balancing"
+  (https://grpc.io/blog/grpc-load-balancing/) — the authoritative operational treatment of the
   HTTP/2 pinning problem and its fixes.
 - J. Kelsey, "Compression and Information Leakage of Plaintext," FSE 2002, and the CRIME/BREACH
   disclosures — the background for why HPACK avoids general-purpose header compression.

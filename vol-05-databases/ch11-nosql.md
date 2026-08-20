@@ -681,23 +681,23 @@ you — and Volume 7, Chapter 5 returns to modeling with the full toolbox in han
 ## Further reading
 
 - Chang, F., et al., "Bigtable: A Distributed Storage System for Structured Data," *OSDI*, 2006 —
-  the CP-lineage founding paper. <https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/>
+  the CP-lineage founding paper. https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/
 - DeCandia, G., et al., "Dynamo: Amazon's Highly Available Key-value Store," *SOSP*, 2007 — the
   AP-lineage founding paper: consistent hashing, sloppy quorums, hinted handoff, vector clocks.
-  <https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf>
+  https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf
 - Kleppmann, M., *Designing Data-Intensive Applications* (O'Reilly, 2017), Chapter 2 — the best
   single treatment of data models, including the document/relational history and graph models.
 - Redis documentation, "Redis persistence" — the RDB/AOF trade-offs from the source, including the
-  honest statements about what each mode can lose. <https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/>
+  honest statements about what each mode can lose. https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/
 - Amazon DynamoDB Developer Guide — partition behavior, capacity units, GSI consistency, and the
-  single-table design guidance under "best practices." <https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/>
+  single-table design guidance under "best practices." https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/
 - Elhemali, M., et al., "Amazon DynamoDB: A Scalable, Predictably Performant, and Fully Managed
   NoSQL Database Service," *USENIX ATC*, 2022 — the service's architecture ten years in, including
   adaptive capacity.
 - Apache Cassandra documentation — data modeling and the CQL reference; the modeling section is an
-  explicit statement of query-first discipline. <https://cassandra.apache.org/doc/latest/>
+  explicit statement of query-first discipline. https://cassandra.apache.org/doc/latest/
 - MongoDB Manual — transactions, replication, and the data-modeling section on embedding versus
-  referencing. <https://www.mongodb.com/docs/manual/>
+  referencing. https://www.mongodb.com/docs/manual/
 - Lakshman, A. and Malik, P., "Cassandra — A Decentralized Structured Storage System," *ACM SIGOPS
   Operating Systems Review*, 2010 — Bigtable's data model on Dynamo's distribution, from the
   original authors.
@@ -707,7 +707,7 @@ you — and Volume 7, Chapter 5 returns to modeling with the full toolbox in han
   CAP conjecture's author on what it does and does not claim; pairs with Gilbert and Lynch's 2002
   proof. Depth in Volume 6, Chapter 4.
 - McKinley, D., "Choose Boring Technology," 2015 — the innovation-token argument referenced in the
-  decision framework. <https://mcfunley.com/choose-boring-technology>
+  decision framework. https://mcfunley.com/choose-boring-technology
 - Volume 5, Chapter 2 — Storage Engines — the LSM machinery under Cassandra; Chapter 9 —
   Partitioning and Sharding — the skew and hot-key theory this chapter applies.
 - Volume 6, Chapter 7 — Dynamo-style quorums, read repair, and anti-entropy in full; Chapter 11 —

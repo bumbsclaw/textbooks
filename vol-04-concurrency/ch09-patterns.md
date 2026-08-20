@@ -731,30 +731,30 @@ processes underneath; this chapter is that discipline.
 
 - Dean, J. and Barroso, L. A., "The Tail at Scale," *Communications of the ACM* 56(2), 2013 —
   tail-latency amplification under fan-out, hedged and tied requests.
-  <https://cacm.acm.org/research/the-tail-at-scale/>
+  https://cacm.acm.org/research/the-tail-at-scale/
 - Goetz, B. et al., *Java Concurrency in Practice* (Addison-Wesley, 2006) — Chapter 6 (task
   execution), Chapter 8 (thread-pool sizing, the wait/compute formula, saturation policies).
 - Little, J. D. C., "A Proof for the Queuing Formula L = λW," *Operations Research* 9(3), 1961 —
   the identity behind every sizing argument in this chapter (see Chapter 1 of this volume).
 - Ajmani, S., "Go Concurrency Patterns: Pipelines and cancellation," The Go Blog, 2014.
-  <https://go.dev/blog/pipelines>
+  https://go.dev/blog/pipelines
 - "Go Concurrency Patterns: Context," The Go Blog, 2014 — deadline propagation as an API
-  discipline. <https://go.dev/blog/context>
+  discipline. https://go.dev/blog/context
 - `golang.org/x/sync/singleflight` — package documentation; the canonical coalescing
-  implementation. <https://pkg.go.dev/golang.org/x/sync/singleflight>
+  implementation. https://pkg.go.dev/golang.org/x/sync/singleflight
 - `golang.org/x/time/rate` — the production token bucket for Go.
-  <https://pkg.go.dev/golang.org/x/time/rate>
+  https://pkg.go.dev/golang.org/x/time/rate
 - Netflix Hystrix wiki, "How it Works" — bulkheads, circuit breaking, and fallbacks; in
   maintenance mode but the design rationale remains a reference.
-  <https://github.com/Netflix/Hystrix/wiki/How-it-Works>
+  https://github.com/Netflix/Hystrix/wiki/How-it-Works
 - resilience4j documentation — the maintained JVM implementations of bulkhead, rate limiter,
-  circuit breaker, and time limiter. <https://resilience4j.readme.io/>
+  circuit breaker, and time limiter. https://resilience4j.readme.io/
 - Beyer, B. et al. (eds.), *Site Reliability Engineering* (O'Reilly, 2016) — Chapter 21 "Handling
   Overload" and Chapter 22 "Addressing Cascading Failures."
-  <https://sre.google/sre-book/handling-overload/>
+  https://sre.google/sre-book/handling-overload/
 - Brooker, M., "Timeouts, retries, and backoff with jitter," *Amazon Builders' Library* — retry
   budgets and jitter, quantitatively.
-  <https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/>
+  https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/
 - Thompson, M. et al., "Disruptor: High performance alternative to bounded queues" (LMAX
   technical paper, 2011) — the ring-buffer design referenced in the producer–consumer section.
 - Chapter 1 of this volume — Little's Law and the USL; Chapter 2 — condition variables,

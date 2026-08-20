@@ -690,24 +690,24 @@ configuration actually implements.
 
 - PostgreSQL documentation, *High Availability, Load Balancing, and Replication* — streaming
   replication, `synchronous_commit`, `synchronous_standby_names`, hot standby conflicts.
-  <https://www.postgresql.org/docs/current/high-availability.html>
+  https://www.postgresql.org/docs/current/high-availability.html
 - PostgreSQL documentation, *Logical Replication* — publications, subscriptions, replica
   identity, and the restrictions list (DDL, sequences).
-  <https://www.postgresql.org/docs/current/logical-replication.html>
+  https://www.postgresql.org/docs/current/logical-replication.html
 - MySQL 8.4 Reference Manual, *Replication* — binlog formats, GTIDs and auto-positioning,
   semi-synchronous replication and `AFTER_SYNC`.
-  <https://dev.mysql.com/doc/refman/8.4/en/replication.html>
+  https://dev.mysql.com/doc/refman/8.4/en/replication.html
 - Patroni documentation — the leader-key/DCS architecture for PostgreSQL auto-failover.
-  <https://patroni.readthedocs.io/>
+  https://patroni.readthedocs.io/
 - Kleppmann, M., *Designing Data-Intensive Applications*, O'Reilly, 2017 — Chapter 5,
   "Replication": the best single treatment of leader-based, multi-leader, and leaderless
   replication and their anomalies.
 - Terry, D. et al., "Session Guarantees for Weakly Consistent Replicated Data," *PDIS*, 1994 —
   the origin of read-your-writes, monotonic reads, and the other session guarantees, from the
-  Bayou project. <https://dl.acm.org/doi/10.1109/PDIS.1994.331722>
+  Bayou project. https://dl.acm.org/doi/10.1109/PDIS.1994.331722
 - Percona Toolkit documentation, `pt-heartbeat` and `pt-table-checksum` — honest lag measurement
   and replica-drift detection, born of the statement-based era.
-  <https://docs.percona.com/percona-toolkit/>
+  https://docs.percona.com/percona-toolkit/
 - Chapter 7 — WAL and Crash Recovery — the log that this chapter ships; Chapter 9 —
   Partitioning — the single-writer-per-shard follow-through; Chapter 10 — Distributed
   Transactions — what cross-shard writes cost.

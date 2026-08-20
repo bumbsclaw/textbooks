@@ -663,33 +663,33 @@ discipline applied to the place all of it begins — the source.
 
 - **GitHub — Organization rulesets and repository rulesets.** The org-level enforcement mechanism for
   branch protection, required signatures, and status checks across many repos.
-  <https://docs.github.com/en/organizations/managing-organization-settings/managing-rulesets-for-repositories-in-your-organization>
+  https://docs.github.com/en/organizations/managing-organization-settings/managing-rulesets-for-repositories-in-your-organization
 - **GitHub — Requiring two-factor authentication in your organization**, and enterprise policies for
-  2FA and SSO. <https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-two-factor-authentication-for-your-organization/requiring-two-factor-authentication-in-your-organization>
+  2FA and SSO. https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-two-factor-authentication-for-your-organization/requiring-two-factor-authentication-in-your-organization
 - **GitHub — Secret scanning and push protection at the organization level.**
-  <https://docs.github.com/en/code-security/secret-scanning/enabling-secret-scanning-features/enabling-secret-scanning-for-your-repository>
+  https://docs.github.com/en/code-security/secret-scanning/enabling-secret-scanning-features/enabling-secret-scanning-for-your-repository
   and push-protection documentation.
 - **Allstar (OpenSSF)** — continuous security policy enforcement for GitHub organizations, including
   the Branch Protection policy and `action: fix` auto-remediation.
-  <https://github.com/ossf/allstar>
+  https://github.com/ossf/allstar
 - **safe-settings (GitHub)** — repository configuration as code, reconciled from a central config
-  repo. <https://github.com/github/safe-settings>
+  repo. https://github.com/github/safe-settings
 - **Terraform GitHub provider** — `github_repository`, `github_branch_protection`,
   `github_repository_ruleset`, `github_team`, org Actions permissions.
-  <https://registry.terraform.io/providers/integrations/github/latest/docs>
+  https://registry.terraform.io/providers/integrations/github/latest/docs
 - **OpenSSF Scorecard** — automated checks (`Branch-Protection`, `Code-Review`, `Token-Permissions`,
   `Dangerous-Workflow`, `Pinned-Dependencies`, …) runnable across an org.
-  <https://github.com/ossf/scorecard>
+  https://github.com/ossf/scorecard
 - **GitLab — Compliance frameworks, security policies, and push rules** at the group level.
-  <https://docs.gitlab.com/ee/user/group/compliance_frameworks/> and
-  <https://docs.gitlab.com/ee/user/application_security/policies/>
+  https://docs.gitlab.com/ee/user/group/compliance_frameworks/ and
+  https://docs.gitlab.com/ee/user/application_security/policies/
 - **SLSA source track** — the developing source-integrity attestation track (draft), parallel to the
-  build track of SLSA v1.0. <https://slsa.dev/spec/> (see the source-track working material).
+  build track of SLSA v1.0. https://slsa.dev/spec/v1.0/ (see the source-track working material — source track draft at https://slsa.dev/spec/draft/source-requirements).
 - **CodeQL default setup for organizations** and **Semgrep** for org-wide static analysis.
-  <https://docs.github.com/en/code-security/code-scanning> and <https://semgrep.dev/docs/>
+  https://docs.github.com/en/code-security/code-scanning and https://semgrep.dev/docs/
 - **GitHub — Restricting and reviewing OAuth apps and GitHub Apps** installed on an organization; and
   GitHub's April 15, 2022 disclosure of stolen OAuth tokens used to clone private repos.
-  <https://github.blog/2022-04-15-security-alert-stolen-oauth-user-tokens/>
+  https://github.blog/2022-04-15-security-alert-stolen-oauth-user-tokens/
 - **Book cross-references:** Book 7, Chapters 2–7 (the controls synthesized here); **Book 1, Chapter
   9** — Supply Chain Security in Distributed Backend Systems (tier-0); **Book 1, Chapter 10** and
   **Book 4, Chapter 10** — the paved road / building a program and a secure build platform; **Book 4,

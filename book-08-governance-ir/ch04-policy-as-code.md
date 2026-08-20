@@ -789,25 +789,25 @@ connective tissue that makes the enforcement of Books 2 through 7 add up to a go
 
 ## Further reading
 
-- **Open Policy Agent** documentation and the Rego language reference — <https://www.openpolicyagent.org/docs/>,
+- **Open Policy Agent** documentation and the Rego language reference — https://www.openpolicyagent.org/docs/,
   including the policy-testing guide (`opa test`).
-- **OPA Gatekeeper** — <https://open-policy-agent.github.io/gatekeeper/> — constraint framework,
+- **OPA Gatekeeper** — https://open-policy-agent.github.io/gatekeeper/ — constraint framework,
   audit mode, and mutation.
-- **Common Expression Language (CEL)** specification — <https://github.com/google/cel-spec> — and
-  Kubernetes **ValidatingAdmissionPolicy** documentation, <https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/>.
-- **Kyverno** documentation — <https://kyverno.io/docs/> — policy types, `verifyImages`,
+- **Common Expression Language (CEL)** specification — https://github.com/google/cel-spec — and
+  Kubernetes **ValidatingAdmissionPolicy** documentation, https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/.
+- **Kyverno** documentation — https://kyverno.io/docs/ — policy types, `verifyImages`,
   PolicyException, and the `kyverno test` command.
-- **HashiCorp Sentinel** documentation — <https://developer.hashicorp.com/sentinel> — enforcement
+- **HashiCorp Sentinel** documentation — https://developer.hashicorp.com/sentinel — enforcement
   levels and Terraform integration.
-- **Conftest** — <https://www.conftest.dev/> — Rego over arbitrary configuration, `conftest test`
+- **Conftest** — https://www.conftest.dev/ — Rego over arbitrary configuration, `conftest test`
   and `conftest verify`.
-- **Sigstore policy-controller** — <https://docs.sigstore.dev/policy-controller/overview/> — and
+- **Sigstore policy-controller** — https://docs.sigstore.dev/policy-controller/overview/ — and
   **cosign** verification policy.
-- **OpenSSF Allstar** — <https://github.com/ossf/allstar> — organization-wide repository policy
+- **OpenSSF Allstar** — https://github.com/ossf/allstar — organization-wide repository policy
   enforcement.
-- **NIST OSCAL** — <https://pages.nist.gov/OSCAL/> — the Open Security Controls Assessment Language:
+- **NIST OSCAL** — https://pages.nist.gov/OSCAL/ — the Open Security Controls Assessment Language:
   catalogs, profiles, component definitions, and assessment results.
-- **NIST SP 800-218 (SSDF)** — <https://csrc.nist.gov/pubs/sp/800/218/final> — for the practice
+- **NIST SP 800-218 (SSDF)** — https://csrc.nist.gov/pubs/sp/800/218/final — for the practice
   identifiers policies map to (revisited from Chapter 1).
 - **AWS Service Control Policies** and **AWS Config** documentation — for the cloud-account layer of
   policy-as-code.

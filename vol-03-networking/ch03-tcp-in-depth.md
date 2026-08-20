@@ -735,15 +735,15 @@ section.
 - Kevin R. Fall, W. Richard Stevens, *TCP/IP Illustrated, Volume 1: The Protocols*, 2nd ed.,
   Addison-Wesley, 2011 — the definitive treatment of the mechanisms in this chapter.
 - RFC 9293 — *Transmission Control Protocol (TCP)* (2022), the current consolidated TCP
-  specification obsoleting RFC 793. <https://www.rfc-editor.org/rfc/rfc9293>
+  specification obsoleting RFC 793. https://www.rfc-editor.org/rfc/rfc9293
 - V. Jacobson, "Congestion Avoidance and Control," *SIGCOMM* 1988 — the origin of slow start
-  and congestion avoidance. <https://ee.lbl.gov/papers/congavoid.pdf>
+  and congestion avoidance. https://ee.lbl.gov/papers/congavoid.pdf
 - D.-M. Chiu, R. Jain, "Analysis of the Increase and Decrease Algorithms for Congestion
   Avoidance in Computer Networks," *Computer Networks and ISDN Systems*, 1989 — why AIMD.
 - S. Ha, I. Rhee, L. Xu, "CUBIC: A New TCP-Friendly High-Speed TCP Variant," *ACM SIGOPS
   Operating Systems Review*, 2008; and RFC 8312 (informational). CUBIC's design and analysis.
 - N. Cardwell et al., "BBR: Congestion-Based Congestion Control," *ACM Queue* / *Communications
-  of the ACM*, 2016–2017. <https://queue.acm.org/detail.cfm?id=3022184>
+  of the ACM*, 2016–2017. https://queue.acm.org/detail.cfm?id=3022184
 - RFC 6298 — *Computing TCP's Retransmission Timer* (SRTT/RTTVAR/RTO); RFC 2018 — *TCP Selective
   Acknowledgment Options*; RFC 6582 — *The NewReno Modification to TCP's Fast Recovery*.
 - RFC 7323 — *TCP Extensions for High Performance* (window scaling and timestamps);
@@ -753,5 +753,5 @@ section.
 - RFC 7413 — *TCP Fast Open*; RFC 6528 — *Defending against Sequence Number Attacks* (ISN
   generation).
 - The Linux kernel networking documentation on TCP sysctls
-  (<https://www.kernel.org/doc/html/latest/networking/ip-sysctl.html>) and the `tcp(7)`,
+  (https://www.kernel.org/doc/html/latest/networking/ip-sysctl.html) and the `tcp(7)`,
   `ss(8)`, and `ip-route(8)` man pages — the operational reference for every knob above.

@@ -668,26 +668,26 @@ the only way it survives contact with a hundred teams shipping continuously.
 ## Further reading
 
 - **SLSA v1.0 — Build track requirements and Threats.** The normative L3 isolation and provenance-
-  non-forgeability requirements this chapter's design satisfies. <https://slsa.dev/spec/v1.0/requirements>
-  and <https://slsa.dev/spec/v1.0/threats>.
+  non-forgeability requirements this chapter's design satisfies. https://slsa.dev/spec/v1.0/requirements
+  and https://slsa.dev/spec/v1.0/threats.
 - **gVisor** — architecture of the user-space kernel (`runsc`), the sentry, and the platform models
-  (ptrace/KVM). <https://gvisor.dev/docs/>.
+  (ptrace/KVM). https://gvisor.dev/docs/.
 - **Kata Containers** and **Firecracker** — VM-isolated containers and AWS's minimal VMM.
-  <https://katacontainers.io/> and <https://firecracker-microvm.github.io/>. See also the Firecracker
+  https://katacontainers.io/ and https://firecracker-microvm.github.io/. See also the Firecracker
   NSDI '20 paper, *Firecracker: Lightweight Virtualization for Serverless Applications*.
 - **Kaniko**, **Buildah**, and **BuildKit (rootless)** — daemonless/rootless OCI image builders.
-  <https://github.com/GoogleContainerTools/kaniko>, <https://buildah.io/>, and
-  <https://github.com/moby/buildkit/blob/master/docs/rootless.md>.
+  https://github.com/GoogleContainerTools/kaniko, https://buildah.io/, and
+  https://github.com/moby/buildkit/blob/master/docs/rootless.md.
 - **Actions Runner Controller (ARC)** — ephemeral autoscaling GitHub runners on Kubernetes.
-  <https://github.com/actions/actions-runner-controller>. See also GitHub's docs on **just-in-time
+  https://github.com/actions/actions-runner-controller. See also GitHub's docs on **just-in-time
   runners** and **ephemeral self-hosted runners** under *Autoscaling with self-hosted runners*.
 - **GitLab Runner — Kubernetes executor** and **Jenkins — Kubernetes plugin** — pod-per-job ephemeral
-  agents. <https://docs.gitlab.com/runner/executors/kubernetes/> and
-  <https://plugins.jenkins.io/kubernetes/>.
+  agents. https://docs.gitlab.com/runner/executors/kubernetes/ and
+  https://plugins.jenkins.io/kubernetes/.
 - **StepSecurity Harden-Runner** — egress monitoring and allowlisting for GitHub Actions runners.
-  <https://github.com/step-security/harden-runner>.
+  https://github.com/step-security/harden-runner.
 - **Kubernetes** — *Pod Security Standards* (Baseline/Restricted), `securityContext`, seccomp and
-  AppArmor tutorials, and `NetworkPolicy`. <https://kubernetes.io/docs/concepts/security/>.
+  AppArmor tutorials, and `NetworkPolicy`. https://kubernetes.io/docs/concepts/security/.
 - **runc CVE-2019-5736** — the canonical container-escape-via-host-binary-overwrite writeup, as a
   concrete reminder of the shared-kernel model's limits.
 - Book 1, Chapter 3 (SolarWinds/3CX build-machine persistence) and Chapter 9 (blast radius); Book 2,

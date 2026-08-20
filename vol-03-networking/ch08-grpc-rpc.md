@@ -773,12 +773,12 @@ for importing a library.
 
 ## Further reading
 
-- gRPC official documentation and concepts — <https://grpc.io/docs/> — including the "Core concepts"
+- gRPC official documentation and concepts — https://grpc.io/docs/ — including the "Core concepts"
   and "gRPC over HTTP/2" pages that specify the request/response framing, trailers, and status model.
-- "gRPC over HTTP/2" protocol specification — <https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md>
+- "gRPC over HTTP/2" protocol specification — https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md
   — the authoritative mapping of calls, `grpc-timeout`, `grpc-status`, and length-prefixed messages.
 - Protocol Buffers documentation: language guide (proto3) and **Encoding** reference —
-  <https://protobuf.dev/programming-guides/encoding/> — the definitive description of varints, wire
+  https://protobuf.dev/programming-guides/encoding/ — the definitive description of varints, wire
   types, and tag-length-value; and the "Proto Best Practices" / compatibility guide.
 - A. D. Birrell and B. J. Nelson, "Implementing Remote Procedure Calls," *ACM Transactions on
   Computer Systems*, 2(1), 1984 — the foundational stub/binding RPC paper.
@@ -787,18 +787,18 @@ for importing a library.
   explanation. See also the Wikipedia summary for the canonical list.
 - RFC 9113 — *HTTP/2* (2022) — the substrate; and Chapter 7 of this volume for framing, multiplexing,
   and the pinning problem.
-- The gRPC blog, "gRPC Load Balancing" — <https://grpc.io/blog/grpc-load-balancing/> — client-side,
+- The gRPC blog, "gRPC Load Balancing" — https://grpc.io/blog/grpc-load-balancing/ — client-side,
   look-aside, and proxy balancing, and why L4 fails for HTTP/2.
 - gRPC retry and hedging design — gRFC A6 ("client retries") in the grpc/proposal repository, which
   specifies the retry and hedging policies and the retry-throttling token bucket —
-  <https://github.com/grpc/proposal/blob/master/A6-client-retries.md>; the service-config schema
+  https://github.com/grpc/proposal/blob/master/A6-client-retries.md; the service-config schema
   itself lives in the grpc/grpc repository.
-- Buf documentation — <https://buf.build/docs/> — schema management, `buf breaking` for compatibility
-  enforcement, and the ConnectRPC framework (<https://connectrpc.com>) for the gRPC/gRPC-Web/HTTP-JSON
+- Buf documentation — https://buf.build/docs/ — schema management, `buf breaking` for compatibility
+  enforcement, and the ConnectRPC framework (https://connectrpc.com) for the gRPC/gRPC-Web/HTTP-JSON
   triple protocol.
-- Apache Thrift (<https://thrift.apache.org>), Apache Avro (<https://avro.apache.org>), Cap'n Proto
-  (<https://capnproto.org>), and FlatBuffers (<https://flatbuffers.dev>) official docs for the
-  serialization-format comparison; Twirp (<https://github.com/twitchtv/twirp>) and tRPC
-  (<https://trpc.io>) for the minimal-RPC and TypeScript-native alternatives.
+- Apache Thrift (https://thrift.apache.org), Apache Avro (https://avro.apache.org), Cap'n Proto
+  (https://capnproto.org), and FlatBuffers (https://flatbuffers.dev) official docs for the
+  serialization-format comparison; Twirp (https://github.com/twitchtv/twirp) and tRPC
+  (https://trpc.io) for the minimal-RPC and TypeScript-native alternatives.
 - Sam Newman, *Building Microservices* (2nd ed., O'Reilly, 2021) — the inter-service communication
   chapters place RPC-versus-REST trade-offs in an organizational context.

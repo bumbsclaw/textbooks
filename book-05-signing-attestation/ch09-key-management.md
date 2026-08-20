@@ -667,32 +667,32 @@ protecting *a* key and becomes about a fleet-wide policy for *all* keys. The thr
 
 - **AWS KMS**, **Google Cloud KMS**, and **Azure Key Vault** developer guides — asymmetric signing
   keys, the `Sign` API, key policies/IAM, and audit integration (CloudTrail / Cloud Audit Logs /
-  Azure Monitor). <https://docs.aws.amazon.com/kms/>, <https://cloud.google.com/kms/docs>,
-  <https://learn.microsoft.com/azure/key-vault/>.
+  Azure Monitor). https://docs.aws.amazon.com/kms/, https://cloud.google.com/kms/docs,
+  https://learn.microsoft.com/azure/key-vault/.
 - **Cosign KMS support** — the `awskms://`, `gcpkms://`, `azurekms://`, `hashivault://` URI schemes
-  and PKCS#11 signing. <https://docs.sigstore.dev/cosign/key_management/> and
-  <https://github.com/sigstore/cosign/blob/main/KMS.md>.
+  and PKCS#11 signing. https://docs.sigstore.dev/cosign/key_management/ and
+  https://github.com/sigstore/cosign/blob/main/KMS.md.
 - **FIPS 140-2 / FIPS 140-3** (NIST) and **PKCS#11** (OASIS Cryptographic Token Interface) — the
-  validation standard and the interface for HSMs. <https://csrc.nist.gov/publications/detail/fips/140/3/final>
+  validation standard and the interface for HSMs. https://csrc.nist.gov/publications/detail/fips/140/3/final
   and the OASIS PKCS#11 spec.
 - **HashiCorp Vault PKI secrets engine** (including its ACME server) and **Smallstep step-ca** — API
-  CAs built for short-lived certificate automation. <https://developer.hashicorp.com/vault/docs/secrets/pki>
-  and <https://smallstep.com/docs/step-ca/>.
+  CAs built for short-lived certificate automation. https://developer.hashicorp.com/vault/docs/secrets/pki
+  and https://smallstep.com/docs/step-ca/.
 - **cert-manager** — Kubernetes certificate lifecycle automation (`Issuer`/`ClusterIssuer`,
-  `Certificate`, automatic renewal). <https://cert-manager.io/docs/>.
+  `Certificate`, automatic renewal). https://cert-manager.io/docs/.
 - **AWS Private CA** and **Google Cloud Certificate Authority Service** — managed private CAs with
-  HSM-backed keys. <https://docs.aws.amazon.com/privateca/> and
-  <https://cloud.google.com/certificate-authority-service/docs>.
+  HSM-backed keys. https://docs.aws.amazon.com/privateca/ and
+  https://cloud.google.com/certificate-authority-service/docs.
 - **ACME (RFC 8555)** — the enrollment/renewal protocol, usable internally.
-  <https://www.rfc-editor.org/rfc/rfc8555>.
+  https://www.rfc-editor.org/rfc/rfc8555.
 - **SPIFFE / SPIRE** — short-lived X.509-SVID/JWT-SVID issuance and rotation for workload identity
-  (developed in Book 9). <https://spiffe.io/docs/>.
+  (developed in Book 9). https://spiffe.io/docs/.
 - **Sigstore self-hosting** — `sigstore/scaffolding` (Helm/Terraform for private Fulcio/Rekor/CT/
-  TSA) and the Fulcio/Rekor operational docs. <https://github.com/sigstore/scaffolding> and
-  <https://docs.sigstore.dev/>.
+  TSA) and the Fulcio/Rekor operational docs. https://github.com/sigstore/scaffolding and
+  https://docs.sigstore.dev/.
 - **The Update Framework (TUF)** and **Sigstore root-signing / `tuf-on-ci`** — threshold root keys,
-  secure rotation, and the ceremony model (Chapter 7). <https://theupdateframework.io/>,
-  <https://github.com/sigstore/root-signing>, and <https://github.com/theupdateframework/tuf-on-ci>.
+  secure rotation, and the ceremony model (Chapter 7). https://theupdateframework.io/,
+  https://github.com/sigstore/root-signing, and https://github.com/theupdateframework/tuf-on-ci.
 - Cross-references: Book 5, Chapter 1 (crypto foundations, Shamir/threshold/FROST, DSSE), Chapter 2
   (classic code signing — key theft, broken revocation), Chapters 3–4 (Sigstore, Fulcio, keyless
   signing and workload identity), Chapter 5 (transparency logs, Rekor internals, privacy/metadata

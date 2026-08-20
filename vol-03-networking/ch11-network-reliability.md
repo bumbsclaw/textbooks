@@ -936,35 +936,35 @@ an untested shedding path.
 - Arnon Rotem-Gal-Oz, *Fallacies of Distributed Computing Explained* — the standard write-up of the
   list.
 - Marc Brooker, "Exponential Backoff And Jitter", AWS Architecture Blog, 2015 —
-  <https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/> — the definitions and
+  https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/ — the definitions and
   simulations of full, equal, and decorrelated jitter used here.
-- Amazon Builders' Library — <https://aws.amazon.com/builders-library/> — especially "Timeouts,
+- Amazon Builders' Library — https://aws.amazon.com/builders-library/ — especially "Timeouts,
   retries, and backoff with jitter", "Using load shedding to avoid overload", and "Avoiding fallback
   in distributed systems".
 - Jeffrey Dean and Luiz André Barroso, "The Tail at Scale", *Communications of the ACM*, Vol. 56
-  No. 2, February 2013 — <https://cacm.acm.org/research/the-tail-at-scale/> — hedged and tied
+  No. 2, February 2013 — https://cacm.acm.org/research/the-tail-at-scale/ — hedged and tied
   requests.
 - Betsy Beyer et al. (eds.), *Site Reliability Engineering*, O'Reilly, 2016 —
-  <https://sre.google/sre-book/table-of-contents/> — Chapter 21 "Handling Overload" (criticality,
+  https://sre.google/sre-book/table-of-contents/ — Chapter 21 "Handling Overload" (criticality,
   adaptive throttling, the `requests`/`accepts` formula) and Chapter 22 "Addressing Cascading
   Failures".
 - gRFC A6: *gRPC Retry Design* —
-  <https://github.com/grpc/proposal/blob/master/A6-client-retries.md> — normative for `retryPolicy`,
-  `hedgingPolicy`, and `retryThrottling`; and <https://grpc.io/docs/guides/deadlines/> for
+  https://github.com/grpc/proposal/blob/master/A6-client-retries.md — normative for `retryPolicy`,
+  `hedgingPolicy`, and `retryThrottling`; and https://grpc.io/docs/guides/deadlines/ for
   `grpc-timeout`.
 - Envoy architecture documentation on routing and retries
-  (<https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_routing>), circuit
-  breaking (<https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/circuit_breaking>),
+  (https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_routing), circuit
+  breaking (https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/circuit_breaking),
   and outlier detection
-  (<https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier>).
+  (https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier).
 - Ben Maurer, "Fail at Scale: Reliability in the face of rapid change", *ACM Queue*, 2015 —
-  <https://queue.acm.org/detail.cfm?id=2839461> — controlled-delay queueing and adaptive LIFO; the
+  https://queue.acm.org/detail.cfm?id=2839461 — controlled-delay queueing and adaptive LIFO; the
   underlying algorithm is Kathleen Nichols and Van Jacobson, "Controlling Queue Delay", *ACM Queue*,
   2012.
 - Michael T. Nygard, *Release It!*, 2nd edition, Pragmatic Bookshelf, 2018 — the origin of the
-  circuit-breaker and bulkhead vocabulary. resilience4j (<https://resilience4j.readme.io/>) is the
+  circuit-breaker and bulkhead vocabulary. resilience4j (https://resilience4j.readme.io/) is the
   current reference implementation; for adaptive server-side limits, Netflix `concurrency-limits`
-  (<https://github.com/Netflix/concurrency-limits>).
+  (https://github.com/Netflix/concurrency-limits).
 - RFC 9110 (*HTTP Semantics*) on idempotent methods and `Retry-After`; RFC 5861
   (`stale-while-revalidate`, `stale-if-error`); RFC 9113 (HTTP/2) on `REFUSED_STREAM` and `GOAWAY`.
 - AWS post-event summaries for the April 2011 EC2/EBS disruption and the September 2015 DynamoDB

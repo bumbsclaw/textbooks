@@ -565,7 +565,7 @@ already understand why your database is sharded.
 - Franke, H., Russell, R., and Kirkwood, M., "Fuss, Futexes and Furwocks: Fast Userlevel Locking in
   Linux," *Ottawa Linux Symposium*, 2002 — the futex design paper.
 - Drepper, U., *Futexes Are Tricky* (2011) — the correct-usage reference for building locks on
-  futexes. <https://www.akkadia.org/drepper/futex.pdf>
+  futexes. https://www.akkadia.org/drepper/futex.pdf
 - `man 2 futex`, `man 7 pthreads`, `man 3 pthread_cond_wait` — the normative specifications,
   including the explicit allowance for spurious wakeups.
 - Hoare, C. A. R., "Monitors: An Operating System Structuring Concept," *CACM* 17(10), 1974 — the
@@ -576,9 +576,9 @@ already understand why your database is sharded.
   2020) — rigorous treatment of spinlock variants and their scaling behavior.
 - McKenney, P., *Is Parallel Programming Hard, And, If So, What Can You Do About It?* — the
   definitive free treatment of RCU by its principal author.
-  <https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html>
+  https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html
 - Kleppmann, M., "How to do distributed locking" (2016) — the fencing-token argument and the
-  Redlock critique. <https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html>
+  Redlock critique. https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html
 - Sanfilippo, S., "Is Redlock safe?" (2016) — the response; read both.
   <http://antirez.com/news/101>
 - Volume 1, Chapter 4 — Caches and Cache Coherence — the mechanics of the ping-pong described here.

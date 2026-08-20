@@ -719,29 +719,29 @@ invariants are.
   two-phase commit.
 - Garcia-Molina, H. and Salem, K., "Sagas," *SIGMOD*, 1987 — the source, including compensation
   and forward/backward recovery; short and very readable.
-  <https://dl.acm.org/doi/10.1145/38713.38742>
+  https://dl.acm.org/doi/10.1145/38713.38742
 - Skeen, D., "Nonblocking Commit Protocols," *SIGMOD*, 1981 — three-phase commit and the formal
   analysis of blocking.
 - Gray, J. and Lamport, L., "Consensus on Transaction Commit," *ACM TODS* 31(1), 2006 — the
   precise bridge between atomic commitment and consensus; 2PC as degenerate Paxos Commit.
-  <https://dl.acm.org/doi/10.1145/1132863.1132867>
+  https://dl.acm.org/doi/10.1145/1132863.1132867
 - Corbett, J. et al., "Spanner: Google's Globally-Distributed Database," *OSDI*, 2012 — 2PC
   layered over Paxos groups in production.
-  <https://research.google/pubs/spanner-googles-globally-distributed-database-2/>
+  https://research.google/pubs/spanner-googles-globally-distributed-database-2/
 - Kleppmann, M., *Designing Data-Intensive Applications*, O'Reilly, 2017 — Chapter 9's treatment
   of 2PC, XA, and the commit/consensus relationship is the best short published account.
 - Helland, P., "Life beyond Distributed Transactions: an Apostate's Opinion," *CIDR*, 2007 —
   entities, activities, and why scale-out systems abandon cross-entity transactions.
 - Richardson, C., *Microservices Patterns*, Manning, 2018, and
-  <https://microservices.io/patterns/data/saga.html> — sagas for services, the countermeasure
+  https://microservices.io/patterns/data/saga.html — sagas for services, the countermeasure
   vocabulary, orchestration versus choreography.
 - X/Open, *Distributed Transaction Processing: The XA Specification*, 1991 — the interface
   underneath JTA and `XA PREPARE`/`XA COMMIT`, heuristic outcomes included.
-- Temporal documentation — <https://docs.temporal.io/> — durable-execution workflow orchestration;
+- Temporal documentation — https://docs.temporal.io/ — durable-execution workflow orchestration;
   see the concepts section on workflows, activities, and retries for the modern orchestrator in
   practice.
 - Debezium documentation, "Outbox Event Router" —
-  <https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html> —
+  https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html —
   the CDC-based outbox relay in deployable form (depth in Volume 10, Chapter 6).
 - Volume 5: Chapter 7 — WAL (the forced writes this chapter leans on); Chapter 9 — Partitioning
   and Sharding (rung 1); Chapter 12 — NewSQL (Spanner and friends in full).

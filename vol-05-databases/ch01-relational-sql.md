@@ -746,15 +746,15 @@ merged dataset as maximally nullable until proven otherwise.
 
 - Codd, E. F., "A Relational Model of Data for Large Shared Data Banks," *Communications of
   the ACM* 13(6), June 1970 — the nine pages this volume stands on.
-  <https://dl.acm.org/doi/10.1145/362384.362685>
+  https://dl.acm.org/doi/10.1145/362384.362685
 - ISO/IEC 9075, *Information technology — Database languages — SQL* — the standard; Part 2
   (Foundation) defines the semantics in this chapter. Latest edition SQL:2023. (Paywalled by
   ISO; the PostgreSQL documentation's conformance appendix is the practical index to it.)
 - PostgreSQL documentation — the best free SQL-semantics reference in existence, dialect
   notwithstanding: queries and SELECT evaluation
-  (<https://www.postgresql.org/docs/current/sql-select.html>), window functions
-  (<https://www.postgresql.org/docs/current/tutorial-window.html>), `WITH` queries
-  (<https://www.postgresql.org/docs/current/queries-with.html>).
+  (https://www.postgresql.org/docs/current/sql-select.html), window functions
+  (https://www.postgresql.org/docs/current/tutorial-window.html), `WITH` queries
+  (https://www.postgresql.org/docs/current/queries-with.html).
 - Date, C. J., *SQL and Relational Theory: How to Write Accurate SQL Code*, 3rd ed. (O'Reilly,
   2015) — the sharpest available treatment of where SQL deviates from the model, including a
   sustained argument against NULL that will vaccinate you even if you don't accept it.
@@ -767,7 +767,7 @@ merged dataset as maximally nullable until proven otherwise.
   standard's longtime editor.
 - Winand, M., *Modern SQL* — a well-maintained site tracking which standard features
   (window functions, recursion, LATERAL, and beyond) each engine actually implements.
-  <https://modern-sql.com>
+  https://modern-sql.com
 - Chapter 4 — Query Processing and Optimization — where the algebra trees of this chapter
   meet cost models and become physical plans.
 - Chapter 9 — Partitioning and Sharding — what happens to keys and constraints at the shard

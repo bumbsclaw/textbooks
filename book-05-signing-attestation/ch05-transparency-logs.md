@@ -745,25 +745,25 @@ particularly elegant one, which is why it rewards a backend engineer's attention
 
 - **RFC 6962 — Certificate Transparency.** The normative Merkle Tree Hash, inclusion (audit) and
   consistency proof algorithms, SCTs, and STH. The single most important source for this chapter.
-  <https://www.rfc-editor.org/rfc/rfc6962>.
+  https://www.rfc-editor.org/rfc/rfc6962.
 - **Certificate Transparency project** — the ecosystem, log list, monitors, and the
-  `certificate-transparency` tooling. <https://certificate.transparency.dev/> and the CT
+  `certificate-transparency` tooling. https://certificate.transparency.dev/ and the CT
   policy in the Chrome/Apple root programs.
 - **`crt.sh`** — a public CT log search interface; the fastest way to see monitoring in practice
-  for your own domains. <https://crt.sh/>.
+  for your own domains. https://crt.sh/.
 - **Sigstore Rekor** — entry types, inclusion proofs, the Signed Entry Timestamp, the REST API,
-  and `rekor-cli`. <https://docs.sigstore.dev/logging/overview/> and
-  <https://github.com/sigstore/rekor>. See also **`rekor-monitor`** for the monitoring pattern.
+  and `rekor-cli`. https://docs.sigstore.dev/logging/overview/ and
+  https://github.com/sigstore/rekor. See also **`rekor-monitor`** for the monitoring pattern.
 - **Sigstore verify-after-expiry** — "How Sigstore works" / the internals docs on short-lived
-  certs plus the log timestamp. <https://docs.sigstore.dev/>.
+  certs plus the log timestamp. https://docs.sigstore.dev/.
 - **Go Module Mirror, Index, and Checksum Database** — the design of `sum.golang.org`, the tlog/
-  tile format, and how the `go` command audits it. <https://go.dev/ref/mod#checksum-database> and
+  tile format, and how the `go` command audits it. https://go.dev/ref/mod#checksum-database and
   Russ Cox's *"Transparent Logs for Skeptical Clients"* — the clearest exposition of tiled
-  transparency logs anywhere. <https://research.swtch.com/tlog>.
+  transparency logs anywhere. https://research.swtch.com/tlog.
 - **`transparency-dev`** — the witness network, tessera (tile-based log), and gossip/consistency
-  tooling that Sigstore and Go share. <https://github.com/transparency-dev>.
+  tooling that Sigstore and Go share. https://github.com/transparency-dev.
 - **Google Key Transparency** and **Apple iMessage Contact Key Verification** — the KT variant
-  (log + verifiable map). <https://github.com/google/keytransparency> and Apple's security docs.
+  (log + verifiable map). https://github.com/google/keytransparency and Apple's security docs.
 - **CONIKS** (Melara et al., USENIX Security 2015) — the academic foundation for key transparency
   and the split-view/gossip reasoning. Worth reading for the fork-detection argument.
 - Cross-references: Book 5, Chapter 1 (Merkle trees, inclusion/consistency proofs, hashing),

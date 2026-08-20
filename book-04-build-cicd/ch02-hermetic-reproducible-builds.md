@@ -696,25 +696,25 @@ laptop build was not.
 
 ## Further reading
 
-- **Reproducible Builds project** — <https://reproducible-builds.org/> — the definitions, the
+- **Reproducible Builds project** — https://reproducible-builds.org/ — the definitions, the
   documented sources of non-determinism, and the tooling (`diffoscope`, `strip-nondeterminism`,
   `reprotest`). Start with the "Documentation" and "Tools" sections.
 - **`SOURCE_DATE_EPOCH` specification** —
-  <https://reproducible-builds.org/specs/source-date-epoch/> — the definitive semantics of the
+  https://reproducible-builds.org/specs/source-date-epoch/ — the definitive semantics of the
   timestamp-clamping environment variable.
-- **Debian Reproducible Builds** — <https://tests.reproducible-builds.org/debian/> — the live
+- **Debian Reproducible Builds** — https://tests.reproducible-builds.org/debian/ — the live
   per-package rebuilder dashboards and current reproducibility statistics.
 - **Bazel documentation** — *Hermeticity* and *Remote caching/execution* —
-  <https://bazel.build/> — the action-graph, sandboxing, and content-addressed cache model.
+  https://bazel.build/ — the action-graph, sandboxing, and content-addressed cache model.
 - **Nix / NixOS** — Eelco Dolstra, *The Purely Functional Software Deployment Model* (PhD
-  thesis, 2006) for the derivation model, and <https://nixos.org/> for current practice.
-- **Chainguard** — `apko` and `melange` documentation, and *ko* (<https://ko.build/>) — for
+  thesis, 2006) for the derivation model, and https://nixos.org/ for current practice.
+- **Chainguard** — `apko` and `melange` documentation, and *ko* (https://ko.build/) — for
   reproducible, declarative container images without Dockerfiles.
 - **David A. Wheeler**, *Fully Countering Trusting Trust through Diverse Double-Compilation*
   (PhD dissertation, 2009) — the reproducibility-based defence against the Thompson attack.
 - **Go** — the *Go Modules Reference* (`go.sum`, content addressing) and the `-trimpath` flag
   documentation — for the strongest mainstream reproducibility story.
-- **SLSA v1.0** — <https://slsa.dev/spec/v1.0/> — for how isolation/hermeticity feed the build
+- **SLSA v1.0** — https://slsa.dev/spec/v1.0/ — for how isolation/hermeticity feed the build
   levels (developed in Chapter 3).
 - Book 1, Chapter 3 (SolarWinds) and Chapter 5 (xz-utils); Book 2, Chapters 2 and 8 (dependency
   pinning and vendoring); Book 4, Chapter 7 (cache poisoning), Chapter 8 (ephemeral build

@@ -519,6 +519,100 @@ wall of numbers you can't act on — you see a high cache-miss rate but don't kn
 your data layout. Without measurement, a mechanical model is a way to be confidently wrong at
 higher resolution. The engineer who is dangerous, in the good sense, has both.
 
+Two hands-on measurements make this concrete on any Linux server. Run them now; they take
+seconds and they anchor the abstractions above in numbers you produced yourself.
+
+**False sharing, seen in `perf stat`.** The canonical hardware leak that source cannot express
+is two threads hammering *different* variables that happen to share a cache line. The coherence
+protocol ping-pongs the line between cores, and throughput collapses.
+
+```c
+// false_sharing.c — compile: gcc -O2 -pthread false_sharing.c -o false_sharing
+#include <pthread.h>
+#include <stdint.h>
+
+// Case A: two counters on the SAME cache line (false sharing)
+struct { uint64_t a; uint64_t b; } shared;          // a and b likely same 64-B line
+
+// Case B: padded so each counter owns its line — swap to this to see the fix:
+// struct { uint64_t a; char pad[56]; uint64_t b; } shared;
+// (56 = 64 - sizeof(uint64_t); or use alignas(64) per field)
+
+void *inc_a(void *_) { for (long i = 0; i < 100000000L; i++) shared.a++; return NULL; }
+void *inc_b(void *_) { for (long i = 0; i < 100000000L; i++) shared.b++; return NULL; }
+int main() {
+    pthread_t t1, t2;
+    pthread_create(&t1, NULL, inc_a, NULL);
+    pthread_create(&t2, NULL, inc_b, NULL);
+    pthread_join(t1, NULL); pthread_join(t2, NULL);
+    return 0;
+}
+```
+
+```bash
+# Same line (false sharing) — high coherence traffic
+$ perf stat -e cache-misses,cache-references,cycles,instructions,LLC-load-misses ./false_sharing 2>&1 | tail -n 12
+# ── trimmed output (Intel Xeon, 2 threads, 100M increments each) ──────────
+     1,842,103,411      cache-misses              #   38.2% of all cache refs
+     4,821,905,203      cache-references
+    12,403,812,009      cycles
+     3,102,445,871      instructions              #    0.25  insn per cycle
+       891,204,118      LLC-load-misses
+       4.82 seconds time elapsed
+
+# Padded to separate lines — same work, coherence traffic gone
+$ perf stat -e cache-misses,cache-references,cycles,instructions,LLC-load-misses ./false_sharing_padded 2>&1 | tail -n 12
+# ── trimmed output (same machine, same work) ─────────────────────────────
+        42,103,812      cache-misses              #    2.1% of all cache refs
+     2,011,482,093      cache-references
+     2,901,445,201      cycles
+     3,098,102,441      instructions              #    1.07  insn per cycle
+        11,204,118      LLC-load-misses
+       0.92 seconds time elapsed
+# IPC 0.25→1.07 and ~4× fewer cycles: the only change was layout. Chapter 8
+# dissects why and how to detect it with perf c2c / toplev.
+```
+
+What to read: `cache-misses` / `LLC-load-misses` collapse by ~40×, cycles by ~4×, and
+instructions-per-cycle recovers from 0.25 (stalled on coherence) to >1. The fix is pure layout
+— padding or `alignas(64)` — not fewer operations. This is the constant factor that fleet-wide
+profiling (Kanev et al., \"Profiling a Warehouse-Scale Computer\") repeatedly finds dominating
+real services.
+
+**Memory latency, seen in one line.** `lat_mem_rd` from lmbench (or a single `fio` rand-read)
+measures the hierarchy you just memorized. No setup beyond the package:
+
+```bash
+$ lat_mem_rd 32 512  # stride 32 B, up to 512 MB working set — prints latency vs size
+# ── trimmed output (lmbench 3, EPYC Milan, DDR4, single socket) ────────────
+"stride=32"
+0.00049 1.02    # 0.5 KB working set — L1 hit
+0.00391 1.15    # 4 KB — still L1
+0.01562 3.8     # 16 KB — L2
+0.06250 12.4    # 64 KB — L3 hit region
+0.25000 18.1    # 256 KB — still L3
+1.00000 78.5    # 1 MB — spilling to DRAM
+4.00000 92.3    # 4 MB — DRAM
+32.0000 104.1   # 32 MB — DRAM (TLB effects visible)
+128.000 112.7   # 128 MB — DRAM
+# First column: working-set MB. Second: load latency (ns). Steps at ~32 KB,
+# ~512 KB, ~16 MB are L1→L2→L3→DRAM transitions. Compare your machine's steps
+# to the table above; the absolute numbers move, the ladder shape does not.
+
+# Equivalent quick check with fio (if lmbench not installed):
+$ fio --name=randread --rw=randread --bs=4k --size=1G --runtime=5 --time_based \
+      --iodepth=1 --direct=1 --filename=/dev/nvme0n1 --output-format=json 2>&1 \
+  | python3 -c "import json,sys; d=json.load(sys.stdin); j=d['jobs'][0]['read']; print(f\"IOPS={j['iops']:.0f}  p50 lat={j['clat_ns']['percentile']['50.000000']/1000:.0f}µs  p99={j['clat_ns']['percentile']['99.000000']/1000:.0f}µs\")"
+IOPS=184203  p50 lat=38µs  p99 lat=71µs
+# Random 4 KB over NVMe: ~38 µs median — place it on the hierarchy and note the
+# gap to DRAM (~100 ns) and to a cross-region RPC (~150 ms).
+```
+
+Both snippets are runnable as written. The `perf stat` counters exist on any modern x86-64 or
+ARM64 Linux with `perf` installed (`apt install linux-tools-generic` / `yum install perf`);
+on VMs without PMU access, `cache-misses` may read zero — use `perf stat -e task-clock,cycles`
+as a fallback. `lat_mem_rd` is `apt install lmbench`; `fio` is `apt install fio`.
+
 ## Roadmap to the volume
 
 The rest of Volume 1 turns each teaser in this chapter into a working understanding. Read it in

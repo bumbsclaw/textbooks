@@ -570,11 +570,11 @@ attack on that one coefficient.
 ## Further reading
 
 - Pike, R., *Concurrency Is Not Parallelism* (Heroku Waza, 2012) — the talk that fixed the
-  distinction in the profession's vocabulary. <https://go.dev/blog/waza-talk>
+  distinction in the profession's vocabulary. https://go.dev/blog/waza-talk
 - Amdahl, G., "Validity of the Single Processor Approach to Achieving Large Scale Computing
   Capabilities," *AFIPS Conference Proceedings*, 1967 — the original statement of the ceiling.
 - Gustafson, J., "Reevaluating Amdahl's Law," *Communications of the ACM* 31(5), 1988 — the
-  scaled-speedup counterpoint. <https://dl.acm.org/doi/10.1145/42411.42415>
+  scaled-speedup counterpoint. https://dl.acm.org/doi/10.1145/42411.42415
 - Gunther, N., *Guerrilla Capacity Planning* (Springer, 2007) — the Universal Scalability Law, its
   derivation, and how to fit α and β to measured data.
 - Little, J. D. C., "A Proof for the Queuing Formula L = λW," *Operations Research* 9(3), 1961.
@@ -583,7 +583,7 @@ attack on that one coefficient.
 - Goetz, B. et al., *Java Concurrency in Practice* (Addison-Wesley, 2006) — still the best
   practical treatment of the shared-memory model and its hazards.
 - Hoare, C. A. R., "Communicating Sequential Processes," *Communications of the ACM* 21(8), 1978 —
-  the foundation of the CSP model. <https://dl.acm.org/doi/10.1145/359576.359585>
+  the foundation of the CSP model. https://dl.acm.org/doi/10.1145/359576.359585
 - Armstrong, J., *Making Reliable Distributed Systems in the Presence of Software Errors* (PhD
   thesis, KTH, 2003) — the actor model and "let it crash" as realized in Erlang/OTP.
 - Lamport, L., "Time, Clocks, and the Ordering of Events in a Distributed System," *CACM* 21(7),

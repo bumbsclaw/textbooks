@@ -669,16 +669,16 @@ them, you will be reading this chapter's diagrams with a network drawn through t
   read/update/memory trade-off framework used in this chapter.
 - Crotty, A., Leis, V., and Pavlo, A., "Are You Sure You Want to Use MMAP in Your DBMS?,"
   *CIDR* 2022 — the mmap argument, with microbenchmarks.
-  <https://db.cs.cmu.edu/mmap-cidr2022/>
+  https://db.cs.cmu.edu/mmap-cidr2022/
 - Chang, F. et al., "Bigtable: A Distributed Storage System for Structured Data," *OSDI* 2006 —
   the paper that gave us memtables and SSTables by name.
 - The RocksDB Wiki — compaction styles, write stalls, tuning; the most detailed public
-  documentation of a production LSM. <https://github.com/facebook/rocksdb/wiki>
+  documentation of a production LSM. https://github.com/facebook/rocksdb/wiki
 - Dong, S. et al., "RocksDB: Evolution of Development Priorities in a Key-Value Store Serving
   Large-Scale Applications," *ACM TOS* 2021 — write amplification vs space amplification
   priorities, from the engine's authors.
 - PostgreSQL documentation, "Database Physical Storage" — page layout, TOAST, fillfactor.
-  <https://www.postgresql.org/docs/current/storage.html>
+  https://www.postgresql.org/docs/current/storage.html
 - MySQL 8.4 Reference Manual, "InnoDB On-Disk Structures" — clustered indexes, doublewrite
   buffer, change buffering.
 - Kleppmann, M., *Designing Data-Intensive Applications* (O'Reilly, 2017), Chapter 3 — a

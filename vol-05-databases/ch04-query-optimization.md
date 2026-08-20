@@ -702,7 +702,7 @@ adaptivity (stop trusting estimates once real numbers exist).
 - Selinger, P. G., Astrahan, M. M., Chamberlin, D. D., Lorie, R. A., and Price, T. G., "Access
   Path Selection in a Relational Database Management System," *SIGMOD*, 1979 — the System R
   paper: statistics, cost estimation, and dynamic-programming join enumeration; the ancestor of
-  every optimizer discussed here. <https://dl.acm.org/doi/10.1145/582095.582099>
+  every optimizer discussed here. https://dl.acm.org/doi/10.1145/582095.582099
 - Graefe, G., "Volcano — An Extensible and Parallel Query Evaluation System," *IEEE Transactions
   on Knowledge and Data Engineering* 6(1), 1994 — the iterator model canonized. His survey "Query
   Evaluation Techniques for Large Databases," *ACM Computing Surveys* 25(2), 1993, remains the
@@ -710,7 +710,7 @@ adaptivity (stop trusting estimates once real numbers exist).
 - Leis, V., Gubichev, A., Mirchev, A., Boncz, P., Kemper, A., and Neumann, T., "How Good Are
   Query Optimizers, Really?", *PVLDB* 9(3), 2015 — the empirical demonstration that cardinality
   estimation, not cost modeling or search, is where plans go wrong.
-  <https://www.vldb.org/pvldb/vol9/p204-leis.pdf>
+  https://www.vldb.org/pvldb/vol9/p204-leis.pdf
 - Neumann, T., "Efficiently Compiling Efficient Query Plans for Modern Hardware," *PVLDB* 4(9),
   2011 — the HyPer JIT-compilation paper. Boncz, P., Zukowski, M., and Nes, N., "MonetDB/X100:
   Hyper-Pipelining Query Execution," *CIDR*, 2005 — the vectorized-execution counterpart.
@@ -718,7 +718,7 @@ adaptivity (stop trusting estimates once real numbers exist).
   Its Architecture," *New Generation Computing* 1(1), 1983 — Grace hash join.
 - PostgreSQL documentation: "Using EXPLAIN," "Planner Statistics" (including extended statistics
   via `CREATE STATISTICS`), "Genetic Query Optimizer," and the `runtime-config-query` planner
-  cost constants. <https://www.postgresql.org/docs/current/using-explain.html>
+  cost constants. https://www.postgresql.org/docs/current/using-explain.html
 - Lahdenmäki, T. and Leach, M., *Relational Database Index Design and the Optimizers* (Wiley,
   2005) — the practitioner's treatment of access-path economics, complementing Chapter 3.
 - Volume 5, Chapter 2 — Storage Engines — the random-versus-sequential I/O economics beneath the

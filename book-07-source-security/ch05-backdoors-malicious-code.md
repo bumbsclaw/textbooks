@@ -695,26 +695,26 @@ minimized base, and provenance reach it.
 
 - **Ken Thompson, "Reflections on Trusting Trust."** Turing Award lecture, *Communications of the
   ACM* 27(8), August 1984. The original; short, and worth reading in full.
-  <https://dl.acm.org/doi/10.1145/358198.358210>
+  https://dl.acm.org/doi/10.1145/358198.358210
 - **David A. Wheeler, "Fully Countering Trusting Trust through Diverse Double-Compiling."** PhD
   dissertation, George Mason University, 2009, and the companion paper. The complete DDC method,
-  proof, and a worked application to GCC/tcc. <https://dwheeler.com/trusting-trust/>
+  proof, and a worked application to GCC/tcc. https://dwheeler.com/trusting-trust/
 - **Nicholas Boucher and Ross Anderson, "Trojan Source: Invisible Vulnerabilities."** 2021;
   USENIX Security 2023. CVE-2021-42574 (bidi) and CVE-2021-42694 (homoglyph). Mechanism, affected
-  languages, and mitigations. <https://trojansource.codes/>
+  languages, and mitigations. https://trojansource.codes/
 - **The Underhanded C Contest.** Archives of winning entries and their explanations — the best
   single corpus of "code that survives a primed reviewer." <http://www.underhanded-c.org/>
 - **The 2003 Linux kernel backdoor attempt.** Ed Felten's contemporaneous analysis, "The Linux
   Backdoor Attempt of 2003," and the LWN/oss archives of the `wait4` `uid = 0` change.
-  <https://freedom-to-tinker.com/2013/10/09/the-linux-backdoor-attempt-of-2003/>
+  https://freedom-to-tinker.com/2013/10/09/the-linux-backdoor-attempt-of-2003/
 - **The xz-utils backdoor (CVE-2024-3094).** Andres Freund's original oss-security disclosure and
   subsequent analyses of the test-fixture payload and `build-to-host.m4` injection. Full treatment
-  in Book 1, Chapter 5. <https://www.openwall.com/lists/oss-security/2024/03/29/4>
+  in Book 1, Chapter 5. https://www.openwall.com/lists/oss-security/2024/03/29/4
 - **Bootstrappable Builds, GNU Mes, and stage0.** The project sites and the Guix full-source
-  bootstrap write-ups. <https://bootstrappable.org/>, <https://www.gnu.org/software/mes/>, and
-  <https://github.com/oriansj/stage0>
+  bootstrap write-ups. https://bootstrappable.org/, https://www.gnu.org/software/mes/, and
+  https://github.com/oriansj/stage0
 - **Reproducible Builds.** The project behind bit-for-bit reproducibility, the foundation both DDC
-  and xz-detection rest on. Full treatment in Book 4, Chapter 2. <https://reproducible-builds.org/>
+  and xz-detection rest on. Full treatment in Book 4, Chapter 2. https://reproducible-builds.org/
 - **Book cross-references:** Book 7, Chapter 1 — SCM Threat Model (git integrity caught the 2003
   attempt); Chapter 3 — Branch Protection, Review, and Two-Person Rules (the review floor and the
   xz trusted-contributor problem); Chapter 6 — Insider Threats and Account Takeover; Chapter 8 —

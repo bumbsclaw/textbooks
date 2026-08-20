@@ -625,28 +625,28 @@ necessary. It has never once been sufficient.
 
 - Ongaro, D. and Ousterhout, J., "In Search of an Understandable Consensus Algorithm," *USENIX ATC*,
   2014 — the Raft paper; the extended version contains the full Figure 8 discussion and the user
-  study. <https://raft.github.io/raft.pdf>
+  study. https://raft.github.io/raft.pdf
 - Ongaro, D., *Consensus: Bridging Theory and Practice*, PhD thesis, Stanford, 2014 — membership
   changes, log compaction, client sessions, ReadIndex/leases, PreVote, and the safety proof; the
   companion TLA+ specification is on the Raft site.
 - Ongaro, D., "bug in single-server membership changes," raft-dev mailing list, July 2015 — the
   honest footnote to the thesis's simpler membership algorithm, with the fix.
 - The Raft site — interactive visualization, the TLA+ spec, and the long list of implementations.
-  <https://raft.github.io/>
+  https://raft.github.io/
 - etcd documentation and the `etcd-io/raft` library — the reference implementation lineage,
-  including ReadIndex, learners, and joint-consensus support. <https://etcd.io/docs/> and
-  <https://github.com/etcd-io/raft>
+  including ReadIndex, learners, and joint-consensus support. https://etcd.io/docs/ and
+  https://github.com/etcd-io/raft
 - TiKV blog, "The Design and Implementation of Multi-raft" and the `raft-rs` introduction — heartbeat
-  coalescing, hibernating regions, and Raft-per-region at scale. <https://tikv.org/blog/>
+  coalescing, hibernating regions, and Raft-per-region at scale. https://tikv.org/blog/
 - Cockroach Labs blog, "Scaling Raft" and the CockroachDB architecture docs on Raft, leases, and
   follower reads — quiescing ranges, leaseholders, closed timestamps.
-  <https://www.cockroachlabs.com/blog/>
+  https://www.cockroachlabs.com/blog/
 - Jepsen analyses — etcd (2014 and the 3.4.3 analysis, 2020), Consul (2015), RethinkDB (2016,
   a Raft membership-change bug in the wild), and others: implementation and integration failures
-  around correct cores. <https://jepsen.io/analyses>
+  around correct cores. https://jepsen.io/analyses
 - KIP-500, "Replace ZooKeeper with a Self-Managed Metadata Quorum," and KIP-595, "A Raft Protocol
   for the Metadata Quorum" — KRaft's pull-based Raft variant.
-  <https://cwiki.apache.org/confluence/display/KAFKA/KIP-500>
+  https://cwiki.apache.org/confluence/display/KAFKA/KIP-500
 - Howard, H. and Mortier, R., "Paxos vs Raft: Have we reached consensus on distributed consensus?,"
   *PaPoC*, 2020 — a careful side-by-side that formalizes how close the two algorithms really are.
 - Volume 5, Chapter 7 — Write-Ahead Logging — the single-node ancestor of the Raft log.

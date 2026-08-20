@@ -721,27 +721,27 @@ as a series of surprises.
 ## Further reading
 
 - **TruffleHog** — Truffle Security's scanner and detector engine, with live credential verification
-  across hundreds of providers. <https://github.com/trufflesecurity/trufflehog>
+  across hundreds of providers. https://github.com/trufflesecurity/trufflehog
 - **Gitleaks** — fast, config-driven secret scanner; the de-facto CI and pre-commit default, and the
-  engine behind GitLab Secret Detection. <https://github.com/gitleaks/gitleaks>
+  engine behind GitLab Secret Detection. https://github.com/gitleaks/gitleaks
 - **detect-secrets** (Yelp) — the baseline-model scanner; see the project README and audit workflow.
-  <https://github.com/Yelp/detect-secrets>
+  https://github.com/Yelp/detect-secrets
 - **git-secrets** (AWS Labs) — hook-based AWS-credential prevention.
-  <https://github.com/awslabs/git-secrets>
+  https://github.com/awslabs/git-secrets
 - **GitHub secret scanning and push protection** — native detection, push-time blocking, and the
   partner program that auto-notifies credential issuers for revocation.
-  <https://docs.github.com/en/code-security/secret-scanning>
+  https://docs.github.com/en/code-security/secret-scanning
 - **GitLab Secret Detection** — pipeline-native detection documentation.
-  <https://docs.gitlab.com/ee/user/application_security/secret_detection/>
+  https://docs.gitlab.com/ee/user/application_security/secret_detection/
 - **git-filter-repo** — the recommended modern history-rewriting tool (and why `filter-branch` is
-  discouraged). <https://github.com/newren/git-filter-repo> and `git help filter-branch`.
+  discouraged). https://github.com/newren/git-filter-repo and `git help filter-branch`.
 - **BFG Repo-Cleaner** — fast history cleaner for large repos.
-  <https://rtyley.github.io/bfg-repo-cleaner/>
+  https://rtyley.github.io/bfg-repo-cleaner/
 - **GitHub — "Removing sensitive data from a repository"** — the official runbook, including the
   critical note that you must contact Support to purge cached views and that forks persist.
-  <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository>
+  https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository
 - **OWASP — Secrets Management Cheat Sheet.**
-  <https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html>
+  https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html
 - **Book 4, Chapter 6 — Secrets in CI** and **Book 5, Chapter 9 — Secrets Management** (runtime and
   platform secret handling); **Book 5, Chapter 4 — Keyless Signing and OIDC** (short-lived,
   identity-derived credentials); **Book 7, Chapter 1 — SCM Threat Model** (git internals, insider/ATO

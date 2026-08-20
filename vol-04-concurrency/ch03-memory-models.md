@@ -647,13 +647,13 @@ Volume 6 is considerably longer than this chapter.
 ## Further reading
 
 - Lamport, L., "Time, Clocks, and the Ordering of Events in a Distributed System," *CACM* 21(7),
-  1978 — the origin of happens-before. <https://dl.acm.org/doi/10.1145/359545.359563>
+  1978 — the origin of happens-before. https://dl.acm.org/doi/10.1145/359545.359563
 - Lamport, L., "How to Make a Multiprocessor Computer That Correctly Executes Multiprocess
   Programs," *IEEE Trans. Computers* C-28(9), 1979 — the definition of sequential consistency.
 - Manson, J., Pugh, W., and Adve, S., "The Java Memory Model," *POPL*, 2005 — the JSR-133 model.
-  <https://dl.acm.org/doi/10.1145/1040305.1040336>
+  https://dl.acm.org/doi/10.1145/1040305.1040336
 - *JSR-133: Java Memory Model and Thread Specification Revision*, and Pugh's FAQ —
-  <https://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html>, still the clearest informal
+  https://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html, still the clearest informal
   explanation of the Java model, including double-checked locking and final-field semantics.
 - Adve, S. and Boehm, H.-J., "Memory Models: A Case for Rethinking Parallel Languages and
   Hardware," *CACM* 53(8), 2010 — why DRF-SC became the industry consensus.
@@ -661,11 +661,11 @@ Volume 6 is considerably longer than this chapter.
   basis of the C++11 model.
 - Sewell, P. et al., "x86-TSO: A Rigorous and Usable Programmer's Model for x86 Multiprocessors,"
   *CACM* 53(7), 2010 — the formalization of x86's actual guarantees.
-- *The Go Memory Model* — <https://go.dev/ref/mem> — including the 2022 revision specifying
+- *The Go Memory Model* — https://go.dev/ref/mem — including the 2022 revision specifying
   `sync/atomic` as sequentially consistent.
-- cppreference, *std::memory_order* — <https://en.cppreference.com/w/cpp/atomic/memory_order> —
+- cppreference, *std::memory_order* — https://en.cppreference.com/w/cpp/atomic/memory_order —
   the practical reference, with the litmus examples.
-- Preshing, J., *Preshing on Programming* — <https://preshing.com/> — the best informal writing on
+- Preshing, J., *Preshing on Programming* — https://preshing.com/ — the best informal writing on
   memory ordering, acquire/release, and lock-free correctness.
 - Volume 1, Chapters 2 and 4 — Out-of-Order Execution, and Caches and Cache Coherence — the hardware
   underneath this chapter.

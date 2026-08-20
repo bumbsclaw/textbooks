@@ -676,7 +676,7 @@ to be wrong sometimes. The ones that survive production budgeted for it.
 
 - Das, A., Gupta, I., and Motivala, A., "SWIM: Scalable Weakly-consistent Infection-style Process
   Group Membership Protocol," *DSN 2002* — the protocol itself, with the load and
-  detection-latency analysis. <https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf>
+  detection-latency analysis. https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf
 - Hayashibara, N., Défago, X., Yared, R., and Katayama, T., "The φ Accrual Failure Detector,"
   *SRDS 2004* — suspicion as a continuous, adaptively-estimated quantity.
 - Chandra, T. D. and Toueg, S., "Unreliable Failure Detectors for Reliable Distributed Systems,"
@@ -685,17 +685,17 @@ to be wrong sometimes. The ones that survive production budgeted for it.
   43(4), 1996.
 - Dadgar, A., Phillips, J., and Currey, J., "Lifeguard: Local Health Awareness for More Accurate
   Failure Detection," *DSN 2018 industry track* — the local-health refinements to SWIM, with
-  measured false-positive reductions. <https://arxiv.org/abs/1707.00788>
+  measured false-positive reductions. https://arxiv.org/abs/1707.00788
 - Huang, P. et al., "Gray Failure: The Achilles' Heel of Cloud-Scale Systems," *HotOS 2017* —
   differential observability and why liveness detection misses what clients see.
-  <https://www.microsoft.com/en-us/research/publication/gray-failure-achilles-heel-cloud-scale-systems/>
+  https://www.microsoft.com/en-us/research/publication/gray-failure-achilles-heel-cloud-scale-systems/
 - Demers, A. et al., "Epidemic Algorithms for Replicated Database Maintenance," *PODC 1987* —
   anti-entropy and rumor-mongering, and the analysis behind O(log N) spread.
 - Fischer, M., Lynch, N., and Paterson, M., "Impossibility of Distributed Consensus with One
   Faulty Process," *JACM* 32(2), 1985 — the impossibility this chapter's machinery works around.
 - HashiCorp `memberlist` — the production SWIM + Lifeguard implementation and its configuration
-  surface. <https://github.com/hashicorp/memberlist> — and the Serf gossip documentation, which
-  walks the protocol's convergence behavior. <https://developer.hashicorp.com/serf/docs/internals/gossip>
+  surface. https://github.com/hashicorp/memberlist — and the Serf gossip documentation, which
+  walks the protocol's convergence behavior. https://developer.hashicorp.com/serf/docs/internals/gossip
 - DeCandia, G. et al., "Dynamo: Amazon's Highly Available Key-value Store," *SOSP 2007* —
   gossiped, eventually-consistent membership consumed by a quorum data path (Chapter 7's subject).
 - Chapter 1 — Foundations — the system models and the crashed-versus-slow ambiguity; Chapter 2 —

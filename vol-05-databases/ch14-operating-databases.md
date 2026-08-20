@@ -775,27 +775,27 @@ individual heroics or paved road.
 
 - Wooldridge, B., "About Pool Sizing," HikariCP wiki — the pool-sizing argument, the
   benchmark, and the `cores × 2 + spindles` heuristic.
-  <https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing>
+  https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
 - PgBouncer documentation — pooling modes and the features-per-mode compatibility
-  table; read it before enabling transaction mode. <https://www.pgbouncer.org/features.html>
+  table; read it before enabling transaction mode. https://www.pgbouncer.org/features.html
 - PostgreSQL documentation, "Explicit Locking" — the lock-mode conflict matrix that
   underlies every DDL hazard in this chapter.
-  <https://www.postgresql.org/docs/current/explicit-locking.html>
+  https://www.postgresql.org/docs/current/explicit-locking.html
 - PostgreSQL documentation, `ALTER TABLE` — notes on which forms rewrite the table and
-  which are metadata-only. <https://www.postgresql.org/docs/current/sql-altertable.html>
+  which are metadata-only. https://www.postgresql.org/docs/current/sql-altertable.html
 - PostgreSQL documentation, "Routine Vacuuming" — autovacuum tuning, freeze ages, and
   the authoritative description of transaction-ID wraparound.
-  <https://www.postgresql.org/docs/current/routine-vacuuming.html>
+  https://www.postgresql.org/docs/current/routine-vacuuming.html
 - PostgreSQL documentation, "Continuous Archiving and Point-in-Time Recovery" — the
-  base-backup-plus-WAL model in full. <https://www.postgresql.org/docs/current/continuous-archiving.html>
+  base-backup-plus-WAL model in full. https://www.postgresql.org/docs/current/continuous-archiving.html
 - gh-ost documentation — the binlog-based shadow-table design and its cut-over
   algorithm; the clearest description of online schema change as a system.
-  <https://github.com/github/gh-ost/blob/master/doc/cheatsheet.md>
+  https://github.com/github/gh-ost/blob/master/doc/cheatsheet.md
 - MySQL 8.0 Reference Manual, "Online DDL Operations" — the INSTANT/INPLACE/COPY
-  algorithm tables. <https://dev.mysql.com/doc/refman/8.0/en/innodb-online-ddl-operations.html>
+  algorithm tables. https://dev.mysql.com/doc/refman/8.0/en/innodb-online-ddl-operations.html
 - Kreps, J., "The Log: What every software engineer should know about real-time data's
   unifying abstraction" (2013) — the conceptual frame behind WAL shipping, replication,
-  and PITR alike. <https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying>
+  and PITR alike. https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 - Beyer, B. et al., *Site Reliability Engineering* (O'Reilly, 2016), Chapter 6 — the
   golden signals this chapter translated into database terms.
 - Volume 4, Chapter 1 — the USL and Little's law that pool sizing instantiates;

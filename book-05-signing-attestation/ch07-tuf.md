@@ -603,25 +603,25 @@ infrastructure a senior backend engineer owns.
 ## Further reading
 
 - **The Update Framework specification** — the authoritative definition of the four roles, metadata
-  formats, delegation, consistent snapshots, and the detailed client workflow. <https://theupdateframework.github.io/specification/latest/>
-  and the project site <https://theupdateframework.io/>. Do not guess metadata field names; the spec is the authority.
+  formats, delegation, consistent snapshots, and the detailed client workflow. https://theupdateframework.github.io/specification/latest/
+  and the project site https://theupdateframework.io/. Do not guess metadata field names; the spec is the authority.
 - **"Survivable Key Compromise in Software Update Systems"** — Samuel, Mathewson, Cappos, Dingledine
   (ACM CCS 2010) — the foundational paper establishing role separation, thresholds, and the
   online/offline split. The threat enumeration in this chapter derives from it.
 - **"A Look in the Mirror: Attacks on Package Managers"** — Cappos et al. (ACM CCS 2008) — the study
   of how real package managers mishandled repository compromise, which motivated TUF.
 - **PEP 458** ("Secure PyPI downloads with signed repository metadata") and **PEP 480**
-  ("Surviving a compromise of PyPI: maximum security model") — <https://peps.python.org/pep-0458/>
-  and <https://peps.python.org/pep-0480/>. The target-hash model and the maintainer-key delegation
+  ("Surviving a compromise of PyPI: maximum security model") — https://peps.python.org/pep-0458/
+  and https://peps.python.org/pep-0480/. The target-hash model and the maintainer-key delegation
   model, respectively; read alongside the deployment-status caveat above.
-- **Uptane standard** — <https://uptane.org/> — the automotive adaptation, with the Director/Image
+- **Uptane standard** — https://uptane.org/ — the automotive adaptation, with the Director/Image
   two-repository split and partial verification for constrained ECUs.
-- **Sigstore root-signing** — `sigstore/root-signing` and **go-tuf** (<https://github.com/theupdateframework/go-tuf>);
+- **Sigstore root-signing** — `sigstore/root-signing` and **go-tuf** (https://github.com/theupdateframework/go-tuf);
   the public TUF root that distributes Fulcio/Rekor/CT/TSA keys (Book 5, Chapter 3). See how cosign
   consumes it via `cosign initialize`.
-- **python-tuf** — the reference implementation and `ngclient` update API. <https://github.com/theupdateframework/python-tuf>.
+- **python-tuf** — the reference implementation and `ngclient` update API. https://github.com/theupdateframework/python-tuf.
   The place to read a correct implementation of the ordered update algorithm.
-- **Notary v1 / Docker Content Trust** — <https://github.com/notaryproject/notary> (v1, TUF-based) —
+- **Notary v1 / Docker Content Trust** — https://github.com/notaryproject/notary (v1, TUF-based) —
   and note the contrast with **Notary v2 / notation**, which is *not* TUF-based.
 - Cross-references: Book 5, Chapter 2 (single-key failure modes TUF avoids), Chapter 3 (Sigstore
   architecture and its TUF root), Chapter 5 (the Rekor key TUF distributes), Chapter 9 (key

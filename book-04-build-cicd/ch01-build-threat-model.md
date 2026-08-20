@@ -629,7 +629,7 @@ transform the source?" becomes a question you can actually answer.
 ## Further reading
 
 - **SLSA v1.0**, *Supply-chain Levels for Software Artifacts* — the specification, the
-  "Threats & mitigations" page, and the build-track levels. <https://slsa.dev/spec/v1.0/>
+  "Threats & mitigations" page, and the build-track levels. https://slsa.dev/spec/v1.0/
 - **CrowdStrike**, *SUNSPOT: An Implant in the Build Process* (January 2021) — the technical
   analysis of the SolarWinds build-server implant and its source-swap mechanism.
 - **Ken Thompson**, *Reflections on Trusting Trust*, Communications of the ACM, 1984 — the
@@ -638,7 +638,7 @@ transform the source?" becomes a question you can actually answer.
   Well-Secured Software) and PS practices covering build integrity and provenance.
 - **CNCF / OpenSSF**, *Software Supply Chain Best Practices* and the *SLSA provenance format*
   (in-toto attestations) — for how provenance is actually represented and verified.
-- **Reproducible Builds project** — <https://reproducible-builds.org/> — the definitions,
+- **Reproducible Builds project** — https://reproducible-builds.org/ — the definitions,
   tooling, and rationale behind bit-for-bit reproducibility (developed in Chapter 2).
 - Book 1, Chapter 3 (SolarWinds and 3CX case studies), Chapter 6 (Trust and threat models),
   and Chapter 9 (the distributed-systems lens); Book 2, Chapters 1, 3, 4 (registry trust,

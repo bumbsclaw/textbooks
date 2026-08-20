@@ -676,7 +676,7 @@ pressure into fast failure, and load shedding to break the feedback loop (Volume
   ordered and all-at-once acquisition as OS/360 operating discipline.
 - Dijkstra, E. W., "Cooperating Sequential Processes" (EWD 123, 1965) — the Banker's algorithm and
   the "deadly embrace"; available in the E. W. Dijkstra Archive, University of Texas.
-  <https://www.cs.utexas.edu/users/EWD/>
+  https://www.cs.utexas.edu/users/EWD/
 - Chandy, K. M., Misra, J., and Haas, L. M., "Distributed Deadlock Detection," *ACM Transactions on
   Computer Systems* 1(2), 1983 — the edge-chasing probe algorithm.
 - Knapp, E., "Deadlock Detection in Distributed Databases," *ACM Computing Surveys* 19(4), 1987 —
@@ -689,16 +689,16 @@ pressure into fast failure, and load shedding to break the feedback loop (Volume
   Networks," *CACM* 19(7), 1976 — the origin of exponential backoff as a collision-resolution
   discipline.
 - Brooker, M., "Exponential Backoff and Jitter," AWS Architecture Blog, 2015 — the simulation-backed
-  case for full jitter. <https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/>
+  case for full jitter. https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
 - Bronson, N., Aghayev, A., Charapko, A., and Zhu, T., "Metastable Failures in Distributed
   Systems," *HotOS* 2021 — retry storms and sustaining feedback loops as a failure class.
 - Linux kernel documentation, "Runtime locking correctness validator" — the lockdep design.
-  <https://www.kernel.org/doc/html/latest/locking/lockdep-design.html>
+  https://www.kernel.org/doc/html/latest/locking/lockdep-design.html
 - MySQL 8.0 Reference Manual, "InnoDB Deadlock Detection" — wait-for graph, victim choice, and the
   `innodb_deadlock_detect` trade-off.
-  <https://dev.mysql.com/doc/refman/8.0/en/innodb-deadlock-detection.html>
+  https://dev.mysql.com/doc/refman/8.0/en/innodb-deadlock-detection.html
 - PostgreSQL documentation, "Deadlocks" and `deadlock_timeout` — detection policy and the ordering
-  advice for applications. <https://www.postgresql.org/docs/current/explicit-locking.html>
+  advice for applications. https://www.postgresql.org/docs/current/explicit-locking.html
 - Java Platform API, `java.util.concurrent.locks.ReentrantLock` — the fairness contract, the
   throughput caveat, and barging `tryLock()`.
 - Volume 5, Chapters 5–6 — transactions and MVCC: why databases can preempt safely, and how MVCC

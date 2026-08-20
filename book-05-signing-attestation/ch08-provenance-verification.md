@@ -625,25 +625,25 @@ The gate in this chapter is where it converts to work.
 
 - **Cosign documentation** — `cosign verify` and `cosign verify-attestation`, the certificate
   identity/issuer flags, predicate `--type` values, and CUE/Rego `--policy`.
-  <https://docs.sigstore.dev/> and <https://github.com/sigstore/cosign>. The cosign 2.0 release
+  https://docs.sigstore.dev/ and https://github.com/sigstore/cosign. The cosign 2.0 release
   notes document the shift to *mandatory* keyless identity flags — read them for the rationale.
 - **slsa-verifier** — `verify-artifact`, `verify-image`, `verify-npm-package`, and the
-  `--source-uri` / `--builder-id` / `--source-tag` semantics. <https://github.com/slsa-framework/slsa-verifier>.
+  `--source-uri` / `--builder-id` / `--source-tag` semantics. https://github.com/slsa-framework/slsa-verifier.
   The authority on what SLSA provenance verification actually checks (developed in Book 4, Chapter 3).
 - **sigstore/policy-controller** — the `ClusterImagePolicy` CRD: `authorities`, `keyless.identities`
   (issuer/subject regex), `ctlog`, and `attestations` with CUE/Rego policy blocks.
-  <https://docs.sigstore.dev/policy-controller/overview/> and
-  <https://github.com/sigstore/policy-controller>.
+  https://docs.sigstore.dev/policy-controller/overview/ and
+  https://github.com/sigstore/policy-controller.
 - **Kyverno image verification** — the `verifyImages` rule, `attestors`/`attestations`,
-  `mutateDigest`, and `verifyDigest`. <https://kyverno.io/docs/policy-types/cluster-policy/verify-images/>.
+  `mutateDigest`, and `verifyDigest`. https://kyverno.io/docs/policy-types/cluster-policy/verify-images/.
   Applied at admission in Book 6, Chapters 5–6.
 - **in-toto Attestation Framework** — the Statement/predicate model whose content these tools verify;
-  the predicate-type registry. <https://github.com/in-toto/attestation> (Chapter 6).
+  the predicate-type registry. https://github.com/in-toto/attestation (Chapter 6).
 - **SLSA v1.0 — Verifying artifacts / Verification Summary Attestation** — the provenance and VSA
-  specs, and the delegated-verification model. <https://slsa.dev/spec/v1.0/verifying-artifacts> and
-  <https://slsa.dev/verification_summary/v1>.
+  specs, and the delegated-verification model. https://slsa.dev/spec/v1.0/verifying-artifacts and
+  https://slsa.dev/verification_summary/v1.
 - **Rekor** — inclusion proofs, signed timestamps, and offline/bundle verification enabling
-  verify-after-expiry. <https://docs.sigstore.dev/logging/overview/> (mechanics in Chapter 5).
+  verify-after-expiry. https://docs.sigstore.dev/logging/overview/ (mechanics in Chapter 5).
 - Cross-references: Book 5, Chapter 1 (crypto, digests, DSSE), Chapters 3–5 (Sigstore, keyless
   identity, Rekor), Chapter 6 (in-toto attestations, VSA), Chapter 10 (attestation-based deployment
   gates); Book 4, Chapter 3 (SLSA provenance); Book 2, Chapter 8 (internal registries); Book 6,

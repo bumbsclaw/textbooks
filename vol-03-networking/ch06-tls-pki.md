@@ -680,7 +680,7 @@ not at all.
 - `draft-ietf-tls-esni`, *TLS Encrypted Client Hello* — the evolving ECH specification; pair with
   the DNS `HTTPS`/`SVCB` records (RFC 9460) that carry ECH keys.
 - The CA/Browser Forum *Baseline Requirements* and the 2025 ballot reducing maximum certificate
-  validity toward roughly 47 days by 2029 — the policy driving short-lived, automated certificates.
+  validity toward roughly 47 days by 2029 (as of early 2026; track current BRs at https://cabforum.org/baseline-requirements-documents/) — the policy driving short-lived, automated certificates.
 - Ivan Ristić, *Bulletproof TLS and PKI* (2nd ed.) — the standard practitioner reference for
   configuration, attacks, and operations; and the associated SSL Labs *SSL/TLS Deployment Best
   Practices* and server test.

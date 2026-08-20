@@ -4,7 +4,7 @@
 predictable ways: the trust anchor is a **long-lived private key**, and that key is a single
 point of failure that gets stolen (Stuxnet's driver certs, the NVIDIA leak), mismanaged, or
 misused silently — nobody outside the signer can see what it signed. This chapter is about the
-system that reorganizes signing to eliminate that failure class: **Sigstore**, and its three
+system that reorganizes signing to eliminate that failure class: **Sigstore** (as of early 2026; public-good instance at https://docs.sigstore.dev/ and https://fulcio.sigstore.dev / https://rekor.sigstore.dev), and its three
 core components — **Cosign** (the client), **Fulcio** (a certificate authority that issues
 certificates lasting *minutes*, not years), and **Rekor** (an append-only transparency log).
 The central idea is **keyless signing**: instead of a durable key that you protect forever, you
@@ -80,7 +80,7 @@ There are two ways to consume Sigstore, and the distinction matters at fleet sca
 
 The **public-good instance** is the community-operated deployment: `fulcio.sigstore.dev`,
 `rekor.sigstore.dev`, a Certificate Transparency log, a timestamp authority, and a TUF-served
-trust root, run by the OpenSSF/Linux Foundation and reached GA in 2022. It is free, accepts a
+trust root, run by the OpenSSF/Linux Foundation and reached GA in 2022 (state described as of early 2026 — check https://docs.sigstore.dev/ for current provider/endpoint updates). It is free, accepts a
 fixed set of public OIDC providers (Google, GitHub, Microsoft, GitLab, and CI token issuers),
 and is what `cosign sign` uses out of the box. It is superb for open source: zero setup, publicly
 auditable, and every signature contributes to a public transparency record.
@@ -617,20 +617,20 @@ produces it to the gate that enforces it (Chapter 10; Book 6).
 ## Further reading
 
 - **Sigstore documentation** — the project overview, `cosign` reference, and the Fulcio/Rekor
-  service docs. <https://docs.sigstore.dev/>.
+  service docs. https://docs.sigstore.dev/.
 - **Cosign** — the CLI and signature-spec (OCI signature storage, tag scheme, and Referrers
-  support). <https://github.com/sigstore/cosign> and the *Cosign Signature Specification*.
+  support). https://github.com/sigstore/cosign and the *Cosign Signature Specification*.
 - **Fulcio** — the certificate authority: certificate profile, SAN identities, OID extensions, and
-  the ~10-minute validity policy. <https://github.com/sigstore/fulcio> and its `docs/`.
+  the ~10-minute validity policy. https://github.com/sigstore/fulcio and its `docs/`.
 - **Rekor** — the transparency log: entry types, inclusion proofs, Signed Entry Timestamp, and the
-  Merkle-tree design. <https://github.com/sigstore/rekor> (Merkle internals in Chapter 5).
+  Merkle-tree design. https://github.com/sigstore/rekor (Merkle internals in Chapter 5).
 - **Sigstore: the internals of Sigstore** and the **"How Sigstore works"** guide — the end-to-end
-  keyless sign/verify flow and the verify-after-expiry reasoning. <https://docs.sigstore.dev/>.
+  keyless sign/verify flow and the verify-after-expiry reasoning. https://docs.sigstore.dev/.
 - **The Update Framework (TUF)** and Sigstore's **root-signing** repository — the trust root and
-  key-rotation model. <https://theupdateframework.io/> and
-  <https://github.com/sigstore/root-signing> (developed in Chapter 7).
+  key-rotation model. https://theupdateframework.io/ and
+  https://github.com/sigstore/root-signing (developed in Chapter 7).
 - **Certificate Transparency (RFC 6962)** — the model the Fulcio CT log follows, and the SCT.
-  <https://www.rfc-editor.org/rfc/rfc6962>.
+  https://www.rfc-editor.org/rfc/rfc6962.
 - **sigstore/policy-controller** and **Kyverno** — admission-time keyless verification for
   Kubernetes (identity-based image policies). Applied in Chapter 10 and Book 6, Chapters 5–6.
 - **sigstore/scaffolding** — Helm-based self-hosted Sigstore for private deployments (Chapter 9).

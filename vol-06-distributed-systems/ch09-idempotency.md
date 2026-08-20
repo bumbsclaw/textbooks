@@ -747,31 +747,31 @@ writes* — and when the answer runs out, that is where your dedupe table goes.
 
 - Saltzer, J., Reed, D., and Clark, D., "End-to-End Arguments in System Design," *ACM
   TOCS* 2(4), 1984 — the argument this whole chapter instantiates.
-  <https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf>
+  https://web.mit.edu/Saltzer/www/publications/endtoend/endtoend.pdf
 - Lampson, B., "Hints for Computer System Design," *SOSP*, 1983 — including the case for
   end-to-end reliability with lower layers as optimization.
 - Helland, P., "Idempotence Is Not a Medical Condition," *ACM Queue* 10(4), 2012 — the
   definitive treatment of messaging idempotency and naming effects.
-  <https://queue.acm.org/detail.cfm?id=2187821>
+  https://queue.acm.org/detail.cfm?id=2187821
 - Leach, B., "Designing robust and predictable APIs with idempotency," Stripe blog, 2017 —
-  and the Stripe API idempotency documentation. <https://stripe.com/blog/idempotency>,
-  <https://docs.stripe.com/api/idempotent_requests>
+  and the Stripe API idempotency documentation. https://stripe.com/blog/idempotency,
+  https://docs.stripe.com/api/idempotent_requests
 - RFC 9110, *HTTP Semantics*, §9.2 — the definitions of safe and idempotent methods.
-  <https://www.rfc-editor.org/rfc/rfc9110#section-9.2.2>
+  https://www.rfc-editor.org/rfc/rfc9110#section-9.2.2
 - *The Idempotency-Key HTTP Header Field*, IETF HTTPAPI working group Internet-Draft
   (draft-ietf-httpapi-idempotency-key-header) — note its status: a draft, not a published
-  RFC. <https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/>
+  RFC. https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/
 - KIP-98, "Exactly Once Delivery and Transactional Messaging," and the Apache Kafka
   documentation on the idempotent producer (`enable.idempotence`) and transactions.
-  <https://kafka.apache.org/documentation/>
+  https://kafka.apache.org/documentation/
 - AWS documentation, *Exactly-once processing* and *Using the message deduplication ID*,
   Amazon SQS FIFO queues — the five-minute deduplication interval, stated plainly.
 - Ongaro, D., *Consensus: Bridging Theory and Practice*, Stanford PhD dissertation, 2014,
   §6.3 — client sessions and duplicate command detection in Raft.
-  <https://web.stanford.edu/~ouster/cgi-bin/papers/OngaroPhD.pdf>
+  https://web.stanford.edu/~ouster/cgi-bin/papers/OngaroPhD.pdf
 - Treat, T., "You Cannot Have Exactly-Once Delivery," *Brave New Geek*, 2015 — a concise
   informal statement of the delivery/processing distinction.
-  <https://bravenewgeek.com/you-cannot-have-exactly-once-delivery/>
+  https://bravenewgeek.com/you-cannot-have-exactly-once-delivery/
 - Gray, J., "Notes on Data Base Operating Systems," 1978 — the classic early treatment of
   message retries, duplicates, and transaction atomicity.
 - Volume 5, Chapter 10 — sagas and the transactional outbox, the write-side sibling of

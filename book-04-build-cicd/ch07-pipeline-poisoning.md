@@ -638,21 +638,21 @@ rather than something each team must instrument itself.
 
 - **OWASP Top 10 CI/CD Security Risks (2022)** — especially CICD-SEC-4 (Poisoned Pipeline
   Execution), CICD-SEC-5 (Insufficient PBAC), and CICD-SEC-9 (Improper Artifact Integrity
-  Validation). <https://owasp.org/www-project-top-10-ci-cd-security-risks/>.
+  Validation). https://owasp.org/www-project-top-10-ci-cd-security-risks/.
 - **Cider Security / Palo Alto Networks CI/CD security research** — the original PPE taxonomy
   (direct / indirect / public) that seeded the OWASP list, and the broader "CI/CD attack surface"
   writeups (Prisma Cloud / Unit 42).
 - **GitHub Actions documentation** — *Caching dependencies to speed up workflows* (cache scope and
   restriction rules) and *Security hardening for GitHub Actions* (`pull_request` vs
-  `pull_request_target`, self-hosted runner risks). <https://docs.github.com/actions>. See also
+  `pull_request_target`, self-hosted runner risks). https://docs.github.com/actions. See also
   published research on Actions cache poisoning and cross-branch cache isolation.
 - **Bazel — Remote Caching** and **Remote Execution API** — the action-keyed cache model and why
-  write access must be controlled. <https://bazel.build/remote/caching> and
-  <https://github.com/bazelbuild/remote-apis>.
+  write access must be controlled. https://bazel.build/remote/caching and
+  https://github.com/bazelbuild/remote-apis.
 - **SLSA v1.0 Threats & mitigations** — the A–H supply-chain threat model, especially (E) compromise
-  build process and (F) upload modified package. <https://slsa.dev/spec/v1.0/threats>.
+  build process and (F) upload modified package. https://slsa.dev/spec/v1.0/threats.
 - **SLSA v1.0 provenance** and **Sigstore `cosign`** — build-time provenance and signing as the
-  tamper-detection controls. <https://slsa.dev/provenance/v1>.
+  tamper-detection controls. https://slsa.dev/provenance/v1.
 - Book 1, Chapter 1 (anatomy and SLSA threats A–H) and Chapter 3 (SolarWinds / 3CX build-system
   compromise); Book 1, Chapter 9 (distributed-systems blast radius); Book 2, Chapters 3–4
   (dependency confusion, malicious packages) and Chapter 8 (internal registries); Book 4,

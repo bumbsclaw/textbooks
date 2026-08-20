@@ -781,28 +781,28 @@ of truth and the teams owning the views, and lag SLOs are the contract between t
   Databases, 2013 — the definitive survey of the columnar techniques in this chapter.
 - Pelkonen, T. et al., "Gorilla: A Fast, Scalable, In-Memory Time Series Database,"
   *VLDB*, 2015 — delta-of-delta timestamps, XOR value compression, and the 1.37
-  bytes/point result. <https://www.vldb.org/pvldb/vol8/p1816-teller.pdf>
+  bytes/point result. https://www.vldb.org/pvldb/vol8/p1816-teller.pdf
 - Robertson, S. and Zaragoza, H., "The Probabilistic Relevance Framework: BM25 and
   Beyond," *Foundations and Trends in Information Retrieval*, 2009 — BM25 from its
   authors, with the reasoning behind k₁ and b.
 - Apache Lucene documentation — segments, merge policies, and scoring.
-  <https://lucene.apache.org/core/documentation.html>
+  https://lucene.apache.org/core/documentation.html
 - Elasticsearch reference: "Near real-time search," analysis, and mapping chapters.
-  <https://www.elastic.co/guide/en/elasticsearch/reference/current/near-real-time.html>
+  https://www.elastic.co/guide/en/elasticsearch/reference/current/near-real-time.html
 - PostgreSQL documentation, Chapter "Full Text Search" — tsvector, tsquery, GIN.
-  <https://www.postgresql.org/docs/current/textsearch.html>
+  https://www.postgresql.org/docs/current/textsearch.html
 - Prometheus documentation — data model, storage (TSDB internals), and the practices
-  pages on label cardinality. <https://prometheus.io/docs/>
+  pages on label cardinality. https://prometheus.io/docs/
 - Apache Parquet format specification — row groups, column chunks, pages, footer
-  metadata and statistics. <https://parquet.apache.org/docs/file-format/>
+  metadata and statistics. https://parquet.apache.org/docs/file-format/
 - Apache Iceberg specification — snapshots, manifests, schema evolution by field ID.
-  <https://iceberg.apache.org/spec/>
+  https://iceberg.apache.org/spec/
 - Armbrust, M. et al., "Delta Lake: High-Performance ACID Table Storage over Cloud Object
   Stores," *VLDB*, 2020 — the Delta variant of the table-format design.
 - Melnik, S. et al., "Dremel: Interactive Analysis of Web-Scale Datasets," *VLDB*, 2010 —
   the ancestry of BigQuery and of Parquet's nested columnar encoding.
 - ClickHouse documentation — MergeTree engine family, sparse primary indexes,
-  materialized views. <https://clickhouse.com/docs/en/engines/table-engines/mergetree-family/mergetree>
+  materialized views. https://clickhouse.com/docs/en/engines/table-engines/mergetree-family/mergetree
 - Kreps, J., "The Log: What every software engineer should know about real-time data's
   unifying abstraction," LinkedIn Engineering blog, 2013 — the derived-data worldview.
 - Raasveldt, M. and Mühleisen, H., "DuckDB: an Embeddable Analytical Database," *SIGMOD*

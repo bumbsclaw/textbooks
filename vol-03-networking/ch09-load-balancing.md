@@ -781,7 +781,7 @@ what the others decided, and any layer can lose members without breaking flows.
 ## Further reading
 
 - D. E. Eisenbud et al., "Maglev: A Fast and Reliable Software Network Load Balancer," *USENIX
-  NSDI 2016* — <https://www.usenix.org/conference/nsdi16/technical-sessions/presentation/eisenbud>
+  NSDI 2016* — https://www.usenix.org/conference/nsdi16/technical-sessions/presentation/eisenbud
   — ECMP plus consistent hashing plus kernel bypass, including the table-population algorithm
   reproduced above.
 - Y. Azar, A. Z. Broder, A. R. Karlin, E. Upfal, "Balanced Allocations," *STOC 1994*; and M.
@@ -790,37 +790,37 @@ what the others decided, and any layer can lose members without breaking flows.
   behind P2C.
 - D. Karger et al., "Consistent Hashing and Random Trees: Distributed Caching Protocols for
   Relieving Hot Spots on the World Wide Web," *STOC 1997*; and V. Mirrokni, M. Thorup, M.
-  Zadimoghaddam, "Consistent Hashing with Bounded Loads," arXiv <https://arxiv.org/abs/1608.01350>
+  Zadimoghaddam, "Consistent Hashing with Bounded Loads," arXiv https://arxiv.org/abs/1608.01350
   (2016), later *SODA 2018*, with the Google Research blog post of the same name on the Vimeo
   deployment. Volume 14, Chapter 5 covers both, plus rendezvous hashing.
 - J. Dean and L. A. Barroso, "The Tail at Scale," *Communications of the ACM* 56(2), February 2013
   — why fanout turns a rare slow backend into a common slow request, and the hedging techniques
   that follow (Chapter 11).
 - *Site Reliability Engineering* (Beyer, Jones, Petoff, Murphy; O'Reilly, 2016), Chapters 19 and 20
-  <https://sre.google/sre-book/load-balancing-datacenter/> — deterministic subsetting, weighted
+  https://sre.google/sre-book/load-balancing-datacenter/ — deterministic subsetting, weighted
   round robin from backend-reported utilization, and why simple least-loaded misbehaves.
 - Envoy documentation: "Supported load balancers"
-  <https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers>
+  https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers
   and "Outlier detection"
-  <https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier>, plus the
+  https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/outlier, plus the
   panic-threshold and slow-start pages of the same architecture overview.
-- HAProxy configuration manual <https://docs.haproxy.org/> (`balance`, `hash-type`, `http-check`,
+- HAProxy configuration manual https://docs.haproxy.org/ (`balance`, `hash-type`, `http-check`,
   `cookie`, `slowstart`) and NGINX's `ngx_http_upstream_module`
-  <https://nginx.org/en/docs/http/ngx_http_upstream_module.html> (`least_conn`, `ip_hash`,
+  https://nginx.org/en/docs/http/ngx_http_upstream_module.html (`least_conn`, `ip_hash`,
   `hash ... consistent`, `random two [least_conn]`).
-- gRPC blog, "gRPC Load Balancing" <https://grpc.io/blog/grpc-load-balancing/> — proxy, client-side,
+- gRPC blog, "gRPC Load Balancing" https://grpc.io/blog/grpc-load-balancing/ — proxy, client-side,
   and look-aside models; plus the load-balancing and service-config gRFCs in
-  <https://github.com/grpc/proposal>, including ORCA-driven weighted round robin.
-- Production L4 balancers: Katran <https://github.com/facebookincubator/katran> (Meta, XDP/eBPF,
+  https://github.com/grpc/proposal, including ORCA-driven weighted round robin.
+- Production L4 balancers: Katran https://github.com/facebookincubator/katran (Meta, XDP/eBPF,
   IPIP), open-sourced in 2018; GitHub's "GLB: GitHub's open source load balancer" (August 2018)
-  <https://github.blog/engineering/infrastructure/glb-director-open-source-load-balancer/> and the
+  https://github.blog/engineering/infrastructure/glb-director-open-source-load-balancer/ and the
   `github/glb-director` repository; and Cloudflare's "Unimog — Cloudflare's edge load balancer"
-  (September 2020) <https://blog.cloudflare.com/unimog-cloudflares-edge-load-balancer/>.
-- Linkerd's load-balancing reference <https://linkerd.io/docs/reference/load-balancing/> and
-  Finagle's client documentation <https://twitter.github.io/finagle/guide/Clients.html> for P2C and
+  (September 2020) https://blog.cloudflare.com/unimog-cloudflares-edge-load-balancer/.
+- Linkerd's load-balancing reference https://linkerd.io/docs/reference/load-balancing/ and
+  Finagle's client documentation https://twitter.github.io/finagle/guide/Clients.html for P2C and
   peak-EWMA.
 - RFC 4786 (BCP 126), *Operation of Anycast Services* (December 2006)
-  <https://www.rfc-editor.org/rfc/rfc4786>; and RFC 9113 <https://www.rfc-editor.org/rfc/rfc9113>,
+  https://www.rfc-editor.org/rfc/rfc4786; and RFC 9113 https://www.rfc-editor.org/rfc/rfc9113,
   §6.8 (`GOAWAY` and graceful shutdown) and §9.1 (connection reuse).
 - Linux Virtual Server / IPVS documentation and `ipvsadm(8)`, including the `mh` (Maglev hashing)
   scheduler added in Linux 4.18 and exposed by ipvsadm v1.30; Volume 2, Chapter 10 covers where

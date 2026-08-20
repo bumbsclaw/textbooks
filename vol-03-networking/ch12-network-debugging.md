@@ -831,27 +831,27 @@ reason code when it fails.
 
 ## Further reading
 
-- `tcpdump` and `pcap-filter` manual pages — <https://www.tcpdump.org/manpages/> — the
+- `tcpdump` and `pcap-filter` manual pages — https://www.tcpdump.org/manpages/ — the
   authoritative BPF filter syntax reference.
-- Wireshark User's Guide — <https://www.wireshark.org/docs/> — TCP analysis flags, Expert
+- Wireshark User's Guide — https://www.wireshark.org/docs/ — TCP analysis flags, Expert
   Information, and TLS decryption with a key log file.
 - `ss(8)`, `nstat(8)`, and `ip-route(8)` from iproute2 —
-  <https://man7.org/linux/man-pages/man8/ss.8.html>.
-- Linux kernel networking documentation — <https://docs.kernel.org/networking/> — especially
+  https://man7.org/linux/man-pages/man8/ss.8.html.
+- Linux kernel networking documentation — https://docs.kernel.org/networking/ — especially
   `snmp_counter.rst`, which documents what each `nstat`/`netstat -s` counter increments on.
 - Brendan Gregg, *BPF Performance Tools* (Addison-Wesley, 2019), Chapter 10, for the networking
-  eBPF tools; the BCC repository is at <https://github.com/iovisor/bcc>.
-- curl documentation — <https://curl.se/docs/manpage.html> — with the exit-code list at
-  <https://curl.se/libcurl/c/libcurl-errors.html>.
-- BIND `dig` documentation — <https://bind9.readthedocs.io/> — and RFC 5001 (NSID).
+  eBPF tools; the BCC repository is at https://github.com/iovisor/bcc.
+- curl documentation — https://curl.se/docs/manpage.html — with the exit-code list at
+  https://curl.se/libcurl/c/libcurl-errors.html.
+- BIND `dig` documentation — https://bind9.readthedocs.io/ — and RFC 5001 (NSID).
 - RFC 1191 (*Path MTU Discovery*), RFC 8201 (*Path MTU Discovery for IP version 6*), RFC 4821
   (*Packetization Layer Path MTU Discovery*), and RFC 8899 (*Datagram PLPMTUD*, used by QUIC).
 - RFC 4443 (*ICMPv6*) and RFC 4890 (*Recommendations for Filtering ICMPv6 Messages in Firewalls*).
 - RFC 8985 (*RACK-TLP*) — the loss detection behind Linux's tail loss probe.
 - Brice Augustin et al., "Avoiding traceroute anomalies with Paris traceroute" (IMC 2006).
-- Envoy access logging — <https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage>
+- Envoy access logging — https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage
   — the response-flag table and `RESPONSE_CODE_DETAILS`.
-- Cilium and Hubble documentation — <https://docs.cilium.io/> — flow verdicts and drop reasons.
+- Cilium and Hubble documentation — https://docs.cilium.io/ — flow verdicts and drop reasons.
 - Nathan Bronson et al., "Metastable Failures in Distributed Systems" (HotOS 2021).
 - Volume 2, Chapter 10 (*The Linux Network Stack*) for the SYN and accept queues and the receive
   path; Volume 2, Chapter 11 (*Performance Analysis: perf, ftrace, and eBPF*) for the tracing

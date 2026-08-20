@@ -672,13 +672,13 @@ and how they agree on its contents; they do not differ in what the log *is*.
   used in this chapter.
 - Kreps, J., "The Log: What every software engineer should know about real-time data's unifying
   abstraction" (LinkedIn Engineering, 2013) — the essay behind this chapter's distributed-systems
-  lens. <https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying>
+  lens. https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 - PostgreSQL documentation, "Reliability and the Write-Ahead Log" and "WAL Configuration" — the
   authoritative source for `wal_level`, `synchronous_commit`, checkpoint behavior, and
-  full-page writes. <https://www.postgresql.org/docs/current/wal.html>
+  full-page writes. https://www.postgresql.org/docs/current/wal.html
 - PostgreSQL documentation, "Continuous Archiving and Point-in-Time Recovery" — the normative
   PITR procedure sketched above.
-  <https://www.postgresql.org/docs/current/continuous-archiving.html>
+  https://www.postgresql.org/docs/current/continuous-archiving.html
 - MySQL 8.x Reference Manual, "InnoDB On-Disk Structures: Doublewrite Buffer" and "InnoDB Recovery"
   — the doublewrite mechanics and InnoDB's redo/undo split.
 - Hellerstein, J., Stonebraker, M., and Hamilton, J., "Architecture of a Database System,"

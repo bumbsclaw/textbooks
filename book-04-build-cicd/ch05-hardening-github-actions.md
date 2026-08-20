@@ -810,11 +810,11 @@ and **Book 8's** governance chapters.
 
 - **GitHub Docs**, *Security hardening for GitHub Actions* — the authoritative reference on
   trigger contexts, `GITHUB_TOKEN` permissions, script injection, and self-hosted runner risk.
-  <https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions>
+  https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
 - **GitHub Docs**, *About security hardening with OpenID Connect* and the AWS/GCP/Azure
   configuration guides — the primary source for the OIDC federation flow, the `sub` claim
   format, and trust-policy conditions.
-  <https://docs.github.com/en/actions/deployment/security-hardening-your-deployments>
+  https://docs.github.com/en/actions/deployment/security-hardening-your-deployments
 - **GitHub Docs**, *Using pre-written building blocks / Restricting the use of actions* and
   *Assigning permissions to jobs* — allowed-actions policy, SHA-pinning requirement, and the
   `permissions` key.
@@ -822,12 +822,12 @@ and **Book 8's** governance chapters.
   `tj-actions/changed-files` compromise (March 2025): tag retargeting, the memory-dump payload,
   the secrets-to-logs exfiltration, and the chained `reviewdog/action-setup` origin.
 - **StepSecurity**, *Harden-Runner* documentation — runtime egress filtering and monitoring for
-  GitHub-hosted and self-hosted runners. <https://github.com/step-security/harden-runner>
+  GitHub-hosted and self-hosted runners. https://github.com/step-security/harden-runner
 - **zizmor** (Trail of Bits) documentation and audit reference, and **actionlint** (rhysd) —
   static analysis for workflow security and correctness.
-  <https://docs.zizmor.sh/> · <https://github.com/rhysd/actionlint>
+  https://docs.zizmor.sh/ · https://github.com/rhysd/actionlint
 - **Actions Runner Controller (ARC)** documentation — ephemeral Kubernetes runners; developed
-  further in Chapter 8. <https://github.com/actions/actions-runner-controller>
+  further in Chapter 8. https://github.com/actions/actions-runner-controller
 - **OWASP**, *Top 10 CI/CD Security Risks (2022)* — SEC-4 (Poisoned Pipeline Execution) and
   SEC-3 (dependency-chain abuse) are the categories this chapter's controls address.
 - Book 4, Chapter 4 (CI/CD Platform Threat Models), Chapter 6 (Secrets in CI/CD), Chapter 7

@@ -694,28 +694,28 @@ skill this chapter exists to seed, and the rest of Volume 3 exists to sharpen.
 ## Further reading
 
 - **RFC 1122**, *Requirements for Internet Hosts — Communication Layers* (IETF, 1989) — the
-  canonical description of the TCP/IP layering model. <https://www.rfc-editor.org/rfc/rfc1122>
+  canonical description of the TCP/IP layering model. https://www.rfc-editor.org/rfc/rfc1122
 - **RFC 826**, *An Ethernet Address Resolution Protocol* (IETF, 1982) — ARP, the L2/L3 glue.
-  <https://www.rfc-editor.org/rfc/rfc826>
+  https://www.rfc-editor.org/rfc/rfc826
 - **RFC 1191**, *Path MTU Discovery* (IETF, 1990), and **RFC 8201**, *Path MTU Discovery for
-  IPv6* (IETF, 2017). <https://www.rfc-editor.org/rfc/rfc1191> and
-  <https://www.rfc-editor.org/rfc/rfc8201>
+  IPv6* (IETF, 2017). https://www.rfc-editor.org/rfc/rfc1191 and
+  https://www.rfc-editor.org/rfc/rfc8201
 - **RFC 4821**, *Packetization Layer Path MTU Discovery* (IETF, 2007) — the ICMP-independent
-  PMTUD that avoids the black-hole failure. <https://www.rfc-editor.org/rfc/rfc4821>
+  PMTUD that avoids the black-hole failure. https://www.rfc-editor.org/rfc/rfc4821
 - **RFC 9293**, *Transmission Control Protocol* (IETF, 2022) — the consolidated modern TCP
-  specification. <https://www.rfc-editor.org/rfc/rfc9293>
+  specification. https://www.rfc-editor.org/rfc/rfc9293
 - **RFC 8446**, *The Transport Layer Security (TLS) Protocol Version 1.3* (IETF, 2018).
-  <https://www.rfc-editor.org/rfc/rfc8446>
+  https://www.rfc-editor.org/rfc/rfc8446
 - **ISO/IEC 7498-1:1994**, *Information technology — Open Systems Interconnection — Basic
   Reference Model* — the OSI model of record.
 - Kurose, J. and Ross, K., *Computer Networking: A Top-Down Approach*, 8th ed. (Pearson, 2020) —
   the standard university text; its delay-components and BDP treatment aligns with this chapter.
 - Peterson, L. and Davie, B., *Computer Networks: A Systems Approach*, 6th ed. — freely available
-  online at <https://book.systemsapproach.org/>; strong on the systems view of the stack.
+  online at https://book.systemsapproach.org/; strong on the systems view of the stack.
 - Grigorik, I., *High Performance Browser Networking* (O'Reilly, 2013), free online at
-  <https://hpbn.co/> — excellent practical treatment of latency, RTT, BDP, and the cost of the
+  https://hpbn.co/ — excellent practical treatment of latency, RTT, BDP, and the cost of the
   connection-setup handshakes.
-- Beej's Guide to Network Programming, <https://beej.us/guide/bgnet/> — sockets, ports, and the
+- Beej's Guide to Network Programming, https://beej.us/guide/bgnet/ — sockets, ports, and the
   four-tuple from the programmer's side.
 - Volume 2, Chapter 10 — The Linux Network Stack — the per-host, in-kernel companion to this
   chapter's end-to-end view.

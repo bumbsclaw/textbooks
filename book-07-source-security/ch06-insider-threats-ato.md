@@ -558,33 +558,33 @@ that, by construction, wears a trusted face.
 
 - **CircleCI — January 4 & 13, 2023 security incident report.** The authoritative account of the
   stolen-session-token / infostealer chain and the mass-rotation guidance.
-  <https://circleci.com/blog/jan-4-2023-incident-report/>
+  https://circleci.com/blog/jan-4-2023-incident-report/
 - **GitHub — "Security alert: Attack campaign involving stolen OAuth user tokens" (April 15, 2022).**
   The Heroku/Travis CI OAuth-token theft used to clone private repositories.
-  <https://github.blog/2022-04-15-security-alert-stolen-oauth-user-tokens/>
+  https://github.blog/2022-04-15-security-alert-stolen-oauth-user-tokens/
 - **Codecov (2021) Bash Uploader compromise** — CI-secret exfiltration via a modified uploader
   script; analyzed in Book 1, Chapter 5. See Codecov's incident disclosures.
 - **NIST SP 800-63B — Digital Identity Guidelines (Authentication).** Authenticator assurance
   levels and the treatment of phishing resistance and restricted authenticators (SMS).
-  <https://pages.nist.gov/800-63-3/sp800-63b.html>
+  https://pages.nist.gov/800-63-3/sp800-63b.html
 - **FIDO Alliance / W3C WebAuthn** — the specifications behind origin-bound, phishing-resistant
-  authentication, hardware security keys, and passkeys. <https://www.w3.org/TR/webauthn-2/> and
-  <https://fidoalliance.org/passkeys/>
+  authentication, hardware security keys, and passkeys. https://www.w3.org/TR/webauthn-2/ and
+  https://fidoalliance.org/passkeys/
 - **Google — "Landing on the moon: hardware security keys" / BeyondCorp reporting** on eliminating
   employee phishing takeovers after mandating security keys (2017).
 - **npm — mandatory 2FA rollout and account-security posts** (enhanced login verification,
   staged 2FA enforcement for high-impact maintainers, granular access tokens).
-  <https://github.blog/2022-11-01-raising-the-bar-for-software-security-github-2fa-begins-march-13/>
+  https://github.blog/2022-11-01-raising-the-bar-for-software-security-github-2fa-begins-march-13/
   and npm docs on 2FA and access tokens.
 - **PyPI — 2FA requirement and Trusted Publishing (OIDC).** The mandatory-2FA announcement and the
   Trusted Publishers (OIDC) mechanism that removes long-lived upload tokens.
-  <https://blog.pypi.org/posts/2023-05-25-securing-pypi-with-2fa/> and
-  <https://docs.pypi.org/trusted-publishers/>
+  https://blog.pypi.org/posts/2023-05-25-securing-pypi-with-2fa/ and
+  https://docs.pypi.org/trusted-publishers/
 - **CISA — "Implementing Phishing-Resistant MFA" fact sheet.** Practical guidance on FIDO/WebAuthn
-  versus phishable factors. <https://www.cisa.gov/resources-tools/resources/implementing-phishing-resistant-mfa>
+  versus phishable factors. https://www.cisa.gov/resources-tools/resources/implementing-phishing-resistant-mfa
 - **The xz-utils backdoor (CVE-2024-3094)** — the trusted-maintainer long-con; Andres Freund's
   original oss-security disclosure and Book 1, Chapter 5.
-  <https://www.openwall.com/lists/oss-security/2024/03/29/4>
+  https://www.openwall.com/lists/oss-security/2024/03/29/4
 - **Book cross-references:** Book 7, Chapter 2 — Commit Signing and Developer Identity; Chapter 3 —
   Branch Protection, Review, and Two-Person Rules; Chapter 4 — Secrets in Source; Chapter 5 —
   Backdoors and Malicious Code; Chapter 8 — Repository Integrity at Scale. **Book 1, Chapters 4–5**

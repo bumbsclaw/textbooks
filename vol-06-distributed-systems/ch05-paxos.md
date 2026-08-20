@@ -675,29 +675,29 @@ will not budget for it, and should not have to.
 
 - Lamport, L., "The Part-Time Parliament," *ACM Transactions on Computer Systems* 16(2), 1998 —
   the original, allegory and all; read it second, not first.
-  <https://dl.acm.org/doi/10.1145/279227.279229>
+  https://dl.acm.org/doi/10.1145/279227.279229
 - Lamport, L., "Paxos Made Simple," *ACM SIGACT News* 32(4), December 2001 — the plain-English
   Synod; the single best short read on this chapter's core.
-  <https://lamport.azurewebsites.net/pubs/paxos-simple.pdf>
+  https://lamport.azurewebsites.net/pubs/paxos-simple.pdf
 - Fischer, M., Lynch, N., and Paterson, M., "Impossibility of Distributed Consensus with One
-  Faulty Process," *JACM* 32(2), 1985 — FLP. <https://dl.acm.org/doi/10.1145/3149.214121>
+  Faulty Process," *JACM* 32(2), 1985 — FLP. https://dl.acm.org/doi/10.1145/3149.214121
 - Chandra, T., Griesemer, R., and Redstone, J., "Paxos Made Live — An Engineering Perspective,"
   *PODC*, 2007 — the honest account of the paper-to-production gap; mandatory before implementing
-  anything. <https://dl.acm.org/doi/10.1145/1281100.1281103>
+  anything. https://dl.acm.org/doi/10.1145/1281100.1281103
 - Burrows, M., "The Chubby Lock Service for Loosely-Coupled Distributed Systems," *OSDI*, 2006 —
   consensus packaged as a lock service; the ancestor of ZooKeeper and etcd.
-  <https://research.google/pubs/pub27897/>
+  https://research.google/pubs/pub27897/
 - Howard, H., Malkhi, D., and Spiegelman, A., "Flexible Paxos: Quorum Intersection Revisited,"
   *OPODIS*, 2016 — the generalization of Paxos's quorum requirement.
-  <https://arxiv.org/abs/1608.06696>
+  https://arxiv.org/abs/1608.06696
 - Moraru, I., Andersen, D., and Kaminsky, M., "There Is More Consensus in Egalitarian
-  Parliaments," *SOSP*, 2013 — EPaxos. <https://dl.acm.org/doi/10.1145/2517349.2517350>
+  Parliaments," *SOSP*, 2013 — EPaxos. https://dl.acm.org/doi/10.1145/2517349.2517350
 - Ongaro, D. and Ousterhout, J., "In Search of an Understandable Consensus Algorithm," *USENIX
   ATC*, 2014 — Raft; the forward pointer to Chapter 6.
-  <https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro>
+  https://www.usenix.org/conference/atc14/technical-sessions/presentation/ongaro
 - Corbett, J. et al., "Spanner: Google's Globally-Distributed Database," *OSDI*, 2012 — Paxos
   groups and 2PC-over-Paxos at scale; treated fully in Volume 5, Chapter 12.
-  <https://research.google/pubs/pub39966/>
+  https://research.google/pubs/pub39966/
 - Van Renesse, R. and Altinbuken, D., "Paxos Made Moderately Complex," *ACM Computing Surveys*
   47(3), 2015 — Multi-Paxos with all the roles and pseudo-code spelled out; the bridge between
   "Paxos Made Simple" and an implementation.

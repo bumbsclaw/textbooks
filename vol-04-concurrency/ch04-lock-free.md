@@ -525,12 +525,12 @@ the intuition is already in your hands: if a value is hot and writes dominate, s
 ## Further reading
 
 - Herlihy, M., "Wait-Free Synchronization," *ACM TOPLAS* 13(1), 1991 — consensus numbers and why CAS
-  is universal. <https://dl.acm.org/doi/10.1145/114005.102808>
+  is universal. https://dl.acm.org/doi/10.1145/114005.102808
 - Herlihy, M. and Shavit, N., *The Art of Multiprocessor Programming*, 2nd ed. (Morgan Kaufmann,
   2020) — the standard text; progress conditions, the Treiber stack, elimination, and the M-S queue.
 - Michael, M. and Scott, M., "Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue
   Algorithms," *PODC*, 1996 — the Michael-Scott queue.
-  <https://www.cs.rochester.edu/~scott/papers/1996_PODC_queues.pdf>
+  https://www.cs.rochester.edu/~scott/papers/1996_PODC_queues.pdf
 - Treiber, R. K., *Systems Programming: Coping with Parallelism*, IBM Research Report RJ5118, 1986 —
   the original lock-free stack.
 - Michael, M., "Hazard Pointers: Safe Memory Reclamation for Lock-Free Objects," *IEEE TPDS* 15(6),
@@ -538,11 +538,11 @@ the intuition is already in your hands: if a value is hot and writes dominate, s
 - Fraser, K., *Practical Lock-Freedom* (PhD thesis, Cambridge, 2004) — epoch-based reclamation.
 - Thompson, M. et al., *The LMAX Architecture* and the Disruptor technical paper — mechanical
   sympathy, the single-writer principle, and cache-line padding.
-  <https://martinfowler.com/articles/lmax.html>
+  https://martinfowler.com/articles/lmax.html
 - Lea, D., and the `java.util.concurrent` API documentation for `LongAdder`, `AtomicReference`, and
   `ConcurrentLinkedQueue` — read the `LongAdder` class javadoc in particular; it states the
   contention argument concisely.
-- Preshing, J., "An Introduction to Lock-Free Programming" — <https://preshing.com/20120612/an-introduction-to-lock-free-programming/>
+- Preshing, J., "An Introduction to Lock-Free Programming" — https://preshing.com/20120612/an-introduction-to-lock-free-programming/
 - Volume 1, Chapters 4 and 8 — cache coherence and false sharing — the physics behind the counter
   lesson and the Disruptor's padding.
 - Chapter 3 — Memory Models and Happens-Before — mandatory prerequisite for writing any of this

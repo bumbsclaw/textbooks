@@ -787,25 +787,25 @@ production traffic. Get it loose and you have spent a lot of cryptography to che
 ## Further reading
 
 - **OpenID Connect Core 1.0** — the ID token, standard claims (`iss`, `sub`, `aud`), and discovery.
-  <https://openid.net/specs/openid-connect-core-1_0.html> (full treatment in Book 9, Chapter 6).
+  https://openid.net/specs/openid-connect-core-1_0.html (full treatment in Book 9, Chapter 6).
 - **GitHub Actions — OIDC** — `id-token: write`, the token endpoint, the full claim set, and hardening
   cloud trust with `sub` conditions.
-  <https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect>.
+  https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect.
 - **Fulcio certificate profile and OID extensions** — the `1.3.6.1.4.1.57264.1` arc, the
   issuer/SAN/`job_workflow_ref` mappings, and per-issuer identity rules.
-  <https://github.com/sigstore/fulcio> (`docs/oid-info.md` and the certificate spec).
+  https://github.com/sigstore/fulcio (`docs/oid-info.md` and the certificate spec).
 - **Cosign verification** — `--certificate-identity`, `--certificate-identity-regexp`,
   `--certificate-oidc-issuer`, and extension matching.
-  <https://docs.sigstore.dev/> and <https://github.com/sigstore/cosign>.
+  https://docs.sigstore.dev/ and https://github.com/sigstore/cosign.
 - **GitLab CI/CD — ID tokens and OIDC** — the `id_tokens` keyword, claims (`ci_config_ref_uri`, ...),
-  and Sigstore integration. <https://docs.gitlab.com/ee/ci/secrets/id_token_authentication.html>.
+  and Sigstore integration. https://docs.gitlab.com/ee/ci/secrets/id_token_authentication.html.
 - **AWS — IAM OIDC identity providers and `AssumeRoleWithWebIdentity`**; **Google Cloud — Workload
   Identity Federation.** The cloud-federation side is developed in Book 6, Chapter 9.
 - **SPIFFE and SPIRE** — the **SPIFFE ID** and **SVID** specs (X.509-SVID, JWT-SVID) and the SPIRE
-  node/workload attestation model. <https://spiffe.io/docs/> and <https://github.com/spiffe/spire>
+  node/workload attestation model. https://spiffe.io/docs/ and https://github.com/spiffe/spire
   (applied to runtime mTLS/zero trust in Book 9, Chapter 10).
 - **SLSA v1.0 provenance** — how the builder identity (`job_workflow_ref` on GitHub) grounds Build L3.
-  <https://slsa.dev/spec/v1.0/> (Book 4, Chapter 3).
+  https://slsa.dev/spec/v1.0/ (Book 4, Chapter 3).
 - Cross-references: Book 5, Chapter 2 (classic code signing and its key-theft failures), Chapter 3
   (Sigstore architecture — Cosign/Fulcio/Rekor, verify-after-expiry), Chapter 5 (transparency logs),
   Chapter 6 (in-toto attestations), Chapter 9 (private Sigstore and key management), Chapter 10

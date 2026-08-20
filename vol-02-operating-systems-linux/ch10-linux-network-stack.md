@@ -820,21 +820,21 @@ counters is the one who can keep tail latency flat when traffic doubles.
 - The Linux kernel documentation tree: `Documentation/networking/scaling.rst` (RSS/RPS/RFS/XPS),
   `Documentation/networking/napi.rst`, and `Documentation/admin-guide/sysctl/net.rst` — the
   authoritative descriptions of the sysctls and steering mechanisms in this chapter.
-  <https://www.kernel.org/doc/html/latest/networking/scaling.html>
+  https://www.kernel.org/doc/html/latest/networking/scaling.html
 - `man 7 socket`, `man 7 tcp`, `man 7 ip` — the definitive semantics of `SO_*`/`TCP_*` options,
   the listen backlog, and the sysctls (`man 7 tcp` documents `tcp_syncookies`, `tcp_rmem`, etc.).
 - Cloudflare Engineering Blog, Marek Majkowski, "SYN packet handling in the wild" (and
   companion posts) — a precise, well-illustrated treatment of the SYN queue / accept queue
-  two-queue model and its overflow behavior. <https://blog.cloudflare.com/>
+  two-queue model and its overflow behavior. https://blog.cloudflare.com/
 - Toke Høiland-Jørgensen, Jesper Dangaard Brouer, et al., "The eXpress Data Path: Fast
   Programmable Packet Processing in the Operating System Kernel" (CoNEXT 2018) — the XDP design
-  paper. <https://dl.acm.org/doi/10.1145/3281411.3281443>
+  paper. https://dl.acm.org/doi/10.1145/3281411.3281443
 - The Cilium documentation, "eBPF and XDP Reference Guide" and the BPF/XDP concepts pages —
-  how an eBPF dataplane replaces iptables/conntrack. <https://docs.cilium.io/>
+  how an eBPF dataplane replaces iptables/conntrack. https://docs.cilium.io/
 - Meta Engineering, "Open-sourcing Katran, a scalable network load balancer" — XDP in production
-  as an L4 LB. <https://engineering.fb.com/>
+  as an L4 LB. https://engineering.fb.com/
 - The Bufferbloat project and the CoDel/`fq_codel` papers (Nichols & Jacobson, "Controlling Queue
-  Delay", ACM Queue 2012). <https://www.bufferbloat.net/> and
-  <https://queue.acm.org/detail.cfm?id=2209336>
+  Delay", ACM Queue 2012). https://www.bufferbloat.net/ and
+  https://queue.acm.org/detail.cfm?id=2209336
 - Brendan Gregg, *Systems Performance* (2nd ed.), the networking chapter — a practical
   methodology for the observability tools (`ss`, `nstat`, `ethtool`, `bpftrace`) used here.

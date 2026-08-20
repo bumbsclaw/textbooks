@@ -630,31 +630,31 @@ the lattice is free.
 
 - Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M., "Conflict-free Replicated Data Types,"
   *SSS 2011* — the SEC definition and the CvRDT/CmRDT framework.
-  <https://inria.hal.science/hal-00932836>
+  https://inria.hal.science/hal-00932836
 - Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M., "A Comprehensive Study of Convergent and
   Commutative Replicated Data Types," INRIA Research Report RR-7506, 2011 — the type catalog in
-  full formal detail. <https://inria.hal.science/inria-00555588>
+  full formal detail. https://inria.hal.science/inria-00555588
 - Almeida, P. S., Shoker, A., Baquero, C., "Delta State Replicated Data Types," *JPDC* 111,
-  2018 — delta-CRDTs. <https://arxiv.org/abs/1603.01529>
+  2018 — delta-CRDTs. https://arxiv.org/abs/1603.01529
 - Bieniusa, A. et al., "An Optimized Conflict-free Replicated Set," INRIA RR-8083, 2012 — the
-  tombstone-free OR-Set behind Riak's implementation. <https://arxiv.org/abs/1210.3368>
+  tombstone-free OR-Set behind Riak's implementation. https://arxiv.org/abs/1210.3368
 - Hellerstein, J. M., Alvaro, P., "Keeping CALM: When Distributed Consistency Is Easy," *CACM*
-  63(9), 2020 — the CALM theorem, accessibly. <https://arxiv.org/abs/1901.01930>
+  63(9), 2020 — the CALM theorem, accessibly. https://arxiv.org/abs/1901.01930
 - Bailis, P. et al., "Coordination Avoidance in Database Systems," *VLDB* 2015 — invariant
-  confluence. <https://arxiv.org/abs/1402.2237>
+  confluence. https://arxiv.org/abs/1402.2237
 - Balegas, V. et al., "Putting Consistency Back into Eventual Consistency," *EuroSys* 2015 —
   bounded counters and reservation-style invariant enforcement.
 - Kleppmann, M., "CRDTs: The Hard Parts" (talk, 2020) — tombstones, metadata overhead, and
   sequence-CRDT subtleties from the Automerge author.
-  <https://martin.kleppmann.com/2020/07/06/crdt-hard-parts-hydra.html>
+  https://martin.kleppmann.com/2020/07/06/crdt-hard-parts-hydra.html
 - Kleppmann, M., Mulligan, D. P., Gomes, V. B. F., et al., "Interleaving Anomalies in
   Collaborative Text Editors," *PaPoC* 2019 — the interleaving problem, precisely.
 - Kleppmann, M., Wiggins, A., van Hardenberg, P., McGranaghan, M., "Local-first Software: You
   Own Your Data, in Spite of the Cloud," *Onward! 2019* —
-  <https://www.inkandswitch.com/local-first/>
-- Automerge documentation — <https://automerge.org/docs/> — and Yjs documentation —
-  <https://docs.yjs.dev/> — the production document-CRDT libraries.
-- Riak Data Types documentation — <https://docs.riak.com/riak/kv/latest/developing/data-types/>
+  https://www.inkandswitch.com/local-first/
+- Automerge documentation — https://automerge.org/docs/ — and Yjs documentation —
+  https://docs.yjs.dev/ — the production document-CRDT libraries.
+- Riak Data Types documentation — https://docs.riak.com/riak/kv/latest/developing/data-types/
   — the first mainstream database CRDT suite.
 - Chapter 2 — Time, Clocks, and Ordering — causal delivery, version vectors, and why LWW's
   timestamps lie.

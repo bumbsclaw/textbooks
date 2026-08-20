@@ -492,7 +492,7 @@ use it in production. Its power comes from a large, complex new kernel-facing su
 opcodes, asynchronous execution contexts, shared memory — and that surface has been a
 **significant source of kernel vulnerabilities**. Google's security teams reported that
 `io_uring` accounted for a disproportionate share of the exploitable Linux kernel bugs they saw
-through their kCTF/VRP program, and consequently **disabled `io_uring`** across ChromeOS,
+through their kCTF/VRP program (as of early 2026; current posture may have evolved — check Google's security blog and kernel release notes), and consequently **disabled `io_uring`** across ChromeOS,
 Android, and their production servers. Container platforms restrict it: gVisor and many seccomp
 default profiles block the `io_uring` syscalls, and hardened environments turn it off via
 `sysctl kernel.io_uring_disabled`. The honest guidance: `io_uring` is a major performance win,
@@ -737,7 +737,7 @@ map.
 - **Lord of the io_uring** (`unixism.net/loti/`) — a thorough, example-driven tutorial on
   `io_uring` semantics and `liburing` usage.
 - **Google Security Blog, "Learnings from kCTF VRP's 42 Linux kernel exploits" (2023)** and
-  Google's subsequent guidance disabling `io_uring` on ChromeOS/Android/production — the primary
+  Google's subsequent guidance disabling `io_uring` on ChromeOS/Android/production (as of early 2026; verify current `io_uring` default/allowlist in your target kernel, container runtime, and seccomp profile) — the primary
   statement of the `io_uring` kernel-security concern this chapter hedges.
 - **Douglas C. Schmidt, "Reactor: An Object Behavioral Pattern for Demultiplexing and
   Dispatching Handles for Synchronous Events"** and the companion **Proactor** pattern paper —
