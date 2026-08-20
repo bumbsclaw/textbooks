@@ -230,6 +230,9 @@ until then their paths are as listed above).
 - [x] 8.06 Idempotency, Pagination, Filtering — `ch06-idempotency-pagination.md`
 - [x] 8.07 Error Handling and Status Semantics — `ch07-error-handling.md`
 - [x] 8.08 Compatibility and Wire Formats — `ch08-compatibility.md`
+- [x] 8.09 API Governance, Linting, and Breaking-Change Detection — `ch09-governance.md`
+- [x] 8.10 Schema Registry, Code Generation, and SDK Delivery — `ch10-codegen.md`
+- [x] 8.11 Contract Testing and API Evolution in Practice — `ch11-contract-testing.md`
 
 ## Volume 9 — Security, Authentication, and Cryptography (`vol-09-security-auth/`)
 
@@ -271,14 +274,17 @@ until then their paths are as listed above).
 
 ## Volume 12 — Cloud, Containers, and Infrastructure (`vol-12-cloud-infra/`)
 
-- [ ] 12.01 Containers Deep Dive — `ch01-containers.md`
-- [ ] 12.02 Kubernetes Architecture — `ch02-kubernetes-architecture.md`
-- [ ] 12.03 Kubernetes Workloads, Networking, Storage — `ch03-kubernetes-workloads.md`
+- [x] 12.01 Containers Deep Dive — `ch01-containers.md`
+- [x] 12.02 Kubernetes Architecture — `ch02-kubernetes-architecture.md`
+- [x] 12.03 Kubernetes Workloads, Networking, Storage — `ch03-kubernetes-workloads.md`
 - [ ] 12.04 Infrastructure as Code — `ch04-iac.md`
 - [ ] 12.05 Cloud Primitives: Compute, Storage, Network — `ch05-cloud-primitives.md`
 - [ ] 12.06 Managed Data and Platform Services — `ch06-managed-services.md`
 - [ ] 12.07 Multi-Tenancy and Isolation — `ch07-multi-tenancy.md`
 - [ ] 12.08 Cloud Cost and Capacity Engineering — `ch08-cost-capacity.md`
+- [ ] 12.09 Capacity Planning and Performance at Cloud Scale — `ch09-capacity-performance.md`
+- [ ] 12.10 Cloud Networking, IAM, and Security Foundations — `ch10-cloud-networking-iam.md`
+- [ ] 12.11 Platform Engineering: Paved Roads and IDPs — `ch11-platform-engineering.md`
 
 ## Volume 13 — Language Runtimes for Backend (`vol-13-runtimes/`)
 
@@ -342,3 +348,4 @@ until then their paths are as listed above).
 - 2026-08-20: Vol08 ch07-ch08 + Vol09 ch10 done (error handling/status semantics, compatibility/wire formats, zero trust/mTLS/SPIFFE — ~5.5-6.5kw each, 4-6 Mermaid). Next: 8.09-8.11 + 9.11.
 - 2026-08-20: Vol10 ch04-ch06 done (stream processing Flink/Kafka Streams, event sourcing/CQRS Postgres+EventStoreDB, outbox/dual-write/Debezium CDC — ~4.6-5.4kw each, 4-5 Mermaid). Next: 10.07-10.08.
 - 2026-08-20: *** VOLUME 9 (Security) COMPLETE — 11 chapters. *** *** VOLUME 10 (Messaging/Streaming) COMPLETE — 8 chapters. *** Vol10 ch07-ch08 + Vol09 ch11 done (backpressure/flow control, DLQ/retries/poison, threat modeling/STRIDE — ~4.5-5.5kw each, 3-6 Mermaid). Next: Vol11 ch04-ch06.
+- 2026-08-20: *** VOLUME 8 (APIs) COMPLETE — 11 chapters. *** Vol08 ch09-ch11 done (governance/linting/breaking-change, schema registry/codegen/SDK delivery, contract testing/evolution — ~5.3-5.7kw each, 2-4 Mermaid). Next: Vol11 batch.
