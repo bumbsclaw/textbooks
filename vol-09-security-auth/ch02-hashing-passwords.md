@@ -89,15 +89,15 @@ func main() {
 ```mermaid
 flowchart TD
     A["Input m<br/>arbitrary bytes"] --> B{"Construction"}
-    B -->|"SHA-256 SHA-512<br >Merkle-Damgard"| C["Compression chain<br/>pad -> blocks -> final digest"]
-    B -->|"SHA3-256<br >Sponge"| D["Absorb -> squeeze<br/>Keccak-f 1600"]
-    B -->|"BLAKE3<br >Tree"| E["Chunk -> parent nodes<br/>parallel, SIMD"]
+    B -->|"SHA-256 SHA-512<br/>Merkle-Damgard"| C["Compression chain<br/>pad -> blocks -> final digest"]
+    B -->|"SHA3-256<br/>Sponge"| D["Absorb -> squeeze<br/>Keccak-f 1600"]
+    B -->|"BLAKE3<br/>Tree"| E["Chunk -> parent nodes<br/>parallel, SIMD"]
 
     C --> F["Digest h<br/>n bits"]
     D --> F
     E --> F
 
-    C -.->|"Length extension<br >H m||ext computable"| G["Use HMAC, not raw hash<br/>for keyed use"]
+    C -.->|"Length extension<br/>H m||ext computable"| G["Use HMAC, not raw hash<br/>for keyed use"]
     D -.-> H["No length extension"]
     E -.-> H
 
@@ -232,8 +232,8 @@ PBKDF2 with 600,000 iterations (OWASP 2023 guidance) is still seen in compliance
 ```mermaid
 flowchart LR
     A["Input material"] --> B{"Entropy?"}
-    B -->|"High: ECDH secret <br >KMS key session secret"| C["HKDF RFC 5869<br/>fast, no tuning needed<br/>salt + info for separation"]
-    B -->|"Low: human password<br >20-40 bits"| D{"New system?"}
+    B -->|"High: ECDH secret <br/>KMS key session secret"| C["HKDF RFC 5869<br/>fast, no tuning needed<br/>salt + info for separation"]
+    B -->|"Low: human password<br/>20-40 bits"| D{"New system?"}
     D -->|"Yes"| E["Argon2id RFC 9106<br/>memory-hard, tune m/t/p"]
     D -->|"Legacy FIPS"| F["PBKDF2 600k iters<br/>or scrypt<br/>migrate to Argon2id"]
 
@@ -267,7 +267,11 @@ flowchart TD
     B --> C["Argon2id<br/>m=64 MiB, t=3, p=1<br/>per RFC 9106"]
     C --> D["Hash with salt and params<br/>PHC string format<br/>argon2id v=19 m=65536 t=3 p=1 salt hash"]
     D --> E["Store in DB<br/>one row per user"]
-    F["User logs in<br/>password attempt"] --> G["Fetch PHC string<br/>parse salt + params"] G --> H["Argon2id with same params<br >same salt"] H --> I{"hmac.Equal?"} I -->|"Yes"|J["Authenticated<br >optionally rehash if params stale"] I -->|"No"| K["Reject<br/>constant-time, no oracle"]
+    F["User logs in<br/>password attempt"] --> G["Fetch PHC string<br/>parse salt + params"]
+    G --> H["Argon2id with same params<br/>same salt"]
+    H --> I{"hmac.Equal?"}
+    I -->|"Yes"| J["Authenticated<br/>optionally rehash if params stale"]
+    I -->|"No"| K["Reject<br/>constant-time, no oracle"]
 
     L["Pepper 32 bytes<br/>stored in KMS/HSM<br/>not in DB"] -.-> C
     L -.-> H
