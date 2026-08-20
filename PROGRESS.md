@@ -222,9 +222,9 @@ until then their paths are as listed above).
 
 ## Volume 8 — APIs and Service Design (`vol-08-apis/`)
 
-- [ ] 8.01 API Design Principles and Contracts — `ch01-principles.md`
-- [ ] 8.02 REST in Depth — `ch02-rest.md`
-- [ ] 8.03 gRPC and Protobuf Schema Design — `ch03-grpc-protobuf.md`
+- [x] 8.01 API Design Principles and Contracts — `ch01-principles.md`
+- [x] 8.02 REST in Depth — `ch02-rest.md`
+- [x] 8.03 gRPC and Protobuf Schema Design — `ch03-grpc-protobuf.md`
 - [ ] 8.04 GraphQL for Backend Engineers — `ch04-graphql.md`
 - [ ] 8.05 Versioning and Evolution — `ch05-versioning.md`
 - [ ] 8.06 Idempotency, Pagination, Filtering — `ch06-idempotency-pagination.md`
@@ -333,3 +333,4 @@ until then their paths are as listed above).
 - 2026-08-14: *** VOLUME 4 (Concurrency) COMPLETE — 10 chapters. *** Vol 5 started: 5.01, 5.03-5.06 done
   (agent batch interrupted by session limit; 5.02, 5.07-5.10 to re-run). Volumes 5-15 scaffolded.
 - 2026-08-14: *** VOLUME 6 (Distributed Systems) COMPLETE — 12 chapters. *** Vol 7 batch 1 (7.01-7.06) in flight.
+- 2026-08-20: Vol08 ch01-ch03 done (principles, REST, gRPC/protobuf). Next: 8.04-8.06.
