@@ -258,9 +258,9 @@ until then their paths are as listed above).
 
 ## Volume 11 — Reliability, Observability, and SRE (`vol-11-reliability-sre/`)
 
-- [ ] 11.01 SLIs, SLOs, and Error Budgets — `ch01-slos.md`
-- [ ] 11.02 Metrics and the Golden Signals — `ch02-metrics.md`
-- [ ] 11.03 Logging at Scale — `ch03-logging.md`
+- [x] 11.01 SLIs, SLOs, and Error Budgets — `ch01-slos.md`
+- [x] 11.02 Metrics and the Golden Signals — `ch02-metrics.md`
+- [x] 11.03 Logging at Scale — `ch03-logging.md`
 - [ ] 11.04 Distributed Tracing and OpenTelemetry — `ch04-tracing.md`
 - [ ] 11.05 Incident Response and On-Call — `ch05-incident-response.md`
 - [ ] 11.06 Blameless Postmortems — `ch06-postmortems.md`
