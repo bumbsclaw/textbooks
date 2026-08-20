@@ -267,9 +267,9 @@ until then their paths are as listed above).
 - [x] 11.04 Distributed Tracing and OpenTelemetry — `ch04-tracing.md`
 - [x] 11.05 Incident Response and On-Call — `ch05-incident-response.md`
 - [x] 11.06 Blameless Postmortems — `ch06-postmortems.md`
-- [ ] 11.07 Load Testing and Capacity Planning — `ch07-load-testing.md`
-- [ ] 11.08 Chaos Engineering — `ch08-chaos.md`
-- [ ] 11.09 Deployment Strategies: Blue/Green, Canary, Flags — `ch09-deployment-strategies.md`
+- [x] 11.07 Load Testing and Capacity Planning — `ch07-load-testing.md`
+- [x] 11.08 Chaos Engineering — `ch08-chaos.md`
+- [x] 11.09 Deployment Strategies: Blue/Green, Canary, Flags — `ch09-deployment-strategies.md`
 - [ ] 11.10 Resilience Patterns in Production — `ch10-resilience-patterns.md`
 
 ## Volume 12 — Cloud, Containers, and Infrastructure (`vol-12-cloud-infra/`)
@@ -357,3 +357,4 @@ until then their paths are as listed above).
 - 2026-08-20: Vol11 ch04-ch06 done (distributed tracing & OTel Collector agent+gateway/tail sampling/W3C propagation, incident response lifecycle/severity/on-call/Alertmanager/PagerDuty/runbooks, blameless postmortems template/facilitation/action items — ~6.8-8.5kw each, 4-5 Mermaid). Next: 11.07-11.10.
 - 2026-08-20: Vol14 ch01-ch03 done (complexity/RAM vs I/O model/benchmarking, hashing/SwissTable/Robin Hood/concurrent maps, AVL/RB/B-tree/B+tree/skip list — ~3.3-4.6kw each, 3-5 Mermaid, real code + benchmarks). Next: 14.04-14.06.
 - 2026-08-20: Vol13 ch01-ch03 done (JVM memory/G1/ZGC/JIT/tuning, Go scheduler P/M/G + memory model + tri-color GC, Rust ownership/borrowing/tokio/axum — ~5-8kw each, 4-6 Mermaid, real configs/traces). Next: 13.04-13.06.
+- 2026-08-20: Vol11 ch07-ch09 done (load testing open/closed models/USL/k6+Vegeta+distributed, chaos hypothesis lifecycle/Chaos Mesh+Litmus+FIS/safety gates/game days, deployment strategies rolling/blue-green/canary Argo Rollouts+Flagger/Gateway API/feature flags OpenFeature — ~6-9kw each, 2-7 Mermaid). Next: 11.10.
