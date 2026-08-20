@@ -250,9 +250,9 @@ until then their paths are as listed above).
 - [x] 10.01 Messaging Fundamentals: Queues, Logs, Pub/Sub — `ch01-fundamentals.md`
 - [x] 10.02 Delivery Semantics — `ch02-delivery-semantics.md`
 - [x] 10.03 Apache Kafka Architecture — `ch03-kafka.md`
-- [ ] 10.04 Stream Processing — `ch04-stream-processing.md`
-- [ ] 10.05 Event Sourcing and CQRS — `ch05-event-sourcing-cqrs.md`
-- [ ] 10.06 The Outbox Pattern and the Dual-Write Problem — `ch06-outbox.md`
+- [x] 10.04 Stream Processing — `ch04-stream-processing.md`
+- [x] 10.05 Event Sourcing and CQRS — `ch05-event-sourcing-cqrs.md`
+- [x] 10.06 The Outbox Pattern and the Dual-Write Problem — `ch06-outbox.md`
 - [ ] 10.07 Backpressure and Flow Control — `ch07-backpressure.md`
 - [ ] 10.08 Dead Letters, Retries, Poison Messages — `ch08-dead-letters.md`
 
@@ -340,3 +340,4 @@ until then their paths are as listed above).
 - 2026-08-20: Vol09 ch07-ch09 done (authorization RBAC/ABAC/ReBAC Zanzibar/SpiceDB, secrets management Vault, AppSec OWASP/injection/SSRF/deserialization — ~4.9-5.1kw each, 3-6 Mermaid). Next: 9.10-9.11.
 - 2026-08-20: *** VOLUME 7 (System Design) COMPLETE — 12 chapters. *** Vol07 ch10-ch12 done (multi-region/geo-distributed, designing for failure bulkheads/breakers/shedding, case studies feed/chat/notifications/global KV — ~4.0-6.3kw each, 4-6 Mermaid). Next: 8.07-8.09 + 9.10 batch.
 - 2026-08-20: Vol08 ch07-ch08 + Vol09 ch10 done (error handling/status semantics, compatibility/wire formats, zero trust/mTLS/SPIFFE — ~5.5-6.5kw each, 4-6 Mermaid). Next: 8.09-8.11 + 9.11.
+- 2026-08-20: Vol10 ch04-ch06 done (stream processing Flink/Kafka Streams, event sourcing/CQRS Postgres+EventStoreDB, outbox/dual-write/Debezium CDC — ~4.6-5.4kw each, 4-5 Mermaid). Next: 10.07-10.08.
