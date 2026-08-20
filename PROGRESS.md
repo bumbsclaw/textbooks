@@ -216,9 +216,9 @@ until then their paths are as listed above).
 - [x] 7.07 Event-Driven Architecture — `ch07-event-driven.md`
 - [x] 7.08 API Gateways, BFF, and Edge — `ch08-gateways-edge.md`
 - [x] 7.09 Rate Limiting, Quotas, and Fairness — `ch09-rate-limiting.md`
-- [ ] 7.10 Multi-Region and Geo-Distributed Systems — `ch10-multi-region.md`
-- [ ] 7.11 Designing for Failure — `ch11-designing-for-failure.md`
-- [ ] 7.12 Design Case Studies — `ch12-case-studies.md`
+- [x] 7.10 Multi-Region and Geo-Distributed Systems — `ch10-multi-region.md`
+- [x] 7.11 Designing for Failure — `ch11-designing-for-failure.md`
+- [x] 7.12 Design Case Studies — `ch12-case-studies.md`
 
 ## Volume 8 — APIs and Service Design (`vol-08-apis/`)
 
@@ -338,3 +338,4 @@ until then their paths are as listed above).
 - 2026-08-20: Vol08 ch04-ch06 done (GraphQL, versioning, idempotency/pagination — ~4.1-5.0kw each, 3-4 Mermaid). Next: 8.07-8.09.
 - 2026-08-20: Vol07 ch07-ch09 done (event-driven/Kafka/CDC/outbox/Saga, gateways/BFF/edge, rate limiting/quotas/fairness — ~4.4-5.4kw each, 4 Mermaid). Next: 7.10-7.12.
 - 2026-08-20: Vol09 ch07-ch09 done (authorization RBAC/ABAC/ReBAC Zanzibar/SpiceDB, secrets management Vault, AppSec OWASP/injection/SSRF/deserialization — ~4.9-5.1kw each, 3-6 Mermaid). Next: 9.10-9.11.
+- 2026-08-20: *** VOLUME 7 (System Design) COMPLETE — 12 chapters. *** Vol07 ch10-ch12 done (multi-region/geo-distributed, designing for failure bulkheads/breakers/shedding, case studies feed/chat/notifications/global KV — ~4.0-6.3kw each, 4-6 Mermaid). Next: 8.07-8.11.
