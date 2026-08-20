@@ -247,9 +247,9 @@ until then their paths are as listed above).
 
 ## Volume 10 — Messaging, Streaming, and Event Systems (`vol-10-messaging-streaming/`)
 
-- [ ] 10.01 Messaging Fundamentals: Queues, Logs, Pub/Sub — `ch01-fundamentals.md`
-- [ ] 10.02 Delivery Semantics — `ch02-delivery-semantics.md`
-- [ ] 10.03 Apache Kafka Architecture — `ch03-kafka.md`
+- [x] 10.01 Messaging Fundamentals: Queues, Logs, Pub/Sub — `ch01-fundamentals.md`
+- [x] 10.02 Delivery Semantics — `ch02-delivery-semantics.md`
+- [x] 10.03 Apache Kafka Architecture — `ch03-kafka.md`
 - [ ] 10.04 Stream Processing — `ch04-stream-processing.md`
 - [ ] 10.05 Event Sourcing and CQRS — `ch05-event-sourcing-cqrs.md`
 - [ ] 10.06 The Outbox Pattern and the Dual-Write Problem — `ch06-outbox.md`
