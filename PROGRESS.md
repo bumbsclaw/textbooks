@@ -311,12 +311,12 @@ until then their paths are as listed above).
 
 ## Volume 15 — Software Engineering Practice (`vol-15-swe-practice/`)
 
-- [ ] 15.01 Testing Strategy: Unit, Integration, E2E, Property-Based — `ch01-testing-strategy.md`
-- [ ] 15.02 Contract Testing, Test Doubles, Testability — `ch02-contract-testing.md`
-- [ ] 15.03 Load, Performance, and Chaos Testing — `ch03-load-testing.md`
-- [ ] 15.04 Design Docs, RFCs, and Technical Decision-Making — `ch04-design-docs.md`
-- [ ] 15.05 Domain-Driven Design for Backend — `ch05-ddd.md`
-- [ ] 15.06 Design Patterns and Anti-Patterns for Services — `ch06-patterns.md`
+- [x] 15.01 Testing Strategy: Unit, Integration, E2E, Property-Based — `ch01-testing-strategy.md`
+- [x] 15.02 Contract Testing, Test Doubles, Testability — `ch02-contract-testing.md`
+- [x] 15.03 Load, Performance, and Chaos Testing — `ch03-load-testing.md`
+- [x] 15.04 Design Docs, RFCs, and Technical Decision-Making — `ch04-design-docs.md`
+- [x] 15.05 Domain-Driven Design for Backend — `ch05-ddd.md`
+- [x] 15.06 Design Patterns and Anti-Patterns for Services — `ch06-patterns.md`
 - [ ] 15.07 Refactoring and Managing Technical Debt — `ch07-refactoring.md`
 - [ ] 15.08 Code Review and Engineering Culture — `ch08-code-review.md`
 - [ ] 15.09 Debugging and Incident-Driven Learning — `ch09-debugging.md`
@@ -368,3 +368,4 @@ until then their paths are as listed above).
 - 2026-08-20: *** VOLUME 13 (Runtimes) COMPLETE — 9 chapters. *** Vol13 ch04-ch06 done (GC across runtimes G1/ZGC/Shenandoah/Go tri-color/V8 Orinoco/CPython/.NET generational, profiling sampling/eBPF perf/async-profiler/pprof/py-spy/clinic, Python GIL+free-threaded 3.13t/asyncio+ASGI and Node V8+libuv/event loop/workers/cluster — ~3.8-5.5kw each, 3-6 Mermaid). Vol13 ch07-ch09 done (Wasm sandbox/Component Model/WASI Wasmtime/WasmEdge/Spin+Fastly, FFI JNI/Panama/cgo/pyo3/N-API ownership+signal+thread failure modes, runtime selection benchmarks/TCO/selection matrix/strangler+shadow migration — ~4.3-6.2kw each, 2-4 Mermaid, real Wasm/JNI/FFI/bench configs).
 - 2026-08-20: Vol14 ch04-ch06 done (probabilistic: Bloom sizing/FPR+vnode impl/Cuckoo+counting+blocked variants+LSM use+RocksDB, HLL harmonic mean+sparse/dense+bias correction+Redis PFADD+12KB@1M, CMS ε·N guarantee+conservative update+CMS+heap top-K; consistent hashing ring+vnodes V=100-200 balance/churn/weighted+bounded loads+rack-aware replication vs rendezvous HRW O(N) stateless + Jump; sorting Ω(n log n) bound/introsort+Timsort, counting/radix/bucket O(n), external sort runs+k-way heap merge+replacement selection, streaming top-K/reservoir/sliding windows — 3 Mermaid ch04, 5 Mermaid ch05, 3 Mermaid ch06, real runnable code each). Next: 14.07-14.08 + 15.01-15.10 (remaining 12).
 - 2026-08-20: *** VOLUME 14 (Algorithms) COMPLETE — 8 chapters. *** Vol14 ch07-ch08 done (graphs: adj list/matrix/edge/CSR + BFS/DFS + Dijkstra/Bellman-Ford/Floyd comparison + topo sort Kahn+DFS + cycle/SCC Kosaraju + Union-Find+Kruskal MST; rate limiting: fixed/sliding log/sliding counter/token bucket/leaky bucket/GCRA TAT + distributed Redis GCRA Lua + local/hybrid sharding + concurrency+adaptive Vegas + scheduling FIFO/priority/WFQ/DRR/EDF — 6 Mermaid ch07, 7 Mermaid ch08, real runnable code each). Next: Vol15 15.01-15.10 (remaining 10).
+- 2026-08-20: Vol15 ch01-ch03 done (testing strategy pyramid/diamond/trophy+unit table-driven/Testcontainers/Playwright E2E/property-based Hypothesis/fast-check/gopter+flakiness/CI staging; contract testing test-double taxonomy fakes> mocks+Pact consumer/provider/Broker can-i-deploy+OpenAPI/buf breaking/WireMock; load/perf/chaos k6/Vegeta/Gatling open/closed workload models+profiling hierarchy+Chaos Mesh/Litmus/Toxiproxy+Istio fault injection+staged pipeline — 3 Mermaid ch01, 4 Mermaid ch02, 4 Mermaid ch03, runnable k6/Pact/Chaos configs each). Next: 15.04-15.10 (remaining 7).
