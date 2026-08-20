@@ -659,7 +659,6 @@ The Spectral ruleset and `buf.yaml` are versioned artifacts. A rule change (e.g.
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Governance Council Flow
 

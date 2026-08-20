@@ -670,7 +670,6 @@ In a fleet with fifty services, a breaking provider change that is "compatible w
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Pact Consumer-Driven Flow
 

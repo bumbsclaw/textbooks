@@ -1069,7 +1069,6 @@ In a distributed backend, tracing is not optional tooling — it is the only sig
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Sampling Decision
 

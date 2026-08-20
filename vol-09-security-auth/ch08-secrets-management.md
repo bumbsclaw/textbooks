@@ -629,7 +629,6 @@ kubectl auth can-i --list --as=system:serviceaccount:default:default | grep secr
 - **Audit as a forensic requirement.** Every read, write, and lease revocation must be auditable (Vault audit device → SIEM). In a breach, "which workloads read this secret, when, from which IP, with which token?" is the first question. If you cannot answer it, the blast radius is "everything that could have."
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Secrets Retrieval with Sidecar
 

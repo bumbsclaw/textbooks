@@ -465,7 +465,6 @@ Three properties of distributed systems make API contracts disproportionately im
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### API Lifecycle State Machine
 

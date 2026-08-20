@@ -607,7 +607,6 @@ Logging: log the *original* downstream error (with `trace_id`, downstream `code`
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Error Taxonomy
 

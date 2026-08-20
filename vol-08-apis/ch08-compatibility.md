@@ -441,7 +441,6 @@ Wire bytes outlive the request that produced them:
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Compatibility Matrix
 

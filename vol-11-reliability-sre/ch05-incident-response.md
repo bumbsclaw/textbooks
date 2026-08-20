@@ -738,7 +738,6 @@ Incident response for distributed backends has specific challenges that single-s
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Severity Decision
 

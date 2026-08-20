@@ -1058,7 +1058,6 @@ Deployment strategy in distributed backends has failure modes that single-servic
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Canary Analysis and Auto-Rollback
 

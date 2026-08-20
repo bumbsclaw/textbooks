@@ -515,7 +515,6 @@ Hashing and KDF choices have fleet-wide consequences.
 **Deduplication and content addressing.** Where hashes are used for deduplication (CAS, Merkle trees, container layer digests in Vol 12), collision resistance is load-bearing — a collision means two distinct objects map to one address, causing silent data loss. Use at least 256-bit output and consider BLAKE3 for large objects where parallel hashing matters. Where hashes are used for sharding or load balancing, uniformity matters more than collision resistance — but still use a cryptographic hash if the input is attacker-controlled, to prevent hash-flooding DoS (Vol 14, Ch 2).
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Password Hashing Flow
 

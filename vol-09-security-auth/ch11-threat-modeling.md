@@ -397,7 +397,6 @@ Acceptance without a written residual-risk entry and a compensating detection (a
 - **Verification must be as distributed as the system.** SAST/SCA/secrets gates run per repo, authz-matrix tests run per service, DAST crawls per environment, and audit-log anomaly detection runs centrally. The threat model maps each mitigation to *where* it is verified — a mitigation with no gate is a mitigation that will regress.
 
 
-<!-- Batch C: additional diagrams -->
 
 #### STRIDE per Component
 

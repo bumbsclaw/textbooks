@@ -458,7 +458,6 @@ kafka-consumer-groups.sh --bootstrap-server kafka-1.internal:9092 --describe --g
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Partition Assignment
 

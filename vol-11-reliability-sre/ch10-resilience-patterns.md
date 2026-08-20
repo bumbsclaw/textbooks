@@ -898,7 +898,6 @@ management:
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Circuit Breaker States
 

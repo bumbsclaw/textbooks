@@ -559,7 +559,6 @@ Without propagation, a slow database causes the consumer buffer to grow, the bro
 - **The edge must shed.** Internal backpressure (pause, throttle) protects durability but increases latency for every caller. At the edge (gateway, BFF), shedding with `429`/`503` + `Retry-After` bounds tail latency and gives callers a signal they can act on (backoff, hedge, degrade). A system that only throttles internally and never sheds at the edge will meet its durability SLO and miss its latency SLO on every overload.
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Backpressure Strategy Choice
 

@@ -662,7 +662,6 @@ Common anti-patterns to forbid in review:
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### gRPC Call Types
 

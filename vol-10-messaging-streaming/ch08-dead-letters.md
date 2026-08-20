@@ -556,7 +556,6 @@ Rules that survive production:
 - **DLQ is a queue like any other.** It needs retention, replication (quorum / ISR), monitoring, and capacity planning. A DLQ that fills disk or is never consumed reintroduces the same failure it was meant to solve.
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Dead Letter Routing
 

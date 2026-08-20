@@ -678,7 +678,6 @@ PKI at single-host scale is `openssl req`. PKI at fleet scale is a distributed s
 - **Observability.** Export `x509_cert_not_after`, `x509_cert_verify_success`, `ocsp_staple_expiry`, and `tls_handshake_errors` as metrics from every terminator. Alert on time-to-expiry, stapling staleness, and handshake error rate — a spike in `unknown_ca` after a deploy is the signal that a chain was broken by the change.
 
 
-<!-- Batch C: additional diagrams -->
 
 #### TLS 1.3 Handshake
 

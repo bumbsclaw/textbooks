@@ -533,7 +533,6 @@ Many organizations run both: Kafka Streams for lightweight per-service transform
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Windowing Types
 

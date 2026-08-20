@@ -612,7 +612,6 @@ Pagination and idempotency interact: a client that pages through a large collect
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Idempotency Key Flow
 

@@ -485,7 +485,6 @@ Cryptography in a single process is a library call. Cryptography in a distribute
 **Forward secrecy at scale** means session keys are ephemeral and short-lived. For long-lived connections (gRPC streams, WebSocket), re-key periodically. For stored data, forward secrecy is approximated by prompt re-encryption after KEK rotation.
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Crypto Primitive Selection
 

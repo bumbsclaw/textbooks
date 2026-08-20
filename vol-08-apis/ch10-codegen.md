@@ -726,7 +726,6 @@ The registry prevents *published* drift. It does not prevent *unpublished* drift
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### SDK Generation Pipeline
 

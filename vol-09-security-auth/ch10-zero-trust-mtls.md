@@ -821,7 +821,6 @@ A minimal end-to-end checklist for a cluster that means it:
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### mTLS with SPIFFE
 

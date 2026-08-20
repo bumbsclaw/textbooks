@@ -633,7 +633,6 @@ Accurate journey SLIs require knowing which service caused a journey to fail —
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### SLI to Error Budget
 

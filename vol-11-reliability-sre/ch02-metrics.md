@@ -988,7 +988,6 @@ No single pillar is sufficient. A metrics-only observability strategy can detect
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### RED vs USE Decision
 

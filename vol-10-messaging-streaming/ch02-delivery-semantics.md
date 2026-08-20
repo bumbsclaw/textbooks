@@ -382,7 +382,6 @@ Operational signals to watch:
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Delivery Semantic Choice
 

@@ -552,7 +552,6 @@ Client ─► LB ──┤
 **Key rotation without `kid`.** New signing key deployed, old key deleted, every in-flight token fails verification and every user is logged out. Defense: publish both keys in JWKS with distinct `kid`s, issue new tokens with the new `kid`, keep the old key verifiable until every token signed with it has expired (max `exp` window), then remove it. This is the same dual-read pattern as Ch 3 and Ch 4. Monitor `kid` distribution in issued tokens to know when the old `kid` is safe to retire.
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Session vs JWT Decision
 

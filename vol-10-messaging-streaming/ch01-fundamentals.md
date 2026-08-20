@@ -445,7 +445,6 @@ Additional forcing functions:
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Queue vs PubSub Decision
 

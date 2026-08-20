@@ -656,7 +656,6 @@ Outbox payloads are events — apply the same versioning discipline as Ch 5:
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Transactional Outbox Sequence
 

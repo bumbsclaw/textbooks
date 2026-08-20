@@ -631,7 +631,6 @@ Otherwise, keep a normalized write table, add an `audit_log` table or CDC (Ch 6)
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Aggregate Lifecycle
 

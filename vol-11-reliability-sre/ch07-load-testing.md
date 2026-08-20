@@ -732,7 +732,6 @@ Load testing distributed backends has failure modes that single-service tests do
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Load Test Lifecycle
 

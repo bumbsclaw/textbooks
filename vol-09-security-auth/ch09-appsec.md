@@ -575,7 +575,6 @@ WAF/RASP (ModSecurity, AWS WAF, Cloudflare, Google Cloud Armor) are **defense in
 - **Dependency blast radius at scale.** One vulnerable transitive dependency shared across 200 services is a fleet-wide incident. Centralize SCA results in a dependency inventory (OSV + SBOM per Companion Book 3), prioritize by reachability, and roll out patches via the same progressive delivery as feature flags (Vol 11, Ch 9) — canary, then fleet.
 
 
-<!-- Batch C: additional diagrams -->
 
 #### OWASP Request Filtering
 

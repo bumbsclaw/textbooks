@@ -433,7 +433,6 @@ Its costs are:
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### REST Constraints Applied
 

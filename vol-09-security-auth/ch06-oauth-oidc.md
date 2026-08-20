@@ -671,7 +671,6 @@ Client ─► AS ───┤                                         ├─► 
 **Authorization code replay.** The code is used twice — the legitimate client and an attacker both exchange it. Defense: single-use codes deleted on first read (the `delete(codes, codeStr)` in the AS above), with the first exchange winning; the second gets `invalid_grant`. Log and alert on replay attempts — they are near-certain attacks or bugs.
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Authorization Code with PKCE
 

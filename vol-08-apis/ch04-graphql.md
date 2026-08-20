@@ -708,7 +708,6 @@ useServer({ schema: server.schema, context: () => ({ loaders: createLoaders() })
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### GraphQL Execution Pipeline
 

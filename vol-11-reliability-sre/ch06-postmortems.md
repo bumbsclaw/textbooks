@@ -594,7 +594,6 @@ Postmortems in distributed backends have specific characteristics that single-se
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Postmortem Timeline
 

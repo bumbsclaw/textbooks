@@ -692,7 +692,6 @@ Chaos engineering is particularly essential — and particularly subtle — in d
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Fault Injection Taxonomy
 

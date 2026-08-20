@@ -1406,7 +1406,6 @@ At scale, log schema drift — one team renames `user_id` to `userId`, another a
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Structured Logging Pipeline
 

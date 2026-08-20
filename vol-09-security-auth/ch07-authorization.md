@@ -637,7 +637,6 @@ Authorization at scale is a *data system* problem with availability and partitio
 - **Observability.** Emit `authz_check_total{result=allow|deny, permission, cached}`, `authz_check_latency_ms`, `spicedb_datastore_replica_lag_ms`, and `authz_policy_version`. Alert on `deny` rate spikes (misconfigured rollout), `p99` latency regression (missing index), and replica lag exceeding the decision TTL.
 
 
-<!-- Batch C: additional diagrams -->
 
 #### RBAC vs ABAC vs ReBAC
 

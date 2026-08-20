@@ -510,7 +510,6 @@ Three realities make versioning a runtime concern, not just a design-time one.
 ---
 
 
-<!-- Batch C: additional diagrams -->
 
 #### Versioning Strategy Decision
 
