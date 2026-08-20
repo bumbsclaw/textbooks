@@ -311,12 +311,16 @@ until then their paths are as listed above).
 
 ## Volume 15 — Software Engineering Practice (`vol-15-swe-practice/`)
 
-- [ ] 15.01 Testing Strategy — `ch01-testing-strategy.md`
-- [ ] 15.02 Design Docs, RFCs, Decision-Making — `ch02-design-docs.md`
-- [ ] 15.03 Domain-Driven Design for Backend — `ch03-ddd.md`
-- [ ] 15.04 Design Patterns and Anti-Patterns for Services — `ch04-patterns.md`
-- [ ] 15.05 Refactoring and Managing Technical Debt — `ch05-refactoring.md`
-- [ ] 15.06 Code Review and Engineering Culture — `ch06-code-review.md`
+- [ ] 15.01 Testing Strategy: Unit, Integration, E2E, Property-Based — `ch01-testing-strategy.md`
+- [ ] 15.02 Contract Testing, Test Doubles, Testability — `ch02-contract-testing.md`
+- [ ] 15.03 Load, Performance, and Chaos Testing — `ch03-load-testing.md`
+- [ ] 15.04 Design Docs, RFCs, and Technical Decision-Making — `ch04-design-docs.md`
+- [ ] 15.05 Domain-Driven Design for Backend — `ch05-ddd.md`
+- [ ] 15.06 Design Patterns and Anti-Patterns for Services — `ch06-patterns.md`
+- [ ] 15.07 Refactoring and Managing Technical Debt — `ch07-refactoring.md`
+- [ ] 15.08 Code Review and Engineering Culture — `ch08-code-review.md`
+- [ ] 15.09 Debugging and Incident-Driven Learning — `ch09-debugging.md`
+- [ ] 15.10 Building High-Performing Engineering Teams — `ch10-teams.md`
 
 ## Log
 
