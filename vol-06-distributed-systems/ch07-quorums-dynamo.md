@@ -683,7 +683,7 @@ sequenceDiagram
     A-->>R: v1 @ t=10
     B-->>R: v2 @ t=20
     C-->>R: v2 @ t=20
-    R->>R: Newest wins: v2; detect A stale
+    R->>R: Newest wins: v2, detect A stale
     R->>A: Read repair — push v2 to A (async)
     Note over A: Anti-entropy: Merkle tree sync<br/>background convergence without read
 ```

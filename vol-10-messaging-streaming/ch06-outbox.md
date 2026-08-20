@@ -40,7 +40,7 @@ sequenceDiagram
     participant DB as Postgres
     participant K as Kafka
     Note over S: Case A: commit then publish
-    S->>DB: BEGIN; INSERT orders ...; COMMIT
+    S->>DB: BEGIN, INSERT orders ..., COMMIT
     DB-->>S: ack — row durable
     Note over S: CRASH — publish never happens
     Note over K: Event never published.<br/>Downstream never learns<br/>order exists. Silent divergence.
@@ -55,7 +55,7 @@ sequenceDiagram
     Note over S: Case B: publish then commit
     S->>K: send(OrderPlaced)
     K-->>S: ack — event durable
-    S->>DB: BEGIN; INSERT orders ...; COMMIT
+    S->>DB: BEGIN, INSERT orders ..., COMMIT
     Note over S: CRASH — commit never happens<br/>or COMMIT fails (constraint, deadlock)
     Note over K: Event published for an order<br/>that does not exist.<br/>Downstream acts on a ghost.
 ```
@@ -665,7 +665,7 @@ sequenceDiagram
     participant DB as DB TX
     participant Relay as Relay / CDC
     participant Broker as Broker
-    Svc->>DB: BEGIN; INSERT business row + outbox row; COMMIT
+    Svc->>DB: BEGIN, INSERT business row + outbox row, COMMIT
     Relay->>DB: poll CDC / logical replication
     Relay->>Broker: publish outbox events
     Broker-->>Relay: ack

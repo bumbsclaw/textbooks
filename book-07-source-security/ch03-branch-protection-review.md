@@ -775,7 +775,7 @@ sequenceDiagram
 flowchart TD
   REQ["Need to bypass<br/>branch protection?"] --> Q1{"Is actor on<br/>bypass list?"}
   Q1 -->|No| DENY["Denied — normal PR flow"]
-  Q1 -->|Yes (admin/bot)| Q2{"Reason + ticket<br/>provided?"}
+  Q1 -->|Yes admin or bot| Q2{"Reason + ticket<br/>provided?"}
   Q2 -->|No| DENY2["Denied — justification required"]
   Q2 -->|Yes| ALLOW["Allowed (push/merge)"]
   ALLOW --> LOG["Logged: actor, reason,<br/>bypass event to SIEM"]

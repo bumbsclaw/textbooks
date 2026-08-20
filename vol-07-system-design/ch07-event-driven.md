@@ -232,7 +232,7 @@ sequenceDiagram
     F1-->>L: ack
     F2-->>L: ack
     L-->>P: ack (all ISR)
-    Note over L,F1,F2: ISR=3, min.insync=2 — tolerates 1 failure
+    Note over L: ISR is 3 with min insync 2 — tolerates 1 failure
     L->>C: fetch (isolation=read_committed)
     C->>C: process + produce derived event in txn
     C->>L: sendOffsetsToTransaction + commitTransaction

@@ -277,7 +277,7 @@ sequenceDiagram
     participant R as Cleanup
 
     M->>A: 1. Introduce abstraction<br/>(interface) over current impl
-    A->>A: Existing code now depends<br/>on abstraction; old impl is one adapter
+    A->>A: Existing code now depends<br/>on abstraction, old impl is one adapter
     A->>N: 2. Implement new adapter<br/>behind same abstraction
     N->>N: Both adapters coexist<br/>tests cover both via interface
     N->>C: 3. Switch wiring<br/>(config, flag, or DI binding)

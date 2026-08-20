@@ -428,7 +428,7 @@ sequenceDiagram
   V->>Reg: fetch signature + cert (+ bundle) for IMAGE@sha256:...
   Reg-->>V: signature, Fulcio cert, Rekor bundle
   V->>V: verify signature over the artifact digest with cert's public key
-  V->>V: verify cert chains to Fulcio root; check embedded SCT
+  V->>V: verify cert chains to Fulcio root, check embedded SCT
   V->>V: extract identity (SAN) + issuer (OID) from cert
   V->>V: match identity + issuer against POLICY (expected signer)
   V->>Rekor: (or from bundle) verify inclusion proof + SET

@@ -752,7 +752,7 @@ sequenceDiagram
     participant WAL as WAL Buffer
     participant Disk as Disk / fsync
     participant Heap as Heap / Buffer Pool
-    App->>Tx: BEGIN; UPDATE; UPDATE
+    App->>Tx: BEGIN, UPDATE, UPDATE
     Tx->>Heap: modify pages in buffer pool (dirty)
     Tx->>WAL: append WAL records (in memory)
     App->>Tx: COMMIT

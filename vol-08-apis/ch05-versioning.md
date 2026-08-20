@@ -201,7 +201,7 @@ sequenceDiagram
     P->>S: backfill old → new for existing rows
     C->>C: switch to reading new
     Note over P,S: Phase 3 — Contract (MAJOR, after Sunset)
-    P->>S: stop writing old; drop column
+    P->>S: stop writing old, drop column
     C->>S: read new only
 ```
 

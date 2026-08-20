@@ -165,7 +165,7 @@ sequenceDiagram
   M->>D: Suggests: pip install foo-utils
   D->>R: Installs the suggestion
   R->>D: Delivers attacker's package
-  D->>P: Ships it; malware runs<br/>at install / import
+  D->>P: Ships it, malware runs<br/>at install / import
 ```
 
 This attack has been given the name **slopsquatting** — "slop" for AI-generated filler,

@@ -252,7 +252,7 @@ sequenceDiagram
     participant App as User (Ring 3)
     participant CPU as CPU
     participant Kernel as Kernel (Ring 0)
-    App->>App: libc wrapper: mov rax,nr; syscall
+    App->>App: libc wrapper: mov rax,nr, syscall
     App->>CPU: syscall insn: trap<br/>RIP to STAR_MSR, CPL 0
     CPU->>Kernel: entry_SYSCALL_64<br/>swapgs, save regs, PTI switch
     Kernel->>Kernel: dispatch: sys_call_table[rax]<br/>arg regs: rdi,rsi,rdx,r10,r8,r9

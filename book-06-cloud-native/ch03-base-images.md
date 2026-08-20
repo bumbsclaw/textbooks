@@ -493,7 +493,7 @@ sequenceDiagram
     CI-->>Repo: checks pass, merge
     Repo->>Reg: publish rebuilt, freshly-based image (signed, Book 5)
   else regression / new CVE
-    CI-->>Bot: fail; hold the bump for a human
+    CI-->>Bot: fail - hold the bump for a human
   end
 ```
 

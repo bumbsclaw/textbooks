@@ -49,7 +49,7 @@ sequenceDiagram
     E->>E: Verify password (Argon2id, Ch 2)
     E->>S: Create session {id=random 256b, user_id, expires_at}
     S-->>E: OK
-    E-->>B: 200 + Set-Cookie: session_id=abc123; HttpOnly; Secure; SameSite=Lax; Path=/; __Host-
+    E-->>B: 200 + Set-Cookie: session_id=abc123, HttpOnly, Secure, SameSite=Lax, Path=/, __Host-
 
     B->>E: GET /api/profile Cookie: session_id=abc123
     E->>S: GET session:abc123
@@ -59,7 +59,7 @@ sequenceDiagram
 
     B->>E: POST /logout
     E->>S: DEL session:abc123
-    E-->>B: 200 + Set-Cookie: session_id=; Max-Age=0
+    E-->>B: 200 + Set-Cookie: session_id=, Max-Age=0
 ```
 
 ### Generating and storing the handle
@@ -572,7 +572,7 @@ sequenceDiagram
     B->>App: POST /login
     App->>App: verify password + MFA
     App->>Store: SET session:abc user=42 ex=15m
-    App-->>B: Set-Cookie: __Host-sid=abc; HttpOnly; Secure; SameSite=Lax
+    App-->>B: Set-Cookie: __Host-sid=abc, HttpOnly, Secure, SameSite=Lax
     B->>App: GET /profile Cookie: sid=abc
     App->>Store: GET session:abc
     Store-->>App: hit

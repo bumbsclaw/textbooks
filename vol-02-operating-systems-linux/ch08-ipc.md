@@ -191,7 +191,7 @@ sequenceDiagram
     Main->>H: invoke handler at arbitrary PC
     Note over H: SAFE: write(pipe, &b, 1)<br/>or set volatile sig_atomic_t flag
     Note over H: UNSAFE: printf/malloc<br/>→ re-enter locked allocator → deadlock
-    H-->>Main: return; resume malloc()
+    H-->>Main: return, resume malloc()
     Note over Main: event loop later observes<br/>flag / readable pipe → shuts down
 ```
 

@@ -773,7 +773,7 @@ sequenceDiagram
     participant DB as Database
     participant Relay as Outbox Relay
     participant Bus as Message Bus
-    Svc->>DB: BEGIN; UPDATE orders; INSERT outbox(event)
+    Svc->>DB: BEGIN, UPDATE orders, INSERT outbox(event)
     DB-->>Svc: COMMIT atomically (order + event)
     Relay->>DB: Poll outbox WHERE published=false
     Relay->>Bus: Publish event (at-least-once)

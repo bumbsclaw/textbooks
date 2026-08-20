@@ -500,10 +500,10 @@ sequenceDiagram
   IR->>Inv: "Where is this vendor's software / access?"
   Inv-->>IR: Instances, versions, privilege, grants (fast if pre-built)
   IR->>IR: Assess blast radius (bounded by least-priv)
-  IR->>Fleet: Isolate; block C2 egress; disable grants
+  IR->>Fleet: Isolate, block C2 egress, disable grants
   IR->>Fleet: Rotate reachable credentials/secrets/tokens
   IR->>Fleet: Hunt for actual compromise (IOCs, logs)
-  IR-->>Vendor: Escalate; demand remediation timeline
+  IR-->>Vendor: Escalate, demand remediation timeline
 ```
 
 The point that generalizes: **vendor IR is fleet IR.** It runs on the same inventory, the same
