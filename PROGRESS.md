@@ -210,9 +210,9 @@ until then their paths are as listed above).
 - [x] 7.01 Principles of Scalable System Design — `ch01-principles.md`
 - [x] 7.02 Estimation and Capacity Planning — `ch02-estimation.md`
 - [x] 7.03 Caching Strategies at Scale — `ch03-caching.md`
-- [ ] 7.04 Load Balancing and Traffic Management — `ch04-traffic-management.md`
-- [ ] 7.05 Data Modeling for Scale — `ch05-data-modeling.md`
-- [ ] 7.06 Monolith, Microservices, and Between — `ch06-monolith-microservices.md`
+- [x] 7.04 Load Balancing and Traffic Management — `ch04-traffic-management.md`
+- [x] 7.05 Data Modeling for Scale — `ch05-data-modeling.md`
+- [x] 7.06 Monolith, Microservices, and Between — `ch06-monolith-microservices.md`
 - [ ] 7.07 Event-Driven Architecture — `ch07-event-driven.md`
 - [ ] 7.08 API Gateways, BFF, and Edge — `ch08-gateways-edge.md`
 - [ ] 7.09 Rate Limiting, Quotas, and Fairness — `ch09-rate-limiting.md`
@@ -334,3 +334,4 @@ until then their paths are as listed above).
   (agent batch interrupted by session limit; 5.02, 5.07-5.10 to re-run). Volumes 5-15 scaffolded.
 - 2026-08-14: *** VOLUME 6 (Distributed Systems) COMPLETE — 12 chapters. *** Vol 7 batch 1 (7.01-7.06) in flight.
 - 2026-08-20: Vol08 ch01-ch03 done (principles, REST, gRPC/protobuf). Next: 8.04-8.06.
+- 2026-08-20: Heavy-tail trim batch 2 committed (20 files -> <=7300w, 17 remain >7300). Vol07 ch04-ch06 done (traffic, data modeling, monolith/microservices, ~4.0-4.3kw each, 3-4 Mermaid). Next: 7.07-7.09.
