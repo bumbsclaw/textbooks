@@ -678,6 +678,48 @@ you — and Volume 7, Chapter 5 returns to modeling with the full toolbox in han
 - **Partition-key design is distributed-systems design handed to you.** Everything from
   Chapters 9 and 10 — skew, hot keys, cross-partition invariants — now lives in your schema.
 
+
+```mermaid
+flowchart TB
+    subgraph KV["Key-Value — Dynamo, Redis"]
+        K1["Simple GET/PUT<br/>tunable R/W"]
+    end
+    subgraph Doc["Document — Mongo, CouchDB"]
+        D1["JSON doc + secondary index<br/>flexible schema"]
+    end
+    subgraph Wide["Wide-column — Cassandra, Bigtable"]
+        W1["Row key + column families<br/>LSM, range scans"]
+    end
+    subgraph Graph["Graph — Neo4j, JanusGraph"]
+        G1["Nodes + edges first-class<br/>traversal queries"]
+    end
+    K1 -.-> C["Consistency vs availability tradeoff<br/>chosen per request R/W"]
+    D1 -.-> C
+    W1 -.-> C
+```
+
+```mermaid
+flowchart LR
+    subgraph Ring["Preference list N=3"]
+        A["Replica A"] --- B["Replica B"] --- C["Replica C"]
+    end
+    W["Write W=2<br/>2 acks required"] --> Ring
+    R["Read R=2<br/>2 replicas queried"] --> Ring
+    Ring --> O["Overlap: R+W > N<br/>at least 1 current replica"]
+    O --> V["Vector clock reconciles<br/>concurrent writes → siblings"]
+    Q["W=1 R=1 → eventual<br/>W=3 R=3 → strong"] -.-> O
+```
+
+```mermaid
+flowchart TD
+    Q{"Data shape?"} --> E1["Aggregated access<br/>read whole entity together"] 
+    Q --> E2["Relational / cross-entity joins"]
+    E1 --> D["Document: embed related data<br/>1 fetch = 1 document<br/>no join at read"]
+    E2 --> R["Relational: normalize<br/>join at query time<br/>strong consistency across entities"]
+    D --> T["When doc grows unbounded<br/>→ split or reference<br/>16MB limit in Mongo"]
+    R --> J["NoSQL join is app-level<br/>N+1 risk without denormalization"]
+```
+
 ## Further reading
 
 - Chang, F., et al., "Bigtable: A Distributed Storage System for Structured Data," *OSDI*, 2006 —

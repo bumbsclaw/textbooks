@@ -517,6 +517,30 @@ Multi-region makes PACELC tangible. Every synchronous write pays latency even wh
 - Avoid conflicts by construction with single writer per key (home region per principal); reserve LWW/CRDTs for data where true multi-writer is required.
 - Operability determines survival: cell-by-cell deploys, clock-offset SLOs, fencing tokens against split-brain, pre-warmed failover targets, and quarterly region-evacuation drills that measure real RTO/RPO.
 
+
+```mermaid
+flowchart TB
+    subgraph AP["Active-Passive"]
+        W1["Writes → primary region only"] --> R1["Async replication → standby"]
+        R1 --> F["Failover: promote standby<br/>RPO > 0, RTO minutes"]
+    end
+    subgraph AA["Active-Active"]
+        W2["Writes → nearest region"] --> C["Conflict resolution<br/>LWW / vector clock / CRDT"]
+        C --> R2["Bidirectional replication<br/>RPO 0 per region, conflicts possible"]
+    end
+    AP -.-> Q{"Need RPO 0 + low write latency?<br/>→ active-active cost is conflicts"}
+    AA -.-> Q
+```
+
+```mermaid
+flowchart TD
+    Q{"Concurrent writes to same key<br/>in two regions?"} --> L["Last-writer-wins<br/>max timestamp<br/>simple, data loss for loser"]
+    Q --> V["Vector clock<br/>detect concurrent → keep siblings<br/>app merges"]
+    Q --> C["CRDT<br/>math guarantees convergence<br/>only for CRDT-compatible types"]
+    Q --> M["Manual / escalation<br/>queue conflict for human<br/>strong correctness, high latency"]
+    L -.-> E["Choose by data: LWW for cache<br/>vector for shopping cart<br/>CRDT for counters"]
+```
+
 ## Further reading
 
 - Google Spanner — TrueTime and externally consistent transactions. https://research.google/pubs/pub39966/

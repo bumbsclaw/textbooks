@@ -628,6 +628,36 @@ not verified downstream is a property you are trusting rather than checking; and
 not measured is a program you cannot know is working. Repository integrity at scale is that
 discipline applied to the place all of it begins — the source.
 
+### Org-scale repo integrity stack
+
+```mermaid
+flowchart TB
+  ORG["Organization"] --> RULESETS["Rulesets + required checks<br/>(all repos, non-bypassable)"]
+  ORG --> SCAN["Org-wide scanning<br/>(secret, SAST, dep review)"]
+  ORG --> SIGN["Commit signing required<br/>(SSH/Sigstore, vigilant mode)"]
+  ORG --> AUDIT["Audit log + SIEM<br/>(push, bypass, admin actions)"]
+  RULESETS --> REPO["Each repo<br/>inherits org policy<br/>+ repo-specific CODEOWNERS"]
+  SCAN --> ALERT["Alert to ticket to SLA"]
+  SIGN --> VER["Verified commits only"]
+  AUDIT --> SOC["SOC review"]
+  style RULESETS fill:#1f6feb,color:#fff
+  style AUDIT fill:#2ea043,color:#fff
+```
+
+### Fork and PR isolation model
+
+```mermaid
+flowchart LR
+  FORK["Fork (untrusted)<br/>external contributor"] --> PR["PR to base repo"]
+  PR --> CI_UNTRUSTED["CI: untrusted context<br/>(no secrets, read-only)"]
+  PR --> REVIEW["Human review gate"]
+  REVIEW -->|"approved"| CI_TRUSTED["CI: trusted context<br/>(with secrets, on main-runner)"]
+  CI_TRUSTED --> MERGE["Merge to main<br/>(now trusted)"]
+  CI_UNTRUSTED -.->|"cannot exfiltrate secrets<br/>or push"| SAFE["Safe isolation"]
+  style SAFE fill:#2ea043,color:#fff
+  style CI_UNTRUSTED fill:#d29922,color:#000
+```
+
 ## Key takeaways
 
 - **Coverage, not configuration, is the unit of assurance.** At thousands of repos the question is

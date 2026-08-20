@@ -611,6 +611,73 @@ Pagination and idempotency interact: a client that pages through a large collect
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Idempotency Key Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as Gateway
+    participant S as Service
+    participant DB as Idempotency Store
+    C->>G: POST /payments Idempotency-Key: k-123
+    G->>S: forward
+    S->>DB: INSERT key ON CONFLICT?
+    alt first time
+        DB-->>S: inserted
+        S->>S: execute side effect
+        S->>DB: store response
+        S-->>C: 201 + result
+    else replay
+        DB-->>S: exists
+        S-->>C: 200 replayed response
+    end
+```
+
+#### Cursor Pagination Sequence
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant API as API
+    participant DB as DB
+    C->>API: GET /orders?limit=50
+    API->>DB: SELECT ... ORDER BY id LIMIT 51
+    DB-->>API: 51 rows
+    API-->>C: 50 items + next_cursor=last_id
+    C->>API: GET /orders?cursor=last_id&limit=50
+    API->>DB: WHERE id > cursor LIMIT 51
+    DB-->>API: rows
+    API-->>C: next page
+```
+
+#### Offset vs Cursor Tradeoff
+
+```mermaid
+flowchart TB
+    Req{"Need stable pagination<br/>under writes?"}
+    Req -->|No small sets| Offset["Offset<br/>?page=3&size=20<br/>simple, drift on insert"]
+    Req -->|Yes large / live| Cursor["Cursor<br/>?cursor=xyz<br/>stable, no count"]
+    Req -->|Need total count| Hybrid["Hybrid<br/>cursor + approximate count"]
+
+```
+
+#### Retry with Idempotency Safety
+
+```mermaid
+stateDiagram-v2
+    [*] --> Send: POST with key
+    Send --> AckCheck: wait ack
+    AckCheck --> Done: 2xx
+    AckCheck --> Timeout: no ack
+    Timeout --> Retry: same key
+    Retry --> AckCheck
+    AckCheck --> Conflict: 409 duplicate
+    Conflict --> Done: fetch stored result
+```
+
 ## Key takeaways
 
 - Make every `POST` that creates or mutates state idempotent via `Idempotency-Key`. The server must handle concurrent duplicate arrivals (`INSERT ... ON CONFLICT` / `SET NX`), distinguish replay (same fingerprint → return stored response) from misuse (different fingerprint → `422`), scope keys to the principal, and expire them on a bounded TTL (24h).

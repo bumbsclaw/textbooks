@@ -669,6 +669,50 @@ In a fleet with fifty services, a breaking provider change that is "compatible w
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Pact Consumer-Driven Flow
+
+```mermaid
+sequenceDiagram
+    participant Cons as Consumer
+    participant Pact as Pact file
+    participant Prov as Provider
+    participant Broker as Broker
+    Cons->>Pact: define expectation<br/>given/when/then
+    Pact->>Broker: publish pact
+    Broker->>Prov: trigger verification
+    Prov->>Prov: replay against real service
+    Prov-->>Broker: results
+    Broker-->>Cons: can-i-deploy?
+```
+
+#### Contract Test CI Pipeline
+
+```mermaid
+flowchart TB
+    Change["Spec or code change"] --> ConsumerTests["Consumer pact tests"]
+    ConsumerTests --> Publish["Publish pacts"]
+    Publish --> ProviderVerify["Provider verification<br/>+ provider states"]
+    ProviderVerify --> Gate{"All green?"}
+    Gate -->|Yes| Deploy["Deploy"]
+    Gate -->|No| Block["Block pipeline"]
+```
+
+#### Provider Verification States
+
+```mermaid
+stateDiagram-v2
+    [*] --> Given: provider state setup
+    Given --> When: replay request
+    When --> Then: assert response
+    Then --> Pass: matches contract
+    Then --> Fail: mismatch
+    Pass --> [*]
+    Fail --> [*]
+```
+
 ## Key takeaways
 
 - A schema proves the *specification* is compatible; a contract test proves the *implementation* honors it. Schemas catch evolution errors in the spec; contracts catch drift between spec and handler — neither replaces the other, and the registry cannot catch a handler that returns `string` where the spec promises `integer`.

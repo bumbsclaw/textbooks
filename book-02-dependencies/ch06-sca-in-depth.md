@@ -693,6 +693,42 @@ paved-road-plus-warn-then-enforce pattern that governs every fleet-wide control 
   packages (Chapter 4's different problem), zero-days, unadvised bugs, first-party vulnerabilities,
   or logic/config flaws. It is necessary, not sufficient; a green gate is not "secure."
 
+
+### SCA scan modes: where it runs
+
+```mermaid
+flowchart TD
+    subgraph When["When"]
+        IDE["IDE / pre-commit<br/>fast, local"]
+        CI["CI pipeline<br/>blocking gate"]
+        REG["Registry /<br/>scheduled scan"]
+        RUNTIME["Runtime<br/>continuous"]
+    end
+    IDE --> DB["Vuln DB"]
+    CI --> DB
+    REG --> DB
+    RUNTIME --> DB
+    DB --> FINDING["Findings<br/>deduplicated +<br/>prioritized"]
+    FINDING --> TICKET["Issue / MR<br/>with fix suggestion"]
+    style CI fill:#ffcc00,stroke:#333
+```
+
+
+### SCA false-positive taxonomy
+
+```mermaid
+flowchart TD
+    FP["False Positive"] --> FP1["Not actually<br/>deployed (dev dep)"]
+    FP --> FP2["Vulnerable code<br/>not reachable"]
+    FP --> FP3["Already patched<br/>(backport / fork)"]
+    FP --> FP4["Wrong version<br/>range in advisory"]
+
+    MIT1["Scope filter"] -. mitigates .-> FP1
+    MIT2["Reachability<br/>analysis"] -. mitigates .-> FP2
+    MIT3["VEX /<br/>patch confirm"] -. mitigates .-> FP3
+    MIT4["Ecosystem DB<br/>(GHSA/OSV)"] -. mitigates .-> FP4
+```
+
 ## Further reading
 
 - OWASP Dependency-Track — the reference central SBOM/vulnerability aggregation platform

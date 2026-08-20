@@ -834,3 +834,43 @@ Platform engineering is the organizational answer to the coordination cost of di
 - Spotify engineering blog — Backstage origin and adoption — https://backstage.spotify.com/learn/
 - Thoughtworks Technology Radar — Backstage, platform engineering patterns — https://www.thoughtworks.com/radar
 - *Accelerate* (Forsgren, Humble, Kim) — DORA metrics and the link between platform capabilities and delivery performance.
+
+### Internal developer platform architecture
+
+```mermaid
+flowchart TB
+    DEV[Developer] --> PORTAL[Developer Portal - Backstage]
+    PORTAL --> TPL[Service Templates]
+    TPL --> SCAFFOLD[Scaffold New Service]
+    SCAFFOLD --> GIT[Git Repo]
+    GIT --> CI[CI Pipeline]
+    CI --> CD[CD / GitOps]
+    CD --> PLAT[Platform - K8s / Cloud]
+    PLAT --> OBS[Observability]
+```
+
+### Golden path vs paved road
+
+```mermaid
+flowchart LR
+    REQ[New Service Request] --> Q{Use Golden Path?}
+    Q -->|Yes| FAST[Fast - Template + Auto-provision]
+    Q -->|No| CUSTOM[Custom - Review + Manual Setup]
+    FAST --> STD[Standard Stack]
+    CUSTOM --> VAR[Variant Stack]
+    STD --> SUP[Fully Supported]
+    VAR --> BES[Best Effort Support]
+```
+
+### Platform team operating model
+
+```mermaid
+flowchart TB
+    P[Platform Team] --> INFRA[Infrastructure Abstraction]
+    P --> SELF[Self-Service APIs]
+    P --> DOCS[Documentation & Guides]
+    APP[App Teams] --> SELF
+    APP --> INFRA
+    FEEDBACK[Feedback Loop] --> P
+    APP --> FEEDBACK
+```

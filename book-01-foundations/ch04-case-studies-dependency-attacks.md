@@ -558,6 +558,61 @@ that happens *to* you automatically into something you *govern* deliberately.
   enforcement, and one-action rollback across the whole fleet — you cannot govern a channel you do
   not funnel.
 
+
+### Dependency confusion attack flow
+
+```mermaid
+sequenceDiagram
+    participant Att as Attacker
+    participant Pub as Public Registry
+    participant Corp as Corporate Build
+    participant Private as Private Registry
+    Att->>Pub: Publish pkg 'internal-auth' v99.0.0
+    Corp->>Private: Resolve 'internal-auth' — not found / version?
+    Corp->>Pub: Fallback to public registry (misconfiguration)
+    Pub->>Corp: Return attacker package v99 (higher version wins)
+    Corp->>Corp: Build with attacker code
+    Note over Corp,Pub: Resolver preference logic exploited
+```
+
+
+### Typosquatting and combosquatting variants
+
+```mermaid
+flowchart TD
+    LEGIT["Legitimate package<br/>requests"] --> TYPO["Typo variant<br/>reqeusts"]
+    LEGIT --> COMBO["Combosquat<br/>requests-oauth"]
+    LEGIT --> HYPHEN["Hyphen/underscore<br/>python_dateutil"]
+    LEGIT --> SCOPE["Scope confusion<br/>@babel/core vs babel-core"]
+
+    TYPO --> HARVEST["Attacker harvests<br/>installs + secrets"]
+    COMBO --> HARVEST
+    HYPHEN --> HARVEST
+    SCOPE --> HARVEST
+
+    HARVEST --> PAYLOAD["Post-install script<br/>exfiltration / dropper"]
+
+    style HARVEST fill:#f88,stroke:#900
+```
+
+
+### Maintainer account takeover chain
+
+```mermaid
+flowchart TD
+    PHISH["Phishing / credential<br/>stuffing"] --> ATO["Maintainer account<br/>takeover"]
+    ATO --> PUSH["Push malicious<br/>version (patch bump)"]
+    PUSH --> REG["Registry publishes<br/>tainted version"]
+    REG --> AUTO["Dependabot / Renovate<br/>auto-merge?"]
+    REG --> MANUAL["Developers<br/>npm install / pip install"]
+    AUTO --> DEPLOY["Production<br/>deployment"]
+    MANUAL --> DEPLOY
+    DEPLOY --> IMPACT["Credential theft<br/>/ supply-chain worm"]
+
+    style ATO fill:#f88,stroke:#900
+    style IMPACT fill:#f88,stroke:#900
+```
+
 ## Further reading
 
 - npm (GitHub) Security team, "Details about the event-stream incident" (November 26, 2018) — the

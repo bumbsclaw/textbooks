@@ -730,6 +730,60 @@ hopeful assertion.
   ephemeral, tenant-isolated builds (Chapter 8)** — and reaching L3 across a fleet is the platform
   team's job, not a per-repo one.
 
+
+### SLSA provenance: generation to verification
+
+```mermaid
+sequenceDiagram
+    participant Src as Source Repo
+    participant Builder as SLSA Builder (isolated)
+    participant Prov as Provenance (in-toto)
+    participant Registry as Registry
+    participant Verifier as Verifier / Admission
+    Src->>Builder: Source + pinned deps
+    Builder->>Builder: Hermetic build
+    Builder->>Prov: Generate provenance (materials, outputs, builder ID)
+    Builder->>Prov: Sign with ephemeral key (Fulcio)
+    Prov->>Registry: Publish artifact + signed provenance
+    Registry->>Verifier: Fetch artifact + provenance
+    Verifier->>Verifier: Verify signature + transparency log + policy
+    Verifier->>Verifier: Allow / deny deploy
+```
+
+
+### Provenance fields: what is attested
+
+```mermaid
+flowchart TD
+    PROV["SLSA Provenance<br/>(in-toto predicate)"] --> SUBJ["Subject<br/>— artifact hash (sha256)"]
+    PROV --> BUILDER["Builder<br/>— builder.id (trusted)"]
+    PROV --> MATERIALS["Materials<br/>— source repo + commit<br/>+ dep digests"]
+    PROV --> RECIPE["Recipe / BuildConfig<br/>— entry point, params"]
+    PROV --> META["Metadata<br/>— build start/finish,<br/>reproducible?"]
+
+    MATERIALS --> VERIFY["Verifier checks:<br/>expected source?<br/>expected builder?<br/>hermetic?"]
+    style PROV fill:#b6d7ff,stroke:#333
+    style VERIFY fill:#b6f0b6,stroke:#333
+```
+
+
+### Provenance verification decision
+
+```mermaid
+flowchart TD
+    FETCH["Fetch artifact +<br/>provenance"] --> SIG{"Signature<br/>valid? (Fulcio + Rekor)"}
+    SIG -->|No| REJECT["REJECT<br/>— untrusted builder"]
+    SIG -->|Yes| BUILDER{"Builder<br/>allowed?"}
+    BUILDER -->|No| REJECT
+    BUILDER -->|Yes| SOURCE{"Source repo<br/>expected?"}
+    SOURCE -->|No| REJECT
+    SOURCE -->|Yes| MATS{"Materials<br/>pinned?"}
+    MATS -->|No| WARN["WARN / REJECT<br/>per policy"]
+    MATS -->|Yes| ALLOW["ALLOW deploy"]
+    style REJECT fill:#f88,stroke:#900
+    style ALLOW fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **SLSA v1.0** — the specification, especially *Build track / levels* and the *Provenance*

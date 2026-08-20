@@ -771,6 +771,48 @@ the ones that survive their coordination service's bad days.
 - Don't use one for data paths, queues, stale-tolerant config, or efficiency-only locks — every
   avoided use shrinks the blast radius of the one dependency everything else shares.
 
+
+```mermaid
+flowchart TB
+    Root["/"] --> S["/services"] --> P["/services/payments<br/>ephemeral + sequential"]
+    S --> E["/election<br/>participants create ephemeral sequential"]
+    Root --> C["/config<br/>persistent + watch"]
+    C --> W["Watch: client notified on change<br/>one-time trigger → re-register"]
+    E --> L["Lowest sequence wins leader<br/>others watch predecessor<br/>herd avoidance"]
+    P -.-> H["Ephemeral → auto-delete on session loss<br/>failure detection via session timeout"]
+```
+
+```mermaid
+sequenceDiagram
+    participant C1 as Client 1
+    participant C2 as Client 2
+    participant ZK as ZooKeeper / etcd
+    participant Res as Resource (storage)
+    C1->>ZK: Acquire lock → token=5, lease 10s
+    ZK-->>C1: Granted token 5
+    C1->>Res: Write with token=5
+    Note over C1: GC pause — lease expires
+    ZK->>C2: Grant lock → token=6
+    C2->>Res: Write with token=6
+    C1->>Res: Wakes, writes with token=5
+    Res->>Res: Reject — token 5 < 6 (fenced)
+    Note over Res: Resource enforces monotonic fencing<br/>prevents split-brain write
+```
+
+```mermaid
+stateDiagram-v2
+    [*] --> Follower: start, create ephemeral sequential
+    Follower --> Leader: lowest sequence
+    Follower --> Watching: not lowest — watch predecessor
+    Watching --> Follower: predecessor deleted (failure)
+    Leader --> Follower: session expired / resign
+    Watching --> Leader: predecessor gone and now lowest
+    note right of Watching
+        Only predecessor watch
+        avoids thundering herd
+    end note
+```
+
 ## Further reading
 
 - Hunt, P., Konar, M., Junqueira, F., and Reed, B., "ZooKeeper: Wait-free coordination for

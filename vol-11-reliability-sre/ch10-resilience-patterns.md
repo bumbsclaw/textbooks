@@ -897,6 +897,48 @@ management:
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Circuit Breaker States
+
+```mermaid
+stateDiagram-v2
+    [*] --> Closed: normal
+    Closed --> Open: failures ≥ threshold
+    Open --> HalfOpen: after sleepWindow
+    HalfOpen --> Closed: probe succeeds
+    HalfOpen --> Open: probe fails
+    Closed --> Closed: success resets count
+```
+
+#### Timeout and Retry Budget
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Downstream
+    C->>S: request with timeout 800ms
+    S-->>C: slow
+    Note over C: per-try timeout 200ms<br/>deadline budget 800ms<br/>retry budget 20%
+    C->>S: retry 1
+    S-->>C: 200
+    Note over C: stop if budget exhausted
+```
+
+#### Bulkhead Isolation
+
+```mermaid
+flowchart TB
+    subgraph Pools["Isolated pools"]
+        P1["Pool A<br/>critical<br/>20 threads"]
+        P2["Pool B<br/>batch<br/>10 threads"]
+        P3["Pool C<br/>external<br/>5 threads"]
+    end
+    Gateway --> P1 & P2 & P3
+    P3 -- "exhausted" --> Isolated["Only C degraded<br/>A + B healthy"]
+```
+
 ## Key takeaways
 
 - Every outbound call needs an explicit timeout strictly less than the remaining inbound deadline — without this, no other resilience pattern can function. Propagate deadlines via gRPC context or HTTP headers so downstream work that cannot be returned in time is never started.

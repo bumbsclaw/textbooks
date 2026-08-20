@@ -579,6 +579,54 @@ implementations — a lesson worth carrying well beyond databases.
 - The meta-lesson: SQL and ACID survived the distribution transition because they specify *what*,
   not *how* — data independence proved portable to planet scale.
 
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Spanner Node
+    participant TT as TrueTime Oracle
+    C->>S: Write Txn
+    S->>TT: TT.now() → [earliest, latest]
+    Note over TT: Uncertainty ~7ms<br/>GPS + atomic clocks
+    S->>S: Pick timestamp s within window<br/>commit wait: sleep until TT.after(s)
+    Note over S: Commit wait ensures external consistency<br/>later txn gets later timestamp
+    S-->>C: Commit ack with timestamp s
+    C->>S: Read at timestamp s — sees write
+```
+
+```mermaid
+flowchart TB
+    subgraph SQL["SQL Layer"]
+        Q["SQL query → optimizer"] --> D["DistSQL fan-out<br/>by range"]
+    end
+    subgraph KV["KV Layer — sorted ranges"]
+        R1["Range 1: [a,m)<br/>Raft group 3 replicas"] --- R2["Range 2: [m,z)<br/>Raft group 3 replicas"]
+    end
+    subgraph Raft["Raft per range"]
+        L1["Leader leaseholder<br/>serves consistent reads"] --> F1["Followers"]
+        L2["Leader"] --> F2["Followers"]
+    end
+    D --> R1
+    D --> R2
+    R1 --> L1
+    R2 --> L2
+```
+
+```mermaid
+sequenceDiagram
+    participant GW as Gateway Node
+    participant L1 as Leaseholder Range A
+    participant L2 as Leaseholder Range B
+    participant M as Merge
+    GW->>L1: DistSQL fragment: scan WHERE user_id BETWEEN 1 AND 1M
+    GW->>L2: DistSQL fragment: same predicate on range B
+    L1-->>GW: Partial rows + stats
+    L2-->>GW: Partial rows + stats
+    GW->>M: Merge sorted streams<br/>apply ORDER BY / LIMIT
+    M-->>GW: Final result set
+    Note over GW: Gateway may not be leaseholder —<br/>extra hop vs direct leaseholder routing
+```
+
 ## Further reading
 
 - Corbett, J. C., Dean, J., et al., "Spanner: Google's Globally-Distributed Database," *OSDI*,

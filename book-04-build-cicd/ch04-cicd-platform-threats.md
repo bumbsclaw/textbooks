@@ -644,6 +644,64 @@ in Chains.
   rather than trusting every team's YAML, and scope the **CI identity** — the keys to the
   kingdom — as tightly and short-lived as possible.
 
+
+### CI/CD platform attack surface
+
+```mermaid
+flowchart TD
+    TRIGGER["Triggers<br/>PR, push, schedule,<br/>webhook, manual"] --> RUNNER["Runner<br/>(VM / container /<br/>self-hosted)"]
+    RUNNER --> SECRETS["Secrets<br/>env, OIDC, vault"]
+    RUNNER --> CACHE["Cache / artifacts<br/>cross-run persistence"]
+    RUNNER --> NETWORK["Network<br/>egress to registries"]
+
+    ATT1["Attacker: fork PR<br/>to poisoned trigger"] -.-> TRIGGER
+    ATT2["Attacker: cache<br/>poisoning"] -.-> CACHE
+    ATT3["Attacker: secret<br/>exfil via logs"] -.-> SECRETS
+    ATT4["Attacker: runner<br/>escape to creds"] -.-> RUNNER
+
+    style ATT1 fill:#f88,stroke:#900
+    style ATT2 fill:#f88,stroke:#900
+    style ATT3 fill:#f88,stroke:#900
+    style ATT4 fill:#f88,stroke:#900
+```
+
+
+### Self-hosted vs hosted runner risk tradeoff
+
+```mermaid
+flowchart TD
+    CHOICE{"Runner type?"}
+    CHOICE --> HOSTED["Hosted (GitHub/Azure)<br/>— ephemeral, isolated<br/>— limited persistence"]
+    CHOICE --> SELF["Self-hosted<br/>— persistent, privileged<br/>— full control"]
+
+    HOSTED --> R1["Risk: cache<br/>poisoning across runs<br/>Mitig: ephemeral"]
+    SELF --> R2["Risk: escape to<br/>host creds, lateral<br/>Mitig: hardening, network policy"]
+
+    R1 --> REC1["Prefer hosted +<br/>ephemeral for untrusted PRs"]
+    R2 --> REC2["Harden self-hosted:<br/>no privileged, minimal creds"]
+
+    style HOSTED fill:#b6f0b6,stroke:#333
+```
+
+
+### Secrets sprawl in CI/CD
+
+```mermaid
+flowchart TD
+    SECRETS["Secrets in CI/CD"] --> S1["Long-lived PATs<br/>in env vars"]
+    SECRETS --> S2["Cloud creds<br/>for deploy"]
+    SECRETS --> S3["Signing keys<br/>on runner"]
+    SECRETS --> S4["Registry tokens<br/>for push"]
+
+    S1 --> RISK["Exfil via<br/>log, cache, artifact,<br/>compromised action"]
+    S2 --> RISK
+    S3 --> RISK
+    S4 --> RISK
+    RISK --> FIX["Fix: OIDC federation<br/>+ short-lived tokens"]
+    style RISK fill:#f88,stroke:#900
+    style FIX fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **OWASP**, *Top 10 CI/CD Security Risks* (2022) — the canonical taxonomy used throughout this

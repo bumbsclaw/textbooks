@@ -630,6 +630,45 @@ Otherwise, keep a normalized write table, add an `audit_log` table or CDC (Ch 6)
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Aggregate Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Empty: create aggregate
+    Empty --> Active: event Appended
+    Active --> Active: next event
+    Active --> Snapshotted: snapshot every N events
+    Snapshotted --> Active: new events after snapshot
+    Active --> [*]: archived
+```
+
+#### CQRS Flow
+
+```mermaid
+flowchart LR
+    Cmd["Command"] --> Aggregate["Aggregate<br/>validate + emit event"]
+    Aggregate --> EventStore["Event Store<br/>append"]
+    EventStore --> Projects["Projections<br/>read models"]
+    Projects --> Query["Query<br/>separate path"]
+```
+
+#### Projection Rebuild
+
+```mermaid
+sequenceDiagram
+    participant ES as Event Store
+    participant Proj as Projector
+    participant RM as Read Model
+    Proj->>ES: replay from 0 or snapshot
+    ES-->>Proj: stream events
+    Proj->>Proj: apply in order
+    Proj->>RM: upsert
+    Note over Proj,RM: idempotent apply<br/>safe to re-replay
+```
+
 ## Key takeaways
 
 - Event sourcing stores the ordered sequence of domain events as the source of truth; current state is a pure left-fold over that sequence — giving complete audit history, temporal queries, and replay for free.

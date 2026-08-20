@@ -330,6 +330,21 @@ automatically. Two families matter conceptually:
 - **Exterior Gateway Protocol**: **BGP**, which glues autonomous systems together and is
   important enough to get its own section.
 
+
+```mermaid
+flowchart TD
+    Pkt["Dst 192.168.1.100"] --> Trie["Trie / TCAM lookup<br/>Longest prefix wins"]
+    Trie --> R1["192.168.0.0/16 -> IF A"]
+    Trie --> R2["192.168.1.0/24 -> IF B (longer)"]
+    Trie --> R3["192.168.1.100/32 -> IF C (longest)"]
+    R3 --> Win["Forward out IF C<br/>/32 host route wins"]
+    R2 -.-> Lose1["/24 ignored (shorter)"]
+    R1 -.-> Lose2["/16 ignored (shorter)"]
+    Note["BGP injects ~1M prefixes<br/>Fast path: TCAM / hash<br/>Slow path: trie walk"]
+    style Win fill:#d4edda,stroke:#155724
+    style Trie fill:#cce5ff,stroke:#004085
+```
+
 ## BGP: the Internet's glue and its fragility
 
 The Internet is not one network; it is on the order of a hundred thousand allocated **autonomous
@@ -536,6 +551,21 @@ hard, and one of the strongest arguments for IPv6, whose abundance removes the a
 justification for NAT entirely (though NAT's accidental firewall property keeps some operators
 attached to it even on v6, via NPTv6 — a practice most engineers consider misguided).
 
+
+```mermaid
+sequenceDiagram
+    participant Client as 10.0.0.5:12345 (private)
+    participant NAT as NAT / conntrack
+    participant Server as 203.0.113.10:443 (public)
+    Client->>NAT: SYN 10.0.0.5:12345 to 203.0.113.10:443
+    NAT->>NAT: Create conntrack entry<br/>10.0.0.5:12345 <-> 203.0.113.10:443<br/>Assign public 198.51.100.1:54321
+    NAT->>Server: SYN 198.51.100.1:54321 to 203.0.113.10:443 (SNAT+PAT)
+    Server-->>NAT: SYN-ACK to 198.51.100.1:54321
+    NAT->>NAT: Lookup conntrack, reverse map
+    NAT-->>Client: SYN-ACK to 10.0.0.5:12345 (DNAT)
+    Note over NAT: conntrack table: ~65k ports per IP<br/>Exhaustion = new connections fail<br/>Timeouts: EST 5d, SYN_SENT 120s
+```
+
 ## The cloud realization: a VPC is IP networking
 
 Everything above is not background for cloud networking — it *is* cloud networking, wearing
@@ -605,6 +635,22 @@ The distributed-systems failure modes are the ones you now recognize:
 This is the cloud realization; Volume 12 (Cloud Infrastructure) develops VPC design, Transit
 Gateways, PrivateLink, and multi-region topologies in depth. Here the point is only that there
 is nothing new under the hood — it is subnets, route tables, LPM, and NAT.
+
+
+```mermaid
+flowchart TD
+    VPC["VPC 10.0.0.0/16"] --> Sub1["Subnet A 10.0.1.0/24 (AZ-a)<br/>Route table: local + NAT GW + IGW"]
+    VPC --> Sub2["Subnet B 10.0.2.0/24 (AZ-b)"]
+    VPC --> Sub3["Subnet C 10.0.0.0/24 (AZ-c, private)<br/>No IGW, via NAT GW"]
+    Sub1 --> IGW["Internet Gateway<br/>1:1 NAT for public IPs"]
+    Sub3 --> NATGW["NAT Gateway<br/>PAT for outbound only"]
+    NATGW --> IGW
+    IGW --> Internet["Internet"]
+    SG["Security Group = stateful firewall<br/>NACL = stateless subnet firewall<br/>Both before conntrack"]
+    style VPC fill:#cce5ff,stroke:#004085
+    style IGW fill:#d4edda,stroke:#155724
+    style NATGW fill:#fff3cd,stroke:#856404
+```
 
 ## Container networking: the same primitives, one host down
 

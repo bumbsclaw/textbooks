@@ -656,6 +656,43 @@ notifications and had almost nothing to rotate.
   weakest pipeline. Standardize workload identity as a paved-road capability so no team stores a
   long-lived secret; the payoff is super-linear in fleet size.
 
+
+### Secret exfiltration paths in CI
+
+```mermaid
+flowchart TD
+    SECRET["Secret in env<br/>AWS_KEY=..."] --> P1["Path: echo in logs<br/>(debug enabled)"]
+    SECRET --> P2["Path: artifact upload<br/>(includes env dump)"]
+    SECRET --> P3["Path: cache<br/>(persisted across runs)"]
+    SECRET --> P4["Path: compromised<br/>action exfiltrates"]
+    SECRET --> P5["Path: PR from fork<br/>reads secrets (if misconfig)"]
+
+    P1 --> MIT1["Mitig: mask secrets<br/>+ no debug on PRs"]
+    P2 --> MIT2["Mitig: no env in<br/>artifacts"]
+    P3 --> MIT3["Mitig: ephemeral<br/>runners, no cache secrets"]
+    P4 --> MIT4["Mitig: pin actions,<br/>allowlist"]
+    P5 --> MIT5["Mitig: pull_request_target<br/>careful + approval"]
+
+    style SECRET fill:#f88,stroke:#900
+```
+
+
+### OIDC federation: short-lived tokens
+
+```mermaid
+sequenceDiagram
+    participant Runner as GitHub Runner
+    participant IdP as GitHub IdP (OIDC)
+    participant Cloud as AWS / GCP / Azure
+    Runner->>IdP: Request OIDC token (aud, sub, repo, workflow)
+    IdP->>Runner: Signed JWT (short-lived, ~5 min)
+    Runner->>Cloud: AssumeRoleWithWebIdentity (JWT)
+    Cloud->>Cloud: Verify JWT + policy (repo/branch match)
+    Cloud->>Runner: STS credentials (short-lived)
+    Runner->>Runner: Use creds — no static secret stored
+    Note over Runner,Cloud: No long-lived secret to steal
+```
+
 ## Further reading
 
 - **HashiCorp Vault**, *Dynamic Secrets*, *Database Secrets Engine*, and *JWT/OIDC Auth Method*

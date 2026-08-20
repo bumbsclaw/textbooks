@@ -241,6 +241,22 @@ better a waking task's `vruntime` must be before it preempts the current task â€
 prevents wakeup thrashing. These live under `/proc/sys/kernel/` (or `/sys/kernel/debug/sched/`
 on newer kernels).
 
+
+```mermaid
+flowchart TD
+    Pick["Pick next task"] --> VRT{"vruntime =<br/>actual_runtime * (1024/weight)"}
+    VRT --> RB["RB-tree keyed by vruntime<br/>Leftmost = smallest vruntime<br/>= most deserving"]
+    RB --> Run["Run task for sched_latency/nr_tasks<br/>(sched_min_granularity floor)"]
+    Run --> Update["Update vruntime, reinsert"]
+    Update --> Preempt{"Preempted?<br/>New task with smaller vruntime<br/>woke up?"}
+    Preempt -->|"yes"| Pick
+    Preempt -->|"no"| Run
+    Note["nice -20..19 maps to weight 88761..15<br/>Weight ratio = CPU share"]
+    VRT -.-> Note
+    style RB fill:#fff3cd,stroke:#856404
+    style VRT fill:#cce5ff,stroke:#004085
+```
+
 ## EEVDF: the successor merged in 6.6
 
 Since kernel 6.6 (October 2023), the default fair-class scheduler is **EEVDF** â€” Earliest
@@ -462,6 +478,20 @@ flowchart TB
     CPUq["Uses 50ms, then THROTTLED<br/>for remaining 50ms of period<br/>even if the node is idle"]
     G --> CPUq
   end
+```
+
+
+```mermaid
+flowchart TD
+    Root["Root cgroup<br/>All CPUs"] --> SvcA["serviceA: cpu.weight=800<br/>cpu.max=200% (2 cores)"]
+    Root --> SvcB["serviceB: cpu.weight=200<br/>cpu.max=50% (0.5 core)"]
+    Root --> SvcC["batch: cpu.weight=100<br/>cpu.max=400% burst"]
+    SvcA --> Throttle{"Usage > max?"}
+    Throttle -->|"yes"| Throttled["Throttled: dequeued<br/>p99 spike, check nr_throttled"]
+    Throttle -->|"no"| Run["Run normally<br/>Weight decides contention share"]
+    Note["cpu.weight = relative share only under contention<br/>cpu.max = hard ceiling always<br/>Throttling is the fleet p99 killer"]
+    style Throttled fill:#f8d7da,stroke:#721c24
+    style Run fill:#d4edda,stroke:#155724
 ```
 
 ## CFS quota throttling: the fleet-wide p99 killer

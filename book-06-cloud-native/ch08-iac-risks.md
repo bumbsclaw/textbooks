@@ -673,6 +673,49 @@ account" to "infrastructure change is a governed, observable, policy-gated pipel
 
 ---
 
+### IaC scanning in the PR lifecycle
+
+```mermaid
+flowchart LR
+  A["IaC (Terraform / Helm / K8s YAML)"] --> B["Pre-commit: tflint / kube-lint"]
+  B --> C["PR: checkov / tfsec / terrascan<br/>(misconfigs: SG 0.0.0.0/0, no encryption)"]
+  C --> D["Plan: terraform plan<br/>+ OPA / Sentinel policy"]
+  D --> E{"Policy passes?"}
+  E -->|Yes| F["Apply (pipeline only,<br/>not locally)"]
+  E -->|No| G["Block PR<br/>fix code, not console"]
+  style G fill:#f85149,color:#fff
+  style F fill:#2ea043,color:#fff
+```
+
+### Terraform state as crown jewels
+
+```mermaid
+flowchart TD
+  CODE["Terraform code<br/>(git, reviewed)"] --> APPLY["terraform apply<br/>(privileged runner)"]
+  APPLY --> STATE["State file (terraform.tfstate)<br/>contains: secrets, infra graph,<br/>real resource IDs"]
+  STATE --> RISK1["Risk: state exfiltrated<br/>then full infra map + secrets"]
+  STATE --> RISK2["Risk: state tampered<br/>then drift / backdoor on next apply"]
+  RISK1 --> CTRL1["Encrypt at rest (S3 + DynamoDB lock)<br/>+ least privilege on state bucket"]
+  RISK2 --> CTRL2["State locking +<br/>plan approval gate +<br/>provenance of apply"]
+  style STATE fill:#f85149,color:#fff
+  style CTRL1 fill:#2ea043,color:#fff
+```
+
+### Drift detection loop
+
+```mermaid
+flowchart TB
+  GIT["Desired (Git)"] --> RECON["Reconciler<br/>(drift detection)"]
+  LIVE["Live (cloud / cluster)"] --> RECON
+  RECON --> DIFF{"Drift?"}
+  DIFF -->|No| OK["In sync"]
+  DIFF -->|Yes| CLASS{"Kind?"}
+  CLASS -->|Intended (approved)| APPROVE["Approve via PR<br/>+ audit log"]
+  CLASS -->|Unintended / manual| ALERT["Alert + auto-revert<br/>(GitOps) or ticket"]
+  style ALERT fill:#f85149,color:#fff
+  style APPROVE fill:#d29922,color:#000
+```
+
 ## Key takeaways
 
 - **IaC is a four-part supply chain — modules, providers, state, execution identity — executed at

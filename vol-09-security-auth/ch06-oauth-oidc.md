@@ -670,6 +670,61 @@ Client ─► AS ───┤                                         ├─► 
 
 **Authorization code replay.** The code is used twice — the legitimate client and an attacker both exchange it. Defense: single-use codes deleted on first read (the `delete(codes, codeStr)` in the AS above), with the first exchange winning; the second gets `invalid_grant`. Log and alert on replay attempts — they are near-certain attacks or bugs.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Authorization Code with PKCE
+
+```mermaid
+sequenceDiagram
+    participant UA as User Agent
+    participant AS as Auth Server
+    participant App as Client
+    App->>UA: redirect + code_challenge
+    UA->>AS: GET /authorize?challenge=xyz
+    AS->>UA: login + consent
+    UA->>App: redirect ?code=abc
+    App->>AS: POST /token code + code_verifier
+    AS->>AS: verify challenge
+    AS-->>App: access + id_token + refresh
+```
+
+#### Client Credentials Flow
+
+```mermaid
+sequenceDiagram
+    participant Svc as Service A
+    participant AS as Auth Server
+    participant API as Service B
+    Svc->>AS: POST /token grant=client_credentials<br/>id + secret / mTLS / JWT assertion
+    AS-->>Svc: access_token aud=ServiceB
+    Svc->>API: call with Bearer token
+    API->>API: verify iss/aud/scope + JWKS
+    API-->>Svc: 200
+```
+
+#### OIDC ID Token Validation
+
+```mermaid
+flowchart TB
+    Token["ID token"] --> H{"Header alg allowed?<br/>RS256/ES256 only"}
+    H -->|No| Reject["Reject"]
+    H -->|Yes| Sig["Verify sig via JWKS kid"]
+    Sig --> Claims{"Claims<br/>iss/aud/exp/nonce?"}
+    Claims -->|Fail| Reject
+    Claims -->|Pass| OK["Authenticated"]
+```
+
+#### Token Exchange and Revocation
+
+```mermaid
+flowchart LR
+    Access["Access token<br/>short-lived"] --> Exchange["Token exchange<br/>act_as / delegation"]
+    Exchange --> Downstream["Downstream token<br/>narrower scope"]
+    Access --> Revoke["/revoke<br/>refresh + access blocklist"]
+    Revoke --> Introspect["/introspect<br/>for opaque tokens"]
+```
+
 ## Key takeaways
 
 - OAuth 2.0 (RFC 6749/6750) delegates authority via scoped, revocable access tokens; OIDC (1.0) adds identity via ID tokens and Discovery. The access token is for the RS (`aud: api`, `scope`-checked), the ID token is for the client (`aud: client_id`, `nonce`-checked) — they are not interchangeable.

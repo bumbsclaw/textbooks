@@ -137,6 +137,23 @@ consumer is felt as network back-pressure, not as a local queue growing unbounde
 TCP flow control doing its job, and it is why a stuck downstream shows up as elevated latency
 upstream.
 
+
+```mermaid
+sequenceDiagram
+    participant NIC
+    participant Driver as Driver / NAPI
+    participant Stack as TCP/IP stack
+    participant Socket as Socket buffer
+    participant App as App (recv)
+    NIC->>Driver: DMA packet to ring, IRQ (or NAPI poll)
+    Driver->>Driver: napi_poll: budget 64, GRO coalesce
+    Driver->>Stack: netif_receive_skb -> IP -> TCP
+    Stack->>Stack: conntrack, netfilter, TCP lookup
+    Stack->>Socket: enqueue to sk_receive_queue<br/>(or prequeue / backlog)
+    Socket-->>App: recv() copies to user<br/>(or zero-copy with MSG_ZEROCOPY)
+    Note over NIC,Stack: Drops visible in /proc/net/softnet_stat,<br/>ethtool -S, ss -ti, qdisc drops
+```
+
 ## The transmit path: from send() to wire
 
 Transmit is the mirror image, with one extra layer — traffic control — that has no receive
@@ -421,6 +438,28 @@ bucket count proportionally, so the hash stays shallow), shorten timeouts for ch
 or exempt high-volume trusted flows from tracking with a `NOTRACK` rule in the `raw` table so
 they never consume an entry. The deeper fix — for clusters where conntrack is a bottleneck — is
 to move the dataplane to eBPF, which can bypass conntrack for known flows.
+
+
+```mermaid
+flowchart TD
+    Ingress["Packet ingress"] --> Raw["raw PREROUTING"]
+    Raw --> Conntrack["conntrack lookup<br/>NEW / ESTABLISHED / INVALID"]
+    Conntrack --> ManglePre["mangle PREROUTING"]
+    ManglePre --> NatPre["nat PREROUTING (DNAT)"]
+    NatPre --> Route{"Routing decision"}
+    Route -->|"local"| MangleIn["mangle INPUT"]
+    MangleIn --> FilterIn["filter INPUT (firewall)"]
+    FilterIn --> Local["Local socket"]
+    Route -->|"forward"| MangleFwd["mangle FORWARD"]
+    MangleFwd --> FilterFwd["filter FORWARD"]
+    FilterFwd --> NatPost["nat POSTROUTING (SNAT/MASQ)"]
+    NatPost --> Egress["Egress"]
+    Local --> NatPost
+    Note["Order matters: DNAT before route,<br/>SNAT after route<br/>conntrack is the bottleneck at scale"]
+    style Conntrack fill:#fff3cd,stroke:#856404
+    style NatPre fill:#cce5ff,stroke:#004085
+    style NatPost fill:#cce5ff,stroke:#004085
+```
 
 ## The qdisc layer and bufferbloat
 

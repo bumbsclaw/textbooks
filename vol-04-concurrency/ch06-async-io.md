@@ -349,6 +349,23 @@ stateless between events. A real protocol handler attaches a state machine — p
 partial frame, write queue — via `epoll_data_t`'s pointer form, and that heap object *is* the
 connection, in the same sense that a stack was the connection in thread-per-connection.
 
+
+```mermaid
+flowchart TD
+    Select["select/poll<br/>O(N) scan all FDs each call<br/>FD limit (1024), copies sets<br/>Legacy, do not use for high N"]
+    Epoll["epoll (Linux)<br/>O(1) per event<br/>Edge or level triggered<br/>Scales to millions of FDs"]
+    Kqueue["kqueue (BSD/macOS)<br/>Similar to epoll<br/>Also timers, signals, files"]
+    IOUR["io_uring (Linux 5.1+)<br/>Completion-based, not readiness<br/>SQ/CQ rings, zero syscalls with SQPOLL"]
+    Select --> Scale1["~1k FDs max practical"]
+    Epoll --> Scale2["~1M FDs, production default"]
+    Kqueue --> Scale2
+    IOUR --> Scale3["Highest throughput<br/>Needs kernel 5.10+"]
+    Note["Edge-triggered: must drain to EAGAIN<br/>Level-triggered: re-notifies<br/>Blocking in handler stalls all!"]
+    style Select fill:#f8d7da,stroke:#721c24
+    style Epoll fill:#d4edda,stroke:#155724
+    style IOUR fill:#cce5ff,stroke:#004085
+```
+
 ## Completion-based I/O: io_uring, IOCP, and the proactor
 
 Everything so far is a **readiness** model: the kernel tells you an operation *would now
@@ -649,6 +666,23 @@ side until `'drain'`) and what TCP itself does with its windows. The same three 
 disconnect, drop, or propagate — reappear at fleet scale in messaging systems, and Volume 10,
 Chapter 7 treats backpressure there; the socket-level version here is the atom from which those
 designs are built.
+
+
+```mermaid
+flowchart TD
+    FastProd["Fast producer<br/>e.g. upstream at 100k msg/s"] --> Queue["Queue / socket buffer"]
+    Queue --> SlowCons["Slow consumer<br/>e.g. downstream at 10k msg/s"]
+    Queue --> Grow{"Queue grows<br/>Unbounded?"}
+    Grow -->|"yes"| OOM["OOM: queue fills RAM<br/>Latency explodes<br/>Server dies"]
+    Grow -->|"bounded + backpressure"| BP{"Backpressure strategy"}
+    BP -->|"block producer"| Block["Block / await<br/>Natural throttling<br/>But watch deadlock"]
+    BP -->|"drop"| Drop["Drop oldest/newest<br/>For loss-tolerant (metrics)"]
+    BP -->|"shed"| Shed["Shed load: 503 + Retry-After<br/>For RPC (admission control)"]
+    Block --> Stable["Stable: producer paced<br/>to consumer speed"]
+    style OOM fill:#f8d7da,stroke:#721c24
+    style Block fill:#d4edda,stroke:#155724
+    style Shed fill:#fff3cd,stroke:#856404
+```
 
 ## The thundering herd, and sharing accept
 

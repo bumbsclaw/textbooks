@@ -721,6 +721,39 @@ The distributed-systems lens:
 - Fairness requires weighted limits, priority lanes, and a shed-vs-queue decision — shed for user-facing (fast 429 beats slow queue), queue with bounded depth for background work.
 - Global limits are a consistency-availability trade-off: local is available but N× imprecise, synchronous global is precise but adds latency and a single point of failure, periodic sync bounds the error to `sync_interval × RPS` and is the right default for most fleets.
 
+
+```mermaid
+flowchart TB
+    F["Fixed window<br/>100 req / 60s<br/>boundary burst 2x"] --> S["Sliding window log<br/>exact, memory heavy<br/>store timestamps"]
+    S --> L["Sliding window counter<br/>approx, low memory<br/>weighted prev window"]
+    L --> T["Token bucket<br/>burst + sustained<br/>refill rate r, capacity b"]
+    T --> G["GCRA / leaky bucket<br/>smooth, queue-like<br/>TCS style"]
+    T -.-> C["Choose token bucket for burst-friendly<br/>sliding window for strict quota<br/>GCRA for paced APIs"]
+```
+
+```mermaid
+flowchart TB
+    A["Request → LB → any of 10 hosts"] --> Q{"Where to count?"}
+    Q --> L["Local counter per host<br/>10× over-allow<br/>N hosts → N× quota"]
+    Q --> C["Central Redis counter<br/>accurate, extra RTT<br/>Redis becomes bottleneck"]
+    Q --> S["Sliding window + eventual sync<br/>approx, bounded over-allow<br/>e.g. local + periodic reconcile"]
+    S --> H["Header: X-RateLimit-Remaining<br/>client backs off"]
+```
+
+```mermaid
+sequenceDiagram
+    participant Cl as Client
+    participant GW as Gateway
+    participant RL as Rate Limiter (Redis)
+    Cl->>GW: Request
+    GW->>RL: INCR key:client:minute
+    RL-->>GW: Count=101 > limit 100
+    GW-->>Cl: 429 Too Many Requests<br/>Retry-After: 42s<br/>X-RateLimit-Remaining: 0
+    Cl->>Cl: Exponential backoff + jitter<br/>sleep 42s + random(0,10s)
+    Cl->>GW: Retry after backoff
+    GW->>RL: Count in new window → allow
+```
+
 ## Further reading
 
 - Envoy 1.30 — external rate limiting and `enable_x_ratelimit_headers`: https://www.envoyproxy.io/docs/envoy/v1.30.0/configuration/http/http_filters/rate_limit_filter

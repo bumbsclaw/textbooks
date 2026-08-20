@@ -306,6 +306,22 @@ canonical *detection* idiom exploits the reflexivity failure: `x != x` is true i
 NaN and infinity at ingestion — a validated numeric input at an API boundary should exclude them
 unless they are genuinely meaningful.
 
+
+```mermaid
+flowchart LR
+    subgraph Bits["IEEE 754 binary64 (double)"]
+        S["sign 1 bit"]
+        E["exponent 11 bits bias 1023"]
+        M["mantissa 52 bits (53 incl. hidden 1)"]
+        S --- E --- M
+    end
+    Bits --> Value["value = (-1)^s x 1.m x 2^(e-1023)<br/>~15-17 decimal digits"]
+    Special["Specials: e=0 subnormals/zero<br/>e=2047,m=0 inf / m!=0 NaN<br/>NaN != NaN!"]
+    style S fill:#cce5ff,stroke:#004085
+    style E fill:#fff3cd,stroke:#856404
+    style M fill:#d4edda,stroke:#155724
+```
+
 ## The fundamental problem: floating point is approximate
 
 Here is the fact that every backend engineer must internalize: **most decimal fractions cannot be
@@ -527,6 +543,18 @@ explicit scale, never `FLOAT` or `DOUBLE`. IEEE 754 also defines *decimal* float
 (decimal64, decimal128) used in some financial and database engines (IBM's hardware, PostgreSQL's
 `numeric` semantics), which give decimal exactness in a floating format — but the everyday rule stands:
 if a value is money, it is an integer of minor units or a decimal type, fleet-wide, at every layer.
+
+
+```mermaid
+flowchart TD
+    Req["Price $19.99 x 3, tax 8.25%"] --> Float["double: 19.99 not representable<br/>Stored as 19.98999..."]
+    Float --> Err["19.99*3 = 59.970000000000006<br/>Rounded display hides it"]
+    Err --> Bug["if total == 59.97 -> false<br/>Ledger off by cents"]
+    Req --> Correct["Correct: integer cents<br/>1999*3 = 5997 cents<br/>Or Decimal / BigDecimal"]
+    Correct --> Ledger["Ledger exact<br/>Bankers rounding explicit"]
+    style Float fill:#f8d7da,stroke:#721c24
+    style Correct fill:#d4edda,stroke:#155724
+```
 
 ## Determinism and reproducibility across a fleet
 

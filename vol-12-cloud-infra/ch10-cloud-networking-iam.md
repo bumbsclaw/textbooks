@@ -872,3 +872,60 @@ Network and IAM are the two global coordination planes that every service depend
 - SPIFFE/SPIRE — https://spiffe.io/docs/latest/ , https://spiffe.io/docs/latest/spire-about/
 - NIST SP 800-210 — General Access Control Guidance for Cloud Systems; NIST SP 800-53 (AC, SC families).
 - Shillaker, *The Cloud Native Security Handbook* (O'Reilly) — VPC, IAM, and workload identity patterns.
+
+### VPC networking fundamentals
+
+```mermaid
+flowchart TB
+    IGW[Internet Gateway] --- VPC[VPC 10.0.0.0/16]
+    VPC --> PUB[Public Subnet 10.0.1.0/24]
+    VPC --> PRIV[Private Subnet 10.0.2.0/24]
+    PUB --> NAT[NAT Gateway]
+    NAT --> PRIV
+    PRIV --> APP[App Instances]
+    PUB --> ALB[Load Balancer]
+```
+
+### IAM policy evaluation flow
+
+```mermaid
+flowchart TB
+    REQ[API Request] --> AUTH{Authenticated?}
+    AUTH -->|No| DENY1[Deny]
+    AUTH -->|Yes| EVAL[Evaluate Policies]
+    EVAL --> EXPLICIT{Explicit Deny?}
+    EXPLICIT -->|Yes| DENY2[Deny]
+    EXPLICIT -->|No| ALLOW{Explicit Allow?}
+    ALLOW -->|Yes| PERMIT[Allow]
+    ALLOW -->|No| DENY3[Implicit Deny]
+```
+
+### Security groups vs NACLs
+
+```mermaid
+flowchart LR
+    subgraph SG["Security Group - Stateful"]
+        A1[Instance] <---> SG1[SG Rules]
+    end
+    subgraph NACL["NACL - Stateless"]
+        SUB[Subnet] --- NACL1[Inbound Rules]
+        SUB --- NACL2[Outbound Rules]
+    end
+    SG1 -.-> NACL1
+```
+
+### Cross-account access with IAM roles
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant STS as STS Service
+    participant Role as Target Role
+    participant Resource
+    User->>STS: AssumeRole
+    STS-->>User: Temporary Credentials
+    User->>Resource: Request with Temp Creds
+    Resource->>Role: Validate Trust Policy
+    Role-->>Resource: Allowed
+    Resource-->>User: Access Granted
+```

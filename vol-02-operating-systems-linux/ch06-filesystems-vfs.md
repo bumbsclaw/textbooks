@@ -151,6 +151,25 @@ the link target and restarts the walk from there, with a recursion limit (40 lin
 loops. That mid-walk restart is why a symlink can point across file systems and why a symlink
 loop returns `ELOOP` rather than hanging.
 
+
+```mermaid
+flowchart TD
+    App["User: open/read/write/close"] --> VFS["VFS layer<br/>Common file_operations<br/>dentry + inode cache"]
+    VFS --> Cache["Page cache<br/>Buffered I/O"]
+    VFS --> FS1["ext4<br/>Journaling, extents"]
+    VFS --> FS2["XFS<br/>B+tree, allocation groups"]
+    VFS --> FS3["btrfs / ZFS<br/>COW, checksums, snapshots"]
+    VFS --> FS4["tmpfs / proc / FUSE"]
+    FS1 --> Block["Block layer<br/>bio, I/O scheduler / blk-mq"]
+    FS2 --> Block
+    FS3 --> Block
+    Block --> Driver["NVMe / SCSI driver"]
+    Driver --> Device["Storage device"]
+    Note["VFS = polymorphism for files<br/>Same syscall, different backend<br/>dentry cache = path lookup speed"]
+    style VFS fill:#cce5ff,stroke:#004085
+    style Cache fill:#d4edda,stroke:#155724
+```
+
 ## Files and inodes: the name is not the file
 
 The single most consequential fact about Unix file systems — the one that explains a whole
@@ -386,6 +405,21 @@ has no `fsck` at all — the design makes the inconsistent state unrepresentable
 fragmentation and write-amplification discussed earlier; the benefit is a simpler, arguably
 stronger consistency story plus the checksums and snapshots that ride along on the same
 mechanism.
+
+
+```mermaid
+flowchart TD
+    Write["Write: update file + metadata<br/>e.g. append + inode size"] --> Journal["Journaling (ext4/XFS)<br/>1. Write intent to journal<br/>2. fsync journal<br/>3. Checkpoint to main FS<br/>4. Free journal space"]
+    Write --> COW["COW (btrfs/ZFS)<br/>1. Write new blocks elsewhere<br/>2. Update parent pointers<br/>3. Atomic root switch<br/>4. Free old blocks (GC)"]
+    Journal --> Trade1["Pro: bounded recovery, fast fsck<br/>Con: double write (WAL)"]
+    COW --> Trade2["Pro: checksums, snapshots, no journal<br/>Con: fragmentation, GC, write amp"]
+    Trade1 --> Choice{"Workload?"}
+    Trade2 --> Choice
+    Choice -->|"overwrite-heavy DB"| Journal
+    Choice -->|"snapshot-heavy, integrity"| COW
+    style Journal fill:#fff3cd,stroke:#856404
+    style COW fill:#d4edda,stroke:#155724
+```
 
 ## The durability write path: where "written" becomes "safe"
 
@@ -663,6 +697,25 @@ protocol), and its caching means `fsync` durability now depends on the *server's
 stack. The general lesson: **a network file system offers the file system *interface* but not
 the *guarantees* you assumed.** Treat "it's just a mounted directory" on NFS as a distributed
 system in disguise, with its own consistency model to learn — not a local disk.
+
+
+```mermaid
+sequenceDiagram
+    participant App
+    participant Cache as Page cache
+    participant Journal as Journal
+    participant Disk as Disk
+    App->>Cache: write() to dirty page (not durable!)
+    Note over App,Cache: Returns immediately, data in RAM only
+    App->>Cache: fsync() / fdatasync()
+    Cache->>Journal: write-ahead log (if journaling)
+    Journal->>Disk: flush journal (barrier)
+    Disk-->>Journal: durable
+    Journal->>Disk: checkpoint data pages
+    Disk-->>Cache: durable
+    Cache-->>App: fsync returns (now durable)
+    Note over App,Disk: fsync cost: seek + flush + wait<br/>Batch + group commit to amortize
+```
 
 ## Distributed-systems lens
 

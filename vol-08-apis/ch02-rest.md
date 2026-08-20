@@ -432,6 +432,60 @@ Its costs are:
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### REST Constraints Applied
+
+```mermaid
+flowchart TB
+    Client --> CS["Client-Server"]
+    CS --> Stateless["Stateless<br/>no session affinity"]
+    Stateless --> Cache["Cacheable<br/>ETag / Cache-Control"]
+    Cache --> Uniform["Uniform Interface<br/>GET/PUT/POST/DELETE"]
+    Uniform --> Layered["Layered System<br/>gateway, CDN, LB"]
+    Layered --> Code["Code on Demand<br/>optional"]
+```
+
+#### Resource Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Draft: POST /resources
+    Draft --> Active: validation passes
+    Active --> Updated: PUT/PATCH
+    Updated --> Active
+    Active --> Archived: DELETE soft
+    Archived --> Purged: retention expires
+    Purged --> [*]
+    Active --> [*]: hard delete
+```
+
+#### HTTP Caching and Conditional Requests
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant CDN as CDN / Gateway
+    participant S as Origin
+    C->>CDN: GET /orders/42
+    CDN->>S: GET /orders/42
+    S-->>CDN: 200 + ETag: W/abc + Cache-Control: max-age=60
+    CDN-->>C: 200
+    C->>CDN: GET /orders/42 If-None-Match: W/abc
+    CDN-->>C: 304 Not Modified
+```
+
+#### Richardson Maturity Model
+
+```mermaid
+flowchart LR
+    L0["Level 0: Swamp<br/>single POST endpoint"] --> L1["Level 1: Resources<br/>/orders, /customers"]
+    L1 --> L2["Level 2: Verbs<br/>proper status codes"]
+    L2 --> L3["Level 3: HATEOAS<br/>links drive state"]
+    L3 --> L4["Level 4: Extra<br/>caching, idempotency, pagination"]
+```
+
 ## Key takeaways
 
 - Model domains as resources with clear ownership; use sub-resources for scoped children and colon-actions for operations that are not CRUD.

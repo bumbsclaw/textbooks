@@ -552,6 +552,52 @@ supply chain already owns most of what it needs to manage its vendors' — it mu
 inventory outward, require the evidence inbound, and remember that the trusted, signed update from
 the vendor in good standing is exactly the shape the last three catastrophes took.
 
+### Vendor assessment scoring flow
+
+```mermaid
+flowchart TD
+  REQ["New / renewing vendor<br/>(component or service)"] --> Q1["Collect artifacts:<br/>SBOM, SLSA provenance,<br/>attestations, SOC 2"]
+  Q1 --> Q2{"Artifacts verifiable?<br/>(sig + provenance valid)"}
+  Q2 -->|No| LOW["Low trust score<br/>require remediation or reject"]
+  Q2 -->|Yes| SCORE["Score: SLSA level +<br/>SBOM completeness +<br/>vuln SLA + signing maturity"]
+  SCORE --> DEC{"Score >= threshold?"}
+  DEC -->|Yes| APPROVE["Approve + continuous monitor"]
+  DEC -->|No| COND["Conditional: compensating controls<br/>or time-bound waiver"]
+  style LOW fill:#f85149,color:#fff
+  style APPROVE fill:#2ea043,color:#fff
+```
+
+### Continuous vendor monitoring loop
+
+```mermaid
+flowchart LR
+  A["Vendor SBOM<br/>(updated)"] --> B["Ingest + diff<br/>(new deps)"]
+  B --> C["Vuln feed<br/>(OSV / CISA KEV)"]
+  C --> D{"New critical CVE<br/>or EOL dep?"}
+  D -->|Yes| E["Alert + SLA clock<br/>(fix or mitigate)"]
+  D -->|No| F["No action"]
+  E --> G{"Vendor fixes<br/>in SLA?"}
+  G -->|No| H["Escalate:<br/>block update /<br/>find alternate"]
+  G -->|Yes| I["Verify fix<br/>(new SBOM + provenance)"]
+  style H fill:#f85149,color:#fff
+  style I fill:#2ea043,color:#fff
+```
+
+### SBOM-driven vendor decision tree
+
+```mermaid
+flowchart TD
+  Q1{"Vendor provides<br/>SBOM + provenance?"}
+  Q1 -->|No| R1["Risk: opaque supply chain<br/>require attestation<br/>or prefer alternate"]
+  Q1 -->|Yes| Q2{"SBOM complete + signed?<br/>(SPDX/CycloneDX, VEX)"}
+  Q2 -->|No| R2["Ask for signed SBOM<br/>+ SLSA provenance"]
+  Q2 -->|Yes| Q3{"Critical vulns or<br/>unsupported deps?"}
+  Q3 -->|Yes| R3["Block or waive<br/>with deadline"]
+  Q3 -->|No| OK["Accept:<br/>pin by digest +<br/>monitor continuously"]
+  style R1 fill:#f85149,color:#fff
+  style OK fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **A vendor is a trust relationship, and a trust relationship is a liability.** Commercial

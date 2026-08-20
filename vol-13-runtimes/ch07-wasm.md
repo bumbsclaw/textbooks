@@ -778,3 +778,48 @@ Wasm's backend value is amplified — and its pitfalls sharpened — at fleet sc
 - GraalVM Native Image — https://www.graalvm.org/latest/reference-manual/native-image/
 - Luke Wagner, *WebAssembly Component Model* — design docs and WIT spec — https://github.com/WebAssembly/component-model
 
+
+### WASM compilation and execution
+
+```mermaid
+flowchart LR
+    SRC[Source - Rust / Go / C++] --> TOOL[wasm toolchain]
+    TOOL --> WASM[WASM Module - .wasm]
+    WASM --> RUNTIME[WASM Runtime]
+    RUNTIME --> WASI[WASI - System Interface]
+    WASI --> HOST[Host - Browser / Server / Edge]
+```
+
+### WASM vs container isolation
+
+```mermaid
+flowchart TB
+    subgraph Container["Container"]
+        CAPP[App] --> CRUN[Container Runtime]
+        CRUN --> CKERN[Host Kernel - Shared]
+    end
+    subgraph WASMMod["WASM Module"]
+        WAPP[WASM App] --> WRUN[WASM Runtime]
+        WRUN --> SANDBOX[Linear Memory Sandbox]
+    end
+```
+
+### WASM use cases map
+
+```mermaid
+flowchart TB
+    WASM[WASM] --> BROWSER[Browser - Near-native perf]
+    WASM --> SERVER[Server - Fast cold start]
+    WASM --> EDGE[Edge - Lightweight isolate]
+    WASM --> PLUGIN[Plugin System - Safe extension]
+```
+
+### WASM component model
+
+```mermaid
+flowchart LR
+    C1[Component A] --> I[WIT Interface Types]
+    C2[Component B] --> I
+    I --> COMPOSE[Composition]
+    COMPOSE --> RUN[WASM Runtime]
+```

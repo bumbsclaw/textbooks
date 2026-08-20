@@ -444,6 +444,35 @@ Additional forcing functions:
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Queue vs PubSub Decision
+
+```mermaid
+flowchart TB
+    Q{"Competing consumers<br/>or broadcast?"}
+    Q -->|One consumer per msg| Queue["Queue<br/>work distribution"]
+    Q -->|All subscribers get msg| PubSub["Pub/Sub<br/>fan-out"]
+    Q -->|Both| Log["Log<br/>Kafka: replayable + both patterns via groups"]
+```
+
+#### Message Lifecycle
+
+```mermaid
+sequenceDiagram
+    participant P as Producer
+    participant B as Broker
+    participant C as Consumer
+    P->>B: send msg
+    B->>B: persist + assign offset
+    B-->>P: ack
+    B->>C: deliver
+    C->>C: process
+    C->>B: ack / commit offset
+    B->>B: advance watermark or delete
+```
+
 ## Key takeaways
 
 - Messaging exists to decouple services in time, space, and failure mode. It trades latency and ordering simplicity for durability and independence.

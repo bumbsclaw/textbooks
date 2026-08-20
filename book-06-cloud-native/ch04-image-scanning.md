@@ -600,6 +600,52 @@ secure them by exploiting the structure of the container supply chain.
   when a critical, exploited, fixable CVE goes from disclosure to fully-redeployed-fleet fast — and
   when it can *prove* that state from its central store, image by image, on demand.
 
+### Scanner placement in the pipeline
+
+```mermaid
+flowchart LR
+  A["CI: build image"] --> B["Scan 1: at build<br/>(fail fast)"]
+  B --> C["Push to registry"]
+  C --> D["Scan 2: registry<br/>(continuous, new CVEs)"]
+  D --> E["Scan 3: admission<br/>(gate on deploy)"]
+  E --> F["Scan 4: runtime<br/>(running containers)"]
+  B -.->|"block if critical"| BLOCK["Block PR"]
+  D -.->|"alert on new CVE"| TICKET["Ticket / SLA"]
+  E -.->|"deny if policy fail"| DENY["Deny deploy"]
+  style BLOCK fill:#f85149,color:#fff
+  style DENY fill:#f85149,color:#fff
+```
+
+### Triage state machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> New: CVE reported
+    New --> Triaged: enrich (CVSS, EPSS, VEX)
+    Triaged --> Deferred: not reachable / no fix
+    Triaged --> Fixing: reachable + fix available
+    Fixing --> Fixed: base/app patched + rebuilt
+    Fixed --> Verified: rescan confirms
+    Deferred --> Revisit: VEX / new exploit
+    Revisit --> Fixing: now exploitable
+    Verified --> [*]
+    Fixing --> Accepted: risk accepted (waiver)
+    Accepted --> Revisit: expiry / new info
+```
+
+### SBOM to CVE correlation flow
+
+```mermaid
+flowchart TD
+  IMG["Image layers"] --> SBOM["SBOM generation<br/>(Syft / Trivy fs)"]
+  SBOM --> PKGS["Packages (name, version, purl)<br/>{pkg:apk/openssl@3.1.4}"]
+  PKGS --> MATCH{"Matcher<br/>(vuln DB: OSV / GHSA / NVD)"}
+  MATCH --> CVE["CVE-2024-5535<br/>openssl 3.1.4<br/>CVSS 9.1"]
+  CVE --> ENRICH["Enrich: EPSS, VEX,<br/>reachability"]
+  ENRICH --> POL["Policy: block if<br/>reachable + critical<br/>else warn"]
+  style POL fill:#1f6feb,color:#fff
+```
+
 ## Key takeaways
 
 - **Image scanning is SCA on an image**: build a component inventory across all layers (OS package

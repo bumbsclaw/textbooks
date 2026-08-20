@@ -664,3 +664,15 @@ flowchart TB
 
 *Next steps for the reader: revisit the DORA and SPACE signals for your current team, audit one ownership boundary and one decision log, and run a single improvement bet through a full retro cycle. Small, closed loops compound.*
 
+
+### Team topologies
+
+```mermaid
+flowchart TB
+    TT[Team Topologies] --> STREAM[Stream-Aligned]
+    TT --> ENABLE[Enabling]
+    TT --> COMPLICATED[Complicated Subsystem]
+    TT --> PLATFORM2[Platform]
+    STREAM --> FLOW[Fast Flow]
+    PLATFORM2 --> STREAM
+```

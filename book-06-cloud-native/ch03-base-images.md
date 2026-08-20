@@ -681,6 +681,47 @@ publisher says it is; a governed base tells you that what the publisher built on
 verified, and centrally patchable. Together they convert the base image from the largest, most
 inherited, least-examined part of your fleet into a controlled, observable, patch-once dependency.
 
+### Golden image pipeline (factory model)
+
+```mermaid
+flowchart LR
+  SRC["Distro upstream<br/>(debian, alpine, chainguard)"] --> BUILD["Hardened factory<br/>docker build / apko / melange"]
+  BUILD --> SCAN["Scan + SBOM<br/>(Grype/Trivy + Syft)"]
+  SCAN --> SIGN["Sign + attest<br/>(SLSA provenance)"]
+  SIGN --> REG["Internal registry<br/>golden/org-base:YYYYMMDD"]
+  REG --> POL["Policy: only golden bases<br/>allowed (admission)"]
+  REG --> MON["Monitor: freshness SLA<br/>(rebuild if > N days / CVE)"]
+  style SIGN fill:#2ea043,color:#fff
+  style POL fill:#1f6feb,color:#fff
+```
+
+### Update strategy decision matrix
+
+```mermaid
+flowchart TD
+  Q1{"How fast does base move?"}
+  Q1 -->|Weekly / daily patches| A1["Track :latest-daily<br/>+ pin by digest at build<br/>+ auto-rebuild"]
+  Q1 -->|Monthly stable| A2["Track :stable tag<br/>+ renovate/dependabot<br/>digest pin PRs"]
+  Q1 -->|Minimal / distroless| A3["Chainguard / distroless<br/>tiny surface, frequent rebuilds"]
+  A1 --> G["Gate: rebuild + rescan<br/>if base digest changes"]
+  A2 --> G
+  A3 --> G
+  style A3 fill:#2ea043,color:#fff
+```
+
+### CVE presence vs reachability
+
+```mermaid
+flowchart LR
+  SBOM["SBOM: package list"] --> SCAN["Vuln scan<br/>package to CVE<br/>(presence)"]
+  SCAN --> R1["CVE-2024-xyz in libcurl<br/>image HAS package"]
+  R1 --> REACH{"Is vulnerable code<br/>reachable at runtime?"}
+  REACH -->|Callgraph / VEX<br/>says not reachable| LOW["Downgrade: not exploitable<br/>(VEX: not_affected)"]
+  REACH -->|Reachable or unknown| HIGH["Keep: exploitable<br/>must patch / rebuild"]
+  style LOW fill:#2ea043,color:#fff
+  style HIGH fill:#f85149,color:#fff
+```
+
 ## Key takeaways
 
 - The **base image dominates** an app image's size, component count, and CVE count. Most scanner

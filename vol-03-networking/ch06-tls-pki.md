@@ -199,6 +199,22 @@ ratcheted forward with `key_update`, compromise of one key does not trivially yi
 takeaway: TLS 1.3 has *one* clean derivation tree with clear separation between handshake-protecting
 and data-protecting keys, replacing TLS 1.2's ad-hoc PRF and blurrier key separation.
 
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    Client->>Server: ClientHello + key_share (x25519) + alpn + sni
+    Note over Client,Server: 1-RTT: client guesses key share<br/>No extra round trip vs TLS 1.2 (2-RTT)
+    Server->>Server: pick share, derive handshake keys
+    Server-->>Client: ServerHello + key_share + EncryptedExtensions + Certificate + CertVerify + Finished
+    Client->>Client: verify cert chain + signature, derive keys
+    Client->>Server: Finished (handshake authentic)
+    Note over Client,Server: Handshake done in 1-RTT<br/>Application data flows immediately after<br/>0-RTT: early_data extension (replay risk)
+    Client->>Server: Application Data (encrypted with traffic keys)
+    Server->>Client: Application Data
+```
+
 ## What TLS 1.3 removed, and why it is safer
 
 The most important design decision in TLS 1.3 was subtractive. A decade of attacks against TLS 1.2 —
@@ -427,6 +443,23 @@ Only if all six pass is the CertificateVerify signature checked against the now-
 intuition: the PKI establishes that *this public key is authorized for this hostname*, and
 CertificateVerify establishes that *the peer holds the matching private key right now*. You need both.
 
+
+```mermaid
+flowchart TD
+    Root["Root CA (offline, self-signed)<br/>In browser/OS trust store"] --> Inter["Intermediate CA<br/>Online, signs leaf certs<br/>Constrained by nameConstraints"]
+    Inter --> Leaf["Leaf cert: api.example.com<br/>SAN: DNS:api.example.com<br/>Validity ~90 days (ACME)"]
+    Leaf --> Chain["Chain: leaf + intermediate<br/>Server sends chain, client verifies to root"]
+    Revoke{"Revocation?"}
+    Chain --> Revoke
+    Revoke --> CRL["CRL: big list, stale"]
+    Revoke --> OCSP["OCSP: per-cert query, privacy leak"]
+    Revoke --> Staple["OCSP stapling: server staples response<br/>Must-Staple extension"]
+    Revoke --> Short["Short-lived certs (90d)<br/>Revocation less needed<br/>ACME auto-renew"]
+    style Root fill:#fff3cd,stroke:#856404
+    style Leaf fill:#d4edda,stroke:#155724
+    style Short fill:#d4edda,stroke:#155724
+```
+
 ## SNI and Encrypted Client Hello
 
 Because one IP address routinely serves thousands of TLS virtual hosts (any CDN, any shared hosting,
@@ -446,6 +479,24 @@ inner hello and routes to the true backend. The observer sees only the cover nam
 Cloudflare and supported by recent Firefox and Chrome, but it depends on encrypted DNS (DoH/DoT,
 Chapter 5) to fetch the key without leaking the name there instead, and remains an evolving standard
 (`draft-ietf-tls-esni`) rather than a finished RFC — promising and partially deployed, not universal.
+
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    participant Observer as On-path observer
+    Note over Client,Observer: Without ECH: ClientHello contains SNI in clear<br/>Observer sees api.example.com
+    Client->>Observer: ClientHello (SNI=api.example.com) -- visible
+    Observer->>Server: forwards
+    Note over Client,Observer: With ECH: SNI encrypted with ECH key (from DNS SVCB/HTTPS record)<br/>Outer ClientHello has decoy SNI, inner has real
+    Client->>Observer: ClientHelloOuter (SNI=cover.example) + ECH extension (encrypted inner)
+    Note over Observer: sees only cover SNI
+    Observer->>Server: forwards outer
+    Server->>Server: decrypt ECH with private key, reveal real SNI
+    Server-->>Client: ServerHello (encrypted extensions)
+    Note over Client,Server: Full handshake privacy after ECH<br/>Requires DNS-over-HTTPS for ECH key fetch
+```
 
 ## Revocation: the genuinely hard problem
 

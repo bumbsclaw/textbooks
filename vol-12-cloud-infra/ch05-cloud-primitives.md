@@ -970,3 +970,16 @@ This is the stack that Chapters 4 (IaC) provisions, Chapter 6 (Managed Services)
 - CloudFront — https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html
 - GCP networking and storage — https://cloud.google.com/vpc/docs/overview and https://cloud.google.com/storage/docs
 - Azure networking — https://learn.microsoft.com/en-us/azure/virtual-network/
+
+### Cloud resource hierarchy
+
+```mermaid
+flowchart TB
+    ORG[Organization] --> FOLDER[Folder / OU]
+    FOLDER --> PROJECT[Project / Account / Subscription]
+    PROJECT --> VPC[VPC / VNet]
+    VPC --> SUBNET[Subnet]
+    SUBNET --> VM[Compute / VM / Pod]
+    PROJECT --> IAM[IAM Policies]
+    IAM -.-> VM
+```

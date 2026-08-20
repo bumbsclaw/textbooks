@@ -626,6 +626,52 @@ transform the source?" becomes a question you can actually answer.
   SolarWinds. Multi-tenant isolation and non-forgeable **build identity** are what turn a shared
   platform from a single point of catastrophic failure into a single point of leverage.
 
+
+### SLSA threats A-H mapped to build pipeline
+
+```mermaid
+flowchart TD
+    subgraph Threats["SLSA Threats"]
+        A["A: Producer compromise<br/>— insider / ATO"]
+        B["B: Source tampering<br/>— push malicious commit"]
+        C["C: Source location<br/>— repo misbinding"]
+        D["D: External build param<br/>— cache / dep tampering"]
+        E["E: Build process<br/>— step tampering"]
+        F["F: Artifact publish<br/>— registry hijack"]
+        G["G: Distribution<br/>— MITM / mirror lag"]
+        H["H: Consumer<br/>— confusion / misconfig"]
+    end
+    A --> MIT1["Two-person review"]
+    B --> MIT2["Branch protection + signing"]
+    C --> MIT3["Provenance: source repo binding"]
+    D --> MIT4["Hermetic builds"]
+    E --> MIT5["SLSA builder + provenance"]
+    F --> MIT6["Signing + transparency log"]
+    G --> MIT7["Hash verification"]
+    H --> MIT8["Policy / admission control"]
+
+    style A fill:#f88,stroke:#900
+    style H fill:#f88,stroke:#900
+```
+
+
+### Build as a pure function: ideal vs reality
+
+```mermaid
+flowchart LR
+    subgraph Ideal["Ideal: Pure Function"]
+        I1["Source +<br/>Deps (pinned)"] --> FN["Build Function<br/>deterministic"]
+        FN --> OUT1["Artifact<br/>(reproducible)"]
+    end
+    subgraph Reality["Reality: Impure"]
+        R1["Source +<br/>floating deps"] --> FN2["Build<br/>+ network<br/>+ clock<br/>+ cache"]
+        FN2 --> OUT2["Artifact<br/>(non-deterministic)"]
+        FN2 -. leaks .-> SECRET["Secrets in<br/>env / cache"]
+    end
+    style Ideal fill:#b6f0b6,stroke:#333
+    style Reality fill:#f88,stroke:#900
+```
+
 ## Further reading
 
 - **SLSA v1.0**, *Supply-chain Levels for Software Artifacts* — the specification, the

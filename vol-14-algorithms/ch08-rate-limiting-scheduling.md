@@ -1176,3 +1176,16 @@ if __name__ == "__main__":
     edf2.push("fresh", deadline=now + 10.0)
     expired = edf2.pop_if_expired(now + 1.0)
     print(f"  expired at t+1.0: {expired} (stale dropped, fresh remains)")
+
+### Token bucket vs leaky bucket
+
+```mermaid
+flowchart TB
+    subgraph TB2["Token Bucket"]
+        TOK[Tokens Added at Rate r]
+        TOK --> BUCKET[Bucket - Capacity b]
+        REQ1[Request] --> NEED{Token Available?}
+        NEED -->|Yes| ALLOW1[Allow - Consume Token]
+        NEED -->|No| DENY1[Deny / Queue]
+    end
+```

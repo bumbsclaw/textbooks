@@ -669,6 +669,54 @@ not-yet-written code is granted by default and legible to no one.
   that re-introduces MVS's "don't pull the newest thing instantly" property. The Maven/Gradle lack of default
   locking is a real gap; close it deliberately.
 
+
+### Version constraint to resolution algorithm
+
+```mermaid
+flowchart TD
+    REQ["Requirements<br/>app: ^1.2, dep A: ~1.3.0,<br/>dep B: >=2.0"] --> SOLVER["Solver (PubGrub /<br/>backtracking)"]
+    SOLVER --> GRAPH["Dependency graph<br/>with concrete versions"]
+    GRAPH --> CONFLICT{"Conflict?"}
+    CONFLICT -->|Yes| FAIL["Resolution failure<br/>— manual intervention"]
+    CONFLICT -->|No| LOCK["Lockfile<br/>pinned tree"]
+    LOCK --> VERIFY["Verify on CI<br/>npm ci / pip --require-hashes"]
+    VERIFY --> REPRO["Reproducible install"]
+
+    style FAIL fill:#f88,stroke:#900
+    style REPRO fill:#b6f0b6,stroke:#333
+```
+
+
+### Semver ranges: the floating window
+
+```mermaid
+flowchart LR
+    SPEC["Spec: ^1.2.3<br/>(compatible)"] --> RANGE["Range: >=1.2.3 <2.0.0"]
+    RANGE --> V1["1.2.3 ok"]
+    RANGE --> V2["1.9.0 ok (auto-picked)"]
+    RANGE --> V3["2.0.0 no"]
+    V2 -. risk .-> MAL["If 1.9.0 is malicious<br/>— auto-compromise"]
+    FIX["Fix: lockfile +<br/>hash pinning"] -. mitigates .-> MAL
+    style MAL fill:#f88,stroke:#900
+```
+
+
+### Lockfile without vs with hash pinning
+
+```mermaid
+flowchart TD
+    subgraph Without["Lockfile only (version pin)"]
+        W1["package-lock.json<br/>pins v1.2.3"] --> W2["Registry returns<br/>different bytes?<br/>— undetected!"]
+    end
+    subgraph With["Lockfile + integrity hash"]
+        H1["package-lock.json<br/>pins v1.2.3 + sha512-..."] --> H2["Client verifies hash<br/>— tamper detected"]
+    end
+    W2 -. vulnerable .-> ATTACK["Registry compromise<br/>→ silent substitution"]
+    H2 -. blocks .-> ATTACK
+    style ATTACK fill:#f88,stroke:#900
+    style H2 fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - Semantic Versioning 2.0.0 — the specification (https://semver.org/spec/v2.0.0.html).

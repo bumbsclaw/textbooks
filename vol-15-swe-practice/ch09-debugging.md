@@ -945,3 +945,28 @@ When paged, start here.
 - N. Forsgren, J. Humble, G. Kim, *Accelerate* (IT Revolution, 2018) and Google Cloud *DORA* (dora.dev) — evidence linking learning culture, delivery performance, and business outcomes.
 - D. Sato et al., "Continuous Delivery" and related *DORA* capabilities — progressive delivery and flag-guarded debugging (Section 6).
 - H. Ballance et al., *Honeycomb Observability* docs and C. Majors et al., *Observability Engineering* (O'Reilly, 2022) — high-cardinality observability for debugging distributed systems.
+
+### Debugging workflow
+
+```mermaid
+flowchart TB
+    SYM[Symptom] --> REPRO[Reproduce]
+    REPRO --> HYP[Hypothesize]
+    HYP --> INSTR[Instrument - Logs / Debugger]
+    INSTR --> OBS3[Observe]
+    OBS3 --> FIX2{Fix Found?}
+    FIX2 -->|No| HYP
+    FIX2 -->|Yes| VERIFY[Verify Fix + Regression Test]
+```
+
+### Observability pillars for debugging
+
+```mermaid
+flowchart TB
+    DEBUG[Debugging] --> LOGS[Logs - Discrete Events]
+    DEBUG --> METRICS2[Metrics - Aggregates]
+    DEBUG --> TRACES[Traces - Request Flow]
+    LOGS --> CORR[Correlate via Trace ID]
+    METRICS2 --> CORR
+    TRACES --> CORR
+```

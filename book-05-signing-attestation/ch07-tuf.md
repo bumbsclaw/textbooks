@@ -569,6 +569,58 @@ infrastructure a senior backend engineer owns.
   safe — and TUF is the framework that takes the next step: *safe even when the thing doing the
   signing is partly owned.*
 
+### TUF role hierarchy and thresholds
+
+```mermaid
+flowchart TB
+  ROOT["Root role<br/>threshold: 2/3 offline keys<br/>signs all top-level keys"] --> TARGETS["Targets role<br/>threshold: 1-2<br/>delegates to per-project"]
+  ROOT --> SNAP["Snapshot role<br/>version of all metadata"]
+  ROOT --> TIMESTAMP["Timestamp role<br/>online, 1 key<br/>freshness (hours)"]
+  TARGETS --> DEL1["Delegation: python/*<br/>signed by PyPI key"]
+  TARGETS --> DEL2["Delegation: container/*<br/>signed by build team"]
+  SNAP --> VER["Client verifies:<br/>Timestamp to Snapshot to Targets<br/>to Delegated targets"]
+  TIMESTAMP --> VER
+  style ROOT fill:#f85149,color:#fff
+  style TIMESTAMP fill:#d29922,color:#000
+```
+
+### TUF client update workflow
+
+```mermaid
+sequenceDiagram
+    participant C as Client (tuf client)
+    participant M as Mirror (untrusted)
+    participant T as Timestamp key (online)
+    C->>M: fetch timestamp.json
+    M->>C: timestamp + sig
+    C->>C: verify timestamp sig + expiry
+    C->>M: fetch snapshot.json (version from timestamp)
+    M->>C: snapshot + sig
+    C->>C: verify snapshot version matches timestamp
+    C->>M: fetch targets.json (+ delegated)
+    M->>C: targets + sigs
+    C->>C: verify threshold for targets role
+    alt Any sig invalid or rollback (version < cached)
+        C->>C: abort — do not install
+    else All valid
+        C->>C: fetch target artifact + verify hash
+    end
+```
+
+### TUF vs transparency log: complementary guarantees
+
+```mermaid
+flowchart LR
+  Q{"What is threatened?"}
+  Q -->|Mirror serves stale/rolled-back metadata| TUF["TUF defends<br/>signed timestamp + snapshot<br/>+ version monotonicity"]
+  Q -->|Signing event hidden or denied| LOG["Transparency log defends<br/>public inclusion proof<br/>+ monitors"]
+  Q -->|Key compromise| BOTH["Both: TUF threshold + log detection"]
+  TUF --> REC["Deploy together:<br/>TUF for update freshness,<br/>Rekor/CT for auditability"]
+  LOG --> REC
+  BOTH --> REC
+  style REC fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - TUF secures **software update/distribution systems**, not just individual artifacts. Its goal is

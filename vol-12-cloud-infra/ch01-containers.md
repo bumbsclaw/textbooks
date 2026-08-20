@@ -654,3 +654,50 @@ bpftrace -e 'tracepoint:syscalls:sys_enter_execve { printf("%d %s %s\n", pid, co
 - Liz Rice — *Container Security* (O'Reilly, 2020) — practical treatment of namespaces, capabilities, and seccomp.
 - Sigstore / cosign documentation — keyless signing and verification. https://docs.sigstore.dev/cosign/overview/
 - Trivy and Grype — container image vulnerability scanning. https://aquasecurity.github.io/trivy/ , https://github.com/anchore/grype
+
+### Container image build and distribution pipeline
+
+```mermaid
+flowchart LR
+    A[Dockerfile] --> B[Build Context]
+    B --> C[BuildKit / Docker Build]
+    C --> D[Image Layers]
+    D --> E[Registry Push]
+    E --> F[Registry Storage]
+    F --> G[Pull on Host]
+    G --> H[Container Runtime]
+```
+
+### Container isolation layers
+
+```mermaid
+flowchart TB
+    subgraph Host["Host OS"]
+        K[Host Kernel]
+        subgraph NS["Namespaces"]
+            PID[pid] --- NET[net] --- MNT[mnt] --- UTS[uts] --- IPC[ipc] --- USER[user]
+        end
+        CG[cgroups v2]
+        K --> NS
+        K --> CG
+    end
+    CG --> C1[Container A]
+    CG --> C2[Container B]
+    NS --> C1
+    NS --> C2
+```
+
+### Docker vs Podman vs containerd architecture
+
+```mermaid
+flowchart TB
+    U[User CLI] --> D[Docker Engine]
+    U --> P[Podman]
+    U --> C[ctr / crictl]
+    D --> CD[containerd]
+    P --> CD2[containerd or直接 runc]
+    C --> CD
+    CD --> R[runc / crun]
+    CD2 --> R
+    R --> L[Linux Kernel]
+```

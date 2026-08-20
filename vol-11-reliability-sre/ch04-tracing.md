@@ -1068,6 +1068,37 @@ In a distributed backend, tracing is not optional tooling — it is the only sig
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Sampling Decision
+
+```mermaid
+flowchart TB
+    Req["Incoming request"] --> Head{"Head sampled?<br/>traceparent flag"}
+    Head -->|Yes| Keep["Keep + tail sample"]
+    Head -->|No| Tail{"Tail sample<br/>error / slow?"} 
+    Tail -->|Yes| Keep
+    Tail -->|No| Probabilistic{"Probabilistic<br/>1% baseline"}
+    Probabilistic -->|hit| Keep
+    Probabilistic -->|miss| Drop["Drop"]
+```
+
+#### Trace Context Propagation
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as Service A
+    participant B as Service B
+    C->>A: GET /orders traceparent: 00-trace-span-01
+    A->>A: create child span
+    A->>B: call with traceparent: 00-trace-newspan-01
+    B->>B: child span
+    B-->>A: response
+    A-->>C: response + trace assembled
+```
+
 ## Key takeaways
 
 - A **trace** is the causal graph of one request across all services; a **span** is one timed operation within that graph. Parent-child relationships and W3C `traceparent` propagation stitch isolated per-service spans into a single distributed trace.

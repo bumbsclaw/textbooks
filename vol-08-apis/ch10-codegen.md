@@ -725,6 +725,66 @@ The registry prevents *published* drift. It does not prevent *unpublished* drift
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### SDK Generation Pipeline
+
+```mermaid
+flowchart LR
+    Spec["Spec merge<br/>openapi.yaml / proto"] --> Gen["buf generate +<br/>openapi-generator"]
+    Gen --> Diff{"gen/ diff vs committed?"}
+    Diff -->|dirty| Fail["CI fail: run generate"]
+    Diff -->|clean| Publish["Publish SDKs<br/>npm / Maven / PyPI / Go"]
+    Publish --> Tag["Git tag + changelog"]
+```
+
+#### Schema Registry Publish and Pin
+
+```mermaid
+sequenceDiagram
+    participant Dev as Dev
+    participant Reg as Schema Registry
+    participant CI as CI
+    participant App as Consumer App
+    Dev->>Reg: buf push / POST /artifacts
+    Reg-->>Dev: version + commit id
+    Reg->>CI: webhook
+    CI->>App: bump buf.lock commit
+    App->>Reg: resolve pinned commit at build
+```
+
+#### SDK Versioning
+
+```mermaid
+flowchart TB
+    APIVer["API version 2.3.0"] --> SDKVer["SDK version 2.3.x<br/>tracks API major"]
+    SDKVer --> Pre["Prerelease on RC<br/>2.4.0-rc.1"]
+    Pre --> Stable["Stable tag<br/>2.4.0"]
+    Stable --> Deprecate["Deprecate 1.x<br/>sunset window"]
+```
+
+#### Thin Facade Pattern
+
+```mermaid
+classDiagram
+    class GeneratedClient {
+        <<generated>>
+        +listOrders()
+        +createOrder()
+    }
+    class HandFacade {
+        +listOrdersWithRetry()
+        +createOrderIdempotent()
+    }
+    class AuthPlugin {
+        +injectToken()
+    }
+    HandFacade --> GeneratedClient: wraps
+    HandFacade --> AuthPlugin: uses
+    GeneratedClient <.. SDKUser: imports facade only
+```
+
 ## Key takeaways
 
 - A schema in Git is a promise; a schema in a registry is an invariant. The registry — Confluent/Apicurio for Kafka (Avro/Protobuf/JSON Schema), BSR for Protobuf/gRPC, Apicurio for OpenAPI — makes the schema versioned, compatibility-checked, and discoverable, and refuses incompatible publishes before any bytes hit the wire.

@@ -651,6 +651,46 @@ Books 1 through 8 built the pieces. This chapter wired them into a system. What 
 
 ---
 
+### Hardened pipeline reference (Book 6 end-to-end)
+
+```mermaid
+flowchart TB
+  A["Source (signed commits,<br/>branch protection)"] --> B["CI (SLSA L3,<br/>hermetic, provenance)"]
+  B --> C["Registry (OCI, sig,<br/>SBOM, attestation)"]
+  C --> D["Scanning (continuous,<br/>VEX-aware)"]
+  D --> E["Policy (OPA/Kyverno,<br/>SLSA + CVE gates)"]
+  E --> F["Admission (verify at<br/>kube-apiserver)"]
+  F --> G["Runtime (drift +<br/>re-verify, Falco)"]
+  G --> H["Feedback to rebuild<br/>(new base / CVE)"]
+  style B fill:#8957e5,color:#fff
+  style F fill:#2ea043,color:#fff
+```
+
+### Compliance and freshness heatmap
+
+```mermaid
+flowchart LR
+  subgraph Rows
+    R1["Image: app/web"]
+    R2["Image: app/api"]
+    R3["Image: golden/base"]
+  end
+  subgraph Cols["Checks"]
+    C1["Signed?"]
+    C2["SLSA L?"]
+    C3["SBOM?"]
+    C4["Crit CVE?"]
+    C5["Age (days)"]
+  end
+  R1 --> C1
+  R1 -->|"example"| E1["app/web: sig OK, L3, SBOM, 0 crit, 3d -> green"]
+  R2 --> E2["app/api: sig OK, L2, SBOM, 1 crit (reachable) -> red"]
+  R3 --> E3["golden/base: sig OK, L3, SBOM, 0 crit, 18d -> amber (refresh)"]
+  style E2 fill:#f85149,color:#fff
+  style E1 fill:#2ea043,color:#fff
+  style E3 fill:#d29922,color:#000
+```
+
 ## Key takeaways
 
 - **The chain of custody is the architecture.** No single control secures a cloud-native supply chain;

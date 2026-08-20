@@ -501,3 +501,30 @@ Runtime selection shapes fleet behavior in ways no single-service benchmark show
 - *Continuous Profiling* — Google Cloud Profiler, Pyroscope — workload-representative sampling at fleet scale.
 - Charity Majors — on deployment frequency and fleet warmup — https://charity.wtf/
 
+
+### Runtime selection decision matrix
+
+```mermaid
+flowchart TB
+    Q1{Latency Sensitive?}
+    Q1 -->|Ultra-low| RUST[Rust / C++]
+    Q1 -->|Moderate| Q2{Throughput Priority?}
+    Q2 -->|High| GO[Go / Java]
+    Q2 -->|Moderate| Q3{Team Expertise?}
+    Q3 -->|Python| PY[Python - Optimize Hot Path]
+    Q3 -->|JS| NODE[Node.js]
+```
+
+### Runtime cost model
+
+```mermaid
+flowchart LR
+    R[Runtime Choice] --> MEM[Memory Footprint]
+    R --> CPU[CPU Efficiency]
+    R --> START[Cold Start Time]
+    R --> OPS[Operational Cost]
+    MEM --> TOTAL[Total Cost of Ownership]
+    CPU --> TOTAL
+    START --> TOTAL
+    OPS --> TOTAL
+```

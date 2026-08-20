@@ -628,6 +628,54 @@ failure modes, and a serious program defends against all of them at once.
   whole org's secrets (Codecov), and your most load-bearing dependency may be one exhausted
   unpaid volunteer (xz).
 
+
+### XZ Utils social-engineering timeline
+
+```mermaid
+flowchart LR
+    Y2021["2021<br/>Jia Tan appears<br/>minor contributions"] --> Y2022["2022<br/>Gains trust<br/>commit access"]
+    Y2022 --> Y2023["2023<br/>Obfuscated test<br/>files (carrier)"]
+    Y2023 --> Y2024a["2024-02<br/>Backdoor in<br/>build-to-test harness"]
+    Y2024a --> Y2024b["2024-03<br/>Freund discovers<br/>500ms SSH latency"]
+    style Y2024a fill:#f88,stroke:#900
+    style Y2024b fill:#b6f0b6,stroke:#333
+```
+
+
+### Codecov Bash Uploader compromise propagation
+
+```mermaid
+flowchart TD
+    ATT["Attacker: credential<br/>leak via Docker image"] --> MOD["Modify Bash Uploader<br/>script on Codecov infra"]
+    MOD --> DIST["Legitimate distribution<br/>endpoint serves tainted script"]
+    DIST --> CI1["Customer CI 1<br/>curl | bash"]
+    DIST --> CI2["Customer CI 2"]
+    DIST --> CI3["Customer CI 3<br/>... thousands"]
+    CI1 --> EXFIL1["Env vars + secrets<br/>exfiltrated"]
+    CI2 --> EXFIL2["Env vars + secrets<br/>exfiltrated"]
+    CI3 --> EXFIL3["..."]
+    EXFIL1 --> REUSE["Secrets reused<br/>for further supply-chain attacks"]
+    style MOD fill:#f88,stroke:#900
+    style REUSE fill:#f88,stroke:#900
+```
+
+
+### Log4Shell: vulnerable component in depth of tree
+
+```mermaid
+flowchart TD
+    APP["Enterprise App"] --> SPRING["Spring / Struts"]
+    SPRING --> LOG4J["log4j-core 2.14.1<br/>VULNERABLE"]
+    APP --> OTHER1["other deps..."]
+    OTHER1 --> TRANS["transitively pulls<br/>log4j-api"]
+    LOG4J --> JNDI["JNDI lookup<br/>feature"]
+    JNDI --> LDAP["Attacker LDAP<br/>server"]
+    LDAP --> RCE["Remote Code<br/>Execution"]
+    NOTE["SBOM + SCA would<br/>have flagged path"] -.-> APP
+    style LOG4J fill:#f88,stroke:#900
+    style RCE fill:#f88,stroke:#900
+```
+
 ## Further reading
 
 - Andres Freund, "backdoor in upstream xz/liblzma leading to ssh server compromise,"

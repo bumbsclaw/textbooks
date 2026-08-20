@@ -579,6 +579,36 @@ flowchart LR
 - Little's Law (L = λW) and the utilization knee are the two quantitative intuitions that prevent most capacity misjudgments. Target 60–70% utilization and autoscale before the knee, not after.
 - Know the boundaries: wire-level load balancing is Vol 3, consistency theory is Vol 6, observability and SRE practice is Vol 11, and API contracts are Vol 8. This chapter is the map; those volumes are the territories.
 
+
+```mermaid
+flowchart TB
+    X["X-axis — Horizontal duplication<br/>clone stateless service<br/>load balancer, N copies"] --> C["Scale cube — pick axes per bottleneck"]
+    Y["Y-axis — Functional decomposition<br/>split by function / service<br/>microservices, data partitioning by type"] --> C
+    Z["Z-axis — Data partitioning<br/>shard by key (user_id, region)<br/>each shard handles subset"] --> C
+    C --> E["Real systems use XY or Z<br/>e.g. sharded microservices = Y+Z"]
+```
+
+```mermaid
+flowchart LR
+    subgraph Sync["Synchronous (coupled)"]
+        A["Client → Service B<br/>blocks, timeout, retry<br/>failure cascades"]
+    end
+    subgraph Decoupled["Decoupled (queue/event)"]
+        B["Client → Queue → Service B<br/>buffer, backpressure<br/>failure isolated"]
+    end
+    A -.->|"coupling = availability risk"| T["Prefer async at scale<br/>unless strong consistency required"]
+    B -.-> T
+```
+
+```mermaid
+flowchart TB
+    M["Metrics<br/>counters, gauges, histograms<br/>Prometheus, SLO burn"] --> O["Observability"]
+    L["Logs<br/>structured, sampled<br/>ELK, Loki"] --> O
+    T["Traces<br/>request span tree<br/>OpenTelemetry, Jaeger"] --> O
+    O --> D["Correlate: metric spike → trace → log<br/>exemplars link metrics to traces"]
+    D --> A["Action: alert on SLO, debug via trace"]
+```
+
 ## Further reading
 
 - Kleppmann, M. *Designing Data-Intensive Applications* (O'Reilly, 2017), Chapters 1–2, 5–6, 8–9, 12 — the most complete single treatment of partitioning, replication, and consistency for practitioners. https://dataintensive.net/

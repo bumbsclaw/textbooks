@@ -710,6 +710,56 @@ defended accordingly.
   deviation only by accountable exception — and treat the chokepoint you create as tier-0,
   because concentrating trust relocates the risk rather than removing it.
 
+
+### Belief, trust, and trustworthiness distinction
+
+```mermaid
+flowchart TD
+    BELIEF["Belief<br/>We think X is safe"] --> TRUST["Trust<br/>We act as if X is safe<br/>(accept risk)"]
+    TRUST --> VERIFY{"Is X trustworthy?<br/>Evidence?"}
+    VERIFY -->|Yes: attestations,<br/>reproducible, review| JUSTIFIED["Justified trust"]
+    VERIFY -->|No evidence<br/>or negative evidence| MISPLACED["Misplaced trust<br/>— vulnerability"]
+    MISPLACED --> COMPROMISE["Supply-chain<br/>compromise succeeds"]
+    style MISPLACED fill:#f88,stroke:#900
+    style JUSTIFIED fill:#b6f0b6,stroke:#333
+```
+
+
+### STRIDE applied to the supply chain
+
+```mermaid
+flowchart TD
+    subgraph STRIDE["STRIDE"]
+        S["Spoofing<br/>— fake maintainer identity"]
+        T["Tampering<br/>— modify artifact in transit"]
+        R["Repudiation<br/>— deny malicious publish"]
+        I["Information Disclosure<br/>— leak secrets in CI"]
+        D["Denial of Service<br/>— registry takedown / yank"]
+        E["Elevation of Privilege<br/>— build runner to prod creds"]
+    end
+    S --> M1["Sigstore / signed commits"]
+    T --> M2["Hash pinning / provenance"]
+    R --> M3["Transparency log"]
+    I --> M4["Secret scanning / OIDC"]
+    D --> M5["Mirroring / vendoring"]
+    E --> M6["Ephemeral least-privilege runners"]
+```
+
+
+### Threat-model scoping: what is in / out
+
+```mermaid
+flowchart TD
+    SCOPE["System boundary<br/>— what we defend"] --> IN1["Source to Build to Publish<br/>IN SCOPE"]
+    SCOPE --> IN2["Registry + distribution<br/>IN SCOPE"]
+    SCOPE --> OUT1["End-user host compromise<br/>OUT (assumed)"]
+    SCOPE --> OUT2["Zero-day in app logic<br/>OUT (adjacent)"]
+    SCOPE --> ASSUME["Assumptions<br/>— compiler trusted?<br/>— hardware trusted?"]
+    ASSUME --> THOMPSON["Ken Thompson<br/>Trusting Trust — turtles down"]
+    style IN1 fill:#b6f0b6,stroke:#333
+    style OUT1 fill:#ddd,stroke:#333
+```
+
 ## Further reading
 
 - Ken Thompson, "Reflections on Trusting Trust," *Communications of the ACM* 27(8), August

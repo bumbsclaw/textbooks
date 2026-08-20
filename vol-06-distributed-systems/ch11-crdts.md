@@ -626,6 +626,36 @@ the lattice is free.
   Chapter 4's PACELC, and the data-structure face of **CALM** — monotone logic needs no
   coordination. Coordinate only where a non-confluent invariant forces it.
 
+
+```mermaid
+flowchart LR
+    subgraph State["State-based (CvRDT)"]
+        S1["State is lattice<br/>merge = LUB (join)<br/>idempotent, commutative<br/>sends full state"] --> E1["Example: G-Counter merge = max per replica"]
+    end
+    subgraph Op["Op-based (CmRDT)"]
+        O1["Ops commutative<br/>broadcast op, not state<br/>smaller messages"] --> E2["Example: increment op<br/>exactly-once delivery required"]
+    end
+    S1 -.-> T["Both converge under same math<br/>choice is transport tradeoff"]
+    O1 -.-> T
+```
+
+```mermaid
+flowchart TB
+    A["Replica A counter [3,0,0]"] --> M["Merge → element-wise max<br/>[3,2,1] value = sum = 6"]
+    B["Replica B counter [0,2,0]"] --> M
+    C["Replica C counter [0,0,1]"] --> M
+    M --> P["PN-Counter = P-counter − N-counter<br/>inc and dec tracked separately<br/>merge max each, value = sum(P) − sum(N)"]
+    P --> R["No coordination, always convergent<br/>but only counters/sets — not general registers"]
+```
+
+```mermaid
+flowchart TB
+    A["LWW-Register<br/>value + timestamp<br/>merge picks max timestamp<br/>last writer wins — concurrent write lost"] --> B{"Need to preserve concurrent writes?"}
+    B -->|Yes| C["OR-Set (Observed-Remove Set)<br/>add tags each element with unique dot<br/>remove only observed dots<br/>concurrent add wins over remove"]
+    B -->|No - single writer| D["LWW is sufficient<br/>single writer per key → no conflict"]
+    C --> E["Example: A adds x, B removes x concurrently<br/>A's dot not observed by B → x remains"]
+```
+
 ## Further reading
 
 - Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M., "Conflict-free Replicated Data Types,"

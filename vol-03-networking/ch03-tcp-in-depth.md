@@ -144,6 +144,20 @@ slowly-changing secret), so it can reconstruct state when the final ACK arrives 
 held a backlog slot. Linux enables this under pressure via `net.ipv4.tcp_syncookies=1`. The
 cost is that a few options cannot be preserved, so it is a degradation, not a free lunch.
 
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    Client->>Server: SYN seq=c_isn
+    Note over Client,Server: Client enters SYN_SENT<br/>Server allocates half-open (SYN queue)
+    Server-->>Client: SYN-ACK seq=s_isn ack=c_isn+1
+    Note over Client,Server: Server enters SYN_RCVD<br/>SYN cookie avoids allocation if enabled
+    Client->>Server: ACK ack=s_isn+1
+    Note over Client,Server: Both ESTABLISHED<br/>Data can piggyback on 3rd ACK
+    Note over Client,Server: Simultaneous open: both send SYN<br/>Both SYN_SENT to SYN_RCVD to ESTABLISHED
+```
+
 ## Connection teardown: the four-way close
 
 TCP connections are full-duplex and each direction is closed independently, which is why
@@ -482,6 +496,25 @@ BBR's pacing) — but it is a policy decision, not a default you set blindly.
 | Latency under load | high (bufferbloat) | high (bufferbloat) | low |
 | Fairness vs CUBIC | n/a (baseline) | RTT-fair-ish | v1 can be unfair; v2/v3 better |
 
+
+```mermaid
+flowchart TD
+    Start["New connection<br/>cwnd = init (10 MSS)"] --> Slow["Slow start<br/>cwnd *= 2 per RTT<br/>Exponential until ssthresh or loss"]
+    Slow --> Loss1{"Loss?"}
+    Loss1 -->|"no, cwnd >= ssthresh"| Avoid["Congestion avoidance<br/>AIMD: cwnd += 1 MSS per RTT<br/>(CUBIC: cubic curve, BBR: model-based)"]
+    Loss1 -->|"loss (3 dup ACKs)"| Fast["Fast retransmit + fast recovery<br/>ssthresh = cwnd/2<br/>cwnd = ssthresh (Reno)"]
+    Avoid --> Loss2{"Loss?"}
+    Loss2 -->|"no"| Avoid
+    Loss2 -->|"yes"| Fast
+    Fast --> Avoid
+    Loss1 -->|"timeout (RTO)"| Timeout["RTO: ssthresh=cwnd/2<br/>cwnd=1 MSS, re-enter slow start"]
+    Timeout --> Slow
+    Note["BBR: estimate BtlBw + RTprop<br/>Probe BW/RTT, no loss needed<br/>Better for bufferbloat"]
+    style Slow fill:#fff3cd,stroke:#856404
+    style Avoid fill:#d4edda,stroke:#155724
+    style Fast fill:#cce5ff,stroke:#004085
+```
+
 ## RTT estimation and the retransmission timeout
 
 The retransmission timeout (RTO) is how long the sender waits for an ACK before assuming loss
@@ -509,6 +542,20 @@ probed with geometrically decreasing frequency rather than hammered. Once an una
 (non-retransmitted) segment is ACKed, normal RTT sampling resumes. Modern stacks that negotiate
 **TCP timestamps** (RFC 7323) sidestep the ambiguity entirely — the echoed timestamp identifies
 which transmission an ACK corresponds to — allowing RTT samples even from retransmissions.
+
+
+```mermaid
+flowchart TD
+    Sample["RTT sample<br/>(time of ACK)"] --> SRTT["SRTT = 7/8*SRTT + 1/8*sample<br/>Smoothed RTT"]
+    Sample --> RTTVAR["RTTVAR = 3/4*RTTVAR + 1/4*|sample-SRTT|<br/>Variance"]
+    SRTT --> RTO["RTO = SRTT + 4*RTTVAR<br/>Clamped to [200ms, 120s]<br/>Karn: ignore retransmitted samples"]
+    RTTVAR --> RTO
+    RTO --> Backoff["Exponential backoff on timeout<br/>RTO *= 2 per consecutive loss<br/>Spurious RTO: F-RTO / Eifel detects"]
+    Sample2["TCP timestamps (RFC 1323)<br/>More samples, PAWS, RTTM<br/>Better RTO, less spurious"]
+    Sample2 -.-> Sample
+    style RTO fill:#fff3cd,stroke:#856404
+    style Backoff fill:#f8d7da,stroke:#721c24
+```
 
 ## The small-packet pathologies: Nagle, delayed ACK, and their bug
 

@@ -742,3 +742,30 @@ flowchart TD
 - Flajolet et al. — "HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm" (AOFA 2007) and Heule et al. — "HyperLogLog in Practice" (Google, 2013) — the HLL++ improvements (sparse, bias correction) that every production implementation follows.
 - Cormode & Muthukrishnan — "An Improved Data Stream Summary: The Count-Min Sketch and its Applications" (J. Algorithms 2005) — the CMS paper; concise analysis of ε, δ guarantees.
 - RedisBloom, Apache DataSketches, and Caffeine (TinyLFU) — production implementations worth reading as reference code.
+
+### Bloom filter operation
+
+```mermaid
+flowchart LR
+    A[Element x] --> H1[h1 x]
+    A --> H2[h2 x]
+    A --> H3[h3 x]
+    H1 --> B1[Bit Array Position 1]
+    H2 --> B2[Bit Array Position 2]
+    H3 --> B3[Bit Array Position 3]
+    B1 --> CHECK{All Bits = 1?}
+    B2 --> CHECK
+    B3 --> CHECK
+    CHECK -->|Yes| MAYBE[Maybe Present]
+    CHECK -->|No| ABSENT[Definitely Absent]
+```
+
+### Probabilistic data structure tradeoffs
+
+```mermaid
+flowchart TB
+    EXACT[Exact Structure] --> MEM1[More Memory]
+    EXACT --> ACC1[100% Accurate]
+    PROB[Probabilistic - Bloom / HyperLogLog] --> MEM2[Less Memory]
+    PROB --> ACC2[Approximate + Tunable Error]
+```

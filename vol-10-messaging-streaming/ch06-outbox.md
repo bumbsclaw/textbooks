@@ -655,6 +655,34 @@ Outbox payloads are events — apply the same versioning discipline as Ch 5:
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Transactional Outbox Sequence
+
+```mermaid
+sequenceDiagram
+    participant Svc as Service
+    participant DB as DB TX
+    participant Relay as Relay / CDC
+    participant Broker as Broker
+    Svc->>DB: BEGIN; INSERT business row + outbox row; COMMIT
+    Relay->>DB: poll CDC / logical replication
+    Relay->>Broker: publish outbox events
+    Broker-->>Relay: ack
+    Relay->>DB: mark outbox sent / delete
+```
+
+#### Polling vs CDC Outbox
+
+```mermaid
+flowchart TB
+    Choice{"Latency & ops?"} --> Poll["Polling relay<br/>simple, ~100ms poll"]
+    Choice --> Log["Log / CDC<br/>Debezium / pgoutput<br/>low latency, needs repl slot"]
+    Poll --> DeDupPoll["At-least-once<br/>+ dedup on consumer"]
+    Log --> DeDupLog["At-least-once<br/>+ dedup or TX"]
+```
+
 ## Key takeaways
 
 - The dual-write problem is fundamental: a database commit and a broker publish have no shared atomicity — `commit-then-publish` creates ghost writes, `publish-then-commit` creates ghost events, and retries cannot fix it.

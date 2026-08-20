@@ -649,6 +649,45 @@ not yet a delivered one — durability at an intermediary is not visibility at t
   replicas spread across failure domains, and read/write consistency levels reviewed as a pair
   — because "write ONE, read ONE, where did my write go" is an incident class, not a puzzle.
 
+
+```mermaid
+flowchart TB
+    A["N=3 replicas"] --> W["Write quorum W=2<br/>must ack 2/3"]
+    A --> R["Read quorum R=2<br/>query 2/3, pick newest"]
+    W --> O["Overlap: R+W > N<br/>2+2 > 3 → at least 1 node in both"]
+    O --> G["Read sees last write<br/>if write succeeded on W"]
+    O --> F["Tunable: W=3 R=1 → write-optimized<br/>W=1 R=3 → read-optimized"]
+    F -.-> T["R=1 W=1 → eventual, may miss write"]
+```
+
+```mermaid
+flowchart LR
+    subgraph Ring["Consistent hash ring"]
+        N1["Node A<br/>tokens 0, 120"] --- N2["Node B<br/>tokens 40, 160"]
+        N2 --- N3["Node C<br/>tokens 80, 200"]
+        N3 --- N1
+    end
+    K["Key hash=45"] --> P["Preference list<br/>first N nodes clockwise<br/>[B, C, A] for N=3"]
+    P --> H["Hinted handoff<br/>if B down → D holds hint<br/>replays when B recovers"]
+```
+
+```mermaid
+sequenceDiagram
+    participant R as Reader
+    participant A as Replica A (stale)
+    participant B as Replica B (current)
+    participant C as Replica C (current)
+    R->>A: Read key k
+    R->>B: Read key k
+    R->>C: Read key k
+    A-->>R: v1 @ t=10
+    B-->>R: v2 @ t=20
+    C-->>R: v2 @ t=20
+    R->>R: Newest wins: v2; detect A stale
+    R->>A: Read repair — push v2 to A (async)
+    Note over A: Anti-entropy: Merkle tree sync<br/>background convergence without read
+```
+
 ## Further reading
 
 - DeCandia, G. et al., "Dynamo: Amazon's Highly Available Key-value Store," *SOSP*, 2007 — the

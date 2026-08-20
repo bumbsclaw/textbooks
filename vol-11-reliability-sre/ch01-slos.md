@@ -632,6 +632,46 @@ Accurate journey SLIs require knowing which service caused a journey to fail —
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### SLI to Error Budget
+
+```mermaid
+flowchart LR
+    SLI["SLI<br/>good events / total"] --> SLO["SLO<br/>99.9% over 28d"]
+    SLO --> Budget["Error budget<br/>0.1% × window"]
+    Budget --> Policy["Policy<br/>freeze / slowdown if exhausted"]
+    Policy --> Burn["Burn rate alerts<br/>2x, 14x"]
+```
+
+#### Burn Rate Alerting
+
+```mermaid
+sequenceDiagram
+    participant Mon as Monitoring
+    participant Alert as Alertmanager
+    participant OnCall as On-call
+    Mon->>Mon: compute burn rate<br/>error / budget rate
+    Mon->>Alert: burn 14x for 5m
+    Alert->>OnCall: page
+    Mon->>Alert: burn 2x for 1h
+    Alert->>OnCall: ticket
+```
+
+#### SLO Window Types
+
+```mermaid
+gantt
+    title SLO windows
+    dateFormat YYYY-MM-DD
+    section Rolling
+    28d rolling :a1, 2025-01-01, 28d
+    section Calendar
+    Jan calendar :a2, 2025-01-01, 31d
+    Feb calendar :a3, after a2, 28d
+```
+
 ## Key takeaways
 
 - An SLI measures the user's experience as `good_events / valid_events` over a window; an SLO is the target for that ratio; the error budget (`1 - SLO`) is the allowed fraction of bad events; an SLA is the contractual promise built on top.

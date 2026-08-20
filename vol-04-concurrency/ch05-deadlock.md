@@ -312,6 +312,20 @@ informal detection-and-recovery, so something must detect stuckness, typically a
 that actually exercises the stuck path); and the decision must be written down, because an
 undocumented ostrich is indistinguishable from ignorance.
 
+
+```mermaid
+flowchart TD
+    C1["1. Mutual exclusion<br/>Resource held exclusively"] --> Deadlock{"All 4 hold?<br/>=> Deadlock possible"}
+    C2["2. Hold and wait<br/>Holding one, waiting for another"] --> Deadlock
+    C3["3. No preemption<br/>Cannot forcibly take resource"] --> Deadlock
+    C4["4. Circular wait<br/>Cycle in wait-for graph"] --> Deadlock
+    Deadlock -->|"yes"| Stuck["Deadlock: no thread progresses<br/>Detected via wait-for cycle<br/>Or timeout / watchdog"]
+    Deadlock -->|"break any one"| Fix["Fix: lock ordering (break 4)<br/>Try-lock + backoff (break 2)<br/>Preemption / kill (break 3)"]
+    Graph["Wait-for graph:<br/>T1 waits lock A held by T2<br/>T2 waits lock B held by T1<br/>Cycle = deadlock"]
+    style Deadlock fill:#f8d7da,stroke:#721c24
+    style Fix fill:#d4edda,stroke:#155724
+```
+
 ## A taxonomy of real deadlocks
 
 The two-mutex example is the fruit fly of deadlock: ideal for study, rarely what actually bites.
@@ -414,6 +428,21 @@ written in one visible function; it arrives through a callback, a signal handler
 
 The fifth family — wait-for cycles spanning processes and machines — changes the problem
 qualitatively enough that it gets the distributed-systems lens section to itself below.
+
+
+```mermaid
+flowchart TD
+    D1["Simple AB-BA<br/>T1: lock A then B<br/>T2: lock B then A<br/>Classic, fix by ordering"]
+    D2["Nested callback<br/>Hold lock, call unknown code<br/>Unknown code takes same lock<br/>Reentrancy deadlock"]
+    D3["Lock + async<br/>Hold lock, await future<br/>Future needs same lock on executor<br/>Structured concurrency fixes"]
+    D4["Distributed<br/>Service A waits B, B waits A<br/>RPC timeout is the fix<br/>No global wait-for graph"]
+    D1 --> Fix1["Global lock order<br/>Sort locks by address/id"]
+    D2 --> Fix2["Never call out while holding lock<br/>Or use reentrant lock (with caution)"]
+    D3 --> Fix3["Do not hold lock across await<br/>Scope locks tightly"]
+    D4 --> Fix4["Timeout + circuit breaker<br/>No distributed deadlock detection"]
+    style D1 fill:#fff3cd,stroke:#856404
+    style D4 fill:#f8d7da,stroke:#721c24
+```
 
 ## Livelock
 

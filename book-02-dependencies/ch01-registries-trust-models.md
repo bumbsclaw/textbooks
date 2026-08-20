@@ -589,6 +589,42 @@ namespace and index models enable (Chapter 3), and how malicious packages actual
   the mirror simultaneously a resilience shock-absorber and a security chokepoint — the topic of
   Chapter 8.
 
+
+### Registry trust model comparison
+
+```mermaid
+flowchart TD
+    subgraph NPM["npm: permissive"]
+        N1["Anyone can publish<br/>unscoped names"] --> N2["No mandatory review<br/>→ typosquat risk high"]
+    end
+    subgraph MAVEN["Maven Central: gated"]
+        M1["Namespace = DNS<br/>ownership"] --> M2["GPG signing required<br/>→ higher bar"]
+    end
+    subgraph GO["Go: proxy + checksum DB"]
+        G1["No central publish<br/>— git origin"] --> G2["Proxy + sumdb<br/>transparent log"]
+    end
+    N2 -. weakest .-> RISK["Attack cost"]
+    M2 -. medium .-> RISK
+    G2 -. strongest .-> RISK
+```
+
+
+### What happens on 'npm install' — resolution to fetch
+
+```mermaid
+sequenceDiagram
+    participant Client as npm Client
+    participant Registry as Registry
+    participant Tarball as Tarball Store
+    Client->>Registry: Resolve 'express@^4.18.0' to manifest
+    Registry->>Client: Manifest (versions, dist URLs, integrity)
+    Client->>Client: Pick max satisfying version (4.18.2)
+    Client->>Tarball: Fetch tarball + verify integrity (sha512)
+    Tarball->>Client: Tarball bytes
+    Client->>Client: Run lifecycle scripts (preinstall — risky!)
+    Note over Client,Tarball: No signature verification by default
+```
+
 ## Further reading
 
 - npm Docs — *package.json*, *package-lock.json*, *scripts*, and *Generating provenance

@@ -987,6 +987,29 @@ No single pillar is sufficient. A metrics-only observability strategy can detect
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### RED vs USE Decision
+
+```mermaid
+flowchart TB
+    Q{"What layer?"} -->|User-facing service| RED["RED<br/>Rate Errors Duration"]
+    Q -->|Infrastructure resource| USE["USE<br/>Utilization Saturation Errors"]
+    Q -->|Both| BOTH["RED for SLO + USE for capacity"]
+```
+
+#### Metrics Pipeline
+
+```mermaid
+flowchart LR
+    App["App<br/>Prom client"] --> OTel["OTel Collector"]
+    OTel --> Prom["Prometheus<br/>scrape / remote write"]
+    Prom --> Rule["Recording + alerting rules"]
+    Rule --> Grafana["Grafana + Alertmanager"]
+    Grafana --> OnCall["On-call"]
+```
+
 ## Key takeaways
 
 - Four metric types cover all use cases: **counters** for events (monotonically increasing, queried via `rate`/`increase`), **gauges** for state (up/down, queried directly), **histograms** for distributions that need fleet-wide aggregation, and **summaries** only for single-instance quantiles.

@@ -724,6 +724,43 @@ would be a checklist, and it is the scale that makes it an engineering disciplin
 - **It is a program, not a project.** It never finishes; Phase 4 is a permanent operating mode, and
   its monitoring and metrics feed back into re-assessment as the estate and threats change.
 
+
+### Program roadmap: crawl to walk to run
+
+```mermaid
+flowchart LR
+    subgraph Crawl["Crawl (0-3 mo)"]
+        C1["Inventory<br/>SBOM + SCA"]
+        C2["Pin + lock<br/>dependencies"]
+    end
+    subgraph Walk["Walk (3-12 mo)"]
+        W1["Provenance<br/>SLSA L2"]
+        W2["Private registry<br/>+ policy"]
+        W3["Secret scanning<br/>+ commit signing"]
+    end
+    subgraph Run["Run (12+ mo)"]
+        R1["SLSA L3 hermetic"]
+        R2["Admission control<br/>+ VEX"]
+        R3["Reproducible<br/>verification"]
+    end
+    Crawl --> Walk --> Run
+```
+
+
+### Risk-prioritized backlog
+
+```mermaid
+flowchart TD
+    BACKLOG["All supply-chain risks"] --> SCORE{"Score by<br/>exploitability x blast radius"}
+    SCORE -->|High / High| P0["P0: fix now<br/>e.g., unpinned CI, public confusion"]
+    SCORE -->|High / Low| P1["P1: this quarter<br/>e.g., missing SBOM"]
+    SCORE -->|Low / High| P1
+    SCORE -->|Low / Low| P2["P2: backlog<br/>e.g., SLSA L4 aspirational"]
+    P0 --> SPRINT["Current sprint"]
+    P1 --> NEXT["Next quarter"]
+    P2 --> BACK["Backlog"]
+```
+
 ## Further reading
 
 - OpenSSF, "Secure Supply Chain Consumption Framework (S2C2F)" specification — the eight practice

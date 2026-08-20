@@ -657,6 +657,47 @@ consistent, probably fast" is a hope.
   is a **linearizable spine with an eventual periphery**, mixed per operation, with staleness
   measured and budgeted as an SLO.
 
+
+```mermaid
+flowchart TB
+    SS["Strict serializability<br/>linearizable + serializable"] --> LIN["Linearizability<br/>single-register real-time order"]
+    LIN --> SEQ["Sequential consistency<br/>global order, no real-time"]
+    SEQ --> CAU["Causal consistency<br/>only causally related ordered"]
+    CAU --> SES["Session guarantees<br/>read-your-writes, monotonic reads<br/>writes-follow-reads, monotonic writes"]
+    SES --> EV["Eventual consistency<br/>liveness only — replicas converge<br/>if writes stop"]
+    EV --> N["No guarantee<br/>may diverge forever"]
+    Note["Stronger → more coordination → higher latency"] -.-> SS
+```
+
+```mermaid
+sequenceDiagram
+    participant A as Client A
+    participant R as Register x
+    participant B as Client B
+    Note over R: x=0 initially
+    A->>R: write x=1 — completes at t=2
+    Note over R: Linearizable requires<br/>any read starting after t=2 sees 1
+    B->>R: read x starting t=3
+    R-->>B: must return 1 if linearizable
+    Note over B: Sequentially consistent could return 0<br/>if read reordered before write in global order<br/>but still respects per-client order
+```
+
+```mermaid
+sequenceDiagram
+    participant U as User Session
+    participant LB as Load Balancer
+    participant L as Leader
+    participant F as Follower (lag 100ms)
+    U->>LB: Write photo v2
+    LB->>L: Routed to leader
+    L-->>U: Ack v2
+    U->>LB: Read photo (refresh)
+    LB->>F: Without stickiness → stale v1 read!
+    Note over U: Violates read-your-writes
+    LB->>L: Fix: session stickiness or<br/>wait-till-version / bounded staleness<br/>or read-from-leader for session
+    L-->>U: Returns v2 — guarantee holds
+```
+
 ## Further reading
 
 - Herlihy, M. and Wing, J., "Linearizability: A Correctness Condition for Concurrent Objects,"

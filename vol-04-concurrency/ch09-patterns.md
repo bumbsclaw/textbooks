@@ -244,6 +244,21 @@ The Java equivalent is `ExecutorService` with an explicit
 shutdown via `shutdown()` → `awaitTermination(grace)` → `shutdownNow()` — the same three beats:
 stop intake, drain with a deadline, cancel stragglers.
 
+
+```mermaid
+flowchart TD
+    Arrive["Requests arrive: lambda req/s<br/>Each takes W seconds"] --> Need["Need concurrency L = lambda * W<br/>(Little's Law)<br/>Pool size must >= L to keep up"]
+    Need --> Size{"Pool size N"}
+    Size -->|"N < L"| Queue["Queue grows unbounded<br/>Latency explodes, OOM"]
+    Size -->|"N = L"| Exact["Just enough<br/>No queue if perfectly steady<br/>But bursts still queue"]
+    Size -->|"N > L + burst"| Good["Handles bursts<br/>Bounded queue, shed if full<br/>Utilization < 100%"]
+    Size -->|"N >> cores, CPU-bound"| Thrashing["Thrashing: context switches<br/>Cache pollution<br/>More threads slower!"]
+    Good --> Shed["Full queue -> 503 + backoff<br/>Not unbounded growth"]
+    style Queue fill:#f8d7da,stroke:#721c24
+    style Good fill:#d4edda,stroke:#155724
+    style Thrashing fill:#f8d7da,stroke:#721c24
+```
+
 ## Producer–consumer: the fundamental pattern
 
 Strip any concurrency architecture to its skeleton and you find producer–consumer with a bounded
@@ -425,6 +440,26 @@ Coalescing composes with two other stampede defenses covered in the caching sect
 jitter and early refresh — and its distributed twin is the cache lock/lease (Volume 6, Chapter 8;
 Volume 7, Chapter 3 treats caching strategy end to end).
 
+
+```mermaid
+sequenceDiagram
+    participant C1 as Caller 1
+    participant C2 as Caller 2
+    participant C3 as Caller 3
+    participant SF as Singleflight
+    participant Origin as Origin / DB
+    C1->>SF: get(key) -- first, executes
+    SF->>Origin: fetch key (one call)
+    C2->>SF: get(key) -- joins in-flight
+    C3->>SF: get(key) -- joins in-flight
+    Note over SF: Deduplicates concurrent callers<br/>One flight per key
+    Origin-->>SF: result
+    SF-->>C1: result (shared)
+    SF-->>C2: result (shared)
+    SF-->>C3: result (shared)
+    Note over SF: Cache result briefly<br/>Thundering herd: N callers -> 1 origin call<br/>Not N
+```
+
 ## Rate limiting and admission control in-process
 
 A service that accepts every request accepts its own death. Two mechanisms guard the front door:
@@ -503,6 +538,21 @@ traffic classes first, keep health checks and payments — is the natural refine
 book's "Handling Overload" and "Addressing Cascading Failures" chapters are the standard field
 guides; Volume 11 develops shedding as a reliability practice, and Volume 11, Chapter 10 covers
 the pattern catalog around it.
+
+
+```mermaid
+flowchart TD
+    Req["Incoming request"] --> Limiter{"Rate limiter"}
+    Limiter --> Token["Token bucket<br/>Refill rate r, burst b<br/>Consume 1 per request"]
+    Token -->|"tokens left"| Allow["Allow<br/>Decrement tokens"]
+    Token -->|"empty"| Deny["Deny: 429 + Retry-After<br/>Or queue with timeout"]
+    Limiter --> Fixed["Fixed window (coarse)<br/>Leaky bucket (smooth)<br/>Sliding window (precise)"]
+    Limiter --> Dist["Distributed: local + global<br/>Local: fast, approximate<br/>Global: Redis / central, precise<br/>Both: local fast-path, global cap"]
+    Allow --> Process["Process"]
+    Deny --> Shed2["Shed, client backs off<br/>Prevents cascade"]
+    style Token fill:#d4edda,stroke:#155724
+    style Deny fill:#fff3cd,stroke:#856404
+```
 
 ## Bulkheads: isolating the blast radius
 

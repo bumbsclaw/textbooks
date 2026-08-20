@@ -529,6 +529,47 @@ Without draining, a rolling deploy that restarts 10% of pods drops 10% of in-fli
 - Capacity-aware routing (EWMA, bounded-load hashing, retry budgets) and slow-start are not optimizations — they are stability requirements. Without them, a single slow host or a single bad deploy cascades.
 - The load balancer fleet itself must be highly available (N+1, ECMP, draining). A deploy that does not drain connections is a partial outage.
 
+
+```mermaid
+flowchart TD
+    Q{"Need content-aware routing?"} -->|No - TCP/UDP only| L4["L4 — NLB / IPVS<br/>packet rewrite, ultra-low latency<br/>no TLS termination, no header routing"]
+    Q -->|Yes - HTTP/gRPC| L7["L7 — ALB / Envoy / nginx<br/>header, path, cookie routing<br/>TLS, retries, rate limiting, tracing"]
+    L4 --> S1["Scale: millions of conns<br/>use for DB, cache, raw TCP"]
+    L7 --> S2["Scale: feature routing<br/>canary, A/B, BFF"]
+```
+
+```mermaid
+flowchart LR
+    H["Hash(request_key) → ring position"] --> R["Ring: hash space 0..2^32<br/>nodes at random tokens"]
+    R --> N1["Node A owns (token_prev, token_A]"]
+    R --> N2["Node B owns (token_A, token_B]"]
+    H --> L["Lookup: clockwise to first node<br/>add/remove → only K/N keys move"]
+    L --> V["Vnodes: 100 virtual nodes per physical<br/>balances skew with heterogeneity"]
+```
+
+```mermaid
+flowchart TB
+    RR["Round-robin / weighted RR<br/>simple, ignores load"] --> LC["Least-connections<br/>good for long-lived conns<br/>needs active conn tracking"]
+    LC --> H["Consistent hash<br/>affinity, cache-friendly<br/>hot key risk"]
+    H --> P["Power of two choices<br/>pick 2 random, choose less loaded<br/>near-optimal with minimal state"]
+    P --> E["EWMA / p2c + peak<br/>Finagle, Envoy weighted<br/>latency-aware, best for heterogeneous"]
+```
+
+```mermaid
+sequenceDiagram
+    participant LB as Load Balancer
+    participant H as Host A
+    participant Ctrl as Control Plane
+    LB->>H: Health check /healthz every 5s
+    H-->>LB: 200 OK
+    Ctrl->>H: Drain signal (SIGTERM)
+    H->>LB: Failing health / draining state
+    LB->>LB: Stop sending new conns<br/>wait drain timeout
+    H->>H: Finish in-flight requests
+    H-->>Ctrl: Drained — safe to terminate
+    Note over LB,H: Without draining: in-flight requests dropped<br/>client sees 502
+```
+
 ## Further reading
 
 - Envoy Proxy documentation — Load balancing, outlier detection, circuit breaking, health checking (Envoy 1.30 — April 2024). https://www.envoyproxy.io/docs/envoy/v1.30/

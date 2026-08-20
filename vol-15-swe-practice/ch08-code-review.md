@@ -641,3 +641,45 @@ if latencies:
 - M. Poppendieck & T. Poppendieck, *Leading Lean Software Development* — cultural and process foundations that complement the DORA findings.
 - E. Edmondson, "Psychological Safety and Learning Behavior in Work Teams" (Administrative Science Quarterly, 1999) — foundational research on safety as a predictor of team learning.
 - GitHub *CODEOWNERS* docs, GitLab *Code Owners* docs, and `pre-commit` framework docs — concrete tooling for ownership and pre-review automation.
+
+### Code review flow
+
+```mermaid
+flowchart LR
+    A[Author Opens PR] --> B[Automated Checks - CI/Lint]
+    B --> C[Reviewer Assigned]
+    C --> D{Approved?}
+    D -->|Changes Requested| E[Author Revises]
+    E --> C
+    D -->|Approved| F[Merge]
+```
+
+### Review priority pyramid
+
+```mermaid
+flowchart TB
+    TOP[Correctness - Logic / Bugs]
+    MID1[Security & Performance]
+    MID2[Design & API]
+    BOT[Style & Nits]
+    TOP --> MID1 --> MID2 --> BOT
+```
+
+### Effective review checklist
+
+```mermaid
+flowchart TB
+    R2[Reviewer] --> C1{Tests Cover Change?}
+    C1 --> C2{Error Handling Present?}
+    C2 --> C3{No Sensitive Data Leaked?}
+    C3 --> C4{Docs Updated?}
+    C4 --> OUT2[Comment / Approve]
+```
+
+### PR size vs review quality
+
+```mermaid
+flowchart LR
+    SMALL[Small PR - <200 LOC] --> HIGH2[High Review Quality - Thorough]
+    LARGE[Large PR - >800 LOC] --> LOW[Low Review Quality - Skimmed]
+```

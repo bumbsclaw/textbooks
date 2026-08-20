@@ -597,6 +597,42 @@ is the difference between a query and a guess.
   `GONOPROXY` and `GONOSUMDB`) to carve out internal namespaces — not `GOINSECURE`, and not a
   blanket `GOSUMDB=off`.
 
+
+### Vendoring vs proxy vs mirror
+
+```mermaid
+flowchart TD
+    APP["Application"] --> OPT{"Strategy?"}
+    OPT --> VEND["Vendoring<br/>commit deps in repo<br/>+ reproducible"]
+    OPT --> PROXY["Pull-through proxy<br/>cache + policy gate"]
+    OPT --> MIRROR["Full mirror<br/>periodic sync"]
+    OPT --> DIRECT["Direct fetch<br/>from public (no control)"]
+
+    VEND --> P1["Pros: offline, auditable<br/>Cons: repo bloat"]
+    PROXY --> P2["Pros: transparent, policy<br/>Cons: cache staleness"]
+    MIRROR --> P3["Pros: air-gap<br/>Cons: sync lag"]
+    DIRECT --> P4["Pros: simple<br/>Cons: no gate — risky"]
+    style DIRECT fill:#f88,stroke:#900
+    style PROXY fill:#b6f0b6,stroke:#333
+```
+
+
+### Private registry as policy enforcement point
+
+```mermaid
+flowchart TD
+    DEV["Developer / CI<br/>npm install"] --> PRIV["Private Registry<br/>(Artifactory / Nexus)"]
+    PRIV --> POL{"Policy checks"}
+    POL -->|Allowlist| ALLOW["Allowed package<br/>+ version"]
+    POL -->|Blocklist / quarantine| BLOCK["Blocked<br/>malicious / unvetted"]
+    POL -->|Egress| FETCH["Fetch from upstream<br/>after approval"]
+    FETCH --> CACHE["Cached +<br/>scanned copy"]
+    CACHE --> DEV
+    ALLOW --> DEV
+    BLOCK --> ALERT["Alert +<br/>suggest alternative"]
+    style BLOCK fill:#f88,stroke:#900
+```
+
 ## Further reading
 
 - JFrog Artifactory — repository types (local, remote, virtual) and include/exclude patterns

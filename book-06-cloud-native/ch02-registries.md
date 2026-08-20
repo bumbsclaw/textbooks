@@ -709,6 +709,36 @@ the internal chokepoint, with egress to public registries blocked. The registry 
 place images happen to sit and becomes what it should be: the controlled front door through
 which every image the fleet runs must pass, once, under policy.
 
+### Registry auth: token exchange flow
+
+```mermaid
+sequenceDiagram
+    participant C as Client (docker/crane)
+    participant R as Registry
+    participant A as Auth server (token issuer)
+    C->>R: GET /v2/library/app/manifests/latest
+    R->>C: 401 Unauthorized<br/>Www-Authenticate: Bearer realm=auth.example, scope=pull
+    C->>A: GET /token?service=registry&scope=repository:app:pull
+    A->>A: authenticate (basic / OIDC / IAM)
+    A->>C: JWT (exp ~5 min, access: pull/push)
+    C->>R: GET /v2/.../manifests/...<br/>Authorization: Bearer jwt
+    R->>R: verify JWT sig + scope + exp
+    R->>C: manifest + layers
+```
+
+### Registry threat model and controls
+
+```mermaid
+flowchart TD
+  T1["Threat: MITM / tampering"] --> C1["TLS + digest verification<br/>(content addressing)"]
+  T2["Threat: Unauthorized push (poisoning)"] --> C2["AuthN + RBAC<br/>scope: push vs pull"]
+  T3["Threat: Mutable tag TOCTOU"] --> C3["Pin by digest<br/>+ tag immutability policy"]
+  T4["Threat: No audit trail"] --> C4["Rekor / registry audit log<br/>+ admission verification"]
+  T5["Threat: Stale / vulnerable base"] --> C5["Image scanning +<br/>freshness policy + provenance"]
+  style C1 fill:#2ea043,color:#fff
+  style C3 fill:#1f6feb,color:#fff
+```
+
 ## Key takeaways
 
 - A registry is a **content-addressable blob store** with a mutable **tag** layer and an

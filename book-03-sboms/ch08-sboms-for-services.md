@@ -759,6 +759,47 @@ organization that runs services — but crystallize it into the load-bearing cla
   runtime deployment inventory, centralized and digest-keyed. That composite — not any single-artifact
   SBOM — is a distributed-backend organization's real SBOM target.
 
+
+### SBOM for a deployed service: not just the image
+
+```mermaid
+flowchart TD
+    SERVICE["Deployed Service<br/>(K8s Deployment)"] --> IMG["Container Image<br/>— image SBOM"]
+    SERVICE --> CONFIG["Config / IaC<br/>— helm chart, env"]
+    SERVICE --> RUNTIME["Runtime deps<br/>— sidecars, init containers"]
+    SERVICE --> SAAS["SaaS dependencies<br/>— managed DB, queue"]
+
+    IMG --> SBOM1["Image SBOM<br/>(Syft / Trivy)"]
+    CONFIG --> SBOM2["Config SBOM<br/>(IaC inventory)"]
+    RUNTIME --> SBOM3["Runtime SBOM<br/>(observed)"]
+    SAAS --> SBOM4["Service SBOM<br/>(provider attests)"]
+
+    SBOM1 --> FULL["Composite SBOM<br/>for the service"]
+    SBOM2 --> FULL
+    SBOM3 --> FULL
+    SBOM4 -. optional .-> FULL
+
+    style FULL fill:#b6f0b6,stroke:#333
+```
+
+
+### Continuous SBOM for long-lived services
+
+```mermaid
+sequenceDiagram
+    participant Deploy as Deploy Pipeline
+    participant Registry as Image Registry
+    participant Runtime as Running Service
+    participant Store as SBOM Store
+    Deploy->>Registry: Push image + SBOM attestation
+    Registry->>Store: Index SBOM
+    Runtime->>Runtime: Drift: hot-patch, sidecar update
+    Runtime->>Store: Periodic runtime SBOM refresh
+    Store->>Store: Diff: expected vs observed
+    Store->>Runtime: Alert on drift / new vuln
+    Note over Runtime,Store: Service SBOM must be living, not point-in-time
+```
+
 ## Further reading
 
 - **OCI Image Specification 1.1** and the **Referrers API** (`/v2/<name>/referrers/<digest>`,

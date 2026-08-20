@@ -1149,3 +1149,19 @@ spec:
 - KEDA documentation — scalers, ScaledObjects, scaling to zero. https://keda.sh/docs/
 - Ian Lewis et al. — *Kubernetes Best Practices* (O'Reilly, 2019) — workload patterns and operational guidance.
 - Brendan Burns et al. — *Kubernetes: Up and Running*, 3rd ed. (O'Reilly, 2022) — workloads, networking, and storage walkthroughs.
+
+### Deployment rollout strategies
+
+```mermaid
+flowchart TB
+    D[Deployment] --> RS1[ReplicaSet v1]
+    D --> RS2[ReplicaSet v2]
+    RS1 --> P1A[Pod v1]
+    RS1 --> P1B[Pod v1]
+    RS2 --> P2A[Pod v2]
+    subgraph Strategy["RollingUpdate"]
+        MAXS[maxSurge]
+        MAXU[maxUnavailable]
+    end
+    Strategy -.-> D
+```

@@ -661,6 +661,42 @@ and how they agree on its contents; they do not differ in what the log *is*.
   Kafka serves the log as a product, event sourcing applies it at the application layer.
   Recovery-by-replay is the universal pattern.
 
+
+```mermaid
+flowchart LR
+    A["LSN 0/16B2A50<br/>INSERT tuple"] --> B["LSN 0/16B2A90<br/>UPDATE tuple<br/>prev LSN link"]
+    B --> C["LSN 0/16B2B00<br/>COMMIT<br/>prev LSN link"]
+    C --> D["WAL buffer<br/>in memory"]
+    D --> E["WAL segment file<br/>16 MB file<br/>fsync on commit"]
+    E --> F["Archive / streaming<br/>to standby"]
+    G["LSN is byte offset<br/>monotonic, total order<br/>recovery replays by LSN"] -.-> A
+```
+
+```mermaid
+gantt
+    title Checkpoint and Crash Recovery Timeline
+    dateFormat X
+    axisFormat %L
+    section WAL
+    Continuous WAL append       :0, 10
+    Checkpoint start            :5, 1
+    Crash                       :8, 1
+    section Recovery
+    Analysis from checkpoint    :9, 2
+    Redo from redo_LSN          :11, 2
+    Undo uncommitted            :13, 2
+    Database consistent         :15, 1
+```
+
+```mermaid
+flowchart LR
+    A["Crash"] --> B["Analysis<br/>scan from last checkpoint<br/>build dirty page table<br/>+ active txn table"]
+    B --> C["Redo<br/>replay WAL from redo_LSN<br/>repeat history — idempotent"]
+    C --> D["Undo<br/>rollback loser txns<br/>via undo/CLR records<br/>reverse LSN chain"]
+    D --> E["Consistent state<br/>all committed durable<br/>all uncommitted undone"]
+    F["Full-page writes<br/>torn-page protection<br/>first page image after checkpoint"] -.-> C
+```
+
 ## Further reading
 
 - Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., and Schwarz, P., "ARIES: A Transaction

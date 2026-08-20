@@ -806,6 +806,38 @@ and **Book 8's** governance chapters.
   OIDC trust, and org-wide egress and audit monitoring beat asking every team to write secure
   YAML.
 
+
+### GitHub Actions hardening checklist flow
+
+```mermaid
+flowchart TD
+    PR["Pull Request<br/>from fork?"] --> PIN{"Actions pinned<br/>to SHA?"}
+    PIN -->|No| FIX1["Pin to SHA<br/>+ Dependabot updates"]
+    PIN -->|Yes| PERM{"Least-privilege<br/>permissions?"}
+    PERM -->|No| FIX2["Set permissions:<br/>contents: read"]
+    PERM -->|Yes| OIDC{"OIDC vs<br/>long-lived secrets?"}
+    OIDC -->|Secrets| FIX3["Migrate to OIDC<br/>federation"]
+    OIDC -->|OIDC| ENV{"Environment<br/>protection?"}
+    ENV -->|No| FIX4["Add environment<br/>+ required reviewers"]
+    ENV -->|Yes| GOOD["Hardened workflow"]
+    style GOOD fill:#b6f0b6,stroke:#333
+```
+
+
+### Pinned action: tag vs SHA
+
+```mermaid
+flowchart TD
+    WF["Workflow: uses: actions/checkout@v4"] --> TAG["Tag v4<br/>— mutable<br/>attacker can move tag"]
+    WF2["Workflow: uses: actions/checkout@11bd719..."] --> SHA["SHA<br/>— immutable<br/>tag move has no effect"]
+
+    TAG --> RISK["If maintainer ATO<br/>to tag to malicious code"]
+    SHA --> SAFE["Digest pinned<br/>— update via<br/>Dependabot PR + review"]
+
+    style RISK fill:#f88,stroke:#900
+    style SAFE fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **GitHub Docs**, *Security hardening for GitHub Actions* — the authoritative reference on

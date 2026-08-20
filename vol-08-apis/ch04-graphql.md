@@ -707,6 +707,50 @@ useServer({ schema: server.schema, context: () => ({ loaders: createLoaders() })
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### GraphQL Execution Pipeline
+
+```mermaid
+flowchart LR
+    Query["Query document"] --> Parse["Parse + Validate<br/>against schema"]
+    Parse --> AuthZ["AuthZ per field"]
+    AuthZ --> Resolve["Resolve<br/>field resolvers"]
+    Resolve --> Batch["Batch / DataLoader<br/>dedupe N+1"]
+    Batch --> Exec["Execute"]
+    Exec --> Response["JSON + errors"]
+```
+
+#### Federation Gateway
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as Gateway
+    participant A as Subgraph A<br/>orders
+    participant B as Subgraph B<br/>customers
+    C->>G: query { order { id customer { name } } }
+    G->>G: query plan
+    G->>A: fetch order
+    A-->>G: order + customer ref
+    G->>B: _entities(customerId)
+    B-->>G: customer
+    G-->>C: merged response
+```
+
+#### N+1 and DataLoader
+
+```mermaid
+flowchart TB
+    subgraph Without["Without DataLoader"]
+        R1["Resolver per parent<br/>N queries"] --> DB1["DB hits N"]
+    end
+    subgraph With["With DataLoader"]
+        R2["Batch keys<br/>collect tick"] --> B["Single IN query"] --> DB2["DB hits 1"]
+    end
+```
+
 ## Key takeaways
 
 - GraphQL's strength is client-shaped fetches over a unified graph; its cost is a gateway that must plan, batch, and bound arbitrary queries. Choose it for heterogeneous frontend consumers, not for interior service-to-service traffic.

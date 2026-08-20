@@ -771,6 +771,49 @@ individual heroics or paved road.
   deployments** governed by the same compatibility rules as APIs; platform teams
   should productize all of it as paved road.
 
+
+```mermaid
+gantt
+    title Point-in-Time Recovery Timeline
+    dateFormat X
+    axisFormat %L
+    section Backup
+    Base backup Sunday 00:00    :0, 2
+    WAL segments continuous     :0, 14
+    Incremental Mon             :3, 1
+    Incremental Tue             :6, 1
+    Crash Wed 14:00             :10, 1
+    section Recovery
+    Restore base backup         :11, 2
+    Replay WAL to 13:59         :13, 2
+    Consistent at target time   :15, 1
+```
+
+```mermaid
+sequenceDiagram
+    participant App as App Fleet
+    participant Pool as PgBouncer / Proxy
+    participant Pri as Primary
+    participant Rep as Replica
+    App->>Pool: Acquire connection (pool size 100)
+    Pool->>Pri: Multiplex N app conns → M DB conns
+    Pri--xPool: Primary failure
+    Pool->>Pool: Detect failure — pause queue
+    Pool->>Rep: Promote replica (Patroni / autopilot)
+    Rep-->>Pool: New primary ready
+    Pool-->>App: Reconnect — retry with backoff
+    Note over Pool: Pool absorbs thundering reconnect<br/>prevents DB overload on failover
+```
+
+```mermaid
+flowchart TB
+    M["Metrics: p50/p99 latency, QPS, replication lag<br/>connections, buffer hit ratio, bloat"] --> D["Dashboard + alerts<br/>SLO: 99.9% p99 < 50ms"]
+    L["Logs: slow query log<br/>pg_stat_statements<br/>WAL stats"] --> D
+    T["Traces: query → plan → lock waits<br/>pg_locks, pg_stat_activity"] --> D
+    D --> A{"SLO burn?"} -->|Yes| P["Page — runbook<br/>EXPLAIN, lock tree, replica lag"]
+    A -->|No| G["Capacity review<br/>growth, vacuum, index usage"]
+```
+
 ## Further reading
 
 - Wooldridge, B., "About Pool Sizing," HikariCP wiki — the pool-sizing argument, the

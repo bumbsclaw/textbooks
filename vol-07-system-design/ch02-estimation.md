@@ -514,6 +514,44 @@ sequenceDiagram
 - Latency budgets compose: allocate an SLO across tiers and enforce timeout budgets that sum to less than the SLO. Fan-out amplifies tails — a request waiting for 10 shards has ~10× the chance of hitting a slow shard.
 - Estimation cannot predict tail latency, hit ratios, or contention effects. Use it to prune the design space and produce a load-test plan, then let measurement close the gap. The loop is estimate → load test → revise → ship with headroom → observe → iterate.
 
+
+```mermaid
+flowchart LR
+    A["Requirement<br/>e.g. 10M DAU"] --> B["Per-user rate<br/>10 requests/day"] --> C["QPS = 10M×10/86400 ≈ 1.2K"]
+    C --> D["Peak factor 3x → 3.6K QPS<br/>p99 planning"]
+    D --> E["Storage: 1KB/req × 1.2K × 86400 ≈ 100GB/day"]
+    E --> F["Fleet: QPS / per-host capacity<br/>headroom 40%"]
+```
+
+```mermaid
+flowchart TB
+    A["L1 cache ~1ns"] --> B["RAM ~100ns<br/>100× L1"]
+    B --> C["SSD random read ~150µs<br/>1500× RAM"]
+    C --> D["Network RTT same AZ ~0.5ms<br/>cross-region ~50-150ms"]
+    D --> E["Disk seek (HDD) ~10ms<br/>100K× RAM"]
+    E --> F["Design intuition:<br/>memory >> SSD >> network >> disk<br/>cache in RAM, batch I/O, avoid cross-region sync"]
+```
+
+```mermaid
+flowchart LR
+    A["Target QPS 10K"] --> B["Per-host capacity<br/>load test: 500 QPS at 60% CPU"]
+    B --> C["Hosts = 10K/500 = 20<br/>+ 40% headroom → 28"]
+    C --> D["+ AZ redundancy<br/>3 AZ → ceil(28/3)×3 = 30"]
+    D --> E["Autoscale: target 60% CPU<br/>scale out at 70%, in at 30%"]
+    E --> F["Verify with load test<br/>measure p99 under peak"]
+```
+
+```mermaid
+flowchart LR
+    A["SLO p99 200ms"] --> B["Edge + WAF 10ms"]
+    B --> C["API gateway 15ms"]
+    C --> D["App logic 50ms"]
+    D --> E["Cache 5ms / DB 40ms"]
+    E --> F["Downstream service 30ms"]
+    F --> G["Network + serialization 20ms"]
+    G --> H["Budget left 30ms<br/>headroom for GC, retries<br/>if sum > SLO → need cache or async"]
+```
+
 ## Further reading
 
 - Dean, J. "Designs, Lessons and Advice from Building Large Distributed Systems" (2009) — the original "numbers every engineer should know" talk and paper; latency and throughput constants with Google's production context. https://research.google/pubs/designs-lessons-and-advice-from-building-large-distributed-systems/

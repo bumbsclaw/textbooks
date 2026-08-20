@@ -596,6 +596,39 @@ internal registry (S2C2F), a verifying admission layer (the meeting point). Adop
 not climbing a framework. It is *wiring those capabilities into an inherited, enforced, measured
 program* — and then holding the floor.
 
+### SLSA build level progression
+
+```mermaid
+flowchart LR
+  L1["SLSA L1<br/>Provenance exists<br/>(who built what)"] --> L2["L2<br/>Hosted builder<br/>(tamper-resistant,<br/>signed provenance)"]
+  L2 --> L3["L3<br/>Hardened builder<br/>(isolated, parameters<br/>non-falsifiable)"]
+  L3 --> L4["L4<br/>Hermetic + reproducible<br/>(two builders to bit-identical)"]
+  L1 --> V1["Verifier: check provenance<br/>exists + builder id"]
+  L2 --> V2["Check provenance sig<br/>+ builder trusted"]
+  L3 --> V3["Policy: require L3 for prod"]
+  L4 --> V4["Maximum assurance<br/>+ independent rebuild"]
+  style L4 fill:#2ea043,color:#fff
+```
+
+### S2C2F capability maturity heatmap
+
+```mermaid
+flowchart TB
+  subgraph P["S2C2F practices (subset)"]
+    A["Ingestion: verify deps<br/>(maturity)"]
+    B["Build: hermetic +<br/>provenance (maturity)"]
+    C["Consumption: pin by hash,<br/>update tooling (maturity)"]
+    D["Monitoring: vuln mgmt<br/>(continuous)"]
+  end
+  P --> SCORE{"Score per team/product?"}
+  SCORE --> RED["Red: ad-hoc / none"]
+  SCORE --> AMBER["Amber: partial,<br/>manual"]
+  SCORE --> GREEN["Green: automated,<br/>enforced by policy"]
+  GREEN --> ROADMAP["Roadmap: red to amber to green<br/>by quarter"]
+  style GREEN fill:#2ea043,color:#fff
+  style RED fill:#f85149,color:#fff
+```
+
 ## Key takeaways
 
 - **Frameworks describe destinations, not routes.** Adoption is a program-execution problem, and it

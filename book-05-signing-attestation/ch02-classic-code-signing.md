@@ -618,6 +618,58 @@ fleet of thousands of artifacts and hundreds of pipelines. The rest of Book 5 is
 survives contact — and each piece of it is a named answer to a named failure from this
 chapter.
 
+### Long-lived key compromise timeline
+
+```mermaid
+sequenceDiagram
+    participant A as Publisher
+    participant K as Private key (on disk/HSM)
+    participant Adv as Attacker
+    participant C as Consumers
+    A->>K: signs release v1.5
+    Adv->>K: steals key (phish / leak / CVE)
+    Note over Adv,K: No detection path
+    Adv->>C: signs malware as v1.6<br/>(valid signature)
+    C->>C: verifies with publisher pubkey => OK
+    A->>C: discovers breach weeks later
+    A->>C: revokes cert / rotates key
+    Note over C: Already-installed malware<br/>revocation often not checked
+```
+
+### Classic verification and where it fails
+
+```mermaid
+flowchart TD
+  ART["Artifact + detached sig<br/>(.asc / .sig)"] --> FETCH["Fetch signer's<br/>public key / cert"]
+  FETCH --> CHK1{"Key authentic?<br/>(WoT / PKI)"}
+  CHK1 -->|No / TOFU| FAIL1["TOCTOU / impersonation<br/>attacker substitutes key"]
+  CHK1 -->|Yes| CRYPTO{"Crypto valid?<br/>sig matches digest?"}
+  CRYPTO -->|No| REJECT["Reject"]
+  CRYPTO -->|Yes| CHK2{"Is this the<br/>expected identity?"}
+  CHK2 -->|No policy| PASS_BAD["Passes crypto,<br/>wrong signer accepted"]
+  CHK2 -->|Yes| CHK3{"Revoked / expired?"}
+  CHK3 -->|No check| PASS_REVOKED["Revoked key still trusted"]
+  CHK3 -->|Checked| OK["Accept"]
+  style FAIL1 fill:#f85149,color:#fff
+  style PASS_BAD fill:#f85149,color:#fff
+  style PASS_REVOKED fill:#f85149,color:#fff
+  style OK fill:#2ea043,color:#fff
+```
+
+### Hardware protection maturity model
+
+```mermaid
+flowchart LR
+  L0["L0: Key on dev laptop<br/>no passphrase"] --> L1["L1: Encrypted key<br/>passphrase in env"]
+  L1 --> L2["L2: OS keychain /<br/>CI secret store"]
+  L2 --> L3["L3: Cloud KMS<br/>(Cloud KMS / AWS KMS)"]
+  L3 --> L4["L4: HSM / YubiKey<br/>non-exportable"]
+  L4 --> L5["L5: Threshold signing<br/>k-of-n HSMs + audit log"]
+  style L0 fill:#f85149,color:#fff
+  style L3 fill:#d29922,color:#000
+  style L5 fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **The classic model provides exactly two things: integrity and signer authenticity.** It

@@ -532,6 +532,35 @@ Many organizations run both: Kafka Streams for lightweight per-service transform
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Windowing Types
+
+```mermaid
+flowchart TB
+    Stream["Unbounded stream"] --> Tumbling["Tumbling<br/>fixed, non-overlapping<br/>every 1m"]
+    Stream --> Sliding["Sliding<br/>overlapping<br/>every 30s of 1m"]
+    Stream --> Session["Session<br/>gap-based<br/>per key inactivity"]
+    Stream --> Global["Global<br/>per key state<br/>until TTL"]
+```
+
+#### Exactly-Once Stream Processing
+
+```mermaid
+sequenceDiagram
+    participant Src as Source Kafka
+    participant Proc as Stream processor
+    participant State as State store
+    participant Sink as Sink Kafka
+    Src->>Proc: read + begin TX
+    Proc->>State: read-modify-write<br/>changelog TX
+    Proc->>Sink: produce results TX
+    Proc->>Src: addOffsetsToTransaction
+    Proc->>Proc: commit TX
+    Note over Src,Sink: all or nothing<br/>consume-transform-produce
+```
+
 ## Key takeaways
 
 - Streaming processes unbounded data continuously, holding keyed state and emitting incremental results — failure recovery is state restore plus log replay, not batch recomputation.

@@ -227,6 +227,28 @@ Acquire and release are the natural pair: a release-store followed by an acquire
 location creates an ordering edge between the two threads, which is the hardware realization of
 happens-before.
 
+
+```mermaid
+flowchart LR
+    subgraph X86["x86-TSO (strong)"]
+        X1["Stores visible in order<br/>Only StoreLoad reordered<br/>(store buffer)"]
+        X2["Need: StoreLoad fence<br/>(mfence) for Dekker"]
+    end
+    subgraph ARM["ARM / RISC-V (weak)"]
+        A1["Any reorder allowed<br/>LoadLoad, LoadStore,<br/>StoreStore, StoreLoad"]
+        A2["Need: dmb / fence<br/>Acquire/release per op"]
+    end
+    subgraph Lang["Language (Java/C++20)"]
+        L1["Acquire/release<br/>happens-before<br/>DRF-SC guarantee"]
+    end
+    X86 ---|"compile to"| Lang
+    ARM ---|"compile to"| Lang
+    Note["x86 code often works by accident<br/>Breaks on ARM -> fleet bug!<br/>Use language model, not hardware"]
+    style X86 fill:#d4edda,stroke:#155724
+    style ARM fill:#f8d7da,stroke:#721c24
+    style Note fill:#fff3cd,stroke:#856404
+```
+
 ## Happens-before: the central formalism
 
 You should almost never reason about store buffers directly. Language memory models give you a
@@ -325,6 +347,21 @@ have races, and the consequences there differ sharply by language:
 And note again the point from Chapter 1: DRF-SC gives you sequential consistency, which eliminates
 *data races* — it does nothing about *race conditions*. A properly synchronized check-then-act is
 still a bug.
+
+
+```mermaid
+flowchart TD
+    HB["Happens-before (hb)<br/>Transitive, irreflexive<br/>If A hb B, A visible to B"] --> Edges["Edges that create hb"]
+    Edges --> PO["Program order<br/>Same thread, in order"]
+    Edges --> Sync["Synchronizes-with<br/>unlock hb lock<br/>store-release hb load-acquire<br/>thread start hb thread run"]
+    PO --> Trans["Transitivity: PO + sync = hb<br/>Unlock in T1 hb Lock in T2<br/>=> all prior writes visible"]
+    Sync --> Trans
+    Trans --> DRF["DRF-SC: data-race-free<br/>=> sequentially consistent<br/>Race => undefined (C++) / no guarantee"]
+    Example["Example: flag.store(true, release)<br/>hb flag.load(acquire)==true<br/>=> payload writes visible"]
+    style HB fill:#cce5ff,stroke:#004085
+    style Trans fill:#d4edda,stroke:#155724
+    style DRF fill:#fff3cd,stroke:#856404
+```
 
 ## Language memory models in practice
 
@@ -524,6 +561,26 @@ best available answer to most visibility problems.
 The escape caveat is important and easy to violate: registering a listener, starting a thread, or
 passing `this` to anything from inside a constructor publishes a partially-constructed object and
 forfeits the guarantee.
+
+
+```mermaid
+sequenceDiagram
+    participant Pub as Publisher thread
+    participant Sub as Subscriber thread
+    Note over Pub,Sub: UNSAFE: plain store/load<br/>Subscriber may see half-constructed object
+    Pub->>Pub: obj = new Obj(42)  (writes fields)
+    Pub->>Pub: ptr = obj  (plain store)
+    Sub->>Sub: p = ptr  (plain load)
+    Sub->>Sub: p->field  -- may be 0! (reordered)
+    Note over Pub,Sub: SAFE: release/acquire
+    Pub->>Pub: obj = new Obj(42)
+    Pub->>Sub: ptr.store(obj, release) -- hb
+    Sub->>Sub: p = ptr.load(acquire)
+    alt p != null
+        Sub->>Sub: p->field == 42 guaranteed<br/>(release hb acquire)
+    end
+    Note over Pub,Sub: Alternatives: mutex, once_flag, static init<br/>All create hb; pick simplest that fits
+```
 
 ## Practical rules
 

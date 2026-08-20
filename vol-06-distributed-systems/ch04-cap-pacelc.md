@@ -608,6 +608,40 @@ will do when the medium misbehaves.
 - **Coordination is the cost center** — the same conclusion Volume 4 reached inside one machine,
   now with a theorem attached. Buy agreement only where the invariant demands it.
 
+
+```mermaid
+flowchart TB
+    A["Partition occurs"] --> Q{"Choose?"} 
+    Q --> CP["CP — refuse / block<br/>linearizable, unavailable on minority<br/>etcd, ZooKeeper, Spanner"]
+    Q --> AP["AP — serve stale / accept writes<br/>available, eventual/causal<br/>Dynamo, Cassandra, Riak"]
+    N["No partition — normal operation"] --> PAC["PACELC Else branch<br/>latency vs consistency even without partition"]
+    CP -.-> T["Harvest vs yield matters more<br/>than binary CAP label"]
+    AP -.-> T
+```
+
+```mermaid
+flowchart TD
+    Q1{"Partition?"} -->|Yes| C{"CAP choice"}
+    C -->|C| L1["Block / linearizable"]
+    C -->|A| L2["Serve stale / queue writes"]
+    Q1 -->|No - Else| E{"Latency vs consistency?"}
+    E -->|Low latency| L3["Async replication<br/>eventual (Dynamo Else)"]
+    E -->|Strong consistency| L4["Sync replication<br/>linearizable (HBase Else)"]
+    L1 -.-> X["System is PC/EC or PA/EL etc"]
+    L2 -.-> X
+    L3 -.-> X
+    L4 -.-> X
+```
+
+```mermaid
+flowchart LR
+    A["Yield<br/>% requests completed<br/>vs unavailable"] --> T["Tradeoff under partition"]
+    H["Harvest<br/>% data returned per request<br/>complete vs partial"] --> T
+    T --> E1["High yield + low harvest<br/>AP search: return partial results"]
+    T --> E2["Low yield + high harvest<br/>CP txn: fail rather than partial commit"]
+    T --> E3["Tunable: Dynamo R/W<br/>trade yield for harvest per request"]
+```
+
 ## Further reading
 
 - Gilbert, S. and Lynch, N., "Brewer's Conjecture and the Feasibility of Consistent, Available,

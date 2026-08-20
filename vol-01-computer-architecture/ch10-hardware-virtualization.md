@@ -226,6 +226,21 @@ delivering an interrupt to a guest doesn't require a round trip through the host
 a workload "virtualizes with under 5% overhead," what that number really measures is how successfully
 the design kept the guest out of root mode.
 
+
+```mermaid
+flowchart TD
+    Rings["x86 rings: Ring 0 kernel, Ring 3 user"] --> Problem["Guest kernel wants Ring 0 too<br/>Binary translation slow, complex"]
+    Problem --> VMX{"VMX root vs non-root"}
+    VMX --> Root["VMX root (host)<br/>Hypervisor, controls VMCS"]
+    VMX --> NonRoot["VMX non-root (guest)<br/>Guest kernel at Ring 0 illusion"]
+    NonRoot --> Exit["VM exit: sensitive op traps to root"]
+    Exit --> Entry["VM entry: resume guest"]
+    Root --- Exit
+    Entry --- NonRoot
+    style Root fill:#d4edda,stroke:#155724
+    style NonRoot fill:#cce5ff,stroke:#004085
+```
+
 ## Memory virtualization: EPT/NPT vs. shadow page tables
 
 A guest OS runs its own MMU logic: it builds page tables mapping **guest-virtual** addresses (GVA)
@@ -268,6 +283,20 @@ levels. To avoid flushing the TLB on every VM entry/exit, the translations are t
 workloads — those with huge, sparse working sets (Chapter 3) — see more virtualization overhead than
 cache-resident ones, and why **huge pages** in the guest matter even more under virtualization: they
 shrink both levels of the walk at once.
+
+
+```mermaid
+flowchart TD
+    GVA["Guest virtual addr"] --> GPT["Guest page table<br/>GVA to GPA (guest-physical)"]
+    GPT --> GPA["Guest-physical (illusion)"]
+    GPA --> EPT["EPT / NPT<br/>GPA to HPA (host-physical)<br/>Hardware walks both"]
+    EPT --> HPA["Host-physical (real DRAM)"]
+    Shadow["Shadow page tables (old)<br/>Hypervisor syncs GVA to HPA<br/>Trap on guest PT writes"]
+    GPT -.->|"before EPT"| Shadow
+    Note["EPT: 2D walk, up to 24 accesses on TLB miss<br/>VPID tags avoid flush"]
+    style EPT fill:#d4edda,stroke:#155724
+    style Shadow fill:#f8d7da,stroke:#721c24
+```
 
 ## Device and DMA isolation: the IOMMU, VT-d, and SR-IOV
 
@@ -331,6 +360,18 @@ AWS's Nitro system, for instance, is a purpose-built lightweight KVM-based hyper
 networking, storage, and security to dedicated Nitro *cards* (hardware), leaving almost the entire
 host CPU for the guest — an architectural move to drive the virtualization tax toward zero by pushing
 the device model off the main CPU entirely.
+
+
+```mermaid
+flowchart TD
+    Bare["Bare metal"] --> T1["Type 1: Xen, ESXi, Hyper-V<br/>Hypervisor is the OS"]
+    Bare --> T2["Type 2: VirtualBox, VMware Workstation<br/>Hypervisor = app on host OS"]
+    Bare --> KVM["KVM: Linux IS the hypervisor<br/>/dev/kvm + VMX"]
+    KVM --> Detail["vCPU = thread, Memory = mmap<br/>I/O = virtio/vfio, Sched = CFS"]
+    Detail --> Use3["Cloud workhorse<br/>AWS Nitro = KVM variant"]
+    style KVM fill:#d4edda,stroke:#155724
+    style Detail fill:#fff3cd,stroke:#856404
+```
 
 ## The isolation spectrum: VMs, microVMs, gVisor, containers
 

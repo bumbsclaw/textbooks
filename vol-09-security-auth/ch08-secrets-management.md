@@ -628,6 +628,48 @@ kubectl auth can-i --list --as=system:serviceaccount:default:default | grep secr
 - **Region affinity for latency.** A service in `eu-west-1` that fetches secrets from `us-east-1` Vault pays cross-region latency on every cold start and renewal. Performance replication or a regional Vault cluster is not optional for multi-region fleets.
 - **Audit as a forensic requirement.** Every read, write, and lease revocation must be auditable (Vault audit device → SIEM). In a breach, "which workloads read this secret, when, from which IP, with which token?" is the first question. If you cannot answer it, the blast radius is "everything that could have."
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Secrets Retrieval with Sidecar
+
+```mermaid
+sequenceDiagram
+    participant App as App
+    participant Side as Vault Agent sidecar
+    participant Vault as Vault
+    participant DB as DB
+    App->>Side: read /secrets/db
+    Side->>Vault: auth via k8s SA JWT
+    Vault-->>Side: short-lived lease + secret
+    Side->>Side: render to tmpfs file
+    App->>DB: connect with secret
+```
+
+#### Secret Rotation Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Active: version 1 issued
+    Active --> Rotating: schedule rotation
+    Rotating --> Dual: v1 + v2 valid
+    Dual --> Retired: app migrated to v2
+    Retired --> Revoked: revoke v1 lease
+    Revoked --> Active: v2 now active
+    Revoked --> [*]
+```
+
+#### Transit Encryption
+
+```mermaid
+flowchart LR
+    App["App"] --> Transit["Vault transit encrypt<br/>plaintext → ciphertext"]
+    Transit --> Store["Store ciphertext only"]
+    Store --> Decrypt["Vault transit decrypt<br/>on read"]
+    Decrypt --> App
+    Note["Key never leaves Vault"] --> Transit
+```
+
 ## Key takeaways
 
 - A secret's lifecycle is generate → store → distribute → use → rotate → revoke/audit. Optimizing only "store" (putting it in a vault) while leaving distribution as env vars and rotation as manual is the common failure mode.

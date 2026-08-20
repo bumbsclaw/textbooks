@@ -286,6 +286,26 @@ memory. You will not program to F or O, but knowing they exist explains why "the
 core's cache" is a distinct, often cheaper cost than "the data was in DRAM." For the rest of the
 chapter, MESI is the model; MESIF/MOESI are the production refinements.
 
+
+```mermaid
+stateDiagram-v2
+    [*] --> I
+    I --> E : read miss<br/>no other cache has it
+    I --> S : read miss<br/>other cache has it
+    I --> M : write miss (RFO)
+    E --> S : other core read
+    E --> M : write hit (silent)
+    E --> I : evict / other write
+    S --> M : write hit (BusUpgr)
+    S --> I : invalidate / evict
+    M --> S : other core read (writeback)
+    M --> I : evict (writeback)
+    note right of M
+        Modified = dirty, exclusive
+        Must write back before sharing
+    end note
+```
+
 ## The cost of coherence
 
 Coherence is correct and automatic, but not free, and its cost concentrates precisely where multiple
@@ -463,6 +483,28 @@ coherence never promised anything about the *cross-location* ordering of `x`'s w
 `y`'s read. That is a *consistency* question, answered by the memory model. Coherence is necessary
 but not sufficient: a machine can be perfectly coherent and still reorder operations across
 locations in ways that break naive concurrent code. The rest of the chapter is about that reordering.
+
+
+```mermaid
+flowchart TD
+    subgraph Core0["Core 0"]
+        A0["store X=1"]
+        B0["store Y=1"]
+    end
+    subgraph Core1["Core 1"]
+        A1["r1 = load Y"]
+        B1["r2 = load X"]
+    end
+    A0 --> SB0["Store buffer<br/>X=1 queued"]
+    SB0 --> Cache0["Cache MESI"]
+    A1 --> LB1["Load may bypass older store"]
+    Note["Coherence (MESI): single cache line has single owner"]
+    Note2["Consistency (TSO/x86): store buffer makes stores visible late<br/>r1=1, r2=0 is ALLOWED on x86! Need mfence"]
+    Cache0 -.-> Note
+    SB0 -.-> Note2
+    style SB0 fill:#f8d7da,stroke:#721c24
+    style Note2 fill:#fff3cd,stroke:#856404
+```
 
 ## Memory consistency models
 

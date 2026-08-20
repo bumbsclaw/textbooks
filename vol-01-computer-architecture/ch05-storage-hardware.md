@@ -158,6 +158,22 @@ because of prefetching; storage multiplies the stakes: **sequential beats random
 the slower the tier, the more extreme the penalty.** Design access patterns for the slowest tier your
 data touches.
 
+
+```mermaid
+flowchart TD
+    Req["I/O request LBA"] --> Queue["NCQ / elevator<br/>Reorder by cylinder"]
+    Queue --> Seek["Seek: arm move 4-10 ms<br/>Dominant cost"]
+    Seek --> Rotate["Rotational delay<br/>~4 ms avg at 7200 RPM"]
+    Rotate --> Transfer["Transfer<br/>~0.05 ms per 4 KiB"]
+    Transfer --> Done["Done"]
+    Note1["Sequential: 1 seek + streaming ~150 MB/s"]
+    Note2["Random 4 KiB: seek each time ~100 IOPS = 0.4 MB/s (~400x slower)"]
+    Seek -.-> Note2
+    Transfer -.-> Note1
+    style Seek fill:#f8d7da,stroke:#721c24
+    style Rotate fill:#fff3cd,stroke:#856404
+```
+
 ## SSDs: NAND flash and the erase-before-write problem
 
 A solid-state drive has no moving parts. It stores bits as trapped electric charge in **NAND flash**
@@ -313,6 +329,23 @@ lesson and reinforces another part:
   Volume 5 dissects. The point for now: **the medium's write physics is a first-class input to that
   decision.**
 
+
+```mermaid
+flowchart TD
+    Write["Host write 4 KiB"] --> FTL["FTL: LBA to PBA<br/>Log-structured write"]
+    FTL --> Page["NAND page write ~80 us<br/>No overwrite in place"]
+    Page --> Block["Erase block 512 KiB ~3 ms<br/>Only way to reuse"]
+    Block --> GC{"Garbage collection"}
+    GC -->|"Has live pages"| Copy["Copy live pages elsewhere<br/>Write amplification"]
+    GC -->|"Fully invalid"| Erase["Erase to free"]
+    Copy --> Erase
+    Erase --> Free["Free block pool<br/>Over-provisioning 7-28%"]
+    WA["Write amp = NAND bytes / host bytes<br/>Random: 2-5x / Sequential: ~1x"]
+    Copy -.-> WA
+    style Block fill:#f8d7da,stroke:#721c24
+    style GC fill:#fff3cd,stroke:#856404
+```
+
 ## NVMe: the interface catches up to the media
 
 For years the SSD's real bottleneck was not the flash — it was the *cable*. Early SSDs shipped on the
@@ -380,6 +413,20 @@ independently; a failed compute node does not take its data with it; utilization
 hardware substrate under a lot of modern cloud block storage and "compute-storage separation"
 database architectures, and it is a direct line to the distributed-systems discussion below and to
 Volume 12's treatment of cloud infrastructure.
+
+
+```mermaid
+flowchart LR
+    subgraph SATA["SATA + AHCI (legacy)"]
+        S1["1 queue, 32 depth<br/>AHCI single lock<br/>~550 MB/s ceiling"]
+    end
+    subgraph NVMe["NVMe (modern)"]
+        N1["64K queues, 64K depth each<br/>Doorbell per core, no locks<br/>3-14 GB/s, 10 us"]
+    end
+    S1 -.->|"6x slower, 10x higher latency"| N1
+    style SATA fill:#f8d7da,stroke:#721c24
+    style NVMe fill:#d4edda,stroke:#155724
+```
 
 ## Persistent memory: the tier that almost was
 

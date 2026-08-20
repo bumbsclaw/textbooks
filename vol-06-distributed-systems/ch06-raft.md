@@ -705,6 +705,49 @@ necessary. It has never once been sufficient.
   Consume Raft via etcd/Consul or a maintained library, and point Jepsen-style testing at your
   integration — that is where the bugs actually are.
 
+
+```mermaid
+sequenceDiagram
+    participant C1 as Candidate
+    participant F1 as Follower 1
+    participant F2 as Follower 2
+    Note over C1,F2: Leader heartbeat timeout — no AppendEntries
+    C1->>C1: Increment term, vote for self
+    C1->>F1: RequestVote(term=5, lastLog=(4,5))
+    C1->>F2: RequestVote(term=5, lastLog=(4,5))
+    F1-->>C1: Grant — log at least as up-to-date
+    F2-->>C1: Grant — majority (2/3)
+    C1->>C1: Become Leader term 5
+    C1->>F1: AppendEntries heartbeat (term 5)
+    C1->>F2: AppendEntries heartbeat (term 5)
+```
+
+```mermaid
+sequenceDiagram
+    participant Cli as Client
+    participant Ldr as Leader term 5
+    participant F1 as Follower 1
+    participant F2 as Follower 2
+    Cli->>Ldr: command x=1
+    Ldr->>Ldr: Append to log index 6 term 5 (uncommitted)
+    Ldr->>F1: AppendEntries idx6 x=1
+    Ldr->>F2: AppendEntries idx6 x=1
+    F1-->>Ldr: Ack
+    Ldr->>Ldr: Majority ack — commit idx6
+    Ldr-->>Cli: Success (after commit)
+    Ldr->>F1: AppendEntries commitIdx=6 (next heartbeat)
+    F1->>F1: Apply x=1 to state machine
+```
+
+```mermaid
+flowchart LR
+    A["Config C_old<br/>3 nodes {A,B,C}"] --> J["Joint consensus C_old,new<br/>quorums require both configs<br/>{A,B,C} AND {A,B,C,D}"]
+    J --> B["Config C_new<br/>4 nodes {A,B,C,D}"]
+    B --> C["Old nodes decommissioned<br/>after C_new committed"]
+    J -.-> S["Single-step add/remove<br/>CockroachDB / etcd modern path<br/>joint consensus generalized"]
+    A -.-> E["Naive 2-step without joint<br/>→ split-brain window"]
+```
+
 ## Further reading
 
 - Ongaro, D. and Ousterhout, J., "In Search of an Understandable Consensus Algorithm," *USENIX ATC*,

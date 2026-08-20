@@ -733,6 +733,41 @@ for everything you ship.
   and anchor trust in something small, external, and verifiable — the organizational answer to
   Trusting Trust.
 
+
+### Secure build platform reference architecture
+
+```mermaid
+flowchart TD
+    DEV["Developer<br/>signed commit"] --> SCM["SCM<br/>branch protection"]
+    SCM --> ORCH["Orchestrator<br/>policy + admission"]
+    ORCH --> BUILD["Isolated Build Pool<br/>hermetic, ephemeral"]
+    BUILD --> PROV["Provenance Generator<br/>SLSA L3"]
+    PROV --> SIGN["Signing (Sigstore)<br/>Fulcio + Rekor"]
+    SIGN --> REG["Registry<br/>+ OCI attestations"]
+    REG --> ADMIT["Admission Controller<br/>verify provenance"]
+    ADMIT --> DEPLOY["Production<br/>fleet"]
+
+    OBSERVE["Observability<br/>+ SIEM"] -. monitors .-> BUILD
+    OBSERVE -. monitors .-> REG
+    style BUILD fill:#b6d7ff,stroke:#333
+    style ADMIT fill:#b6f0b6,stroke:#333
+```
+
+
+### Platform hardening layers
+
+```mermaid
+flowchart TD
+    L1["L1: Source<br/>signed commits, 2FA, review"] --> L2["L2: Build isolation<br/>ephemeral, no privileged, net policy"]
+    L2 --> L3["L3: Provenance<br/>SLSA L3, signed, transparency log"]
+    L3 --> L4["L4: Distribution<br/>signed artifacts, hash verification"]
+    L4 --> L5["L5: Deployment<br/>admission control, policy as code"]
+    L5 --> L6["L6: Detection<br/>anomaly, audit, incident response"]
+
+    style L1 fill:#ddd,stroke:#333
+    style L6 fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **SLSA v1.0 — Build track and Threats & mitigations.** The normative basis for "everything built

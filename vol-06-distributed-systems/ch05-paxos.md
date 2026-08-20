@@ -671,6 +671,51 @@ will not budget for it, and should not have to.
 - **Never hand-roll consensus.** If split-brain can corrupt your data, put etcd or ZooKeeper
   under it (Chapter 8). Same moral as "don't write lock-free structures," with higher stakes.
 
+
+```mermaid
+sequenceDiagram
+    participant P as Proposer
+    participant A1 as Acceptor 1
+    participant A2 as Acceptor 2
+    participant A3 as Acceptor 3
+    P->>A1: Prepare(n=5)
+    P->>A2: Prepare(n=5)
+    P->>A3: Prepare(n=5)
+    A1-->>P: Promise(n=5, lastAccepted=null)
+    A2-->>P: Promise(n=5, lastAccepted=(n=2,v=X))
+    A3-->>P: Promise(n=5, lastAccepted=null)
+    Note over P: Must propose X (highest lastAccepted)
+    P->>A1: Accept(n=5, v=X)
+    P->>A2: Accept(n=5, v=X)
+    P->>A3: Accept(n=5, v=X)
+    A1-->>P: Accepted
+    A2-->>P: Accepted
+    P-->>P: Chosen — majority accepted
+```
+
+```mermaid
+flowchart LR
+    A["Classic Paxos<br/>2 RTT per decree<br/>any proposer"] --> B["Leader election<br/>one proposer wins Prepare"]
+    B --> C["Steady state<br/>skip Prepare<br/>1 RTT: Accept only"]
+    C --> D["Leader lease / ballot<br/>others forward to leader"]
+    D --> E["View change on leader loss<br/>new Prepare with higher ballot"]
+    E -.-> C
+```
+
+```mermaid
+sequenceDiagram
+    participant P1 as Proposer 1 (n=1)
+    participant P2 as Proposer 2 (n=2)
+    participant Acc as Acceptors
+    P1->>Acc: Prepare n=1 → Promise
+    P2->>Acc: Prepare n=2 → Promise (preempts P1)
+    P1->>Acc: Prepare n=3 → Promise (preempts P2)
+    P2->>Acc: Prepare n=4 → Promise (preempts P1)
+    Note over P1,Acc: Duel — no progress without leader election
+    Acc-->>P1: Nack — try higher ballot
+    Note over P1,P2: Fix: leader election + backoff<br/>or Raft restriction: one leader at a time
+```
+
 ## Further reading
 
 - Lamport, L., "The Part-Time Parliament," *ACM Transactions on Computer Systems* 16(2), 1998 —

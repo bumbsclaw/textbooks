@@ -743,6 +743,45 @@ writes* — and when the answer runs out, that is where your dedupe table goes.
   client sessions with serial numbers inside the replicated state machine are this
   chapter's pattern at the bottom of the stack.
 
+
+```mermaid
+flowchart TD
+    AM["At-most-once<br/>fire and forget<br/>may lose"] --> L1["Use: metrics, best-effort"]
+    AL["At-least-once<br/>retry until ack<br/>may duplicate"] --> L2["Use: with idempotency key → effectively once"]
+    EO["Exactly-once<br/>atomic commit + dedup<br/>strong infra required"] --> L3["Use: txn outbox + consumer dedup<br/>or idempotent receiver"]
+    AL -.->|"add idempotency"| EO
+    Note["Most systems claim exactly-once<br/>actually at-least-once + dedup"] --> AL
+```
+
+```mermaid
+stateDiagram-v2
+    [*] --> Processing: POST with Idempotency-Key: k
+    Processing --> Completed: success — store result for k
+    Processing --> Failed: error — store error for k
+    Completed --> Completed: retry with same k → return cached result
+    Failed --> Failed: retry with same k → return cached error
+    Processing --> Processing: concurrent retry → 409 / 422 or wait
+    note right of Completed
+        TTL on keys — e.g. 24h
+        key = hash(method+url+body+key)
+    end note
+```
+
+```mermaid
+sequenceDiagram
+    participant Svc as Service
+    participant DB as Database
+    participant Relay as Outbox Relay
+    participant Bus as Message Bus
+    Svc->>DB: BEGIN; UPDATE orders; INSERT outbox(event)
+    DB-->>Svc: COMMIT atomically (order + event)
+    Relay->>DB: Poll outbox WHERE published=false
+    Relay->>Bus: Publish event (at-least-once)
+    Bus-->>Relay: Ack
+    Relay->>DB: Mark published=true
+    Note over Relay,Bus: Relay retries until ack<br/>consumer deduplicates by event_id
+```
+
 ## Further reading
 
 - Saltzer, J., Reed, D., and Clark, D., "End-to-End Arguments in System Design," *ACM

@@ -746,6 +746,38 @@ once.
   CVE drops, inventory (Book 3) tells you where it is and update automation pushes the fix everywhere
   fast — but only if the fleet was already near-current. You cannot sprint if you have not been walking.
 
+
+### Automated update pipeline with gates
+
+```mermaid
+flowchart TD
+    BOT["Renovate / Dependabot<br/>detects new version"] --> PR["Opens PR<br/>bump dep + lockfile"]
+    PR --> CI["CI: tests + SCA<br/>+ reachability"]
+    CI --> PASS{"All checks pass?"}
+    PASS -->|Yes| AUTO{"Auto-merge<br/>policy?"}
+    PASS -->|No| HOLD["Hold — human<br/>triage"]
+    AUTO -->|Patch/minor<br/>+ trusted| MERGE["Auto-merge"]
+    AUTO -->|Major /<br/>untrusted| REVIEW["Human review"]
+    MERGE --> DEPLOY["Deploy"]
+    REVIEW --> MERGE
+    style HOLD fill:#ffcc00,stroke:#333
+```
+
+
+### Update risk vs staleness tradeoff
+
+```mermaid
+flowchart TD
+    STALE["Stale dependencies<br/>— known CVEs accumulate"] --> RISK1["High vuln exposure"]
+    FRESH["Aggressive auto-update<br/>— every release"] --> RISK2["Supply-chain<br/>attack surface up"]
+
+    BALANCE["Balanced policy<br/>— auto patch/minor<br/>— gate major<br/>— pin + verify"] --> GOOD["Low vuln +<br/>controlled risk"]
+
+    RISK1 -. mitigated by .-> BALANCE
+    RISK2 -. mitigated by .-> BALANCE
+    style BALANCE fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - GitHub — Dependabot version updates configuration (`dependabot.yml`)

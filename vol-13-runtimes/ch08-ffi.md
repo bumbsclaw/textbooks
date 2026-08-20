@@ -705,3 +705,46 @@ cosign verify-blob target/release/libfilter.so --signature libfilter.so.sig \
 - `cbindgen` / `bindgen` — https://github.com/mozilla/cbindgen, https://rust-lang.github.io/rust-bindgen/
 - PEP 703 — Making the GIL Optional in CPython — https://peps.python.org/pep-0703/
 
+
+### FFI boundary crossing
+
+```mermaid
+flowchart LR
+    HOST[Host Language - Python / JS] --> BRIDGE[FFI Bridge]
+    BRIDGE --> NATIVE[Native Code - C / Rust]
+    NATIVE --> MEM[Shared Memory]
+    MEM --> BRIDGE
+    BRIDGE --> HOST
+```
+
+### FFI safety considerations
+
+```mermaid
+flowchart TB
+    CALL[FFI Call] --> CHECK{Memory Safe?}
+    CHECK -->|No| RISK[Buffer Overflow / UAF Risk]
+    CHECK -->|Yes| OK[Safe]
+    CALL --> GC{GC Interaction?}
+    GC -->|Pin Needed| PIN[Pin Object]
+    GC -->|Copy| COPY[Copy Data Across Boundary]
+```
+
+### N-API vs native addon lifecycle
+
+```mermaid
+flowchart TB
+    JS[JavaScript] --> NAPI[N-API - Stable ABI]
+    NAPI --> BIND[Native Binding]
+    BIND --> LIB[Native Library]
+    JS --> NANO[nan - Legacy]
+    NANO -.->|Version coupled| BIND
+```
+
+### WASM as safer FFI alternative
+
+```mermaid
+flowchart LR
+    OLD[Traditional FFI - Raw Pointers] --> RISK2[Memory Unsafe]
+    NEW[WASM FFI - Sandboxed Memory] --> SAFE[Memory Safe + Portable]
+    RISK2 -.->|Migrate| SAFE
+```

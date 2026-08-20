@@ -142,6 +142,20 @@ mutex. Under high contention, N threads each compute and N−1 discard the work 
 collapses toward the serialized case while burning CPU on all cores. This is the USL's β term from
 Chapter 1 in its purest form, and it is why lock-free is not a general-purpose speedup.
 
+
+```mermaid
+flowchart TD
+    CAS["CAS: compare-and-swap<br/>atomically: if *addr==expected then *addr=new<br/>Returns success/fail<br/>Basis of all lock-free"]
+    FAA["FAA: fetch-and-add<br/>atomically: old=*addr; *addr+=delta; return old<br/>Wait-free counter"]
+    LLSC["LL/SC (ARM/RISC-V)<br/>LL loads, SC stores if no intervening write<br/>More general than CAS"]
+    CAS --> Loop["Retry loop:<br/>old=load; new=f(old);<br/>while !CAS(addr, old, new) old=load"]
+    FAA --> Counter["Counter: always succeeds<br/>No retry, wait-free"]
+    LLSC --> CAS2["CAS can be built from LL/SC<br/>But ABA still applies"]
+    Note["x86: LOCK CMPXCHG, LOCK XADD<br/>ARM: LDXR/STXR, CASA"]
+    style CAS fill:#d4edda,stroke:#155724
+    style FAA fill:#cce5ff,stroke:#004085
+```
+
 ## The ABA problem
 
 The subtle hazard that makes naive CAS insufficient. CAS answers the question *"is this location's
@@ -196,6 +210,20 @@ Mitigations, in rough order of practicality:
 - **Garbage collection.** In Java or Go the collector will not reclaim a node any thread still
   references, so the "freed and reused" step cannot happen. ABA can still occur logically if you
   reuse *values*, but the memory-corruption form is eliminated.
+
+
+```mermaid
+sequenceDiagram
+    participant T1 as Thread 1
+    participant T2 as Thread 2
+    participant Head as Stack head (atomic)
+    T1->>Head: read head = A (will CAS A to B)
+    Note over T1: preempted!
+    T2->>Head: pop A (CAS A to next)
+    T2->>Head: push A again (recycled node!)<br/>head = A again
+    T1->>Head: CAS(A, B) -- succeeds! (A==A)<br/>But stack changed underneath<br/>B may be freed / corrupted
+    Note over T1,Head: Fix: tagged pointer (ABA counter)<br/>head = (ptr, count)<br/>CAS checks both -> fails if recycled<br/>Or hazard pointers / epoch reclamation
+```
 
 ## Memory reclamation: the genuinely hard part
 
@@ -421,6 +449,23 @@ partition it and aggregate on read.** Note the trade you are making — you exch
 strongly-consistent value readable at any instant for an eventually-consistent one that is exact
 only at rest. For metrics that is free; for a value that gates a decision, such as a quota, it is
 not, and you need the exact primitive or a different design.
+
+
+```mermaid
+flowchart TD
+    Naive["Naive: atomic<int> global<br/>All cores CAS same line<br/>Cache-line bounce<br/>~20M ops/s max, scales negatively"]
+    Striped["Striped: per-core shard<br/>atomic per CPU, sum on read<br/>No contention on inc<br/>~1B ops/s, linear scaling"]
+    Approx["Approximate: per-thread batch<br/>Thread-local buffer, flush periodically<br/>Eventually consistent, fastest"]
+    Naive --> Choice{"Need exact?"}
+    Choice -->|"yes, frequent read"| Striped
+    Choice -->|"yes, rare read"| Striped
+    Choice -->|"approx OK (metrics)"| Approx
+    Striped --> Read["Read: sum shards<br/>O(Ncores), may race<br/>Add mutex for exact snapshot if needed"]
+    Approx --> Read2["Read: approximate<br/>Good for stats, not money"]
+    style Naive fill:#f8d7da,stroke:#721c24
+    style Striped fill:#d4edda,stroke:#155724
+    style Approx fill:#cce5ff,stroke:#004085
+```
 
 ## When to use lock-free, and when not to
 

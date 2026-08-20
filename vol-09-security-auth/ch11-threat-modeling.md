@@ -396,6 +396,52 @@ Acceptance without a written residual-risk entry and a compensating detection (a
 - **The DFD is the contract between teams.** When the `orders` team adds a new Kafka topic that `analytics` consumes, the DFD change is the notification that `analytics` now has PII and needs ACLs, retention, and audit. Without the DFD as a shared artifact, the data flow is discovered during an incident.
 - **Verification must be as distributed as the system.** SAST/SCA/secrets gates run per repo, authz-matrix tests run per service, DAST crawls per environment, and audit-log anomaly detection runs centrally. The threat model maps each mitigation to *where* it is verified — a mitigation with no gate is a mitigation that will regress.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### STRIDE per Component
+
+```mermaid
+flowchart TB
+    DF["Data flow<br/>user → API → DB"] --> S["Spoofing<br/>authN?"]
+    DF --> T["Tampering<br/>integrity?"]
+    DF --> R["Repudiation<br/>audit log?"]
+    DF --> I["Information disclosure<br/>encrypt?"]
+    DF --> D["Denial of service<br/>rate limit?"]
+    DF --> E["Elevation<br/>authZ?"]
+```
+
+#### Threat Model Iteration
+
+```mermaid
+sequenceDiagram
+    participant Team as Team
+    participant Model as Threat model
+    participant Arch as Architecture
+    participant Backlog as Backlog
+    Team->>Model: enumerate assets + flows
+    Model->>Team: STRIDE + attack trees
+    Team->>Arch: mitigations + controls
+    Arch->>Backlog: stories + tests
+    Backlog->>Model: verify on next iteration
+```
+
+#### Attack Tree Example
+
+```mermaid
+flowchart TB
+    Goal["Goal: exfiltrate PII"]
+    Goal --> A["Compromise creds"]
+    Goal --> B["Exploit injection"]
+    Goal --> C["Abuse IDOR"]
+    A --> A1["Phish"]
+    A --> A2["Brute force"]
+    B --> B1["SQLi"]
+    B --> B2["SSRF to metadata"]
+    C --> C1["Enumerate IDs"]
+    Mitigations["Mitigations map to each leaf"] -.-> A1 & A2 & B1 & B2 & C1
+```
+
 ## Key takeaways
 
 - Threat modeling is the design-time discipline that turns architecture (DFD + trust boundaries) into prioritized, testable security requirements — it precedes and directs controls, not the reverse. Its output is tickets and tests, not just diagrams.

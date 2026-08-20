@@ -733,6 +733,58 @@ protection is the ambient condition, not a per-team project — the same princip
 images (Book 6, Chapter 3) or a hardened service scaffold: make the right thing the easy thing and
 the fleet trends secure without heroics.
 
+### Branch protection hierarchy
+
+```mermaid
+flowchart TB
+  REPO["Repository"] --> RULESET["Rulesets (new) / Branch protection (classic)"]
+  RULESET --> MAIN["main / master<br/>(strictest)"]
+  RULESET --> REL["release/*<br/>(strict)"]
+  RULESET --> FEAT["feature/*<br/>(lighter)"]
+  MAIN --> C1["Require PR (1-2 reviews)<br/>+ dismiss stale<br/>+ CODEOWNERS"]
+  MAIN --> C2["Require status checks<br/>(CI green)"]
+  MAIN --> C3["No force-push / no deletion<br/>+ require signed commits"]
+  MAIN --> C4["Restrict pushers /<br/>bypass list (audited)"]
+  style MAIN fill:#f85149,color:#fff
+  style C4 fill:#2ea043,color:#fff
+```
+
+### PR review assignment and CODEOWNERS
+
+```mermaid
+sequenceDiagram
+    participant A as Author
+    participant H as Hosting (GitHub)
+    participant O as CODEOWNERS
+    participant CI as CI
+    A->>H: open PR (feature to main)
+    H->>O: auto-request review<br/>(matching owned paths)
+    H->>CI: trigger required checks
+    CI->>H: status: pass/fail
+    O->>H: approve(s) (1-2 required)
+    H->>H: evaluate ruleset:<br/>reviews OK + checks OK + no conflicts?
+    alt All gates pass
+        H->>A: merge enabled (squash/merge)
+    else Any gate fails
+        H->>A: merge blocked
+    end
+```
+
+### Bypass and break-glass audit flow
+
+```mermaid
+flowchart TD
+  REQ["Need to bypass<br/>branch protection?"] --> Q1{"Is actor on<br/>bypass list?"}
+  Q1 -->|No| DENY["Denied — normal PR flow"]
+  Q1 -->|Yes (admin/bot)| Q2{"Reason + ticket<br/>provided?"}
+  Q2 -->|No| DENY2["Denied — justification required"]
+  Q2 -->|Yes| ALLOW["Allowed (push/merge)"]
+  ALLOW --> LOG["Logged: actor, reason,<br/>bypass event to SIEM"]
+  LOG --> REVIEW["Post-merge review<br/>(audit queue)"]
+  style DENY fill:#f85149,color:#fff
+  style LOG fill:#1f6feb,color:#fff
+```
+
 ## Key takeaways
 
 - **Two-person control is the core source-integrity control.** No single identity should be able

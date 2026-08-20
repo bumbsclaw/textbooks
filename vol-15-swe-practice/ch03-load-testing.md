@@ -952,3 +952,40 @@ Expand from there as incidents teach you which faults and load patterns actually
 ---
 
 *Next: Chapter 4 — Design Docs, RFCs, and Technical Decision-Making — where the focus shifts from verifying the system to deciding what to build and how to align a team around that decision before a line of code is written.*
+
+### Load testing types
+
+```mermaid
+flowchart TB
+    LT[Load Testing] --> LOAD[Load - Expected Traffic]
+    LT --> STRESS[Stress - Beyond Capacity]
+    LT --> SPIKE[Spike - Sudden Surge]
+    LT --> SOAK[Soak - Sustained Duration]
+    LT --> BREAK[Breakpoint - Find Ceiling]
+```
+
+### Load test pipeline
+
+```mermaid
+flowchart LR
+    DEF[Define SLO - p95 < 200ms] --> SCRIPT[Write Test Script - k6/Gatling]
+    SCRIPT --> BASE[Baseline Run]
+    BASE --> RAMP[Ramp Up Load]
+    RAMP --> OBS2[Observe Metrics]
+    OBS2 --> TUNE[Tune System]
+    TUNE --> RAMP
+```
+
+### k6 / Gatling architecture
+
+```mermaid
+flowchart TB
+    CTRL[Controller] --> VU1[VU 1]
+    CTRL --> VU2[VU 2]
+    CTRL --> VUN[VU N]
+    VU1 --> TARGET[Target System]
+    VU2 --> TARGET
+    VUN --> TARGET
+    TARGET --> METRICS[Metrics Store]
+    METRICS --> REPORT[Report]
+```

@@ -85,6 +85,21 @@ SISD does four adds to add four pairs; SIMD does one `vadd` that produces four r
 latency a scalar add takes. Widen the vector and the ratio grows. That is the entire idea. Everything
 else is the engineering required to keep the lanes full and the constraints satisfied.
 
+
+```mermaid
+flowchart TD
+    Flynn["Flynn: Instruction x Data streams"] --> SISD["SISD<br/>Scalar core, baseline"]
+    Flynn --> SIMD["SIMD<br/>Vector units, GPUs"]
+    Flynn --> MIMD["MIMD<br/>Multicore, distributed"]
+    Flynn --> MISD["MISD<br/>Rare (systolic, pipeline)"]
+    SIMD --> Vec["AVX2: 8 floats / AVX-512: 16 floats<br/>One op does N"]
+    MIMD --> Cores["N cores do N different ops"]
+    Vec -.-> Gain["SIMD: 4-16x per core<br/>MIMD: Nx per socket"]
+    Cores -.-> Gain
+    style SIMD fill:#d4edda,stroke:#155724
+    style MIMD fill:#cce5ff,stroke:#004085
+```
+
 ## CPU SIMD: vector registers, lanes, and the ISA ladder
 
 A SIMD instruction operates on a **vector register** — a wide register partitioned into equal-width
@@ -193,6 +208,22 @@ effects, and anything that can throw all defeat vectorization.
 
 These four are not incidental — they *define* what "data-parallel" means. A workload that satisfies them is
 SIMD-friendly; one that cannot is not, no matter how much compute it burns.
+
+
+```mermaid
+flowchart LR
+    Scalar["Scalar: c[i]=a[i]+b[i]<br/>1 add per instruction"] --> SLoop["Loop 16x:<br/>16 loads + 16 adds + branches"]
+    Vector["SIMD AVX-512:<br/>c[0:15]=a[0:15]+b[0:15]<br/>1 vaddps does 16 adds"] --> VOp["2 wide loads + 1 vadd<br/>No loop overhead"]
+    subgraph Regs["512-bit ZMM register"]
+        L0["lane 0: float"]
+        L1["lane 1: float"]
+        L2["... 14 more ..."]
+        L15["lane 15: float"]
+    end
+    Vector --- Regs
+    style Vector fill:#d4edda,stroke:#155724
+    style Scalar fill:#f8d7da,stroke:#721c24
+```
 
 ## How you actually get SIMD
 
@@ -462,6 +493,21 @@ write a kernel: you will call a framework that dispatches optimized kernels for 
 *systems* problem — feeding the GPU, batching, memory management, and keeping the expensive device busy. The
 kernel-level details above matter not because you will write them but because they explain *why* your GPU
 service behaves the way it does when a batch is too small or a transfer too frequent.
+
+
+```mermaid
+flowchart TD
+    CPU["CPU: few fat cores<br/>OOO, branch predict, large caches<br/>Latency-optimized ~8-64 cores"]
+    GPU["GPU: many thin cores<br/>In-order, throughput-optimized<br/>~3000-18000 cores"]
+    CPU --> CPUWork["Best: irregular, branchy<br/>latency-sensitive"]
+    GPU --> GPUWork["Best: regular, data-parallel<br/>dense math, ML, imaging"]
+    Kernel["Kernel: grid to blocks to warps (32 threads)<br/>Warp = SIMD width<br/>Divergence cost"]
+    GPUWork --- Kernel
+    PCIe["PCIe transfer tax: ~32 GB/s, 10 us<br/>Batch or stay on device"]
+    style CPU fill:#cce5ff,stroke:#004085
+    style GPU fill:#d4edda,stroke:#155724
+    style PCIe fill:#fff3cd,stroke:#856404
+```
 
 ## GPUs for backend engineering
 

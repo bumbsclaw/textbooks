@@ -246,6 +246,22 @@ any pre-2018 "syscalls are ~50 ns" figure with suspicion, hedge your own numbers
 operative lesson — recognize that the mitigations *raised the price of the boundary*, which is
 precisely what pushed the industry toward architectures that cross it far less often.
 
+
+```mermaid
+sequenceDiagram
+    participant App as User (Ring 3)
+    participant CPU as CPU
+    participant Kernel as Kernel (Ring 0)
+    App->>App: libc wrapper: mov rax,nr; syscall
+    App->>CPU: syscall insn: trap<br/>RIP to STAR_MSR, CPL 0
+    CPU->>Kernel: entry_SYSCALL_64<br/>swapgs, save regs, PTI switch
+    Kernel->>Kernel: dispatch: sys_call_table[rax]<br/>arg regs: rdi,rsi,rdx,r10,r8,r9
+    Kernel-->>Kernel: do work (may sleep)
+    Kernel->>CPU: sysret / iret
+    CPU->>App: return to Ring 3<br/>rax = result / -errno
+    Note over App,Kernel: Cost: ~100-300 ns (no PTI) ~500-1000 ns (PTI/KPTI)<br/>vDSO avoids trap for gettimeofday etc.
+```
+
 ## The cost of syscalls, and why you reduce them
 
 So a syscall is cheap-ish but not free: on the order of hundreds of nanoseconds for the
@@ -324,6 +340,22 @@ across a service handling millions of requests per second across thousands of ma
 cores — real, budgeted, dollar-denominated capacity. The teams that run the largest I/O-bound
 fleets (CDNs, proxies, databases, message brokers) obsess over syscalls-per-request precisely
 because at their scale the boundary crossing is a line item.
+
+
+```mermaid
+flowchart TD
+    App["App: need time, I/O, etc."] --> Path{"Path"}
+    Path -->|"naive: syscall per op"| Many["100k gettimeofday/s<br/>100k x 500 ns = 50 ms/s<br/>10% of one core"]
+    Path -->|"batched: vectored I/O"| Few["1 writev for 100 writes<br/>1 io_uring submit for N ops<br/>Amortize trap cost"]
+    Path -->|"vDSO"| None["gettimeofday via vDSO<br/>Userspace read of kernel-mapped page<br/>~20 ns, no trap"]
+    Path -->|"vsyscall trap path"| Trap["Legacy vsyscall: still traps<br/>Deprecated"]
+    Many --> Opt["Optimize: batch, cache time<br/>reuse FDs, buffered I/O"]
+    Few --> Opt
+    None --> Opt
+    style Many fill:#f8d7da,stroke:#721c24
+    style Few fill:#d4edda,stroke:#155724
+    style None fill:#d4edda,stroke:#155724
+```
 
 ## libc wrappers, `syscall()`, and the vDSO
 

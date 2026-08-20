@@ -649,6 +649,36 @@ constantly across a fleet, has to meet.
 
 ---
 
+### GitOps delivery chain with verification
+
+```mermaid
+flowchart LR
+  DEV["Git push (app repo)"] --> CI["CI: build + sign + SBOM<br/>(SLSA provenance)"]
+  CI --> REG["Registry<br/>(image@digest + sig)"]
+  CI --> GITOPS["GitOps repo<br/>(update manifest: image@digest)"]
+  GITOPS --> ARGO["ArgoCD / Flux<br/>(reconciler)"]
+  ARGO --> ADM["Admission (verify sig<br/>+ policy before apply)"]
+  ADM --> K8S["Cluster: running pod<br/>(verified image)"]
+  K8S --> MON["Monitor: drift +<br/>re-attest at runtime"]
+  style ADM fill:#2ea043,color:#fff
+```
+
+### Progressive delivery gates
+
+```mermaid
+flowchart TD
+  V["New image @digest<br/>(verified)"] --> CAN["Canary 5%<br/>(verify health)"]
+  CAN -->|"healthy"| R25["25%"]
+  R25 -->|"healthy"| R50["50%"]
+  R50 -->|"healthy"| R100["100%"]
+  CAN -->|"unhealthy / vuln found"| ROLL["Rollback to prior digest<br/>(known-good)"]
+  R25 --> ROLL
+  R50 --> ROLL
+  R100 --> MON["Continuous verify<br/>(new CVEs or revocations)"]
+  style ROLL fill:#f85149,color:#fff
+  style R100 fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **What deploys is not just an image.** It is a graph of manifests, charts, subcharts, CRDs,

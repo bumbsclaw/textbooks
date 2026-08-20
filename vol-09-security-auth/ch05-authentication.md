@@ -551,6 +551,63 @@ Client ─► LB ──┤
 
 **Key rotation without `kid`.** New signing key deployed, old key deleted, every in-flight token fails verification and every user is logged out. Defense: publish both keys in JWKS with distinct `kid`s, issue new tokens with the new `kid`, keep the old key verifiable until every token signed with it has expired (max `exp` window), then remove it. This is the same dual-read pattern as Ch 3 and Ch 4. Monitor `kid` distribution in issued tokens to know when the old `kid` is safe to retire.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Session vs JWT Decision
+
+```mermaid
+flowchart TB
+    Q{"Revocation & scale needs?"} -->|Immediate revoke<br/>server control| Session["Server sessions<br/>Redis/DB, opaque cookie"]
+    Q -->|Stateless, CDN, mobile| JWT["JWT<br/>short-lived access + refresh"]
+    Q -->|Both| Hybrid["Hybrid<br/>JWT 5m + Redis blocklist + refresh"]
+```
+
+#### Login and Session Creation
+
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant App as App
+    participant Store as Redis
+    B->>App: POST /login
+    App->>App: verify password + MFA
+    App->>Store: SET session:abc user=42 ex=15m
+    App-->>B: Set-Cookie: __Host-sid=abc; HttpOnly; Secure; SameSite=Lax
+    B->>App: GET /profile Cookie: sid=abc
+    App->>Store: GET session:abc
+    Store-->>App: hit
+    App-->>B: 200 profile
+```
+
+#### JWT Validation via JWKS
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant API as API
+    participant JWKS as JWKS endpoint
+    C->>API: Authorization: Bearer ey... kid=k2
+    API->>API: parse header, allowlist alg RS256/ES256
+    API->>JWKS: fetch (cached) GET /.well-known/jwks.json
+    JWKS-->>API: {keys:[{kid:k2, n, e}]}
+    API->>API: verify sig + exp/nbf/iss/aud
+    API-->>C: 200 or 401
+```
+
+#### Refresh Token Rotation
+
+```mermaid
+stateDiagram-v2
+    [*] --> Issued: login issues refresh R1
+    Issued --> Used: POST /refresh with R1
+    Used --> Rotated: issue R2, invalidate R1
+    Rotated --> Used: next refresh with R2
+    Used --> Replayed: attacker replays R1
+    Replayed --> Revoked: detect → revoke family
+    Revoked --> [*]: re-login required
+```
+
 ## Key takeaways
 
 - Server-side sessions (opaque handle + store lookup) and JWTs (self-contained signed object, RFC 7519) are not rivals — they are different trade-offs. Sessions give instant revocation at the cost of a store on the hot path; JWTs give stateless verification at the cost of delayed revocation bounded by `exp`. Most fleets use sessions for web (cookies) and short-lived JWTs for APIs.

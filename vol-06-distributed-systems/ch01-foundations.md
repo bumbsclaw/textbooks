@@ -629,6 +629,38 @@ reliability practices of Volume 11 are the same habit with dashboards attached.
   exceeding a lease, a backward-stepping clock, a lying fsync — monitor the assumptions your
   correctness cites, and test by attacking them (Chapter 12).
 
+
+```mermaid
+flowchart TB
+    S["Synchronous<br/>bounded delay Δ + bounded clock drift"] --> G1["Can solve consensus with timeouts<br/>simpler, unrealistic"]
+    A["Asynchronous<br/>no bound on delay"] --> G2["FLP impossible<br/>cannot distinguish slow from dead"]
+    P["Partially synchronous<br/>eventually bounded Δ"] --> G3["Practical: timeouts + retries<br/>safety always, liveness eventually"]
+    G2 -.-> I["Need failure detector<br/>or randomization to circumvent FLP"]
+    G1 -.-> P
+    A -.-> P
+```
+
+```mermaid
+sequenceDiagram
+    participant G1 as General A
+    participant Chan as Unreliable Channel
+    participant G2 as General B
+    G1->>Chan: Attack at dawn? (msg 1)
+    Chan->>G2: Delivered
+    G2->>Chan: Ack — I will attack (msg 2)
+    Chan--xG1: Lost — A uncertain
+    G1->>Chan: Ack your ack? (msg 3)
+    Note over G1,G2: Every ack needs an ack — infinite regress<br/>common knowledge unattainable<br/>→ need quorums / fencing, not perfect agreement
+```
+
+```mermaid
+flowchart LR
+    S["Safety: nothing bad happens<br/>linearizability, consensus safety<br/>must hold always — even during partition"] --> T["Invariants, fencing tokens<br/>formal verification"]
+    L["Liveness: something good eventually happens<br/>termination, progress<br/>holds only during synchrony"] --> R["Timeouts, retries, leader election<br/>best-effort with backoff"]
+    S -.->|"tension — CAP"| L
+    Note["Correct system: safety never violated<br/>liveness may stall under partition"] --> S
+```
+
 ## Further reading
 
 - Fischer, M. J., Lynch, N. A., and Paterson, M. S., "Impossibility of Distributed Consensus with

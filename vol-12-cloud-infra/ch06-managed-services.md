@@ -956,3 +956,42 @@ This is the data and platform layer that Chapters 4–5 provision and that appli
 - AWS Backup — https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html
 - GCP managed data — Cloud SQL, Memorystore, BigQuery — https://cloud.google.com/products/databases and https://cloud.google.com/bigquery/docs
 - Azure managed data — https://learn.microsoft.com/en-us/azure/product-categories/databases
+
+### Build vs buy decision tree
+
+```mermaid
+flowchart TB
+    Q1{Undifferentiated heavy lifting?}
+    Q1 -->|Yes| Q2{Managed service meets SLO?}
+    Q1 -->|No| BUILD[Build In-House]
+    Q2 -->|Yes| BUY[Use Managed Service]
+    Q2 -->|No| Q3{Cost of building < cost of working around?}
+    Q3 -->|Yes| BUILD
+    Q3 -->|No| HYBRID[Managed + Custom Extension]
+```
+
+### Managed service integration pattern
+
+```mermaid
+flowchart LR
+    APP[Your App] --> SDK[Cloud SDK / API]
+    SDK --> MS[Managed Service]
+    MS --> DL[(Managed Storage)]
+    APP --> OBS[Cloud Monitoring]
+    MS --> OBS
+    IAM[IAM Role] -.-> APP
+    IAM -.-> MS
+```
+
+### Vendor lock-in mitigation
+
+```mermaid
+flowchart TB
+    A[Application Layer] --> AB[Abstraction Interface]
+    AB --> AD1[Adapter - AWS]
+    AB --> AD2[Adapter - GCP]
+    AB --> AD3[Adapter - Azure]
+    AD1 --> S1[(AWS Service)]
+    AD2 --> S2[(GCP Service)]
+    AD3 --> S3[(Azure Service)]
+```

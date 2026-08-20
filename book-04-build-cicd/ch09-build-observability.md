@@ -662,6 +662,40 @@ platform**, and it has the same shape as production observability:
   are the SLOs of the detective program. The goal is endogenous detection at single-build-run timescale,
   not a customer's incident two months later.
 
+
+### Build observability pillars
+
+```mermaid
+flowchart TD
+    BUILD["Build Execution"] --> LOGS["Logs<br/>— what ran, when,<br/>by whom"]
+    BUILD --> METRICS["Metrics<br/>— duration, cache hit,<br/>artifact size"]
+    BUILD --> TRACE["Traces<br/>— step-level<br/>provenance"]
+    BUILD --> ATTEST["Attestations<br/>— signed evidence"]
+
+    LOGS --> SIEM["SIEM /<br/>central store"]
+    METRICS --> DASH["Dashboard +<br/>alerting"]
+    TRACE --> GUAC["GUAC /<br/>supply-chain graph"]
+    ATTEST --> VERIFY["Verification<br/>+ audit"]
+
+    style ATTEST fill:#b6d7ff,stroke:#333
+```
+
+
+### Detecting anomalous builds
+
+```mermaid
+flowchart TD
+    BASELINE["Baseline:<br/>normal build profile<br/>(duration, egress, steps)"] --> OBSERVE["Observe current<br/>build telemetry"]
+    OBSERVE --> COMPARE{"Anomaly?"}
+    COMPARE -->|No| PASS["Pass"]
+    COMPARE -->|Yes: new egress<br/>to unknown host| ALERT1["Alert: possible<br/>exfiltration"]
+    COMPARE -->|Yes: unexpected<br/>step / action| ALERT2["Alert: possible<br/>injection"]
+    COMPARE -->|Yes: artifact<br/>hash drift| ALERT3["Alert: possible<br/>tampering"]
+
+    ALERT1 --> INVEST["Investigate +<br/>quarantine artifact"]
+    style ALERT1 fill:#f88,stroke:#900
+```
+
 ## Further reading
 
 - **CISA / Mandiant (FireEye) — SolarWinds SUNBURST and SUNSPOT analysis.** CrowdStrike's technical

@@ -627,6 +627,40 @@ protecting *a* key and becomes about a fleet-wide policy for *all* keys. The thr
   signed what and when, which is the substrate for **misuse detection** (Book 8). At scale, the
   audit stream is as valuable as the access control.
 
+### Key hierarchy from root to workload
+
+```mermaid
+flowchart TB
+  R["Root (offline, HSM)<br/>air-gapped, ceremony"] --> INT["Intermediate CA<br/>(online HSM, shorter lived)"]
+  INT --> KMS["Cloud KMS key<br/>(per-team / per-env)"]
+  KMS --> WK["Workload keys<br/>(ephemeral Fulcio certs<br/>or per-service KMS keys)"]
+  KMS --> CI["CI signing keys<br/>(per-pipeline KMS key)"]
+  WK --> SIG["Signatures on artifacts"]
+  CI --> SIG
+  R -.->|"protects"| AUDIT["Audit log +<br/>transparency log"]
+  style R fill:#f85149,color:#fff
+  style KMS fill:#1f6feb,color:#fff
+  style WK fill:#2ea043,color:#fff
+```
+
+### Key rotation lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Active: generate
+    Active --> Staged: new key created
+    Staged --> Active: promote (sign with new)
+    Active --> Deprecated: rotation due
+    Deprecated --> Retired: grace period over<br/>(verifiers updated)
+    Retired --> Destroyed: secure delete<br/>(HSM zeroize)
+    Active --> Compromised: breach detected
+    Staged --> Compromised: breach detected
+    Deprecated --> Compromised: breach detected
+    Compromised --> Revoked: revoke cert<br/>+ log emergency
+    Revoked --> [*]
+    Destroyed --> [*]
+```
+
 ## Key takeaways
 
 - **Keyless does not abolish keys; it relocates them.** Someone runs Fulcio's CA, the TUF root, and

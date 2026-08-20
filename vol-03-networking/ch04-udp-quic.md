@@ -175,6 +175,21 @@ the last of these into the specification, as we will see — a server must not s
 three times the bytes it has received from an as-yet-unvalidated client address. Keep this
 mechanism in mind; it is a recurring theme in why QUIC's handshake is shaped the way it is.
 
+
+```mermaid
+flowchart TD
+    App["App: sendto()"] --> UDP["UDP header<br/>src/dst port + len + checksum<br/>8 bytes, no state"]
+    UDP --> IP["IP datagram<br/>Best-effort, unordered, lossy"]
+    IP --> Wire["Wire"]
+    Wire --> IP2["IP at receiver"]
+    IP2 --> UDP2["UDP: check ports, deliver<br/>No handshake, no retransmit<br/>No flow/congestion control"]
+    UDP2 --> App2["App: recvfrom()<br/>App owns reliability if needed"]
+    Trade["When UDP wins: DNS, RTP, QUIC base<br/>App needs custom reliability<br/>or no reliability (realtime)"]
+    Alt["When TCP wins: file transfer,<br/>RPC, anything needing ordering"]
+    style UDP fill:#d4edda,stroke:#155724
+    style IP fill:#cce5ff,stroke:#004085
+```
+
 ## Why QUIC exists: TCP became inevolvable
 
 Chapter 3 established TCP as a mature, well-tuned reliable transport. So why build a new one?
@@ -435,6 +450,24 @@ governing principle is stated in RFC 9000's companion documents as protecting th
 minimize what is observable so that only what is intended to be extensible remains extensible,
 and ossification has nothing to grip.
 
+
+```mermaid
+flowchart TD
+    subgraph QUICpkt["QUIC packet (over UDP)"]
+        Hdr["Header: CID, pn, flags<br/>Connection ID survives IP change"]
+        Frames["Frames: STREAM, ACK, CRYPTO, PING<br/>Multiple streams in one packet"]
+        Enc["Entire packet encrypted<br/>(not just payload)"]
+    end
+    Features["QUIC features"]
+    Features --> S1["Streams: per-stream flow control<br/>No HOL blocking across streams"]
+    Features --> S2["Loss recovery: packet numbers<br/>No retransmit ambiguity (TCP problem)"]
+    Features --> S3["Migration: CID not 4-tuple<br/>WiFi to cellular seamless"]
+    Features --> S4["0-RTT: replayable early data<br/>Like TLS 1.3, with same caveat"]
+    Features --> S5["QPACK: header compression<br/>No HOL blocking (vs HPACK)"]
+    style QUICpkt fill:#d4edda,stroke:#155724
+    style Features fill:#cce5ff,stroke:#004085
+```
+
 ## QUIC versus TCP+TLS: an honest comparison
 
 QUIC is not free lunch, and a senior engineer should be able to argue both sides.
@@ -481,6 +514,20 @@ tunnel other traffic — and it is increasingly a substrate people reach for whe
 "TCP but evolvable and encrypted." The DATAGRAM extension is a nice closing of the circle: QUIC, itself
 built on UDP to escape TCP, hands the application back an *unreliable* datagram service — UDP
 semantics — but now inside an authenticated, congestion-controlled, migratable connection.
+
+
+```mermaid
+flowchart TD
+    Q{"Decision factor"}
+    Q -->|"Need max compat<br/>Middlebox traversal"| TCP["TCP+TLS<br/>Universal, kernel-tuned<br/>Nagle, TSO/GRO offload"]
+    Q -->|"Need fastest handshake<br/>Lossy / mobile / multiplexed"| QUIC["QUIC<br/>1-RTT (or 0-RTT), no HOL<br/>Userspace, faster iteration"]
+    Q -->|"Need raw throughput<br/>Single large stream"| Either["Either: bottleneck is BW<br/>QUIC userspace cost ~5-10%"]
+    TCP --> Trade1["Mature, offloaded<br/>HOL blocking, ossified"]
+    QUIC --> Trade2["Modern, evolvable<br/>UDP blocked in some nets<br/>CPU: crypto + userspace"]
+    Either --> Measure["Measure: p99, CPU, loss rate"]
+    style TCP fill:#cce5ff,stroke:#004085
+    style QUIC fill:#d4edda,stroke:#155724
+```
 
 ## The distributed-systems lens
 

@@ -617,3 +617,67 @@ Each phase must be reversible. Keep the pool rows until the dedicated path has s
 - vCluster — https://www.vcluster.com/docs — virtual clusters for hard multi-tenancy.
 - Postgres — *Row Security Policies* — https://www.postgresql.org/docs/current/ddl-rowsecurity.html — RLS syntax and performance considerations.
 - Oracle — *Cell-Based Architecture* (AWS re:Invent talk, Adrian Hornsby) — https://www.youtube.com/watch?v=8pQ9I8J8J8Q — practical cell design at AWS scale.
+
+### Multi-tenancy isolation models
+
+```mermaid
+flowchart TB
+    subgraph Silo["Silo Model"]
+        T1A[Tenant A Stack]
+        T1B[Tenant B Stack]
+    end
+    subgraph Pool["Pool Model"]
+        SHARED[Shared Services]
+        SHARED --> TA[Tenant A Data - Row Filter]
+        SHARED --> TB[Tenant B Data - Row Filter]
+    end
+    subgraph Bridge["Bridge / Hybrid"]
+        SH2[Shared Control Plane]
+        SH2 --> ISO1[Isolated Data Plane A]
+        SH2 --> ISO2[Isolated Data Plane B]
+    end
+```
+
+### Tenant-aware request path
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant GW as API Gateway
+    participant Auth as Tenant Resolver
+    participant Svc as Service
+    participant DB as Tenant-Scoped DB
+    Client->>GW: Request + Tenant Token
+    GW->>Auth: Resolve tenant_id
+    Auth-->>GW: tenant_id + isolation policy
+    GW->>Svc: Forward with tenant context
+    Svc->>DB: Query WHERE tenant_id = ?
+```
+
+### Noisy neighbor mitigation
+
+```mermaid
+flowchart TB
+    REQ[Incoming Requests] --> RL[Per-Tenant Rate Limiter]
+    RL --> Q[Per-Tenant Queue]
+    Q --> SCHED[Fair Scheduler]
+    SCHED --> W1[Worker Pool]
+    Q --> CB[Circuit Breaker per Tenant]
+    CB --> SCHED
+```
+
+### Tenant data partitioning strategies
+
+```mermaid
+flowchart LR
+    subgraph DB["Database"]
+        direction TB
+        OPT1[Separate DB per Tenant]
+        OPT2[Separate Schema per Tenant]
+        OPT3[Shared DB - tenant_id Column]
+    end
+    APP[App Layer] --> ROUTER[Tenant Router]
+    ROUTER --> OPT1
+    ROUTER --> OPT2
+    ROUTER --> OPT3
+```

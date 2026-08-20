@@ -716,3 +716,46 @@ For large-scale stream processors (Flink, Kafka Streams, Spark Structured Stream
 - Nyberg et al. — "AlphaSort: A Cache-Sensitive Parallel External Sort" (VLDB 1994) and Graefe — "Implementing Sorting in Database Systems" (ACM Computing Surveys, 2006) — external sort in database engines: run formation, merge optimization, and parallel execution.
 - Vitter — "External Memory Algorithms and Data Structures" (ACM Computing Surveys, 2001) — the I/O model and optimal external sorting bounds.
 - Flink / Kafka Streams / Spark Structured Streaming documentation on windowing (tumbling, sliding, session) and watermarking — the production realization of streaming aggregation at scale.
+
+### Sorting algorithm taxonomy
+
+```mermaid
+flowchart TB
+    SORT[Sorting] --> COMP[Comparison - n log n lower bound]
+    SORT --> NONCOMP[Non-Comparison]
+    COMP --> QS[Quicksort]
+    COMP --> MS[Merge Sort]
+    COMP --> HS[Heap Sort]
+    NONCOMP --> CS[Counting Sort - O n+k]
+    NONCOMP --> RS[Radix Sort - O n*k]
+    NONCOMP --> BS[Bucket Sort]
+```
+
+### Quicksort partition step
+
+```mermaid
+flowchart TB
+    ARR[Array + Pivot] --> PART[Partition]
+    PART --> LESS[Less than Pivot - Left]
+    PART --> GREAT[Greater than Pivot - Right]
+    LESS --> RECUR1[Recurse Left]
+    GREAT --> RECUR2[Recurse Right]
+```
+
+### Stability in sorting
+
+```mermaid
+flowchart LR
+    IN2[Input - A1 B A2] --> STABLE[Stable Sort - A1 A2 B - Preserves Order]
+    IN2 --> UNSTABLE[Unstable Sort - A2 A1 B - May Swap Equals]
+```
+
+### External sorting for large datasets
+
+```mermaid
+flowchart TB
+    BIG[Large File - Larger than RAM] --> CHUNK[Split into Chunks]
+    CHUNK --> SORT2[Sort Each Chunk in Memory]
+    SORT2 --> MERGE[K-Way Merge]
+    MERGE --> OUT[Sorted Output]
+```

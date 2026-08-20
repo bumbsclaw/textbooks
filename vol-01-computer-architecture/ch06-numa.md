@@ -255,6 +255,28 @@ This is why *cross-node shared mutable state is the cardinal NUMA sin*: it conve
 cache activity into interconnect congestion, and it does so invisibly — the code looks like an ordinary
 memory write.
 
+
+```mermaid
+flowchart TD
+    subgraph Socket0["Socket 0 (NUMA node 0)"]
+        C0["Cores 0-15"]
+        L3_0["L3"]
+        MC0["Memory controller<br/>Local DRAM 256 GiB"]
+        C0 --- L3_0 --- MC0
+    end
+    subgraph Socket1["Socket 1 (NUMA node 1)"]
+        C1["Cores 16-31"]
+        L3_1["L3"]
+        MC1["Memory controller<br/>Local DRAM 256 GiB"]
+        C1 --- L3_1 --- MC1
+    end
+    Socket0 <-->|"UPI / Infinity Fabric<br/>~30 GB/s, +80 ns"| Socket1
+    IO0["PCIe NIC, NVMe (node 0 aff.)"] --- Socket0
+    IO1["PCIe devices (node 1 aff.)"] --- Socket1
+    Note["Local ~80 ns | Remote ~140 ns (+75%)<br/>Remote BW ~60% of local"]
+    style Note fill:#fff3cd,stroke:#856404
+```
+
 ## Why it matters for backend performance
 
 Now make it concrete for the services you actually run. Consider a large in-memory workload — a
@@ -416,6 +438,21 @@ service shows `numa_hit` dominating. High `numa_miss`/`numa_foreign` means memor
 spillover across nodes — you are getting remote placement not by choice but because the target node was
 full. `numastat -p <pid>` on a suffering service that shows its memory split roughly 50/50 across nodes,
 when it *should* be partitioned, is the smoking gun for the "scattered allocation" pathology above.
+
+
+```mermaid
+flowchart TD
+    Alloc["Allocation: malloc / mmap"] --> Policy{"NUMA policy"}
+    Policy -->|"default: localalloc"| Local["Allocate on node of running CPU"]
+    Policy -->|"interleave"| Inter["Stripe pages across nodes<br/>Max BW, avg latency"]
+    Policy -->|"bind / preferred"| Bind["Pin to node N"]
+    Policy -->|"first-touch"| FT["First faulting thread owns page<br/>Init locality matters!"]
+    FT --> Mig{"AutoNUMA?"}
+    Mig -->|"on"| Balance["Sample faults, migrate pages"]
+    Mig -->|"off"| Stay["Stay where allocated"]
+    style FT fill:#cce5ff,stroke:#004085
+    style Local fill:#d4edda,stroke:#155724
+```
 
 ## Designing for NUMA: treat each node like a mini-machine
 

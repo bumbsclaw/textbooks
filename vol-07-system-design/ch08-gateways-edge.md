@@ -744,6 +744,49 @@ The distributed-systems lens:
 - Gateway fleets must be stateless, per-AZ, behind anycast/GSLB, with no per-request DB on the data path, progressive delivery for config changes, and per-route SLOs — otherwise the gateway is the single point of failure it was meant to eliminate.
 - Policy placement is a consistency trade-off: enforce coarsely at the gateway (valid token? over quota?) and finely at the owning service (can this user mutate this resource?).
 
+
+```mermaid
+flowchart TB
+    C["Client"] --> G["API Gateway<br/>single entry point"]
+    G --> A["AuthN/Z<br/>JWT verify, scope check"]
+    G --> R["Routing<br/>path → service<br/>version, canary"]
+    G --> T["Cross-cutting<br/>rate limiting, caching<br/>request validation, tracing"]
+    A --> M["BFF per client type<br/>web BFF, mobile BFF<br/>aggregate + shape response"]
+    M --> S1["Service A"]
+    M --> S2["Service B"]
+    G -.-> E["Edge: WAF, DDoS, TLS termination<br/>before gateway"]
+```
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant Edge as Edge / CDN PoP
+    participant GW as API Gateway (origin)
+    participant Svc as Backend Service
+    U->>Edge: GET /api/products/42
+    Edge->>Edge: Cache hit? If yes → return
+    Edge->>GW: Cache miss — forward
+    GW->>GW: Auth, rate limit, route
+    GW->>Svc: Proxied request + trace header
+    Svc-->>GW: Response + Cache-Control
+    GW-->>Edge: Response + edge cache header
+    Edge->>Edge: Store per Cache-Control
+    Edge-->>U: Response (edge cached for next)
+```
+
+```mermaid
+flowchart LR
+    M["Mobile app<br/>needs 3 fields from 3 services"] --> B["Mobile BFF<br/>single endpoint /mobile/home"]
+    B --> S1["User service"]
+    B --> S2["Order service"]
+    B --> S3["Recommendation service"]
+    S1 --> B
+    S2 --> B
+    S3 --> B
+    B --> R["Aggregated response<br/>1 round-trip vs 3<br/>over-fetch eliminated"]
+    W["Web BFF — different shape<br/>same backends"] -.-> S1
+```
+
 ## Further reading
 
 - Envoy 1.30 documentation — listeners, filter chains, JWT and rate-limit filters, outlier detection: https://www.envoyproxy.io/docs/envoy/v1.30.0/

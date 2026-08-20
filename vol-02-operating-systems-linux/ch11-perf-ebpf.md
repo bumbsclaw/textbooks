@@ -493,6 +493,22 @@ The bimodal shape — a fast mode around 300µs (likely cache/SSD hits) and a sl
 milliseconds — is the visual signature of a device or queue under contention, invisible in the
 `iostat` average of `await`.
 
+
+```mermaid
+flowchart TD
+    Prog["eBPF program (C, restricted)"] --> Verify["Verifier<br/>No loops unbounded, no oops<br/>Bounded stack, no invalid mem"]
+    Verify -->|"reject"| Fix["Fix program"]
+    Verify -->|"accept"| JIT["JIT to native code"]
+    JIT --> Attach["Attach: kprobe/tracepoint/XDP/cgroup/sk_lookup"]
+    Attach --> Event["Kernel event fires"]
+    Event --> Run["Run eBPF prog<br/>Maps for state, ringbuf for output"]
+    Run --> Maps["BPF maps: hash, array, ringbuf<br/>Userspace reads via bpf() syscall"]
+    Maps --> User["Userspace: bcc, bpftrace, libbpf<br/>Aggregates, histograms, traces"]
+    Note["Safe: no kernel crash, no infinite loop<br/>Overhead: ~ns per probe if filtered"]
+    style Verify fill:#fff3cd,stroke:#856404
+    style JIT fill:#d4edda,stroke:#155724
+```
+
 ## On-CPU vs off-CPU: the two halves of latency
 
 Here is the analytical split that reorganizes everything. A thread's wall-clock time is either
@@ -536,6 +552,22 @@ CPUs were saturated. If that tail correlates with your service's p99, your probl
 code the profiler shows — it is CPU saturation and scheduling delay (USE's *saturation* cell for
 the CPU resource), and the fix is capacity, concurrency limits, or CPU-quota tuning, not a hot
 loop. This is the concrete payoff of holding on-CPU and off-CPU as separate ideas.
+
+
+```mermaid
+flowchart TD
+    Latency["Request latency"] --> Split{"Where is time spent?"}
+    Split --> OnCPU["On-CPU<br/>perf record, flame graph<br/>CPU hot, spinning, GC"]
+    Split --> OffCPU["Off-CPU<br/>Waiting: I/O, lock, sleep<br/>Invisible to on-CPU profiler!"]
+    OnCPU --> Tool1["perf top / flame graph<br/>Find hot functions<br/>Optimize algorithm, SIMD, cache"]
+    OffCPU --> Tool2["offcputime (eBPF)<br/>wakeup latency, I/O wait<br/>lock contention, page faults"]
+    Tool1 --> Both["Need BOTH<br/>On-CPU + Off-CPU flame graphs<br/>Wall-clock completeness"]
+    Tool2 --> Both
+    Note["Common mistake: only on-CPU profile<br/>Misses the blocked 90%<br/>eBPF offcputime shows it"]
+    style OnCPU fill:#cce5ff,stroke:#004085
+    style OffCPU fill:#f8d7da,stroke:#721c24
+    style Both fill:#d4edda,stroke:#155724
+```
 
 ## Putting it together: a "service is slow" walkthrough
 

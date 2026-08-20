@@ -614,6 +614,43 @@ problem.
   high-signal, low-noise security telemetry source (Book 8): a deploy blocked for a wrong signer
   identity is an attempted intrusion or a serious misconfiguration, and either way IR wants to know.
 
+### Deployment gate stack (defense in depth)
+
+```mermaid
+flowchart TB
+  ART["Artifact @digest"] --> G1{"Gate 1: Sig<br/>valid + identity?"}
+  G1 -->|No| B1["Block"]
+  G1 -->|Yes| G2{"Gate 2: Provenance<br/>SLSA level + builder?"}
+  G2 -->|No| B2["Block / warn"]
+  G2 -->|Yes| G3{"Gate 3: Policy<br/>OPA / EC / Kyverno?"}
+  G3 -->|No| B3["Block"]
+  G3 -->|Yes| G4{"Gate 4: Admission<br/>K8s webhook?"}
+  G4 -->|No| B4["Block at deploy"]
+  G4 -->|Yes| G5{"Gate 5: Runtime<br/>update + drift?"}
+  G5 --> RUN["Running — continuous verify"]
+  style RUN fill:#2ea043,color:#fff
+  style B1 fill:#f85149,color:#fff
+```
+
+### Break-glass procedure
+
+```mermaid
+sequenceDiagram
+    participant D as Deployer
+    participant P as Policy engine
+    participant L as Audit log (Rekor + SIEM)
+    participant A as Approver (on-call)
+    D->>P: request deploy (image fails policy)
+    P->>D: DENY + reason
+    D->>P: break-glass request<br/>{ticket, reason, TTL}
+    P->>A: notify (PagerDuty / Slack)
+    A->>P: approve (MFA + 2nd pair of eyes)
+    P->>L: log {who, image, reason, TTL}
+    P->>D: temporary allow (TTL-bound)
+    Note over P,L: Post-incident: review consumes<br/>break-glass audit trail
+    D->>P: remediation (fix attestation) before TTL expiry
+```
+
 ## Key takeaways
 
 - **The gate is the enforcement point.** All of Books 3–5's signing, provenance, and attestation

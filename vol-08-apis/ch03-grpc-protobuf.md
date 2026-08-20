@@ -661,6 +661,64 @@ Common anti-patterns to forbid in review:
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### gRPC Call Types
+
+```mermaid
+flowchart TB
+    subgraph Calls["gRPC call patterns"]
+        U["Unary<br/>1 request → 1 response"] 
+        SS["Server streaming<br/>1 → many"]
+        CS["Client streaming<br/>many → 1"]
+        BD["Bidirectional<br/>many ↔ many"]
+    end
+    Client --> U & SS & CS & BD --> Server
+```
+
+#### Protobuf Build Pipeline
+
+```mermaid
+flowchart LR
+    Proto[".proto<br/>syntax=proto3"] --> BufLint["buf lint +<br/>buf breaking"]
+    BufLint --> BufGen["buf generate<br/>plugins: go, java, py, ts"]
+    BufGen --> Artifacts["gen/ artifacts<br/>versioned packages"]
+    Artifacts --> Registry["Buf Schema Registry<br/>buf push"]
+    Registry --> Consumers["Consumers<br/>buf.lock pin"]
+```
+
+#### Interceptor Chain
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant CI as Client Interceptor<br/>auth, retry, tracing
+    participant S as Server
+    participant SI as Server Interceptor<br/>auth, logging, rate limit
+    C->>CI: unary call
+    CI->>S: augmented with metadata
+    S->>SI: inbound interceptors
+    SI->>S: handler
+    S-->>SI: response + trailers
+    SI-->>CI: status + metadata
+    CI-->>C: result
+```
+
+#### Streaming Backpressure
+
+```mermaid
+sequenceDiagram
+    participant Prod as Producer stream
+    participant Chan as gRPC channel<br/>flow control window
+    participant Cons as Consumer
+    Prod->>Chan: send msg 1..N
+    Chan-->>Prod: WINDOW_UPDATE credit
+    Cons->>Chan: recv + process
+    Chan->>Cons: deliver
+    Note over Prod,Cons: if consumer slow, window closes<br/>producer blocks until credit returns
+```
+
 ## Key takeaways
 
 - Use gRPC/Protobuf for interior service-to-service traffic where throughput, typing, and streaming outweigh REST's debuggability and cacheability; use REST at the edge.

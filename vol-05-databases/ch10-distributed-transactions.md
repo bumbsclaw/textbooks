@@ -712,6 +712,52 @@ invariants are.
   tolerance — different problems that compose. And exactly-once is a fiction at the boundary:
   the real contract everywhere is at-least-once delivery plus idempotent effects.
 
+
+```mermaid
+sequenceDiagram
+    participant Coord as Coordinator
+    participant P1 as Participant A
+    participant P2 as Participant B
+    Coord->>P1: PREPARE (xid)
+    Coord->>P2: PREPARE (xid)
+    P1-->>Coord: YES (durable prepare)
+    P2-->>Coord: YES
+    Coord->>Coord: Write COMMIT decision durably
+    Coord->>P1: COMMIT
+    Coord->>P2: COMMIT
+    P1-->>Coord: ACK
+    P2-->>Coord: ACK
+    Note over Coord,P2: Failure windows: participant YES then coordinator crash → blocked<br/>coordinator must recover decision from log
+```
+
+```mermaid
+flowchart TD
+    Q{"Need atomic across services?"} --> T{"Can you tolerate blocking?"}
+    T -->|Yes, short txn, XA capable| P2["2PC / XA<br/>strong atomic<br/>blocking, not available under partition"]
+    T -->|No — need availability| S["Saga<br/>sequence of local txns<br/>compensate on failure<br/>eventual atomic, no isolation"]
+    Q --> O["Transactional outbox<br/>atomic local commit + event<br/>relay publishes — at-least-once"]
+    P2 --> C1["Use for single DB sharded txn"]
+    S --> C2["Use for long-lived business process"]
+    O --> C3["Use for service → event bridge"]
+```
+
+```mermaid
+stateDiagram-v2
+    [*] --> ReserveInventory: Tx1
+    ReserveInventory --> ChargePayment: success
+    ReserveInventory --> [*]: fail → abort
+    ChargePayment --> ScheduleShipment: success
+    ChargePayment --> CompensateInventory: fail
+    ScheduleShipment --> [*]: success — saga complete
+    ScheduleShipment --> CompensatePayment: fail
+    CompensatePayment --> CompensateInventory: refund issued
+    CompensateInventory --> [*]: inventory released — compensated
+    note right of CompensatePayment
+        Compensation is itself a txn
+        must be idempotent + retryable
+    end note
+```
+
 ## Further reading
 
 - Gray, J., "Notes on Data Base Operating Systems," in *Operating Systems: An Advanced Course*,

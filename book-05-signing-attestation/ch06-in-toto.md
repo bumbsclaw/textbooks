@@ -614,6 +614,42 @@ make "attested" mean "benign." Provenance and policy tell you *how* something wa
 whether that *how* is trustworthy is the subject of build-integrity levels (SLSA, Book 4) and of the
 policies you write at the gate.
 
+### In-toto layout verification flow
+
+```mermaid
+flowchart TD
+  LAYOUT["Layout (root of trust)<br/>signed by project owner<br/>{steps, keys, thresholds}"] --> LOAD["Verifier loads layout<br/>+ pubkeys"]
+  LINKS["Link metadata<br/>(per step: materials, products,<br/>byproducts, sig by functionary)"] --> COLL["Collect links"]
+  COLL --> CHK1{"Layout sig valid<br/>and threshold met?"}
+  CHK1 -->|No| FAIL["Reject layout"]
+  CHK1 -->|Yes| CHK2{"For each step:<br/>link sigs + threshold?"}
+  CHK2 -->|No| FAIL2["Reject step"]
+  CHK2 -->|Yes| CHK3{"Materials =<br/>prior products?<br/>(allowlist + MATCH rule)"}
+  CHK3 -->|No| FAIL3["Break in chain<br/>(tampered input)"]
+  CHK3 -->|Yes| CHK4{"Inspections pass?<br/>(re-run checks)"}
+  CHK4 -->|No| FAIL4["Inspection failed"]
+  CHK4 -->|Yes| OK["Supply chain verified"]
+  style OK fill:#2ea043,color:#fff
+  style FAIL fill:#f85149,color:#fff
+```
+
+### Provenance types: SLSA vs in-toto statement
+
+```mermaid
+flowchart LR
+  subgraph ST["DSSE Envelope (outer)"]
+    PAY["PAE(payloadType, payload)"] --> SIG["Signature(s)"]
+  end
+  PAY --> KIND{"Predicate type"}
+  KIND -->|in-toto provenance| SLSA["SLSA Provenance<br/>(builder, materials, buildConfig)<br/>consumed by SLSA verifiers"]
+  KIND -->|custom / SBOM / vuln| OTHER["Other predicates<br/>SPDX, CycloneDX,<br/>link, scan result"]
+  SIG --> VER["Verifier selects<br/>predicate-specific policy"]
+  SLSA --> POL["Threshold + provenance policy"]
+  OTHER --> POL
+  POL --> GATE["Deploy gate"]
+  style ST fill:#1f6feb,color:#fff
+```
+
 ## Key takeaways
 
 - **Signing the final artifact proves who signed a blob; it says nothing about the process.**

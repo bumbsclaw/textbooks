@@ -284,6 +284,22 @@ regardless of calls. The general lesson survives the details: a cooperative runt
 preemption mechanism, or it must give you a blocking-pool escape hatch and the discipline to use
 it — and usually both.
 
+
+```mermaid
+flowchart TD
+    Tasks["M tasks (goroutines/coroutines)<br/>M >> N (e.g. 100k tasks, 16 threads)"] --> Scheduler["Scheduler (work-stealing)<br/>Per-thread run queue<br/>+ global queue"]
+    Scheduler --> Thread1["Thread 1: run queue [t1,t2,t3]"]
+    Scheduler --> Thread2["Thread 2: run queue [t4,t5]"]
+    Scheduler --> ThreadN["Thread N: run queue [...]"]
+    Thread1 --> Work1["Run t1 until yield/block<br/>Then pick t2"]
+    Thread2 --> Steal{"Queue empty?"}
+    Steal -->|"yes"| Steal2["Steal from another thread<br/>Random victim, take half queue"]
+    Steal -->|"no"| Work2["Run next task"]
+    Note["Blocking task parks thread<br/>-> spawn/help thread or fail<br/>Go: handoff, Tokio: block_in_place"]
+    style Scheduler fill:#cce5ff,stroke:#004085
+    style Steal2 fill:#fff3cd,stroke:#856404
+```
+
 ## Structured concurrency: the go statement considered harmful
 
 Everything so far makes tasks *cheap*. Cheap tasks make a new problem acute: what governs their
@@ -384,6 +400,20 @@ flowchart TD
   ROOT -- "cancels" --> C
   ROOT -- "cancels" --> B1
   ROOT --> DONE["scope exits only after all<br/>children finish or are cancelled —<br/>then rethrows the error"]
+```
+
+
+```mermaid
+flowchart TD
+    Unstruct["Unstructured: go task()<br/>Fire-and-forget<br/>No owner, leaks on panic<br/>Cancellation manual, error lost"]
+    Struct["Structured: nursery / scope<br/>All children in scope<br/>Parent waits for all<br/>Cancel/error propagates"]
+    Unstruct --> Leak["Leaked goroutine<br/>Holds memory, FDs<br/>Test flake, prod leak"]
+    Struct --> Scope["Scope {<br/>  spawn child1<br/>  spawn child2<br/>} // joins both<br/>// error cancels siblings"]
+    Scope --> Cancel["Cancel scope -> all children cancelled<br/>Cooperative via context/token"]
+    Cancel --> Safe["No leaks, no orphans<br/>Like RAII for concurrency"]
+    style Unstruct fill:#f8d7da,stroke:#721c24
+    style Struct fill:#d4edda,stroke:#155724
+    style Scope fill:#d4edda,stroke:#155724
 ```
 
 ## Realizations: four ecosystems, one tree
@@ -600,6 +630,21 @@ enforce this automatically — `context.WithTimeout` derived from an already-tig
 the parent's deadline; Kotlin's nested `withTimeout` and Trio's nested cancel scopes fire
 whichever expires first. This is what makes timeouts *composable*: a library can impose its own
 internal timeout without ever extending the caller's budget.
+
+
+```mermaid
+flowchart TD
+    Cancel["Cancellation request<br/>(deadline, user abort, sibling error)"] --> Token["Token / Context<br/>Passed down call tree<br/>Checked at cancellation points"]
+    Token --> Check{"Cancelled?"}
+    Check -->|"no"| Work["Do work chunk<br/>Then check again"]
+    Check -->|"yes"| Cleanup["Cleanup: release locks<br/>Close FDs, rollback<br/>Then return Cancelled error"]
+    Work --> Check
+    Cleanup --> Propagate["Propagate to children<br/>Children see cancelled token<br/>Tree collapses gracefully"]
+    Note["Cooperative: code must check<br/>Not preemptive (no Thread.stop)<br/>Blocking calls must be interruptible"]
+    style Check fill:#fff3cd,stroke:#856404
+    style Cleanup fill:#cce5ff,stroke:#004085
+    style Propagate fill:#d4edda,stroke:#155724
+```
 
 ## Errors across task boundaries
 

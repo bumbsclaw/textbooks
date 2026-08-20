@@ -207,6 +207,20 @@ hedging below. And steady-state numbers are wrong during cold start, when JIT wa
 inflate latency for tens of seconds, so either warm up before taking traffic (Chapter 9's slow start)
 or your timeouts fire in a wave on every rollout.
 
+
+```mermaid
+flowchart TD
+    Call["RPC call"] --> Timeout{"Timeout set?"}
+    Timeout -->|"none"| Hang["Hangs forever<br/>Thread leaked, pool exhausted<br/>Cascading failure"]
+    Timeout -->|"too short"| FalseFail["False failures<br/>p99 truncated, retry storm<br/>Worse than no timeout"]
+    Timeout -->|"right: p99 + slack"| OK["Fail fast on real issues<br/>Release resources<br/>Retry with backoff"]
+    Right["Right timeout =<br/>SLO budget / depth of call graph<br/>Or deadline propagation<br/>Not a magic number!"]
+    OK --- Right
+    style Hang fill:#f8d7da,stroke:#721c24
+    style FalseFail fill:#fff3cd,stroke:#856404
+    style OK fill:#d4edda,stroke:#155724
+```
+
 ## Deadlines beat timeouts
 
 A timeout is a per-hop duration. A **deadline** is a point in time that belongs to the whole
@@ -554,6 +568,21 @@ attempt count** — Envoy can add `x-envoy-attempt-count`, and a server seeing a
 amplification is under way. Write it down as a fleet-wide contract, or retry behavior remains an
 emergent property of every layer's independent choices.
 
+
+```mermaid
+flowchart TD
+    Fail["Call failed"] --> Idem{"Idempotent?"}
+    Idem -->|"yes (GET, idempotent PUT)"| Safe["Safe to retry<br/>But still need budget"]
+    Idem -->|"no (POST, non-idempotent)"| Unsafe["Unsafe: may double-execute<br/>Need idempotency key<br/>Or exactly-once layer"]
+    Safe --> Budget{"Retry budget<br/>(e.g. 20% of traffic)"}
+    Budget -->|"under budget"| Retry["Retry with backoff + jitter<br/>Different backend (hedge)"]
+    Budget -->|"over budget"| GiveUp["Fail fast, shed load<br/>Prevent retry storm"]
+    Unsafe --> Key["Server stores key -> result<br/>Retry returns cached result<br/>Like Stripe idempotency-key"]
+    style Safe fill:#d4edda,stroke:#155724
+    style Unsafe fill:#f8d7da,stroke:#721c24
+    style GiveUp fill:#fff3cd,stroke:#856404
+```
+
 ## Backoff and jitter
 
 Retrying immediately is close to useless: whatever transient condition caused the failure — a GC
@@ -733,6 +762,27 @@ only hangs.
 Netflix's Hystrix popularized the pattern and has been in maintenance mode since roughly 2018, its
 README pointing users toward resilience4j; Envoy, Istio, and Linkerd provide mesh-layer equivalents.
 The pattern predates all of them — Michael Nygard's *Release It!* (2007) is canonical.
+
+
+```mermaid
+stateDiagram-v2
+    [*] --> Closed
+    Closed --> Open : failure rate > threshold<br/>(e.g. 50% over 10s)
+    Open --> HalfOpen : after sleep window (e.g. 30s)<br/>allow trial requests
+    HalfOpen --> Closed : trial succeeds
+    HalfOpen --> Open : trial fails (reset timer)
+    Closed --> Closed : success (reset failure count)
+    note right of Open
+        Fail fast without calling downstream
+        Returns error immediately
+        Prevents hammering a sick backend
+        Bulkhead: isolate per-backend
+    end note
+    note right of HalfOpen
+        Single trial or limited probe
+        Not a flood of retries
+    end note
+```
 
 ## Hedged requests: buying tail latency
 

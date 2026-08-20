@@ -704,3 +704,39 @@ xychart-beta
 - Gunther, N. — *Guerrilla Capacity Planning* and *Universal Scalability Law* — https://www.perfdynamics.com/Manifesto/USLscalability.html — USL derivation and application to fleet sizing.
 - Tran, K. — *AWS Data Transfer Costs — The Complete Guide* — https://www.lastweekinaws.com/blog/understanding-aws-data-transfer-costs/ — practical transfer cost breakdown and mitigations.
 - OPA — https://www.openpolicyagent.org/docs/latest/ — policy-as-code for cost guardrails in the IaC pipeline.
+
+### Cloud cost attribution flow
+
+```mermaid
+flowchart LR
+    RES[Cloud Resources] --> TAGS[Resource Tags]
+    TAGS --> CUR[Cost & Usage Report]
+    CUR --> AGG[Aggregation by Team / Service]
+    AGG --> DASH[Cost Dashboard]
+    DASH --> ALERT[Budget Alert]
+    DASH --> OPT[Optimization Action]
+```
+
+### Autoscaling cost vs performance tradeoff
+
+```mermaid
+flowchart TB
+    M[Metrics - CPU / RPS / Queue] --> HPA[HPA / ASG]
+    HPA --> SCALE{Scale Decision}
+    SCALE -->|Scale Out| COST[Higher Cost - More Capacity]
+    SCALE -->|Scale In| SAVE[Lower Cost - Less Headroom]
+    SCALE -->|Hold| STEADY[Steady State]
+    COST --> SLO[SLO Protected]
+    SAVE --> RISK[Risk of Throttling]
+```
+
+### Capacity planning loop
+
+```mermaid
+flowchart TB
+    F[Forecast Demand] --> M[Model Capacity Needs]
+    M --> P[Provision / Reserve]
+    P --> MON[Monitor Utilization]
+    MON --> REV[Review & Rightsize]
+    REV --> F
+```

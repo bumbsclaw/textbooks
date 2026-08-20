@@ -296,6 +296,27 @@ still commits as though nothing had been reordered. The stall that would have fr
 hundred cycles is, on the OoO core, largely *hidden* behind useful work. This is the mechanism by which the
 memory hierarchy of Chapter 3 becomes tolerable at all.
 
+
+```mermaid
+flowchart LR
+    Fetch["Fetch & Decode<br/>x86 to uops"] --> Rename["Rename<br/>Arch regs to Phys regs"]
+    Rename --> ROB["Reorder Buffer<br/>In-order rename<br/>Out-of-order execute<br/>In-order commit"]
+    ROB --> RS["Reservation Stations<br/>Tomasulo Scheduler"]
+    RS --> EU1["ALU 0"]
+    RS --> EU2["ALU 1"]
+    RS --> EU3["AGU / Load"]
+    RS --> EU4["AGU / Store"]
+    RS --> EU5["FPU / SIMD"]
+    EU1 --> ROB
+    EU2 --> ROB
+    EU3 --> ROB
+    EU4 --> ROB
+    EU5 --> ROB
+    ROB --> Commit["Retire<br/>Visible state only here"]
+    style RS fill:#e2e3e5,stroke:#383d41
+    style ROB fill:#fff3cd,stroke:#856404
+```
+
 ## Branch prediction and speculation
 
 Return to the control hazard. A conditional branch's direction is not known until it executes, but the front
@@ -391,6 +412,23 @@ barriers) cost real performance and reshaped how kernels and hypervisors defend 
 backend engineer the operational takeaway is concrete: the mitigations are not free, they landed as measurable
 throughput regressions across fleets, and on shared hardware the boundary between your workload and a
 co-tenant's is enforced in part by microarchitectural controls you do not see.
+
+
+```mermaid
+stateDiagram-v2
+    [*] --> StrongNotTaken
+    StrongNotTaken --> WeakNotTaken : taken
+    WeakNotTaken --> WeakTaken : taken
+    WeakTaken --> StrongTaken : taken
+    StrongTaken --> WeakTaken : not taken
+    WeakTaken --> WeakNotTaken : not taken
+    WeakNotTaken --> StrongNotTaken : not taken
+    note right of StrongTaken
+        2-bit saturating counter
+        Predict taken in top 2 states
+        Mispredict = flush 15-20 stages
+    end note
+```
 
 ## Memory and the CPU: hiding latency
 
@@ -493,6 +531,20 @@ SMT entirely for untrusted multi-tenancy, and cloud schedulers use **core schedu
 so that only sibling threads from the *same* trust domain share a core. For a backend engineer this is not
 abstract — it is why some security-sensitive fleets run with Hyper-Threading off, eating the throughput loss
 to close the side channel.
+
+
+```mermaid
+flowchart TD
+    T1["Thread 0<br/>Arch state + PC"] --> RS["ROB / RS / Registers<br/>Partitioned per thread"]
+    T2["Thread 1<br/>Arch state + PC"] --> RS
+    RS --> FE["Front-end<br/>Fetch / Decode<br/>Shared, partitioned"]
+    FE --> BE["Execution engine<br/>ALUs, AGUs, FPU<br/>Competitively shared"]
+    BE --> T1
+    BE --> T2
+    Note["Gain: ~15-30% throughput<br/>when threads stall differently<br/>1 thread alone is faster"]
+    style T1 fill:#d4edda,stroke:#155724
+    style T2 fill:#cce5ff,stroke:#004085
+```
 
 ## Distributed-systems lens: IPC is a line item
 

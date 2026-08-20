@@ -693,6 +693,43 @@ problem is, at scale, an inventory and chokepoint problem as much as a code-anal
   smash-and-grab. Feed detections into SBOM-keyed inventory so a hit yields a precise blast
   radius, not a fleet-wide guess.
 
+
+### Malicious package lifecycle
+
+```mermaid
+sequenceDiagram
+    participant Att as Attacker
+    participant Reg as Registry
+    participant Dev as Developer
+    participant CI as CI Pipeline
+    Att->>Reg: Publish 'colourised' (typo of colorized)
+    Dev->>Reg: npm install colourised (typo)
+    Reg->>Dev: Malicious tarball + install script
+    Dev->>Dev: postinstall executes — harvests env
+    Dev->>CI: Commit with malicious dep (or CI installs directly)
+    CI->>Att: Exfiltrates AWS keys / tokens
+    Note over Att,CI: Dwell until detected by scanner or report
+```
+
+
+### Detection layers for malicious packages
+
+```mermaid
+flowchart TD
+    PUBLISH["Package publish<br/>event"] --> S1["Static signals<br/>— name similarity<br/>— new maintainer<br/>— obfuscated code"]
+    PUBLISH --> S2["Dynamic signals<br/>— sandbox install<br/>— network / fs behavior"]
+    PUBLISH --> S3["Reputation<br/>— age, downloads,<br/>maintainer history"]
+
+    S1 --> SCORE["Risk score"]
+    S2 --> SCORE
+    S3 --> SCORE
+    SCORE --> DECISION{"Score > threshold?"}
+    DECISION -->|Yes| QUARANTINE["Quarantine /<br/>block + alert"]
+    DECISION -->|No| ALLOW["Allow with<br/>ongoing monitoring"]
+
+    style QUARANTINE fill:#ffcc00,stroke:#333
+```
+
 ## Further reading
 
 - OpenSSF Package Analysis — dynamic sandboxing of newly-published packages

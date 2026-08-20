@@ -574,6 +574,57 @@ WAF/RASP (ModSecurity, AWS WAF, Cloudflare, Google Cloud Armor) are **defense in
 - **Centralized logging for AppSec signals.** Injection probes (`' OR 1=1`, `{{7*7}}`, `169.254.169.254`), deserialization errors, and authz denials must flow to a SIEM (Vol 11, Ch 3) with alerts on rate spikes — a burst of `403` with `reason: BOLA` is an active enumeration, not background noise.
 - **Dependency blast radius at scale.** One vulnerable transitive dependency shared across 200 services is a fleet-wide incident. Centralize SCA results in a dependency inventory (OSV + SBOM per Companion Book 3), prioritize by reachability, and roll out patches via the same progressive delivery as feature flags (Vol 11, Ch 9) — canary, then fleet.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### OWASP Request Filtering
+
+```mermaid
+flowchart TB
+    Req["HTTP request"] --> WAF["WAF<br/>OWASP CRS"]
+    WAF -->|blocked| Deny["403 + log"]
+    WAF -->|pass| Valid["Input validation<br/>schema + allowlist"]
+    Valid -->|fail| Deny
+    Valid --> Rate["Rate limit + bot check"]
+    Rate --> Handler["Handler"]
+```
+
+#### Input Validation Pipeline
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as Gateway
+    participant S as Service
+    C->>G: JSON payload
+    G->>G: JSON schema + size limit
+    G->>S: validated object
+    S->>S: domain invariants<br/>allowlist, normalize, escape
+    S-->>G: result
+    G-->>C: response
+```
+
+#### WAF and RASP Architecture
+
+```mermaid
+flowchart LR
+    Internet --> WAF["WAF edge"]
+    WAF --> GW["Gateway"]
+    GW --> App["App + RASP agent<br/>in-process checks"]
+    App --> DB[("DB")]
+    App --> SIEM["SIEM + alerts"]
+```
+
+#### Threat Mitigation Decision
+
+```mermaid
+flowchart TB
+    Vuln{"Vuln class"} -->|Injection| Param["Parameterized queries<br/>+ ORM + escaping"]
+    Vuln -->|XSS| Encode["Contextual encoding<br/>+ CSP"]
+    Vuln -->|SSRF| Allow["Egress allowlist<br/>+ IMDSv2 + no 169.254"]
+    Vuln -->|IDOR| AuthZ["Object-level authz<br/>check owner"]
+```
+
 ## Key takeaways
 
 - OWASP Top 10 2021 (with API Top 10 2023 overlay) is the prioritization map: A01/BOLA (access control, Ch 7), A03 (injection), A10 (SSRF), and A08 (deserialization) are the handler-level risks this chapter owns. Every handler gets injection + authz review; every outbound fetch gets SSRF review; every deserialization boundary gets a codec review.

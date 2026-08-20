@@ -679,6 +679,56 @@ Kubernetes fleet refuses to run anything that can't back it up.
 
 ---
 
+### Cosign sign and verify with workload identity
+
+```mermaid
+sequenceDiagram
+    participant CI as CI (GHA / Tekton)
+    participant REG as Registry
+    participant K as Kubernetes (admission)
+    CI->>CI: build image + push<br/>image@sha256:abc
+    CI->>REG: cosign sign --yes image@abc<br/>(Fulcio OIDC via workload identity)
+    REG->>REG: store sig (referrers API)
+    K->>REG: admission: fetch image@abc<br/>+ signature bundle
+    REG->>K: bundle {cert, SET, sig}
+    K->>K: verify (cert chain + Rekor SET + SAN==expected)
+    alt Verified
+        K->>K: admit pod
+    else Not verified
+        K->>K: deny + event
+    end
+```
+
+### Signing key strategy for Kubernetes
+
+```mermaid
+flowchart TD
+  Q{"Cluster trust model?"}
+  Q -->|Single org, cloud-native| A1["Keyless (Fulcio) per CI workload<br/>verifier checks OIDC issuer + subject"]
+  Q -->|Air-gapped / private| A2["Private Fulcio + Rekor<br/>or long-lived KMS key<br/>(per-env)"]
+  Q -->|Vendor images| A3["Vendor key (long-lived)<br/>pinned via TUF / policy<br/>+ transparency"]
+  A1 --> POL["ClusterImagePolicy:<br/>authority: keyless + issuer"]
+  A2 --> POL2["ClusterImagePolicy:<br/>authority: kms://..."]
+  A3 --> POL3["ClusterImagePolicy:<br/>authority: static key + CT log"]
+  style A1 fill:#2ea043,color:#fff
+```
+
+### Admission integration architecture
+
+```mermaid
+flowchart TB
+  API["kube-apiserver"] --> WH["Validating webhook<br/>(Sigstore policy-controller / Kyverno)"]
+  WH --> CACHE["Cache / mirror: sigs + attestations"]
+  WH --> VER["Verifier: cosign verify<br/>(Fulcio chain + Rekor)"]
+  VER --> POL["Policy eval (OPA / CEL)<br/>{identity, SLSA, CVE }"]
+  CACHE -.->|"fallback if registry down"| DENY{"Fail-closed?"}
+  POL -->|"allow"| API2["Pod admitted"]
+  POL -->|"deny"| REJ["Denied: image not attested"]
+  DENY -->|"yes"| REJ
+  style REJ fill:#f85149,color:#fff
+  style API2 fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **Cosign signs an image by its manifest digest**, not its tag, and stores the signature (and

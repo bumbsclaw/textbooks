@@ -558,6 +558,49 @@ Without propagation, a slow database causes the consumer buffer to grow, the bro
 - **Quotas are multi-tenancy isolation.** A single noisy producer or consumer can starve every other tenant on the same Kafka or RabbitMQ cluster. Per-client quotas turn a noisy-neighbour incident into local throttling rather than a cluster-wide outage.
 - **The edge must shed.** Internal backpressure (pause, throttle) protects durability but increases latency for every caller. At the edge (gateway, BFF), shedding with `429`/`503` + `Retry-After` bounds tail latency and gives callers a signal they can act on (backoff, hedge, degrade). A system that only throttles internally and never sheds at the edge will meet its durability SLO and miss its latency SLO on every overload.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Backpressure Strategy Choice
+
+```mermaid
+flowchart TB
+    Q{"Can consumer keep up?"} -->|Yes| Pass["Pass-through"]
+    Q -->|No burst| Buffer["Buffer<br/>bounded queue"]
+    Q -->|No sustained| Shed["Load shed<br/>drop / sample"]
+    Q -->|Must not lose| Backpress["Propagate<br/>slow producer"]
+    Buffer -->|full| Shed
+    Shed --> Metric["Shed metric + alert"]
+    Backpress --> Block["Block / 429 / pause fetch"]
+```
+
+#### Reactive Streams Protocol
+
+```mermaid
+sequenceDiagram
+    participant Pub as Publisher
+    participant Sub as Subscriber
+    Sub->>Pub: subscribe
+    Pub->>Sub: onSubscribe subscription
+    Sub->>Pub: request(n)
+    Pub->>Sub: onNext x n
+    Sub->>Pub: request(m)
+    Pub->>Sub: onComplete or onError
+```
+
+#### Buffer and Drop Policies
+
+```mermaid
+stateDiagram-v2
+    [*] --> Empty: buffer empty
+    Empty --> Filling: messages arrive
+    Filling --> Full: hits high watermark
+    Full --> Dropping: drop newest / oldest
+    Dropping --> Draining: consumer catches up
+    Draining --> Empty: below low watermark
+    Full --> Blocking: block producer
+```
+
 ## Key takeaways
 
 - Little's Law (`L = λ·W`) and the stability condition (`λ < μ`) govern every pipeline: a sustained `λ > μ` makes queue depth and latency grow without bound — a buffer only delays the failure.

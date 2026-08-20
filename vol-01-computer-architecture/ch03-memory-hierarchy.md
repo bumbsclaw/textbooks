@@ -279,6 +279,18 @@ stride (e.g., iterating a large 2D array by a power-of-two column stride can map
 same set) — the fix is to change the layout or padding so accesses spread across sets. **Compulsory**
 misses are the cost of touching data for the first time; prefetching is how the hardware hides them.
 
+
+```mermaid
+flowchart TD
+    Addr["Physical address<br/>tag - index - offset"] --> Split{"Cache geometry"}
+    Split --> Direct["Direct-mapped<br/>1 line per index<br/>Conflict misses high"]
+    Split --> SetAssoc["Set-associative (8-16 way)<br/>index selects set<br/>tag searched within set"]
+    Split --> Full["Fully associative<br/>No index, search all tags<br/>Only tiny structures"]
+    SetAssoc --> Example["Example 32 KiB 8-way L1<br/>64 B lines to 64 sets<br/>addr bits: offset/index/tag"]
+    style SetAssoc fill:#d4edda,stroke:#155724
+    style Example fill:#fff3cd,stroke:#856404
+```
+
 ## Cache operations: hits, evictions, and writes
 
 On every memory access the cache does a lookup as above. A **hit** returns data at that tier's
@@ -391,6 +403,30 @@ in-memory stores expose huge-page / `MADV_HUGEPAGE` options and why Linux offers
 The mechanics of paging, page tables, and huge pages belong to Volume 2 (Virtual Memory); the point
 here is architectural: **the TLB is a cache with the same hit/miss/reach economics as the data caches,
 it sits on every access, and huge pages are to the TLB what good locality is to the data cache.**
+
+
+```mermaid
+sequenceDiagram
+    participant Core
+    participant TLB as L1 D-TLB (64 entries)
+    participant L2TLB as L2 TLB (1500 entries)
+    participant Walker as Page Walker
+    participant Cache as Data Cache / DRAM
+    Core->>TLB: virtual address lookup
+    alt TLB hit (~1 cycle)
+        TLB-->>Core: PA + permissions
+        Core->>Cache: access with PA
+    else L1 miss, L2 hit (~7 cycles)
+        TLB->>L2TLB: lookup
+        L2TLB-->>Core: PA
+    else TLB miss to walk (50-150 cycles)
+        L2TLB->>Walker: 4-level page walk
+        Walker->>Cache: 4 DRAM accesses
+        Cache-->>Walker: PTEs
+        Walker-->>L2TLB: PTE
+        L2TLB-->>Core: PA
+    end
+```
 
 ## Measuring what actually happens
 

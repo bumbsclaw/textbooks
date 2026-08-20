@@ -697,6 +697,51 @@ adaptivity (stop trusting estimates once real numbers exist).
   failure mode — broadcasting a "small" table that isn't — takes down clusters, not queries. The
   same EXPLAIN-reading skill applies to fragments and stages.
 
+
+```mermaid
+flowchart LR
+    A["SQL text"] --> P["Parser → parse tree"]
+    P --> R["Rewriter<br/>view expansion, subquery flattening"]
+    R --> L["Logical plan<br/>relational algebra tree"]
+    L --> E["Explorer<br/>enumerate join orders<br/>access paths"]
+    E --> S["Statistics<br/>pg_statistic, histograms<br/>n_distinct, MCV"]
+    S --> C["Cost model<br/>seq_page_cost, cpu_tuple_cost<br/>random_page_cost"]
+    C --> B["Best physical plan<br/>lowest estimated cost"]
+    B --> X["EXPLAIN / EXPLAIN ANALYZE"]
+```
+
+```mermaid
+flowchart TB
+    T1["customers 1M rows"] --- T2["orders 10M rows"] --- T3["order_lines 50M rows"]
+    T1 --> F1["Filter region='emea'<br/>sel 0.2 → 200K"]
+    T2 --> F2["Filter placed_at >= 2026-01<br/>sel 0.3 → 3M"]
+    F1 --> J1{"Join order?"}
+    F2 --> J1
+    J1 -->|Good: small first| O1["Hash join 200K ⋈ 3M<br/>build hash on small side"]
+    J1 -->|Bad: large first| O2["Nested loop 50M ⋈ 10M<br/>catastrophic"]
+    O1 --> E["Estimate vs actual<br/>EXPLAIN ANALYZE reveals misestimate"]
+```
+
+```mermaid
+flowchart TB
+    R["Seq Scan on orders<br/>cost 0..18334 rows=10000"] --> F["Filter: status='completed'<br/>Rows Removed by Filter: 8000"]
+    F --> H["Hash<br/>Buckets 1024 Batches 1"]
+    H --> HJ["Hash Join<br/>cost 234..456 rows=950"]
+    HJ --> S["Sort<br/>cost 500..510"]
+    S --> L["Limit 10<br/>actual time 12ms"]
+    L --> N["Node timing × loops<br/>Buffers: shared hit=234 read=12"]
+```
+
+```mermaid
+flowchart LR
+    A["Stale statistics<br/>ANALYZE not run"] --> B["Underestimate ndistinct<br/>or correlated columns"]
+    B --> C["Wrong join order<br/>optimizer picks nested loop"]
+    C --> D["Spill to disk<br/>work_mem exceeded"]
+    D --> E["p99 10x regression"]
+    F["Fix: CREATE STATISTICS<br/>for functional deps<br/>+ extended stats"] -.-> B
+    G["Fix: EXPLAIN ANALYZE<br/>compare estimated vs actual rows"] -.-> C
+```
+
 ## Further reading
 
 - Selinger, P. G., Astrahan, M. M., Chamberlin, D. D., Lorie, R. A., and Price, T. G., "Access

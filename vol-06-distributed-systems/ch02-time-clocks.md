@@ -713,6 +713,42 @@ choice among consistency models. One relation, learned once, load-bearing in bot
   causal tokens (sessions, `traceparent`) because clocks cannot see causality they were never
   told about.
 
+
+```mermaid
+sequenceDiagram
+    participant A as Process A
+    participant B as Process B
+    participant C as Process C
+    A->>A: Event a1: lamport 1, vector [1,0,0]
+    A->>B: Send m (include clock [1,0,0])
+    B->>B: Receive m — merge: vector [1,1,0]<br/>lamport max+1 = 2
+    B->>C: Send n [1,1,0]
+    C->>C: Receive n — vector [1,1,1]
+    Note over A,C: Lamport: total order but not causality<br/>Vector: a→b iff V(a) < V(b) element-wise<br/>concurrent if neither dominates
+```
+
+```mermaid
+flowchart TB
+    subgraph TT["TrueTime — Spanner"]
+        T1["GPS + atomic clock per DC<br/>TT.now = [earliest, latest]<br/>uncertainty 1-7ms<br/>commit wait pays uncertainty"]
+    end
+    subgraph HLC["Hybrid Logical Clock — CockroachDB"]
+        H1["Physical clock + logical counter<br/>hlc = max(physical, remote+1)<br/>causality without commit wait<br/>uncertainty via clock skew bound"]
+    end
+    T1 -.-> C["Goal: external consistency<br/>without blocking on true time"]
+    H1 -.-> C
+```
+
+```mermaid
+flowchart TD
+    S["Clock skew > lease TTL"] --> F1["Stale leader serves writes<br/>split-brain — fencing fails"]
+    S --> F2["TTL cache expires early/late<br/>inconsistent reads"]
+    S --> F3["Spanner commit wait insufficient<br/>external consistency violated"]
+    F1 --> M["Mitigations:<br/>bounded skew assumption<br/>+ fencing tokens<br/>+ TrueTime/HLC<br/>+ monotonic raw clock"]
+    F2 --> M
+    F3 --> M
+```
+
 ## Further reading
 
 - Lamport, L., "Time, Clocks, and the Ordering of Events in a Distributed System," *CACM* 21(7),

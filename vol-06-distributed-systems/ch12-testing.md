@@ -678,6 +678,38 @@ that have merely worked so far.
   most expensive place to learn anything. A conjecture becomes a system through adversarial
   verification against explicit models — nothing else promotes it.
 
+
+```mermaid
+sequenceDiagram
+    participant Nemesis as Nemesis (fault injector)
+    participant DB as System Under Test
+    participant Checker as Checker (history analyzer)
+    participant Client as Concurrent Clients
+    Client->>DB: Random ops (read/write/CAS)
+    Nemesis->>DB: Partition, kill, clock skew, pause
+    DB-->>Client: Responses (maybe stale / error)
+    Client->>Checker: Full history (invoke/complete)
+    Checker->>Checker: Verify linearizability (Knossos)<br/>or serializability (Elle)
+    Checker-->>Checker: Anomaly → counterexample trace
+```
+
+```mermaid
+flowchart LR
+    A["FoundationDB / TigerBeetle style<br/>single-process simulation"] --> B["Deterministic RNG<br/>seeded, reproducible"]
+    B --> C["Simulated time, network, disk<br/>inject faults programmatically"]
+    C --> D["Run millions of random histories<br/>in seconds — no real clock"]
+    D --> E["On failure: minimal trace<br/>deterministic replay with same seed"]
+    E --> F["Coverage >> integration tests<br/>finds rare interleavings"]
+```
+
+```mermaid
+flowchart TB
+    T["Testing — Jepsen, simulation<br/>finds bugs, cannot prove absence"] --> M["Model checking — TLA+<br/>exhaustive state exploration<br/>proves safety for bounded model"]
+    M --> P["Proof — Coq, Verdi, IronFleet<br/>machine-checked proof<br/>unbounded, high effort"]
+    T -.-> C["Choose by risk: TLA+ for consensus<br/>simulation for storage engine<br/>Jepsen for black-box DB"]
+    M -.-> C
+```
+
 ## Further reading
 
 - Kingsbury, K., the Jepsen analyses and methodology docs — https://jepsen.io/analyses — the

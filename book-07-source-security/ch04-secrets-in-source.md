@@ -680,6 +680,34 @@ prevention rate and MTTR — because at fleet scale you manage secrets in source
 other continuous failure mode: as a system with a base rate, a set of controls, and a dashboard, not
 as a series of surprises.
 
+### Secret scanning pipeline (three checkpoints)
+
+```mermaid
+flowchart LR
+  A["Author writes code"] --> B["Checkpoint 1: pre-commit<br/>(gitleaks / secretlint)<br/>local block"]
+  B --> C["Checkpoint 2: push / PR<br/>(GitHub push protection,<br/>GitLab secret detection)"]
+  C --> D["Checkpoint 3: post-commit<br/>(org-wide historical scan +<br/>alert + rotation ticket)"]
+  B -.->|"fastest, cheapest"| E["Ideal: catch before push"]
+  C -.->|"blocks leaked secret from history"| F["Second best"]
+  D -.->|"detects legacy leaks"| G["Needs rotation workflow"]
+  style D fill:#f85149,color:#fff
+  style B fill:#2ea043,color:#fff
+```
+
+### Leaked secret remediation playbook
+
+```mermaid
+flowchart TD
+  DETECT["Secret detected<br/>(push protection / scan)"] --> Q1{"Is it a real secret?<br/>(not example/test)?"}
+  Q1 -->|False positive| FP["Mark false positive<br/>tune ruleset"]
+  Q1 -->|Real| IMM["Immediate: revoke + rotate secret<br/>(even if push blocked)"]
+  IMM --> PURGE["Purge from git history<br/>(git filter-repo / BFG)<br/>+ force-push (audited)"]
+  PURGE --> AUDIT["Audit: was secret used?<br/>(logs, downstream exposure)"]
+  AUDIT --> PREVENT["Prevent: block commit +<br/>vault issuance + short-lived creds"]
+  style IMM fill:#f85149,color:#fff
+  style PREVENT fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **A committed secret is a live credential, not a disclosure.** On public hosts, automated

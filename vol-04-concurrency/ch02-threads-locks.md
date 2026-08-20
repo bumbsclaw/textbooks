@@ -110,6 +110,29 @@ The same architecture appears under other names elsewhere: Windows uses `SRWLOCK
 `WaitOnAddress`, and the JVM's `synchronized` uses a related escalation from thin (CAS-based) to
 inflated (OS-monitor) locks. The details differ; the fast-path/slow-path principle does not.
 
+
+```mermaid
+sequenceDiagram
+    participant T as Thread
+    participant Atomic as Atomic word (userspace)
+    participant Futex as Futex (kernel)
+    T->>Atomic: compare-and-swap (fast path)
+    alt CAS succeeds (uncontended)
+        Atomic-->>T: locked (no syscall, ~20 cycles)
+    else CAS fails (contended)
+        T->>Futex: futex(WAIT, addr, expected)
+        Note over Futex: kernel parks thread<br/>on wait queue keyed by addr
+        Futex-->>T: asleep
+        Note over T,Futex: holder unlocks: CAS to 0<br/>futex(WAKE, 1) wakes one waiter
+        Futex-->>T: woken, retry CAS
+        T->>Atomic: CAS again (now succeeds)
+    end
+    T->>Atomic: unlock: atomic store 0 + check waiters flag
+    alt waiters present
+        T->>Futex: futex(WAKE, 1)
+    end
+```
+
 ## The family of locks
 
 ### Spinlocks
@@ -234,6 +257,21 @@ are so much easier in Java and Go than in C.
 | RW lock | Atomic on shared counter | Exclusive | Yes | Long read sections, measured read-dominance |
 | Seqlock | Two counter reads, may retry | Increment, write, increment | No | Read-mostly small data, e.g. timekeeping |
 | RCU | Essentially free | Copy, publish, wait for grace period | No | Extremely read-dominated; needs reclamation scheme |
+
+
+```mermaid
+flowchart TD
+    Need{"What do you need?"}
+    Need -->|"short, no sleep"| Spin["Spinlock<br/>Busy-wait, no context switch<br/>Only for very short sections<br/>+ IRQ-disabled contexts"]
+    Need -->|"general, may sleep"| Mutex["Mutex (futex-based)<br/>Adaptive: spin briefly then sleep<br/>Default choice"]
+    Need -->|"read-heavy"| RW["RW lock<br/>Many readers or one writer<br/>Writer starvation risk<br/>Often slower than mutex!"]
+    Need -->|"read-heavy + rare write<br/>+ seqlock pattern"| Seq["Seqlock / RCU<br/>Readers never block<br/>Writer copies, RCU grace period"]
+    Need -->|"one-time init"| Once["Once / barrier / latch<br/>Single signal"]
+    Trade["Benchmark: RW lock often loses to mutex<br/>due to cache-line bouncing on read count<br/>RCU wins when reads >> writes (100:1+)"]
+    style Mutex fill:#d4edda,stroke:#155724
+    style RW fill:#fff3cd,stroke:#856404
+    style Spin fill:#f8d7da,stroke:#721c24
+```
 
 ## Condition variables and monitors
 
@@ -456,6 +494,20 @@ The Universal Scalability Law from Chapter 1 now has a concrete physical referen
 serialization from mutual exclusion, and β is this cache-coherence traffic.** That is why adding
 threads past a point reduces throughput, and why the fix is to eliminate sharing rather than to
 lock it more cleverly.
+
+
+```mermaid
+flowchart TD
+    OneLock["One global lock<br/>All ops serialize<br/>Throughput = 1/latency<br/>No scaling"] --> Contend["Contended: cache-line ping-pong<br/>MESI invalidations per acquire<br/>Context switches, queue"]
+    Striped["Striped: N locks<br/>Hash(key) -> lock i<br/>Stripes in parallel"] --> Scale["Throughput ~ N x (if keys spread)<br/>Per-stripe contention / N<br/>Ancestor of sharding"]
+    Sharded["Sharded: N independent maps<br/>No shared lock at all<br/>Best if partitionable"] --> Best["Linear scaling<br/>Like sharded DB / cache"]
+    OneLock -.->|"coarse"| Striped
+    Striped -.->|"finer"| Sharded
+    Trade["Trade: more locks = more memory<br/>But hash must spread well<br/>Hot key still serializes one stripe"]
+    style OneLock fill:#f8d7da,stroke:#721c24
+    style Striped fill:#fff3cd,stroke:#856404
+    style Sharded fill:#d4edda,stroke:#155724
+```
 
 ## Practical guidance
 

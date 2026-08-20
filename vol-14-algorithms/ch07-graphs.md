@@ -891,3 +891,13 @@ if __name__ == "__main__":
         net.add_edge(u, v, w)
     mst, cost = kruskal_mst(net)
     print(f"\nMST edges: {mst}  total cost: {cost}")
+
+### Graph representation comparison
+
+```mermaid
+flowchart TB
+    G[Graph] --> AM[Adjacency Matrix - O V^2 Space]
+    G --> AL[Adjacency List - O V+E Space]
+    AM --> USE1[Dense Graphs]
+    AL --> USE2[Sparse Graphs]
+```

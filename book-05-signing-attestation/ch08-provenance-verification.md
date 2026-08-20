@@ -589,6 +589,61 @@ automated, identity-pinned, digest-anchored, enforced at admission, failing clos
 matters — is the half that actually stops attacks. Everything in Chapters 1–6 is potential energy.
 The gate in this chapter is where it converts to work.
 
+### Verification layers pyramid
+
+```mermaid
+flowchart TB
+  L1["Layer 1: Crypto valid?<br/>(sig matches digest + key)"]
+  L1 --> L2["Layer 2: Identity expected?<br/>(SAN / issuer matches policy)"]
+  L2 --> L3["Layer 3: Provenance matches?<br/>(builder / materials / SLSA level)"]
+  L3 --> L4["Layer 4: Attestations complete?<br/>(SBOM + vulns + tests)"]
+  L4 --> L5["Layer 5: Policy decision?<br/>(OPA/Kyverno/Enterprise Contract)"]
+  L5 --> OUT{"All layers pass?"}
+  OUT -->|Yes| DEPLOY["Deploy"]
+  OUT -->|No| BLOCK["Block + alert"]
+  style L1 fill:#8957e5,color:#fff
+  style L5 fill:#2ea043,color:#fff
+```
+
+### DSSE envelope anatomy and verification
+
+```mermaid
+flowchart LR
+  subgraph ENV["DSSE Envelope"]
+    PT["payloadType<br/>(application/vnd.in-toto+json)"]
+    P["payload (base64)<br/>{subject, predicateType, predicate}"]
+    SIGS["signatures[]<br/>{keyid, sig}"]
+  end
+  ENV --> PAE["PAE = DSSEv1 + len(payloadType)<br/>+ payloadType + len(payload)<br/>+ payload"]
+  PAE --> VFY["Verify: sig == Sign(priv, PAE)"]
+  VFY -->|"valid"| DEC["Decode payload to<br/>in-toto statement<br/>then predicate check"]
+  VFY -->|"invalid"| REJ["Reject — not signed by trusted key"]
+  style REJ fill:#f85149,color:#fff
+  style DEC fill:#2ea043,color:#fff
+```
+
+### Admission-time verification with policy engine
+
+```mermaid
+sequenceDiagram
+    participant K as kube-apiserver
+    participant W as Webhook (Kyverno / policy-controller)
+    participant REG as Registry (sig + attestation)
+    participant POL as Policy (ClusterImagePolicy)
+    K->>W: AdmissionReview (pod spec: image@digest)
+    W->>REG: fetch signature + attestation bundle
+    REG->>W: DSSE bundle
+    W->>W: verify sig (Fulcio chain + Rekor SET)
+    W->>POL: evaluate predicate (builder==trusted, SLSA>=2, no critical vuln)
+    alt Policy passes
+        POL->>W: allow
+        W->>K: allowed
+    else Policy fails
+        POL->>W: deny + message
+        W->>K: denied (image not verified)
+    end
+```
+
 ## Key takeaways
 
 - **Produce AND verify.** Signatures, provenance, and SBOMs that nothing checks are security

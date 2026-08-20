@@ -636,6 +636,32 @@ Authorization at scale is a *data system* problem with availability and partitio
 - **Bulkhead the PDP.** The authz tier is a hard dependency — every request validates against it. Apply the same resilience patterns as any critical dependency (Vol 7, Ch 11; Vol 11, Ch 10): circuit breaker (fail-closed), bulkhead (isolate authz thread pool), timeout (`50 ms` budget for a check, `200 ms` for `LookupResources`), and a degraded mode only where explicitly approved (e.g., read-only cache for `view` but never for `delete`). A PDP outage must not become an authz bypass.
 - **Observability.** Emit `authz_check_total{result=allow|deny, permission, cached}`, `authz_check_latency_ms`, `spicedb_datastore_replica_lag_ms`, and `authz_policy_version`. Alert on `deny` rate spikes (misconfigured rollout), `p99` latency regression (missing index), and replica lag exceeding the decision TTL.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### RBAC vs ABAC vs ReBAC
+
+```mermaid
+flowchart TB
+    Q{"Policy shape?"} --> Role["Roles static"] --> RBAC["RBAC<br/>role → permissions"]
+    Q --> Attr["Attributes dynamic"] --> ABAC["ABAC<br/>subject/resource/env<br/>OPA / Cedar"]
+    Q --> Relation["Relations graph"] --> ReBAC["ReBAC<br/>Google Zanzibar<br/>object → relation → subject"]
+```
+
+#### OPA Policy Evaluation
+
+```mermaid
+sequenceDiagram
+    participant API as API
+    participant OPA as OPA sidecar
+    participant Bundle as Bundle registry
+    API->>OPA: POST /v1/data/authz/allow<br/>input: subject, resource, action
+    OPA->>OPA: evaluate Rego + data
+    OPA-->>API: {allow: true, filter: row_filter}
+    API->>API: enforce + apply row filter
+    Bundle-->>OPA: periodic bundle sync
+```
+
 ## Key takeaways
 
 - Authorization answers `principal × action × resource × context → allow|deny`. Authentication (Ch 5–6) is a prerequisite, not a substitute — validating a token's `aud`/`exp`/`scope` is only the input to the decision.

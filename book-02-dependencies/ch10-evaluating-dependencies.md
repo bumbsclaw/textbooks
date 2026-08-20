@@ -701,6 +701,46 @@ reason you weight your human attention that way.
   continuous re-evaluation, with policy enforced throughout and the org-wide inventory (Book 3) as substrate.
   Measure it with *criticality-weighted* fleet metrics, not raw counts.
 
+
+### Dependency evaluation scorecard
+
+```mermaid
+flowchart TD
+    CANDIDATE["Candidate package"] --> D1["Popularity<br/>downloads, dependents"]
+    CANDIDATE --> D2["Maintenance<br/>commit recency, bus factor"]
+    CANDIDATE --> D3["Security posture<br/>Scorecard, vuln history"]
+    CANDIDATE --> D4["Supply-chain hygiene<br/>signed, provenance, 2FA"]
+    CANDIDATE --> D5["License +<br/>compatibility"]
+
+    D1 --> SCORE["Weighted score"]
+    D2 --> SCORE
+    D3 --> SCORE
+    D4 --> SCORE
+    D5 --> SCORE
+    SCORE --> DECISION{"Adopt?"}
+    DECISION -->|Pass| ADOPT["Adopt + monitor"]
+    DECISION -->|Fail| REJECT["Reject /<br/>find alternative"]
+    DECISION -->|Marginal| MITIGATE["Adopt with<br/>mitigations (pin, vendor)"]
+```
+
+
+### Alternative analysis: build vs buy vs borrow
+
+```mermaid
+flowchart TD
+    NEED["Need: e.g., JWT parsing"] --> OPT1["Adopt OSS lib<br/>fast, risk: supply chain"]
+    NEED --> OPT2["Buy / managed<br/>service<br/>cost, less control"]
+    NEED --> OPT3["Build in-house<br/>control, cost: maintenance"]
+    NEED --> OPT4["Stdlib only<br/>minimal deps<br/>cost: re-implement"]
+
+    OPT1 --> EVAL["Evaluate via<br/>scorecard (prev diagram)"]
+    OPT2 --> EVAL2["Vendor risk<br/>assessment"]
+    OPT3 --> EVAL3["Team capacity<br/>assessment"]
+    OPT4 --> EVAL3
+
+    style OPT1 fill:#ffd966,stroke:#333
+```
+
 ## Further reading
 
 - OpenSSF Scorecard — project, the authoritative per-check documentation, and the public API/dataset

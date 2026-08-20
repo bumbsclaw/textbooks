@@ -572,6 +572,52 @@ and logs them so a deploy gate can trust them later. Sigstore is that something.
 cryptographic transport that carries every other attestation in this suite from the platform that
 produces it to the gate that enforces it (Chapter 10; Book 6).
 
+### TUF-secured trust root distribution
+
+```mermaid
+flowchart TD
+  ROOT["Offline root key<br/>(air-gapped, rare use)"] -->|"signs"| TARGETS["Targets role<br/>(Fulcio chain + Rekor key)"]
+  ROOT -->|"signs"| SNAP["Snapshot role<br/>(version of all metadata)"]
+  ROOT -->|"signs"| TSV["Timestamp role<br/>(freshness)"]
+  TARGETS --> CLIENT["Client (cosign / policy-controller)<br/>verifies TUF chain before trusting<br/>Fulcio or Rekor keys"]
+  SNAP --> CLIENT
+  TSV --> CLIENT
+  CLIENT -->|"if any role fails"| REJECT["Reject — do not verify signatures"]
+  CLIENT -->|"if all valid"| OK["Trust Fulcio cert chain + Rekor SET"]
+  style ROOT fill:#1f6feb,color:#fff
+  style REJECT fill:#f85149,color:#fff
+  style OK fill:#2ea043,color:#fff
+```
+
+### Signature storage: tag vs referrers API
+
+```mermaid
+flowchart LR
+  IMG["Image manifest<br/>sha256:abc123"] --> OLD["Pre-1.1: tag suffix<br/>abc123.sig<br/>(cosign .sig tag)"]
+  IMG --> NEW["OCI 1.1 Referrers API<br/>subject field +<br/>ArtifactType: sig/att"]
+  OLD --> P1["Pros: simple<br/>Cons: tag races,<br/>GC can delete"]
+  NEW --> P2["Pros: content-linked<br/>discoverable via<br/>/referrers?digest="]
+  P1 -.-> MIG["Migration: support both"]
+  P2 -.-> MIG
+  MIG --> REC["Recommendation:<br/>require referrers-aware registry"]
+  style OLD fill:#d29922,color:#000
+  style NEW fill:#2ea043,color:#fff
+```
+
+### Failure-mode coverage matrix
+
+```mermaid
+flowchart TD
+  F1["Key theft"] --> M1["Fulcio: no long-lived key<br/>to steal (ephemeral)"]
+  F2["Silent misuse of key"] --> M2["Rekor: every signing<br/>publicly logged"]
+  F3["Stolen cert misuse elsewhere"] --> M3["Short-lived (~10m) +<br/>OIDC-bound SAN +<br/>CT log"]
+  F4["Log equivocation"] --> M4["Merkle consistency proofs<br/>+ monitors/witnesses"]
+  F5["Supplying malicious artifact"] --> M5["NOT fixed by signing<br/> — needs provenance + policy<br/>(Ch 6-10)"]
+  style M5 fill:#f85149,color:#fff
+  style M1 fill:#2ea043,color:#fff
+  style M2 fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **Sigstore** (OpenSSF / Linux Foundation, launched ~2021) makes signing free and easy. Its

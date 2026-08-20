@@ -341,6 +341,19 @@ with per-process heaps and immutable terms; that enforcement, more than any sing
 feature, is the gap between the two. There is no free path to actor safety on a
 shared-memory runtime: you buy it with copying, with immutability, or with vigilance.
 
+
+```mermaid
+flowchart TD
+    Actor["Actor<br/>Private state + mailbox<br/>One message at a time<br/>No shared memory"] --> Send["Send: fire-and-forget<br/>Non-blocking, async<br/>At-most-once (or at-least)"]
+    Send --> Mailbox["Mailbox (queue)<br/>Per-actor, ordered<br/>Backpressure via bounded mailbox"]
+    Mailbox --> Process["Process one msg<br/>Update state, send to others<br/>May spawn children"]
+    Process --> Supervise["Supervision tree<br/>Parent restarts failed child<br/>Let-it-crash philosophy"]
+    Supervise --> Location["Location transparency<br/>Actor address, not thread<br/>Same code local or remote"]
+    Note["No data race (single-threaded actor)<br/>But: message order, deadlock仍 possible<br/>State per actor, not shared"]
+    style Actor fill:#d4edda,stroke:#155724
+    style Supervise fill:#cce5ff,stroke:#004085
+```
+
 ## CSP: Communicating Sequential Processes
 
 ### Hoare, 1978
@@ -470,6 +483,21 @@ signatures like `func producer(out chan<- int)` and `func consumer(in <-chan int
 compiler-checked statements of protocol role: the producer *cannot* receive from its own
 output or, usefully, be closed by the wrong side, because `close` is disallowed on a
 receive-only channel. Cheap, local, static protocol enforcement; use it everywhere.
+
+
+```mermaid
+sequenceDiagram
+    participant P1 as Process 1
+    participant Ch as Channel (bounded/unbounded)
+    participant P2 as Process 2
+    P1->>Ch: send(value) -- blocks if bounded+full
+    Note over Ch: Channel is the rendezvous<br/>Decouples sender/receiver<br/>Go: goroutine + channel
+    Ch-->>P2: recv() -- blocks if empty
+    P2->>P2: process value
+    P2->>Ch: reply on reply channel (if request-response)
+    Ch-->>P1: reply value
+    Note over P1,Ch: Select: wait on multiple channels<br/>like epoll for goroutines<br/>Fan-in, fan-out, timeout, cancellation
+```
 
 ## Channel patterns
 
@@ -638,6 +666,23 @@ policy: run N goroutines, wait for all, return the first error, and — via
 `errgroup.WithContext` — cancel the shared context the moment any member fails, so
 siblings stop doing doomed work. It is structured concurrency in miniature, and Chapter 8
 generalizes it.
+
+
+```mermaid
+flowchart TD
+    subgraph Patterns["Channel patterns"]
+        FanIn["Fan-in: N senders -> 1 channel -> 1 receiver<br/>Merge streams, load balance"]
+        FanOut["Fan-out: 1 sender -> N channels -> N workers<br/>Scatter, pipeline"]
+        Pipeline["Pipeline: ch1 -> stage -> ch2 -> stage -> ch3<br/>Each stage is goroutine(s)"]
+        Timeout["Timeout: select with time.After<br/>or context.WithTimeout"]
+    end
+    FanIn --> Code1["for val := range merge(ch1,ch2)"]
+    FanOut --> Code2["for _, ch := range workers { ch <- task }"]
+    Pipeline --> Code3["Natural backpressure if bounded<br/>Slow stage throttles fast stage"]
+    Timeout --> Code4["select { case v:=<-ch: ... ; case <-ctx.Done(): return }"]
+    style Pipeline fill:#d4edda,stroke:#155724
+    style Timeout fill:#cce5ff,stroke:#004085
+```
 
 ## What message passing does not fix
 

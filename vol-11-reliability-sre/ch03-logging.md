@@ -1405,6 +1405,48 @@ At scale, log schema drift — one team renames `user_id` to `userId`, another a
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Structured Logging Pipeline
+
+```mermaid
+flowchart LR
+    App["App emit<br/>JSON + trace_id"] --> Sidecar["Sidecar / agent<br/>Vector / Fluent Bit"]
+    Sidecar --> Kafka["Kafka / buffer"]
+    Kafka --> Store["ClickHouse / ES / Loki"]
+    Store --> UI["Grafana / Kibana"]
+```
+
+#### Log Aggregation Architecture
+
+```mermaid
+flowchart TB
+    subgraph Hosts
+        A["Service A"]
+        B["Service B"]
+        C["Service C"]
+    end
+    A & B & C --> Agent["DaemonSet agent"]
+    Agent --> Central["Central pipeline<br/>parse + enrich + sample"]
+    Central --> Cold["Cold store<br/>S3 / GCS"] & Hot["Hot store<br/>ES / Loki"]
+```
+
+#### Correlation ID Propagation
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as Gateway
+    participant S1 as Service A
+    participant S2 as Service B
+    C->>G: request + X-Request-ID: r-123
+    G->>S1: propagate r-123 + traceparent
+    S1->>S2: same ids in headers
+    S2->>S2: log with r-123
+    Note over C,S2: all logs joinable by r-123
+```
+
 ## Key takeaways
 
 - Every log line at scale must be **structured JSON** with a consistent schema — `timestamp`, `level`, `service`, `message`, `request_id`, `trace_id`, and relevant domain fields — so that downstream stages can query without per-service parsing.

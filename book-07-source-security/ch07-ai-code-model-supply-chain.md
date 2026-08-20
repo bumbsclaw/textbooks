@@ -602,6 +602,36 @@ detector makes it safe. The organizations that do well here are the ones that re
 early, that "the AI produced it" and "it's just weights" are not trust statements — and
 pointed their existing supply-chain discipline at both.
 
+### Model and code supply chain for AI
+
+```mermaid
+flowchart TB
+  DATA["Training data<br/>(web, code, docs)"] --> TRAIN["Training / fine-tune<br/>(poisonable)"]
+  BASE["Base model<br/>(Hugging Face)"] --> TRAIN
+  TRAIN --> MODEL["Model artifact<br/>(weights, config)"]
+  MODEL --> REG["Model registry<br/>(signed + provenance?)"]
+  REG --> APP["App: RAG / agent<br/>(prompt + tools)"]
+  APP --> CODE["AI-generated code<br/>(into repo)"]
+  CODE --> REVIEW["Review gate<br/>(same as human code)"]
+  DATA -.->|"poisoning"| P1["Backdoored data to<br/>backdoored model"]
+  CODE -.->|"hallucinated deps / insecure patterns"| P2["Vulnerable code merged"]
+  style REVIEW fill:#2ea043,color:#fff
+```
+
+### Prompt-injection to code-poisoning chain
+
+```mermaid
+flowchart LR
+  A["Adversarial input<br/>(prompt injection,<br/>poisoned docs)"] --> B["Model behavior shift<br/>(jailbreak / exfil)"]
+  B --> C["Agent tool misuse<br/>(reads secrets,<br/>writes code)"]
+  C --> D["Malicious code<br/>proposed in PR"]
+  D --> E{"Review catches?"}
+  E -->|No| F["Backdoor landed<br/>via trusted AI path"]
+  E -->|Yes| G["Blocked"]
+  style F fill:#f85149,color:#fff
+  style G fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - AI adds **two distinct inputs** to the supply chain: AI-*generated code* (enters your

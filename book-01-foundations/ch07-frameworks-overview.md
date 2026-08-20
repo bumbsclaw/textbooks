@@ -687,6 +687,51 @@ and the number.
   S2C2F together. Measure *coverage and the tail* (from the verifier's own records), never the
   average — the risk lives in the unaudited 5%, not the mean.
 
+
+### Framework coverage map: which layer each protects
+
+```mermaid
+flowchart TD
+    subgraph Layers["Supply-Chain Layers"]
+        L1["Source"]
+        L2["Build & CI"]
+        L3["Artifact & Registry"]
+        L4["Deployment & Runtime"]
+        L5["Governance"]
+    end
+    SLSA["SLSA<br/>Build integrity"] -. covers .-> L2
+    SLSA -. covers .-> L3
+    SSDF["SSDF / NIST 800-218<br/>Dev practices"] -. covers .-> L1
+    SSDF -. covers .-> L2
+    S2C2F["S2C2F<br/>OSS consumption"] -. covers .-> L1
+    S2C2F -. covers .-> L4
+    SCVS["OWASP SCVS<br/>Verification"] -. covers .-> L1
+    SCVS -. covers .-> L3
+    NTIA["NTIA / SBOM<br/>Visibility"] -. covers .-> L3
+    NTIA -. covers .-> L4
+
+    style SLSA fill:#b6d7ff,stroke:#333
+    style S2C2F fill:#ffd966,stroke:#333
+```
+
+
+### Adoption ladder: incremental maturity
+
+```mermaid
+flowchart LR
+    L0["L0: Ad hoc<br/>No provenance"] --> L1["SLSA L1<br/>Provenance available"]
+    L1 --> L2["SLSA L2<br/>Hosted build"]
+    L2 --> L3["SLSA L3<br/>Hermetic + non-falsifiable"]
+    L3 --> L4["SLSA L4<br/>Two-party review + hermetic"]
+
+    M0["SSDF: basic<br/>hygiene"] --> M1["SSDF: automated<br/>tooling"]
+    M1 --> M2["SSDF: measured<br/>+ attested"]
+
+    L0 -. parallel .-> M0
+    L2 -. parallel .-> M1
+    style L4 fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - SLSA (Supply-chain Levels for Software Artifacts), **v1.0** — the specification at `slsa.dev`:

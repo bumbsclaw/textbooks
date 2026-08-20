@@ -640,6 +640,41 @@ substrate.
   (outbound, compliance and trust) and **what you run** (inbound, your own vulnerability
   management) — from the same substrate.
 
+
+### SBOM answers: inventory to vulnerability to response
+
+```mermaid
+flowchart TD
+    SBOM["SBOM<br/>inventory of components"] --> Q1["Are we affected<br/>by CVE-2024-XXXX?"]
+    Q1 --> SEARCH["Search SBOMs<br/>across fleet"]
+    SEARCH --> FOUND{"Found?"}
+    FOUND -->|Yes| PATCH["Patch / mitigate<br/>+ VEX update"]
+    FOUND -->|No| ATTEST["Attest 'not affected'<br/>to customers / regulator"]
+    PATCH --> VERIFY["Rescan +<br/>verify fix"]
+    ATTEST --> TRUST["Customer trust<br/>+ compliance"]
+
+    style SBOM fill:#b6d7ff,stroke:#333
+    style ATTEST fill:#b6f0b6,stroke:#333
+```
+
+
+### SBOM lifecycle: produce to distribute to consume
+
+```mermaid
+sequenceDiagram
+    participant Build as Build System
+    participant SBOM as SBOM Generator
+    participant Registry as Registry / Release
+    participant Consumer as Consumer / Scanner
+    Build->>SBOM: Build completes — enumerate deps
+    SBOM->>SBOM: Generate SPDX / CycloneDX
+    SBOM->>Registry: Attach SBOM to artifact (attestation)
+    Registry->>Consumer: Deliver artifact + SBOM
+    Consumer->>Consumer: Ingest SBOM → vuln match + policy
+    Consumer->>Consumer: Enrich with VEX
+    Note over Build,Consumer: SBOM is provenance-adjacent metadata
+```
+
 ## Further reading
 
 - **Executive Order 14028**, "Improving the Nation's Cybersecurity," The White House, 12

@@ -833,6 +833,38 @@ Four ways CycloneDX specifically earns its place in a large backend estate:
   `cyclonedx-cli`, and typed libraries; validate against the schema — and remember that
   schema-valid is not the same as complete or accurate.**
 
+
+### CycloneDX BOM structure
+
+```mermaid
+flowchart TD
+    BOM["BOM: app v1.0<br/>bomFormat: CycloneDX"] --> META["Metadata<br/>— timestamp, tool, component"]
+    BOM --> COMPS["Components[]<br/>— each dep with purl, hash, license"]
+    BOM --> DEPS["Dependencies[]<br/>— graph edges (ref to dependsOn)"]
+    BOM --> VULNS["Vulnerabilities[]<br/>— optional, or via VEX"]
+    BOM --> SERVICES["Services[]<br/>— APIs / endpoints"]
+
+    COMPS --> C1["comp: lodash v4.17.21<br/>purl pkg:npm/lodash@4.17.21"]
+    DEPS --> D1["app dependsOn lodash, express"]
+    style BOM fill:#b6d7ff,stroke:#333
+```
+
+
+### CycloneDX vs SPDX: when to use which
+
+```mermaid
+flowchart TD
+    CHOICE{"Primary consumer?"} --> ECOSYS["Ecosystem tooling<br/>is CycloneDX-native<br/>(Dependency-Track)"]
+    CHOICE --> COMPLY["Compliance / legal<br/>needs license depth"]
+    CHOICE --> BOTH["Need both?<br/>Convert via protobom"]
+
+    ECOSYS --> CDX["Choose CycloneDX<br/>— simpler, OWASP tooling"]
+    COMPLY --> SPDX["Choose SPDX<br/>— richer license +<br/>ISO standard"]
+    BOTH --> EITHER["Generate both<br/>— CI produces each"]
+
+    style EITHER fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **ECMA-424**, "CycloneDX Bill of Materials Specification," 1st edition, Ecma

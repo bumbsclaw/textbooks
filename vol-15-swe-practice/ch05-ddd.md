@@ -784,3 +784,13 @@ flowchart TB
 - Vlad Khononov — *Learning Domain-Driven Design* (2021) and *Balancing Coupling in Software Design* (2023). Modern, pragmatic treatment of strategic DDD and coupling analysis.
 - Greg Young — *Versioning in an Event Sourced System* (2010). Event versioning and evolution — directly applicable to domain-event schemas on Kafka.
 - confluent.io — *Event Sourcing, CQRS, and Outbox patterns* — operational guidance for DDD on Kafka. https://docs.confluent.io/kafka/design/
+
+### Event storming to bounded contexts
+
+```mermaid
+flowchart LR
+    E1[Domain Events] --> CMD[Commands]
+    CMD --> AGG2[Aggregates]
+    AGG2 --> BC[Bounded Contexts]
+    BC --> MAP[Context Map]
+```

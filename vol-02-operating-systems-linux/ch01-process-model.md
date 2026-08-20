@@ -319,6 +319,24 @@ entirely — which is why `docker stop` on such a container hangs for ten second
 signals to the real application. We revisit this in Book 6 on cloud-native security and in
 Chapter 9; for now, remember: **a container's PID 1 must reap.**
 
+
+```mermaid
+stateDiagram-v2
+    [*] --> Running : fork (COW)
+    Running --> Zombie : exit (retain task_struct for parent)
+    Zombie --> [*] : parent wait reaps
+    Running --> Orphan : parent dies first
+    Orphan --> Reparented : reparent to init/subreaper
+    Reparented --> Zombie : exit
+    Zombie --> Reaped : init reaps in loop
+    Reaped --> [*]
+    note right of Zombie
+        Zombie holds PID + exit code
+        Leaks PID table if not reaped
+        Container PID 1 must reap!
+    end note
+```
+
 ## clone(): the primitive under fork and threads
 
 We have described `fork` (new process) and, shortly, `pthread_create` (new thread) as if they
@@ -490,6 +508,22 @@ PostgreSQL backends, and Python multiprocessing pools are node-level bulkheads, 
 bulkheads you draw between services. The threads-vs-processes-vs-async choice is not a
 micro-optimization; it sets the fault-domain granularity and the scaling ceiling of every
 node your distributed system runs on.
+
+
+```mermaid
+flowchart TD
+    Req["100k concurrent connections"] --> Choice{"Concurrency model"}
+    Choice -->|"threads"| T["Thread per conn<br/>8 MiB stack x 100k = 800 GiB<br/>Context switch heavy"]
+    Choice -->|"processes"| P["Process per conn<br/>Isolated, heavier than threads<br/>Fork cost + IPC"]
+    Choice -->|"async (epoll/io_uring)"| A["Event loop + coroutines<br/>~KiB per conn<br/>No per-conn thread<br/>Must not block loop"]
+    Choice -->|"hybrid"| H["Thread pool + async<br/>CPU pool + I/O loop<br/>Best of both (Go, Tokio)"]
+    T --> Cost1["C10k problem, OOM"]
+    A --> Cost2["Scales to M conns<br/>Backpressure needed"]
+    H --> Best["Production default"]
+    style T fill:#f8d7da,stroke:#721c24
+    style A fill:#d4edda,stroke:#155724
+    style H fill:#cce5ff,stroke:#004085
+```
 
 ## Context switching and its cost
 

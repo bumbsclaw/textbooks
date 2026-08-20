@@ -514,6 +514,49 @@ Hashing and KDF choices have fleet-wide consequences.
 
 **Deduplication and content addressing.** Where hashes are used for deduplication (CAS, Merkle trees, container layer digests in Vol 12), collision resistance is load-bearing — a collision means two distinct objects map to one address, causing silent data loss. Use at least 256-bit output and consider BLAKE3 for large objects where parallel hashing matters. Where hashes are used for sharding or load balancing, uniformity matters more than collision resistance — but still use a cryptographic hash if the input is attacker-controlled, to prevent hash-flooding DoS (Vol 14, Ch 2).
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Password Hashing Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant App as App
+    participant Store as DB
+    U->>App: password
+    App->>App: Argon2id hash<br/>pepper from KMS + random salt
+    App->>Store: store hash + salt + params
+    U->>App: login password'
+    App->>Store: fetch params + salt
+    App->>App: recompute + constant-time compare
+    App-->>U: success or fail + timing-safe
+```
+
+#### Hash Algorithm Choice
+
+```mermaid
+flowchart TB
+    Start{"New system?"} -->|Yes| Argon["Argon2id<br/>memory-hard, preferred"]
+    Start -->|Legacy| Bcrypt["bcrypt/scrypt<br/>acceptable with cost ≥12"]
+    Argon --> Pepper["Add pepper via KMS<br/>+ unique salt"]
+    Bcrypt --> Pepper
+    Pepper --> Upgrade["Upgrade on login<br/>re-hash with new params"]
+```
+
+#### Weak Hash Migration
+
+```mermaid
+stateDiagram-v2
+    [*] --> Legacy: stored as MD5/SHA1/bcrypt-low-cost
+    Legacy --> Login: user logs in
+    Login --> VerifyLegacy: verify with old algo
+    VerifyLegacy --> Rehash: success → hash with Argon2id
+    Rehash --> Modern: store new hash
+    Modern --> [*]
+    VerifyLegacy --> [*]: fail stays legacy until next login
+```
+
 ## Key takeaways
 
 - Hash functions provide preimage (~2^n), second-preimage (~2^n), and collision (~2^(n/2)) resistance — collisions fail first, which is why MD5 and SHA-1 are broken and SHA-256/SHA-3-256/BLAKE3 are the current choices (FIPS 180-4, FIPS 202).

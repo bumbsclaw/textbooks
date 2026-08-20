@@ -704,6 +704,58 @@ particularly elegant one, which is why it rewards a backend engineer's attention
   it — **self-host** (Chapter 9). The log is not a nice-to-have side service; when verification
   depends on it, it is production infrastructure.
 
+### Rekor shard and monitor architecture
+
+```mermaid
+flowchart TB
+  subgraph Writers
+    BUILD["Build systems<br/>(signing)"] --> REKOR["Rekor (active shard)<br/>Merkle tree + signed tree head"]
+  end
+  REKOR -->|"tree head (STH)"| MON["Monitor / Witness<br/>(e.g., Rekor monitor,<br/> Sigstore operated)"]
+  REKOR -->|"inclusion proof"| VER["Verifier<br/>(cosign verify)"]
+  MON -->|"consistency proof<br/>shard N vs N+1"| AUDIT["Auditor<br/>detects split-view / fork"]
+  MON -->|"alert on unexpected<br/>signing identity"| SIEM["SIEM / alerting"]
+  style REKOR fill:#1f6feb,color:#fff
+  style AUDIT fill:#2ea043,color:#fff
+```
+
+### Consistency proof verification
+
+```mermaid
+sequenceDiagram
+    participant V as Verifier / Monitor
+    participant L as Log (Rekor)
+    V->>L: get STH at size 1024 (old)
+    V->>L: get STH at size 2048 (new)
+    L->>V: STH_old + STH_new + consistency proof
+    V->>V: verify STH sigs with log pubkey
+    V->>V: recompute roots via proof nodes
+    alt Roots match
+        V->>V: Log is append-only
+    else Mismatch
+        V->>V: Log fork / tampering detected
+        V->>SIEM: alert + freeze verification
+    end
+```
+
+### Log-backed verification end-to-end
+
+```mermaid
+flowchart LR
+  A["Artifact digest"] --> S["Sign (ephemeral key)"]
+  S --> C["Cert (Fulcio)"] --> E["Rekor entry<br/>{hash, sig, cert, integratedTime}"]
+  E -->|"returns"| SET["Signed Entry Timestamp (SET)<br/>+ inclusion proof (optional)"]
+  SET --> B["Bundle (DSSE + SET)<br/>stored with artifact"]
+  B --> V{"Verifier checks"}
+  V -->|"1. cert chain"| C1["Fulcio chain valid<br/>+ SAN matches policy?"]
+  V -->|"2. expiry"| C2["integratedTime in<br/>[NotBefore, NotAfter]?"]
+  V -->|"3. log"| C3["SET sig valid<br/>+ inclusion proof?"]
+  C1 --> OK
+  C2 --> OK
+  C3 --> OK["Accept — log-anchored identity"]
+  style OK fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **Transparency logs convert silent abuse into detectable abuse.** They do not stop a stolen key

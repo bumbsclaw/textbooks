@@ -747,6 +747,44 @@ constraint is not arbitrary; it is the cost accounting of this chapter, applied 
   externalized global indexes; Cassandra's query-driven modeling is this trade-off adopted as
   doctrine.
 
+
+```mermaid
+flowchart TD
+    Q{"Query pattern?"} --> E["Equality only → Hash index<br/>O(1) no range"]
+    Q --> R["Range / order / prefix → B-Tree<br/>composite, covering, partial"]
+    Q --> G["Geometric / KNN → GiST / SP-GiST"]
+    Q --> B["Min/max over large range → BRIN<br/>tiny, lossy, sequential scan assist"]
+    Q --> F["Full-text / JSON → GIN<br/>inverted index"]
+    E --> C{"Need to cover?"} 
+    R --> C
+    C -->|Yes| I["INCLUDE columns<br/>index-only scan"]
+    C -->|No| H["Heap fetch per row"]
+```
+
+```mermaid
+flowchart LR
+    A["Query: SELECT email FROM users WHERE status='active'"] --> B{"Index on (status) INCLUDE (email)?"}
+    B -->|No - non-covering| C["Index scan → heap fetch per row<br/>random I/O per tuple<br/>visibility check in heap"]
+    B -->|Yes - covering| D["Index-only scan<br/>all columns in index<br/>visibility map skips heap"]
+    D --> E["~10x fewer page reads<br/>when visibility map clean"]
+    C --> F["Seq scan may beat index<br/>if selectivity > 5-10%"]
+```
+
+```mermaid
+sequenceDiagram
+    participant W as Write Workload
+    participant I as B-Tree Index
+    participant V as VACUUM
+    W->>I: UPDATE / DELETE → dead tuples + page fragmentation
+    I->>I: Page splits, half-empty pages accumulate
+    Note over I: Bloat: logical size >> live data
+    V->>I: VACUUM scans dead tuples
+    V->>I: Mark pages reclaimable in FSM
+    I-->>W: REINDEX CONCURRENTLY if bloat > threshold
+    Note over V: Autovacuum tuning: scale_factor + threshold
+    W->>I: Fillfactor < 100 reserves update space
+```
+
 ## Further reading
 
 - PostgreSQL documentation, Chapter 11 "Indexes" — index types, partial and expression indexes,

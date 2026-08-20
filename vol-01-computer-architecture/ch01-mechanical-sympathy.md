@@ -378,6 +378,21 @@ reliable way to know is to measure: a profiler and the CPU's performance counter
 rate, stalled cycles, IPC) will tell you whether you are starved for compute, for memory
 bandwidth, or for data from another machine.
 
+
+```mermaid
+flowchart TD
+    A["Workload: arithmetic intensity<br/>(FLOPs per byte moved)"] --> B{"Roofline test"}
+    B -->|"Low intensity<br/>(streaming, pointer chasing)"| C["Memory-bound<br/>Perf = Bandwidth x Intensity<br/>Optimize: locality, layout"]
+    B -->|"High intensity<br/>(dense matmul, crypto)"| D["Compute-bound<br/>Perf = Peak FLOPs<br/>Optimize: vectorize, pipeline"]
+    B -->|"Blocked on syscall / disk / net"| E["I/O-bound<br/>Perf = IOPS / latency<br/>Optimize: batch, async, cache"]
+    C --> F["Move less data<br/>Cache blocking, SoA, compression"]
+    D --> G["Do more per byte<br/>SIMD, FMA, GPU offload"]
+    E --> H["Hide latency<br/>Pooling, coalescing, prefetch"]
+    style C fill:#fee,stroke:#c33
+    style D fill:#efe,stroke:#393
+    style E fill:#eef,stroke:#339
+```
+
 ## Why it matters more at scale, not less
 
 A reasonable objection at this point: modern hardware is fast and cheap, most services are
@@ -442,6 +457,16 @@ the tail. You cannot debug a p999 problem with a model of the machine that stops
 code. The tail lives in the microarchitecture, and reasoning about it *requires* the mechanical
 model this volume builds.
 
+
+```mermaid
+flowchart LR
+    W["Wasted cycles per node<br/>e.g. 15% extra DRAM misses<br/>~0.3 ms per request"] --> Fleet["Fleet: 5000 x waste<br/>= 1500 core-hours/day<br/>= $100k+/month"]
+    Fleet --> Tail["Tail latency<br/>p99 amplified by stragglers"]
+    Fleet --> Carbon["Energy & carbon<br/>Extra racks, power, cooling"]
+    style W fill:#fff3cd,stroke:#856404
+    style Fleet fill:#f8d7da,stroke:#721c24
+```
+
 ## The distributed-systems lens: the network is just another tier
 
 The unifying insight for a distributed-systems engineer is that **the latency hierarchy does
@@ -485,6 +510,19 @@ for peak?" you are, whether you say so or not, modeling hardware: how many reque
 sustains before its memory system saturates or its tail latency crosses the SLO. Get the
 mechanical model wrong and you over-provision (burning money) or under-provision (missing the
 SLO under load). Good capacity planning is applied mechanical sympathy plus queueing theory.
+
+
+```mermaid
+flowchart TD
+    A["Latency hierarchy (log scale)"] --> B["Register ~1 ns / L1 ~1 ns / L2 ~4 ns / L3 ~15 ns"]
+    B --> C["DRAM ~80 ns / Local SSD ~80 us"]
+    C --> D["Intra-AZ network ~500 us<br/>(same as SSD read)"]
+    D --> E["Cross-AZ ~1-2 ms"]
+    E --> F["Cross-region ~50-150 ms"]
+    F --> G["Lesson: remote call = tier miss<br/>Cache it, batch it, or avoid it"]
+    style D fill:#cce5ff,stroke:#004085
+    style G fill:#d4edda,stroke:#155724
+```
 
 ## The engineer's mental model
 

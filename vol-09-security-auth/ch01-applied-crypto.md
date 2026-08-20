@@ -484,6 +484,43 @@ Cryptography in a single process is a library call. Cryptography in a distribute
 
 **Forward secrecy at scale** means session keys are ephemeral and short-lived. For long-lived connections (gRPC streams, WebSocket), re-key periodically. For stored data, forward secrecy is approximated by prompt re-encryption after KEK rotation.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Crypto Primitive Selection
+
+```mermaid
+flowchart TB
+    Need{"What property?"} --> Conf["Confidentiality"] --> AEAD["AEAD: AES-GCM / ChaCha20-Poly1305"]
+    Need --> Integ["Integrity"] --> MAC["HMAC / KMAC or AEAD tag"]
+    Need --> Identity["Authenticity"] --> Sig["Sign: Ed25519 / ECDSA / RSA-PSS"]
+    Need --> KDF["Key derivation"] --> HKDF["HKDF / Argon2"]
+```
+
+#### Envelope Encryption
+
+```mermaid
+sequenceDiagram
+    participant App as App
+    participant KMS as KMS / HSM
+    participant DB as Storage
+    App->>KMS: GenerateDataKey
+    KMS-->>App: plaintext DEK + encrypted DEK
+    App->>App: encrypt payload with DEK via AES-GCM
+    App->>DB: store ciphertext + encrypted DEK + nonce
+    App->>App: wipe plaintext DEK
+```
+
+#### Key Hierarchy
+
+```mermaid
+flowchart TB
+    Root["Root key<br/>HSM, offline"] --> KEK["KEK<br/>KMS, auto-rotate"]
+    KEK --> DEK["DEK<br/>per object / per envelope"]
+    DEK --> Data["Data ciphertext"]
+    KEK --> Field["Field-level keys<br/>per tenant"] --> Data
+```
+
 ## Key takeaways
 
 - Use vetted, version-pinned primitives: AES-GCM or ChaCha20-Poly1305 for AEAD (RFC 5116/8439), HMAC-SHA256 for MACs, HKDF (RFC 5869) for key derivation, X25519 (RFC 7748) for key exchange, Ed25519 (RFC 8032) for signatures. Do not invent constructions.

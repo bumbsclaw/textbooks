@@ -606,6 +606,50 @@ Logging: log the *original* downstream error (with `trace_id`, downstream `code`
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Error Taxonomy
+
+```mermaid
+flowchart TB
+    Err["Error"] --> Client["4xx Client<br/>fix request"]
+    Err --> Server["5xx Server<br/>retry maybe"]
+    Client --> C1["400 validation"]
+    Client --> C2["401/403 auth"]
+    Client --> C3["404 not found"]
+    Client --> C4["409 conflict"]
+    Client --> C5["429 rate limit"]
+    Server --> S1["500 internal"]
+    Server --> S2["502/503 unavailable"]
+    Server --> S3["504 timeout"]
+```
+
+#### Retry with Backoff and Jitter
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Service
+    C->>S: GET /resource
+    S-->>C: 503 + Retry-After: 1
+    Note over C: backoff 1s + jitter
+    C->>S: retry 1
+    S-->>C: 503
+    Note over C: backoff 2s + jitter
+    C->>S: retry 2
+    S-->>C: 200
+```
+
+#### ProblemDetails Propagation
+
+```mermaid
+flowchart LR
+    Service["Service throws<br/>DomainError"] --> Map["Map to RFC 9457<br/>type/title/status/detail"]
+    Map --> Gateway["Gateway enriches<br/>request-id, trace-id"]
+    Gateway --> Client["Client: switch on status<br/>+ parse problem+json"]
+```
+
 ## Key takeaways
 
 - Treat every error response as versioned contract. Stable `code`/`ErrorInfo.reason` values are what clients switch on; `detail`/`message` are for humans. Changing a code is a breaking change.

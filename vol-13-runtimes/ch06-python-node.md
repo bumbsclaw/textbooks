@@ -780,3 +780,30 @@ Python and Node services amplify fleet-wide patterns that are invisible in singl
 - *clinic.js* — https://clinicjs.org/ ; *0x* — https://github.com/davidmarkclements/0x ; *py-spy* — https://github.com/benfred/py-spy ; *austin* — https://github.com/P403n1x87/austin.
 - McKinney — *High Performance Python* (2nd ed., O'Reilly) — GIL, asyncio, and profiling.
 - Roberts — *High Performance Browser Networking* (O'Reilly) — event loop and I/O model context.
+
+### Python GIL execution model
+
+```mermaid
+flowchart TB
+    T1[Thread 1] --> GIL[GIL - Global Interpreter Lock]
+    T2[Thread 2] --> GIL
+    T3[Thread 3] --> GIL
+    GIL --> RUN{One Thread Runs Python Bytecode}
+    RUN --> IO{Blocking I/O?}
+    IO -->|Yes| RELEASE[Release GIL]
+    IO -->|No| HOLD[Hold GIL]
+```
+
+### Node.js event loop phases
+
+```mermaid
+flowchart TB
+    A[Incoming Request] --> LOOP[Event Loop]
+    LOOP --> TIMERS[Timers Phase]
+    TIMERS --> PENDING[Pending Callbacks]
+    PENDING --> POLL[Poll - I/O]
+    POLL --> CHECK[Check - setImmediate]
+    CHECK --> CLOSE[Close Callbacks]
+    CLOSE --> LOOP
+    POLL --> WORKER[Worker Threads - libuv]
+```

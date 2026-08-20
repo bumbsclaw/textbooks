@@ -136,6 +136,23 @@ word `single` to boot to single-user mode for recovery), `systemd.log_level=debu
 `systemd.mask=`. Knowing you can edit this line in the GRUB menu at boot — press `e`, append a
 parameter, boot once — is the difference between recovering a node and reimaging it.
 
+
+```mermaid
+sequenceDiagram
+    participant FW as Firmware (UEFI/BIOS)
+    participant Boot as Bootloader (GRUB/shim)
+    participant Kernel as Kernel
+    participant Init as systemd (PID 1)
+    FW->>Boot: load from ESP, Secure Boot verify
+    Boot->>Kernel: load vmlinuz + initramfs
+    Kernel->>Kernel: decompress, init, mount initramfs
+    Kernel->>Init: exec /sbin/init (PID 1)
+    Init->>Init: parse units, mount filesystems
+    Init->>Init: socket activation, start services (parallel)
+    Init-->>Init: steady state: service manager<br/>Reap zombies, handle cgroups, journald
+    Note over FW,Init: Cloud: add cloud-init, ignition<br/>Containers: skip FW/Boot, runc is init
+```
+
 ## Before systemd: SysV init and its limits
 
 To see why systemd looks the way it does, you have to see what it replaced. The traditional Unix
@@ -305,6 +322,23 @@ systemctl is-active / is-enabled / is-failed orders-api   # scriptable, exit-cod
 
 The `is-*` subcommands return machine-readable exit codes, which is what your configuration-
 management and health-check scripts should key off, never string-matching `status` output.
+
+
+```mermaid
+flowchart TD
+    Unit["Unit file: foo.service<br/>ExecStart, Restart, Type, Dependencies"] --> Types{"Type?"}
+    Types -->|"simple"| Simple["Process is the service<br/>systemd tracks PID"]
+    Types -->|"forking"| Fork["Double-fork, PID file<br/>Legacy, race-prone"]
+    Types -->|"notify"| Notify["SD_NOTIFY ready<br/>Precise readiness, watchdog"]
+    Types -->|"oneshot"| One["Run to completion<br/>Setup tasks"]
+    Simple --> Deps["After=, Requires=, Wants=<br/>Ordering + requirement<br/>Not a health check!"]
+    Fork --> Deps
+    Notify --> Deps
+    Deps --> Cgroup["cgroup: systemd owns tree<br/>Delegate to container runtime<br/>Slice -> scope -> service"]
+    Cgroup --> Restart["Restart=on-failure + backoff<br/>StartLimitInterval, watchdog"]
+    style Notify fill:#d4edda,stroke:#155724
+    style Fork fill:#f8d7da,stroke:#721c24
+```
 
 ## journald: structured logging
 

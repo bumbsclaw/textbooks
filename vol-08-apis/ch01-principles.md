@@ -464,6 +464,70 @@ Three properties of distributed systems make API contracts disproportionately im
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### API Lifecycle State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Design: draft spec
+    Design --> Review: spec review
+    Review --> Design: changes requested
+    Review --> Implement: approved
+    Implement --> Test: contract tests pass
+    Test --> Implement: failures
+    Test --> Deploy: staged rollout
+    Deploy --> Observe: traffic + metrics
+    Observe --> Deprecate: sunset decision
+    Deprecate --> Sunset: migration window ends
+    Sunset --> [*]
+    Observe --> Design: next version
+```
+
+#### Design-First Workflow
+
+```mermaid
+sequenceDiagram
+    participant PM as Product
+    participant Des as API Designer
+    participant Spec as Spec Repo
+    participant CI as CI Gate
+    participant Gen as Codegen
+    PM->>Des: propose capability
+    Des->>Spec: author OpenAPI/proto + examples
+    Spec->>CI: PR triggers lint + breaking check
+    CI-->>Des: feedback
+    Des->>Spec: iterate until green
+    Spec->>Gen: merge triggers SDK generation
+    Gen-->>PM: preview SDK + docs
+```
+
+#### API Maturity Model
+
+```mermaid
+flowchart TB
+    L1["Level 1: Ad hoc<br/>no spec, manual clients"] --> L2["Level 2: Documented<br/>OpenAPI, examples, lint"]
+    L2 --> L3["Level 3: Governed<br/>breaking checks, style guide, catalog"]
+    L3 --> L4["Level 4: Productized<br/>SLAs, SDKs, versioning, deprecation policy"]
+    L4 --> L5["Level 5: Platform<br/>self-serve, scoring, automated governance"]
+```
+
+#### Consumer-Driven Contract Flow
+
+```mermaid
+flowchart LR
+    subgraph Consumers
+        C1["Consumer A<br/>pact expectations"]
+        C2["Consumer B<br/>pact expectations"]
+    end
+    C1 --> Broker["Contract Broker"]
+    C2 --> Broker
+    Broker --> Provider["Provider verification<br/>replay expectations"]
+    Provider -->|all green| Deploy["Deploy safe"]
+    Provider -->|failure| Block["Block merge"]
+```
+
 ## Key takeaways
 
 - The contract, not the implementation, is the unit of coupling. Invest design effort where the blast radius is largest.

@@ -765,6 +765,53 @@ non-stale decision that someone — a tool or a person — made exactly once.
   ingesting upstream vendors' VEX cuts third-party noise the same way. Cost scales with
   *distinct* (component, CVE) pairs, not services × CVEs.
 
+
+### VEX lifecycle: from CVE to consumer decision
+
+```mermaid
+sequenceDiagram
+    participant Vendor as Vendor / Producer
+    participant CVE as CVE / Advisory
+    participant VEX as VEX Document
+    participant Consumer as Consumer
+    CVE->>Vendor: New CVE published
+    Vendor->>Vendor: Triage: are we affected?
+    Vendor->>VEX: Emit VEX: affected / not_affected / fixed / under_investigation
+    VEX->>Consumer: Distribute alongside SBOM
+    Consumer->>Consumer: Correlate SBOM + VEX → filter scanner noise
+    Note over Vendor,VEX: VEX without SBOM is unactionable
+```
+
+
+### VEX status decision tree
+
+```mermaid
+flowchart TD
+    CVE["CVE matches<br/>component in SBOM"] --> AFFECTED{"Are we<br/>affected?"}
+    AFFECTED -->|Vuln code reachable<br/>+ exploitable| AFF["affected<br/>→ patch priority P0/P1"]
+    AFFECTED -->|Vuln code not<br/>present / not reachable| NOT["not_affected<br/>→ justification: inline_mitigations /<br/>vulnerable_code_not_present"]
+    AFFECTED -->|Patch available| FIXED["fixed<br/>→ update to version X"]
+    AFFECTED -->|Still triaging| INVEST["under_investigation<br/>→ ETA + workaround"]
+
+    style AFF fill:#f88,stroke:#900
+    style NOT fill:#b6f0b6,stroke:#333
+```
+
+
+### VEX + SBOM correlation to cut scanner noise
+
+```mermaid
+flowchart TD
+    SCAN["Scanner: 200 findings<br/>from SBOM vs vuln DB"] --> VEX["VEX overlay<br/>50 not_affected<br/>30 fixed"]
+    VEX --> FILTERED["Filtered: 120<br/>actionable findings"]
+    FILTERED --> PRIORITY["Prioritized by<br/>reachability + KEV"]
+    PRIORITY --> TICKETS["20 tickets<br/>that matter"]
+
+    NOTE["Without VEX:<br/>all 200 look actionable"] -. contrast .-> SCAN
+    style TICKETS fill:#b6f0b6,stroke:#333
+    style SCAN fill:#f88,stroke:#900
+```
+
 ## Further reading
 
 - **CISA SBOM/VEX working group** — "Vulnerability-Exploitability eXchange (VEX) — Use

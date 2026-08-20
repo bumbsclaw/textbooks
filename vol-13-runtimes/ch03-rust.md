@@ -820,3 +820,39 @@ Rust's compile-time guarantees change how you reason about fleet behavior:
 - McNamara — *Rust in Action* (Manning) — systems/backend patterns.
 - *Rust Atomics and Locks* (Mara Bos) — https://marabos.nl/atomics/ (concurrency primitives)
 - *tracing* — https://docs.rs/tracing ; *tokio-console* — https://github.com/tokio-rs/console
+
+### Rust ownership and borrowing
+
+```mermaid
+flowchart TB
+    OWNER[Owner - Single Owner Rule] --> MOVE[Move Semantics]
+    OWNER --> BORROW[Borrowing]
+    BORROW --> IMMUT[&T - Shared Borrow]
+    BORROW --> MUT[&mut T - Exclusive Borrow]
+    IMMUT --> OK1[Many Readers OK]
+    MUT --> OK2[One Writer OK]
+    MOVE --> DROP[Drop at Scope End]
+```
+
+### Rust async execution model
+
+```mermaid
+flowchart LR
+    A[async fn] --> B[State Machine - Future]
+    B --> C[Executor - Tokio / async-std]
+    C --> D[Reactor - epoll / kqueue]
+    D --> E[Waker - Notify Ready]
+    E --> C
+```
+
+### Cargo build pipeline
+
+```mermaid
+flowchart TB
+    SRC[Source + Cargo.toml] --> RESOLVE[Cargo Resolve Deps]
+    RESOLVE --> FETCH[Fetch Crates]
+    FETCH --> COMPILE[rustc Compilation]
+    COMPILE --> BORROW[Borrow Checker]
+    BORROW --> LLVM[LLVM Backend]
+    LLVM --> BIN[Binary]
+```

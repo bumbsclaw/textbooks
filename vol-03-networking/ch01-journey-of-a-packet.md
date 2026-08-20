@@ -149,6 +149,24 @@ bandwidth and why techniques like TCP segmentation offload and jumbo frames exis
 single most useful network-debugging skill, and Chapter 12 (Debugging and Observing Networks)
 builds it systematically.
 
+
+```mermaid
+flowchart TD
+    App["App data<br/>(HTTP request)"] --> L7["L7: HTTP"]
+    L7 --> L4["L4: TCP header<br/>ports, seq, flags, window"]
+    L4 --> L3["L3: IP header<br/>src/dst IP, TTL, DSCP"]
+    L3 --> L2["L2: Ethernet<br/>src/dst MAC, VLAN, FCS"]
+    L2 --> Wire["Wire: bits on medium"]
+    Wire --> R_L2["L2: strip Ethernet<br/>Switch forwards by MAC"]
+    R_L2 --> R_L3["L3: strip IP<br/>Router forwards by longest prefix"]
+    R_L3 --> R_L4["L4: strip TCP<br/>Kernel delivers to socket"]
+    R_L4 --> R_App["App: HTTP request"]
+    Note["Each layer adds header on send<br/>Strips on receive<br/>MTU limits frame size"]
+    style L4 fill:#cce5ff,stroke:#004085
+    style L3 fill:#fff3cd,stroke:#856404
+    style L2 fill:#d4edda,stroke:#155724
+```
+
 ## A concrete request: calling `https://api.example.com/v1/orders`
 
 Now the main event. Your service, running in a pod on a Linux host, executes an HTTPS GET. We
@@ -368,6 +386,22 @@ eventually dies rather than circulating forever. It is also the mechanism `trace
 by sending packets with TTL 1, 2, 3, … it provokes each successive router on the path to
 announce itself via the ICMP error, revealing the route hop by hop.
 
+
+```mermaid
+flowchart TD
+    Pkt["Packet: dst 10.2.3.4"] --> Table["Routing table<br/>Longest prefix match"]
+    Table --> E1["10.0.0.0/8 -> eth0 (gw 10.1.0.1)"]
+    Table --> E2["10.2.3.0/24 -> eth1 (direct)"]
+    Table --> E3["0.0.0.0/0 -> eth0 (default)"]
+    E2 --> Pick["Pick most specific: /24 wins<br/>Forward out eth1, next-hop ARP"]
+    E1 -.-> Less["/8 less specific, ignored"]
+    E3 -.-> Less
+    ARP["ARP: who has 10.2.3.4?<br/>Cache, broadcast if miss"] --> Forward["Rewrite L2 header<br/>Decrement TTL, forward"]
+    Pick --> ARP
+    style Pick fill:#d4edda,stroke:#155724
+    style Table fill:#cce5ff,stroke:#004085
+```
+
 ## How a packet moves hop by hop: switches vs. routers
 
 Now we can assemble the L2/L3 picture into the actual per-hop behavior — the single most
@@ -463,6 +497,26 @@ large responses hang, and it looks like an application bug until you notice it c
 payload size. The mitigations are to never blanket-drop ICMP "too big" messages, and TCP's
 "MSS clamping" (and RFC 4821 Packetization Layer PMTUD, which probes with data segments instead
 of relying on ICMP). This is a recurring theme in Chapter 12 (Debugging and Observing Networks).
+
+
+```mermaid
+sequenceDiagram
+    participant Sender
+    participant Router as Router (MTU 1500)
+    participant Receiver
+    Sender->>Router: 4 KiB packet, DF=1 (don't fragment)
+    Router-->>Sender: ICMP Frag Needed (MTU 1500)
+    Sender->>Sender: Cache PMTU = 1500
+    Sender->>Router: 1500 B segments
+    Router->>Receiver: Forward 1500 B
+    Receiver-->>Sender: ACKs
+    Note over Sender,Receiver: Modern: PLPMTUD (probe, no ICMP dep)<br/>MSS clamping in middleboxes<br/>IPv6: no router fragmentation at all
+    alt DF=0 (legacy)
+        Sender->>Router: 4 KiB, DF=0
+        Router->>Receiver: Fragments 1500+1500+1000
+        Note over Router,Receiver: Fragments reassembled at dst only<br/>One loss = whole packet retransmit
+    end
+```
 
 ## Layer 4: ports, TCP vs. UDP
 

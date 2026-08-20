@@ -660,6 +660,49 @@ two-year key matches a fleet of ephemeral runners. The arc of the rest of this b
 part, the story of trading long-lived keys for short-lived, verifiable, logged identity — and
 every primitive in this chapter is a piece of how that trade is made sound.
 
+### Hash agility migration plan
+
+```mermaid
+flowchart LR
+  A["Single hash (SHA-256)"] --> B{"Agile design?"}
+  B -->|No| C["Hard-coded SHA-256<br/>future break = rewrite"]
+  B -->|Yes| D["Multi-hash records<br/>alg + digest (SHA-256/384, SHA3)"]
+  D --> E["Field A: SHA-256<br/>Field B: SHA3-256"]
+  E --> F["Policy: accept >= 1 trusted algo"]
+  F --> G["Graceful migration<br/>deprecate broken algo"]
+  style C fill:#f85149,color:#fff
+  style G fill:#2ea043,color:#fff
+```
+
+### Signature vs MAC: when to use which
+
+```mermaid
+flowchart TD
+  Q{"Do verifier and signer<br/>share a secret?"}
+  Q -->|Yes, same trust domain| M["MAC / HMAC<br/>symmetric, fast<br/>no non-repudiation"]
+  Q -->|No, open verifier set| S{"Need non-repudiation?"}
+  S -->|Yes| SIG["Digital signature<br/>asymmetric (Ed25519/ECDSA/RSA-PSS)"]
+  S -->|Auditing only| SIG
+  M --> E1["Example: internal artifact HMAC<br/>by build service + registry"]
+  SIG --> E2["Example: publisher signs release<br/>any consumer verifies with pubkey/cert"]
+  style SIG fill:#1f6feb,color:#fff
+  style M fill:#8957e5,color:#fff
+```
+
+### Revocation vs short-lived certs
+
+```mermaid
+flowchart LR
+  subgraph Long["Long-lived cert (classic)"]
+    L1["Issue cert (1-2 years)"] --> L2["Private key lives long"] --> L3["Revocation needed<br/>CRL / OCSP / OCSP stapling"] --> L4["Verifier must be online<br/>privacy + availability issues"]
+  end
+  subgraph Short["Short-lived cert (Sigstore/Fulcio)"]
+    S1["Issue cert (~10 min)"] --> S2["No revocation list"] --> S3["Transparency log timestamps<br/>binding validity"] --> S4["Verifier checks<br/>integratedTime in window"]
+  end
+  style L4 fill:#f85149,color:#fff
+  style S4 fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **Hashes give you three separable properties** — preimage, second-preimage, and collision

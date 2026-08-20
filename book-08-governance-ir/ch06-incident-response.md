@@ -610,6 +610,48 @@ they are the ones whose peacetime platform can be pointed at an incident questio
 the load test for the entire supply chain security program, graded on work done months before the pager
 went off.
 
+### IR phases tailored to supply chain
+
+```mermaid
+flowchart LR
+  A["1. Detect<br/>(provenance fail /<br/>anomaly / intel)"] --> B["2. Contain<br/>(block digest,<br/>pin prior good)"]
+  B --> C["3. Eradicate<br/>(rebuild from known-good<br/>source + rotate keys)"]
+  C --> D["4. Recover<br/>(verify provenance +<br/>staged rollout)"]
+  D --> E["5. Learn<br/>(postmortem +<br/>control gaps)"]
+  E --> F["Harden:<br/>higher SLSA / stricter policy"]
+  style B fill:#f85149,color:#fff
+  style F fill:#2ea043,color:#fff
+```
+
+### Containment decision tree
+
+```mermaid
+flowchart TD
+  Q1{"What is compromised?"}
+  Q1 -->|"Artifact (single image)"| A1["Block that digest<br/>(admission + registry)<br/>keep prior digest running"]
+  Q1 -->|"Build system"| A2["Freeze builder<br/>rotate builder keys<br/>rebuild from trusted builder"]
+  Q1 -->|"Signing key / CA"| A3["Revoke cert<br/>rotate via TUF<br/>re-sign good artifacts"]
+  Q1 -->|"Git / source"| A4["Lock repo<br/>revert malicious commits<br/>force-push audited"]
+  Q1 -->|"Upstream dep"| A5["Pin prior version<br/>wait for upstream fix<br/>or vendor patch"]
+  style A3 fill:#f85149,color:#fff
+```
+
+### Evidence preservation flow
+
+```mermaid
+sequenceDiagram
+    participant R as Responder
+    participant L as Logs (Rekor / CT / CI)
+    participant A as Artifacts (registry)
+    participant S as SIEM / case mgmt
+    R->>L: freeze + export logs<br/>(WORM / snapshot)
+    R->>A: quarantine artifact<br/>(do not delete — retain hash)
+    R->>S: create case<br/>{timeline, digests, builder ids}
+    L->>S: attach provenance + SETs +<br/>inclusion proofs
+    A->>S: attach SBOMs + digests
+    Note over R,S: Chain of custody:<br/>hash + sig retained<br/>for forensics + disclosure
+```
+
 ## Key takeaways
 
 - **Supply chain IR is structurally different from ordinary IR.** The threat is a *trusted* artifact you

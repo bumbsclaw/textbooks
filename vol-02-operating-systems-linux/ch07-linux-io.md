@@ -359,6 +359,23 @@ callbacks — "callback hell" — and error handling and backpressure became gen
 right. That pain is exactly what the async/await and green-thread runtimes later set out to
 erase, without giving up the loop underneath.
 
+
+```mermaid
+flowchart TD
+    Init["Init: epoll_create + register FDs<br/>EPOLLIN/OUT, edge vs level"] --> Loop["Event loop"]
+    Loop --> Wait["epoll_wait(timeout)<br/>Block until events or timeout"]
+    Wait --> Events{"Events?"}
+    Events -->|"yes: N ready FDs"| Dispatch["For each ready FD:<br/>dispatch handler<br/>read/write until EAGAIN"]
+    Events -->|"timeout / signal"| Tick["Timers, housekeeping"]
+    Dispatch --> Dispatch
+    Tick --> Loop
+    Dispatch --> Loop
+    Note["Edge-triggered: must drain until EAGAIN<br/>or you lose wakeups!<br/>Level-triggered: re-notifies if data remains"]
+    style Wait fill:#cce5ff,stroke:#004085
+    style Dispatch fill:#fff3cd,stroke:#856404
+    style Note fill:#f8d7da,stroke:#721c24
+```
+
 ## From readiness to completion: the async I/O gap
 
 Everything so far — `select`, `poll`, `epoll`, `kqueue` — is a **readiness** model. The kernel
@@ -501,6 +518,28 @@ permitted in this environment?" as a real question — of kernel version, seccom
 security posture (Volume 0, Book 6, Container and Cloud-Native Supply Chain Security) — not a
 given. Many fleets gate it behind an explicit, per-workload decision.
 
+
+```mermaid
+flowchart LR
+    subgraph User["Userspace"]
+        App["App"]
+        SQ["SQ (submit queue)<br/>Shared ring<br/>SQEs: read/write/send/recv"]
+        CQ["CQ (completion queue)<br/>Shared ring<br/>CQEs: result + user_data"]
+    end
+    subgraph Kernel["Kernel"]
+        Worker["io_uring worker<br/>(or inline)"]
+        Files["Files / sockets / disk"]
+    end
+    App -->|"fill SQEs, no syscall<br/>(SQPOLL) or io_uring_submit"| SQ
+    SQ -->|"kernel consumes"| Worker
+    Worker --> Files
+    Files -->|"completion"| CQ
+    CQ -->|"app polls CQ, no syscall"| App
+    Note["Batch: 1 syscall for N ops<br/>Zero-copy with fixed buffers<br/>~2-3x throughput vs epoll+read"]
+    style SQ fill:#d4edda,stroke:#155724
+    style CQ fill:#cce5ff,stroke:#004085
+```
+
 ## The "looks-blocking" comeback: user-space scheduling
 
 The reactor solved scalability but taxed the programmer: explicit state machines, callback
@@ -610,6 +649,23 @@ zero-copy send operations as ring ops, unifying "async" and "zero-copy" in one s
 CDN node, a video origin, or a Kafka broker, these primitives are the difference between being
 CPU/memory-bandwidth-bound and being network-bound — i.e., between wasting the box and
 saturating the wire.
+
+
+```mermaid
+flowchart TD
+    Classic["Classic: read + write<br/>disk -> page cache -> user buf -> socket buf -> NIC<br/>4 copies, 2 syscalls"]
+    Classic --> Cost["CPU + cache pollution<br/>Mem BW wasted"]
+    Sendfile["sendfile(): disk -> page cache -> socket -> NIC<br/>2 copies, 1 syscall<br/>Kernel splices pages"]
+    Splice["splice()/tee(): pipe-based<br/>Move pages between FDs<br/>No userspace copy"]
+    Uring["io_uring + fixed buffers<br/>Registered bufs, zero-copy<br/>Best for high-throughput proxy"]
+    Sendfile --> Zero{"Need transform?"}
+    Splice --> Zero
+    Zero -->|"no (static file, proxy)"| Good["Zero-copy wins<br/>10-30% less CPU, more BW"]
+    Zero -->|"yes (TLS, compress)"| MustCopy["Must copy to transform<br/>kTLS / KTLS offload helps"]
+    style Classic fill:#f8d7da,stroke:#721c24
+    style Sendfile fill:#d4edda,stroke:#155724
+    style Good fill:#d4edda,stroke:#155724
+```
 
 ## Distributed-systems lens
 

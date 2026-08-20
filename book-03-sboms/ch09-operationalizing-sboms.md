@@ -744,6 +744,37 @@ dependency. The documents are the substrate. The capability is the product.
   registry, the build platform, and the admission controller. Build it, staff it, and drill it like
   any other core dependency.
 
+
+### SBOM operational pipeline
+
+```mermaid
+flowchart TD
+    GEN["Generate<br/>(build + image)"] --> VALIDATE["Validate<br/>(schema + NTIA)"]
+    VALIDATE --> SIGN["Sign + attest<br/>(Sigstore)"]
+    SIGN --> STORE["Store + index<br/>(central)"]
+    STORE --> CORRELATE["Correlate<br/>SBOM + vuln DB + VEX"]
+    CORRELATE --> POLICY["Policy gate<br/>(allow / warn / block)"]
+    POLICY --> DISTRIBUTE["Distribute<br/>to consumers"]
+    DISTRIBUTE --> MONITOR["Monitor<br/>new CVEs continuously"]
+
+    style POLICY fill:#ffcc00,stroke:#333
+    style MONITOR fill:#b6d7ff,stroke:#333
+```
+
+
+### Maturity model for SBOM adoption
+
+```mermaid
+flowchart LR
+    L1["L1: Generate<br/>one SBOM format<br/>on demand"] --> L2["L2: Generate<br/>every build<br/>both formats"]
+    L2 --> L3["L3: Central store<br/>+ vuln correlation"]
+    L3 --> L4["L4: Policy gates<br/>+ VEX +<br/>consumer distribution"]
+    L4 --> L5["L5: Continuous<br/>+ runtime SBOM<br/>+ GUAC graph"]
+
+    style L1 fill:#ddd,stroke:#333
+    style L5 fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **CISA**, "Software Bill of Materials (SBOM)" resource hub and the SBOM community working-group

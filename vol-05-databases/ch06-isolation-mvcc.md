@@ -770,6 +770,50 @@ spend it.**
   replica still serves stale reads. Isolation between transactions and consistency between
   replicas are separate axes — ask about both.
 
+
+```mermaid
+flowchart TB
+    S["Snapshot: xmin=100 xmax=200<br/>active list {105, 107}"] --> T["Tuple header: xmin=103 xmax=0"]
+    T --> C1{"xmin < xmin_snap? or xmin in active?"}
+    C1 -->|xmin committed & visible| C2{"xmax set?"}
+    C1 -->|xmin in active list| INV["INVISIBLE<br/>uncommitted insert"]
+    C2 -->|xmax=0| VIS["VISIBLE<br/>live version"]
+    C2 -->|xmax committed after snap| VIS
+    C2 -->|xmax committed before snap| DEL["INVISIBLE<br/>deleted before snapshot"]
+    VIS --> H["Heap fetch returns this version"]
+```
+
+```mermaid
+flowchart TB
+    subgraph Levels["Isolation levels — stronger upward"]
+        RU["Read Uncommitted<br/>allows dirty read"] --> RC["Read Committed<br/>no dirty read"]
+        RC --> RR["Repeatable Read<br/>no non-repeatable, no phantom*"]
+        RR --> SER["Serializable (SSI)<br/>no serialization anomaly"]
+    end
+    subgraph Anomalies["Anomalies forbidden"]
+        A1["Dirty read"] -.-> RC
+        A2["Non-repeatable read"] -.-> RR
+        A3["Phantom"] -.-> RR
+        A4["Write skew"] -.-> SER
+    end
+    Note["* Postgres RR prevents phantom via snapshot<br/>MySQL RR allows phantom without gap locks"] --> RR
+```
+
+```mermaid
+sequenceDiagram
+    participant Tx as Oldest Active Txn (xmin horizon)
+    participant Heap as Heap Pages
+    participant Vac as VACUUM / Autovacuum
+    participant Xid as XID Wraparound Guard
+    Tx->>Heap: long-running txn holds xmin=500
+    Note over Heap: Dead tuples with xmax < 500 cannot be removed<br/>bloat accumulates
+    Vac->>Heap: VACUUM scans but cannot clean before horizon
+    Vac-->>Tx: n_dead_tup stays high
+    Tx->>Tx: COMMIT — horizon advances to 800
+    Vac->>Heap: Now reclaim dead tuples
+    Vac->>Xid: FREEZE tuples with age > freeze age<br/>prevent wraparound failure
+```
+
 ## Further reading
 
 - Berenson, H., Bernstein, P., Gray, J., Melton, J., O'Neil, E., O'Neil, P., "A Critique of ANSI

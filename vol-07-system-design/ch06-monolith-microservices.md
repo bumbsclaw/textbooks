@@ -481,6 +481,45 @@ Splitting a system changes its failure modes from local to distributed, which is
 - Operate the fleet with a mesh (mTLS, outlier detection, traffic splitting), contract testing (Pact), and progressive delivery (Argo Rollouts with automated analysis). A deploy without draining and canary analysis is a partial outage.
 - The monolith is often the correct starting point. A modular monolith with enforced boundaries is the pragmatic default for most teams; services are extracted when a boundary earns its operational cost.
 
+
+```mermaid
+flowchart TD
+    Q{"Pain is scaling or team velocity?"} --> S["Scaling — shard the monolith<br/>horizontal + caching first<br/>cheaper than split"]
+    Q --> T["Team — domain boundaries clear?"]
+    T -->|No - tangled domain| M["Modular monolith<br/>enforce boundaries in-process<br/>split later when seam appears"]
+    T -->|Yes - bounded contexts| V["Extract service<br/>strangler fig, one seam at a time"]
+    V --> C{"Need distributed txn?"}
+    C -->|Yes| E["Saga / outbox — cost is real<br/>reconsider boundary"]
+    C -->|No| G["Split — independent deploy"]
+```
+
+```mermaid
+sequenceDiagram
+    participant Cli as Client
+    participant Proxy as Proxy / Gateway
+    participant Mono as Monolith
+    participant New as New Service
+    Cli->>Proxy: Request for domain X
+    Proxy->>Proxy: Route by path/feature flag
+    alt Still in monolith
+        Proxy->>Mono: Forward
+        Mono-->>Proxy: Response
+    else Migrated
+        Proxy->>New: Forward
+        New-->>Proxy: Response
+    end
+    Proxy-->>Cli: Response
+    Note over Mono,New: Dual-write or CDC sync during transition<br/>dark launch → shadow → cutover
+```
+
+```mermaid
+flowchart TB
+    S["Sync: REST/gRPC<br/>simple, coupled<br/>needs timeout+retry+circuit breaker"] --> A["Async: queue/event<br/>decoupled, buffered<br/>needs idempotency+ordering"]
+    A --> E["Event choreography<br/>no central coordinator<br/>flexible, harder to trace"]
+    E --> O["Orchestration (saga orchestrator)<br/>central workflow<br/>traceable, SPOF risk"]
+    S -.-> C["Choose sync for request/response<br/>async for fire-and-forget<br/>orchestrate long workflows"]
+```
+
 ## Further reading
 
 - Evans, E. *Domain-Driven Design* (Addison-Wesley, 2003), Chapters 1–3, 14 — bounded contexts, ubiquitous language, anti-corruption layers.

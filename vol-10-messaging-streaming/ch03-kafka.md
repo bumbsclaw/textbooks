@@ -457,6 +457,36 @@ kafka-consumer-groups.sh --bootstrap-server kafka-1.internal:9092 --describe --g
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Partition Assignment
+
+```mermaid
+flowchart TB
+    Topic["Topic<br/>N partitions"] --> Group["Consumer group"]
+    Group --> Assignor["Assignor<br/>range / round-robin / sticky"]
+    Assignor --> Members["Members get<br/>disjoint partition sets"]
+    Members --> Rebalance["Rebalance on<br/>join/leave/failure"]
+```
+
+#### End-to-End Kafka Flow
+
+```mermaid
+sequenceDiagram
+    participant Prod as Producer
+    participant Lead as Leader partition
+    participant Rep as Followers
+    participant Cons as Consumer group
+    Prod->>Lead: produce + acks=all
+    Lead->>Rep: replicate ISR
+    Rep-->>Lead: ack
+    Lead-->>Prod: ack
+    Cons->>Lead: fetch offset
+    Lead-->>Cons: batch
+    Cons->>Cons: process + commit
+```
+
 ## Key takeaways
 
 - Kafka is a partitioned, replicated log — sequential segment files, offset/index/timeindex, page cache + `sendfile` for speed. Partitions scale throughput; replication scales durability.

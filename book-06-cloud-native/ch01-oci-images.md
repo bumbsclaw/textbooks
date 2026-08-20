@@ -629,6 +629,37 @@ is the prerequisite to securing any of it: signing signs a manifest digest, scan
 config's layers, admission checks a subject-linked signature, and all of them agree on identity only
 because the format defines it precisely.
 
+### Manifest, config, and layer digests
+
+```mermaid
+flowchart TB
+  IDX["Index (multi-arch)<br/>manifests[] digest to platform"] --> MAN["Manifest<br/>config digest +<br/>layers[] (compressed digest)"]
+  MAN --> CFG["Config blob<br/>architecture, env,<br/>diff_ids (uncompressed)"]
+  MAN --> L1["Layer tar.gz #1<br/>compressed digest<br/>sha256:aaa..."]
+  MAN --> L2["Layer tar.gz #2<br/>sha256:bbb..."]
+  CFG -. "diff_id = hash(uncompressed tar)" .-> U1["Uncompressed diff #1"]
+  L1 -. "gunzip" .-> U1
+  U1 -->|"overlay"| FS["Union filesystem"]
+  style MAN fill:#1f6feb,color:#fff
+  style CFG fill:#8957e5,color:#fff
+```
+
+### Build to attested push flow
+
+```mermaid
+sequenceDiagram
+    participant D as Dockerfile
+    participant B as Build (BuildKit)
+    participant R as Registry
+    participant S as Signer (Cosign)
+    participant A as Attestor (SBOM/provenance)
+    B->>B: build layers + config + manifest
+    B->>R: push manifest@sha256:abc + layers
+    S->>R: sign digest (cosign sign --yes image@abc)
+    A->>R: attach SBOM + SLSA provenance<br/>(referrers API)
+    Note over R: Registry now has<br/>manifest + sig + attestation<br/>all by digest
+```
+
 ## Key takeaways
 
 - An **OCI image is a content-addressed graph**: a **manifest** (JSON of descriptors) pointing to a

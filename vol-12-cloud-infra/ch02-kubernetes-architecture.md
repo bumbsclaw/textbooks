@@ -636,3 +636,52 @@ Managed clusters automate this; self-hosted clusters use `kubeadm upgrade plan` 
 - Brendan Burns et al. — *Kubernetes: Up and Running*, 3rd ed. (O'Reilly, 2022) — control-plane and data-plane walkthroughs.
 - Cilium documentation — eBPF datapath and kube-proxy replacement. https://docs.cilium.io/
 - kubeadm — Creating Highly Available Clusters. https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/
+
+### Kubernetes control plane components
+
+```mermaid
+flowchart TB
+    U[kubectl / API Client] --> API[kube-apiserver]
+    API --> ETCD[(etcd)]
+    API --> SCHED[kube-scheduler]
+    API --> CM[kube-controller-manager]
+    SCHED --> API
+    CM --> API
+    API --> KUBELET[kubelet]
+    KUBELET --> CR[Container Runtime]
+    KUBELET --> KPROXY[kube-proxy]
+```
+
+### Pod scheduling flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant API as kube-apiserver
+    participant Sched as kube-scheduler
+    participant Node as kubelet
+    User->>API: kubectl apply pod.yaml
+    API->>API: Persist to etcd
+    Sched->>API: Watch unassigned Pods
+    Sched->>Sched: Score & filter Nodes
+    Sched->>API: Bind Pod to Node
+    API->>Node: Pod spec via watch
+    Node->>Node: Pull image & start containers
+```
+
+### Kubernetes networking model
+
+```mermaid
+flowchart LR
+    subgraph Cluster["Cluster Network"]
+        SVC[Service VIP] --> EP[Endpoints]
+        EP --> P1[Pod A]
+        EP --> P2[Pod B]
+        EP --> P3[Pod C]
+        CNI[CNI Plugin] --- P1
+        CNI --- P2
+        CNI --- P3
+    end
+    ING[Ingress] --> SVC
+    EXT[External Traffic] --> ING
+```

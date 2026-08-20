@@ -589,6 +589,42 @@ Encryption at the single-service level is a library call. Encryption across a fl
 
 **When not to encrypt at the application layer.** If TLS (Vol 3, Ch 6) already protects data in transit and your storage layer provides at-rest encryption (EBS, GCS, database TDE), application-layer field encryption adds defense-in-depth but also complexity, key-management overhead, and query limitations (encrypted fields cannot be indexed or filtered without special constructions like deterministic or order-preserving encryption, both of which weaken security). Encrypt at the application layer when: the storage layer is untrusted or shared, the data must remain opaque to operators/DBAs, or regulatory scope requires it (e.g., PCI DSS cardholder data, HIPAA PHI). Otherwise, transport + storage-layer encryption may be sufficient — see Ch 4 for the decision framework.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### AES-GCM Encrypt and Decrypt
+
+```mermaid
+sequenceDiagram
+    participant A as App
+    participant K as Key
+    A->>A: generate 96-bit nonce
+    A->>A: AES-GCM encrypt<br/>plaintext + AAD → ciphertext + tag
+    A->>A: store nonce + ciphertext + tag
+    Note over A: decrypt: same nonce + key<br/>tag verifies before plaintext released
+```
+
+#### KMS Envelope for At-Rest
+
+```mermaid
+flowchart LR
+    Data["Plaintext record"] --> DEK["DEK<br/>random 256b"]
+    DEK --> Enc["AES-GCM<br/>nonce + tag"]
+    Enc --> Store["Store: ciphertext +<br/>encrypted DEK"]
+    KMS["KMS KEK"] --> EDek["Encrypt DEK"]
+    EDek --> Store
+```
+
+#### Encryption Scope Decision
+
+```mermaid
+flowchart TB
+    Q{"What is threatened?"} --> Transit["Network adversary"] --> TLS["TLS 1.3 + mTLS"]
+    Q --> AtRest["Stolen disk / snapshot"] --> Disk["Volume + DB encryption"]
+    Q --> Field["Tenant / PII leakage"] --> FieldEnc["Field-level + tokenization"]
+    Q --> Backup["Backup theft"] --> BackupEnc["Backup + envelope encryption"]
+```
+
 ## Key takeaways
 
 - AEAD (RFC 5116) is the only safe symmetric-encryption interface — it binds confidentiality and integrity with a 16-byte tag and fails closed on any tampering. Use AES-GCM where AES-NI is available and ChaCha20-Poly1305 (RFC 8439) elsewhere; both provide 128-bit security.

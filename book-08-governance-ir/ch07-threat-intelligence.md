@@ -550,6 +550,46 @@ shared-fate ecosystem, that second direction is not a cost center bolted onto th
 the same automated inventory-provenance-verify-monitor machinery pointed *outward*, and it is a rational
 fleet-defense investment: the upstream you help harden is the upstream that attacks you next.
 
+### Threat intel lifecycle for supply chain
+
+```mermaid
+flowchart LR
+  A["Collect<br/>(OSV, GHSA, CISA KEV,<br/>vendor advisories, intel feeds)"] --> B["Enrich<br/>(VEX, EPSS, reachability)"]
+  B --> C["Correlate<br/>(SBOM: do we use it?<br/>is it reachable?)"]
+  C --> D["Act<br/>(ticket, block, patch,<br/>policy update)"]
+  D --> E["Feedback<br/>(was intel actionable?<br/>tune sources)"]
+  E --> A
+  style C fill:#1f6feb,color:#fff
+```
+
+### Indicator enrichment pipeline
+
+```mermaid
+flowchart TB
+  CVE["CVE-2024-xxxx<br/>(incoming)"] --> VEX["VEX status?<br/>(affected / not_affected)"]
+  VEX --> EPSS["EPSS score<br/>(exploitation likelihood)"]
+  EPSS --> REACH["Reachability?<br/>(callgraph / runtime)"]
+  REACH --> SBOM["SBOM match?<br/>(do we ship it?)"]
+  SBOM --> PRI["Priority:<br/>P0 reachable+affected+high EPSS<br/>then immediate"]
+  SBOM --> LOW["Low: not_affected /<br/>not shipped then backlog"]
+  style PRI fill:#f85149,color:#fff
+  style LOW fill:#2ea043,color:#fff
+```
+
+### Trust groups for intel sharing
+
+```mermaid
+flowchart LR
+  YOU["Your org"] --> ISAC["ISAC / sector sharing<br/>(e.g., Health-ISAC)"]
+  YOU --> VENDOR["Vendor PSIRT<br/>(direct advisories)"]
+  YOU --> OPEN["OpenSSF / OSV<br/>(public feeds)"]
+  ISAC --> FUSE["Fusion:<br/>dedupe + correlate"]
+  VENDOR --> FUSE
+  OPEN --> FUSE
+  FUSE --> ACT["Actionable tickets<br/>+ policy updates"]
+  style FUSE fill:#1f6feb,color:#fff
+```
+
 ## Key takeaways
 
 - **Supply chain is a shared-fate ecosystem; that makes intelligence disproportionately valuable.** Attacks

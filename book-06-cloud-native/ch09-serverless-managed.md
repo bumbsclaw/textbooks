@@ -506,6 +506,58 @@ and serverless is not "no supply chain." It is a *different, provider-shared* su
 your side of the line, larger and more opaque on theirs — and securing it means being precise about
 where the line sits, owning your side of it completely, and trusting the other side explicitly.
 
+### Serverless supply chain threat map
+
+```mermaid
+flowchart TB
+  SRC["Function source<br/>(repo + deps)"] --> BUILD["Build (zip / image)<br/>(CI)"]
+  BUILD --> REG["Artifact (ECR / S3)"]
+  REG --> DEPLOY["Lambda / Cloud Run /<br/>Cloud Functions deploy"]
+  DEPLOY --> RUNTIME["Managed runtime<br/>(provider patched)"]
+  RUNTIME --> EXT["Extensions / layers<br/>(extra supply chain!)"]
+  SRC -.->|"threat"| T1["Dependency poisoning<br/>(Book 2)"]
+  BUILD -.->|"threat"| T2["Build tampering<br/>(SLSA)"]
+  REG -.->|"threat"| T3["Artifact tampering<br/>(sign + verify)"]
+  EXT -.->|"threat"| T4["Malicious layer/extension"]
+  style T1 fill:#f85149,color:#fff
+  style T3 fill:#1f6feb,color:#fff
+```
+
+### Managed service: shared responsibility
+
+```mermaid
+flowchart LR
+  subgraph YOU["You own"]
+    A["App code + deps"]
+    B["IAM / config"]
+    C["Data + secrets"]
+  end
+  subgraph PROVIDER["Provider owns"]
+    D["Runtime patching"]
+    E["Host / hypervisor"]
+    F["Control plane"]
+  end
+  A --> G["Supply chain controls:<br/>sign, SBOM, provenance"]
+  D --> H["Verify provider posture:<br/>certifications, attestations"]
+  B --> I["IaC policy (least privilege)<br/>+ drift detection"]
+  style YOU fill:#1f6feb,color:#fff
+  style PROVIDER fill:#8957e5,color:#fff
+```
+
+### Serverless attestation gap
+
+```mermaid
+flowchart TD
+  Q{"Where does attestation live?"}
+  Q -->|"Artifact-based (ECR image)"| A1["Sign OCI artifact<br/>verify at deploy (normal flow)"]
+  Q -->|"Zip / inline code"| A2["Sign zip hash<br/>store attestation out-of-band<br/>(S3 / in-toto)"]
+  Q -->|"Provider-built (managed)"| A3["No local artifact<br/>then rely on provider provenance<br/>(e.g., Cloud Build provenance)"]
+  A1 --> R["Policy gate checks<br/>attestation before deploy"]
+  A2 --> R
+  A3 --> R
+  style A2 fill:#d29922,color:#000
+```
+
 ## Key takeaways
 
 - **The boundary moves; it does not disappear.** FaaS and managed services shift the OS, runtime,

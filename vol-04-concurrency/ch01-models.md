@@ -253,6 +253,22 @@ generalizes: optimistic concurrency control is excellent when conflicts are rare
 cheap, and poor otherwise — the same calculus that governs optimistic versus pessimistic locking in
 databases (Volume 5, Chapter 6).
 
+
+```mermaid
+flowchart TD
+    Root["Concurrency models"] --> Shared["Shared memory<br/>Threads + locks, atomics<br/>Lock-free, STM"]
+    Root --> Msg["Message passing<br/>Actors, CSP/channels, queues"]
+    Root --> Async["Async / coroutines<br/>Event loop, futures, structured"]
+    Root --> Data["Data-parallel<br/>SIMD, GPU, MapReduce"]
+    Shared --> Hazard["Hazard: races, deadlocks<br/>Memory model matters"]
+    Msg --> Hazard2["Hazard: deadlocks via cycles<br/>No data races (if isolated)"]
+    Async --> Hazard3["Hazard: blocking the loop<br/>Backpressure, cancellation"]
+    Data --> Hazard4["Hazard: divergence, transfer cost"]
+    style Shared fill:#cce5ff,stroke:#004085
+    style Msg fill:#d4edda,stroke:#155724
+    style Async fill:#fff3cd,stroke:#856404
+```
+
 ## The four families of hazard
 
 Every concurrency bug you will meet belongs to one of four families. Naming them precisely is
@@ -328,6 +344,22 @@ Not wrong answers but *no* answers.
 
 Chapter 5 treats these, including Coffman's four necessary conditions for deadlock and the
 strategies that break each one.
+
+
+```mermaid
+flowchart TD
+    Hazard["Concurrency hazards"] --> Race["Data race<br/>Unsync concurrent access<br/>At least one write<br/>Undefined in many langs"]
+    Hazard --> Atomicity["Atomicity violation<br/>Check-then-act, read-modify-write<br/>Not atomic without lock/CAS"]
+    Hazard --> Order["Ordering violation<br/>Wrong order assumed<br/>Reordering by compiler/CPU"]
+    Hazard --> Deadlock["Deadlock / liveness<br/>Cycle of waits<br/>No progress, not a race"]
+    Race --> Fix1["Fix: lock, atomic, volatile<br/>Or share-nothing"]
+    Atomicity --> Fix2["Fix: CAS loop, transaction<br/>Make compound atomic"]
+    Order --> Fix3["Fix: fence, happens-before<br/>Correct memory ordering"]
+    Deadlock --> Fix4["Fix: lock ordering, timeout<br/>Try-lock, deadlock detection"]
+    style Race fill:#f8d7da,stroke:#721c24
+    style Deadlock fill:#f8d7da,stroke:#721c24
+    style Order fill:#fff3cd,stroke:#856404
+```
 
 ## The quantitative laws
 
@@ -471,6 +503,18 @@ you whether that size is past the point where more workers hurt.** If Little's L
 300 concurrent workers but the USL peak for your workload is at 80, you do not have a pool-sizing
 problem — you have an architecture problem, and the answer is to reduce W (make requests faster) or
 to shard the contended resource, not to add workers.
+
+
+```mermaid
+flowchart TD
+    Amdahl["Amdahl: speedup = 1 / (s + p/N)<br/>s=serial fraction, p=parallel, N=cores<br/>Serial fraction dominates!"] --> Ex1["Example: 10% serial, 8 cores<br/>Max speedup = 1/(0.1+0.9/8) = 4.7x not 8x"]
+    Gustafson["Gustafson: scaled speedup<br/>= s + p*N (problem grows with N)<br/>More optimistic for weak scaling"] --> Ex2["Example: problem scales with cores<br/>Speedup closer to N if serial fixed"]
+    Little["Little: L = lambda * W<br/>Concurrency = throughput * latency<br/>Need concurrency to fill pipeline"] --> Ex3["Example: 10k req/s * 50ms = 500 concurrent<br/>Pool must hold 500 to sustain"]
+    Ex1 --> Lesson["Lesson: find and shrink s<br/>Lock contention, sequential I/O, barriers"]
+    style Amdahl fill:#cce5ff,stroke:#004085
+    style Gustafson fill:#d4edda,stroke:#155724
+    style Little fill:#fff3cd,stroke:#856404
+```
 
 ## Choosing a model
 

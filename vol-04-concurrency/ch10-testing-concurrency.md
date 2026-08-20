@@ -334,6 +334,21 @@ Worth its own subsection, because over-trusting a clean TSan run is a common fai
 - **Some synchronization the tool cannot model** — cross-process shared memory, custom futex use —
   where you may get noise or silence, neither trustworthy.
 
+
+```mermaid
+flowchart TD
+    Tool{"Race detector"}
+    Tool --> TSAN["ThreadSanitizer<br/>Happens-before tracking<br/>Shadow memory<br/>~5-10x slowdown, 3x memory"]
+    Tool --> Helgrind["Helgrind / DRD<br/>Valgrind-based<br/>Slower, no recompile"]
+    Tool --> GoRace["Go race detector<br/>TSAN-based<br/>go run -race"]
+    TSAN --> How["How: track every mem access<br/>Check hb: if concurrent + at least one write<br/>=> report race with stacks"]
+    How --> Limit["Limit: only races that execute<br/>Need coverage + stress<br/>Happens-before via sync primitives<br/>Custom sync needs annotations"]
+    Limit --> CI["CI: run -race on stress tests<br/>Flaky test = real race<br/>Fix before merge"]
+    style TSAN fill:#d4edda,stroke:#155724
+    style How fill:#cce5ff,stroke:#004085
+    style Limit fill:#fff3cd,stroke:#856404
+```
+
 ## Stress testing and schedule exploration
 
 ### Stress alone is weaker than it feels
@@ -439,6 +454,21 @@ retrofitting is close to impossible — and the simulator only tests what it mod
 the worst property of concurrency bugs (irreproducibility) into a non-issue, and it is the
 intellectual ancestor of the deterministic-simulation and Antithesis-style testing covered for
 distributed systems in Volume 6, Chapter 12.
+
+
+```mermaid
+flowchart TD
+    Stress["Stress test<br/>Run test N times in parallel<br/>N=1000, many cores<br/>Hope to hit rare interleaving"] --> Yield["Inject yields<br/>runtime.Gosched / sched_yield<br/>Increase interleaving diversity"]
+    Yield --> Deterministic["Deterministic simulation<br/>Simulated scheduler<br/>Explore ALL interleavings<br/>(like FoundationDB, TigerBeetle)"]
+    Deterministic --> Model["Model checker<br/>Enumerate states<br/>Proves absence for bounded N<br/>Expensive, for critical code"]
+    Stress --> Flaky{"Flaky failure?"}
+    Flaky -->|"yes"| Race["Real race or deadlock<br/>Capture with -race, log, reproduce"]
+    Flaky -->|"no"| Maybe["May still hide bug<br/>Stress != proof"]
+    Maybe --> Deterministic
+    style Stress fill:#fff3cd,stroke:#856404
+    style Deterministic fill:#d4edda,stroke:#155724
+    style Model fill:#cce5ff,stroke:#004085
+```
 
 ## Deadlock and leak detection
 
@@ -590,6 +620,22 @@ suite and hoping:
 4. **Bisect with the detector**, not with the symptom. `git bisect` where the test is "does the
    race detector report under the reproduction workload" converges fast precisely because the
    detector does not need the failure to manifest, only the racy accesses to execute.
+
+
+```mermaid
+flowchart TD
+    Prod["Production anomaly<br/>Hang, slow, deadlock"] --> Dump["Thread dump / goroutine dump<br/>kill -QUIT, pprof, /debug/pprof/goroutine"]
+    Dump --> Analyze{"Analyze"}
+    Analyze --> Blocked["Blocked on lock/mutex<br/>Who holds it? Chain?"]
+    Analyze --> Waiting["Waiting on channel/cond<br/>No sender? Deadlock cycle?"]
+    Analyze --> CPU2["Spinning / livelock<br/>On-CPU profile shows hot loop"]
+    Blocked --> Tool1["pprof mutex profile<br/>contentions, hold time<br/>go: block profile"]
+    Waiting --> Tool2["Wait-for graph<br/>Deadlock detector<br/>Timeout + log holder stack"]
+    CPU2 --> Tool3["CPU flame graph<br/>Find spin, fix backoff"]
+    Note["Always-on: continuous profiling<br/>(Pyroscope, Parca, Datadog)<br/>Post-mortem without repro"]
+    style Dump fill:#cce5ff,stroke:#004085
+    style Note fill:#d4edda,stroke:#155724
+```
 
 ## Designing for testability
 

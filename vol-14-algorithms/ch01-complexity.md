@@ -471,3 +471,35 @@ flowchart LR
 - Cliff Click — "Aging and Modern Hardware" (QCon 2009 talk) — memory hierarchy and its effect on data-structure choice.
 - JMH samples (openjdk.java.net/projects/code-tools/jmh) and Go `testing` package docs — correct microbenchmark methodology for JVM and Go.
 - Brendan Gregg — *Systems Performance: Enterprise and the Cloud*, 2nd ed. (2020). Chapters 6-7 on CPU, memory, and benchmarking.
+
+### Complexity classes overview
+
+```mermaid
+flowchart LR
+    C1[O1 - Constant] --> C2[O log n - Logarithmic]
+    C2 --> C3[O n - Linear]
+    C3 --> C4[O n log n - Linearithmic]
+    C4 --> C5[O n squared - Quadratic]
+    C5 --> C6[O 2^n - Exponential]
+```
+
+### Time vs space tradeoff
+
+```mermaid
+flowchart TB
+    P[Problem] --> T1[Time-Optimized - More Memory]
+    P --> T2[Space-Optimized - More Time]
+    T1 --> EX1[Memoization / Caching]
+    T2 --> EX2[Recomputation / Streaming]
+```
+
+### Amortized analysis intuition
+
+```mermaid
+flowchart LR
+    OP1[Op 1 - Cheap] --> OP2[Op 2 - Cheap]
+    OP2 --> OP3[Op 3 - Expensive]
+    OP3 --> AVG[Average Cost per Op - Amortized O1]
+    OP1 -.-> AVG
+    OP2 -.-> AVG
+```

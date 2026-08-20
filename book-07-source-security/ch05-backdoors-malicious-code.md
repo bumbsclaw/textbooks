@@ -661,6 +661,50 @@ for everyone — is also its single deepest point of failure, and it is a point 
 the control everyone trusts, structurally cannot defend. Only reproducibility, diversity, a
 minimized base, and provenance reach it.
 
+### Backdoor detection funnel
+
+```mermaid
+flowchart LR
+  A["All PRs (N)"] --> B["Automated: SAST / Semgrep<br/>+ secret scan + dep review"]
+  B --> C["Heuristics: anomalous diff<br/>(obfuscation, new network/exec, build script edit)"]
+  C --> D["Human review<br/>(CODEOWNERS + security)"]
+  D --> E["Deep: reproducible build<br/>+ provenance check +<br/>behavioral tests"]
+  B -.->|"blocks ~80% obvious"| B1["Fast"]
+  C -.->|"flags subtle 5%"| C1["Needs tuning"]
+  E -.->|"catches build-time injection"| E1["Expensive"]
+  style E fill:#1f6feb,color:#fff
+```
+
+### Malicious commit pattern catalog
+
+```mermaid
+flowchart TD
+  M["Malicious commit traits"] --> P1["Obfuscated payload<br/>(base64, hex, minified blob)"]
+  M --> P2["Build-script edit<br/>(package.json scripts, Makefile,<br/>GitHub Actions workflow)"]
+  M --> P3["New outbound network<br/>(curl/wget to unknown host)"]
+  M --> P4["Privileged operations<br/>(chmod +s, credential access)"]
+  M --> P5["Small diff, big effect<br/>(one-liner in auth path)"]
+  M --> DET["Detectors: AST diff, dep diff,<br/>workflow diff, egress policy"]
+  style DET fill:#2ea043,color:#fff
+```
+
+### Review red-flags decision tree
+
+```mermaid
+flowchart TD
+  Q1{"Does PR touch security-sensitive area?<br/>(auth, crypto, CI config, deps)"}
+  Q1 -->|Yes| Q2{"Is author trusted +<br/>change justified?"}
+  Q1 -->|No| STD["Standard review"]
+  Q2 -->|No / unknown| DEEP["Deep review + second reviewer<br/>+ run in sandbox"]
+  Q2 -->|Yes| Q3{"Does diff contain<br/>obfuscation or network?"}
+  Q3 -->|Yes| DEEP
+  Q3 -->|No| Q4{"Do checks pass<br/>(SAST, tests, provenance)?"}
+  Q4 -->|No| BLOCK["Block + request changes"]
+  Q4 -->|Yes| APPROVE["Approve"]
+  style DEEP fill:#d29922,color:#000
+  style BLOCK fill:#f85149,color:#fff
+```
+
 ## Key takeaways
 
 - The real threat is not obvious malware, which review and scanning catch, but **underhanded code**

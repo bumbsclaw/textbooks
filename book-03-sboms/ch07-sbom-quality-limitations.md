@@ -778,6 +778,42 @@ on, never the finished building.
   Report the score distribution and the known structural gaps; never let a coverage number
   masquerade as completeness.
 
+
+### SBOM quality dimensions
+
+```mermaid
+flowchart TD
+    QUALITY["SBOM Quality"] --> COMP["Completeness<br/>— all components present?"]
+    QUALITY --> ACC["Accuracy<br/>— correct versions + hashes?"]
+    QUALITY --> FRESH["Freshness<br/>— reflects current build?"]
+    QUALITY --> CONF["Conformance<br/>— NTIA minimum elements?"]
+
+    COMP --> TEST1["Test: compare<br/>manifest vs image scan"]
+    ACC --> TEST2["Test: hash verification"]
+    FRESH --> TEST3["Test: SBOM timestamp<br/>vs build timestamp"]
+    CONF --> TEST4["Test: validator<br/>(spdx-tools / cdx validate)"]
+
+    style QUALITY fill:#ffd966,stroke:#333
+```
+
+
+### What SBOMs cannot tell you
+
+```mermaid
+flowchart TD
+    SBOM["SBOM<br/>— inventory"] --> NO1["Not: is vuln<br/>reachable? (need call graph)"]
+    SBOM --> NO2["Not: was artifact<br/>tampered? (need provenance)"]
+    SBOM --> NO3["Not: is license<br/>compliant? (need policy)"]
+    SBOM --> NO4["Not: runtime<br/>behavior? (need dynamic)"]
+
+    NO1 --> NEED1["Need: reachability<br/>analysis"]
+    NO2 --> NEED2["Need: SLSA<br/>provenance + sig"]
+    NO3 --> NEED3["Need: license<br/>policy engine"]
+    NO4 --> NEED4["Need: runtime<br/>observation"]
+
+    style SBOM fill:#b6d7ff,stroke:#333
+```
+
 ## Further reading
 
 - **NTIA**, "The Minimum Elements for a Software Bill of Materials (SBOM)," 12 July 2021 — the

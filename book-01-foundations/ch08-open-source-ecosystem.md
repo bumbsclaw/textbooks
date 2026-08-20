@@ -682,6 +682,47 @@ should be *you*.
   2016) cannot break builds you have already validated — and so the mirror doubles as your
   security chokepoint.
 
+
+### Open-source funding and sustainability risk
+
+```mermaid
+flowchart TD
+    MAINT["Single maintainer<br/>Unpaid, burnt out"] --> RISK1["Slow security patches"]
+    MAINT --> RISK2["Social-engineering<br/>vulnerability (xz)"]
+    MAINT --> RISK3["Abandonment<br/>— dependency becomes unmaintained"]
+
+    SPONSOR["Corporate sponsor<br/>/ foundation"] --> MIT1["Funded audit"]
+    SPONSOR --> MIT2["Bus-factor > 1"]
+
+    RISK2 --> XZ["xz case:<br/>new maintainer = attacker"]
+    RISK3 --> TAKEOVER["Package takeover<br/>/ hijack"]
+
+    style MAINT fill:#f88,stroke:#900
+    style SPONSOR fill:#b6f0b6,stroke:#333
+```
+
+
+### Ecosystem health signals
+
+```mermaid
+flowchart LR
+    subgraph Signals["Health Signals"]
+        S1["Commit recency<br/>& contributor count"]
+        S2["Mean time to<br/>CVE fix"]
+        S3["Funding /<br/>sponsorship"]
+        S4["Two-person<br/>review policy"]
+        S5["Signed releases<br/>+ provenance"]
+    end
+    S1 --> SCORE["OpenSSF Scorecard<br/>aggregate score"]
+    S2 --> SCORE
+    S3 --> SCORE
+    S4 --> SCORE
+    S5 --> SCORE
+    SCORE --> DECISION{"Adopt /<br/>mitigate / reject?"}
+    DECISION -->|Low score| MITIGATE["Vendor / pin /<br/>replace / contribute"]
+    DECISION -->|High score| ADOPT["Adopt with<br/>monitoring"]
+```
+
 ## Further reading
 
 - Randall Munroe, xkcd #2347, "Dependencies" (`xkcd.com/2347`) — the Nebraska-maintainer

@@ -584,6 +584,38 @@ verifies flawlessly (Book 7, Chapters 5–6). Signing catches, deters, and trace
 signing for the accountability it genuinely provides — and never mistake a green badge for a safe
 change.
 
+### Commit signature verification states
+
+```mermaid
+stateDiagram-v2
+    [*] --> Unsigned: commit without sig
+    [*] --> Signed: git commit -S
+    Signed --> Verified: sig valid + key linked to account
+    Signed --> Unverified: sig invalid (bad key / tampered)
+    Signed --> Unknown: valid sig but key not on account
+    Verified --> Trusted: key is SSH/GPG + vigilant mode<br/>or Sigstore cert matches policy
+    Unverified --> Blocked: branch rule requires verified
+    Unknown --> Blocked: not associated
+    Unsigned --> Blocked: requires signing
+    Trusted --> [*]
+    Blocked --> [*]
+```
+
+### Signing mechanism comparison
+
+```mermaid
+flowchart LR
+  OPT{"Choose mechanism"}
+  OPT --> GPG["GPG (classic)<br/>WoT / keyserver<br/>long-lived key"]
+  OPT --> SSH["SSH (GitHub-native)<br/>reuse existing SSH key<br/>simpler rotation"]
+  OPT --> SIGSTORE["Sigstore (gitsign)<br/>OIDC-bound cert<br/>short-lived, keyless"]
+  GPG --> P1["Pros: portable<br/>Cons: key mgmt heavy"]
+  SSH --> P2["Pros: easy adoption<br/>Cons: key still long-lived"]
+  SIGSTORE --> P3["Pros: keyless + identity<br/>Cons: needs OIDC + witness"]
+  style SIGSTORE fill:#2ea043,color:#fff
+  style SSH fill:#1f6feb,color:#fff
+```
+
 ## Key takeaways
 
 - Git's `author`/`committer` fields are **unauthenticated strings**; `git commit --author=...`

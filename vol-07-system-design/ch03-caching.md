@@ -695,6 +695,52 @@ flowchart TD
 - Distributed cache topology is a trade-off: Memcached is simpler and scales linearly but has no replication; Redis Cluster provides replication and richer data structures but has more operational complexity. Many teams run both for different tiers.
 - Hit ratio is the metric that drives economics. Going from 85% to 95% hit ratio halves database load. Monitor it continuously, alert on drops, and treat cache tuning as high-ROI work. Size the cache to the working set with headroom; beyond that, policy matters more than bytes.
 
+
+```mermaid
+flowchart TD
+    Q{"Write path?"} --> A["Cache-aside<br/>app manages cache<br/>lazy populate, TTL expiry<br/>simple, stale window on write"]
+    Q --> T["Write-through<br/>write to cache + DB sync<br/>no stale, higher write latency"]
+    Q --> B["Write-behind<br/>write to cache, async to DB<br/>fast, risk of loss on crash"]
+    Q --> R["Read-through<br/>loader function in cache layer<br/>app never misses — cache fetches"]
+    A --> C{"Strong consistency needed?"}
+    T --> C
+    C -->|Yes| T
+    C -->|No| A
+```
+
+```mermaid
+flowchart TB
+    L["LRU — evict least recently used<br/>simple, scan pollution"] --> F["LFU — evict least frequent<br/>frequency sketch, resists scan"]
+    F --> W["W-TinyLFU — admission filter + segmented LRU<br/>window + main (probation/protected)<br/>used in Caffeine, Ristretto"]
+    L --> S["FIFO / Random — cheap<br/>ok for uniform access<br/>poor under skew"]
+    W --> C["Choose W-TinyLFU for skewed<br/>LRU for recency-heavy<br/>FIFO for bounded memory only"]
+```
+
+```mermaid
+sequenceDiagram
+    participant C as 100 Clients
+    participant SF as Single-flight / mutex
+    participant Cache as Redis
+    participant DB as Database
+    C->>SF: GET hot key — cache miss
+    SF->>SF: Only 1 winner proceeds
+    SF->>DB: Single query to DB
+    DB-->>SF: Result
+    SF->>Cache: SET with jittered TTL
+    SF-->>C: Fan-out result to 99 waiters
+    Note over C,DB: Without single-flight: 100 queries hit DB<br/>cache stampede → DB overload<br/>Fix: + probabilistic early refresh before expiry
+```
+
+```mermaid
+flowchart TB
+    A["Client"] --> L["In-process (Caffeine)<br/>~50ns, per-host, no coherence"]
+    A --> R["External cluster (Redis Cluster)<br/>~0.5ms, shared, consistent hash<br/>replication + failover"]
+    A --> C["CDN / Edge (CloudFront)<br/>~10ms from edge, global<br/>cache-control, purge API"]
+    L --> T["Tiered: L1 in-process → L2 Redis → L3 DB<br/>hit ratio multiplies<br/>invalidation via pub/sub"] 
+    R --> T
+    C --> T
+```
+
 ## Further reading
 
 - Caffeine cache design — Ben Manes, "Caffeine: A High Performance Caching Library for Java" — the W-TinyLFU paper and implementation that replaced Guava cache; explains segmented LRU and TinyLFU admission with benchmarks. https://github.com/ben-manes/caffeine

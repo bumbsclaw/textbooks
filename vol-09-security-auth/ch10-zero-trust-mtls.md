@@ -820,6 +820,36 @@ A minimal end-to-end checklist for a cluster that means it:
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### mTLS with SPIFFE
+
+```mermaid
+sequenceDiagram
+    participant W as Workload
+    participant Agent as SPIRE Agent
+    participant Server as SPIRE Server
+    participant Peer as Peer workload
+    W->>Agent: request SVID
+    Agent->>Server: attest + sign CSR
+    Server-->>Agent: X509 SVID spiffe://trust/svc
+    Agent-->>W: SVID + bundle
+    W->>Peer: mTLS handshake with SVID
+    Peer->>Peer: verify SVID + bundle + policy
+```
+
+#### Zero Trust Policy Evaluation
+
+```mermaid
+flowchart TB
+    Req["Request with<br/>mTLS SVID"] --> AuthN["AuthN: verify cert<br/>+ SPIFFE ID"]
+    AuthN --> Device["Device / workload posture"]
+    Device --> Policy["Policy engine<br/>OPA / Cedar"]
+    Policy -->|allow| Allow["Allow + audit"]
+    Policy -->|deny| Deny["Deny + alert"]
+```
+
 ## Key takeaways
 
 - Zero trust replaces network trust with workload identity + mutual authentication + identity-based authorization on every hop. The network is never a trust boundary — identity (SPIFFE ID) is.

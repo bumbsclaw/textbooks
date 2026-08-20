@@ -615,6 +615,34 @@ response; they made *visible and legally consequential* a capability that a well
 distributed-systems organization should have built anyway. The rest of Book 8 is how you run
 that program.
 
+### US thread: EO 14028 to attestation
+
+```mermaid
+flowchart LR
+  EO["EO 14028<br/>(May 2021)"] --> NIST["NIST SSDF / SBOM guidance<br/>(SP 800-218)"]
+  NIST --> OMB["OMB M-22-18 to M-23-16<br/>(procurement rule)"]
+  OMB --> FORM["CISA Self-Attestation Form<br/>(secure dev practices)"]
+  FORM --> BUY["Federal purchase<br/>requires attestation"]
+  FORM --> FALSE["False attestation to<br/>False Claims Act risk"]
+  style EO fill:#1f6feb,color:#fff
+  style FALSE fill:#f85149,color:#fff
+```
+
+### Two models of market pressure
+
+```mermaid
+flowchart TB
+  subgraph US["US model: procurement-driven"]
+    U1["Condition of sale to gov<br/>self-attestation<br/>+ SBOM on request"] --> U2["Incentive: keep gov market<br/>Risk: civil enforcement"]
+  end
+  subgraph EU["EU model: market-access law"]
+    E1["Condition of sale anywhere in EU<br/>CRA: security-by-design,<br/>vuln handling, incident reporting"] --> E2["Enforcement: fines,<br/>product withdrawal,<br/>phase-in 2026-27"]
+  end
+  US -.-> COMPARISON["Both push same controls:<br/>SSDF/S2C2F to SLSA/repro to signing/provenance"]
+  EU -.-> COMPARISON
+  style COMPARISON fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **Regulation followed catastrophe.** SolarWinds (disclosed December 2020) and the 2020–2021

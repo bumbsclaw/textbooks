@@ -523,6 +523,68 @@ non-colluding humans under their rightful owners' control. Only the *combination
 identity, plus least privilege, plus two-person control, plus behavioral detection — bounds a threat
 that, by construction, wears a trusted face.
 
+### ATO kill-chain: CircleCI 2023 pattern
+
+```mermaid
+sequenceDiagram
+    participant M as Infostealer (on laptop)
+    participant E as Engineer session
+    participant S as SSO / IdP
+    participant C as CI system (CircleCI)
+    participant D as Downstream (customers)
+    M->>E: exfiltrates live SSO token<br/>(bypasses 2FA)
+    M->>S: replays token then authenticated
+    M->>C: enumerates stored secrets<br/>(customer env vars / keys)
+    C->>M: secrets exfiltrated
+    Note over D: Blast radius = all projects<br/>that stored secrets in CircleCI
+    D->>D: forced global rotation<br/>(mass incident)
+```
+
+### Layered ATO defenses (must combine)
+
+```mermaid
+flowchart TB
+  L1["1. Phishing-resistant MFA<br/>(FIDO2 / passkey / YubiKey)"] --> L2["2. No long-lived creds<br/>(OIDC workload identity + short-lived PATs)"]
+  L2 --> L3["3. Least privilege<br/>(RBAC, repo-scoped tokens, expiry)"]
+  L3 --> L4["4. Endpoint hardening<br/>(EDR, disk encryption, token binding)"]
+  L4 --> L5["5. Session hygiene<br/>(short TTL, re-auth for sensitive ops)"]
+  L5 --> L6["6. Behavioral detection<br/>(impossible travel, bulk access)"]
+  style L1 fill:#2ea043,color:#fff
+  style L6 fill:#1f6feb,color:#fff
+```
+
+### Malicious insider bounding
+
+```mermaid
+flowchart LR
+  A["Insider with legit access"] --> B{"Two-person control?"}
+  B -->|Yes (PR + review)| C["Needs collusion<br/>to land malicious code"]
+  B -->|No (self-merge / bypass)| D["Single-actor backdoor<br/>(insider succeeds)"]
+  A --> E["Least privilege<br/>(cannot access all repos)"]
+  A --> F["Audit log + UEBA<br/>(bulk clone, off-hours push)"]
+  C --> G["Detection via<br/>separation of duties +<br/>provenance"]
+  style C fill:#2ea043,color:#fff
+  style D fill:#f85149,color:#fff
+```
+
+### Offboarding and access removal SLA
+
+```mermaid
+sequenceDiagram
+    participant HR as HR / IT
+    participant IDP as IdP / directory
+    participant GH as Git hosting
+    participant KMS as Secrets / KMS
+    participant SIEM as SIEM (audit)
+    HR->>IDP: termination event
+    IDP->>GH: revoke SSO + remove org membership
+    IDP->>KMS: revoke PATs / tokens
+    GH->>GH: transfer owned repos / rotate deploy keys
+    KMS->>SIEM: log {who, when, what revoked}
+    SIEM->>SIEM: alert if post-termination access attempted
+    Note over HR,SIEM: SLA: automated < 15 min<br/>manual fallback audited
+```
+
 ## Key takeaways
 
 - **Insider/ATO breaks the premise every other control assumes** — an honest identity in rightful

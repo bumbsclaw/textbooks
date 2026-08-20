@@ -694,6 +694,41 @@ laptop build was not.
   integrity-protected, and the durable design is a two-track split: fast ambient dev builds,
   hermetic reproducible release builds.
 
+
+### Hermetic vs reproducible: Venn and payoff
+
+```mermaid
+flowchart TD
+    HERM["Hermetic<br/>no network,<br/>declared inputs"] --> BOTH["Hermetic + Reproducible<br/>— strongest: bit-for-bit +<br/>isolated (SLSA L3)"]
+    REPRO["Reproducible<br/>bit-for-bit<br/>identical output"] --> BOTH
+    HERM --> HONLY["Hermetic only<br/>isolated but<br/>non-deterministic (timestamps)"]
+    REPRO --> RONLY["Reproducible only<br/>deterministic but<br/>fetches at build time"]
+    BOTH --> VERIFY["Independent<br/>verification possible"]
+    style BOTH fill:#b6f0b6,stroke:#333
+    style HONLY fill:#ffd966,stroke:#333
+    style RONLY fill:#ffd966,stroke:#333
+```
+
+
+### Sources of non-determinism and fixes
+
+```mermaid
+flowchart TD
+    SRC["Non-determinism sources"] --> T1["Timestamps<br/>to SOURCE_DATE_EPOCH"]
+    SRC --> T2["File ordering<br/>to sorted inputs"]
+    SRC --> T3["Randomness<br/>to fixed seed"]
+    SRC --> T4["Absolute paths<br/>to -trimpath / relocatable"]
+    SRC --> T5["Network fetches<br/>to vendored / hermetic"]
+
+    T1 --> FIX["Reproducible<br/>build"]
+    T2 --> FIX
+    T3 --> FIX
+    T4 --> FIX
+    T5 --> FIX
+    FIX --> V1["Verifier rebuilds<br/>— hashes match?"]
+    style FIX fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **Reproducible Builds project** — https://reproducible-builds.org/ — the definitions, the

@@ -850,6 +850,48 @@ path — which is why, at fleet scale, "what can we push to VAP?" is now a first
 
 ---
 
+### Admission controller chain and ordering
+
+```mermaid
+flowchart LR
+  REQ["Pod CREATE request"] --> MUT["Mutating webhooks<br/>(inject sidecars, image digest)"]
+  MUT --> SCHEMA["Schema validation<br/>(api-server)"]
+  SCHEMA --> VAL["Validating webhooks<br/>(image sig + policy)<br/>(Kyverno / Gatekeeper)"]
+  VAL -->|"allow"| ETCD["Persist to etcd"]
+  VAL -->|"deny"| REJ["Reject 403<br/>reason: unverified image"]
+  style VAL fill:#1f6feb,color:#fff
+  style REJ fill:#f85149,color:#fff
+```
+
+### Policy-as-code lifecycle
+
+```mermaid
+flowchart TB
+  A["Author policy<br/>(Rego / Kyverno YAML / CEL)"] --> B["Unit test<br/>(conftest / kyverno test)"]
+  B --> C["Review + sign<br/>(git + provenance)"]
+  C --> D["Deploy to cluster<br/>(GitOps: ArgoCD / Flux)"]
+  D --> E["Monitor: dry-run / audit<br/>(violations logged, not blocked)"]
+  E --> F{"Stable?"}
+  F -->|Yes| G["Enforce: deny mode"]
+  F -->|No| A
+  style G fill:#2ea043,color:#fff
+```
+
+### Fail-open vs fail-closed decision tree
+
+```mermaid
+flowchart TD
+  Q1{"Can webhook be reached?"}
+  Q1 -->|Yes| V1["Verify path<br/>(normal)"]
+  Q1 -->|No / timeout| Q2{"failurePolicy?"}
+  Q2 -->|FailClosed (recommended prod)| BLOCK["Block (safe)<br/>may block deploys<br/>if webhook down"]
+  Q2 -->|FailOpen| ALLOW["Allow (risky)<br/>unverified images may run"]
+  Q2 -->|FailClosed + HA| HA["HA webhook (3 replicas)<br/>+ cache + timeout tuning"]
+  style BLOCK fill:#d29922,color:#000
+  style ALLOW fill:#f85149,color:#fff
+  style HA fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **Admission is the policy enforcement point** because it is the last checkpoint before an object is

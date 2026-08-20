@@ -658,6 +658,58 @@ The Spectral ruleset and `buf.yaml` are versioned artifacts. A rule change (e.g.
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Governance Council Flow
+
+```mermaid
+flowchart TB
+    Proposal["API proposal<br/>RFC + spec"] --> Review["Governance review<br/>naming, style, security"]
+    Review -->|Changes| Revise["Revise spec"] --> Review
+    Review -->|Approved| Catalog["Catalog + score<br/>published"]
+    Catalog --> PIR["Post-launch review<br/>adoption + SLOs"]
+```
+
+#### CI Governance Pipeline
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant CI as CI
+    participant Lint as Spectral / buf lint
+    participant Break as Breaking check
+    participant Score as API Scoreboard
+    Dev->>CI: push spec
+    CI->>Lint: lint + style
+    Lint-->>CI: report
+    CI->>Break: diff vs main
+    Break-->>CI: pass/fail
+    CI->>Score: publish score
+    Score-->>Dev: badge + merge gate
+```
+
+#### Catalog Discovery
+
+```mermaid
+flowchart LR
+    Specs["Spec repos<br/>OpenAPI + proto"] --> Registry["Registry +<br/>Backstage catalog"]
+    Registry --> Search["Search + lineage<br/>who owns, who calls"]
+    Search --> Guard["Guardrails<br/>no shadow APIs"]
+    Guard --> Consumers["Consumers discover<br/>reusable APIs"]
+```
+
+#### Style Guide Enforcement Levels
+
+```mermaid
+stateDiagram-v2
+    [*] --> Warn: style violation low
+    Warn --> Error: repeated / high severity
+    Error --> Block: breaking or security
+    Block --> [*]: must fix
+    Warn --> [*]: acknowledged
+```
+
 ## Key takeaways
 
 - Governance at scale is platform-enabled, not committee-driven. Codify standards as machine-checkable rules (Spectral, buf lint), ship them as versioned packages, enforce them in CI, and reserve human review for breaking or novel changes — the fast path keeps review latency flat as service count grows.

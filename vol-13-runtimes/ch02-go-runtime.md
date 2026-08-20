@@ -553,3 +553,14 @@ Go's runtime choices shape how you operate fleets:
 - *GOMEMLIMIT* — https://tip.golang.org/doc/gc-guide#GOMEMLIMIT ; *A Guide to the Go Garbage Collector* — https://go.dev/doc/gc-guide
 - *uber-go/automaxprocs* — https://github.com/uber-go/automaxprocs
 - Cox, *Hardware Memory Models* — https://research.swtch.com/hwmm (background for understanding Go's model vs. x86/ARM)
+
+### Goroutine scheduling - GMP model
+
+```mermaid
+flowchart TB
+    G[Goroutines G] --> P[Processors P]
+    P --> M[Machine Threads M]
+    P --> RQ[Local Run Queue]
+    RQ --> GQ[Global Run Queue]
+    M --> OS[OS Threads]
+```

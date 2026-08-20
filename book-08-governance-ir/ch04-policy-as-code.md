@@ -754,6 +754,52 @@ governance as documents that describe a posture nobody continuously verifies. Th
 between a program that says it requires X and a program in which X is structurally true, and it is the
 connective tissue that makes the enforcement of Books 2 through 7 add up to a governed whole.
 
+### Policy engine architecture (Kubernetes example)
+
+```mermaid
+flowchart TB
+  REQ["Admission request<br/>(pod with image)"] --> WEB["Webhook<br/>(Kyverno / Gatekeeper / EC)"]
+  WEB --> CACHE["Cache: sigs + attestations<br/>(from registry)"]
+  CACHE --> VERIFY["Verify: cosign +<br/>Fulcio chain + Rekor SET"]
+  VERIFY --> EVAL["Evaluate Rego/CEL:<br/>SLSA >= 2? CVE == 0 critical?<br/>builder in allowlist?"]
+  EVAL -->|"allow"| ALLOW["Admit"]
+  EVAL -->|"deny"| DENY["Deny + message<br/>(which check failed)"]
+  EVAL -->|"audit"| AUDIT["Audit mode:<br/>log violation only"]
+  style DENY fill:#f85149,color:#fff
+  style ALLOW fill:#2ea043,color:#fff
+```
+
+### Policy lifecycle: author to enforce
+
+```mermaid
+flowchart LR
+  A["Author policy<br/>(git)"] --> B["Test (conftest)<br/>unit + e2e"]
+  B --> C["Review + sign<br/>(in-toto provenance)"]
+  C --> D["Stage: audit mode<br/>(observe violations)"]
+  D --> E["Promote: deny mode<br/>(enforcing)"]
+  E --> F["Monitor: violations to<br/>SIEM + dashboard"]
+  F --> G{"Tune needed?"}
+  G -->|Yes| A
+  G -->|No| H["Stable"]
+  style E fill:#f85149,color:#fff
+  style H fill:#2ea043,color:#fff
+```
+
+### Exception and waiver flow
+
+```mermaid
+flowchart TD
+  V["Policy violation<br/>(image fails check)"] --> Q1{"Legitimate exception?<br/>(zero-day window / legacy)"}
+  Q1 -->|No| BLOCK["Remain blocked<br/>fix image"]
+  Q1 -->|Yes| REQ["Request waiver<br/>{image, reason, TTL, approver}"]
+  REQ --> APP{"Approved by<br/>security + owner?"}
+  APP -->|No| BLOCK
+  APP -->|Yes| GRANT["Grant TTL-bound exception<br/>(logged, expiring)"]
+  GRANT --> EXP["Auto-expire<br/>then re-evaluate"]
+  style BLOCK fill:#f85149,color:#fff
+  style GRANT fill:#d29922,color:#000
+```
+
 ## Key takeaways
 
 - **Prose policy enforces nothing.** A document has no enforcement surface; it fails on scale, drift,

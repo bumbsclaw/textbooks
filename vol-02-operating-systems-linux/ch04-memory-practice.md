@@ -403,6 +403,23 @@ jemalloc and tcmalloc, and runtimes that want huge pages, opt in per-region and 
 blanket behavior. This is a fleet p99 gotcha: one wrong default in a base image, replicated
 across thousands of pods, is a fleet-wide tail-latency regression.
 
+
+```mermaid
+flowchart TD
+    Small["4 KiB pages<br/>64-entry TLB = 256 KiB reach<br/>Large working set = TLB thrash<br/>Page walk on every miss"]
+    Huge["2 MiB huge pages<br/>64-entry TLB = 128 MiB reach (512x)<br/>Fewer walks, fewer faults"]
+    Trans["Transparent Huge Pages (THP)<br/>khugepaged coalesces<br/>defrag stalls, latency spikes"]
+    Explicit["Explicit hugetlbfs<br/>Pre-allocated at boot<br/>Predictable, needs config"]
+    Small --> Choose{"Need TLB reach?"}
+    Choose -->|"latency-sensitive, large heap"| Huge
+    Huge --> Trans
+    Huge --> Explicit
+    Trade["Trade: internal fragmentation<br/>2 MiB page for 4 KiB alloc wastes 99%<br/>Measure with perf stat dTLB-load-misses"]
+    style Small fill:#f8d7da,stroke:#721c24
+    style Huge fill:#d4edda,stroke:#155724
+    style Trans fill:#fff3cd,stroke:#856404
+```
+
 ## The OOM killer: when overcommit comes due
 
 Chapter 3 explained **overcommit**: Linux hands out more virtual memory than it has physical
@@ -522,6 +539,24 @@ perfectly healthy (all that reclaimable cache again). A cgroup with rising `memo
 is fine. `systemd-oomd` uses PSI to proactively kill workloads *before* the kernel's hard OOM
 kicks in, precisely because PSI sees the pain coming. Alert on PSI.
 
+
+```mermaid
+flowchart TD
+    Alloc["malloc / mmap<br/>Overcommit allows > RAM"] --> Fault["Page fault: need frame"]
+    Fault --> Reclaim{"Reclaim cache?<br/>Drop clean pages"}
+    Reclaim -->|"success"| OK["Continue"]
+    Reclaim -->|"no reclaimable"| Swap{"Swap enabled?"}
+    Swap -->|"yes"| SwapOut["Swap out cold pages<br/>Stalls, thrashing"]
+    Swap -->|"no / still no memory"| OOM{"OOM killer<br/>Select victim by oom_score"}
+    OOM --> Kill["SIGKILL chosen process<br/>May not be the allocator!"]
+    Kill --> Freed["Memory freed<br/>System recovers (or cascades)"]
+    Score["oom_score = f(RSS, nice, cgroup)<br/>oom_score_adj -1000..1000<br/>Containers: per-cgroup OOM"]
+    OOM -.-> Score
+    style OOM fill:#f8d7da,stroke:#721c24
+    style Kill fill:#f8d7da,stroke:#721c24
+    style OK fill:#d4edda,stroke:#155724
+```
+
 ## Observing memory: telling leaks from fragmentation from cache
 
 You cannot manage what you cannot measure, and memory metrics are riddled with traps —
@@ -586,6 +621,23 @@ refault rate** (thrashing), and **OOM-kill events** (a kill already happened —
 alert, not a "prevent" one). Do **not** alert on raw `used`, `free`, VSZ, RSS-sum, or "percent
 of `memory.max`" without separating cache from anon. Getting this right across a fleet is the
 difference between actionable pages and alert fatigue.
+
+
+```mermaid
+flowchart TD
+    Symptom["RSS growing or OOM?"] --> Check{"Check /proc/meminfo + cgroup"}
+    Check -->|"MemAvailable low, cache high"| Cache["Cache pressure, not leak<br/>Reclaimable, normal"]
+    Check -->|"Slab high"| Slab["Slab leak (dentry/inode)<br/>Check /proc/slabinfo, drop_caches test"]
+    Check -->|"RSS high, cache low"| RSS{"RSS breakdown"}
+    RSS --> Heap["Heap: brk/mmap anon<br/>jemalloc stats, heap profile<br/>(pprof, jeprof)"]
+    RSS --> PageCache2["File RSS: page cache per cgroup<br/>memory.stat file_mapped"]
+    RSS --> Huge2["Huge pages pinned<br/>Check HugePages_Total"]
+    Heap --> Leak{"Growth unbounded?"}
+    Leak -->|"yes"| Fix["Fix leak: ASAN, valgrind, heap dump"]
+    Leak -->|"no"| Frag["Fragmentation: high RSS, low use<br/>Allocator stats (jemalloc bins)"]
+    style Cache fill:#d4edda,stroke:#155724
+    style Fix fill:#fff3cd,stroke:#856404
+```
 
 ## Distributed-systems lens
 

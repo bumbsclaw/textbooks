@@ -440,6 +440,50 @@ Wire bytes outlive the request that produced them:
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Compatibility Matrix
+
+```mermaid
+flowchart TB
+    Change{"Field change"} --> AddOpt{"Add optional field?"}
+    AddOpt -->|Yes| BackYes["Backward compatible ✓"]
+    AddOpt -->|No| AddReq{"Add required field?"}
+    AddReq -->|Yes| Break["Breaking ✗<br/>needs major or default"]
+    Change --> Remove{"Remove/rename?"}
+    Remove -->|Yes| Break
+    Change --> TypeWiden{"Widen type<br/>int32→int64?"}
+    TypeWiden -->|Yes| BackYes
+    TypeWiden -->|Narrow| Break
+```
+
+#### Breaking Change Detection Pipeline
+
+```mermaid
+flowchart LR
+    PR["PR: proto/openapi diff"] --> Lint["buf breaking /<br/>openapi diff"]
+    Lint --> Compat{"Compatible?"}
+    Compat -->|Yes| CI["CI green → merge"]
+    Compat -->|No| Block["Block + migration guide required"]
+    Block --> Major["Major version bump"] --> CI
+```
+
+#### Consumer Upgrade Safe Path
+
+```mermaid
+sequenceDiagram
+    participant Prov as Provider
+    participant Reg as Registry
+    participant Cons as Consumer
+    Prov->>Reg: publish v2 additive
+    Reg-->>Cons: notification / catalog
+    Cons->>Reg: fetch v2, run contract tests
+    Cons->>Cons: deploy with dual read
+    Cons->>Prov: confirm adoption
+    Prov->>Reg: deprecate v1 after window
+```
+
 ## Key takeaways
 
 - Compatibility is about *mixed versions in flight*, not single-version correctness. Backward (old ← new) lets you roll forward; forward (new ← old) lets you roll back and replay; full (both) lets you do either without deploy ordering.

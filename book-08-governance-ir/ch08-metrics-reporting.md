@@ -694,6 +694,31 @@ exists.
   running infrastructure that reports the present. Governance as a continuously-running control system
   over the fleet — that is the distributed-systems framing of this entire book.
 
+### Metrics hierarchy (leading vs lagging)
+
+```mermaid
+flowchart TB
+  LEAD["Leading (preventive)<br/>% repos with branch protection<br/>% images signed<br/>% builds SLSA L3"]
+  LEAD --> LAG["Lagging (outcome)<br/># incidents<br/>MTTR<br/># critical CVEs in prod"]
+  LEAD --> DORA["DORA + security<br/>deploy frequency vs<br/>change failure rate"]
+  LAG --> EXEC["Executive view:<br/>trend lines, not snapshots"]
+  DORA --> EXEC
+  style LEAD fill:#1f6feb,color:#fff
+  style EXEC fill:#2ea043,color:#fff
+```
+
+### From raw signals to executive dashboard
+
+```mermaid
+flowchart LR
+  A["Raw: registry + CI +<br/>scanner + audit logs"] --> B["Normalize: per-team,<br/>per-product, per-level<br/>(SLSA, SBOM, CVE)"]
+  B --> C["Score: maturity heatmap<br/>(red/amber/green per capability)"]
+  C --> D["Dashboard:<br/>trend + SLA breaches<br/>+ top risks"]
+  D --> E["Decision:<br/>fund hardening,<br/>exception review, roadmap"]
+  style C fill:#8957e5,color:#fff
+  style E fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **Measure to manage, improve, and justify.** An unmeasured program is invisible to its operators,

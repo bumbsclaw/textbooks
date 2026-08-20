@@ -405,6 +405,28 @@ One runtime note: Envoy runs a small number of worker threads, each an independe
 its own connection set, so it scales with cores — but its per-instance memory is dominated by the
 *size of its configuration*, which makes config scoping a first-order mesh optimization.
 
+
+```mermaid
+flowchart LR
+    Down["Downstream<br/>Client / sidecar"] --> Listener["Listener<br/>IP:port + filter chain"]
+    Listener --> HCM["HCM (HTTP Conn Manager)<br/>Route, retry, timeout, rate limit"]
+    HCM --> Route["Route table<br/>Prefix/regex -> cluster"]
+    Route --> Cluster["Cluster<br/>EDS endpoints + LB policy + TLS"]
+    Cluster --> Up["Upstream<br/>Backend / next hop"]
+    subgraph Filters["Filter chain"]
+        F1["TLS inspector"]
+        F2["RBAC / JWT / WASM"]
+        F3["Tap / access log"]
+    end
+    Listener --- Filters
+    XDS["xDS: LDS/RDS/CDS/EDS/SDS<br/>Control plane pushes config<br/>Eventually consistent"]
+    XDS -.-> Listener
+    XDS -.-> Route
+    XDS -.-> Cluster
+    style HCM fill:#cce5ff,stroke:#004085
+    style Cluster fill:#d4edda,stroke:#155724
+```
+
 ## API gateways: a reverse proxy with product concerns
 
 An API gateway is a reverse proxy plus a set of concerns about the *API as a product* rather than
@@ -576,6 +598,22 @@ whole point: a control-plane outage stops *changes* from propagating but should 
 because each proxy keeps serving its last known-good configuration. Verify that property with a
 game day rather than assuming it.
 
+
+```mermaid
+flowchart TD
+    CP["Control plane<br/>(istiod, etc.)<br/>Policy, discovery, certs"] --> XDS["xDS API<br/>LDS/RDS/CDS/EDS"]
+    XDS --> DP1["Data plane: Envoy sidecar<br/>Per-pod proxy<br/>All traffic via proxy"]
+    XDS --> DP2["Data plane: gateway Envoy<br/>Edge / east-west"]
+    DP1 --> Traffic["Request path<br/>App -> localhost:15001 (Envoy)<br/>-> mTLS -> remote Envoy -> app"]
+    DP2 --> Traffic
+    Trade1["Pro: uniform policy, observability<br/>mTLS, retries, tracing for free"]
+    Trade2["Con: extra hop (~1-3 ms)<br/>2x Envoy per call, CPU + memory<br/>Complexity: debug via proxy logs"]
+    Traffic --> Trade1
+    Traffic --> Trade2
+    style CP fill:#cce5ff,stroke:#004085
+    style DP1 fill:#d4edda,stroke:#155724
+```
+
 ## What the mesh actually gives you
 
 ### Identity and mutual TLS
@@ -698,6 +736,25 @@ free.** A sidecar can generate and forward spans, but it cannot know that inboun
 outbound request Y unless the application copies trace context headers (`traceparent`, or the B3
 family) from the request it handles onto the requests it makes. Without in-process propagation you
 get disconnected single-hop spans, not traces.
+
+
+```mermaid
+flowchart LR
+    App["App code<br/>(no mesh awareness)"] --> Features["Mesh features (free)"]
+    Features --> F1["mTLS: identity + encryption<br/>SPIFFE certs, auto-rotation"]
+    Features --> F2["L7 policy: retry, timeout<br/>circuit breaker, rate limit"]
+    Features --> F3["Observability: metrics, traces<br/>Access logs, per-route"]
+    Features --> F4["Traffic: canary, mirror<br/>fault injection"]
+    F1 --> Cost["Cost: latency + CPU<br/>Sidecar per pod<br/>~50-100 MiB RAM each"]
+    F2 --> Cost
+    F3 --> Cost
+    F4 --> Cost
+    Cost --> Choice{"Worth it?"}
+    Choice -->|"large fleet, many teams"| Yes["Yes: uniform, no per-app library"]
+    Choice -->|"small fleet, few services"| No["Maybe not: library + gateway may suffice"]
+    style Features fill:#d4edda,stroke:#155724
+    style Cost fill:#fff3cd,stroke:#856404
+```
 
 ## The costs, honestly
 

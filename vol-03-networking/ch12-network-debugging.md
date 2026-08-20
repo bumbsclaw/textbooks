@@ -177,6 +177,19 @@ resolve host, `7` failed to connect, `28` timed out, `35` TLS connect error, `52
 gives the narrative and `--trace-time` timestamps every trace line, which is how you see *where* a
 stall sits without a capture; `--trace-ascii -` dumps the bytes.
 
+
+```mermaid
+flowchart TD
+    Curl["curl -w '@fmt' -o /dev/null -s https://api/api<br/>time_namelookup, connect, appconnect,<br/>pretransfer, starttransfer, total"] --> Parse{"Parse timings"}
+    Parse --> DNSs["namelookup ~ DNS<br/>High = DNS latency/cache miss"]
+    Parse --> TCPs["connect ~ TCP handshake<br/>High = SYN loss, firewall, LB"]
+    Parse --> TLSs["appconnect ~ TLS<br/>High = cert, OCSP, cipher"]
+    Parse --> TTFB["starttransfer ~ TTFB<br/>High = backend slow"]
+    Parse --> Total["total ~ end-to-end<br/>Compare to p50/p99 SLO"]
+    Flags["Flags: -v (headers), --resolve (pin IP)<br/>--connect-timeout, -k (skip verify for test)"]
+    style Curl fill:#cce5ff,stroke:#004085
+```
+
 ## DNS: ask precisely, and ask what the application asks
 
 `dig` is the instrument, but use it deliberately.
@@ -421,6 +434,18 @@ failures at all:
 lsof -nP -iTCP -sTCP:ESTABLISHED -a -p 1041 | wc -l
 cat /proc/1041/limits | grep 'open files'
 ls /proc/1041/fd | wc -l
+```
+
+
+```mermaid
+flowchart LR
+    SS["ss -tunap<br/>ss -ti (TCP info)"] --> Fields["Fields to read"]
+    Fields --> State["State: ESTAB, SYN-SENT<br/>CLOSE-WAIT leak, TIME-WAIT flood"]
+    Fields --> Queue["Recv-Q / Send-Q<br/>Recv-Q stuck = app not reading<br/>Send-Q stuck = peer not ACKing"]
+    Fields --> TCPInfo["TCP info: rtt, rto, cwnd<br/>retrans, lost, unacked"]
+    Fields --> Timer["Timers: keepalive, RTO<br/>retrans timer = loss"]
+    style Queue fill:#fff3cd,stroke:#856404
+    style State fill:#f8d7da,stroke:#721c24
 ```
 
 ## Kernel and NIC counters: proving drops without a capture

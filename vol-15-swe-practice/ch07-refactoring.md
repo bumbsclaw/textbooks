@@ -631,3 +631,15 @@ The key lesson: no single refactoring achieves the outcome. The combination — 
 - K. Beck, *Tidy First?* (O'Reilly, 2023) — a compact, modern framing of tidyings vs. behavior changes vs. cohesion.
 - N. Forsgren, J. Humble, G. Kim, *Accelerate* (IT Revolution, 2018) — evidence linking code quality, delivery performance, and organizational outcomes.
 - *SonarQube / SonarCloud* docs, *CodeScene* docs, *OpenRewrite* docs, *ast-grep* docs — concrete tooling for measurement and automated refactoring at scale.
+
+### Refactoring safety net
+
+```mermaid
+flowchart TB
+    CODE[Code to Refactor] --> TESTS[Characterization Tests]
+    TESTS --> REFACTOR[Small Refactoring Steps]
+    REFACTOR --> RUN[Run Tests]
+    RUN -->|Pass| NEXT[Next Step]
+    RUN -->|Fail| REVERT[Revert Step]
+    NEXT --> DONE2[Refactored]
+```

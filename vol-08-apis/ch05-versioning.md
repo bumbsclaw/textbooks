@@ -509,6 +509,48 @@ Three realities make versioning a runtime concern, not just a design-time one.
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Versioning Strategy Decision
+
+```mermaid
+flowchart TB
+    Start{"Breaking change?"} -->|No| Compatible["Additive<br/>no version bump"]
+    Start -->|Yes| Audience{"External consumers?"}
+    Audience -->|No| Internal["Coordinated deploy<br/>single version"]
+    Audience -->|Yes| Choice{"URI vs Header?"}
+    Choice -->|URI| URI["/v2/… clear, cacheable"]
+    Choice -->|Header| Header["Accept: vnd… + content negotiation"]
+```
+
+#### Deprecation Timeline
+
+```mermaid
+gantt
+    title Deprecation lifecycle
+    dateFormat YYYY-MM-DD
+    section Lifecycle
+    Announce deprecation :a1, 2025-01-01, 30d
+    Sunset header + docs :a2, after a1, 60d
+    Dual-run window :a3, after a2, 90d
+    Brownout tests :a4, after a3, 14d
+    Removal :a5, after a4, 7d
+```
+
+#### SemVer State Transitions
+
+```mermaid
+stateDiagram-v2
+    [*] --> Current: 1.x active
+    Current --> Minor: additive feature
+    Minor --> Current: consumers adopt
+    Current --> Major: breaking change on v2 branch
+    Major --> Dual: v1 + v2 served
+    Dual --> Sunset: v1 deprecation window
+    Sunset --> [*]
+```
+
 ## Key takeaways
 
 - SemVer for contracts: MAJOR = breaking (remove/rename/tighten), MINOR = additive (new optional field/endpoint), PATCH = non-behavioural. Adding an optional field is MINOR only if consumers ignore unknown fields — document that requirement.

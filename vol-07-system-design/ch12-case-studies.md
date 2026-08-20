@@ -842,6 +842,27 @@ These cases make concrete why distributed systems is not a separate topic from s
 - Every case composes the same patterns (cache, LB, events, gateway, rate limit, multi-region, resilience) — the defining trade-off per case is what makes the composition distinct.
 - Operability is the design — hot-key, herd, lag, and partition mitigations must be built in and drilled, not added after an outage.
 
+
+```mermaid
+flowchart TB
+    U["User POST /shorten {url}"] --> G["API Gateway<br/>rate limit, auth"]
+    G --> H["Hash service<br/>base62(murmur3(url) + salt)<br/>or counter + base62"]
+    H --> C{"Collision?"}
+    C -->|No| D["DB: id → url<br/>+ cache (Redis)"]
+    C -->|Yes| H
+    D --> R["GET /{id} → 301 redirect<br/>cache hit 95%+<br/>CDN edge cache"]
+    R --> A["Analytics: click log → Kafka → warehouse"]
+```
+
+```mermaid
+flowchart TB
+    Q{"Fan-out model?"} --> P["Push (fan-out on write)<br/>write → push to all followers' feeds<br/>read fast, write heavy<br/>celebrity = hot key problem"]
+    Q --> L["Pull (fan-out on read)<br/>read → gather from followees<br/>write cheap, read heavy<br/>tail latency on read"]
+    Q --> H["Hybrid<br/>normal users: push<br/>celebrity: pull on read<br/>best of both — used by Twitter/X"]
+    P --> M["Cache: precomputed feed per user<br/>in Redis / timeline service"]
+    L --> M
+```
+
 ## Further reading
 
 - Feed — Twitter (now X) Manhattan and home-timeline architecture; Instagram feed ranking. https://blog.twitter.com/engineering/en_us/topics/infrastructure/2021/processing-billions-of-events-in-real-time-at-twitter and https://instagram-engineering.com/

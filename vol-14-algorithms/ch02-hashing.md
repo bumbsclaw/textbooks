@@ -577,3 +577,49 @@ for n in [1_000, 100_000, 10_000_000]:
 - Go `runtime/map` and `swiss` experiment (github.com/golang/go/issues/54766) — Go's map evolution toward SwissTable.
 - Crosby & Wallach — "Denial of Service via Algorithmic Complexity Attacks" (USENIX Security 2003) — the original hash-flooding paper.
 - RocksDB / LevelDB bloom filter docs — hash-assisted LSM point lookups at scale.
+
+### Hash table collision resolution
+
+```mermaid
+flowchart TB
+    KEY[Key] --> HASH[Hash Function]
+    HASH --> BUCKET[Bucket Index]
+    BUCKET --> COL{Collision?}
+    COL -->|Chaining| CHAIN[Linked List / Chain]
+    COL -->|Open Addressing| PROBE[Probe Sequence]
+    PROBE --> LIN[Linear]
+    PROBE --> QUAD[Quadratic]
+    PROBE --> DH[Double Hash]
+```
+
+### Consistent hashing ring
+
+```mermaid
+flowchart TB
+    RING[(Hash Ring 0 to 2^32)]
+    RING --> N1[Node A - Position hA]
+    RING --> N2[Node B - Position hB]
+    RING --> N3[Node C - Position hC]
+    KEY1[Key k1] --> POS1[hash k1 - Walk Clockwise to Node]
+    POS1 --> N1
+```
+
+### Cryptographic vs non-cryptographic hash use
+
+```mermaid
+flowchart LR
+    USE{Use Case}
+    USE -->|Integrity / Security| CRYPTO[SHA-256 / BLAKE3]
+    USE -->|Hash Table / Dedup| FAST[murmur / xxHash / FNV]
+    USE -->|Password| SLOW[bcrypt / Argon2 - Slow]
+```
+
+### Load factor and resizing
+
+```mermaid
+flowchart TB
+    LF[Load Factor = n/m] --> CHECK{> Threshold 0.75?}
+    CHECK -->|Yes| RESIZE[Resize - Double Capacity + Rehash]
+    CHECK -->|No| OK[Continue]
+    RESIZE --> REHASH[Rehash All Keys]
+```

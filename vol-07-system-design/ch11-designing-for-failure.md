@@ -604,6 +604,49 @@ Resilience is not "make failures go away" — it is "make failures local and par
 - Hedging trades duplicate load for lower p99 — only for idempotent reads, guarded by a budget, with hedge delay ≈ p90.
 - Compose at the call site (bulkhead → breaker → timeout → retry/hedge → fallback) and verify with fault injection from unit test through production chaos.
 
+
+```mermaid
+stateDiagram-v2
+    [*] --> Closed: start
+    Closed --> Open: failures >= threshold in window
+    Closed --> Closed: success — reset count
+    Open --> HalfOpen: after timeout (e.g. 30s)
+    Open --> Open: fast-fail without calling downstream
+    HalfOpen --> Closed: trial succeeds → healthy
+    HalfOpen --> Open: trial fails → back to open
+    note right of Open
+        Fail fast protects downstream
+        and caller thread pool
+    end note
+```
+
+```mermaid
+gantt
+    title Retry with Exponential Backoff and Jitter
+    dateFormat X
+    axisFormat %L
+    section Client
+    Initial attempt (fail)     :0, 1
+    Backoff 100ms + jitter     :1, 2
+    Retry 1 (fail)             :3, 1
+    Backoff 200ms + jitter     :4, 3
+    Retry 2 (fail)             :7, 1
+    Backoff 400ms + jitter     :8, 4
+    Retry 3 (success)          :12, 1
+    section Without jitter
+    Thundering herd retries     :3, 1
+```
+
+```mermaid
+flowchart TB
+    A["Incoming requests"] --> P["Bulkhead partition"]
+    P --> B1["Pool A: critical path<br/>isolated threads/conns<br/>e.g. payment"]
+    P --> B2["Pool B: non-critical<br/>separate pool<br/>e.g. recommendations"]
+    P --> B3["Pool C: background<br/>separate pool<br/>e.g. analytics"]
+    B2 --> F["If Pool B saturates<br/>only B threads block<br/>A still serves"]
+    F -.-> T["Without bulkhead:<br/>one slow downstream<br/>exhausts shared pool → all fail"]
+```
+
 ## Further reading
 
 - Nygard — Release It! (2nd ed.), Stability patterns (Circuit Breaker, Bulkhead, Timeout).

@@ -787,6 +787,43 @@ identifier-rich *source* for that internal model.
   (the "what depends on X" traversal). The right architecture normalizes SPDX *and* CycloneDX
   into one internal model (Chapter 5), leaving format specifics at the ingestion edge.
 
+
+### SPDX 2.3 document structure
+
+```mermaid
+flowchart TD
+    DOC["SPDX Document<br/>SPDXID: DOCUMENT"] --> PKG1["Package: app v1.0"]
+    DOC --> PKG2["Package: lodash v4.17.21"]
+    DOC --> FILES["Files + Snippets<br/>(optional)"]
+    DOC --> RELS["Relationships"]
+    RELS --> R1["DOCUMENT DESCRIBES pkg:app"]
+    RELS --> R2["pkg:app DEPENDS_ON pkg:lodash"]
+    RELS --> R3["pkg:lodash CONTAINS file:lodash.js"]
+    PKG1 --> ANN1["Annotations<br/>+ Checksums + License"]
+    PKG2 --> ANN2["ExternalRef: purl<br/>+ CPE + License"]
+    style DOC fill:#b6d7ff,stroke:#333
+```
+
+
+### SPDX 3.0 profile layering
+
+```mermaid
+flowchart TD
+    CORE["Core Profile<br/>(mandatory)"] --> SW["Software Profile<br/>(packages, files)"]
+    CORE --> SEC["Security Profile<br/>(vulns, VEX)"]
+    CORE --> BUILD["Build Profile<br/>(provenance)"]
+    CORE --> LIC["Licensing Profile<br/>(license expressions)"]
+    CORE --> AI["AI / Dataset<br/>Profile (new in 3.0)"]
+
+    SW --> DOC["SPDX 3.0 Document<br/>compose profiles as needed"]
+    SEC --> DOC
+    BUILD --> DOC
+    LIC --> DOC
+
+    style CORE fill:#ffd966,stroke:#333
+    style DOC fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **SPDX Specification 2.3**, Linux Foundation / SPDX project — the authoritative reference for

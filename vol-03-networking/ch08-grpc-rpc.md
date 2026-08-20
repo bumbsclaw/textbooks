@@ -282,6 +282,20 @@ odd one out: it is optimized for data-at-rest and streaming where a **schema reg
 schemas out of band and readers resolve a writer's schema against their own — which is exactly what
 you want for Kafka topics (Volume 4/5 territory) and exactly the wrong shape for per-call RPC.
 
+
+```mermaid
+flowchart TD
+    Choice{"Serialization?"}
+    Choice -->|"JSON"| JSON["JSON: human-readable, 1.5-2x size<br/>No schema, flexible, slow parse<br/>REST default"]
+    Choice -->|"Protobuf"| PB["Protobuf: binary, 3-10x smaller<br/>Schema + codegen, fast, evolvable<br/>Field numbers, not names"]
+    Choice -->|"Avro/Thrift"| Avro["Avro: schema + compact<br/>Thrift: similar, older"]
+    PB --> Evolve["Evolution rules<br/>Never reuse field numbers<br/>Add optional, reserve deleted<br/>Same wire compat both directions"]
+    JSON --> Evolve2["Evolution: add fields OK<br/>No compile-time guarantee<br/>Breaks on rename/type change"]
+    Evolve --> Verdict["For internal RPC: Protobuf wins<br/>For public API: JSON wins (browser)"]
+    style PB fill:#d4edda,stroke:#155724
+    style JSON fill:#cce5ff,stroke:#004085
+```
+
 ## gRPC in depth
 
 gRPC is Google's open-source RPC framework: protobuf messages (by default) carried over HTTP/2,
@@ -661,6 +675,20 @@ Fallacies: they acknowledge that the network is unreliable and slow, and give yo
 load-aware, tail-tolerant ways to cope. Chapter 11 develops the reliability theory; gRPC is where a
 lot of it becomes concrete configuration.
 
+
+```mermaid
+sequenceDiagram
+    participant Client as gRPC client
+    participant Channel as HTTP/2 channel<br/>(persistent, multiplexed)
+    participant Server as gRPC server
+    Client->>Channel: Create channel (load balance, keepalive, retry policy)
+    Channel->>Server: HTTP/2 connection + SETTINGS + WINDOW_UPDATE
+    Client->>Server: HEADERS (method, :path, grpc-timeout, metadata)<br/>DATA (protobuf frame: 5B header + message)
+    Server->>Server: Unary / server-stream / client-stream / bidi
+    Server-->>Client: HEADERS (grpc-status) + DATA (protobuf) + TRAILERS
+    Note over Client,Server: One conn, many concurrent RPCs (streams)<br/>Flow control per-stream + per-connection<br/>Keepalive PING, retry + hedging per method config
+```
+
 ## gRPC versus REST/JSON, and the browser gap
 
 The real question is rarely "is gRPC better than REST?" but "which surface is this?" The honest
@@ -705,6 +733,21 @@ inferring the contract from the server's types; it is superb for a single TypeSc
 irrelevant to a polyglot fleet. The pattern across all of them is the same trade you now recognize:
 how much of gRPC's power (streaming, HTTP/2, strict schema) you are willing to give up for
 simplicity, browser reach, or single-language ergonomics.
+
+
+```mermaid
+flowchart TD
+    Need{"Client?"}
+    Need -->|"browser"| REST["REST/JSON over HTTP/1.1 or HTTP/2<br/>Fetch API, no gRPC browser support<br/>(gRPC-Web needs proxy)"]
+    Need -->|"service-to-service"| gRPC["gRPC: binary, streaming, codegen<br/>Efficient, typed, backpressure<br/>Needs HTTP/2, harder to debug"]
+    Need -->|"both"| BFF["BFF: gRPC internally<br/>REST/JSON at edge (gateway)<br/>Transcode via Envoy/gRPC-Gateway"]
+    REST --> Trade1["Debuggable (curl), universal<br/>Larger, no streaming"]
+    gRPC --> Trade2["Fast, streaming, typed<br/>Binary, needs tooling (grpcurl)"]
+    BFF --> Best["Best of both<br/>Edge translates, interior is gRPC"]
+    style gRPC fill:#d4edda,stroke:#155724
+    style REST fill:#cce5ff,stroke:#004085
+    style BFF fill:#fff3cd,stroke:#856404
+```
 
 ## Distributed-systems lens
 

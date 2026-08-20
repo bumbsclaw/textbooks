@@ -381,6 +381,49 @@ Operational signals to watch:
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Delivery Semantic Choice
+
+```mermaid
+flowchart TB
+    Domain{"Loss vs duplicate<br/>tolerance?"}
+    Domain -->|Loss OK<br/>metrics| AtMost["At-most-once<br/>fire & forget"]
+    Domain -->|Duplicate OK<br/>idempotent handler| AtLeast["At-least-once<br/>retry + dedup"]
+    Domain -->|Neither OK<br/>payments| Effective["Effectively-once<br/>idempotent + dedup table + TX"]
+```
+
+#### Kafka Transactional Produce
+
+```mermaid
+sequenceDiagram
+    participant P as Producer
+    participant TC as Txn Coordinator
+    participant B as Brokers
+    P->>TC: initTransactions
+    P->>TC: beginTransaction
+    P->>B: produce batch PID+seq
+    P->>TC: addOffsetsToTransaction
+    P->>TC: commitTransaction
+    TC->>B: write COMMIT marker
+    Note over B: LSO moves past committed msgs<br/>read_committed skips aborts
+```
+
+#### Dedup Table Pattern
+
+```mermaid
+stateDiagram-v2
+    [*] --> Check: msg id arrived
+    Check --> Insert: INSERT dedup ON CONFLICT?
+    Insert --> First: inserted=1
+    First --> Apply: apply side effect
+    Apply --> Ack: commit offset
+    Insert --> Dup: inserted=0
+    Dup --> Ack: skip, commit offset
+    Ack --> [*]
+```
+
 ## Key takeaways
 
 - Exactly-once delivery is impossible over a lossy network; the achievable property is exactly-once *effect* via at-least-once delivery plus deduplication and idempotent handling.

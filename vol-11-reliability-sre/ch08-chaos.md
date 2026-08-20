@@ -691,6 +691,61 @@ Chaos engineering is particularly essential — and particularly subtle — in d
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Fault Injection Taxonomy
+
+```mermaid
+flowchart TB
+    Fault["Fault"] --> Infra["Infra<br/>pod kill, node drain, AZ loss"]
+    Fault --> Net["Network<br/>latency, loss, partition, DNS"]
+    Fault --> Res["Resource<br/>CPU, mem, disk, IO"]
+    Fault --> Dep["Dependency<br/>slow downstream, 5xx"]
+    Fault --> Time["Time<br/>clock skew"]
+```
+
+#### Safety Gates Sequence
+
+```mermaid
+sequenceDiagram
+    participant Req as Requester
+    participant Gate as Safety gate
+    participant Mon as Monitoring
+    participant Mesh as Chaos Mesh
+    Req->>Gate: submit experiment
+    Gate->>Mon: SLO green? freeze? business hours?
+    Mon-->>Gate: all clear
+    Gate->>Mesh: apply CR
+    Mesh-->>Gate: running
+    Mon->>Gate: burn rate spike? auto-abort
+    Gate->>Mesh: rollback
+```
+
+#### Steady-State Hypothesis
+
+```mermaid
+flowchart LR
+    Baseline["Baseline<br/>p95 120ms, err 0.1%"] --> Fault["Inject<br/>one pod killed"]
+    Fault --> Observe["Observe<br/>p95 <200ms, err <1%"]
+    Observe -->|holds| Pass["Hypothesis holds ✓"]
+    Observe -->|breaks| Fail["Hypothesis fails → fix"]
+```
+
+#### Game Day Timeline
+
+```mermaid
+gantt
+    title Game Day
+    dateFormat HH:mm
+    axisFormat %H:%M
+    section Phases
+    Briefing       :a1, 09:00, 30m
+    Inject fault 1 :a2, after a1, 20m
+    Observe + debug :a3, after a2, 30m
+    Rollback + retro :a4, after a3, 40m
+```
+
 ## Key takeaways
 
 - Chaos engineering is **hypothesis-driven experimentation on the system's ability to withstand realistic failures** — not random destruction. Every experiment has a falsifiable hypothesis with a specific metric, bound, and named resilience mechanism, plus defined steady state, scope, duration, and abort conditions.

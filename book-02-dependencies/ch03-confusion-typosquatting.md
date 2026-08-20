@@ -665,6 +665,35 @@ chokepoint you control.
   as versioned, reviewed policy through golden images and CI templates. See Book 2, Chapter 8 —
   Vendoring, Mirroring, and Internal Registries.
 
+
+### Dependency confusion: resolver order exploit
+
+```mermaid
+flowchart TD
+    CODE["Source: import 'corp-auth'<br/>private package"] --> RESOLVE{"Resolver order"}
+    RESOLVE -->|Check private first| PRIVATE["Private registry<br/>corp-auth v1.0 ok"]
+    RESOLVE -->|Check public first<br/>or public has higher version| PUBLIC["Public registry<br/>corp-auth v99.0.0 (attacker)"]
+    PRIVATE --> SAFE["Safe install"]
+    PUBLIC --> PWNED["Attacker code<br/>executed"]
+    CONFIG["Registry config<br/>scoped vs unscoped"] -. determines .-> RESOLVE
+    style PWNED fill:#f88,stroke:#900
+    style SAFE fill:#b6f0b6,stroke:#333
+```
+
+
+### Namespace defense: scopes and prefixes
+
+```mermaid
+flowchart TD
+    ATTACK["Attacker tries<br/>@corp/auth v99"] --> SCOPE{"Scope reserved?"}
+    SCOPE -->|Yes: @corp owned| BLOCK["Registry rejects<br/>unauthorized publish"]
+    SCOPE -->|No: unscoped 'auth'| CHECK{"Private registry<br/>claims name?"}
+    CHECK -->|Squatting protection| BLOCK2["Public registry<br/>blocks / warns"]
+    CHECK -->|No protection| SUCCESS["Attacker publishes<br/>— confusion possible"]
+    style BLOCK fill:#b6f0b6,stroke:#333
+    style SUCCESS fill:#f88,stroke:#900
+```
+
 ## Further reading
 
 - Alex Birsan, "Dependency Confusion: How I Hacked Into Apple, Microsoft and Dozens of Other

@@ -495,6 +495,38 @@ Data modeling is where distributed-systems trade-offs become schema.
 - Evolve schemas via expand-contract with forward/backward compatibility (Avro/Protobuf rules, Schema Registry enforcement). No flag-day migrations; old and new code must coexist during rolling deploys.
 - One service, one primary store, sole writer. Derived stores via CDC/stream, not dual writes or shared tables. Cross-service table access is a distributed monolith.
 
+
+```mermaid
+flowchart TD
+    Q["List all access patterns<br/>Q1: get user by id<br/>Q2: list orders by user + time<br/>Q3: search by email"] --> E["Entity-relationship first<br/>normalize for correctness"]
+    E --> P{"Per pattern: need?"} 
+    P -->|Point lookup| I1["Primary key / unique index"]
+    P -->|Range scan| I2["Sort key / clustering index<br/>or secondary index"]
+    P -->|Search| I3["Inverted / GIN index<br/>or external search"]
+    I1 --> D{"Denormalize?"}
+    I2 --> D
+    D -->|Hot path, bounded| M["Materialized / embedded copy<br/>with change stream sync"]
+    D -->|Rare| J["Join at read — keep normalized"]
+```
+
+```mermaid
+flowchart TB
+    L["Local secondary index<br/>partition key same, different sort key<br/>co-located, strongly consistent<br/>limited to one partition"] --> G["Global secondary index<br/>different partition key<br/>scattered, eventually consistent<br/>cross-partition fan-out"]
+    G --> M["Materialized view<br/>managed GSI with async refresh<br/>stale window"]
+    L -.-> C["Choose local for per-user queries<br/>global for cross-user lookups<br/>MV for aggregation"]
+```
+
+```mermaid
+flowchart LR
+    N["Normalized<br/>one fact one place<br/>no anomaly, join cost at read"] --> D["Denormalized<br/>pre-joined / embedded<br/>read fast, write fan-out"]
+    D --> W["Write amplification<br/>N copies to update<br/>need transactional outbox or CDC"]
+    N --> R["Read amplification<br/>N joins / N queries<br/>p99 grows with fan-out"]
+    W -.-> Q{"Read:write ratio?"}
+    R -.-> Q
+    Q -->|100:1 read-heavy| D
+    Q -->|1:1 mixed| N
+```
+
 ## Further reading
 
 - Kleppmann, M. *Designing Data-Intensive Applications* (O'Reilly, 2017), Chapters 2–4, 6 — data models, encoding/evolution, partitioning, replication. https://dataintensive.net/

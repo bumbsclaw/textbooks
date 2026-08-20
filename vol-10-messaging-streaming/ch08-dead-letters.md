@@ -555,6 +555,52 @@ Rules that survive production:
 - **Exactly-once effect requires idempotent replay.** A DLQ message replayed after a fix is *at-least-once* — the main pipeline may have already processed later messages that assumed the poison was skipped. The consumer must be idempotent (Vol 6, Ch 9 inbox pattern) or replay will double-apply.
 - **DLQ is a queue like any other.** It needs retention, replication (quorum / ISR), monitoring, and capacity planning. A DLQ that fills disk or is never consumed reintroduces the same failure it was meant to solve.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Dead Letter Routing
+
+```mermaid
+flowchart TB
+    Consume["Consume"] --> Try{"Process ok?"}
+    Try -->|Yes| Ack["Ack / commit"]
+    Try -->|No retriable| Retry["Retry queue<br/>backoff"]
+    Retry --> Try
+    Try -->|Exhausted| DLQ["DLQ<br/>dead.letter topic"]
+    Try -->|Poison<br/>non-retriable| DLQ
+    DLQ --> Inspect["Inspect + re-drive"]
+```
+
+#### Retry with DLQ Sequence
+
+```mermaid
+sequenceDiagram
+    participant C as Consumer
+    participant B as Broker
+    participant DLQ as DLQ
+    B->>C: deliver msg
+    C->>C: fail attempt 1
+    C->>B: nack + requeue with delay
+    B->>C: redeliver attempt 2,3
+    C->>C: fail exhausted
+    C->>DLQ: publish + headers reason
+    C->>B: ack original
+```
+
+#### Poison Pill Handling
+
+```mermaid
+stateDiagram-v2
+    [*] --> Try: deserialize
+    Try --> Poison: bad format / schema
+    Poison --> Quarantine: send to DLQ without retry
+    Quarantine --> Alert: alert + skip
+    Try --> BusinessFail: handler exception
+    BusinessFail --> Retry
+    Retry --> Quarantine: after N tries
+    Alert --> [*]
+```
+
 ## Key takeaways
 
 - Two bad defaults — ack-on-failure (silent loss) and retry-forever (partition stall) — are replaced by bounded retries with backoff + DLQ.

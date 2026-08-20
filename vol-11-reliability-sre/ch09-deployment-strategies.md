@@ -1057,6 +1057,27 @@ Deployment strategy in distributed backends has failure modes that single-servic
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Canary Analysis and Auto-Rollback
+
+```mermaid
+sequenceDiagram
+    participant CD as CD controller
+    participant Canary as Canary 5%
+    participant Stable as Stable 95%
+    participant Mon as Monitoring
+    CD->>Canary: deploy v2 canary
+    Canary->>Mon: metrics p95, errors, business KPI
+    Mon->>CD: analysis 5m window
+    alt KPIs bad
+        CD->>Canary: rollback
+    else KPIs good
+        CD->>Stable: promote to 25% → 50% → 100%
+    end
+```
+
 ## Key takeaways
 
 - Deployment strategy determines **blast radius** (how much traffic sees the new version), **signal** (how the new version is evaluated), and **rollback** (how quickly a bad version is removed). The strategy is the primary lever for deployment safety — more impactful than code review or testing alone for containing bad deploys.

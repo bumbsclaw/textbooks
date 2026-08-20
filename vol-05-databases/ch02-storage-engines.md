@@ -654,6 +654,44 @@ them, you will be reading this chapter's diagrams with a network drawn through t
   segments and lakehouse files, and compaction debt and stall behavior are fleet-level
   operational inputs, not node-level trivia.
 
+
+```mermaid
+flowchart LR
+    subgraph BTree["B+Tree — update in place"]
+        W1["Write → WAL → page latch → in-place update"] --> R1["Read → root → internal → leaf\nsingle path if cached"]
+    end
+    subgraph LSM["LSM — out-of-place"]
+        W2["Write → WAL → memtable\nO(1) in-memory"] --> F["Flush → SSTable L0"] --> C["Compaction → L1..Ln"]
+        R2["Read → memtable → L0 → L1 → ...\nbloom filter prunes"] --> M["Merge across levels"]
+    end
+    W1 -.->|"write amp low<br>read amp low"| R1
+    W2 -.->|"write amp high<br>read amp higher"| R2
+```
+
+```mermaid
+flowchart TB
+    H["Page header<br/>LSN, checksum, free pointer"] --> S["Slot directory<br/>array of (offset, length)<br/>grows from bottom"]
+    D["Tuple heap<br/>rows packed top-down<br/>with null bitmap + varlena"] --> F["Free space<br/>between heap and slots"]
+    S -.->|"slot 0 → tuple at offset 120"| D
+    S -.->|"slot 1 → tuple at offset 340"| D
+    F --> V["VACUUM reclaims<br/>updates slot directory"]
+```
+
+```mermaid
+stateDiagram-v2
+    [*] --> Healthy: memtable flush ok
+    Healthy --> CompactionDebt: L0 SSTables > threshold
+    CompactionDebt --> Slowing: write throttle / backpressure
+    Slowing --> Stalled: L0 > hard limit
+    Stalled --> Recovering: compaction catches up
+    Recovering --> Healthy: L0 drained
+    CompactionDebt --> Recovering: leveled compaction
+    note right of Stalled
+        p99 spikes — fleet-level stall
+        same as Kafka segment pressure
+    end note
+```
+
 ## Further reading
 
 - O'Neil, P., Cheng, E., Gawlick, D., and O'Neil, E., "The Log-Structured Merge-Tree

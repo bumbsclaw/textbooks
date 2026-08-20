@@ -303,6 +303,76 @@ A supply chain program that cannot say, per class, "which team is accountable an
 - Existing taxonomies are complementary and each is silent somewhere: MITRE ATT&CK T1195 situates supply chain compromise in the broader intrusion but under-resolves it; the SLSA threat model resolves the build finely but ignores intent; Ladisa et al. (2023) give the most complete open-source technique catalog as a research artifact.
 - Taxonomy enables **ownership mapping**: source-stage to security/SCM admins, build-stage to the platform/build team, distribution-stage to platform and vendor-risk, consumption-stage jointly to app teams and the platform team.
 
+
+### Taxonomy-to-mitigation mapping
+
+```mermaid
+flowchart LR
+    subgraph Stage["Chain Stage"]
+        SRC["Source"]
+        BUILD["Build"]
+        DIST["Distribution"]
+        CONS["Consumption"]
+    end
+    subgraph Example["Representative Technique"]
+        T1["Commit impersonation<br/>Maintainer ATO"]
+        T2["Build injection<br/>Cache poisoning"]
+        T3["Registry hijack<br/>Typosquat publish"]
+        T4["Dependency confusion<br/>Unpinned resolve"]
+    end
+    subgraph Mitigation["Primary Mitigation"]
+        M1["Signed commits<br/>Branch protection"]
+        M2["Hermetic builds<br/>Provenance"]
+        M3["Registry signing<br/>Transparency log"]
+        M4["Lockfiles + hashes<br/>Private registry"]
+    end
+    SRC --> T1 --> M1
+    BUILD --> T2 --> M2
+    DIST --> T3 --> M3
+    CONS --> T4 --> M4
+```
+
+
+### Attack lifecycle: from injection to execution
+
+```mermaid
+sequenceDiagram
+    participant Att as Attacker
+    participant Repo as Source / Registry
+    participant Build as Build Pipeline
+    participant Victim as Downstream Consumer
+    Att->>Repo: Inject malicious commit / package
+    Repo->>Repo: Code review bypassed / typosquat accepted
+    Build->>Repo: Fetch compromised dependency
+    Build->>Build: Build & sign (tainted artifact)
+    Build->>Victim: Distribute artifact
+    Victim->>Victim: Install / deploy / execute payload
+    Victim->>Att: Exfiltrate / callback
+    Note over Att,Victim: Dwell time hides in transitive trust
+```
+
+
+### Subversion-of-trust vs direct compromise
+
+```mermaid
+flowchart TD
+    ROOT{"How is trust subverted?"}
+    ROOT --> ID["Identity subversion<br/>Impersonate maintainer"]
+    ROOT --> INFRA["Infrastructure subversion<br/>Compromise system"]
+    ROOT --> SOCIAL["Social subversion<br/>Hijack trust decision"]
+
+    ID --> ID1["Stolen token / credential"]
+    ID --> ID2["Name confusion<br/>typo / confusion"]
+
+    INFRA --> INF1["CI runner compromise"]
+    INFRA --> INF2["Registry / mirror MITM"]
+
+    SOCIAL --> SOC1["Social engineering<br/>maintainer"]
+    SOCIAL --> SOC2["Dependency choice<br/>under confusion"]
+
+    style ROOT fill:#ffd966,stroke:#333
+```
+
 ## Further reading
 
 - SLSA v1.0 — "Threats & mitigations" (the A–H threat model): https://slsa.dev/spec/v1.0/threats

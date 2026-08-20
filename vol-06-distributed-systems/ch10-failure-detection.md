@@ -672,6 +672,38 @@ to be wrong sometimes. The ones that survive production budgeted for it.
   orchestration — so its false-positive rate multiplies through the stack. Detector storms cause
   outages bigger than the failures; detector quality is amortized leverage.
 
+
+```mermaid
+flowchart TB
+    subgraph HB["Fixed heartbeat timeout"]
+        H1["Heartbeat every 1s<br/>suspect if no heartbeat in 3s"] --> P1["Binary: alive / suspect<br/>tuning is cliff — flaps on GC pause"]
+    end
+    subgraph Phi["Phi-accrual (Hayashibara)"]
+        P2["Model arrival distribution<br/>phi = -log10(prob heartbeat late)"] --> T1["Threshold phi=8 → suspicion level<br/>continuous, adaptive<br/>no hard timeout"]
+        P2 --> T2["Higher phi = higher confidence<br/>app chooses threshold per use"]
+    end
+    T1 -.-> A["Cassandra, Akka use phi-accrual<br/>smoother under variable latency"]
+    H1 -.-> A
+```
+
+```mermaid
+flowchart LR
+    A["Node A detects B failed<br/>via direct ping"] --> B["Gossip: A tells C, D<br/>about B suspect"]
+    B --> C["C tells E, F<br/>exponential spread O(log N)"]
+    C --> D["All nodes converge<br/>on B failed within seconds"]
+    E["SWIM optimization<br/>ping via random relay<br/>when direct ping fails<br/>avoids false positive on partial partition"] -.-> A
+```
+
+```mermaid
+flowchart TB
+    Q["Completeness: every crashed process<br/>eventually suspected"]
+    Q2["Accuracy: no correct process<br/>suspected falsely"]
+    Q --> T["Strong completeness achievable"]
+    Q2 --> F["Strong accuracy impossible under async<br/>→ eventually strong accuracy<br/>or phi-accrual tunable"]
+    T --> C["Chandra-Toueg hierarchy<br/>◇W weakest to solve consensus"]
+    F --> C
+```
+
 ## Further reading
 
 - Das, A., Gupta, I., and Motivala, A., "SWIM: Scalable Weakly-consistent Infection-style Process

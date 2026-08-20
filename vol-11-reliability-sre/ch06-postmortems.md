@@ -593,6 +593,47 @@ Postmortems in distributed backends have specific characteristics that single-se
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Postmortem Timeline
+
+```mermaid
+sequenceDiagram
+    participant S as System
+    participant O as On-call
+    participant Doc as Postmortem doc
+    S->>O: incident 14:02
+    O->>Doc: timeline start
+    Doc->>Doc: 14:03 deploy, 14:07 latency spike, 14:10 rollback
+    Doc->>Doc: five whys + contributing factors
+    Doc->>Doc: action items with owners
+```
+
+#### Five Whys
+
+```mermaid
+flowchart TB
+    Sym["Symptom: checkout 500"] --> W1["Why? DB pool exhausted"]
+    W1 --> W2["Why? retry storm ×10"]
+    W2 --> W3["Why? timeout 100ms too low"]
+    W3 --> W4["Why? no timeout budget"]
+    W4 --> Fix["Fix: deadline budget + backoff + bulkhead"]
+```
+
+#### Action Item Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Open: created from postmortem
+    Open --> InProgress: owner assigned
+    InProgress --> InReview: PR opened
+    InReview --> Done: merged + verified
+    InReview --> InProgress: changes requested
+    Done --> [*]
+    Open --> WontFix: risk accepted + documented
+```
+
 ## Key takeaways
 
 - Postmortems convert the **cost of an incident into durable improvement** — without them, the same failure recurs with larger blast radius as the system grows, and knowledge leaves with the responders who hold it tacitly.

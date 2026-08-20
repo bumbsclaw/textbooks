@@ -671,6 +671,58 @@ meaning "reachable and credentialed" and starts meaning "verified."
   (signed statements about them), **identities** (who signs), and **policies** (rules
   that enforce evidence at trust boundaries).
 
+
+### Supply-chain trust boundaries and crossing points
+
+```mermaid
+flowchart TD
+    DEV["Developer Workstation<br/>First-party code"] --> SCM["Source Control<br/>Git / SCM"]
+    SCM --> CI["CI/CD Pipeline"]
+    OSS["Open-Source Registry<br/>npm / PyPI / Maven"] --> RESOLVE{"Dependency<br/>Resolution"}
+    RESOLVE --> CI
+    CI --> BUILD["Build System"]
+    BUILD --> REG["Artifact Registry<br/>Container / Package"]
+    REG --> DEPLOY["Deployment<br/>Prod Fleet"]
+    DEPLOY --> USER["End User"]
+
+    ATT1["Attacker: commit<br/>impersonation"] -.-> SCM
+    ATT2["Attacker: typosquat<br/>/ confusion"] -.-> OSS
+    ATT3["Attacker: pipeline<br/>injection"] -.-> CI
+    ATT4["Attacker: build<br/>tampering"] -.-> BUILD
+    ATT5["Attacker: registry<br/>compromise"] -.-> REG
+
+    style ATT1 fill:#f88,stroke:#900
+    style ATT2 fill:#f88,stroke:#900
+    style ATT3 fill:#f88,stroke:#900
+    style ATT4 fill:#f88,stroke:#900
+    style ATT5 fill:#f88,stroke:#900
+```
+
+
+### Transitive dependency explosion
+
+```mermaid
+flowchart TD
+    APP["Your Application<br/>1 direct dependency?"] --> A["dep A v1.2"]
+    APP --> B["dep B v3.0"]
+    APP --> C["dep C v2.1"]
+    A --> A1["transitive a1"]
+    A --> A2["transitive a2"]
+    B --> B1["transitive b1"]
+    B1 --> B11["deep transitive<br/>b1.1"]
+    B1 --> B12["deep transitive<br/>b1.2"]
+    C --> C1["transitive c1"]
+    C --> C2["transitive c2"]
+    C2 --> C21["deep transitive<br/>c2.1"]
+
+    COMP["Compromised leaf<br/>c2.1 (1 maintainer)"] -. compromise .-> C2
+    C2 -. propagates .-> C
+    C -. propagates .-> APP
+
+    style COMP fill:#f88,stroke:#900
+    style APP fill:#ffcc00,stroke:#333
+```
+
 ## Further reading
 
 - SLSA v1.0 specification, especially the threat model ("Supply chain threats"):

@@ -708,6 +708,46 @@ sure you never mistake it for two.
 - **Shard late; design keys early.** A shardable schema — tenant ID everywhere, compound keys, no
   cross-tenant invariants — is cheap insurance; retrofitting one is the multi-year horror story.
 
+
+```mermaid
+flowchart TD
+    Q{"Shard key and access?"} --> R["Range — time-series friendly<br/>pruning, hot tail risk"]
+    Q --> H["Hash — uniform spread<br/>no range pruning<br/>good for point lookups"]
+    Q --> CH["Consistent hash — elastic<br/>minimal reshuffle on add/remove"]
+    Q --> C["Composite / directory<br/>lookup table for irregular dist"]
+    R --> S1["range by created_at"]
+    H --> S2["hash(user_id) mod N"]
+    CH --> S3["hash ring with vnodes"]
+    S1 -.-> P["Pruning: WHERE range matches → 1 partition"]
+    S2 -.-> P
+```
+
+```mermaid
+sequenceDiagram
+    participant Ctrl as Controller
+    participant S1 as Shard A (overfull)
+    participant S2 as Shard B (new)
+    Ctrl->>S1: Initiate split — logical range [0,100) → [0,50)+[50,100)
+    S1->>S1: Quiesce writes for range [50,100)
+    S1->>S2: Copy data for [50,100) + WAL tail
+    S2-->>Ctrl: Catchup complete — LSN aligned
+    Ctrl->>Ctrl: Update routing table atomically
+    Ctrl-->>S1: Resume — now owns [0,50) only
+    Note over Ctrl: Online split needs double-write window<br/>or logical replication tail
+```
+
+```mermaid
+flowchart TB
+    Q["SELECT COUNT(*) WHERE status='active'<br/>no shard key in predicate"] --> R["Router / Proxy<br/>no pruning possible"]
+    R --> S1["Scatter to Shard 1"]
+    R --> S2["Scatter to Shard 2"]
+    R --> S3["Scatter to Shard N"]
+    S1 --> A["Partial COUNT=42"] --> M["Merge / gather<br/>SUM partial counts = 142"]
+    S2 --> B["Partial COUNT=60"] --> M
+    S3 --> C["Partial COUNT=40"] --> M
+    M --> L["Latency = slowest shard<br/>tail at scale pitfall"]
+```
+
 ## Further reading
 
 - Kleppmann, M., *Designing Data-Intensive Applications* (O'Reilly, 2017), Chapter 6

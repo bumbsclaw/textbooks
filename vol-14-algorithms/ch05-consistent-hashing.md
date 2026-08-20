@@ -610,3 +610,17 @@ flowchart TB
 - Lamping & Veach — "A Fast, Minimal Memory, Consistent Hash Algorithm" (Google, 2014; arxiv:1406.2294) — Jump consistent hash.
 - Mirrokni et al. — "Consistent Hashing with Bounded Loads" (2018; arxiv:1608.01350) — the bounded-load extension that prevents absorption overload.
 - Ketama consistent hashing (github.com/RJ/ketama) — the memcached implementation that standardized `V=100–200` and is still the reference for most ring libraries.
+
+### Virtual nodes on hash ring
+
+```mermaid
+flowchart TB
+    RING2[(Hash Ring)]
+    RING2 --> V1A[Node A - VNode 1]
+    RING2 --> V1B[Node A - VNode 2]
+    RING2 --> V1C[Node A - VNode 3]
+    RING2 --> V2A[Node B - VNode 1]
+    RING2 --> V2B[Node B - VNode 2]
+    KEY2[Key] --> HASH2[hash key]
+    HASH2 --> WALK[Walk Clockwise to Nearest VNode]
+```

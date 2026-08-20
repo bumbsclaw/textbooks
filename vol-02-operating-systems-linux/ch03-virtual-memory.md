@@ -169,6 +169,22 @@ flowchart TB
   FILL --> PA
 ```
 
+
+```mermaid
+flowchart TD
+    VA["Virtual addr 48-bit<br/>9+9+9+9+12"] --> PML4["PML4 (512 entries)<br/>CR3 points here"]
+    PML4 -->|"bits 47:39"| PDP["PDP / PUD"]
+    PDP -->|"bits 38:30"| PD["Page Directory"]
+    PD -->|"bits 29:21"| PT["Page Table"]
+    PT -->|"bits 20:12"| Page["4 KiB page frame<br/>PA = PFN + offset(11:0)"]
+    Huge["Huge pages shortcut<br/>1 GiB: stop at PDP<br/>2 MiB: stop at PD<br/>Fewer levels, fewer walks"]
+    PD -.-> Huge
+    TLB["TLB caches VA->PA<br/>Huge pages: more reach per entry<br/>1 TLB entry: 4 KiB vs 2 MiB (512x)"]
+    style PML4 fill:#cce5ff,stroke:#004085
+    style Page fill:#d4edda,stroke:#155724
+    style Huge fill:#fff3cd,stroke:#856404
+```
+
 ## The TLB, deepened
 
 Volume 1, Chapter 3 (*The Memory Hierarchy and Caches*) introduced the **Translation
@@ -295,6 +311,30 @@ flowchart TB
   CACHE --> RET
   DISKF --> RET
   SWAPIN --> RET
+```
+
+
+```mermaid
+sequenceDiagram
+    participant App as Process
+    participant MMU as MMU
+    participant Kernel as Kernel fault handler
+    participant Disk as Backing store
+    App->>MMU: load VA (not yet mapped)
+    MMU-->>Kernel: #PF (page fault)
+    alt Anonymous (heap/stack)
+        Kernel->>Kernel: alloc zeroed frame, install PTE
+    else File-backed (mmap)
+        Kernel->>Disk: read page from file
+        Disk-->>Kernel: page data
+        Kernel->>Kernel: install PTE, add to page cache
+    else Copy-on-write
+        Kernel->>Kernel: copy frame, mark writable
+    else Swapped out
+        Kernel->>Disk: swap in
+    end
+    Kernel-->>App: return, re-execute faulting insn
+    Note over App,Kernel: Major fault = I/O (ms), Minor = alloc/COW (us)
 ```
 
 ## Copy-on-write

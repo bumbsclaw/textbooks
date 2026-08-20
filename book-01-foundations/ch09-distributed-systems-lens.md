@@ -703,6 +703,50 @@ single-artifact model the earlier chapters implicitly assumed:
   policy, SBOM/CVE response — are named explicitly. An attacker's recon is a search for the row
   where the Accountable column is blank.
 
+
+### Supply chain as a distributed system
+
+```mermaid
+flowchart TD
+    subgraph Control["Control Plane (few)"]
+        REG["Registry / SCM<br/>Centralized chokepoint"]
+        BUILD["Build platform<br/>Centralized chokepoint"]
+    end
+    subgraph Data["Data Plane (many)"]
+        DEV1["Developer 1"]
+        DEV2["Developer 2"]
+        DEV3["... thousands"]
+        MIRROR["Mirrors / CDNs<br/>Eventual consistency"]
+    end
+    REG --> DEV1
+    REG --> DEV2
+    REG --> MIRROR
+    BUILD --> REG
+    DEV1 --> BUILD
+    BAD["Byzantine actor<br/>(malicious package)"] -.-> REG
+    REG -. propagates .-> DEV2
+    style BAD fill:#f88,stroke:#900
+    style REG fill:#ffcc00,stroke:#333
+```
+
+
+### Consistency vs availability in registries
+
+```mermaid
+flowchart TD
+    PUBLISH["Publisher: push v1.2.3"] --> REG["Primary registry<br/>strong consistency"]
+    REG --> CDN1["CDN edge 1<br/>stale?"]
+    REG --> CDN2["CDN edge 2<br/>stale?"]
+    REG --> MIRROR["Corporate mirror<br/>lagging?"]
+
+    CONSUMER["Consumer: install"] --> WHICH{"Which view?"}
+    WHICH -->|Stale CDN| STALE["Gets old (vuln) version"]
+    WHICH -->|Fresh primary| FRESH["Gets latest"]
+    WHICH -->|Mirror lag| CONFUSION["Version confusion<br/>to dependency confusion risk"]
+
+    style CONFUSION fill:#f88,stroke:#900
+```
+
 ## Further reading
 
 - Netflix Technology Blog, "The Paved PaaS to Microservices" and related posts on the paved-road

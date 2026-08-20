@@ -658,3 +658,40 @@ GC is a local runtime concern with fleet-wide consequences:
 - CPython `gc` module — https://docs.python.org/3/library/gc.html and *PEP 442 — Safe object finalization*; `tracemalloc` — https://docs.python.org/3/library/tracemalloc.html.
 - Meyer — *Memory Management Reference* — https://www.memorymanagement.org/ — concise algorithm glossary.
 - Hertz — *Quantifying the performance of garbage collection vs. explicit memory management* (OOPSLA 2005) — throughput/pause/footprint trade-offs measured.
+
+### GC roots and reachability
+
+```mermaid
+flowchart TB
+    ROOTS[GC Roots - Stack / Globals / Registers] --> REF1[Object A]
+    REF1 --> REF2[Object B]
+    REF1 --> REF3[Object C]
+    REF2 --> REF4[Object D]
+    UNREACH[Object E - Unreachable] -.->|No path from roots| COLLECT[Collected]
+    ROOTS -.->|No reference| UNREACH
+```
+
+### Generational GC lifecycle
+
+```mermaid
+flowchart LR
+    ALLOC[Allocation - Eden] --> MINOR[Minor GC]
+    MINOR -->|Survives| S0[Survivor S0]
+    S0 --> S1[Survivor S1]
+    S1 -->|Survives N cycles| OLD[Old Generation]
+    OLD --> MAJOR[Major / Full GC]
+    MINOR -->|Dies young| FREE[Freed]
+```
+
+### Stop-the-world vs concurrent GC
+
+```mermaid
+flowchart TB
+    subgraph STW["Stop-The-World"]
+        A1[Mutator Paused] --> GC1[GC Runs] --> A2[Mutator Resumes]
+    end
+    subgraph CONC["Concurrent"]
+        B1[Mutator Running] --- GC2[GC Concurrent Phase]
+        B2[STW Pause - Short] --> B3[Mutator Running]
+    end
+```

@@ -334,6 +334,21 @@ measure. Second, false sharing is a *write* problem: read-only shared data on on
 multiple caches can hold a line in Shared state simultaneously. It is concurrent *writes* to distinct
 variables on one line that trigger the ping-pong.
 
+
+```mermaid
+sequenceDiagram
+    participant C0 as Core 0 (counter A)
+    participant C1 as Core 1 (counter B)
+    participant Bus as Coherence bus
+    Note over C0,C1: A and B on SAME 64 B line (false sharing)
+    C0->>Bus: store A++ (RFO, line to M)
+    Bus-->>C1: invalidate C1 copy
+    C1->>Bus: store B++ (miss, RFO)
+    Bus-->>C0: invalidate C0 copy
+    C0->>Bus: store A++ (miss again!)
+    Note over C0,Bus: Ping-pong: every store is a miss<br/>~70 ns vs ~1 ns without sharing<br/>Fix: align to 64 B or per-core sharding
+```
+
 ## Branch misprediction: when the pipeline guesses wrong
 
 Chapter 2's core is deeply pipelined and speculative: to keep the pipeline full it *predicts* the
@@ -408,6 +423,22 @@ genuinely hot loops. Everywhere else, leave the branch — it is cheaper, and it
 always: measure `branch-misses`, confirm the branch is both hot and unpredictable, and only then
 reach for branchless or SIMD.
 
+
+```mermaid
+flowchart TD
+    Fetch["Fetch branch"] --> Predict{"Predictor<br/>(TAGE / BTB)"}
+    Predict -->|"predict taken"| SpecTake["Speculatively fetch taken path<br/>Fill 15-20 stages"]
+    Predict -->|"predict not taken"| SpecNot["Speculatively fetch fall-through"]
+    SpecTake --> Exec["Execute and resolve"]
+    SpecNot --> Exec
+    Exec --> Correct{"Correct?"}
+    Correct -->|"yes ~95%"| Commit["Commit: zero cost"]
+    Correct -->|"no ~5%"| Flush["FLUSH pipeline<br/>Discard 15-20 stages ~15 ns"]
+    Flush --> Refetch["Fetch correct path"]
+    style Flush fill:#f8d7da,stroke:#721c24
+    style Commit fill:#d4edda,stroke:#155724
+```
+
 ## Memory-bandwidth saturation
 
 The locality section optimized for *latency* — avoiding misses. But a class of workloads is not
@@ -446,6 +477,19 @@ reflex — add vCPUs — buys nothing, because the bottleneck is the memory subs
 Recognizing bandwidth saturation (flat throughput vs. thread count, high `LLC-load-misses` streaming
 to DRAM, and — where available — memory-controller bandwidth counters near their ceiling) prevents
 the expensive mistake of scaling a machine that has no headroom left to give.
+
+
+```mermaid
+flowchart TD
+    Cores["N cores streaming<br/>Each ~30 GB/s demand"] --> BW{"DRAM BW<br/>~50-100 GB/s per socket"}
+    BW -->|"sum < capacity"| Linear["Linear scaling<br/>2 cores: 2x, 4 cores: 4x"]
+    BW -->|"sum > capacity"| Plateau["Bandwidth wall<br/>More cores = same total<br/>Per-core BW drops"]
+    Plateau --> Mitigate["Compress, cache-block,<br/>NUMA-local, fewer threads"]
+    Linear --> Roof["Increase arithmetic intensity"]
+    Mitigate --> Roof
+    style Plateau fill:#f8d7da,stroke:#721c24
+    style Linear fill:#d4edda,stroke:#155724
+```
 
 ## Atomic and lock contention
 

@@ -769,6 +769,43 @@ of truth and the teams owning the views, and lag SLOs are the contract between t
   store is data loss rather than an incident, it has silently become a second source of
   truth.
 
+
+```mermaid
+flowchart TD
+    Q{"Workload shape?"} --> TS["Time-series / metrics<br/>append-heavy, range scans → TimescaleDB, InfluxDB"]
+    Q --> SR["Full-text search<br/>inverted index, ranking → Elasticsearch, Typesense"]
+    Q --> AN["Vector / nearest neighbor<br/>embeddings, ANN → pgvector, Qdrant"]
+    Q --> GR["Graph traversals<br/>multi-hop → Neo4j, Neptune"]
+    Q --> CO["Columnar OLAP<br/>wide scans, compression → ClickHouse, DuckDB"]
+    TS --> T["If mixed OLTP+OLAP → HTAP tradeoff"]
+    SR --> T
+```
+
+```mermaid
+flowchart TB
+    D1["Doc 1: 'distributed systems are hard'"] --> T1["Tokenizer + stemmer"]
+    D2["Doc 2: 'hard distributed consensus'"] --> T1
+    T1 --> P["Posting lists"]
+    P --> L1["'distribut' → [1, 2]"]
+    P --> L2["'hard' → [1, 2]"]
+    P --> L3["'consensus' → [2]"]
+    L1 --> Q["Query 'distributed consensus'<br/>intersect [1,2] ∩ [2] = [2]"]
+    L3 --> Q
+    Q --> R["Ranking: TF-IDF / BM25<br/>then fetch docs"]
+```
+
+```mermaid
+flowchart LR
+    subgraph Row["Row store — OLTP"]
+        A["Page holds whole rows<br/>point lookup fast<br/>write friendly"]
+    end
+    subgraph Col["Columnar — OLAP"]
+        B["Column holds one attribute<br/>vectorized scan<br/>high compression (RLE, dict)"]
+    end
+    A --> Q1["SELECT * WHERE id=42<br/>1 page read"]
+    B --> Q2["SELECT avg(salary) GROUP BY dept<br/>scan 1 column, skip rest<br/>10x compression → 10x less I/O"]
+```
+
 ## Further reading
 
 - Stonebraker, M. and Çetintemel, U., "'One Size Fits All': An Idea Whose Time Has Come

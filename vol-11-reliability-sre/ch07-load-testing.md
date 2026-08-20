@@ -731,6 +731,35 @@ Load testing distributed backends has failure modes that single-service tests do
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Load Test Lifecycle
+
+```mermaid
+flowchart TB
+    Define["Define SLO + workload"] --> Model["Model traffic<br/>RPS, mix, data size"]
+    Model --> Harness["Harness<br/>k6 / Vegeta / Gatling"]
+    Harness --> Baseline["Baseline no-load"]
+    Baseline --> Ramp["Ramp + soak"]
+    Ramp --> Analyze["Analyze<br/>p50/p95/p99 + saturation"]
+    Analyze --> Tune["Tune + re-test"]
+```
+
+#### Little's Law and Saturation
+
+```mermaid
+sequenceDiagram
+    participant Gen as Load generator
+    participant S as Service
+    participant DB as DB
+    Gen->>S: RPS λ
+    S->>DB: queries
+    DB-->>S: latency W
+    Note over Gen,S: L = λ × W<br/>concurrency = throughput × latency
+    S-->>Gen: p95 rises at saturation
+```
+
 ## Key takeaways
 
 - Load testing answers **how much, how gracefully, and for how long** a system can handle demand — questions that functional tests cannot answer and that capacity planning depends on. Without measured data, provisioning is guesswork and autoscaling is hope.

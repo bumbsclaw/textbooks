@@ -838,3 +838,46 @@ jobs:
 ---
 
 *Next: Chapter 2 — Contract Testing, Test Doubles, and Testability — where the focus shifts from testing a single service to testing the seams between services, the doubles that isolate them, and the design choices that make both possible.*
+
+### Testing pyramid
+
+```mermaid
+flowchart TB
+    E2E[E2E Tests - Few - Slow]
+    INT[Integration Tests - Some]
+    UNIT[Unit Tests - Many - Fast]
+    UNIT --> INT --> E2E
+```
+
+### Test doubles taxonomy
+
+```mermaid
+flowchart TB
+    DOUBLE[Test Double] --> MOCK[Mock - Verify Interaction]
+    DOUBLE --> STUB[Stub - Canned Answers]
+    DOUBLE --> FAKE[Fake - Working Implementation]
+    DOUBLE --> SPY[Spy - Record Calls]
+    DOUBLE --> DUMMY[Dummy - Placeholder]
+```
+
+### Flaky test triage
+
+```mermaid
+flowchart TB
+    FAIL[Test Failed] --> RE{Re-run Passes?}
+    RE -->|Yes| FLAKY[Flaky - Quarantine]
+    RE -->|No| REAL[Real Failure - Fix Code]
+    FLAKY --> ROOT{Root Cause?}
+    ROOT --> TIME[Timing / Async]
+    ROOT --> ORDER[Order Dependent]
+    ROOT --> ENV[Environment]
+```
+
+### Coverage vs confidence
+
+```mermaid
+flowchart LR
+    COV[High Coverage %] --> CONF{Meaningful Assertions?}
+    CONF -->|Yes| HIGH[High Confidence]
+    CONF -->|No| FALSE[False Confidence - Low Value]
+```

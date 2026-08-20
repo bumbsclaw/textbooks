@@ -936,3 +936,15 @@ do not adopt the pattern.
 - Michael Nygard — *Release It!* (2nd ed., 2018). Circuit breaker, bulkhead, timeout, and other stability patterns grounded in production failure stories.
 - Gregor Hohpe and Bobby Woolf — *Enterprise Integration Patterns* (2003). Messaging patterns (outbox, saga, event-driven) that underpin inter-service communication. https://www.enterpriseintegrationpatterns.com/
 - Mark Richards — *Software Architecture Patterns* (2015) — layered, event-driven, microkernel patterns and their trade-offs. https://www.oreilly.com/library/view/software-architecture-patterns/9781491971437/
+
+### Pattern selection decision tree
+
+```mermaid
+flowchart TB
+    Q1{Object Creation Complex?}
+    Q1 -->|Yes| FACTORY[Factory / Builder]
+    Q1 -->|No| Q2{Need Decoupling?}
+    Q2 -->|Yes| OBS2[Observer / Pub-Sub / Strategy]
+    Q2 -->|No| Q3{Need Structure?}
+    Q3 -->|Yes| ADAPTER[Adapter / Decorator / Facade]
+```

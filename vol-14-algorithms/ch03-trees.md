@@ -798,3 +798,30 @@ print(f"skip list scan: {t_sl*1000:.1f} ms  ({len(sorted_via_sl)} keys)")
 - Graefe — *Modern B-Tree Techniques* (Foundations and Trends in Databases, 2011) — comprehensive survey of B-tree variants, latch coupling, and write-optimized trees.
 - RocksDB wiki (github.com/facebook/rocksdb/wiki) — LSM memtable (skip list), SSTable format, and bloom-filter-assisted reads.
 - PostgreSQL docs — "Indexes" (postgresql.org/docs/current/indexes.html) — B-tree, hash, GiST, GIN, BRIN with operational guidance.
+
+### Tree traversal orders
+
+```mermaid
+flowchart TB
+    ROOT[Root] --> LEFT[Left Subtree]
+    ROOT --> RIGHT[Right Subtree]
+    PRE[Pre-order - Root Left Right]
+    IN[In-order - Left Root Right]
+    POST[Post-order - Left Right Root]
+    LEVEL[Level-order - BFS]
+    ROOT -.-> PRE
+    ROOT -.-> IN
+    ROOT -.-> POST
+    ROOT -.-> LEVEL
+```
+
+### AVL vs Red-Black balance comparison
+
+```mermaid
+flowchart TB
+    INSERT[Insert Node] --> CHECK{Balance Factor?}
+    CHECK -->|AVL - Strict| ROT1[Rotation - O log n - Tighter Balance]
+    CHECK -->|Red-Black - Relaxed| ROT2[Recolor + Rotation - Fewer Rotations]
+    ROT1 --> H1[Height ~1.44 log n]
+    ROT2 --> H2[Height ~2 log n]
+```

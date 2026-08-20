@@ -740,6 +740,38 @@ the same question in its own dialect: *"is this the identity my policy allows?"*
 (the footgun section) and the fleet has a single, coherent, keyless identity story from `git push` to
 production traffic. Get it loose and you have spent a lot of cryptography to check almost nothing.
 
+### Workload identity federation (OIDC)
+
+```mermaid
+sequenceDiagram
+    participant W as Workload (GitHub Actions / GKE)
+    participant IdP as OIDC Provider (token issuer)
+    participant F as Fulcio
+    participant R as Rekor
+    W->>IdP: authenticate (OIDC flow)<br/>aud=fulcio, sub=repo:org/repo@ref:main
+    IdP->>W: ID token (JWT, ~5 min)
+    W->>W: generate ephemeral keypair<br/>(in memory)
+    W->>F: POST /api/v2/signingCert<br/>{id_token, ephemeral pubkey}
+    F->>F: validate JWT sig + aud + sub
+    F->>W: short-lived cert<br/>(SAN = sub, ~10 min)
+    W->>R: create log entry<br/>(artifact hash + sig + cert)
+    Note over W,R: No long-lived secret<br/>ever at rest
+```
+
+### Keyless vs keyed decision tree
+
+```mermaid
+flowchart TD
+  Q1{"Who signs?"}
+  Q1 -->|Human releasing locally| K1["Keyed: hardware key (YubiKey)<br/>or KMS — human holds identity"]
+  Q1 -->|CI/CD workload| Q2{"Can CI mint OIDC tokens?"}
+  Q2 -->|Yes (GHA, GCP, AWS IAM OIDC)| KL["Keyless: Fulcio + ephemeral key<br/>identity = workload sub claim"]
+  Q2 -->|No / air-gapped| K2["Keyed: KMS-anchored<br/>long-lived workload key"]
+  Q1 -->|Third-party / vendor| K3["Keyed + transparency<br/>vendor long-lived cert<br/>+ Rekor for auditability"]
+  style KL fill:#2ea043,color:#fff
+  style K1 fill:#1f6feb,color:#fff
+```
+
 ## Key takeaways
 
 - **"Keyless" is a misnomer.** There *is* an ephemeral keypair per signing — generated in memory,

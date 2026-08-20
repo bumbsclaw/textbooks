@@ -677,6 +677,47 @@ PKI at single-host scale is `openssl req`. PKI at fleet scale is a distributed s
 - **Config-plane propagation for trust anchors.** Rotating a root or adding a new trust anchor requires pushing the new PEM to every verifier — every Go service's `SystemCertPool` augmentation, every Envoy `validation_context`, every nginx `ssl_trusted_certificate`, every Java truststore. Use your config plane (Kubernetes `ConfigMap` with reload, Envoy xDS, Vault Agent templates) and version the anchor bundle (`ca-bundle:v3`) so you can roll back.
 - **Observability.** Export `x509_cert_not_after`, `x509_cert_verify_success`, `ocsp_staple_expiry`, and `tls_handshake_errors` as metrics from every terminator. Alert on time-to-expiry, stapling staleness, and handshake error rate — a spike in `unknown_ca` after a deploy is the signal that a chain was broken by the change.
 
+
+<!-- Batch C: additional diagrams -->
+
+#### TLS 1.3 Handshake
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: ClientHello + key_share
+    S->>C: ServerHello + key_share + certificate + Finished
+    C->>C: verify cert chain
+    C->>S: Finished
+    Note over C,S: traffic now encrypted<br/>1-RTT, forward secret
+```
+
+#### Certificate Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Issue: ACME / CSR
+    Issue --> Deployed: cert installed
+    Deployed --> Renew: T-30d auto-renew
+    Renew --> Deployed: new cert
+    Deployed --> Revoked: compromise
+    Revoked --> Issue: reissue
+    Deployed --> Expired: missed renewal
+    Expired --> Issue
+```
+
+#### Chain of Trust
+
+```mermaid
+flowchart TB
+    Root["Root CA<br/>offline, long-lived"] --> Inter["Intermediate CA<br/>online, short-lived"]
+    Inter --> Leaf["Leaf cert<br/>service / domain"]
+    Leaf --> Verify{"Client verifies<br/>leaf → inter → root<br/>+ CT log + OCSP"}
+    Verify -->|OK| Trusted["Trusted"]
+    Verify -->|Fail| Reject["Reject"]
+```
+
 ## Key takeaways
 
 - Every TLS certificate is an X.509 v3 binding of a public key to identities via SANs — not CN — with KU/EKU and Basic Constraints that restrict how it may be used. Clients validate SAN, validity window, chain signatures, and constraints before trusting a leaf; servers must send leaf + intermediate, not just leaf.

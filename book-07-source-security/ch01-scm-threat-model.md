@@ -573,6 +573,48 @@ The chapters that follow build these links one at a time. We start, in Chapter 2
 glaring gap this chapter exposed: git authenticates *no one*, and until a commit carries a verified
 signature, "authored by" is just a string on an envelope.
 
+### SCM attack taxonomy (STRIDE for Git hosting)
+
+```mermaid
+flowchart TD
+  SCM["Source control plane<br/>(GHE / GitHub / GitLab)"]
+  SCM --> S["Spoofing: stolen PAT /<br/>hijacked session"]
+  SCM --> T["Tampering: force-push,<br/>history rewrite"]
+  SCM --> R["Repudiation: unsigned commits,<br/>no audit trail"]
+  SCM --> I["Information disclosure:<br/>secret in git history"]
+  SCM --> D["Denial: branch deletion,<br/>repo wipe"]
+  SCM --> E["Elevation: maintainer<br/>ATO to push to protected branch"]
+  style T fill:#f85149,color:#fff
+  style E fill:#f85149,color:#fff
+```
+
+### Git hosting supply chain blast radius
+
+```mermaid
+flowchart LR
+  A["Single repo compromise<br/>(malicious commit merged)"] --> B["CI builds artifact<br/>(inherits malicious code)"]
+  B --> C["Registry: poisoned image<br/>+ valid provenance (built honestly)"]
+  C --> D["Fleet: N clusters / customers<br/>deploy poisoned artifact"]
+  D --> E["Amplification: downstream deps<br/>(if published package)"]
+  E --> F["Total blast radius >> single commit"]
+  style F fill:#f85149,color:#fff
+  style A fill:#d29922,color:#000
+```
+
+### Source trust boundaries
+
+```mermaid
+flowchart TB
+  DEV["Developer + endpoint"] -->|"push (SSH/HTTPS+PAT)"| HOST["Git hosting<br/>(GitHub/GitLab)"]
+  HOST -->|"webhook"| CI["CI (Actions / Jenkins)"]
+  HOST -->|"protect via"| BRANCH["Branch protection<br/>+ required reviews"]
+  DEV -.->|"sign commits"| SIG["Commit sig<br/>(GPG/SSH/Sigstore)"]
+  SIG -.->|"verified by"| HOST
+  CI -.->|"deploy key / OIDC"| HOST2["Deploy via deploy key<br/>(privilege boundary!)"]
+  style HOST fill:#1f6feb,color:#fff
+  style BRANCH fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **Source is the root of the supply chain.** Every downstream artifact is a derivation of

@@ -553,6 +553,58 @@ subject of nearly everything that follows.
   single vendor never had). Treat build infrastructure as tier-0, production-critical
   infrastructure.
 
+
+### SolarWinds SUNBURST injection flow
+
+```mermaid
+sequenceDiagram
+    participant Att as Threat Actor
+    participant Build as SolarWinds Build System
+    participant Orion as Orion Platform Artifact
+    participant Customer as Customer Fleet
+    Att->>Build: Compromise build server (SUNSPOT)
+    Build->>Build: Inject backdoor into source during build
+    Build->>Orion: Produce signed Orion update (tainted)
+    Orion->>Customer: Distribute via trusted update channel
+    Customer->>Customer: Deploy signed update (trust validated!)
+    Customer->>Att: SUNBURST beacon to C2
+    Note over Build,Orion: Signature valid — provenance missing
+```
+
+
+### Build-system chokepoint: one compromise, many victims
+
+```mermaid
+flowchart TD
+    BUILD["Compromised Build System<br/>Single point of amplification"] --> A1["Artifact v1.2.1"]
+    BUILD --> A2["Artifact v1.2.2"]
+    BUILD --> A3["Artifact v1.3.0"]
+    A1 --> C1["Customer 1"]
+    A1 --> C2["Customer 2"]
+    A2 --> C3["Customer 3"]
+    A3 --> C4["Customer 4"]
+    A3 --> C5["Customer 5"]
+    A3 --> C6["... 18,000 customers"]
+
+    style BUILD fill:#f88,stroke:#900
+```
+
+
+### 3CX vs SolarWinds: comparison of build-compromise vectors
+
+```mermaid
+flowchart LR
+    subgraph SW["SolarWinds (2020)"]
+        SW1["Build server<br/>compromise"] --> SW2["Source injection<br/>at build time"] --> SW3["Signed artifact<br/>via update channel"]
+    end
+    subgraph CX3["3CX (2023)"]
+        CX1["Upstream dependency<br/>compromise"] --> CX2["Trojanized<br/>FFmpeg build"] --> CX3["Bundled installer<br/>signed & distributed"]
+    end
+    SW3 -. both bypass .-> TRUST["Trust in signature<br/>without provenance"]
+    CX3 -. both bypass .-> TRUST
+    style TRUST fill:#ffcc00,stroke:#333
+```
+
 ## Further reading
 
 - CrowdStrike, "SUNSPOT: An Implant in the Build Process" (January 11, 2021) — the primary

@@ -659,3 +659,31 @@ Capacity planning is a coordination problem across teams. Each team optimizes lo
 - AWS: EC2 Auto Scaling mixed instances policy, Karpenter best practices, Graviton migration guide — https://docs.aws.amazon.com/autoscaling/ec2/userguide/auto-scaling-mixed-instances-groups.html
 - Beyer, Jones, Petoff, *Site Reliability Engineering* (O'Reilly), Ch. 22 — Handling Overload; Ch. 23 — Managing Critical State.
 - Prophet forecasting library — https://facebook.github.io/prophet/ and Holt-Winters in `statsmodels`.
+
+### Performance testing progression
+
+```mermaid
+flowchart LR
+    A[Baseline Test] --> B[Load Test]
+    B --> C[Stress Test]
+    C --> D[Spike Test]
+    D --> E[Soak Test]
+    E --> F[Capacity Ceiling Identified]
+```
+
+### Vertical vs horizontal scaling
+
+```mermaid
+flowchart TB
+    subgraph Vertical["Vertical Scaling"]
+        V1[Small Instance] --> V2[Large Instance]
+    end
+    subgraph Horizontal["Horizontal Scaling"]
+        H1[Instance 1] 
+        H2[Instance 2]
+        H3[Instance 3]
+        LB[Load Balancer] --> H1
+        LB --> H2
+        LB --> H3
+    end
+```

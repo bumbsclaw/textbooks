@@ -269,6 +269,24 @@ around it. The lesson — that speculative pushing
 without knowing the client's cache state loses more than it wins — echoes the server-push-style
 deprecations elsewhere in the stack.
 
+
+```mermaid
+flowchart TD
+    subgraph Conn["One TCP connection"]
+        Stream1["Stream 1: GET /api/users<br/>HEADERS + DATA frames<br/>Priority, flow control"]
+        Stream3["Stream 3: GET /static/app.js<br/>Interleaved frames"]
+        Stream5["Stream 5: POST /api/orders<br/>Concurrent, no HOL at HTTP layer"]
+        Ctrl["Control: SETTINGS, PING<br/>WINDOW_UPDATE, GOAWAY"]
+    end
+    Hpack["HPACK: header compression<br/>Static + dynamic table<br/>Per-connection state"]
+    Stream1 --- Hpack
+    Stream3 --- Hpack
+    TCPHOL["But: TCP HOL remains<br/>One lost TCP segment stalls ALL streams<br/>See ch04 QUIC fix"]
+    Conn -.-> TCPHOL
+    style Conn fill:#d4edda,stroke:#155724
+    style TCPHOL fill:#f8d7da,stroke:#721c24
+```
+
 ## The wall HTTP/2 cannot climb: TCP head-of-line blocking
 
 HTTP/2 eliminated head-of-line blocking *at the HTTP layer*. It could not eliminate it at the
@@ -398,6 +416,25 @@ user-space transport burns more CPU per byte than the kernel's TCP, which matter
 | Connection migration | No | No | Yes (connection ID) |
 | Server push | No | Yes (deprecated/removed) | Not carried forward |
 | Concurrency workaround | ~6 connections/host | 1 connection | 1 connection |
+
+
+```mermaid
+flowchart TD
+    V1["HTTP/1.1<br/>Text, 1 req per conn (pipelining broken)<br/>6 conns per origin, HOL at app<br/>No push, no multiplex"]
+    V2["HTTP/2<br/>Binary frames, multiplexed streams<br/>1 conn, HPACK, server push<br/>TCP HOL remains"]
+    V3["HTTP/3<br/>Over QUIC (UDP)<br/>Per-stream reliability, no TCP HOL<br/>QPACK, 0-RTT, migration"]
+    V1 --> Trade1["Simple, universal<br/>Head-of-line at HTTP + TCP"]
+    V2 --> Trade2["Efficient, widely deployed<br/>TCP HOL is the wall"]
+    V3 --> Trade3["Fast, loss-resilient<br/>UDP blocked in some nets<br/>Userspace QUIC CPU cost"]
+    Choice{"Choose?"}
+    Trade1 --> Choice
+    Trade2 --> Choice
+    Trade3 --> Choice
+    Choice --> Measure["Measure: p99 under loss<br/>CDN + origin must both support"]
+    style V1 fill:#f8d7da,stroke:#721c24
+    style V2 fill:#fff3cd,stroke:#856404
+    style V3 fill:#d4edda,stroke:#155724
+```
 
 ## Practical backend concern: connection management and pooling
 

@@ -850,6 +850,48 @@ merged dataset as maximally nullable until proven otherwise.
   partition boundaries become expensive or impossible; the logical layer determines later
   shardability.
 
+
+```mermaid
+flowchart TB
+    A["Predicate P\nTRUE / FALSE / UNKNOWN"] --> B{"P AND Q"}
+    B --> C["TRUE AND UNKNOWN = UNKNOWN"]
+    B --> D["FALSE AND UNKNOWN = FALSE"]
+    B --> E["UNKNOWN AND UNKNOWN = UNKNOWN"]
+    A --> F{"P OR Q"}
+    F --> G["TRUE OR UNKNOWN = TRUE"]
+    F --> H["FALSE OR UNKNOWN = UNKNOWN"]
+    A --> I{"NOT P"}
+    I --> J["NOT UNKNOWN = UNKNOWN"]
+    J --> K["WHERE filters only TRUE\nUNKNOWN behaves like FALSE"]
+```
+
+```mermaid
+sequenceDiagram
+    participant Q as Query Engine
+    participant S as Subquery
+    participant R as Result
+    Q->>S: SELECT id FROM t WHERE x NOT IN (1, 2, NULL)
+    S-->>Q: NULL in list → 3VL poisons every comparison
+    Q->>Q: id <> 1 AND id <> 2 AND id <> NULL
+    Note over Q: id <> NULL = UNKNOWN → row filtered
+    Q-->>R: 0 rows always — silent bug
+    Q->>S: SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.id = t.id)
+    Note over Q: EXISTS is two-valued — NULL safe
+    S-->>Q: correlated check — correct anti-join
+    Q-->>R: expected rows returned
+```
+
+```mermaid
+flowchart LR
+    A["Base case\nSELECT * FROM employees WHERE manager IS NULL"] --> B["Working table\niteration 0"]
+    B --> C{"Recursive step\nJOIN employees e ON e.manager = wt.id"}
+    C -->|produces rows| D["Append to working table"]
+    D --> C
+    C -->|0 rows| E["UNION deduplication"]
+    E --> F["Final result set"]
+    G["Cycle guard\nUNION vs UNION ALL\n+ depth limit"] -.-> C
+```
+
 ## Further reading
 
 - Codd, E. F., "A Relational Model of Data for Large Shared Data Banks," *Communications of

@@ -534,3 +534,41 @@ Profiling a single pod is necessary but not sufficient for fleet performance:
 - Parca — https://www.parca.dev/ ; Grafana Pyroscope — https://grafana.com/docs/pyroscope/ ; Polar Signals — https://www.polarsignals.com/.
 - *Linux perf wiki* — https://perf.wiki.kernel.org/ and *eBPF docs* — https://ebpf.io/.
 - Volume 2, Chapter 11 — *Performance Analysis: perf, ftrace, eBPF* and Volume 11 — *Reliability/SRE* for kernel and SLO context.
+
+### Profiling types overview
+
+```mermaid
+flowchart TB
+    PROF[Profiling] --> CPU[CPU Profile]
+    PROF --> HEAP[Heap / Allocation Profile]
+    PROF --> LOCK[Lock / Contention Profile]
+    PROF --> IO[Off-CPU / I/O Profile]
+    CPU --> FLAME[Flame Graph]
+    HEAP --> FLAME
+    LOCK --> FLAME
+```
+
+### Continuous profiling pipeline
+
+```mermaid
+flowchart LR
+    AGENT[Profiler Agent] --> COLLECT[Collect Samples]
+    COLLECT --> AGG[Aggregation Service]
+    AGG --> STORE[(Profile Store)]
+    STORE --> UI[Flame Graph UI]
+    UI --> ALERT[Regression Alert]
+```
+
+### Flame graph reading guide
+
+```mermaid
+flowchart TB
+    W[Width = Total Samples] 
+    H[Height = Call Stack Depth]
+    TOP[Top Edge = Leaf Functions - Hot]
+    BOT[Bottom = Root - main]
+    W --> FLAME[Flame Graph]
+    H --> FLAME
+    TOP --> FLAME
+    BOT --> FLAME
+```

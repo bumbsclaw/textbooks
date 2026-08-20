@@ -696,6 +696,65 @@ precondition for everything Chapter 5 does with the resulting store.
   4, Chapter 10) delivers high-fidelity build-time SBOMs to every tenant for free** — the
   most accurate technique, implemented once and amortized across the whole estate.
 
+
+### SBOM generation: where in the pipeline
+
+```mermaid
+flowchart TD
+    SRC["Source scan<br/>(manifest only)<br/>fast, incomplete"] --> BUILD["Build-time generation<br/>(resolved graph)<br/>accurate"]
+    BUILD --> IMAGE["Image / artifact scan<br/>(final bits)<br/>ground truth"]
+    IMAGE --> RUNTIME["Runtime observation<br/>(actually loaded)<br/>most precise, late"]
+
+    ACC["Accuracy up"] -.-> RUNTIME
+    EARLY["Earlier signal"] -.-> SRC
+
+    BEST["Best practice:<br/>build-time + image scan<br/>cross-validate"] --> SBOM["Final SBOM<br/>attached as attestation"]
+    BUILD -.-> BEST
+    IMAGE -.-> BEST
+
+    style BEST fill:#b6f0b6,stroke:#333
+```
+
+
+### Generator comparison matrix
+
+```mermaid
+flowchart TD
+    subgraph Tools["Generators"]
+        SYFT["Syft<br/>image + fs"]
+        TRIVY["Trivy<br/>image + vuln"]
+        CDXGEN["cdxgen<br/>multi-ecosystem"]
+        PROTOBOM["protobom<br/>translate"]
+    end
+    SYFT --> F1["Strength: broad<br/>ecosystem + container"]
+    TRIVY --> F2["Strength: vuln DB<br/>integrated"]
+    CDXGEN --> F3["Strength: deep<br/>manifest parsing"]
+    PROTOBOM --> F4["Strength: format<br/>conversion"]
+
+    CHOICE{"Need?"} -->|Image SBOM| SYFT
+    CHOICE -->|Scan + SBOM| TRIVY
+    CHOICE -->|JS/Python depth| CDXGEN
+    CHOICE -->|Translate SPDX to CDX| PROTOBOM
+```
+
+
+### SBOM generation failure modes
+
+```mermaid
+flowchart TD
+    GEN["Generator runs"] --> MISS1["Miss: dynamically<br/>loaded dep (plugin)"]
+    GEN --> MISS2["Miss: vendored<br/>code without manifest"]
+    GEN --> MISS3["Miss: container<br/>base layer drift"]
+    GEN --> FALSE["False: dev dep<br/>included as runtime"]
+
+    MISS1 --> FIX1["Runtime observation<br/>or import tracing"]
+    MISS2 --> FIX2["Binary /<br/>hash scanning"]
+    MISS3 --> FIX3["Image scan<br/>not just manifest"]
+    FALSE --> FIX4["Scope filtering<br/>(prod vs dev)"]
+
+    style GEN fill:#ffd966,stroke:#333
+```
+
 ## Further reading
 
 - **Anchore Syft** — project documentation and cataloger source (`github.com/anchore/syft`),

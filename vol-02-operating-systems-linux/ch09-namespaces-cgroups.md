@@ -619,6 +619,22 @@ chain of daemons that ultimately call the same `clone`, `mount`, `pivot_root`, a
 you could type by hand. Every layer above the kernel is convenience; the isolation is all in the
 bottom box.
 
+
+```mermaid
+sequenceDiagram
+    participant CLI as docker run / k8s kubelet
+    participant Runtime as runc / crun
+    participant Kernel as Kernel
+    CLI->>Runtime: create container (spec + rootfs)
+    Runtime->>Kernel: clone(CLONE_NEWPID|NEWNS|NEWNET|NEWUTS|NEWIPC...)
+    Runtime->>Kernel: unshare / setns, pivot_root to overlayfs
+    Runtime->>Kernel: write cgroup files (cpu.max, memory.max, pids.max)
+    Runtime->>Kernel: drop capabilities, apply seccomp, LSM profile
+    Runtime->>Kernel: exec entrypoint as PID 1 in new ns
+    Kernel-->>Runtime: container running
+    Note over Runtime,Kernel: runc exits, container is child of shim<br/>Shim reaps, forwards signals, holds cgroup
+```
+
 ## Distributed-systems lens
 
 Containers are the fleet's **unit of deployment**, and almost every operational surprise at

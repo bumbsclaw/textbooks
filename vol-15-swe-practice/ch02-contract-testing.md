@@ -807,3 +807,42 @@ None of these replaces E2E — E2E still owns the question "does the assembled, 
 ---
 
 *Next: Chapter 3 — Load, Performance, and Chaos Testing — where the focus shifts from correctness to behaviour under pressure: how the system performs when traffic is heavy, resources are constrained, and failures are injected deliberately.*
+
+### Consumer-driven contract testing flow
+
+```mermaid
+sequenceDiagram
+    participant Consumer
+    participant Contract as Contract Broker
+    participant Provider
+    Consumer->>Contract: Publish Contract - Expected Request/Response
+    Contract->>Provider: Verify Contract
+    Provider-->>Contract: Verification Result
+    Contract-->>Consumer: Can I Deploy?
+```
+
+### Contract testing vs E2E
+
+```mermaid
+flowchart TB
+    subgraph CT["Contract Tests"]
+        FAST[Fast - Isolated]
+        LOCAL[Run Locally / CI]
+    end
+    subgraph E2E2["E2E Tests"]
+        SLOW[Slow - Full Env]
+        BRITTLE[Brittle - Many Moving Parts]
+    end
+```
+
+### Pact workflow
+
+```mermaid
+flowchart LR
+    A[Consumer Test - Define Pact] --> B[Generate Pact File]
+    B --> C[Pact Broker]
+    C --> D[Provider Verification]
+    D --> E{Verified?}
+    E -->|Yes| OK2[Safe to Deploy]
+    E -->|No| FIX[Fix Provider]
+```

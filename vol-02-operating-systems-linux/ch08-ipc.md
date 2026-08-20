@@ -625,6 +625,20 @@ pass the fd to another process, which `mmap`s it — shared memory established o
 shared namespace. Sealing (`F_SEAL_*`) lets the receiver trust the buffer won't change size —
 used by Wayland, `dma-buf`, and Chromium's graphics IPC.
 
+
+```mermaid
+flowchart TD
+    Create["shm_open + ftruncate + mmap<br/>or memfd_create<br/>Both processes map same pages"] --> Access["Both see same physical pages<br/>Load/store = memcpy<br/>No syscall on data path"]
+    Access --> Sync{"Synchronization?"}
+    Sync -->|"none"| Race["RACE: torn reads, corruption<br/>Compiler/CPU reordering visible"]
+    Sync -->|"futex / sem"| Correct["Correct: atomic + fence<br/>Or seqlock / RCU<br/>Mutex in shared mem (PTHREAD_PROCESS_SHARED)"]
+    Sync -->|"lock-free ring"| Ring["SPSC/MPSC ring<br/>Head/tail atomics<br/>Best for high-throughput"]
+    Race --> Bug["Heisenbugs, fleet-wide corruption<br/>Hardest to debug post-mortem"]
+    style Race fill:#f8d7da,stroke:#721c24
+    style Correct fill:#d4edda,stroke:#155724
+    style Ring fill:#d4edda,stroke:#155724
+```
+
 ## The rest of the toolbox
 
 **POSIX and System V message queues.** A message queue is a kernel-managed queue of
@@ -711,6 +725,20 @@ How to choose, in practice:
   Shared memory plus explicit synchronization.
 - **The peer might be on another machine?** A network socket (Volume 3) — and now you are in
   distributed-systems territory with partial failure, retries, and timeouts.
+
+
+```mermaid
+flowchart TD
+    Q{"What do you need?"}
+    Q -->|"signal"| S["Signal: notification only<br/>No data, async, lossy<br/>Use for lifecycle (TERM/HUP)"]
+    Q -->|"byte stream, 1:1"| P["Pipe / FIFO / UDS stream<br/>Kernel-buffered, flow control<br/>UDS: FD passing, creds"]
+    Q -->|"message, boundaries"| M["UDS datagram / MQ<br/>Message boundaries preserved<br/>Priority, async notify"]
+    Q -->|"shared memory"| SHM["SHM: fastest (memcpy)<br/>No kernel copy, but sync needed<br/>(futex, sem, atomic)"]
+    Q -->|"sync only"| Sync["Futex / semaphore / eventfd<br/>Not data channels<br/>Pair with SHM or signal"]
+    Trade["Throughput: SHM >> UDS > pipe > MQ<br/>Complexity: SHM >> MQ > UDS > pipe > signal"]
+    style SHM fill:#fff3cd,stroke:#856404
+    style S fill:#cce5ff,stroke:#004085
+```
 
 ## Distributed-systems lens
 

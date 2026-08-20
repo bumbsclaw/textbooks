@@ -162,6 +162,22 @@ sysctl -w net.ipv4.conf.all.arp_announce=2   # use the best local address as ARP
 Get `arp_ignore`/`arp_announce` wrong and multiple hosts answer ARP for the VIP; the switch's MAC
 table flaps and traffic goes to a random member. This is the canonical DSR bring-up bug.
 
+
+```mermaid
+flowchart TD
+    Client["Client"] --> VIP["VIP (anycast / ECMP)<br/>L4 LB (IPVS, Maglev, Katran)"]
+    VIP --> Choice{"L4 mode"}
+    Choice -->|"DR (DSR)"| DSR["Direct Server Return<br/>LB rewrites dst MAC only<br/>Response bypasses LB<br/>Best throughput"]
+    Choice -->|"NAT"| NAT["SNAT: LB rewrites IP<br/>Response via LB<br/>LB is bottleneck"]
+    Choice -->|"Tunnel"| Tunnel["Encap (IPIP/GRE)<br/>LB encapsulates to backend<br/>Backend decaps"]
+    DSR --> Backends["Backends (ECMP hash on 5-tuple)<br/>Consistent hash for stability"]
+    NAT --> Backends
+    Tunnel --> Backends
+    Backends --> Health["Health checks<br/>Remove failed, drain gracefully"]
+    style DSR fill:#d4edda,stroke:#155724
+    style NAT fill:#fff3cd,stroke:#856404
+```
+
 ## L7: balancing at the application layer
 
 An L7 balancer is a **terminating proxy**. It completes the TCP and TLS handshakes with the client
@@ -523,6 +539,21 @@ accepts a minimum of 100, and documents 120–200 as the useful range; it applie
 `MAGLEV` alike. Use it whenever your key space might be skewed — that is, almost always.
 (Kubernetes note: `kube-proxy` in IPVS mode can be configured with the `mh` scheduler, which is how
 you get consistent-hash behavior for ClusterIP Services without a userspace proxy.)
+
+
+```mermaid
+flowchart TD
+    Req["Incoming request"] --> Alg{"Algorithm"}
+    Alg -->|"round-robin"| RR["RR: cycle backends<br/>Simple, ignores load<br/>Fails with heterogeneous capacity"]
+    Alg -->|"least-conn / least-loaded"| LC["Least-conn: pick fewest active<br/>Or EWMA / P2C (power of two choices)<br/>Best for uneven latency"]
+    Alg -->|"consistent hash"| CH["Hash(key) -> backend<br/>Stable on membership change<br/>For caches, sharding"]
+    Alg -->|"weighted"| W["Weight by capacity<br/>Manual or auto (CPU-based)"]
+    LC --> Best["Production default:<br/>P2C + least-loaded<br/>O(1), adapts quickly"]
+    CH --> CacheBest["Cache tier<br/>Minimize miss on scale"]
+    W --> Heter["Heterogeneous fleet"]
+    style LC fill:#d4edda,stroke:#155724
+    style CH fill:#cce5ff,stroke:#004085
+```
 
 ## Health checking
 

@@ -162,6 +162,28 @@ the same IP, so a resolver's query to `198.41.0.4` is routed by BGP (Chapter 2) 
 topologically nearest instance. We return to anycast at the end of the chapter; for now, note
 that the root is a distributed system in exactly the sense this book cares about.
 
+
+```mermaid
+sequenceDiagram
+    participant App as App
+    participant Stub as Stub resolver (libc / systemd-resolved)
+    participant Rec as Recursive resolver
+    participant Root as Root (.)
+    participant TLD as TLD (com)
+    participant Auth as Auth (example.com)
+    App->>Stub: getaddrinfo(api.example.com)
+    Stub->>Rec: query A api.example.com (RD=1)
+    Rec->>Root: query api.example.com
+    Root-->>Rec: referral: com NS + glue
+    Rec->>TLD: query api.example.com
+    TLD-->>Rec: referral: example.com NS
+    Rec->>Auth: query api.example.com
+    Auth-->>Rec: A 93.184.216.34 (TTL 300)
+    Rec-->>Stub: answer + TTL
+    Stub-->>App: 93.184.216.34 (+ cache)
+    Note over Rec: Caches at every level<br/>Next query served from cache until TTL
+```
+
 ## Record types: the vocabulary of the database
 
 The value side of the DNS database is a resource record, and choosing the right type — and
@@ -312,6 +334,22 @@ routinely ignore TTLs entirely. So while you *set* the TTL as your intent, you m
 failover assuming a meaningful population of clients will hold a stale answer well past it. TTL
 is a floor on convergence time, never a ceiling.
 
+
+```mermaid
+flowchart TD
+    TTL{"TTL value"}
+    TTL -->|"low (10-60s)"| Low["Agile failover<br/>Fast cutover on deploy<br/>But: more queries, higher latency<br/>Cache miss on every burst"]
+    TTL -->|"medium (300s)"| Med["Balanced: 5 min<br/>Common for API records<br/>Brief stale on change"]
+    TTL -->|"high (3600s+)"| High["Scale: few queries<br/>CDN-friendly<br/>But: slow failover<br/>Need dual-publish for migration"]
+    Low --> Neg["Negative caching (NXDOMAIN)<br/>Also has TTL (SOA MINIMUM)<br/>Typos cached too!"]
+    Med --> Neg
+    High --> Neg
+    Note["Strategy: low TTL before migration<br/>Raise after stable<br/>Observe via dig + trace"]
+    style Low fill:#fff3cd,stroke:#856404
+    style High fill:#cce5ff,stroke:#004085
+    style Med fill:#d4edda,stroke:#155724
+```
+
 ## The wire: UDP, TCP, EDNS0, and the 512-byte ghost
 
 DNS runs on port 53, and its transport history explains a surprising amount of production
@@ -452,6 +490,21 @@ internal target while believing it is talking to the original external host — 
 of a name's meaning is the whole exploit. Defenses are DNS-aware: forbid resolving internal/RFC
 1918/link-local addresses in outbound-fetch code, pin the resolved IP for the life of a request,
 and validate `Host` against an allowlist rather than trusting the name to keep meaning one thing.
+
+
+```mermaid
+flowchart TD
+    Attack["Attacker spoofs DNS reply<br/>Race the real reply<br/>Poison cache"] --> Def1{"Defense"}
+    Def1 --> DNSSEC["DNSSEC: RRSIG + DNSKEY chain<br/>Root trust anchor, validates answers<br/>But: not privacy, complex rollover"]
+    Def1 --> DoTDoH["DoT (853) / DoH (443)<br/>Encrypt stub to recursive<br/>Privacy, not authenticity alone"]
+    Def1 --> Random["TXID + port randomization<br/>Mitigates spoof racing<br/>Not cryptographic"]
+    DNSSEC --> Limit1["Deployed ~30% of zones<br/>Validation often off"]
+    DoTDoH --> Limit2["Hides queries from on-path<br/>Recursive still sees plaintext"]
+    Random --> Limit3["16-bit TXID + 16-bit port<br/>~32 bits entropy, still brute-forceable"]
+    Best["Best: DNSSEC + DoT/DoH + randomization<br/>Defense in depth"]
+    style Attack fill:#f8d7da,stroke:#721c24
+    style Best fill:#d4edda,stroke:#155724
+```
 
 ## Operational DNS: service discovery at fleet scale
 

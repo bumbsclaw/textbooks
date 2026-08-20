@@ -735,6 +735,44 @@ problem. It was, and remains, the thing worth paying for.
   is the honest name for "the anomalies are now your application's job" — sometimes the right
   purchase, never a free one.
 
+
+```mermaid
+flowchart TB
+    A["A — Atomicity<br/>all or nothing<br/>UNDO log, rollback"] --> D["Durability<br/>WAL fsync before commit ack<br/>recovery replays committed"]
+    C["C — Consistency<br/>app invariants<br/>constraints, FK, CHECK"] --> A
+    I["I — Isolation<br/>concurrent txn interference<br/>locks, MVCC, SSI"] --> A
+    A --> D
+    Note1["Atomicity + Durability = failure handling<br/>Consistency = app correctness<br/>Isolation = concurrency control"] --> A
+```
+
+```mermaid
+sequenceDiagram
+    participant App as Application
+    participant Tx as Transaction
+    participant WAL as WAL Buffer
+    participant Disk as Disk / fsync
+    participant Heap as Heap / Buffer Pool
+    App->>Tx: BEGIN; UPDATE; UPDATE
+    Tx->>Heap: modify pages in buffer pool (dirty)
+    Tx->>WAL: append WAL records (in memory)
+    App->>Tx: COMMIT
+    Tx->>WAL: WAL record COMMIT
+    WAL->>Disk: fsync WAL (group commit batches)
+    Disk-->>Tx: durable
+    Tx-->>App: commit ack (only after fsync)
+    Note over Heap: Dirty pages flushed later by checkpointer<br/>no need to fsync heap on commit
+```
+
+```mermaid
+flowchart TD
+    Q{"Contention expected?"} -->|High contention<br/>short txns| P["Pessimistic<br/>2PL — lock before access<br/>detect deadlock via waits-for graph"]
+    Q -->|Low contention<br/>read-heavy| O["Optimistic<br/>read without locks<br/>validate at commit<br/>abort on conflict → retry"]
+    P --> L["SELECT FOR UPDATE<br/>row-level lock"]
+    O --> V["SSI checks rw-dependencies<br/>abort serialization anomaly"]
+    L --> T["Throughput vs latency tradeoff"]
+    V --> T
+```
+
 ## Further reading
 
 - Härder, T. and Reuter, A., "Principles of Transaction-Oriented Database Recovery," *ACM Computing

@@ -674,6 +674,42 @@ each team's list is, actually, the thing most worth their next hour.
   KEV, EPSS, and exposure all change daily. Ship each team a risk-ranked queue, not a
   severity-sorted CSV.
 
+
+### Reachability analysis levels
+
+```mermaid
+flowchart TD
+    L0["L0: Package-level<br/>is vuln package present?"] --> L1["L1: File-level<br/>is vuln file imported?"]
+    L1 --> L2["L2: Function-level<br/>is vuln function called?"]
+    L2 --> L3["L3: Path-level<br/>is call reachable with<br/>tainted input?"]
+
+    L0 -. high FP .-> TRIAGE0["Many alerts<br/>low precision"]
+    L3 -. low FP<br/>higher cost .-> TRIAGE3["Few alerts<br/>high precision"]
+
+    COST["Analysis cost up"] -.-> L3
+    style TRIAGE3 fill:#b6f0b6,stroke:#333
+```
+
+
+### Prioritization matrix: reachability x exploitability
+
+```mermaid
+flowchart TD
+    subgraph Matrix["Priority Matrix"]
+        direction TB
+        H1["High reachability<br/>+ High exploitability<br/>→ P0 fix now"]
+        H2["High reachability<br/>+ Low exploitability<br/>→ P1 soon"]
+        H3["Low reachability<br/>+ High exploitability<br/>→ P1 monitor"]
+        H4["Low reachability<br/>+ Low exploitability<br/>→ P2 backlog / VEX"]
+    end
+    EPSS["EPSS /<br/>KEV signal"] -.-> H1
+    EPSS -.-> H3
+    CALLGRAPH["Call graph<br/>evidence"] -.-> H1
+    CALLGRAPH -.-> H2
+    style H1 fill:#f88,stroke:#900
+    style H4 fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - The Go vulnerability database and govulncheck — design, the symbol-level OSV data, and how

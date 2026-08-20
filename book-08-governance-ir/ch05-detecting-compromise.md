@@ -491,6 +491,48 @@ scopes and drives the response. Detection is the detective-control layer of the 
 half that Books 2 through 7 do not cover, and the half that history says decides whether a compromise
 lasts a day or nine months.
 
+### Detection pyramid for supply chain compromise
+
+```mermaid
+flowchart TB
+  L1["L1: Package / image signals<br/>(new dep, version bump, image digest change)"]
+  L1 --> L2["L2: Build signals<br/>(builder identity change, provenance missing)"]
+  L2 --> L3["L3: Behavior signals<br/>(unexpected network, privilege, data access)"]
+  L3 --> L4["L4: Fleet signals<br/>(anomaly across many hosts)"]
+  L4 --> SOC["SOC: correlate + triage<br/>(single signal rarely decisive)"]
+  style L1 fill:#8957e5,color:#fff
+  style SOC fill:#1f6feb,color:#fff
+```
+
+### Compromise indicator taxonomy
+
+```mermaid
+flowchart LR
+  IND["Indicators of<br/>supply chain compromise"] --> A["Artifact: mismatched digest,<br/>unsigned image, SBOM drift"]
+  IND --> B["Build: unknown builder,<br/>provenance gap, step timeout"]
+  IND --> C["Repo: off-hours force-push,<br/>bypass of protection, new deploy key"]
+  IND --> D["Runtime: egress to unknown,<br/>crypto miner, lateral movement"]
+  A --> SIEM["SIEM rules:<br/>alert on >= N indicators<br/>or high-severity single"]
+  D --> SIEM
+  style SIEM fill:#f85149,color:#fff
+```
+
+### Triage workflow for suspected compromise
+
+```mermaid
+flowchart TD
+  ALERT["Alert: suspected<br/>supply chain compromise"] --> Q1{"Confirmed<br/>malicious artifact?"}
+  Q1 -->|Yes| CONTAIN["Contain: block digest<br/>+ revoke provenance +<br/>quarantine fleet"]
+  Q1 -->|No / unclear| INVEST["Investigate: fetch sigs +<br/>provenance + logs +<br/>repro build"]
+  INVEST --> Q2{"Artifact differs<br/>from repro?"}
+  Q2 -->|Yes| CONTAIN
+  Q2 -->|No| Q3{"Behavior benign?"}
+  Q3 -->|Yes| FP["False positive<br/>tune detector"]
+  Q3 -->|No| CONTAIN
+  style CONTAIN fill:#f85149,color:#fff
+  style FP fill:#2ea043,color:#fff
+```
+
 ## Key takeaways
 
 - **Prevention fails against trust-abuse by design; detection is the essential second layer.** Supply

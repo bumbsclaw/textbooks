@@ -1022,3 +1022,45 @@ flowchart LR
 - Pulumi vs. Terraform — https://www.pulumi.com/docs/concepts/vs/terraform/
 - Crossplane — https://docs.crossplane.io/latest/
 - Infracost (cost estimation in plan) — https://www.infracost.io/docs/
+
+### Terraform workflow lifecycle
+
+```mermaid
+flowchart LR
+    A[Write .tf Files] --> B[terraform init]
+    B --> C[terraform plan]
+    C --> D{Review Plan}
+    D -->|Approve| E[terraform apply]
+    D -->|Reject| A
+    E --> F[State File]
+    F --> G[Real Infrastructure]
+```
+
+### IaC drift detection loop
+
+```mermaid
+flowchart TB
+    S[Desired State - Git] --> P[Plan / Diff]
+    R[Real State - Cloud API] --> P
+    P --> D{Drift?}
+    D -->|Yes| A[Alert / Auto-remediate]
+    D -->|No| OK[No Action]
+    A --> S
+```
+
+### Environment promotion with IaC
+
+```mermaid
+flowchart LR
+    subgraph Git["Git Branches"]
+        DEV[dev]
+        STG[staging]
+        PROD[prod]
+    end
+    DEV --> TF1[terraform apply - dev]
+    STG --> TF2[terraform apply - staging]
+    PROD --> TF3[terraform apply - prod]
+    TF1 --> I1[Dev Env]
+    TF2 --> I2[Staging Env]
+    TF3 --> I3[Prod Env]
+```

@@ -548,3 +548,50 @@ To make the abstract concrete, here is a condensed real-world RFC (inspired by a
 - Will Larson — *An Elegant Puzzle: Systems of Engineering Management* (2019), Ch. 4 — Engineering decision-making at scale.
 - Camille Fournier — *The Manager's Path* (2017), Ch. 8 — Technical decision-making and RFC culture.
 - Google — *Software Engineering at Google* (2020), Ch. 8 — Style guides and code review; Ch. 14 — Documentation. https://abseil.io/resources/swe-book
+
+### RFC lifecycle
+
+```mermaid
+flowchart LR
+    IDEA[Idea] --> DRAFT[Draft RFC]
+    DRAFT --> REVIEW[Review - Comments]
+    REVIEW --> REVISE{Revisions Needed?}
+    REVISE -->|Yes| DRAFT
+    REVISE -->|No| APPROVED[Approved]
+    APPROVED --> IMPL[Implementation]
+    IMPL --> DONE[Done - Update RFC]
+```
+
+### Design doc structure
+
+```mermaid
+flowchart TB
+    DOC[Design Doc] --> CTX[Context & Problem]
+    DOC --> GOALS[Goals & Non-Goals]
+    DOC --> PROP[Proposal & Alternatives]
+    DOC --> TRADE[Tradeoffs]
+    DOC --> ROLLOUT[Rollout Plan]
+    DOC --> OPEN[Open Questions]
+```
+
+### ADRs vs RFCs
+
+```mermaid
+flowchart TB
+    RFC[RFC - Before Build - Propose Future]
+    ADR[ADR - After Decision - Record Past]
+    RFC --> DECISION[Decision Made]
+    DECISION --> ADR
+    ADR --> LOG[(Decision Log)]
+```
+
+### Review quality checklist
+
+```mermaid
+flowchart TB
+    R[Reviewer] --> Q1{Goals Clear?}
+    Q1 --> Q2{Alternatives Considered?}
+    Q2 --> Q3{Failure Modes Addressed?}
+    Q3 --> Q4{Rollback Plan?}
+    Q4 --> APPROVE[Approve / Request Changes]
+```

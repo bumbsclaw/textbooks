@@ -686,6 +686,48 @@ configuration actually implements.
 - A **delayed replica** is cheap insurance against the leading cause of data loss — humans —
   because normal replication propagates the mistake faithfully everywhere else.
 
+
+```mermaid
+flowchart TB
+    subgraph Async["Async — low latency, loss window"]
+        A1["Primary commit → ack client"] --> R1["WAL streams to replica later"]
+        R1 --> L1["Lag > 0 — failover may lose data"]
+    end
+    subgraph Sync["Sync — zero loss, higher latency"]
+        A2["Primary commit → wait replica fsync"] --> R2["Replica acks fsync"]
+        R2 --> L2["Then ack client — RTT added"]
+    end
+    subgraph Semi["Semisync — compromise"]
+        A3["Primary commit → wait 1 replica"] --> R3["At least 1 replica has WAL"]
+        R3 --> L3["Bounded loss, bounded latency"]
+    end
+```
+
+```mermaid
+sequenceDiagram
+    participant P as Primary
+    participant R as Replica
+    participant M as Monitor / Patroni
+    participant C as Client
+    P->>R: async WAL stream (lag 200ms)
+    P--xM: Primary heartbeat lost
+    M->>M: Confirm via DCS (etcd) — avoid split-brain
+    M->>R: Promote replica — timeline ID increments
+    Note over R: Old primary fenced via STONITH<br/>or lease expiry
+    R-->>C: New primary serves writes (new timeline)
+    P->>R: Old primary returns — must rejoin as replica<br/>pg_rewind or rebuild from new timeline
+```
+
+```mermaid
+flowchart LR
+    A["pg_stat_replication<br/>replay_lag, flush_lag, write_lag"] --> B{"Lag > threshold?"}
+    B -->|Yes| C["Alert — replica stale<br/>read-after-write violation"]
+    B -->|No| D["Replica ok for stale reads"]
+    C --> E["Mitigation:<br/>wait-till-LSN<br/>or route to primary"]
+    F["Monitoring: LSN distance<br/>not wall-clock"] -.-> A
+    G["WAL retention:<br/>slot prevents recycling"] -.-> A
+```
+
 ## Further reading
 
 - PostgreSQL documentation, *High Availability, Load Balancing, and Replication* — streaming

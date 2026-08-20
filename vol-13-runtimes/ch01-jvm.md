@@ -517,3 +517,30 @@ The JVM's shared-heap, stop-the-world heritage shapes how you deploy and operate
 - JFR Runtime Guide — https://docs.oracle.com/en/java/javase/21/jfr/
 - *Java Performance Companion* — async-profiler docs: https://github.com/async-profiler/async-profiler
 - Shipilev, *JVM Anatomy Quarks* — https://shipilev.net/jvm/anatomy/ (TLABs, safepoints, compressed oops, biased locking)
+
+### JVM memory layout
+
+```mermaid
+flowchart TB
+    subgraph JVM["JVM Process"]
+        HEAP[Heap - Young + Old Gen]
+        META[Metaspace]
+        STACK[Thread Stacks]
+        PC[PC Registers]
+        NATIVE[Native Memory]
+    end
+    HEAP --- GC[Garbage Collector]
+    META --- CL[Class Loader]
+```
+
+### JIT compilation pipeline
+
+```mermaid
+flowchart LR
+    A[Java Bytecode] --> B[Interpreter]
+    B --> C{Hot Method?}
+    C -->|No| B
+    C -->|Yes| D[C1 Compiler]
+    D --> E[C2 Compiler - Optimized]
+    E --> F[Native Code Cache]
+```

@@ -665,6 +665,41 @@ the only way it survives contact with a hundred teams shipping continuously.
   construction — which is why L3 is nearly free on a well-designed hosted platform and hard to retrofit
   onto persistent self-hosted runners.
 
+
+### Ephemeral runner lifecycle
+
+```mermaid
+sequenceDiagram
+    participant Trigger as Trigger (push/PR)
+    participant Orchestrator as Orchestrator
+    participant Runner as Ephemeral Runner
+    participant Registry as Registry
+    Trigger->>Orchestrator: Build requested
+    Orchestrator->>Runner: Provision fresh VM/container
+    Runner->>Runner: Build + test + provenance
+    Runner->>Registry: Push artifact + attestation
+    Runner->>Orchestrator: Report result
+    Orchestrator->>Runner: Terminate — wipe disk
+    Note over Runner: No state survives to next build
+```
+
+
+### Persistent vs ephemeral: blast radius
+
+```mermaid
+flowchart TD
+    subgraph Persistent["Persistent Runner"]
+        P1["Build 1 (attacker PR)<br/>drops backdoor"] --> P2["Build 2 (main)<br/>backdoor persists!"]
+        P2 --> P3["Build 3<br/>still infected"]
+    end
+    subgraph Ephemeral["Ephemeral Runner"]
+        E1["Build 1 (attacker PR)<br/>drops backdoor"] --> KILL["Runner destroyed"]
+        KILL --> E2["Build 2 (main)<br/>fresh — clean"]
+    end
+    style Persistent fill:#f88,stroke:#900
+    style Ephemeral fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **SLSA v1.0 — Build track requirements and Threats.** The normative L3 isolation and provenance-

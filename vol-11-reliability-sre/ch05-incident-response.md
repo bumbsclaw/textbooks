@@ -737,6 +737,49 @@ Incident response for distributed backends has specific challenges that single-s
 
 ---
 
+
+<!-- Batch C: additional diagrams -->
+
+#### Severity Decision
+
+```mermaid
+flowchart TB
+    Impact{"Users impacted?"} -->|Many / data loss| SEV1["SEV1<br/>all hands, war room"]
+    Impact -->|Degraded| SEV2["SEV2<br/>on-call + comms"]
+    Impact -->|Minor / workaround| SEV3["SEV3<br/>ticket, next business day"]
+    Impact -->|No| SEV4["SEV4<br/>backlog"]
+```
+
+#### On-Call Escalation
+
+```mermaid
+sequenceDiagram
+    participant Mon as Monitoring
+    participant Page as PagerDuty
+    participant L1 as L1 on-call
+    participant L2 as L2 / manager
+    Mon->>Page: alert
+    Page->>L1: page
+    L1->>L1: ack 5m?
+    alt no ack
+        Page->>L2: escalate
+    else ack
+        L1->>Page: mitigating?
+        Page->>Page: auto-escalate at 15m if not mitigated
+    end
+```
+
+#### War Room Comms
+
+```mermaid
+flowchart LR
+    Detect["Detect"] --> Declare["Declare + severity"]
+    Declare --> WarRoom["War room<br/>Slack + bridge"]
+    WarRoom --> Mitigate["Mitigate"]
+    Mitigate --> Comms["Customer + internal comms"]
+    Comms --> Resolve["Resolve + postmortem"]
+```
+
 ## Key takeaways
 
 - Incident response is about **minimizing duration and blast radius**, not preventing incidents — prevention is covered by resilience and deployment practices (Chapters 7–10), but every system will still have incidents that require practiced response.

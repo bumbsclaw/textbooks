@@ -679,6 +679,47 @@ key; get both right and the platform self-heals under the messy reality of a rea
   latency/scale choice between relational and graph. This is a distributed-systems build; engineer it
   like one.
 
+
+### Fleet-wide SBOM aggregation architecture
+
+```mermaid
+flowchart TD
+    subgraph Pipelines["Many Pipelines"]
+        P1["Pipeline A to SBOM A"]
+        P2["Pipeline B to SBOM B"]
+        P3["Pipeline N to SBOM N"]
+    end
+    P1 --> STORE["Central SBOM Store<br/>(Dependency-Track /<br/>GUAC / BOM server)"]
+    P2 --> STORE
+    P3 --> STORE
+    STORE --> INDEX["Indexed by<br/>purl + version"]
+    INDEX --> QUERY["Query: where is<br/>log4j 2.14.1?"]
+    QUERY --> RESULT["Affected services<br/>list in seconds"]
+    STORE --> VULN["Continuous vuln<br/>correlation"]
+    VULN --> ALERT["Alert on new CVE"]
+
+    style STORE fill:#b6d7ff,stroke:#333
+    style RESULT fill:#b6f0b6,stroke:#333
+```
+
+
+### SBOM distribution: how consumers get it
+
+```mermaid
+flowchart TD
+    ARTIFACT["Artifact<br/>(image / package)"] --> ATTACH{"Distribution method"}
+    ATTACH --> REG["OCI referrers<br/>/ registry attestation"]
+    ATTACH --> RELEASE["Release assets<br/>sbom.json alongside"]
+    ATTACH --> ENDPOINT["Well-known endpoint<br/>/.well-known/sbom"]
+    ATTACH --> REQUEST["On-request<br/>via support / portal"]
+
+    REG --> CONSUMER["Consumer tooling<br/>auto-discovers"]
+    RELEASE --> CONSUMER
+    ENDPOINT --> CONSUMER
+
+    style REG fill:#b6f0b6,stroke:#333
+```
+
 ## Further reading
 
 - **OCI Image Specification 1.1** and the **OCI Distribution Specification** — the `subject` field,

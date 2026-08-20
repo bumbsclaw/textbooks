@@ -602,6 +602,51 @@ The distributed-systems lens:
 - At-least-once delivery is the reality; every consumer must be idempotent (key table or dedup window). Ordering is per-partition only — partition by aggregate key when order matters.
 - Schema evolution with a registry and backward compatibility is the only way to keep decoupled services actually decoupled — breaking schema changes are silent distributed outages.
 
+
+```mermaid
+flowchart TB
+    subgraph Chore["Choreography — events only"]
+        A1["Order service emits OrderPlaced"] --> B1["Inventory listens → reserves"]
+        B1 --> C1["Payment listens → charges"]
+        C1 --> D1["Shipment listens → ships"]
+        D1 -.-> E1["No central controller<br/>flexible, trace is scattered"]
+    end
+    subgraph Orch["Orchestration — central workflow"]
+        O["Orchestrator<br/>state machine"] --> A2["Call inventory"]
+        O --> B2["Call payment"]
+        O --> C2["Call shipment"]
+        O -.-> E2["Central trace + retry<br/>orchestrator is coupling point"]
+    end
+```
+
+```mermaid
+flowchart LR
+    C["Command<br/>PlaceOrder"] --> E["Event store<br/>append-only log<br/>source of truth"]
+    E --> P["Projections / read models<br/>materialized views<br/>per query pattern"]
+    P --> Q1["Order view (relational)"]
+    P --> Q2["Search index"]
+    P --> Q3["Analytics warehouse"]
+    E --> R["Replay: rebuild any view<br/>from history<br/>time travel"]
+```
+
+```mermaid
+sequenceDiagram
+    participant Prod as Producer
+    participant Bus as Event Bus (at-least-once)
+    participant Cons as Consumer
+    participant DB as Consumer DB
+    Prod->>Bus: Publish event id=abc (may duplicate)
+    Bus->>Cons: Deliver id=abc
+    Cons->>DB: BEGIN; INSERT processed(id=abc) IF NOT EXISTS
+    alt First delivery
+        DB-->>Cons: Inserted — process
+        Cons->>DB: Business update + COMMIT
+    else Duplicate delivery
+        DB-->>Cons: Already exists — skip
+        Cons-->>Bus: Ack (idempotent)
+    end
+```
+
 ## Further reading
 
 - Kleppmann, M. *Designing Data-Intensive Applications*, Chapters 11–12 (stream processing, future of data systems) — O'Reilly, 2017.
