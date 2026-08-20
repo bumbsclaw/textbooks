@@ -213,9 +213,9 @@ until then their paths are as listed above).
 - [x] 7.04 Load Balancing and Traffic Management — `ch04-traffic-management.md`
 - [x] 7.05 Data Modeling for Scale — `ch05-data-modeling.md`
 - [x] 7.06 Monolith, Microservices, and Between — `ch06-monolith-microservices.md`
-- [ ] 7.07 Event-Driven Architecture — `ch07-event-driven.md`
-- [ ] 7.08 API Gateways, BFF, and Edge — `ch08-gateways-edge.md`
-- [ ] 7.09 Rate Limiting, Quotas, and Fairness — `ch09-rate-limiting.md`
+- [x] 7.07 Event-Driven Architecture — `ch07-event-driven.md`
+- [x] 7.08 API Gateways, BFF, and Edge — `ch08-gateways-edge.md`
+- [x] 7.09 Rate Limiting, Quotas, and Fairness — `ch09-rate-limiting.md`
 - [ ] 7.10 Multi-Region and Geo-Distributed Systems — `ch10-multi-region.md`
 - [ ] 7.11 Designing for Failure — `ch11-designing-for-failure.md`
 - [ ] 7.12 Design Case Studies — `ch12-case-studies.md`
@@ -336,3 +336,4 @@ until then their paths are as listed above).
 - 2026-08-20: Vol08 ch01-ch03 done (principles, REST, gRPC/protobuf). Next: 8.04-8.06.
 - 2026-08-20: Heavy-tail trim batch 2 committed (20 files -> <=7300w, 17 remain >7300). Vol07 ch04-ch06 done (traffic, data modeling, monolith/microservices, ~4.0-4.3kw each, 3-4 Mermaid). Next: 7.07-7.09.
 - 2026-08-20: Vol08 ch04-ch06 done (GraphQL, versioning, idempotency/pagination — ~4.1-5.0kw each, 3-4 Mermaid). Next: 8.07-8.09.
+- 2026-08-20: Vol07 ch07-ch09 done (event-driven/Kafka/CDC/outbox/Saga, gateways/BFF/edge, rate limiting/quotas/fairness — ~4.4-5.4kw each, 4 Mermaid). Next: 7.10-7.12.
