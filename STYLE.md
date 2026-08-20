@@ -55,8 +55,10 @@ Every chapter in this suite must follow these conventions.
 
 ## Length
 
-- Target **4,000–7,000 words** per chapter (excluding code/diagrams). Comprehensive, not
-  padded. Every section must earn its place.
+- Chapters should be **as comprehensive as needed** — no word-count ceiling. Cover the
+  topic in the depth a senior backend engineer expects, with mechanisms, trade-offs, failure
+  modes, and operational reality. Avoid repetition and verbosity: every section must earn
+  its place, but do not trim substantive content to hit an arbitrary limit.
 
 ## Cross-referencing
 

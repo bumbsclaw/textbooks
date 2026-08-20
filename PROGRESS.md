@@ -236,12 +236,12 @@ until then their paths are as listed above).
 - [x] 9.01 Applied Cryptography for Engineers — `ch01-applied-crypto.md`
 - [x] 9.02 Hashing, MACs, KDFs, Password Storage — `ch02-hashing-passwords.md`
 - [x] 9.03 Symmetric and Asymmetric Encryption in Practice — `ch03-encryption.md`
-- [ ] 9.04 Certificates, PKI, and TLS Operations — `ch04-pki-tls-ops.md`
-- [ ] 9.05 Authentication: Sessions, Tokens, JWTs — `ch05-authentication.md`
-- [ ] 9.06 OAuth 2.0 and OpenID Connect — `ch06-oauth-oidc.md`
-- [ ] 9.07 Authorization: RBAC, ABAC, ReBAC (Zanzibar) — `ch07-authorization.md`
-- [ ] 9.08 Secrets Management — `ch08-secrets-management.md`
-- [ ] 9.09 Application Security: OWASP, Injection, SSRF — `ch09-appsec.md`
+- [x] 9.04 Certificates, PKI, and TLS Operations — `ch04-pki-tls-ops.md`
+- [x] 9.05 Authentication: Sessions, Tokens, JWTs — `ch05-authentication.md`
+- [x] 9.06 OAuth 2.0 and OpenID Connect — `ch06-oauth-oidc.md`
+- [x] 9.07 Authorization: RBAC, ABAC, ReBAC (Zanzibar) — `ch07-authorization.md`
+- [x] 9.08 Secrets Management — `ch08-secrets-management.md`
+- [x] 9.09 Application Security: OWASP, Injection, SSRF — `ch09-appsec.md`
 - [ ] 9.10 Zero Trust and Service-to-Service Auth: mTLS, SPIFFE — `ch10-zero-trust-mtls.md`
 - [ ] 9.11 Threat Modeling and Secure Design — `ch11-threat-modeling.md`
 
@@ -337,3 +337,4 @@ until then their paths are as listed above).
 - 2026-08-20: Heavy-tail trim batch 2 committed (20 files -> <=7300w, 17 remain >7300). Vol07 ch04-ch06 done (traffic, data modeling, monolith/microservices, ~4.0-4.3kw each, 3-4 Mermaid). Next: 7.07-7.09.
 - 2026-08-20: Vol08 ch04-ch06 done (GraphQL, versioning, idempotency/pagination — ~4.1-5.0kw each, 3-4 Mermaid). Next: 8.07-8.09.
 - 2026-08-20: Vol07 ch07-ch09 done (event-driven/Kafka/CDC/outbox/Saga, gateways/BFF/edge, rate limiting/quotas/fairness — ~4.4-5.4kw each, 4 Mermaid). Next: 7.10-7.12.
+- 2026-08-20: Vol09 ch07-ch09 done (authorization RBAC/ABAC/ReBAC Zanzibar/SpiceDB, secrets management Vault, AppSec OWASP/injection/SSRF/deserialization — ~4.9-5.1kw each, 3-6 Mermaid). Next: 9.10-9.11.
