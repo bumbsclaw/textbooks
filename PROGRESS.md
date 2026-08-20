@@ -296,9 +296,9 @@ until then their paths are as listed above).
 
 ## Volume 14 — Data Structures and Algorithms for Backend (`vol-14-algorithms/`)
 
-- [ ] 14.01 Complexity That Matters in Practice — `ch01-complexity.md`
-- [ ] 14.02 Hashing and Hash Tables at Scale — `ch02-hashing.md`
-- [ ] 14.03 Balanced Trees and Ordered Structures — `ch03-trees.md`
+- [x] 14.01 Complexity That Matters in Practice — `ch01-complexity.md`
+- [x] 14.02 Hashing and Hash Tables at Scale — `ch02-hashing.md`
+- [x] 14.03 Balanced Trees and Ordered Structures — `ch03-trees.md`
 - [ ] 14.04 Probabilistic Structures: Bloom, HLL, Count-Min — `ch04-probabilistic.md`
 - [ ] 14.05 Consistent Hashing and Rendezvous Hashing — `ch05-consistent-hashing.md`
 - [ ] 14.06 Sorting, External Sorting, Streaming — `ch06-sorting.md`
@@ -351,3 +351,4 @@ until then their paths are as listed above).
 - 2026-08-20: *** VOLUME 8 (APIs) COMPLETE — 11 chapters. *** Vol08 ch09-ch11 done (governance/linting/breaking-change, schema registry/codegen/SDK delivery, contract testing/evolution — ~5.3-5.7kw each, 2-4 Mermaid). Next: Vol11 batch.
 - 2026-08-20: Vol12 ch01-ch03 done (containers deep dive OCI/runc/gVisor/Kata, K8s control/data plane etcd/scheduler/controllers/kubelet, workloads/networking/storage Deployments/StatefulSets/Services/Gateway/CSI — ~5.0-8.0kw each, 4-6 Mermaid). Next: 12.04-12.06.
 - 2026-08-20: Vol11 ch04-ch06 done (distributed tracing & OTel Collector agent+gateway/tail sampling/W3C propagation, incident response lifecycle/severity/on-call/Alertmanager/PagerDuty/runbooks, blameless postmortems template/facilitation/action items — ~6.8-8.5kw each, 4-5 Mermaid). Next: 11.07-11.10.
+- 2026-08-20: Vol14 ch01-ch03 done (complexity/RAM vs I/O model/benchmarking, hashing/SwissTable/Robin Hood/concurrent maps, AVL/RB/B-tree/B+tree/skip list — ~3.3-4.6kw each, 3-5 Mermaid, real code + benchmarks). Next: 14.04-14.06.
