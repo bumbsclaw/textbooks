@@ -225,9 +225,9 @@ until then their paths are as listed above).
 - [x] 8.01 API Design Principles and Contracts — `ch01-principles.md`
 - [x] 8.02 REST in Depth — `ch02-rest.md`
 - [x] 8.03 gRPC and Protobuf Schema Design — `ch03-grpc-protobuf.md`
-- [ ] 8.04 GraphQL for Backend Engineers — `ch04-graphql.md`
-- [ ] 8.05 Versioning and Evolution — `ch05-versioning.md`
-- [ ] 8.06 Idempotency, Pagination, Filtering — `ch06-idempotency-pagination.md`
+- [x] 8.04 GraphQL for Backend Engineers — `ch04-graphql.md`
+- [x] 8.05 Versioning and Evolution — `ch05-versioning.md`
+- [x] 8.06 Idempotency, Pagination, Filtering — `ch06-idempotency-pagination.md`
 - [ ] 8.07 Error Handling and Status Semantics — `ch07-error-handling.md`
 - [ ] 8.08 Compatibility and Wire Formats — `ch08-compatibility.md`
 
@@ -335,3 +335,4 @@ until then their paths are as listed above).
 - 2026-08-14: *** VOLUME 6 (Distributed Systems) COMPLETE — 12 chapters. *** Vol 7 batch 1 (7.01-7.06) in flight.
 - 2026-08-20: Vol08 ch01-ch03 done (principles, REST, gRPC/protobuf). Next: 8.04-8.06.
 - 2026-08-20: Heavy-tail trim batch 2 committed (20 files -> <=7300w, 17 remain >7300). Vol07 ch04-ch06 done (traffic, data modeling, monolith/microservices, ~4.0-4.3kw each, 3-4 Mermaid). Next: 7.07-7.09.
+- 2026-08-20: Vol08 ch04-ch06 done (GraphQL, versioning, idempotency/pagination — ~4.1-5.0kw each, 3-4 Mermaid). Next: 8.07-8.09.
