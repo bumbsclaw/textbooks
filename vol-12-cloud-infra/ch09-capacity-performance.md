@@ -76,7 +76,7 @@ Fitting α and β from load-test data tells you whether your service is contenti
 
 ```mermaid
 xychart-beta
-    title USL: Throughput vs Concurrency for different contention/coherency
+    title USL Throughput vs Concurrency for different contention and coherency
     x-axis "Concurrency N" [1, 4, 8, 16, 32, 64, 128]
     y-axis "Relative throughput X(N)" 0 --> 50
     line [1, 3.8, 6.5, 9.2, 11.0, 11.2, 9.5]
