@@ -182,6 +182,16 @@ and non-obvious semantics around negation and unification trip up newcomers — 
 
 ### CEL and Kubernetes ValidatingAdmissionPolicy
 
+**CEL — Common Expression Language** — is a small, non-Turing-complete expression language
+originally from Google, designed to be embedded, safe to evaluate on untrusted input, and cheap. It
+is not a general policy *system* like OPA; it is an expression evaluator that a host system embeds to
+let users write boolean/attribute predicates. Its rise in this space is driven by Kubernetes: as of
+v1.30 (GA) Kubernetes ships **ValidatingAdmissionPolicy (VAP)**, an *in-tree* admission mechanism
+that evaluates CEL expressions against admission requests — no external webhook, no separately
+operated engine. Book 6, Chapter 6 introduced this as the native alternative to a Gatekeeper/Kyverno
+webhook. The appeal is operational: an admission webhook is a network hop in the critical path of
+every API write, a service you must run HA or risk wedging the cluster; VAP runs inside the API
+server, so it has no availability tail and no webhook to secure.
 
 ```yaml
 apiVersion: admissionregistration.k8s.io/v1
@@ -283,6 +293,18 @@ alongside the artifact engines.
 Several tools apply a general engine to a specific job:
 
 - **Conftest** (Book 6, Chapter 8) runs Rego against *arbitrary structured config* — Kubernetes
+  manifests, Terraform HCL/plan JSON, Dockerfiles, CI YAML, any JSON/YAML/TOML/HCL. It is OPA's
+  language pointed at files in CI rather than at an API server. It is how you shift admission-style
+  checks left into the pull request.
+- **cosign / policy-controller** (Book 5, Chapter 10; Book 6, Chapter 5) — Sigstore's
+  `policy-controller` is an admission controller specialized for signature and attestation
+  verification, expressing "which identities may sign what, and which attestations must be present"
+  as its policy.
+- **Allstar** (Book 7, Chapter 8) enforces *repository* security settings across a GitHub org as
+  policy — branch protection present, no binary artifacts, no outside collaborators on admin — and
+  files issues or reverts drift. It is policy-as-code for source configuration.
+- **CI-native checks** — `osv-scanner`, Scorecard thresholds (Book 2, Chapter 10), and required
+  status checks — are policy enforced at the pipeline layer.
 
 The common shape across every one of these is the picture from the start of the section: a resource
 or request, plus data, plus declarative rules, evaluated to allow/warn/deny with an explanation. The
@@ -491,6 +513,16 @@ this switch by design: Kyverno's `validationFailureAction: Audit` versus `Enforc
 `enforcementAction: dryrun` versus `deny`, Sentinel's `advisory`/`soft-mandatory`/`hard-mandatory`,
 VAP's `validationActions` including `Audit` and `Warn` alongside `Deny`.
 
+The measurement is the whole point. A policy that looks correct will, on real fleet traffic, surface
+violations you did not anticipate — legacy workloads, a team you did not know existed, an edge case
+the tests missed. If you had gone straight to enforce, every one of those is a production incident
+and a page. In audit mode, each is a data point: a would-be-violation you can quantify ("this policy
+would currently deny 340 of 5,000 running pods across 40 namespaces"), triage, and drive to zero —
+by fixing the workloads, by adding scoped exceptions, or by discovering the policy is wrong — *before*
+you flip the switch. Only when the would-be-violation rate is at or near zero, and the residue is
+covered by explicit exceptions, do you move to enforce. This is not timidity; it is how you deploy a
+fleet-wide gate without a fleet-wide outage, and it is the operational expression of the "enable
+before you mandate" thesis of Chapter 2.
 
 ### Exceptions as code
 
@@ -632,6 +664,17 @@ that used to be documents: control catalogs (e.g., NIST SP 800-53), profiles/bas
 selection of controls), system security plans, component definitions, assessment plans, and
 assessment results.
 
+The relevance to this chapter is the bridge OSCAL builds. An OSCAL **component definition** can state
+how a given component satisfies a set of controls; an OSCAL **assessment results** document can carry
+the machine-readable findings of evaluating those controls. In a compliance-as-code pipeline, your
+policy engines produce decisions, your build produces attestations, and a tool maps those into OSCAL
+assessment results keyed to the control catalog — so "are we compliant with this baseline" becomes a
+structured, tool-processable artifact rather than a binder. OSCAL does not enforce anything; it is the
+*lingua franca* for the control-and-evidence layer, letting the machine-readable enforcement of your
+policy engines connect to the machine-readable control frameworks of Chapter 2 without a human
+retyping a spreadsheet in between. It is young and adoption is uneven — be honest that much of the
+industry is still in spreadsheets — but it is the standard the continuous-compliance vision points
+at, and where regulators and large buyers are heading.
 
 The audit trail this produces — policy decisions plus attestations plus SBOMs, mapped to controls —
 is also the raw material for the metrics and executive reporting of Chapter 8. Continuous compliance
@@ -666,6 +709,17 @@ namespaces or a canary set of repos before the whole fleet, and the ability to r
 the commit and letting GitOps propagate the revert. A fleet-wide enforce flip is a production change
 and gets production-change discipline.
 
+**Central mandate versus team flexibility.** The genuine tension, and the one Book 7, Chapter 8 framed
+as guardrails versus gates. Too much central mandate — every check a hard gate, no flexibility — and
+teams are blocked constantly, route around the system, and resent it; the policy becomes an obstacle
+rather than a road. Too little — everything advisory, everything overridable — and the policy enforces
+nothing. The workable balance is a small set of **non-negotiable hard gates** where the risk is
+existential and uniform (unsigned images do not run, secrets do not merge, public buckets do not
+provision — the things where an exception is essentially never right), surrounded by a larger set of
+**guardrails** that warn, guide, and default-secure but permit a reviewed, expiring exception. The
+hard gates are few and load-bearing; the guardrails are many and forgiving. Which checks belong in
+which tier is a genuine risk-management decision, not a technical one, and it is the central team's
+core judgment call.
 
 ## Distributed-systems lens
 

@@ -288,6 +288,17 @@ by the receiving TCP.
 
 ### Step 6 — Teardown
 
+When the exchange is done (or the connection idles past keep-alive), it is closed. TCP's
+graceful close is a four-way exchange: each side sends a **FIN** and receives an **ACK**,
+independently, because a TCP connection is a pair of independent byte streams (full-duplex).
+The side that closes actively enters `TIME_WAIT` and lingers there for a duration meant to be
+2×MSL (maximum segment lifetime) — long enough to absorb any delayed duplicate segments and to
+ensure the final ACK was received. The RFC's nominal MSL is 2 minutes (so 2×MSL is 4 minutes),
+but Linux does not use MSL directly: it fixes `TIME_WAIT` at 60 seconds (the compiled-in
+`TCP_TIMEWAIT_LEN`), which is not runtime-tunable via a sysctl. `TIME_WAIT` accumulation on a busy client is a real
+operational concern — it can exhaust ephemeral ports — which is why keep-alive and connection
+pooling, and options like `SO_REUSEADDR`, matter, as covered in Volume 2, Chapter 10 and again
+in Chapter 3 here.
 
 That is the whole life of a request. Everything below re-examines the individual layers this
 walk-through passed through quickly.
@@ -455,6 +466,18 @@ of relying on ICMP). This is a recurring theme in Chapter 12 (Debugging and Obse
 
 ## Layer 4: ports, TCP vs. UDP
 
+The transport layer adds two things the network layer lacks: **multiplexing** (via ports) and,
+optionally, **reliable ordered delivery**. IP delivers a packet to a *host*; it has no notion of
+*which process* should receive it. The 16-bit source and destination **port** numbers in the L4
+header provide that. A listening server binds a well-known port (443 for HTTPS, 53 for DNS); a
+client picks an *ephemeral* port from a local range (Linux default roughly 32768–60999). The
+tuple that uniquely identifies a connection — the key the kernel demultiplexes on — is the
+**four-tuple**: *(source IP, source port, destination IP, destination port)*. Two connections
+from the same client to the same server differ only in the client's ephemeral port, and that
+alone keeps their byte streams separate. This four-tuple is also why a single client can open at
+most ~28,000 concurrent connections to one (server IP, port) before ephemeral-port exhaustion —
+a limit that bites connection-heavy services and one reason `SO_REUSEPORT`, multiple destination
+IPs, and connection pooling exist.
 
 The two dominant L4 protocols embody a fundamental trade-off:
 
@@ -519,6 +542,21 @@ flowchart LR
 ```
 
 - **Processing delay** — time for a node to examine a packet's headers, verify the checksum, and
+  make a forwarding decision (the longest-prefix lookup). On modern hardware this is
+  microseconds, usually negligible except in software routers or deep packet inspection.
+- **Queuing delay** — time a packet waits in a buffer behind other packets before it can be
+  transmitted. This is the *variable* component: near zero on an idle link, unbounded as a link
+  saturates. Queuing delay is the source of most jitter and of the pathology called
+  **bufferbloat**, where oversized buffers hold packets for tens or hundreds of milliseconds
+  under load instead of dropping them, wrecking latency without improving throughput. Queuing
+  delay is where load-dependent tail latency comes from.
+- **Serialization (transmission) delay** — time to clock all of a packet's bits onto the wire,
+  equal to *packet size / bandwidth*. A 1500-byte (12,000-bit) packet on a 1 Gbit/s link takes
+  12 µs to serialize; on a 10 Mbit/s link, 1.2 ms. This is the *only* delay component that
+  higher bandwidth actually reduces.
+- **Propagation delay** — time for a bit to physically traverse the distance, equal to *distance
+  / signal speed*. Governed by the speed of light in the medium and utterly indifferent to
+  bandwidth. Dominant on long-haul links.
 
 Summed over every hop, these four give end-to-end latency. The diagnostic value is knowing which
 dominates: a saturated link is queuing delay (fix congestion or add capacity), a long-haul link
@@ -541,6 +579,18 @@ and achieve throughput equal to bandwidth, the sender's in-flight window must be
 BDP. If the window is smaller, throughput is capped at *window / RTT*, regardless of how much
 bandwidth is available.
 
+A worked example makes the stakes clear. On a 1 Gbit/s path (125 MB/s) with a 1 ms RTT
+(intra-data-center), the BDP is 125 MB/s × 0.001 s ≈ **125 KB** — a modest window fills it. But
+on the *same* 1 Gbit/s bandwidth with an 80 ms RTT (cross-continent), the BDP is 125 MB/s ×
+0.08 s ≈ **10 MB**. To saturate that link a single TCP connection needs a 10 MB in-flight
+window. If the OS default socket buffer or the receiver's advertised window is, say, 256 KB,
+throughput is capped at 256 KB / 0.08 s ≈ **3.2 MB/s** — about 2.5% of the available gigabit.
+This is why "long fat networks" (high bandwidth × high latency) require **window scaling**
+(TCP's option to advertise windows beyond 64 KB) and generous, autotuned socket buffers, and
+it is why a single TCP stream often cannot fill a fast, distant link while many parallel streams
+can. Every discussion of TCP tuning, of why you parallelize large transfers, and of why RTT (not
+bandwidth) is the throughput lever on long paths, comes back to the BDP. Chapter 3 develops the
+congestion-control dynamics behind it.
 
 ## Where the kernel stack fits
 
@@ -569,6 +619,16 @@ two views of the same machine; keep both loaded.
 Everything above described *one* request between *two* hosts. Real backend systems shatter that
 tidy picture, and the consequences define large-scale networking.
 
+**One user request fans out into dozens of internal hops.** When a user hits a single public
+endpoint, the edge load balancer forwards to an API gateway, which calls an auth service, which
+calls a session store, which the gateway then routes to an orders service, which reads from a
+database primary and two caches, emits an event to a message broker, and calls a pricing service
+that itself calls three more. A single external request routinely becomes tens of internal RPCs
+across many services and teams. **Each of those internal hops traverses the full stack twice** —
+down through the caller's kernel and up through the callee's — and in a service mesh, *four*
+times per logical hop, because the traffic passes through a sidecar proxy on the way out of the
+caller's pod and another on the way into the callee's (Chapter 10 covers this). The stack you
+traced once is executed hundreds of times per user action.
 
 **Per-hop latency compounds, and BDP governs each hop.** If each internal RPC adds even 1 ms of
 median latency, a fan-out depth of ten adds 10 ms to the median — and tail latency is far worse,

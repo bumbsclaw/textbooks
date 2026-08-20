@@ -179,6 +179,20 @@ follows the pointer to `example.com` and returns its A record. CNAMEs are conven
 other records of any type.** The CNAME must be alone. This is not arbitrary; the CNAME means
 "everything about this name is defined elsewhere," so you cannot also attach an MX or TXT to it.
 
+The consequence is the **CNAME-at-apex problem**, one of the most common real-world DNS snags.
+The apex (or "zone apex," or "naked domain") is the bare `example.com` with no subdomain. The
+apex *must* carry the zone's `SOA` and `NS` records — that is what makes it a zone. Because
+those records exist, the apex cannot also be a CNAME. So you cannot write
+`example.com CNAME my-load-balancer.aws.example.` — the standard forbids it. But you frequently
+*want* exactly that: your load balancer or CDN gives you a hostname, not a stable IP, and you
+want the naked domain to point at it. Managed DNS providers solve this with a non-standard
+record type — Route 53 calls it an **ALIAS**, others call it **ANAME** or "CNAME flattening"
+(Cloudflare). Mechanically, the provider's *authoritative server* does the CNAME resolution
+internally at query time and returns the final A/AAAA records to the client, so the wire
+response looks like a normal A record at the apex and the CNAME-alone rule is never violated on
+the wire. It works, but understand it is a provider feature, not a DNS record you can host on
+your own BIND server, and the flattening is done by the authoritative server, adding a
+resolution step and coupling you to the provider's health of the target.
 
 **MX** (mail exchanger) records list, with priority values, the hosts that accept mail for a
 domain; lower priority is preferred. **NS** records name the authoritative servers for a zone
@@ -359,6 +373,19 @@ fields and reply before the real authoritative server does can inject a forged a
 poisoning** — and the resolver will cache the lie and serve it to every downstream client for the
 TTL the attacker chooses.
 
+For years this was considered hard because the attacker had to win a race and guess a 16-bit ID —
+a 1-in-65536 shot per attempt. In 2008 **Dan Kaminsky** demonstrated why that comfort was false.
+His insight was that an attacker need not race a single query: by querying the target resolver for
+many *nonexistent* names under a domain (`aaaa.example.com`, `aaab.example.com`, …), the attacker
+gets many fresh races in quick succession, and crucially the forged reply can carry, in its
+authority/additional section, a poisoned NS or glue record redirecting the *entire domain* — not
+just one hostname — to attacker-controlled servers. With only 16 bits of transaction ID and a
+predictable source port, poisoning a domain went from "years" to "seconds." The emergency
+mitigation, deployed across the internet in 2008, was **source-port randomization**: the resolver
+picks a random UDP source port per query, so the attacker must now guess ~16 bits of ID plus
+~16 bits of port, raising the work by orders of magnitude. That is a mitigation, not a cure — it
+makes poisoning expensive, not impossible, and it does nothing against an on-path attacker who
+can see the real values.
 
 The real cure for authenticity is **DNSSEC** (DNS Security Extensions). DNSSEC does *not* encrypt
 anything and does not provide privacy; it provides **origin authentication and integrity** by
@@ -400,6 +427,19 @@ denial-of-service surface. Second, DNSSEC authenticates the *data*, not the *cha
 you the answer genuinely came from the zone owner and was not tampered with, but it does nothing to
 hide *which* names you are looking up from anyone watching the wire.
 
+Privacy is the separate problem that **DoT** and **DoH** solve, and they solve only the
+stub-to-recursive hop. **DNS over TLS** (DoT, port 853) wraps the stub-resolver-to-recursive
+conversation in TLS: same DNS messages, encrypted channel, on a dedicated port that a network
+operator can see (and block) as DNS-shaped even without reading contents. **DNS over HTTPS** (DoH,
+port 443) tunnels DNS inside ordinary HTTPS requests, making the DNS traffic indistinguishable from
+web traffic and thus resistant to network-level blocking — which is exactly why it is both loved
+(user privacy, censorship resistance) and resented (it bypasses enterprise DNS-based security
+controls and split-horizon resolvers, and moves visibility to the DoH provider). Note the scope
+carefully: DoT/DoH encrypt only the client-to-recursive-resolver leg. The recursive resolver's
+iterative queries out to the authoritative hierarchy are historically still cleartext UDP; and
+neither DoT nor DoH *authenticates the data* — that is still DNSSEC's job. The two are
+complementary: DNSSEC says "this answer is genuine," DoT/DoH say "no one on your network saw you
+ask." A backend engineer running an internal resolver should think about both axes independently.
 
 A final security note that ties into cloud security elsewhere in this curriculum: the cloud
 metadata endpoint `169.254.169.254` (link-local, source of many SSRF-to-credential-theft incidents)
@@ -569,6 +609,16 @@ problem, and it interacts with caching (answers must be cached per client-subnet
 
 ### The failover pitfall: clients that cache DNS forever
 
+Here is the single most expensive DNS mistake in backend systems, and it is a client-side one. You
+set a 60-second TTL, you configure health-checked failover, you fail a region — and half your clients
+keep hammering the dead IP for *hours*. Why? Because the TTL is only an instruction, and some clients
+ignore it. The infamous case is the **JVM**: with a security manager installed, the default value of
+`networkaddress.cache.ttl` was historically **`-1`, meaning cache successful DNS lookups forever** —
+the process resolves a name once at startup and never looks again until it restarts. A Java service
+that resolved `db.internal.example.com` at boot will keep connecting to the original IP across any
+number of failovers, oblivious to your carefully tuned 60-second TTL, until someone restarts the JVM.
+Newer JDKs default this to a bounded value (commonly 30 seconds) when no security manager is present,
+but you should never leave it to defaults across your fleet.
 
 ```java
 // Set explicitly on JVM startup; do NOT rely on defaults for failover-critical services.
@@ -578,6 +628,19 @@ java.security.Security.setProperty("networkaddress.cache.ttl", "30");
 java.security.Security.setProperty("networkaddress.cache.negative.ttl", "5");
 ```
 
+The JVM is the famous offender but not the only one. Many HTTP client libraries and connection pools
+resolve a hostname once when a connection or pool is created and then reuse that connection
+indefinitely, so even a language whose resolver honors TTLs will keep using a dead IP as long as the
+pooled connection or the process lives. Go's standard-library resolver does no caching of its own —
+each lookup is fresh (subject to the OS resolver) — but `http.Transport` keeps and reuses established
+connections; a persistent connection to a now-dead IP survives a DNS change until the connection
+itself fails and is re-dialed. The general lesson: **DNS
+TTL bounds convergence only for clients that actually re-resolve.** For failover you care about, you
+must either (a) bound resolver/library DNS caching explicitly and short, (b) use connection pools that
+periodically recycle and re-resolve, and (c) not rely on DNS alone for fast failover — pair it with a
+load balancer or service mesh that fails over at the connection layer in seconds regardless of client
+DNS behavior. DNS failover is real, but its speed is set by the *slowest, stalest* client in your
+fleet, not by the TTL you published.
 
 ## Anycast DNS and GSLB
 

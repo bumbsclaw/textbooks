@@ -235,6 +235,16 @@ are correctness reasons, not paranoia:
    connection that reused the same (src IP, src port, dst IP, dst port) and be accepted as
    valid data — a data-corruption bug. Waiting 2×MSL guarantees every old segment has expired.
 
+The trouble is scale. `TIME_WAIT` accumulates on the *active closer*, and in a typical
+client-server RPC pattern the client (or a proxy in front of a backend) is the active closer of
+huge numbers of short connections. Each `TIME_WAIT` socket pins one four-tuple for 60 seconds.
+Since the destination IP and port are usually fixed (your backend), and the source IP is fixed
+(the client), the only degree of freedom is the **ephemeral source port**, of which there are
+at most ~28,000 by default (`net.ipv4.ip_local_port_range`, commonly 32768–60999) and ~64K
+absolute. A busy client opening and closing connections faster than its ephemeral range
+refills — roughly 28K per 60 s with the default range — to a single destination will run out
+of source ports and see `connect()` fail with `EADDRNOTAVAIL` — a
+real and common outage mode for API gateways, sidecar proxies, and load-testing rigs.
 
 The correct fixes, in order of preference:
 
@@ -269,6 +279,16 @@ unacknowledged data in flight than the smaller of `rwnd` (receiver's limit) and 
 
 ### Window scaling
 
+A 16-bit window maxes out at 65,535 bytes. On a fast, high-latency path that is nowhere near
+enough. The amount of data that must be in flight to keep a pipe full is the
+**bandwidth-delay product** (BDP): bandwidth × RTT. On a 10 Gbps link with 80 ms RTT,
+BDP = 10e9 bits/s × 0.08 s ÷ 8 ≈ 100 MB. A 64 KB window on that path caps throughput at
+64 KB / 80 ms ≈ 800 KB/s — under 0.1% of the link. **Window scaling** (RFC 7323) fixes this: a
+window-scale option, negotiated once in the SYN, is a left-shift applied to the advertised
+window, allowing windows up to roughly 1 GB. It must be offered in the handshake or it is
+unavailable for the connection. This is why a connection that starts before scaling is
+negotiated, or a middlebox that strips the option, can silently cap a fast path at absurdly low
+throughput — a nasty, invisible failure.
 
 ### Zero-window and the persist timer
 
@@ -311,6 +331,13 @@ unacknowledged bytes. Everything below is about how `cwnd` moves.
 
 ### Slow start
 
+A new connection has no idea what the path can carry. Rather than blast at line rate, it starts
+with a small **initial congestion window** (`initcwnd`) — historically 1–4 MSS, raised by
+RFC 6928 (and Linux default since ~kernel 2.6.39) to **10 MSS** (~14.6 KB) — and grows
+*exponentially*: for every ACK received, `cwnd` increases by one MSS, which roughly doubles
+`cwnd` every RTT. "Slow" refers to starting small, not to the growth rate, which is the fastest
+growth TCP ever uses. Slow start continues until `cwnd` reaches the **slow-start threshold**
+(`ssthresh`) or a loss occurs.
 
 The exponential ramp is why short-lived connections are slow. A cold connection with
 `initcwnd=10` can send ~14.6 KB in the first RTT, ~29 KB in the second, ~58 KB in the third.
@@ -388,6 +415,18 @@ un-shrink `cwnd` it cut needlessly.
 
 ### CUBIC: the modern loss-based default
 
+Standard Reno/NewReno AIMD grows `cwnd` linearly at one MSS per RTT. On a modern high-BDP path
+that is painfully slow: after a loss cuts a 100 MB window in half, refilling it at ~1500 bytes
+per 80 ms RTT takes thousands of round trips — minutes. **CUBIC** (Ha, Rhee, Xu, 2008;
+RFC 8312; the Linux default since kernel 2.6.19 in 2006) replaces the linear increase with a
+*cubic function of the time since the last congestion event*. The window grows quickly right
+after a cut (concave region) toward the value where loss last occurred (`W_max`), plateaus
+gently around `W_max` (the inflection, where it probes cautiously), then grows quickly again
+(convex region) if no loss appears, aggressively searching for new capacity. Crucially, the
+growth is a function of *wall-clock time, not RTT count*, which makes CUBIC **RTT-fair**: flows
+with different RTTs sharing a bottleneck get more equal shares than Reno gives, where the
+short-RTT flow's faster ACK clock lets it grab a disproportionate share. CUBIC is what your
+Linux servers run by default today.
 
 CUBIC is still fundamentally **loss-based**: it treats a dropped packet as the signal to back
 off. That assumption is its weakness. On paths with *non-congestive* loss — wireless, lossy
@@ -409,6 +448,18 @@ properties of the path and paces the sender to match them:
 - **RTprop** — the round-trip propagation delay: the *minimum* RTT observed, reflecting pure
   propagation with no queueing.
 
+The optimal operating point (Kleinrock's, 1979) is exactly `BtlBw × RTprop` bytes in flight —
+enough to fill the pipe but not the queue. BBR *paces* packets out at the estimated BtlBw
+rather than sending in ACK-clocked bursts, and periodically runs two probing phases:
+**ProbeBW**, where it briefly sends ~25% faster (a pacing gain of 1.25) to test whether more
+bandwidth is available, then drains the queue it just built (gain 0.75), then cruises; and
+**ProbeRTT** every ~10 seconds, where it drops the in-flight data to a minimum to re-measure
+the true, unqueued RTprop (since a persistently full pipe would otherwise inflate the RTT
+estimate). Because BBR aims to keep the bottleneck buffer nearly *empty*, it achieves high
+throughput at low latency and is largely *immune to non-congestive loss* — a few random drops
+do not change its bandwidth estimate. On lossy WAN and high-BDP paths, BBR can dramatically
+outperform CUBIC; Google reported large throughput gains and latency reductions on YouTube and
+B4 after deploying it.
 
 BBR is not free of controversy. The original **BBRv1** could be *unfair* to concurrent
 loss-based (CUBIC/Reno) flows on shallow-buffered links — because it ignores the loss signal
@@ -474,6 +525,15 @@ fewer, fuller packets.
 the receiver waits up to ~40–200 ms (Linux ~40 ms) hoping to either piggyback the ACK on
 outbound data or accumulate a second segment to ACK both cumulatively.
 
+The interaction: a sender using Nagle writes a small request and waits (correctly per Nagle)
+for the previous data to be ACKed before sending the tail of it. The receiver, using delayed
+ACK, is *sitting on the ACK* hoping for more data or a chance to piggyback — but it will not
+send data until it has the full request, which the sender will not send until it gets the ACK.
+Deadlock, broken only when the receiver's ~40 ms delayed-ACK timer fires. The result is a
+request that should take one RTT taking one RTT **plus ~40 ms**, on a fraction of requests, in
+a way that is maddening to diagnose because it is intermittent and load-dependent. This is the
+classic "why is my RPC sometimes 40 ms slower for no reason" bug, and it has bitten
+Redis clients, database drivers, and RPC frameworks repeatedly.
 
 The fix for any latency-sensitive, request/response protocol is **`TCP_NODELAY`**, which
 disables Nagle so small segments go out immediately:

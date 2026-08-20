@@ -176,7 +176,35 @@ flowchart TB
   end
 ```
 
+**Nested loop join** is the simplest and, in its naive form, the worst: for each of N outer rows,
+scan all M inner rows — O(N·M), which at 10⁵ × 10⁵ is 10¹⁰ comparisons and a query that never
+comes back. The redeemed form is the **indexed nested loop**: for each outer row, probe an index
+on the inner table's join key — O(N · log M). For a *small* outer input this is unbeatable: five
+outer rows means five index lookups, microseconds of work, no setup cost, and the first output
+row appears almost immediately. The entire hazard of the nested loop is that its cost is linear
+in the outer cardinality, so it is exquisitely sensitive to the optimizer's estimate of N. A plan
+built on "N will be about 40" that meets N = 800,000 at runtime performs 800,000 index probes —
+the single most common way a misestimate becomes an incident, and the centerpiece of our
+`EXPLAIN` walk-through below. (PostgreSQL 14+ can interpose a **memoize** node that caches inner
+lookups by key, which softens — but does not repair — this failure when the outer side has many
+duplicate keys.)
 
+**Hash join** handles the case nested loops cannot: two large inputs, no useful indexes, an
+equality join condition. It runs in two phases. The **build** phase reads the smaller input once
+and builds an in-memory hash table keyed on the join columns. The **probe** phase streams the
+larger input once, hashing each row's key and checking the table. Total cost is roughly one pass
+over each input — O(N + M) — which is asymptotically as good as a join can be. The costs are in
+the fine print. First, the build side must fit in the operator's memory budget (`work_mem` per
+node in PostgreSQL; a *memory grant* negotiated at plan time in SQL Server — itself computed from
+cardinality estimates, so a misestimate here means either a wasteful over-grant or a spilling
+under-grant). Second, when the build side does not fit, the join **spills**: both inputs are
+hash-partitioned into batches on disk such that each build partition fits in memory, and the join
+runs partition by partition. This is **Grace hash join** (from the GRACE database machine
+project, Kitsuregawa et al., 1983); the *hybrid* variant keeps the first partition in memory to
+save I/O. A spilling hash join still completes in near-linear time, but with an extra write and
+read of both inputs — visible in plans as `Batches: 16` (PostgreSQL) or hash spill warnings (SQL
+Server), and one of the first things to look for when a formerly fast query slows down as data
+grows. Third, hash joins require equality predicates; they cannot serve `<` or range conditions.
 
 **Merge join** requires both inputs sorted on the join key, then advances two cursors in
 lockstep, emitting matches — one pass over each input, O(N + M), with mark-and-restore rewinds
@@ -387,6 +415,20 @@ second cannot re-plan every execution. So plans are cached — per prepared stat
 PostgreSQL, in a shared plan cache keyed by statement text in SQL Server and Oracle. And caching
 creates a new failure class with a memorable name.
 
+A cached plan must serve *all* future parameter values, but it was chosen by looking at *some*
+value. **Parameter sniffing** (SQL Server's term; Oracle calls the mechanism bind peeking) is
+that look: optimize the statement using the first execution's actual parameters. Usually this is
+strictly better than optimizing blind. But consider `WHERE customer_id = $1` on a skewed
+distribution — most customers have a handful of orders, one aggregator account has four million.
+Sniff a small customer and you cache an indexed nested-loop plan that is perfect for millions of
+executions — until the aggregator arrives and the plan runs four million index probes. Sniff the
+aggregator first and you cache a hash-join-with-scan plan that makes every small-customer lookup
+do a table scan. Neither plan is wrong for the value it was built for; the *cache* is wrong to
+assume one plan fits all values. This is a certified production-incident classic, with a
+signature worth memorizing: a query is fast for weeks, then instantly and persistently slow after
+a restart, failover, or cache eviction re-sniffed it with an unlucky first parameter — "it got
+slow and `DBCC FREEPROCCACHE` / re-preparing fixed it" is parameter sniffing until proven
+otherwise.
 
 PostgreSQL's variant is more polite but the same disease: a prepared statement's first five
 executions use custom per-parameter plans; the planner then compares their average cost to a
@@ -500,6 +542,29 @@ repaired statistic.
 
 When a plan is wrong, apply remedies in this order — cheapest and most durable first:
 
+1. **Refresh or strengthen statistics.** Run `ANALYZE` (autovacuum's analyze can lag on
+   fast-growing or recently bulk-loaded tables — stale statistics after a big import is the most
+   boring and most common cause of bad plans). Raise the per-column statistics target where
+   histograms or MCV lists are too coarse for skew. Add extended statistics for correlated
+   predicate pairs, as above.
+2. **Fix the indexing.** Add the missing index the plan is compensating for; make a hot index
+   covering to unlock index-only scans; and remove the self-inflicted wounds from Chapter 3 —
+   a function wrapped around a column (`WHERE date_trunc('day', created_at) = …`, `WHERE
+   lower(email) = …`) defeats both the index *and* the statistics on that column, so rewrite the
+   predicate as a range or create the matching expression index (expression indexes get their own
+   statistics, repairing estimation too).
+3. **Rewrite the query.** Decorrelate the subqueries the rewriter could not: turn a per-row
+   scalar subquery into a `LEFT JOIN` on a grouped derived table, or use a lateral join
+   deliberately. Split `OR`s across different columns into a `UNION` of two indexable branches —
+   `WHERE a = 1 OR b = 2` cannot use single-column indexes as one predicate, but the union of two
+   single-predicate queries can (bitmap-OR handles some of these automatically; not all). Break a
+   15-way join into temp-table stages so estimation errors cannot compound end to end.
+4. **Hints, last.** PostgreSQL core famously refuses them (`pg_hint_plan` exists as an
+   extension); SQL Server, Oracle, and MySQL embrace them. Use a hint when a plan must be
+   stabilized *now*; then treat it as technical debt. A hint encodes today's data shape into the
+   query text — silently wrong when the data grows, invisible to the optimizer's improvements
+   after an upgrade, and scattered across a codebase where nobody re-audits it. Prefer the
+   engine's managed pinning machinery (next section) to ad-hoc hint sprinkling.
 
 ## What the optimizer cannot see — and stability versus optimality
 

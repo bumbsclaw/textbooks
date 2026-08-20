@@ -332,6 +332,20 @@ flowchart TB
   BEFORE -->|"write faults -> copy"| AFTER
 ```
 
+COW is used far beyond `fork`. Private file mappings (`MAP_PRIVATE`) are COW against the page
+cache. The kernel's `MADV_FREE` and same-page merging (KSM) build on it. But the operational
+gotcha every backend engineer should internalize is the **memory blow-up under write load
+after fork.** The textbook example is **Redis persistence**: to take a point-in-time snapshot
+(`RDB`) or rewrite the append-only file, Redis `fork`s and lets the child serialize a
+consistent view while the parent keeps serving. COW makes this near-instant and, in the
+common case, cheap. But every key the parent *writes* during the save triggers a COW copy —
+and if the workload is write-heavy, the parent can duplicate a large fraction of the dataset
+before the child finishes. In the pathological case memory usage approaches **2×** the
+dataset size, transiently, on the node. This is a real capacity-planning hazard: a Redis
+instance sized to fit comfortably in RAM can OOM *during a background save* under a write
+spike. Transparent huge pages make it worse, because a COW copy is then 2 MiB instead of
+4 KiB — a single small write dirties a huge page — which is exactly why Redis recommends
+disabling THP.
 
 ## `mmap`: memory-mapping and its discontents
 
@@ -459,6 +473,17 @@ forward progress. Throughput collapses; latency goes to the moon. **Pressure Sta
 Information** (`/proc/pressure/memory`, the `PSI` interface) is the modern way to quantify
 this: it reports the fraction of time tasks stall waiting on memory.
 
+This is why **latency-sensitive backend deployments frequently disable swap entirely.** The
+reasoning: for a service with a strict tail-latency SLO, a swap-in is never an acceptable
+outcome — you would rather fail fast (OOM) than serve a request that stalled 10 ms on a
+swapped page. Kubernetes historically *required* swap to be off on nodes (the kubelet refused
+to start otherwise) precisely so that the scheduler's memory accounting and the cgroup limits
+would map cleanly to physical RAM, without the confounding variable of disk-backed memory;
+swap support for Kubernetes has since been added as an opt-in alpha/beta feature, but the
+default posture in latency-sensitive fleets remains swap-off. The trade-off is stark and worth
+naming: **swap-off converts "slow" into "dead."** Without swap, a memory spike that swap would
+have absorbed instead trips the OOM killer. That is usually the *right* trade for a service
+behind a load balancer with retries, and the *wrong* trade for a workstation.
 
 ### Keeping the working set resident
 
@@ -590,6 +615,36 @@ Virtual memory is a per-node mechanism, but its behavior sets the economics and 
 latency of an entire fleet.
 
 - **Major faults are a hidden p99 killer.** A service that looks CPU-bound in aggregate can
+  have a p999 dominated by swap-ins and cold `mmap` faults — synchronous disk reads spliced
+  into request handling, invisible to application timers. This is why latency-sensitive fleets
+  standardize on **swap-off + `mlock` hot data**, converting the "slow" failure mode into a
+  "fail fast" one they can handle with retries and load balancing (Volume 11). The node-level
+  choice directly shapes the tail of the distributed system.
+- **cgroup limits and OOM kills are a top cause of container churn.** Across a large
+  Kubernetes fleet, `OOMKilled` / exit-137 restart loops are a leading operational failure,
+  and every one is a memory-sizing decision: limit too tight, RSS growth unaccounted, page
+  cache misattributed, or a load spike. Right-sizing limits — and knowing RSS vs cache vs the
+  cgroup's own accounting — is fleet hygiene (Chapter 9, Book 6, Volume 12).
+- **`mmap`-backed data stores inherit OS eviction and fault latency.** Databases and indexes
+  built on `mmap` (Volume 5) hand the kernel control over what stays resident and when faults
+  happen. That makes their tail latency a property of node memory pressure and reclaim policy,
+  not just their own code — a coupling you must model when you co-locate them or set limits.
+- **COW `fork` can transiently double memory.** The Redis-snapshot pattern is a fleet-wide
+  capacity gotcha: a node sized to hold the dataset can OOM *during a background save* under
+  write load, because COW duplicates dirtied pages. Provisioning must include COW headroom, or
+  the save itself becomes the incident.
+- **Working-set-fits-in-RAM is the node-level cache-locality law.** The same principle that
+  governs L1/L2/L3 in Volume 1, Chapter 3 governs DRAM vs swap here, and governs in-memory
+  store sizing across the fleet: keep the hot set in the fast tier. Every tier of the
+  distributed memory hierarchy — registers, caches, RAM, local SSD, remote cache, remote disk —
+  obeys the same locality logic; virtual memory is where the RAM-vs-disk boundary of that
+  hierarchy is enforced.
+- **Overcommit + OOM is the node's resource-exhaustion failure mode.** It mirrors distributed
+  resource exhaustion exactly: promise capacity you statistically won't all need, and when the
+  bet fails, shed load violently. The OOM killer is admission control by assassination. Under
+  a coordinated demand spike — the correlated-failure pattern — many nodes call in their
+  promises at once, and a fleet of overcommitted nodes OOMs together. Understanding the local
+  mechanism is understanding one instance of the global pattern.
 
 ## Key takeaways
 

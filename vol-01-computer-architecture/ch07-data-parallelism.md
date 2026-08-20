@@ -205,6 +205,20 @@ vectorizer). When it works it is free. The problem is that **it is fragile and f
 reasons it fails are precisely the constraints above dressed up as compiler-provability questions:
 
 - **Aliasing.** If two pointers *might* overlap, writing through one could change what the other reads, so
+  the compiler must assume a loop-carried dependency and refuse to vectorize. C's `restrict` (Rust's
+  ownership model, Fortran's non-aliasing-by-default) is the promise that unlocks this — and its absence is
+  the most common silent failure.
+- **Alignment and trip count unknown at compile time** force the compiler to emit peeling/remainder code
+  and may make it decide vectorization is not worth it.
+- **Loop-carried dependencies** — each iteration reads the previous iteration's result (a running sum
+  written back to the same accumulator naively, pointer-chasing, prefix computations) — are unvectorizable
+  as written.
+- **Function calls, potential exceptions, complex control flow, `break` on a data condition** — all block
+  it.
+- **Reductions and floating-point reassociation.** Vectorizing a sum means adding elements in a different
+  order, and floating-point addition is not associative (Chapter 9), so the result changes in the last
+  bits. A strict compiler will *not* reorder FP math unless you pass `-ffast-math` / `-ffp-contract` or use
+  a reduction pragma — meaning correct-by-default compilers leave FP reductions scalar unless you opt in.
 
 The practical consequence: **auto-vectorization is a bonus, not a plan.** It reliably handles simple,
 `restrict`-annotated, statically-sized loops over contiguous arrays, and it evaporates the moment the code
@@ -234,6 +248,17 @@ existing scalar loop.
 
 ### The AVX-512 frequency caveat
 
+One deployment-relevant wrinkle. On several **older Intel server generations** (notably Skylake-SP and
+Cascade Lake, roughly 2017–2019), executing heavy AVX-512 (and to a lesser degree AVX2) instructions drew
+enough power that the core **downclocked** — sometimes across the whole socket — to stay within thermal and
+voltage limits. The effect: sprinkling a little AVX-512 into an otherwise scalar or lightly-threaded
+workload could *slow down* the surrounding non-vector code by dropping the clock, occasionally making the
+"optimization" a net loss at the application level. This drove real guidance at the time (Cloudflare and
+others documented it) to be cautious about AVX-512 in mixed workloads. The important hedges: it was **always
+workload- and SKU-dependent**, it was most acute on those specific generations, and **newer parts (Ice Lake
+onward, and AMD's Zen 4 AVX-512) reduced or largely eliminated the penalty**. It is a caution to *measure*
+on your actual hardware, not a blanket "avoid AVX-512." (Consumer Alder Lake, incidentally, shipped with
+AVX-512 fused off after early enabling — another reason to feature-detect rather than assume.)
 
 ## Backend uses of SIMD
 
@@ -241,6 +266,18 @@ SIMD stopped being a graphics/HPC niche and became load-bearing backend infrastr
 always the same: a workload that is *bulk, homogeneous, and column-shaped* gets rewritten to process many
 elements per instruction.
 
+**Vectorized query execution — the reason modern OLAP is fast.** The defining architectural choice of
+ClickHouse, DuckDB, and the Apache Arrow ecosystem is that they process data in **columnar batches**, not
+row-at-a-time. Classic databases execute a query one tuple at a time through a tree of operators (the
+"Volcano" iterator model): for each row, call `next()`, chase virtual functions, evaluate the predicate.
+The per-row interpreter overhead swamps the actual work. **Vectorized execution** — pioneered by
+**MonetDB/X100** (Boncz, Zukowski, Nes, CIDR 2005) — flips this: operators consume and produce *vectors* of
+thousands of values from a single column, so the inner loop is a tight, branch-light, cache-friendly, and
+**auto-/hand-vectorizable** pass over contiguous, same-type data. A `WHERE price > 100` over a column
+becomes a SIMD compare producing a bitmask; a `SUM` becomes a SIMD reduction; a filter becomes a
+mask-and-compact. This is why "vectorized execution" is the marquee feature of every fast analytical
+engine — the word *vectorized* is literally SIMD. Columnar storage (Volume 5, on data systems) and SIMD are
+symbiotic: columns give you the contiguous, uniform-type layout that SIMD demands.
 
 **JSON and string parsing — simdjson.** Parsing looks inherently sequential and branchy — the last place
 you would expect SIMD. **simdjson** (Langdale and Lemire, 2019) showed otherwise, parsing JSON at multiple
@@ -470,6 +507,19 @@ architectures** — trading general-purpose flexibility for enormous efficiency 
 datacenter is now visibly **heterogeneous**, and a backend engineer should recognize the players:
 
 - **TPUs (Tensor Processing Units)** — Google's ML accelerators, built around a large **systolic array**
+  matrix-multiply unit. A systolic array streams data through a grid of multiply-accumulate cells so each
+  loaded value is reused across many operations without returning to memory — a hardware embodiment of
+  maximizing arithmetic intensity. TPUs (and the broader class of **dedicated inference/training chips** —
+  AWS **Inferentia**/**Trainium**, and various startups' parts) trade GPU generality for higher
+  efficiency on the narrow domain of dense neural-network math.
+- **FPGAs (Field-Programmable Gate Arrays)** — reconfigurable logic you program into a custom circuit for
+  your workload. Used for line-rate network processing, custom compression/crypto, and low-latency
+  specialized pipelines (financial exchanges, Microsoft's Catapult/Bing and SmartNIC work). Extremely
+  efficient for the fixed function they are configured to; costly to develop and slower-clocked than ASICs.
+- **DPUs / SmartNICs (Data Processing Units)** — programmable NICs (NVIDIA **BlueField**, AWS **Nitro**,
+  Intel IPUs) that offload networking, storage, encryption, and virtualization from the host CPUs, freeing
+  those cores for tenant work and providing hardware isolation. In cloud infrastructure the DPU is where a
+  growing share of the "infrastructure tax" now runs (Volume 12).
 
 The unifying trend: as general-purpose scaling slows, performance increasingly comes from **matching the
 silicon to the workload**. For the backend engineer this means the compute fabric under a large service is
@@ -547,6 +597,25 @@ includes knowing *which shape a workload is*.
 
 Compress everything above into a decision procedure you can run in your head.
 
+1. **Is the workload data-parallel?** Same operation, many homogeneous elements, contiguous or
+   contiguous-izable, little data-dependent branching? If yes, SIMD/GPU is on the table. If it is branchy,
+   sequential, pointer-chasing, or a diverse mix of tasks, it is not — keep it scalar and parallelize with
+   threads/services instead.
+2. **How much data, and what is the arithmetic intensity?** Small data or low FLOPs-per-byte → stay on the
+   CPU, and reach for **SIMD** (auto-vectorization verified, or intrinsics/portable-SIMD for the hot loops).
+   Large data *and* high arithmetic intensity (data reused on-chip, compute-bound) → an **accelerator** can
+   deliver order-of-magnitude wins.
+3. **Does the data movement pay for itself?** For a GPU, the PCIe transfer and launch overhead must be
+   amortized by enough compute or enough batch, with data kept resident where possible. If the workload is
+   transfer-bound, the accelerator will disappoint no matter its peak FLOPs. **Roofline first, FLOPs
+   second.**
+4. **Batch for throughput.** Both SIMD (fill the lanes) and GPUs (fill the cores, hide latency) reward
+   processing many elements per invocation. Right-size the batch to trade latency for throughput
+   deliberately.
+5. **Measure — do not assume.** The compiler silently un-vectorizes; AVX-512 can downclock on old parts; a
+   GPU offload can be net-negative when transfer-bound. Read the assembly, check vectorization remarks,
+   profile the kernel, watch utilization. Every number in this chapter is a *hypothesis about your
+   hardware* until you have measured it on your hardware.
 
 Hold onto the framing: this is the *other axis*. Everything you know about scaling out — partition,
 localize, batch, minimize movement, coordinate as little as possible — applies just as forcefully to

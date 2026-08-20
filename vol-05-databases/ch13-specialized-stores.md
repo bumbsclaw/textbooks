@@ -238,6 +238,23 @@ early 2000s.
 The consequences are the LSM consequences, translated:
 
 - **Deletes are tombstones.** You cannot remove a document from an immutable segment, so a
+  delete marks the document dead in a per-segment live-docs bitmap. Dead documents still
+  occupy space and still appear in the statistics (skewing IDF slightly) until a merge
+  rewrites the segment without them. An update is a delete plus a reinsert of the whole
+  document.
+- **Merges are the background tax.** Merge policy tuning in Elasticsearch is Chapter 2's
+  compaction tuning with the serial numbers filed off, including the failure mode of merges
+  falling behind under heavy indexing.
+- **Visibility is decoupled from durability.** A newly indexed document is not searchable
+  until a **refresh** opens a new point-in-time searcher over the current segment set
+  (Elasticsearch refreshes every second by default); it is not durable in Lucene terms
+  until a **commit** fsyncs the segment state (Elasticsearch layers its own translog —
+  a WAL, Chapter 7 — so that acknowledged writes survive a crash between commits). This is
+  the precise meaning of "near-real-time search": *visible after refresh, not after
+  acknowledgment*. Index a document and immediately search for it and you will usually
+  not find it. This is not a bug and cannot be configured away without destroying indexing
+  throughput; applications must be written for it, a point we return to at the end of the
+  chapter.
 
 ### Elasticsearch and OpenSearch: distributed Lucene
 
@@ -365,6 +382,19 @@ flowchart TB
   DOD --> N["regular series: about one bit per timestamp<br/>instead of 64"]
 ```
 
+**Values: XOR of adjacent floats.** Successive samples of one series are usually close in
+value, so the IEEE-754 bit patterns share their sign, exponent, and high mantissa bits, and
+`current XOR previous` is a word that is mostly zeros. If the XOR is exactly zero (value
+unchanged — extremely common for gauges), store a single `0` bit. Otherwise store a control
+bit and the nonzero "meaningful" middle of the XOR, described by its count of leading and
+trailing zero bits — with a further optimization that if the meaningful bits fall inside
+the same window as the previous value's, the window description can be reused. Across
+Facebook's production data the two techniques together averaged **about 1.37 bytes per
+point** — roughly 12× smaller than the naive 16 bytes, before any general-purpose
+compression. That ratio is what makes "keep every point at full resolution for weeks, in
+RAM or on NVMe" economically sane, and it is only available because the layout put each
+series' points adjacent: compression leverage is a *consequence of layout*, a theme that
+returns at full strength in the columnar section.
 
 ### Cardinality: the operational hazard
 
@@ -449,7 +479,37 @@ flowchart TB
   COL --> CIO["reads about 3 percent,<br/>then compression shrinks that 5 to 20x more"]
 ```
 
+Compression is the second, larger win, and it falls out of homogeneity: a column is a run
+of values of one type, often sorted or clustered, with low local entropy. Four encoding
+families do most of the work. **Run-length encoding (RLE)**: a sorted or clustered column
+like `region` stores `("EU", 41200), ("US", 78911)` instead of 120,111 strings.
+**Dictionary encoding**: map each distinct string to a small integer and store the
+integers — which also means predicates like `region = 'EU'` become integer comparisons.
+**Bit-packing**: a dictionary code with 200 distinct values needs 8 bits, not 32.
+**Delta encoding**: sorted numeric columns (IDs, timestamps) store small differences —
+the Gorilla timestamp trick generalized. These compose (dictionary, then RLE on the codes,
+then bit-pack), and 5–20× compression on real analytical data is routine. Row stores
+cannot get this because interleaving heterogeneous columns destroys the homogeneity the
+encodings feed on. The literature anchor is Stonebraker et al.'s **C-Store** paper
+(VLDB 2005) — the academic column store that became Vertica and whose ideas (columnar
+projections, compression-aware execution, a small write store merged into a read store)
+are visible in every system below.
 
+Three execution techniques complete the columnar story. **Vectorized execution** — Chapter
+4 flagged this — processes values in batches of a few thousand per operator call rather
+than one row at a time; on columnar data a batch is a contiguous array of one type, so the
+loop is branch-light, cache-friendly, SIMD-izable, and amortizes interpretation overhead —
+Volume 1's cache-behavior arguments doing query processing. Engines can often evaluate
+predicates *directly on compressed data* (compare against the dictionary code; skip whole
+RLE runs). **Late materialization**: keep working with column-and-position vectors as long
+as possible, stitching values into row tuples only when the result demands it, so columns
+irrelevant to the filter are fetched only for the rows that survive it. And **zone maps**:
+per block of rows (per row group, per part granule), store min/max of each column; a query
+with `order_date >= '2026-01-01'` skips every block whose max date is older. This is
+Chapter 3's BRIN index generalized and made ubiquitous — it is why *sort order and
+partitioning are the most important physical design decisions in a column store*: pruning
+only works if the clustering makes block min/max ranges narrow for the columns you filter
+on.
 
 ### Getting the data there: ETL, ELT, CDC
 
@@ -490,6 +550,22 @@ orders.parquet
 └── footer: schema, chunk offsets, per-chunk min/max stats  ← read this first
 ```
 
+A directory of Parquet files is not yet a table: there is no atomic multi-file commit, no
+schema enforcement, no way to know which files constitute the current version. **Open table
+formats** — Apache Iceberg and Delta Lake, similar in aim — add exactly that missing
+metadata layer, and the result is called the **lakehouse**: warehouse-grade table semantics
+over object-store files. Conceptually (Iceberg's vocabulary): a table's current state is a
+metadata file pointing at a **snapshot**; a snapshot points, via manifest lists and
+manifests, at the exact set of data files that are the table; a commit writes new data
+files and swaps in a new snapshot with one atomic metadata operation. From that one design
+you get: atomic appends and rewrites (readers see either the old or new snapshot, never a
+half-written mix), **time travel** (query any retained snapshot by ID or timestamp),
+**schema evolution** done safely (Iceberg tracks columns by ID, not by name or position,
+so renames and drops do not silently corrupt old files), and pruning from manifest-level
+column statistics before a single data file is opened. The strategic effect is real:
+storage in an open format on S3/GCS, and Spark, Trino, Snowflake, BigQuery, and DuckDB all
+reading *the same table* — the first credible unbundling of database storage from database
+compute.
 
 ### Exemplars: ClickHouse, the cloud warehouses, DuckDB
 

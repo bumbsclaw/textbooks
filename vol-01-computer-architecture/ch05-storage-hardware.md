@@ -138,6 +138,20 @@ This one asymmetry shaped the storage-engine designs you study in depth in Volum
 technique is, at root, a strategy to turn random I/O into sequential I/O:
 
 - **Append-only logs and write-ahead logging (WAL).** Writing new data by *appending* to the end of
+  a file keeps the head in one place, converting a stream of updates into one long sequential write.
+  A transaction commits by appending its record to the WAL — sequential, fast — and the expensive
+  random updates to the main data structures happen later, in batch. Volume 5's durability chapters
+  and Volume 10's log-structured systems (Kafka) both descend from this idea.
+- **B-trees with large nodes.** The B-tree (and its disk-oriented variant the B+ tree) exists to
+  minimize the number of random seeks per lookup by making each node a large, contiguous block —
+  historically sized to a disk block or a small multiple of it — so that one seek retrieves a
+  high-fanout node. A tree with fanout in the hundreds reaches billions of keys in three or four
+  seeks. The node is large *specifically because the seek is the cost and the transfer is nearly
+  free once you are positioned.*
+- **Log-structured designs.** Taken to the limit, the log-structured filesystem and the
+  log-structured merge-tree (LSM) treat *all* writes as sequential appends and reorganize in the
+  background. On an HDD this is close to optimal: you only ever pay for sequential writes plus
+  periodic sequential compaction.
 
 The enduring lesson generalizes past HDDs. Chapter 3 showed sequential memory access beats random
 because of prefetching; storage multiplies the stakes: **sequential beats random at every tier, and
@@ -285,6 +299,19 @@ The HDD's lesson was "sequential ≫ random, avoid seeks at all costs." The SSD 
 lesson and reinforces another part:
 
 - **Random *reads* became cheap.** With no seek and no rotation, a random read is roughly as fast as a
+  sequential read (both ~tens of microseconds on NVMe). This relaxes decades of index design that
+  existed purely to avoid random reads; a query doing a handful of random index lookups is no longer a
+  disaster.
+- **Writes still are not free — but for a new reason.** The HDD penalized random writes for seeks; the
+  SSD penalizes them for write amplification and GC. The *conclusion* — prefer large, sequential,
+  batched writes — survives; the *mechanism* changed from mechanics to erase semantics.
+- **This reshaped the LSM-vs-B-tree debate.** B-trees do in-place updates (small random writes), which
+  on flash means more write amplification and GC pressure. LSM trees buffer writes in memory, flush
+  them as large sequential runs, then compact in the background — a pattern that maps cleanly onto
+  flash's love of big sequential writes, at the cost of read amplification and its own compaction WAF.
+  Neither is universally better; the trade-off is the durable/latency/write-amplification balance
+  Volume 5 dissects. The point for now: **the medium's write physics is a first-class input to that
+  decision.**
 
 ## NVMe: the interface catches up to the media
 
@@ -342,6 +369,17 @@ overhead you cheerfully ignored in the HDD era becomes the bottleneck.
 
 ### NVMe over Fabrics: disaggregating storage across the network
 
+NVMe's command model is not intrinsically tied to a local PCIe slot. **NVMe over Fabrics (NVMe-oF)**
+carries the same queue-based protocol over a network transport — RDMA (RoCE/InfiniBand), Fibre
+Channel, or plain TCP — so a host can drive a *remote* NVMe device almost as if it were local, adding
+only the network round trip (tens of microseconds on a tuned RDMA fabric). This is the enabling
+technology for **disaggregated storage**: instead of stranding flash inside each compute server
+(where it is often underutilized), the datacenter pools NVMe drives in dedicated storage nodes and
+lets any compute node mount capacity from the pool over the fabric. Compute and storage scale
+independently; a failed compute node does not take its data with it; utilization rises. This is the
+hardware substrate under a lot of modern cloud block storage and "compute-storage separation"
+database architectures, and it is a direct line to the distributed-systems discussion below and to
+Volume 12's treatment of cloud infrastructure.
 
 ## Persistent memory: the tier that almost was
 
@@ -524,6 +562,23 @@ abstraction does not repeal the physics — it repackages it and often adds a ne
 families matter (Volume 12 covers them in depth):
 
 - **Network-attached block storage** — AWS **EBS**, GCP **Persistent Disk**, Azure Managed Disks.
+  These present a block device, but the bytes live on storage nodes reached over the datacenter network
+  (conceptually the disaggregated/NVMe-oF model above). Consequences that surprise people: (1) you buy
+  performance as **provisioned IOPS and/or throughput**, decoupled from capacity — a small fast volume
+  or a large slow one, and you pay for the IOPS. (2) A **network-latency tax**: a network-attached
+  volume's latency (often ~sub-millisecond to low milliseconds) is higher than a *local* NVMe SSD's
+  tens of microseconds, because every I/O crosses the network and a replication layer. (3) The volume
+  is typically **replicated** behind the scenes, which is why it survives instance failure — and part
+  of the latency cost. For the lowest latency, clouds also offer **local instance/ephemeral NVMe** —
+  physically attached, microsecond-class, but **not durable across instance stop/termination**. The
+  classic mistake is putting a database's WAL on ephemeral local disk for speed and discovering after
+  an instance replacement that "local" meant "gone."
+- **Object storage** — **S3**, GCS, Azure Blob. A different abstraction entirely: an HTTP key-value
+  store of immutable objects, with high latency (tens of milliseconds), effectively unbounded bandwidth
+  and capacity, and very high durability. Not a block device and not `fsync`-able per byte; you get
+  whole-object PUT/GET semantics. Modern "lakehouse" and disaggregated databases lean on object storage
+  as the cheap, durable bottom tier and cache hot data on faster local NVMe — the memory-hierarchy
+  pattern of Chapter 3, re-expressed across the cloud.
 
 The lesson: know *which* physics your abstraction is standing on. "Provisioned IOPS," "the network-
 storage latency tax," "local NVMe is fast but ephemeral," and "object storage is durable but
@@ -541,6 +596,18 @@ sequential consumer reads for the same reason. LSM stores (Volume 5) exist becau
 flushing them as large sequential runs is the pattern flash rewards. The log is not just a convenient
 abstraction; it is the shape of write that storage hardware is fastest at, at every tier.
 
+**Durability is the foundation under consensus correctness.** This is the sharpest connection in the
+chapter. Consensus protocols — Raft, Paxos, Viewstamped Replication (Volume 6) — are proven correct on
+the assumption that when a node says "I have persisted this log entry," the entry is actually durable.
+Raft's guarantee that a committed entry is never lost depends on a majority of nodes having *durably*
+stored it before the leader considers it committed. If a node acknowledges a log append that was still
+sitting in a volatile drive cache — because `fsync` was skipped for speed, or the drive lacked
+power-loss protection and lied about a flush — then a correlated power event (a rack losing power) can
+erase "committed" entries from a majority at once, and the protocol's safety proof no longer holds.
+**A "committed" write that was never actually durable breaks Raft/Paxos.** The hardware-level
+durability mechanisms — `fsync`, FUA, capacitor-backed PLP — are not an implementation detail beneath
+consensus; they are the physical layer the entire correctness argument rests on. Real systems have
+lost data exactly here, by trusting an acknowledgment the hardware never earned.
 
 **The durability-vs-latency trade-off is a core design axis.** Because `fsync` is slow, every
 replicated data system chooses where to sit on a spectrum: `fsync` on every write (maximally durable,

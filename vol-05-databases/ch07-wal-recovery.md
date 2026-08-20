@@ -158,6 +158,20 @@ where useful, FUA — force-unit-access — writes) to the device, so that data 
 volatile write cache is pushed to media. Two honest caveats belong next to that sentence:
 
 - **It was not always so.** For years, consumer drives acknowledged writes on arrival in their
+  volatile caches, and parts of the stack failed to send cache-flush barriers — ext3 shipped with
+  barriers off by default for a long time. The result was databases that called `fsync`, were told
+  yes, and lost acknowledged commits on power failure. The modern stack is trustworthy when
+  configured plainly, but the same class of bug reappears wherever a layer buffers and
+  acknowledges: virtualized disks with unsafe cache modes, and RAID controllers whose write-back
+  caches are only safe if the battery that protects them is actually healthy. Enterprise NVMe
+  devices with power-loss-protected caches can honestly acknowledge flushes from cache — that is
+  the legitimate version of the trick.
+- **Error semantics bite.** In 2018 the PostgreSQL community discovered ("fsyncgate") that on
+  Linux, a writeback error is reported to *one* `fsync` call and then cleared — pages are marked
+  clean, and a retried `fsync` succeeds while the data was never written. Postgres had been
+  retrying; it now PANICs on `fsync` failure and recovers from WAL, and the episode is the
+  sharpest available lesson that durability code must treat a failed flush as a crash, not a
+  retryable hiccup.
 
 One more precision point that generalizes: durability of a *file* and durability of its *directory
 entry* are separate. Creating a new WAL segment durably requires an `fsync` on the directory as
@@ -265,6 +279,18 @@ engines vary in detail, but ARIES is the reference frame in which every variatio
 including the engines that deviate from it. It assumes exactly the regime we have built:
 steal/no-force buffering, physiological redo, logical undo, LSNs on every page.
 
+Two in-memory tables and one humility about checkpoints complete the setup. The **active
+transaction table (ATT)** tracks in-flight transactions and the LSN of each one's latest record.
+The **dirty page table (DPT)** tracks pages that are dirty in the buffer pool; each entry carries a
+**recLSN** — the LSN of the *first* record that dirtied the page since it was last clean, i.e., the
+earliest log record whose effect might not be on disk for that page. And checkpoints are **fuzzy**:
+a checkpoint cannot stop the world — quiescing all transactions and flushing every dirty page in a
+large buffer pool would pause service for seconds to minutes, an availability cost no production
+engine will pay. So an ARIES checkpoint flushes *nothing* and forbids *nothing*; it merely writes
+the current ATT and DPT into the log between begin- and end-checkpoint records, and records the
+checkpoint's location where recovery can find it. A checkpoint is not a promise that the disk is
+clean; it is a photograph of exactly *how dirty* things were, so recovery can bound how far back it
+must look.
 
 Recovery after a crash makes three passes:
 
@@ -371,6 +397,18 @@ touches, then decays as pages accumulate deltas instead. Shorter checkpoint inte
 frequent spikes — the first concrete reason checkpoint frequency is a real cost dial.
 `wal_compression = on` blunts the volume, spending CPU to compress the images.
 
+**InnoDB: the doublewrite buffer.** InnoDB writes every flushed page *twice*: first into a small
+dedicated doublewrite area (its own files since MySQL 8.0.20; a region of the system tablespace
+before that) as a batch of sequential writes plus a sync, then to the pages' real locations. A tear
+can now only exist in one of the two copies. On recovery, InnoDB scans the doublewrite area; any
+page whose home copy fails its checksum is repaired from the doublewrite copy, and only then does
+redo run. The cost is on the page-flush path — every data-page write is doubled — rather than in
+the log, but the first copy is sequential and batched, so the practical overhead is modest (and it
+is off the commit path entirely, since page flushing is background work). On storage that
+guarantees atomic 16 KB writes, `innodb_doublewrite` can be disabled — the same class of hardware
+assumption that lets Postgres operators consider `full_page_writes = off` on filesystems with
+copy-on-write semantics like ZFS, and it should be believed only with the vendor's guarantee in
+writing.
 
 ## Checkpoints as an operational dial
 
@@ -479,6 +517,19 @@ buffer pool. Synchronous replication reuses the commit rule with a wider definit
 acknowledgment too. Chapter 8 takes this up properly; note here only that no new machinery was
 invented — replication is the recovery subsystem pointed at another machine.
 
+**Logical decoding turns the WAL into an event stream.** The physiological records were written
+for redo, but with `wal_level = logical` they carry enough metadata to be decoded *backward* into
+the row-level changes that produced them — "insert into `orders`, columns (…)", grouped by
+transaction, in commit order. Postgres exposes this through replication slots and output plugins
+(`pgoutput` feeds built-in logical replication; `wal2json` emits JSON), and change-data-capture
+platforms — Debezium is the canonical one — sit on this interface to publish every committed
+change into Kafka. This is the honest solution to the dual-write problem that Chapter 5 flagged
+and Volume 10, Chapter 6 develops as the outbox/CDC pattern: instead of writing to the database
+*and* separately to a message bus (two non-atomic writes that will eventually disagree), write
+only the transaction, and let the log — which already totally orders and durably records every
+commit — be the bus's source of truth. One caution from operations: a replication slot pins WAL
+until its consumer confirms receipt, so a dead consumer causes unbounded WAL retention; monitor
+slot lag or learn this during a disk-full incident.
 
 **PITR: the backup that is actually a log replay.** Archive every completed WAL segment
 (`archive_command`, or streaming via `pg_receivewal`), take periodic *base backups* — filesystem
