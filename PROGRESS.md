@@ -207,9 +207,9 @@ until then their paths are as listed above).
 
 ## Volume 7 — System Design and Architecture (`vol-07-system-design/`)
 
-- [ ] 7.01 Principles of Scalable System Design — `ch01-principles.md`
-- [ ] 7.02 Estimation and Capacity Planning — `ch02-estimation.md`
-- [ ] 7.03 Caching Strategies at Scale — `ch03-caching.md`
+- [x] 7.01 Principles of Scalable System Design — `ch01-principles.md`
+- [x] 7.02 Estimation and Capacity Planning — `ch02-estimation.md`
+- [x] 7.03 Caching Strategies at Scale — `ch03-caching.md`
 - [ ] 7.04 Load Balancing and Traffic Management — `ch04-traffic-management.md`
 - [ ] 7.05 Data Modeling for Scale — `ch05-data-modeling.md`
 - [ ] 7.06 Monolith, Microservices, and Between — `ch06-monolith-microservices.md`
