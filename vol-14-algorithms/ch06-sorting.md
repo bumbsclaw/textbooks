@@ -20,13 +20,13 @@ The right algorithm is determined by two questions: *how large is n relative to 
 flowchart TD
     Q1{"Data fits in RAM?"}
     Q1 -->|"Yes"| Q2{"Keys have exploitable<br/>structure (small int range,<br/>fixed-width, uniform)?"}
-    Q1 -->|"No — larger than RAM<br/>or unbounded stream"| Q3{"Need total order<br/>or just top-K / sample / aggregate?"}
+    Q1 -->|"No — larger than RAM<br >or unbounded stream"| Q3{"Need total order<br/>or just top-K / sample / aggregate?"}
 
     Q2 -->|"No — general comparable keys"| CMP["Comparison sort<br/>O(n log n) — Timsort / introsort<br/>Section 6.2"]
     Q2 -->|"Yes"| LIN["Non-comparison sort<br/>O(n) — radix / counting / bucket<br/>Section 6.3"]
 
     Q3 -->|"Total order of all data"| EXT["External sort<br/>runs + k-way merge<br/>Section 6.4"]
-    Q3 -->|"Top-K / sample / aggregate<br/>over stream"| STR["Streaming algorithms<br/>heap, reservoir, windowing<br/>Section 6.5"]
+    Q3 -->|"Top-K sample aggregate<br >over stream"| STR["Streaming algorithms<br/>heap, reservoir, windowing<br/>Section 6.5"]
 
     style CMP fill:#bfdbfe,stroke:#1e40af,color:#000
     style LIN fill:#86efac,stroke:#166534,color:#000
@@ -621,7 +621,7 @@ flowchart TB
         S1["[00:00-00:05): 1200"]
         S2["[00:01-00:06): 1180"]
         S3["[00:02-00:07): 1210"]
-        S1 -.->|"overlap — events counted<br/>in multiple windows"| S2
+        S1 -.->|"overlap — events counted<br >in multiple windows"| S2
         S2 -.-> S3
     end
     style T1 fill:#bfdbfe,stroke:#1e40af,color:#000

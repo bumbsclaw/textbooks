@@ -294,16 +294,9 @@ vectorize the loop with SIMD, the data is already in the shape the vector units 
 flowchart TB
     subgraph AoS["Array of Structs -- hot loop reads only x"]
         direction LR
-        A1["x0 | y0 | z0 | ...meta0"]
-        A2["x1 | y1 | z1 | ...meta1"]
-        A3["x2 | y2 | z2 | ...meta2"]
-        A1 --> A2 --> A3
-    end
-    subgraph SoA["Struct of Arrays -- hot loop reads only x"]
-        direction LR
-        X["x0 | x1 | x2 | x3 | x4 | x5"]
-        Y["y0 | y1 | y2 | y3 | y4 | y5"]
-        Z["z0 | z1 | z2 | z3 | z4 | z5"]
+        A1["x0 |y0| z0 |...meta0"] A2["x1| y1 |z1| ...meta1"]
+        A3["x2 |y2| z2 |...meta2"] A1 --> A2 --> A3 end subgraph SoA["Struct of Arrays -- hot loop reads only x"] direction LR X["x0| x1 |x2| x3 |x4| x5"]
+        Y["y0 |y1| y2 |y3| y4 |y5"] Z["z0| z1 |z2| z3 |z4| z5"]
     end
     AoS -. "each cache line wastes bandwidth on y,z,meta" .-> SoA
 ```
@@ -346,9 +339,9 @@ system, or I/O?** Every workload is dominated by one of three regimes:
 ```mermaid
 flowchart LR
     W["Workload"] --> Q{"What saturates first?"}
-    Q -->|"ALUs / FPUs busy, data fits in cache"| C["Compute-bound"]
-    Q -->|"stalled on DRAM, low arithmetic intensity"| M["Memory-bound"]
-    Q -->|"stalled on disk / network"| I["I/O-bound"]
+    Q -->|"ALUs FPUs busy data fits in cache"| C["Compute-bound"]
+    Q -->|"stalled on DRAM low arithmetic intensity"| M["Memory-bound"]
+    Q -->|"stalled on disk network"| I["I/O-bound"]
     C --> CF["Fix: better algorithm, SIMD, more cores, fewer ops"]
     M --> MF["Fix: locality, layout, cache blocking, prefetch, compression"]
     I --> IF["Fix: batching, async, caching, sequential access, fewer round trips"]
@@ -382,9 +375,9 @@ bandwidth, or for data from another machine.
 ```mermaid
 flowchart TD
     A["Workload: arithmetic intensity<br/>(FLOPs per byte moved)"] --> B{"Roofline test"}
-    B -->|"Low intensity<br/>(streaming, pointer chasing)"| C["Memory-bound<br/>Perf = Bandwidth x Intensity<br/>Optimize: locality, layout"]
-    B -->|"High intensity<br/>(dense matmul, crypto)"| D["Compute-bound<br/>Perf = Peak FLOPs<br/>Optimize: vectorize, pipeline"]
-    B -->|"Blocked on syscall / disk / net"| E["I/O-bound<br/>Perf = IOPS / latency<br/>Optimize: batch, async, cache"]
+    B -->|"Low intensity<br > streaming pointer chasing "| C["Memory-bound<br/>Perf = Bandwidth x Intensity<br/>Optimize: locality, layout"]
+    B -->|"High intensity<br > dense matmul crypto "| D["Compute-bound<br/>Perf = Peak FLOPs<br/>Optimize: vectorize, pipeline"]
+    B -->|"Blocked on syscall disk net"| E["I/O-bound<br/>Perf = IOPS / latency<br/>Optimize: batch, async, cache"]
     C --> F["Move less data<br/>Cache blocking, SoA, compression"]
     D --> G["Do more per byte<br/>SIMD, FMA, GPU offload"]
     E --> H["Hide latency<br/>Pooling, coalescing, prefetch"]

@@ -234,7 +234,7 @@ flowchart TD
     App --> C["lib-c<br/>requires common ^2.0"]
     B --> D1["common 1.x"]
     C --> D2["common 2.x"]
-    D1 -.->|"same package,<br/>conflicting constraints"| D2
+    D1 -.->|"same package <br >conflicting constraints"| D2
     style D1 fill:#fde,stroke:#c39
     style D2 fill:#fde,stroke:#c39
 ```

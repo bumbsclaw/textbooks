@@ -174,14 +174,7 @@ flowchart TD
     P1 --> L1
   end
   subgraph AFTER["After the split"]
-    P2["parent: ... 12 | 27 ..."]
-    L2["leaf: 12 23"]
-    L3["new leaf: 27 31 47"]
-    P2 --> L2
-    P2 --> L3
-    L2 -.->|"sibling link"| L3
-  end
-  BEFORE ==>|"split leaf, promote 27"| AFTER
+    P2["parent: ... 12 |27 ..."] L2["leaf: 12 23"] L3["new leaf: 27 31 47"] P2 --> L2 P2 --> L3 L2 -.->|"sibling link"|L3 end BEFORE ==>|"split leaf, promote 27"| AFTER
 ```
 
 Amortized, splits are rare — with fanout 100+, fewer than a percent of inserts split — but they
@@ -403,8 +396,8 @@ flowchart TD
     A5["low write amp<br/>high read amp: overlapping runs<br/>high space amp: 2x during merge"]
   end
   subgraph LV["Leveled"]
-    B0["L0: overlapping flush files"] -->|"pick file, merge into overlap"| B1["L1: one sorted run, disjoint files"]
-    B1 -->|"same, 10x down"| B2["L2: 10x larger"]
+    B0["L0: overlapping flush files"] -->|"pick file merge into overlap"| B1["L1: one sorted run, disjoint files"]
+    B1 -->|"same 10x down"| B2["L2: 10x larger"]
     B3["low read amp: 1 file per level<br/>low space amp: ~10 percent<br/>high write amp: ~10x per level"]
   end
 ```

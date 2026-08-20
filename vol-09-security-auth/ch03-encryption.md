@@ -52,8 +52,8 @@ flowchart TD
     C --> D["Store / transmit<br/>through untrusted infra"]
     D --> E{"AEAD Decrypt<br/>key + nonce + aad + tag"}
 
-    E -->|"Tag valid,<br/>AAD matches"| F["Plaintext recovered<br/>integrity guaranteed"]
-    E -->|"Any bit tampered,<br/>wrong AAD, wrong key"| G["Error — reject<br/>no plaintext returned<br/>no oracle"]
+    E -->|"Tag valid <br >AAD matches"| F["Plaintext recovered<br/>integrity guaranteed"]
+    E -->|"Any bit tampered <br >wrong AAD wrong key"| G["Error — reject<br/>no plaintext returned<br/>no oracle"]
 
     H["Raw AES-CBC/CTR<br/>no tag"] --> I["Malleable ciphertext<br/>bit flips -> controlled<br/>plaintext changes"]
     I --> J["Padding oracle<br/>plaintext leaks<br/>without the key"]

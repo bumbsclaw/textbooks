@@ -234,7 +234,7 @@ flowchart TD
   GEN --> COMMIT["Backdoored / exfiltrating<br/>code proposed as a normal change"]
   COMMIT --> REVIEW{"Human review +<br/>SAST + policy gate"}
   REVIEW -->|"catches it"| BLOCK["Blocked"]
-  REVIEW -->|"missed / auto-merged"| PROD["Shipped"]
+  REVIEW -->|"missed auto-merged"| PROD["Shipped"]
 ```
 
 This is a supply-chain concern for two reasons. First, the injected instruction can travel
@@ -614,7 +614,7 @@ flowchart TB
   APP --> CODE["AI-generated code<br/>(into repo)"]
   CODE --> REVIEW["Review gate<br/>(same as human code)"]
   DATA -.->|"poisoning"| P1["Backdoored data to<br/>backdoored model"]
-  CODE -.->|"hallucinated deps / insecure patterns"| P2["Vulnerable code merged"]
+  CODE -.->|"hallucinated deps insecure patterns"| P2["Vulnerable code merged"]
   style REVIEW fill:#2ea043,color:#fff
 ```
 

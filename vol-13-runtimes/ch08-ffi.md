@@ -33,12 +33,12 @@ flowchart TB
         MEM["Manual memory<br/>malloc / free<br/>no GC"]
         SIG["Signals & threads<br/>SIGSEGV kills the process<br/>pthread blocks the scheduler"]
     end
-    APP -->|"call via shim<br/>pin GC roots"| SHIM -->|"extern C / dlopen"| ABI --> LIB
+    APP -->|"call via shim<br >pin GC roots"| SHIM -->|"extern C dlopen"| ABI --> LIB
     LIB --> MEM
     LIB --> SIG
 
-    SIG -.->|"segfault, abort"| APP
-    MEM -.->|"leak, UAF, double-free"| APP
+    SIG -.->|"segfault abort"| APP
+    MEM -.->|"leak UAF double-free"| APP
 
     style Boundary fill:#fff3e0,stroke:#ef6c00
     style NativeLib fill:#fce4ec,stroke:#c62828
@@ -556,9 +556,9 @@ The fastest call is not the cheapest system. A single native segfault that resta
 ```mermaid
 flowchart TB
     Q{"Should this be<br/>in-process FFI?"}
-    Q -->|"Yes — trusted, fast,<br/>small, well-tested lib"| FFI["In-process FFI<br/>direct call, zero copy<br/>add sandboxing via seccomp/userns if needed"]
-    Q -->|"No — untrusted, large,<br/>crash-prone, or blocking"| SIDE["Sidecar / subprocess<br/>Unix socket / localhost gRPC<br/>isolated crash & resource limits"]
-    Q -->|"No — language not co-located<br/>or team boundary"| SVC["Separate service<br/>HTTP/gRPC, independent deploy<br/>strongest isolation"]
+    Q -->|"Yes — trusted fast <br >small well-tested lib"| FFI["In-process FFI<br/>direct call, zero copy<br/>add sandboxing via seccomp/userns if needed"]
+    Q -->|"No — untrusted large <br >crash-prone or blocking"| SIDE["Sidecar / subprocess<br/>Unix socket / localhost gRPC<br/>isolated crash & resource limits"]
+    Q -->|"No — language not co-located<br >or team boundary"| SVC["Separate service<br/>HTTP/gRPC, independent deploy<br/>strongest isolation"]
 
     FFI --> FFIOPS["Ops: pin versions,<br/>sig-verify .so, limit with cgroups,<br/>monitor segfault restarts"]
     SIDE --> SIDEOPS["Ops: supervise child,<br/>restart on crash, cap memory/CPU,<br/>health-check the socket"]

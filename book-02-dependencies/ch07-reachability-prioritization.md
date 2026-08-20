@@ -517,14 +517,14 @@ flowchart TD
     START["New finding<br/>(present + reachable enough to enter tree)"] --> EX{"Exploitation?"}
     EX -->|"None"| AUT1{"Automatable?"}
     EX -->|"Public PoC"| AUT2{"Automatable?"}
-    EX -->|"Active (KEV)"| TI3{"Technical Impact?"}
+    EX -->|"Active KEV "| TI3{"Technical Impact?"}
     AUT1 -->|"No"| MW1{"Mission & Well-being?"}
     AUT1 -->|"Yes"| MW2{"Mission & Well-being?"}
-    MW1 -->|"Low/Med"| TRK["Track"]
+    MW1 -->|"Low Med"| TRK["Track"]
     MW1 -->|"High"| TRKS["Track*"]
     MW2 -->|"Low"| TRK
-    MW2 -->|"Med/High"| ATT["Attend"]
-    AUT2 -->|"No/Yes"| MW3{"Mission & Well-being?"}
+    MW2 -->|"Med High"| ATT["Attend"]
+    AUT2 -->|"No Yes"| MW3{"Mission & Well-being?"}
     MW3 -->|"Low"| TRKS
     MW3 -->|"Med"| ATT
     MW3 -->|"High"| ACT["Act"]
@@ -600,7 +600,7 @@ flowchart LR
     EXPL["Exploitation feeds<br/>KEV, EPSS, exploit-db"] --> JOIN
     JOIN["Central prioritization engine<br/>(multiplicative model / SSVC)"] --> VEX["Central VEX store<br/>(triage recorded once)"]
     VEX --> Q["Per-team queues,<br/>ranked by risk to US"]
-    VEX -.->|"reused, not re-triaged"| Q2["Other teams'<br/>same transitive CVE"]
+    VEX -.->|"reused not re-triaged"| Q2["Other teams'<br/>same transitive CVE"]
 ```
 
 **Centralize triage; do not let 500 teams re-triage the same transitive CVE.** In a

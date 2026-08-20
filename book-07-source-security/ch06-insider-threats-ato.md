@@ -558,8 +558,8 @@ flowchart TB
 ```mermaid
 flowchart LR
   A["Insider with legit access"] --> B{"Two-person control?"}
-  B -->|Yes (PR + review)| C["Needs collusion<br/>to land malicious code"]
-  B -->|No (self-merge / bypass)| D["Single-actor backdoor<br/>(insider succeeds)"]
+  B -->|Yes PR + review| C["Needs collusion<br/>to land malicious code"]
+  B -->|No self-merge bypass| D["Single-actor backdoor<br/>(insider succeeds)"]
   A --> E["Least privilege<br/>(cannot access all repos)"]
   A --> F["Audit log + UEBA<br/>(bulk clone, off-hours push)"]
   C --> G["Detection via<br/>separation of duties +<br/>provenance"]

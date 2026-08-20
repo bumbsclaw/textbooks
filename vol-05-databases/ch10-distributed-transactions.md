@@ -357,7 +357,7 @@ flowchart TB
     T2 -->|"reservation fails"| C1["C1 cancel order<br/>state REJECTED"]
     T3 -->|"payment declined"| C2["C2 release inventory"]
     C2 --> C1
-    T4 -.->|"failure here does NOT compensate<br/>money is taken - roll FORWARD"| T4
+    T4 -.->|"failure here does NOT compensate<br >money is taken - roll FORWARD"| T4
 ```
 
 ### What a saga is not: the missing I
@@ -534,8 +534,8 @@ dead: the event and the state change share a single commit.
 flowchart LR
     SVC["order service"] --> TXN["one local ACID transaction<br/>UPDATE orders SET status = PAID<br/>INSERT INTO outbox VALUES ..."]
     TXN --> DB[("PostgreSQL<br/>orders + outbox<br/>+ WAL")]
-    DB -->|"poll: SELECT unpublished<br/>or CDC: read the WAL"| RELAY["relay"]
-    RELAY -->|"publish, then mark sent"| BROKER["broker topic"]
+    DB -->|"poll: SELECT unpublished<br >or CDC: read the WAL"| RELAY["relay"]
+    RELAY -->|"publish then mark sent"| BROKER["broker topic"]
     BROKER --> CON["consumer<br/>idempotent - dedup on event_id"]
 ```
 
@@ -733,7 +733,7 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     Q{"Need atomic across services?"} --> T{"Can you tolerate blocking?"}
-    T -->|Yes, short txn, XA capable| P2["2PC / XA<br/>strong atomic<br/>blocking, not available under partition"]
+    T -->|Yes short txn XA capable| P2["2PC / XA<br/>strong atomic<br/>blocking, not available under partition"]
     T -->|No — need availability| S["Saga<br/>sequence of local txns<br/>compensate on failure<br/>eventual atomic, no isolation"]
     Q --> O["Transactional outbox<br/>atomic local commit + event<br/>relay publishes — at-least-once"]
     P2 --> C1["Use for single DB sharded txn"]

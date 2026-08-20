@@ -164,7 +164,7 @@ sequenceDiagram
     MSB->>Sign: Emit SolarWinds.Orion.Core.BusinessLayer.dll
     Sign->>Sign: Code-sign with valid SolarWinds certificate
     Sign->>Dev: Ship signed update through official channel
-    Note over Dev,Sign: Source in SCM is clean; tampering lives only in the signed output
+    Note over Dev,Sign: Source in SCM is clean, tampering lives only in the signed output
 ```
 
 Two design lessons for a build-platform engineer fall out of this diagram immediately.
@@ -220,7 +220,7 @@ flowchart TD
     D --> E["DGA: resolve avsvmcloud.com subdomain<br/>encoding victim identity"]
     E --> F{"Attacker decision<br/>per victim"}
     F -->|"Not interesting"| G["Stand down / stay dormant"]
-    F -->|"High value (~100)"| H["Escalate to hands-on-keyboard"]
+    F -->|"High value ~100 "| H["Escalate to hands-on-keyboard"]
     H --> I["TEARDROP / Raindrop dropper"]
     I --> J["Cobalt Strike Beacon"]
     J --> K["Credential theft, lateral movement,<br/>Golden SAML into cloud identity"]

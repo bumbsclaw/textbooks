@@ -50,8 +50,8 @@ flowchart TB
     Storage --> Query["Query layer<br/>Kibana / Grafana / LogQL / KQL"]
     Query --> User["Engineer<br/>incident investigation"]
 
-    Agent -.->|"backpressure<br/>disk buffer"| Agent
-    Pipeline -.->|"sampling<br/>redaction"| Pipeline
+    Agent -.->|"backpressure<br >disk buffer"| Agent
+    Pipeline -.->|"sampling<br >redaction"| Pipeline
 
     style Buffer fill:#fff3e0
     style Storage fill:#e3f2fd
@@ -281,10 +281,10 @@ flowchart TB
         Pod2 --> Files
         Agent["DaemonSet agent<br/>Filebeat / Fluent Bit / Alloy<br/>tail, parse JSON, enrich<br/>k8s metadata, buffer to disk"]
         Files --> Agent
-        Agent -->|"ship<br/>with retry + disk buffer"| Out["Central pipeline<br/>Kafka / Elasticsearch / Loki"]
+        Agent -->|"ship<br >with retry + disk buffer"| Out["Central pipeline<br/>Kafka / Elasticsearch / Loki"]
     end
 
-    Agent -.->|"enrichment<br/>k8s API"| K8sAPI["Kubernetes API<br/>pod labels, namespace,<br/>node, annotations"]
+    Agent -.->|"enrichment<br >k8s API"| K8sAPI["Kubernetes API<br/>pod labels, namespace,<br/>node, annotations"]
 
     style Agent fill:#e3f2fd
     style Files fill:#fff3e0
@@ -1118,7 +1118,7 @@ flowchart LR
     Trace --> Fix["Root cause<br/>slow downstream,<br/>bad deploy, saturation"]
 
     Logs -.->|"trace_id"| Trace
-    Metrics -.->|"exemplar<br/>trace_id"| Logs
+    Metrics -.->|"exemplar<br >trace_id"| Logs
 
     style Alert fill:#ffcdd2
     style Trace fill:#e3f2fd

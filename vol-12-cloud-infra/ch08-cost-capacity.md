@@ -203,9 +203,9 @@ flowchart TB
     OD --> Graviton[Graviton / ARM<br/>~20% better price/perf<br/>no commitment<br/>requires rebuild]
 
     RI & SP & Spot & Graviton --> Choice{Workload shape?}
-    Choice -->|steady-state<br/>known baseline| CommitChoice[Commit: RI or SP]
-    Choice -->|spiky / elastic| ElasticChoice[On-Demand + Autoscaling]
-    Choice -->|batch / fault-tolerant| SpotChoice[Spot with diversification]
+    Choice -->|steady-state<br >known baseline| CommitChoice[Commit: RI or SP]
+    Choice -->|spiky elastic| ElasticChoice[On-Demand + Autoscaling]
+    Choice -->|batch fault-tolerant| SpotChoice[Spot with diversification]
     Choice -->|portable compute| GravitonChoice[Graviton migration]
 
     style OD fill:#e3f2fd

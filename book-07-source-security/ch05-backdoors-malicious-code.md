@@ -281,11 +281,11 @@ flowchart TB
     end
     APP -->|"reviewer reads closely"| OK["Approved on the strength of app-code review"]
     BUILD -.->|"rarely opened"| OK
-    TEST -.->|"never read (binary)"| OK
+    TEST -.->|"never read binary "| OK
     GEN -.->|"nobody reads generated code"| OK
     DEPS -.->|"outside the diff entirely"| OK
     BLOB -.->|"unreadable by design"| OK
-    CONF -.->|"boilerplate, skimmed"| OK
+    CONF -.->|"boilerplate skimmed"| OK
 ```
 
 The catalogue, with the mechanism for each:
@@ -425,10 +425,10 @@ flowchart TB
     LS -->|"compiled by"| PC
     CS -->|"compiled by"| PC
 
-    PC -->|"recognizes login →<br/>inject accept-any-password"| LB["login binary<br/>WITH backdoor"]
-    PC -->|"recognizes own source →<br/>re-inject BOTH payloads"| PC2["new compiler binary<br/>STILL poisoned"]
+    PC -->|"recognizes login →<br >inject accept-any-password"| LB["login binary<br/>WITH backdoor"]
+    PC -->|"recognizes own source →<br >re-inject BOTH payloads"| PC2["new compiler binary<br/>STILL poisoned"]
 
-    PC2 -.->|"next generation:<br/>same two behaviors"| PC
+    PC2 -.->|"next generation:<br >same two behaviors"| PC
 
     style PC fill:#c0392b,color:#fff
     style PC2 fill:#c0392b,color:#fff
@@ -691,7 +691,7 @@ flowchart TD
   Q1{"Does PR touch security-sensitive area?<br/>(auth, crypto, CI config, deps)"}
   Q1 -->|Yes| Q2{"Is author trusted +<br/>change justified?"}
   Q1 -->|No| STD["Standard review"]
-  Q2 -->|No / unknown| DEEP["Deep review + second reviewer<br/>+ run in sandbox"]
+  Q2 -->|No unknown| DEEP["Deep review + second reviewer<br/>+ run in sandbox"]
   Q2 -->|Yes| Q3{"Does diff contain<br/>obfuscation or network?"}
   Q3 -->|Yes| DEEP
   Q3 -->|No| Q4{"Do checks pass<br/>(SAST, tests, provenance)?"}

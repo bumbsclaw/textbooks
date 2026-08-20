@@ -681,7 +681,7 @@ flowchart TB
   L2["Race-detector CI lane<br/>full suite under -race or TSan<br/>required, blocks merge"]
   L3["Nightly stress and soak<br/>perturbed schedules, leak canaries,<br/>simulation seeds"]
   L4["Production observability plus race canary<br/>contention profiles, queue depths,<br/>goroutine counts, flight recorder"]
-  L1 -->|"less exhaustive, more realistic"| L2 --> L3 --> L4
+  L1 -->|"less exhaustive more realistic"| L2 --> L3 --> L4
 ```
 
 ## The distributed-systems lens

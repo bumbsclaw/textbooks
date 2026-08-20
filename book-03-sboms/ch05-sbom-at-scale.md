@@ -157,12 +157,12 @@ flowchart TD
     SIG1["Signature<br/>subject → SBOM manifest"]
     SIG2["Signature<br/>subject → provenance"]
 
-    SBOM -->|"subject (by digest)"| IMG
-    PROV -->|"subject (by digest)"| IMG
+    SBOM -->|"subject by digest "| IMG
+    PROV -->|"subject by digest "| IMG
     SIG1 -->|"subject"| SBOM
     SIG2 -->|"subject"| PROV
 
-    QUERY["Referrers API:<br/>GET /v2/app/referrers/sha256:9b2a…"] -.->|"returns SBOM, PROV, signatures"| IMG
+    QUERY["Referrers API:<br/>GET /v2/app/referrers/sha256:9b2a…"] -.->|"returns SBOM PROV signatures"| IMG
 ```
 
 The tooling is mature enough to use in anger, with caveats:
@@ -417,7 +417,7 @@ flowchart TD
     A1 -->|"digest → service+version"| S1
     A2 --> S2
     A3 --> S3
-    S1 -->|"deploy system:<br/>what's running where"| E1
+    S1 -->|"deploy system:<br >what's running where"| E1
     S1 --> E2
     S2 --> E3
     S3 --> E4

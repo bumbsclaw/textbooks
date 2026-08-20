@@ -403,9 +403,9 @@ chapter.
 
 ```mermaid
 flowchart TD
-  SW["SolarWinds / SUNBURST"] -->|"Actually: FireEye found own breach, ~9 mo"| SWa["Should: build egress monitoring + provenance/reproducibility"]
-  CC["Codecov Bash Uploader"] -->|"Actually: customer hash mismatch, ~2 mo"| CCa["Should: automated integrity / SRI on fetched scripts"]
-  XZ["xz-utils backdoor"] -->|"Actually: 500ms latency, luck"| XZa["Should: reproducible build from VCS + build-from-source diff"]
+  SW["SolarWinds / SUNBURST"] -->|"Actually: FireEye found own breach ~9 mo"| SWa["Should: build egress monitoring + provenance/reproducibility"]
+  CC["Codecov Bash Uploader"] -->|"Actually: customer hash mismatch ~2 mo"| CCa["Should: automated integrity / SRI on fetched scripts"]
+  XZ["xz-utils backdoor"] -->|"Actually: 500ms latency luck"| XZa["Should: reproducible build from VCS + build-from-source diff"]
   SWa --> LESSON["Common core: integrity verification + egress/behavioral monitoring + reproducibility"]
   CCa --> LESSON
   XZa --> LESSON
@@ -523,7 +523,7 @@ flowchart LR
 flowchart TD
   ALERT["Alert: suspected<br/>supply chain compromise"] --> Q1{"Confirmed<br/>malicious artifact?"}
   Q1 -->|Yes| CONTAIN["Contain: block digest<br/>+ revoke provenance +<br/>quarantine fleet"]
-  Q1 -->|No / unclear| INVEST["Investigate: fetch sigs +<br/>provenance + logs +<br/>repro build"]
+  Q1 -->|No unclear| INVEST["Investigate: fetch sigs +<br/>provenance + logs +<br/>repro build"]
   INVEST --> Q2{"Artifact differs<br/>from repro?"}
   Q2 -->|Yes| CONTAIN
   Q2 -->|No| Q3{"Behavior benign?"}

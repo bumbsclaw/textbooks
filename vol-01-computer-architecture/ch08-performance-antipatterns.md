@@ -63,13 +63,13 @@ mechanism, its counter, and its fix — followed by the workflow that ties them 
 ```mermaid
 flowchart TD
     A["Slow code, correct big-O"] --> B{"perf stat: what is high?"}
-    B -->|"cache-misses,<br/>LLC-load-misses,<br/>low IPC, high stalls"| C["Poor locality /<br/>bandwidth"]
+    B -->|"cache-misses <br >LLC-load-misses <br >low IPC high stalls"| C["Poor locality /<br/>bandwidth"]
     B -->|"branch-misses high"| D["Branch misprediction"]
-    B -->|"HITM in perf c2c,<br/>low IPC on shared struct"| E["False sharing /<br/>atomic contention"]
+    B -->|"HITM in perf c2c <br >low IPC on shared struct"| E["False sharing /<br/>atomic contention"]
     C --> C1{"Working set vs cache?"}
-    C1 -->|"fits, but strided/random"| C2["Contiguous layout,<br/>SoA, prefetch-friendly stride"]
+    C1 -->|"fits but strided random"| C2["Contiguous layout,<br/>SoA, prefetch-friendly stride"]
     C1 -->|"exceeds cache"| C3["Blocking/tiling,<br/>reduce data movement"]
-    C1 -->|"bandwidth saturated<br/>(roofline)"| C4["Compress, compute<br/>per byte, fewer threads"]
+    C1 -->|"bandwidth saturated<br > roofline "| C4["Compress, compute<br/>per byte, fewer threads"]
     D --> D1["Branchless / cmov,<br/>sort/partition for<br/>predictability, SIMD"]
     E --> E1["Cache-line padding<br/>alignas(64), per-core<br/>state, lock-free, batch"]
 ```

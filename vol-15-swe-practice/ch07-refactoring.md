@@ -364,9 +364,9 @@ flowchart TB
     end
     subgraph Phase2["Phase 2 — Route incrementally"]
         Client2[Client] --> Facade2[Facade / Gateway]
-        Facade2 -->|"/orders/* → new service"| NewOrders["New Orders Service"]
-        Facade2 -->|"/other/* → monolith"| Monolith2[Monolith - remainder]
-        NewOrders -.->|CDC / events| Monolith2
+        Facade2 -->|" orders * → new service"| NewOrders["New Orders Service"]
+        Facade2 -->|" other * → monolith"| Monolith2[Monolith - remainder]
+        NewOrders -.->|CDC events| Monolith2
     end
     subgraph Phase3["Phase 3 — Monolith hollowed out"]
         Client3[Client] --> NewOrders3["New Services"]

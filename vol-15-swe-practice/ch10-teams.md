@@ -390,9 +390,9 @@ flowchart TB
         M1 --> M2 --> M3
     end
 
-    IC4 -.->|"lateral, no demotion"| M1
-    M1 -.->|"lateral, rare but supported"| IC5
-    IC2 ---|"shared expectations:<br/>ownership, collaboration, craft"| M1
+    IC4 -.->|"lateral no demotion"| M1
+    M1 -.->|"lateral rare but supported"| IC5
+    IC2 ---|"shared expectations:<br >ownership collaboration craft"| M1
 
     style IC4 fill:#e3f2fd
     style IC5 fill:#e8f5e9

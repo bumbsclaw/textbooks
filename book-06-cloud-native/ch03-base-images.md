@@ -701,9 +701,9 @@ flowchart LR
 ```mermaid
 flowchart TD
   Q1{"How fast does base move?"}
-  Q1 -->|Weekly / daily patches| A1["Track :latest-daily<br/>+ pin by digest at build<br/>+ auto-rebuild"]
+  Q1 -->|Weekly daily patches| A1["Track :latest-daily<br/>+ pin by digest at build<br/>+ auto-rebuild"]
   Q1 -->|Monthly stable| A2["Track :stable tag<br/>+ renovate/dependabot<br/>digest pin PRs"]
-  Q1 -->|Minimal / distroless| A3["Chainguard / distroless<br/>tiny surface, frequent rebuilds"]
+  Q1 -->|Minimal distroless| A3["Chainguard / distroless<br/>tiny surface, frequent rebuilds"]
   A1 --> G["Gate: rebuild + rescan<br/>if base digest changes"]
   A2 --> G
   A3 --> G
@@ -717,7 +717,7 @@ flowchart LR
   SBOM["SBOM: package list"] --> SCAN["Vuln scan<br/>package to CVE<br/>(presence)"]
   SCAN --> R1["CVE-2024-xyz in libcurl<br/>image HAS package"]
   R1 --> REACH{"Is vulnerable code<br/>reachable at runtime?"}
-  REACH -->|Callgraph / VEX<br/>says not reachable| LOW["Downgrade: not exploitable<br/>(VEX: not_affected)"]
+  REACH -->|Callgraph VEX<br >says not reachable| LOW["Downgrade: not exploitable<br/>(VEX: not_affected)"]
   REACH -->|Reachable or unknown| HIGH["Keep: exploitable<br/>must patch / rebuild"]
   style LOW fill:#2ea043,color:#fff
   style HIGH fill:#f85149,color:#fff

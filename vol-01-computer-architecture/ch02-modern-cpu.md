@@ -234,7 +234,7 @@ flowchart TB
     P3 --> WBK
     P4 --> WBK
     WBK --> ROB["Reorder buffer (ROB)"]
-    ROB -->|oldest first, in order| RET["Retire / commit<br/>(update arch state)"]
+    ROB -->|oldest first in order| RET["Retire / commit<br/>(update arch state)"]
 ```
 
 **Front end — fetch, decode, in program order.** Instructions enter in program order. On x86 they are

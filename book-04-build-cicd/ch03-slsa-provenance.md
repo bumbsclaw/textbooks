@@ -216,11 +216,11 @@ flowchart TD
   subgraph S["in-toto Statement (Book 5 Ch 6)"]
     ST["_type: in-toto.io/Statement/v1\nsubject: [ {name, digest} ]  ← WHAT\npredicateType: slsa.dev/provenance/v1\npredicate: { ...the SLSA predicate... }"]
   end
-  S -->|"serialize to JSON, base64-encode"| D
+  S -->|"serialize to JSON base64-encode"| D
   subgraph D["DSSE envelope"]
     DE["payloadType: application/vnd.in-toto+json\npayload: <base64 Statement>\nsignatures: [ {sig, keyid} ]"]
   end
-  D -->|"sign PAE(payloadType, payload)"| SIG["Signature\n(keyed OR Sigstore keyless:\nFulcio cert bound to OIDC identity,\nlogged in Rekor)"]
+  D -->|"sign PAE payloadType payload "| SIG["Signature\n(keyed OR Sigstore keyless:\nFulcio cert bound to OIDC identity,\nlogged in Rekor)"]
 
   Note["Same three layers carry ANY predicate:\nSBOM, VEX, test results — provenance is\njust ONE predicate type."]:::note
   classDef note fill:#eef,stroke:#88a,color:#224;

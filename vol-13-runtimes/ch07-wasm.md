@@ -104,10 +104,10 @@ flowchart TB
         HR --- RT
         RT -->|"instantiate + fuel limit"| Sandbox
         Sandbox -->|"import only CAP"| RT
-        RT -->|"fd_write / http_fetch<br/>via WASI"| HostOS["OS — files, net, clock"]
+        RT -->|"fd_write http_fetch<br >via WASI"| HostOS["OS — files, net, clock"]
     end
-    Attacker["Untrusted Wasm module"] -->|"load/store offset<br/>trap if OOB"| MEM
-    Attacker -.->|"cannot forge handle<br/>no ambient open()"| HostOS
+    Attacker["Untrusted Wasm module"] -->|"load store offset<br >trap if OOB"| MEM
+    Attacker -.->|"cannot forge handle<br >no ambient open "| HostOS
 
     style Sandbox fill:#e8f5e9,stroke:#2e7d32
     style RT fill:#e3f2fd,stroke:#1565c0

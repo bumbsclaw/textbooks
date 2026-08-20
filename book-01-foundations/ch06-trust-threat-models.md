@@ -717,8 +717,8 @@ defended accordingly.
 flowchart TD
     BELIEF["Belief<br/>We think X is safe"] --> TRUST["Trust<br/>We act as if X is safe<br/>(accept risk)"]
     TRUST --> VERIFY{"Is X trustworthy?<br/>Evidence?"}
-    VERIFY -->|Yes: attestations,<br/>reproducible, review| JUSTIFIED["Justified trust"]
-    VERIFY -->|No evidence<br/>or negative evidence| MISPLACED["Misplaced trust<br/>— vulnerability"]
+    VERIFY -->|Yes: attestations <br >reproducible review| JUSTIFIED["Justified trust"]
+    VERIFY -->|No evidence<br >or negative evidence| MISPLACED["Misplaced trust<br/>— vulnerability"]
     MISPLACED --> COMPROMISE["Supply-chain<br/>compromise succeeds"]
     style MISPLACED fill:#f88,stroke:#900
     style JUSTIFIED fill:#b6f0b6,stroke:#333

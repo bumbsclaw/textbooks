@@ -189,7 +189,7 @@ flowchart TD
     A["git repo: clean-looking C source,<br/>no obvious backdoor"] -->|"Jia Tan cuts release"| B["Release tarball 5.6.0 / 5.6.1"]
     B --> C["Crafted binary .xz test fixtures<br/>(obfuscated payload, look like corrupt-input tests)"]
     B --> D["Modified build-to-host.m4<br/>(in tarball, NOT in git)"]
-    D -->|"runs during ./configure"| E["Shell chain: locate, decompress,<br/>de-obfuscate test fixtures"]
+    D -->|"runs during . configure"| E["Shell chain: locate, decompress,<br/>de-obfuscate test fixtures"]
     C --> E
     E --> F["Extracted hidden build script"]
     F --> G["Malicious object code compiled<br/>and linked into liblzma.so"]

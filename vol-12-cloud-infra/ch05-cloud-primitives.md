@@ -605,7 +605,7 @@ flowchart TB
     NAT2 --> PrivRT2["Private Route Table AZ-b<br/>0.0.0.0/0 → NAT AZ-b"]
     PrivRT1 --> PrivSub1["Private Subnet AZ-a<br/>10.0.10.0/24<br/>EC2 / ECS / RDS"]
     PrivRT2 --> PrivSub2["Private Subnet AZ-b<br/>10.0.11.0/24<br/>EC2 / ECS / RDS"]
-    PrivSub1 & PrivSub2 -.->|"VPC Endpoints<br/>(Gateway: S3/Dynamo<br/>Interface: ECR/Secrets/KMS)"| AWS["AWS Services<br/>(no NAT needed)"]
+    PrivSub1 & PrivSub2 -.->|"VPC Endpoints<br > Gateway: S3 Dynamo<br >Interface: ECR Secrets KMS "| AWS["AWS Services<br/>(no NAT needed)"]
     PubSub1 & PubSub2 --> ALB["ALB (public subnets)"]
     ALB --> PrivSub1 & PrivSub2
 
@@ -752,7 +752,7 @@ flowchart LR
     ALB --> TGB["Target Group B<br/>web.prod:3000<br/>health: /"]
     TGA --> ECS1["ECS / EC2 Targets<br/>AZ-a"]
     TGA --> ECS2["ECS / EC2 Targets<br/>AZ-b"]
-    DNS -.->|"failover<br/>active-passive"| ALB2["ALB (secondary region)"]
+    DNS -.->|"failover<br >active-passive"| ALB2["ALB (secondary region)"]
 
     style DNS fill:#e3f2fd
     style CF fill:#fff3e0
@@ -919,7 +919,7 @@ flowchart TB
     ECS --> RDS[("RDS Postgres<br/>(private subnets, SG: from ECS only)")]
     ECS --> ElastiCache[("ElastiCache Redis<br/>(private subnets)")]
     ECS --> S3[("S3<br/>(via VPC endpoint)")]
-    ECS -.->|"logs/metrics"| CW["CloudWatch"]
+    ECS -.->|"logs metrics"| CW["CloudWatch"]
 
     style R53 fill:#e3f2fd
     style CF fill:#fff3e0

@@ -519,9 +519,9 @@ semantics — but now inside an authenticated, congestion-controlled, migratable
 ```mermaid
 flowchart TD
     Q{"Decision factor"}
-    Q -->|"Need max compat<br/>Middlebox traversal"| TCP["TCP+TLS<br/>Universal, kernel-tuned<br/>Nagle, TSO/GRO offload"]
-    Q -->|"Need fastest handshake<br/>Lossy / mobile / multiplexed"| QUIC["QUIC<br/>1-RTT (or 0-RTT), no HOL<br/>Userspace, faster iteration"]
-    Q -->|"Need raw throughput<br/>Single large stream"| Either["Either: bottleneck is BW<br/>QUIC userspace cost ~5-10%"]
+    Q -->|"Need max compat<br >Middlebox traversal"| TCP["TCP+TLS<br/>Universal, kernel-tuned<br/>Nagle, TSO/GRO offload"]
+    Q -->|"Need fastest handshake<br >Lossy mobile multiplexed"| QUIC["QUIC<br/>1-RTT (or 0-RTT), no HOL<br/>Userspace, faster iteration"]
+    Q -->|"Need raw throughput<br >Single large stream"| Either["Either: bottleneck is BW<br/>QUIC userspace cost ~5-10%"]
     TCP --> Trade1["Mature, offloaded<br/>HOL blocking, ossified"]
     QUIC --> Trade2["Modern, evolvable<br/>UDP blocked in some nets<br/>CPU: crypto + userspace"]
     Either --> Measure["Measure: p99, CPU, loss rate"]

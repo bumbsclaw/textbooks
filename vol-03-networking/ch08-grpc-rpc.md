@@ -288,7 +288,7 @@ flowchart TD
     Choice{"Serialization?"}
     Choice -->|"JSON"| JSON["JSON: human-readable, 1.5-2x size<br/>No schema, flexible, slow parse<br/>REST default"]
     Choice -->|"Protobuf"| PB["Protobuf: binary, 3-10x smaller<br/>Schema + codegen, fast, evolvable<br/>Field numbers, not names"]
-    Choice -->|"Avro/Thrift"| Avro["Avro: schema + compact<br/>Thrift: similar, older"]
+    Choice -->|"Avro Thrift"| Avro["Avro: schema + compact<br/>Thrift: similar, older"]
     PB --> Evolve["Evolution rules<br/>Never reuse field numbers<br/>Add optional, reserve deleted<br/>Same wire compat both directions"]
     JSON --> Evolve2["Evolution: add fields OK<br/>No compile-time guarantee<br/>Breaks on rename/type change"]
     Evolve --> Verdict["For internal RPC: Protobuf wins<br/>For public API: JSON wins (browser)"]

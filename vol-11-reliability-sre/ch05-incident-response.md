@@ -55,8 +55,8 @@ flowchart LR
     Mitigate --> Resolve["5 Resolution<br/>full fix deployed<br/>verified healthy"]
     Resolve --> Handoff["6 Handoff<br/>close or escalate<br/>postmortem scheduled"]
 
-    Mitigate -.->|"not working<br/>try alternative"| Coord
-    Triage -.->|"not an incident<br/>false alarm"| Handoff
+    Mitigate -.->|"not working<br >try alternative"| Coord
+    Triage -.->|"not an incident<br >false alarm"| Handoff
 
     style Detect fill:#ffebee
     style Mitigate fill:#fff3e0
@@ -152,12 +152,12 @@ Severity can change during an incident. An incident that starts as Sev3 ("one av
 ```mermaid
 flowchart TB
     Alert["Alert fires"] --> Q1{"User impact?"}
-    Q1 -->|None / internal only| Sev4["Sev4 — ticket"]
-    Q1 -->|Some users / workaround exists| Q2{"How many? How degraded?"}
-    Q1 -->|Most/all users<br/>or data at risk| Sev1["Sev1 — all-hands<br/>war room in 5 min"]
+    Q1 -->|None internal only| Sev4["Sev4 — ticket"]
+    Q1 -->|Some users workaround exists| Q2{"How many? How degraded?"}
+    Q1 -->|Most all users<br >or data at risk| Sev1["Sev1 — all-hands<br/>war room in 5 min"]
 
-    Q2 -->|Small subset<br/>minor degradation| Sev3["Sev3 — on-call<br/>async coordination"]
-    Q2 -->|Significant subset<br/>major feature down| Sev2["Sev2 — on-call + backup<br/>war room in 15 min"]
+    Q2 -->|Small subset<br >minor degradation| Sev3["Sev3 — on-call<br/>async coordination"]
+    Q2 -->|Significant subset<br >major feature down| Sev2["Sev2 — on-call + backup<br/>war room in 15 min"]
 
     Sev3 -.->|"worsens"| Sev2
     Sev2 -.->|"worsens"| Sev1
@@ -233,7 +233,7 @@ flowchart TB
     Ops --> SME3["SME: infrastructure"]
 
     Comms --> Stakeholders["Stakeholders<br/>separate channel<br/>status page readers"]
-    Comms -.->|"shields from<br/>interruptions"| IC
+    Comms -.->|"shields from<br >interruptions"| IC
     Ops -.->|"reports findings"| IC
 
     style IC fill:#ffebee
@@ -707,7 +707,7 @@ flowchart TB
     Comms --> Verify["Verify<br/>metrics return to normal"]
     Verify --> Close["Close<br/>schedule postmortem"]
 
-    WarRoom -.->|"timeline<br/>auto-captured"| Record["Incident record<br/>Jira / FireHydrant"]
+    WarRoom -.->|"timeline<br >auto-captured"| Record["Incident record<br/>Jira / FireHydrant"]
     Diagnose -.-> Record
     Mitigate -.-> Record
 
@@ -743,9 +743,9 @@ Incident response for distributed backends has specific challenges that single-s
 
 ```mermaid
 flowchart TB
-    Impact{"Users impacted?"} -->|Many / data loss| SEV1["SEV1<br/>all hands, war room"]
+    Impact{"Users impacted?"} -->|Many data loss| SEV1["SEV1<br/>all hands, war room"]
     Impact -->|Degraded| SEV2["SEV2<br/>on-call + comms"]
-    Impact -->|Minor / workaround| SEV3["SEV3<br/>ticket, next business day"]
+    Impact -->|Minor workaround| SEV3["SEV3<br/>ticket, next business day"]
     Impact -->|No| SEV4["SEV4<br/>backlog"]
 ```
 

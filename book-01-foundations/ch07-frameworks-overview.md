@@ -101,9 +101,9 @@ flowchart TB
       S2C2F["S2C2F<br/>secure OSS consumption<br/>process + technical, maturity-tiered"]
     end
 
-    SLSA -.->|"compose, do not compete"| S2C2F
-    SSDF -.->|"SSDF's PW/PS practices call for SLSA-style controls"| SLSA
-    SSDF -.->|"SSDF's PW.4 / PS practices call for S2C2F-style controls"| S2C2F
+    SLSA -.->|"compose do not compete"| S2C2F
+    SSDF -.->|"SSDF's PW PS practices call for SLSA-style controls"| SLSA
+    SSDF -.->|"SSDF's PW.4 PS practices call for S2C2F-style controls"| S2C2F
 ```
 
 Keep this diagram in your head. SLSA lives in the production/technical quadrant: narrow, deep,
@@ -175,9 +175,9 @@ flowchart LR
     L2["Build L2<br/>Signed provenance<br/>hosted build platform<br/>generates + signs it<br/>authenticity verifiable"]
     L3["Build L3<br/>Hardened / non-forgeable<br/>isolated runs, build steps<br/>cannot reach signing key"]
 
-    L0 -->|"scripted build,<br/>emit provenance"| L1
-    L1 -->|"move to hosted platform,<br/>sign provenance"| L2
-    L2 -->|"isolate runs,<br/>protect signing material"| L3
+    L0 -->|"scripted build <br >emit provenance"| L1
+    L1 -->|"move to hosted platform <br >sign provenance"| L2
+    L2 -->|"isolate runs <br >protect signing material"| L3
 
     L1 -.defends.-> D1["release mistakes:<br/>building from the<br/>wrong commit"]
     L2 -.defends.-> D2["post-build tampering:<br/>swapping the artifact<br/>after it is built"]
@@ -236,14 +236,14 @@ chain threats **A through H**, laid out along the path from source to consumer:
 
 ```mermaid
 flowchart LR
-    DEV["Developer"] -->|"(A) submit<br/>unauthorized change"| SRC["Source repo"]
-    SRC -->|"(B) compromise<br/>source repo"| SRC2["Source"]
-    SRC2 -->|"(C) build from<br/>modified source"| BUILD["Build process"]
-    DEP["Dependencies"] -->|"(D) use compromised<br/>dependency"| BUILD
-    BUILD -->|"(E) compromise<br/>build process"| PKG["Package"]
-    PKG -->|"(F) upload<br/>modified package"| REG["Package registry"]
-    REG -->|"(G) compromise<br/>package repo"| CONS["Consumer"]
-    REG -->|"(H) use compromised<br/>package"| CONS
+    DEV["Developer"] -->|" A submit<br >unauthorized change"| SRC["Source repo"]
+    SRC -->|" B compromise<br >source repo"| SRC2["Source"]
+    SRC2 -->|" C build from<br >modified source"| BUILD["Build process"]
+    DEP["Dependencies"] -->|" D use compromised<br >dependency"| BUILD
+    BUILD -->|" E compromise<br >build process"| PKG["Package"]
+    PKG -->|" F upload<br >modified package"| REG["Package registry"]
+    REG -->|" G compromise<br >package repo"| CONS["Consumer"]
+    REG -->|" H use compromised<br >package"| CONS
 
     classDef build fill:#c0392b,color:#fff;
     class BUILD build;
@@ -325,7 +325,7 @@ flowchart TB
     end
 
     PO --> PS --> PW --> RV
-    RV -.->|"root-cause feedback<br/>improves PO/PW"| PO
+    RV -.->|"root-cause feedback<br >improves PO PW"| PO
 ```
 
 - **PO — Prepare the Organization.** Get people, processes, and tooling ready *before* you

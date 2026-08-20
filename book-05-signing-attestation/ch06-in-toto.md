@@ -418,15 +418,15 @@ flowchart LR
     L3["build.link<br/>materials: src/* @ H1<br/>products: bin @ H2"]
     L4["package.link<br/>materials: bin @ H2<br/>products: image @ H3"]
   end
-  L1 -->|"MATCH src/* WITH PRODUCTS FROM clone"| L3
+  L1 -->|"MATCH src * WITH PRODUCTS FROM clone"| L3
   L3 -->|"MATCH bin WITH PRODUCTS FROM build"| L4
   LS --> V{"Verifier"}
   L1 --> V
   L2 --> V
   L3 --> V
   L4 --> V
-  V -->|"all steps present, authorized,<br/>thresholds met, artifacts flow"| PASS["PASS"]
-  V -->|"missing / unauthorized step,<br/>or digest mismatch"| FAIL["FAIL"]
+  V -->|"all steps present authorized <br >thresholds met artifacts flow"| PASS["PASS"]
+  V -->|"missing unauthorized step <br >or digest mismatch"| FAIL["FAIL"]
 ```
 
 ### Verification: checking the chain against the layout
@@ -562,7 +562,7 @@ flowchart LR
   AP --> GATE
   AS --> GATE
   AV --> GATE
-  GATE -->|"provenance L3 from our builder<br/>+ SBOM present<br/>+ scan passing and fresh<br/>+ Rekor-logged<br/>+ signed by expected identity"| ADMIT["ADMIT"]
+  GATE -->|"provenance L3 from our builder<br >+ SBOM present<br >+ scan passing and fresh<br >+ Rekor-logged<br >+ signed by expected identity"| ADMIT["ADMIT"]
   GATE -->|"any check fails"| DENY["DENY"]
 ```
 
@@ -643,7 +643,7 @@ flowchart LR
   end
   PAY --> KIND{"Predicate type"}
   KIND -->|in-toto provenance| SLSA["SLSA Provenance<br/>(builder, materials, buildConfig)<br/>consumed by SLSA verifiers"]
-  KIND -->|custom / SBOM / vuln| OTHER["Other predicates<br/>SPDX, CycloneDX,<br/>link, scan result"]
+  KIND -->|custom SBOM vuln| OTHER["Other predicates<br/>SPDX, CycloneDX,<br/>link, scan result"]
   SIG --> VER["Verifier selects<br/>predicate-specific policy"]
   SLSA --> POL["Threshold + provenance policy"]
   OTHER --> POL

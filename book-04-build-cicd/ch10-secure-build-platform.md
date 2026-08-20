@@ -280,7 +280,7 @@ secure path *dramatically* easier than rolling your own.
 
 ```mermaid
 flowchart TD
-  T["App team"] -->|"uses: platform/build@v3"| GP["Golden pipeline<br/>(reusable workflow)"]
+  T["App team"] -->|"uses: platform build@v3"| GP["Golden pipeline<br/>(reusable workflow)"]
   GP --> A["Ephemeral isolated build"]
   GP --> B["Least-priv OIDC secrets"]
   GP --> C["Provenance + SBOM + signing"]
@@ -582,9 +582,9 @@ flowchart LR
   L3 --> L4["L4 — Fly<br/>Verify-at-deploy +<br/>continuous compliance +<br/>anomaly detection"]
 
   L1 -.->|"Ch 4-6"| M1[" "]
-  L2 -.->|"Ch 8, 3, 6; Bk3 Ch4; Bk5"| M2[" "]
-  L3 -.->|"Ch 2, 8, 9"| M3[" "]
-  L4 -.->|"Bk5 Ch10, Bk6, Bk8"| M4[" "]
+  L2 -.->|"Ch 8 3 6; Bk3 Ch4; Bk5"| M2[" "]
+  L3 -.->|"Ch 2 8 9"| M3[" "]
+  L4 -.->|"Bk5 Ch10 Bk6 Bk8"| M4[" "]
 
   style M1 fill:none,stroke:none
   style M2 fill:none,stroke:none

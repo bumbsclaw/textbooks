@@ -654,7 +654,7 @@ flowchart LR
   PR --> REVIEW["Human review gate"]
   REVIEW -->|"approved"| CI_TRUSTED["CI: trusted context<br/>(with secrets, on main-runner)"]
   CI_TRUSTED --> MERGE["Merge to main<br/>(now trusted)"]
-  CI_UNTRUSTED -.->|"cannot exfiltrate secrets<br/>or push"| SAFE["Safe isolation"]
+  CI_UNTRUSTED -.->|"cannot exfiltrate secrets<br >or push"| SAFE["Safe isolation"]
   style SAFE fill:#2ea043,color:#fff
   style CI_UNTRUSTED fill:#d29922,color:#000
 ```

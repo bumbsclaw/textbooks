@@ -252,7 +252,7 @@ flowchart TD
     Size -->|"N < L"| Queue["Queue grows unbounded<br/>Latency explodes, OOM"]
     Size -->|"N = L"| Exact["Just enough<br/>No queue if perfectly steady<br/>But bursts still queue"]
     Size -->|"N > L + burst"| Good["Handles bursts<br/>Bounded queue, shed if full<br/>Utilization < 100%"]
-    Size -->|"N >> cores, CPU-bound"| Thrashing["Thrashing: context switches<br/>Cache pollution<br/>More threads slower!"]
+    Size -->|"N >> cores CPU-bound"| Thrashing["Thrashing: context switches<br/>Cache pollution<br/>More threads slower!"]
     Good --> Shed["Full queue -> 503 + backoff<br/>Not unbounded growth"]
     style Queue fill:#f8d7da,stroke:#721c24
     style Good fill:#d4edda,stroke:#155724

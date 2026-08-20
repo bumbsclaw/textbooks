@@ -361,7 +361,7 @@ graph TD
     A -->|"owner"| U1["user:alice"]
     A -->|"viewer"| U3["user:carol (direct)"]
 
-    U1 -.->|"owner ⇒ viewer (inherited)"| A
+    U1 -.->|"owner ⇒ viewer inherited "| A
 
     style A fill:#d4edda
     style F fill:#fff3cd
@@ -579,7 +579,7 @@ flowchart TB
     S1 --> Replica
     S2 --> Replica
     S3 --> Primary
-    Replica -.->|"replication lag<br/>monitor: replica_lag_ms"| Primary
+    Replica -.->|"replication lag<br >monitor: replica_lag_ms"| Primary
     Index -.-> Store
 
     style Primary fill:#ffcccc

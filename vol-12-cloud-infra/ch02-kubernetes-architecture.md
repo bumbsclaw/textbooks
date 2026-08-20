@@ -52,14 +52,14 @@ flowchart TB
 
     User <--> API
     API <--> ETCD
-    Sched -->|watch pods + nodes<br/>bind decisions| API
+    Sched -->|watch pods + nodes<br >bind decisions| API
     CCM -->|watch + reconcile| API
     CloudCM -->|cloud API| API
-    Kubelet -->|watch pods bound<br/>to this node| API
+    Kubelet -->|watch pods bound<br >to this node| API
     Kubelet --> Runtime
     Kubelet --> CNI
     Kubelet --> CSI
-    Proxy -->|watch Services<br/>+ Endpoints| API
+    Proxy -->|watch Services<br >+ Endpoints| API
     Proxy -.->|programs| Runtime
 
     style API fill:#e3f2fd
@@ -390,10 +390,10 @@ flowchart LR
     Act[Act via API server<br/>create / update / delete]
 
     API -->|watch events| Informer
-    Informer -->|enqueue key<br/>ns/name| Queue
+    Informer -->|enqueue key<br >ns name| Queue
     Queue --> Worker
-    Worker -->|get from cache<br/>compare spec vs status| Worker
-    Worker -->|requeue on error<br/>with backoff| Queue
+    Worker -->|get from cache<br >compare spec vs status| Worker
+    Worker -->|requeue on error<br >with backoff| Queue
     Worker --> Act
     Act --> API
 

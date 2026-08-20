@@ -246,14 +246,14 @@ sequenceDiagram
     F1-->>L: ack
     F2-->>L: ack
     L-->>C: ack (after quorum)
-    Note over C,F2: Latency = slowest replica; unavailable if quorum unreachable
+    Note over C,F2: Latency = slowest replica, unavailable if quorum unreachable
 
     Note over C,F2: Asynchronous replication (eventual consistency)
     C->>L: write(key, value)
     L-->>C: ack (immediately after local write)
     L->>F1: replicate (background)
     L->>F2: replicate (background)
-    Note over C,F2: Low latency, highly available; followers may lag
+    Note over C,F2: Low latency, highly available, followers may lag
 ```
 
 *Figure 1-2: Synchronous versus asynchronous replication. The same three replicas make radically different trade-offs depending on when the client is acknowledged.*

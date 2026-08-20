@@ -218,12 +218,12 @@ resource "aws_db_instance" "read_replica" {
 
 ```mermaid
 flowchart TB
-    App["Application<br/>(private subnets)"] -->|"read/write<br/>5432 + TLS"| Primary["RDS Primary<br/>AZ-a<br/>read/write"]
-    Primary -->|"sync replication<br/>(block-level for Multi-AZ)"| Standby["RDS Standby<br/>AZ-b<br/>not readable<br/>auto-promoted on failure"]
-    Primary -.->|"async replication<br/>(WAL streaming)"| Replica["Read Replica<br/>AZ-c / cross-region<br/>readable, lag ~10-100ms"]
-    App -.->|"read-only<br/>replica endpoint"| Replica
+    App["Application<br/>(private subnets)"] -->|"read write<br >5432 + TLS"| Primary["RDS Primary<br/>AZ-a<br/>read/write"]
+    Primary -->|"sync replication<br > block-level for Multi-AZ "| Standby["RDS Standby<br/>AZ-b<br/>not readable<br/>auto-promoted on failure"]
+    Primary -.->|"async replication<br > WAL streaming "| Replica["Read Replica<br/>AZ-c / cross-region<br/>readable, lag ~10-100ms"]
+    App -.->|"read-only<br >replica endpoint"| Replica
     Primary --> Snap["Automated Snapshots<br/>S3, 14-day PITR<br/>+ cross-region copy"]
-    Standby -.->|"DNS flip<br/>~60-120s"| App
+    Standby -.->|"DNS flip<br >~60-120s"| App
 
     style Primary fill:#e3f2fd
     style Standby fill:#fff3e0
@@ -422,10 +422,10 @@ resource "random_password" "cache_auth" {
 
 ```mermaid
 flowchart TB
-    App["Application<br/>(private subnets)"] -->|"TLS 6379<br/>auth token"| Primary["Primary<br/>AZ-a<br/>read/write"]
+    App["Application<br/>(private subnets)"] -->|"TLS 6379<br >auth token"| Primary["Primary<br/>AZ-a<br/>read/write"]
     Primary -->|"async replication"| Replica1["Replica AZ-b<br/>readable"]
     Primary -->|"async replication"| Replica2["Replica AZ-c<br/>readable"]
-    App -.->|"read scale<br/>(replica endpoint)"| Replica1 & Replica2
+    App -.->|"read scale<br > replica endpoint "| Replica1 & Replica2
 
     subgraph ClusterMode["Cluster Mode (sharded) — alternative"]
         Shard1["Shard 1<br/>slots 0-5460"]
@@ -897,9 +897,9 @@ flowchart TB
     App --> Search[("OpenSearch<br/>3+3+warm<br/>VPC isolated")]
     App --> Queue["SQS FIFO<br/>orders.fifo → DLQ"]
     App --> Stream["Kinesis<br/>events (4 shards)<br/>→ Lambda processor"]
-    App -.->|"config/secrets"| Secrets[("Secrets Manager<br/>+ SSM + AppConfig")]
+    App -.->|"config secrets"| Secrets[("Secrets Manager<br/>+ SSM + AppConfig")]
     App -.->|"images"| ECR[("ECR<br/>immutable tags")]
-    App -.->|"logs/metrics"| CW["CloudWatch<br/>+ Performance Insights"]
+    App -.->|"logs metrics"| CW["CloudWatch<br/>+ Performance Insights"]
 
     RDS --> Snap["Snapshots → S3<br/>cross-region copy<br/>Backup Vault (WORM)"]
     Cache -.->|"snapshot"| S3Cache[("S3<br/>cache warm-restart")]

@@ -54,7 +54,7 @@ flowchart LR
     Fixes --> SLI
 
     Postmortem -.->|"action items"| Fixes
-    Postmortem -.->|"new SLIs / alerts"| SLI
+    Postmortem -.->|"new SLIs alerts"| SLI
     Postmortem -.->|"new runbooks"| Respond
 
     style Postmortem fill:#fff3e0

@@ -281,7 +281,7 @@ initial value*, which no serial order produces. Two increments, counter goes up 
 ```mermaid
 flowchart LR
   subgraph SA["Schedule A — acyclic, serializable as T1 then T2"]
-    A1(("T1")) -->|"RW, WR, WW on x<br/>all point one way"| A2(("T2"))
+    A1(("T1")) -->|"RW WR WW on x<br >all point one way"| A2(("T2"))
   end
   subgraph SB["Schedule B — cycle, NOT serializable"]
     B1(("T1")) -->|"r1 of x before w2 of x"| B2(("T2"))
@@ -765,8 +765,8 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    Q{"Contention expected?"} -->|High contention<br/>short txns| P["Pessimistic<br/>2PL — lock before access<br/>detect deadlock via waits-for graph"]
-    Q -->|Low contention<br/>read-heavy| O["Optimistic<br/>read without locks<br/>validate at commit<br/>abort on conflict → retry"]
+    Q{"Contention expected?"} -->|High contention<br >short txns| P["Pessimistic<br/>2PL — lock before access<br/>detect deadlock via waits-for graph"]
+    Q -->|Low contention<br >read-heavy| O["Optimistic<br/>read without locks<br/>validate at commit<br/>abort on conflict → retry"]
     P --> L["SELECT FOR UPDATE<br/>row-level lock"]
     O --> V["SSI checks rw-dependencies<br/>abort serialization anomaly"]
     L --> T["Throughput vs latency tradeoff"]

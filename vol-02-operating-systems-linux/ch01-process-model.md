@@ -375,8 +375,8 @@ flowchart LR
   subgraph SPEC["clone() sharing spectrum"]
     direction LR
     A["fork()<br/>share nothing<br/>(new address space,<br/>own FDs)"]
-    B["clone(CLONE_VM<br/>| CLONE_FILES)<br/>share memory + FDs,<br/>separate signals"]
-    C["pthread_create()<br/>CLONE_VM|CLONE_FILES<br/>|CLONE_THREAD|...<br/>share everything"]
+    B["clone(CLONE_VM<br/>|CLONE_FILES <br >share memory + FDs <br >separate signals"]
+    C["pthread_create <br >CLONE_VM|CLONE_FILES<br/>|CLONE_THREAD|...<br/>share everything"]
   end
   A -->|"more sharing →"| B --> C
   note1["'Process' and 'thread' are not<br/>two kinds of object — they are<br/>two settings of the same dial."]
@@ -515,7 +515,7 @@ flowchart TD
     Req["100k concurrent connections"] --> Choice{"Concurrency model"}
     Choice -->|"threads"| T["Thread per conn<br/>8 MiB stack x 100k = 800 GiB<br/>Context switch heavy"]
     Choice -->|"processes"| P["Process per conn<br/>Isolated, heavier than threads<br/>Fork cost + IPC"]
-    Choice -->|"async (epoll/io_uring)"| A["Event loop + coroutines<br/>~KiB per conn<br/>No per-conn thread<br/>Must not block loop"]
+    Choice -->|"async epoll io_uring "| A["Event loop + coroutines<br/>~KiB per conn<br/>No per-conn thread<br/>Must not block loop"]
     Choice -->|"hybrid"| H["Thread pool + async<br/>CPU pool + I/O loop<br/>Best of both (Go, Tokio)"]
     T --> Cost1["C10k problem, OOM"]
     A --> Cost2["Scales to M conns<br/>Backpressure needed"]

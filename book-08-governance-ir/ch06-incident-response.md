@@ -107,7 +107,7 @@ flowchart TB
     B3["PLUS: notify downstream,<br/>remediate build, regulatory report,<br/>rebuild channel trust"]
     B1 --> B2 --> B3
   end
-  A3 -.->|"if your shipped<br/>artifact is affected"| B1
+  A3 -.->|"if your shipped<br >artifact is affected"| B1
 ```
 
 The two modes are not mutually exclusive. SolarWinds-the-company was simultaneously a mode-B producer
@@ -628,10 +628,10 @@ flowchart LR
 ```mermaid
 flowchart TD
   Q1{"What is compromised?"}
-  Q1 -->|"Artifact (single image)"| A1["Block that digest<br/>(admission + registry)<br/>keep prior digest running"]
+  Q1 -->|"Artifact single image "| A1["Block that digest<br/>(admission + registry)<br/>keep prior digest running"]
   Q1 -->|"Build system"| A2["Freeze builder<br/>rotate builder keys<br/>rebuild from trusted builder"]
-  Q1 -->|"Signing key / CA"| A3["Revoke cert<br/>rotate via TUF<br/>re-sign good artifacts"]
-  Q1 -->|"Git / source"| A4["Lock repo<br/>revert malicious commits<br/>force-push audited"]
+  Q1 -->|"Signing key CA"| A3["Revoke cert<br/>rotate via TUF<br/>re-sign good artifacts"]
+  Q1 -->|"Git source"| A4["Lock repo<br/>revert malicious commits<br/>force-push audited"]
   Q1 -->|"Upstream dep"| A5["Pin prior version<br/>wait for upstream fix<br/>or vendor patch"]
   style A3 fill:#f85149,color:#fff
 ```

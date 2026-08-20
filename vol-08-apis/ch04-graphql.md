@@ -261,12 +261,12 @@ flowchart TB
         Q1[Query.orders — 1 SELECT] --> R1[Order 1 — SELECT customer]
         Q1 --> R2[Order 2 — SELECT customer]
         Q1 --> R3[Order N — SELECT customer]
-        R1 & R2 & R3 -.-> D1[\"N sequential round-trips\"]
+        R1 & R2 & R3 -.-> D1['N sequential round-trips']
     end
     subgraph Batched[Batched — DataLoader]
         Q2[Query.orders — 1 SELECT] --> B1[customerLoader.load × N — batched]
-        B1 --> S1[\"1 SELECT ... WHERE id IN (...)\"]
-        S1 --> C1[\"N customers — single round-trip\"]
+        B1 --> S1['1 SELECT ... WHERE id IN (...)']
+        S1 --> C1['N customers — single round-trip']
     end
 ```
 
@@ -641,7 +641,7 @@ const timingPlugin = {
 ```mermaid
 flowchart LR
     A[Client query] --> B{Validate}
-    B -->|depth/complexity exceeded| C[Reject 400 + extensions.code COMPLEXITY_EXCEEDED]
+    B -->|depth complexity exceeded| C[Reject 400 + extensions.code COMPLEXITY_EXCEEDED]
     B -->|persisted hash unknown| D[Require full query once, then cache]
     B -->|ok| E[Execute with timeout]
     E --> F{Auth per field}

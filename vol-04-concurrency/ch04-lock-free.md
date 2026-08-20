@@ -133,7 +133,7 @@ flowchart TD
   L["old = load(shared)"] --> C["next = f(old)<br/>computed on a PRIVATE snapshot<br/>no lock held"]
   C --> CAS{"CAS(shared, old, next)"}
   CAS -->|"success"| DONE["done — our update is published"]
-  CAS -->|"failure: someone else won<br/>old is refreshed with actual value"| C
+  CAS -->|"failure: someone else won<br >old is refreshed with actual value"| C
   DONE -.-> NOTE["Lock-free: SOME thread always wins each round.<br/>Not wait-free: one unlucky thread can lose forever.<br/>Under high contention the losers' work is wasted."]
 ```
 
@@ -311,14 +311,14 @@ flowchart TB
     direction TB
     PU1["1. read oldHead = top (A)"] --> PU2["2. newNode.next = A<br/>node D is still PRIVATE — invisible to others"]
     PU2 --> PU3{"3. CAS(top, A, D)"}
-    PU3 -->|"success: top = D, list D to A to B to C"| PU4["done"]
+    PU3 -->|"success: top = D list D to A to B to C"| PU4["done"]
     PU3 -->|"failure: another thread changed top"| PU1
   end
   subgraph POP["pop(): read next, then CAS the head"]
     direction TB
     PO1["1. read oldHead = top (A)"] --> PO2["2. read newHead = A.next (B)<br/>THE ABA WINDOW IS HERE"]
     PO2 --> PO3{"3. CAS(top, A, B)"}
-    PO3 -->|"success: top = B, return A.item"| PO4["done"]
+    PO3 -->|"success: top = B return A.item"| PO4["done"]
     PO3 -->|"failure: another thread changed top"| PO1
   end
 ```
@@ -457,9 +457,9 @@ flowchart TD
     Striped["Striped: per-core shard<br/>atomic per CPU, sum on read<br/>No contention on inc<br/>~1B ops/s, linear scaling"]
     Approx["Approximate: per-thread batch<br/>Thread-local buffer, flush periodically<br/>Eventually consistent, fastest"]
     Naive --> Choice{"Need exact?"}
-    Choice -->|"yes, frequent read"| Striped
-    Choice -->|"yes, rare read"| Striped
-    Choice -->|"approx OK (metrics)"| Approx
+    Choice -->|"yes frequent read"| Striped
+    Choice -->|"yes rare read"| Striped
+    Choice -->|"approx OK metrics "| Approx
     Striped --> Read["Read: sum shards<br/>O(Ncores), may race<br/>Add mutex for exact snapshot if needed"]
     Approx --> Read2["Read: approximate<br/>Good for stats, not money"]
     style Naive fill:#f8d7da,stroke:#721c24

@@ -109,8 +109,8 @@ flowchart TB
     SL3["Can suspend ONLY at<br/>marked await points —<br/>every caller must be async"]
     SL1 --> SL2 --> SL3
   end
-  SF3 -.->|"cost: stack memory, FFI and<br/>growth complexity"| TRADE["Trade-off"]
-  SL3 -.->|"cost: function coloring,<br/>viral signatures"| TRADE
+  SF3 -.->|"cost: stack memory FFI and<br >growth complexity"| TRADE["Trade-off"]
+  SL3 -.->|"cost: function coloring <br >viral signatures"| TRADE
 ```
 
 The comparison in one table:

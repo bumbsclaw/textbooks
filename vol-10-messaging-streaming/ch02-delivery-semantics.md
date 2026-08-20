@@ -388,9 +388,9 @@ Operational signals to watch:
 ```mermaid
 flowchart TB
     Domain{"Loss vs duplicate<br/>tolerance?"}
-    Domain -->|Loss OK<br/>metrics| AtMost["At-most-once<br/>fire & forget"]
-    Domain -->|Duplicate OK<br/>idempotent handler| AtLeast["At-least-once<br/>retry + dedup"]
-    Domain -->|Neither OK<br/>payments| Effective["Effectively-once<br/>idempotent + dedup table + TX"]
+    Domain -->|Loss OK<br >metrics| AtMost["At-most-once<br/>fire & forget"]
+    Domain -->|Duplicate OK<br >idempotent handler| AtLeast["At-least-once<br/>retry + dedup"]
+    Domain -->|Neither OK<br >payments| Effective["Effectively-once<br/>idempotent + dedup table + TX"]
 ```
 
 #### Kafka Transactional Produce

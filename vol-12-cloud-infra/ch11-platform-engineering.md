@@ -42,7 +42,7 @@ A platform that mandates a single framework for every workload fails. A platform
 flowchart LR
     Dev["Developer<br/>new service / feature"] --> Question{"Common need?<br/>stateless API, worker,<br/>cron, ML batch?"}
     Question -->|Yes| Paved["Paved road<br/>template → repo + CI + IaC<br/>+ K8s + observability<br/>compliant by default"]
-    Question -->|No / special| Wilderness["Wilderness<br/>bring your own<br/>you own the maintenance"]
+    Question -->|No special| Wilderness["Wilderness<br/>bring your own<br/>you own the maintenance"]
     Paved --> Catalog["Service catalog<br/>registered, discoverable<br/>scorecard + ownership"]
     Wilderness --> Catalog
     Catalog --> Prod["Production<br/>SLOs, runbooks, alerts<br/>— uniform on paved,<br/>— self-managed off-road"]
@@ -682,7 +682,7 @@ flowchart TB
     K8s --> Obs["Observability<br/>Grafana dashboard<br/>Prometheus alerts<br/>SLO (99.9 / p99 250ms)"]
     Obs --> Docs["Docs + ownership<br/>TechDocs + runbook<br/>PagerDuty + catalog"]
 
-    Repo -.->|"escape hatch<br/>replace any layer"| Custom["Custom stack<br/>you own the delta"]
+    Repo -.->|"escape hatch<br >replace any layer"| Custom["Custom stack<br/>you own the delta"]
 
     style Template fill:#e3f2fd
     style CI fill:#fff3e0

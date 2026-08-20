@@ -110,7 +110,7 @@ flowchart LR
     T3["'quorum' : 2, 3"]
     T4["'replica' : 3"]
   end
-  DOCS -->|"analysis: tokenize,<br/>lowercase, stem"| IDX
+  DOCS -->|"analysis: tokenize <br >lowercase stem"| IDX
   Q["query: quorum lease"] --> T2
   Q --> T3
   T2 --> M["intersect sorted postings:<br/>1,2 with 2,3 gives 2"]
@@ -657,10 +657,10 @@ an offset to resume from.
 ```mermaid
 flowchart LR
   APP["application"] -->|"transactions"| OLTP["OLTP source of truth<br/>Postgres: rows + WAL, Ch7"]
-  OLTP -->|"CDC: WAL tailing<br/>or outbox, Vol 10 Ch6"| LOG["durable log<br/>Kafka"]
+  OLTP -->|"CDC: WAL tailing<br >or outbox Vol 10 Ch6"| LOG["durable log<br/>Kafka"]
   LOG --> SPIPE["indexer"] --> SEARCH["search cluster<br/>Elasticsearch: inverted index"]
   LOG --> WPIPE["loader"] --> WH["warehouse or lakehouse<br/>ClickHouse / Iceberg: columnar"]
-  APP -.->|"metrics scraped, pull"| TSDB["Prometheus TSDB<br/>Gorilla chunks"]
+  APP -.->|"metrics scraped pull"| TSDB["Prometheus TSDB<br/>Gorilla chunks"]
   SEARCH -.->|"lag: refresh + pipeline"| APP
   WH -.->|"lag: minutes"| APP
 ```

@@ -343,7 +343,7 @@ flowchart TD
   OLM --> CTRL["Operator controller pod<br/>(operator image)"]
   RBAC --> CTRL
   CTRL -->|watches| CR["Custom Resources<br/>PostgresCluster, ..."]
-  CTRL -->|creates/modifies| RES["StatefulSets, Secrets,<br/>Services, RBAC, PVCs"]
+  CTRL -->|creates modifies| RES["StatefulSets, Secrets,<br/>Services, RBAC, PVCs"]
   CTRL -->|deploys| OPND["Operand images<br/>(upstream, tagged)"]
   classDef risk fill:#7a1f1f,stroke:#d66,color:#fff
   class OH,RBAC,OPND risk
@@ -672,7 +672,7 @@ flowchart TD
   CAN -->|"healthy"| R25["25%"]
   R25 -->|"healthy"| R50["50%"]
   R50 -->|"healthy"| R100["100%"]
-  CAN -->|"unhealthy / vuln found"| ROLL["Rollback to prior digest<br/>(known-good)"]
+  CAN -->|"unhealthy vuln found"| ROLL["Rollback to prior digest<br/>(known-good)"]
   R25 --> ROLL
   R50 --> ROLL
   R100 --> MON["Continuous verify<br/>(new CVEs or revocations)"]

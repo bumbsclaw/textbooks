@@ -638,7 +638,7 @@ flowchart LR
     E["<b>5. Detect / respond</b><br/>assume breach; inventory-driven IR<br/>(Book 8 Ch 5-6)"]
     F["<b>6. Govern / measure</b><br/>prove it works · find gaps · report<br/>(Book 8)"]
     A --> B --> C --> D --> E --> F
-    F -->|"metrics find gaps →<br/>drive investment →<br/>close the loop"| A
+    F -->|"metrics find gaps →<br >drive investment →<br >close the loop"| A
 ```
 
 Metrics and reporting are the arrow that closes the loop. Measurement takes the outcomes of detection

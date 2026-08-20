@@ -692,16 +692,16 @@ flowchart TD
     Q1{"Question to answer?"}
     Q1 -->|"Is x in S?"| B{"Need deletions?"}
     Q1 -->|"How many distinct?"| HLL["HyperLogLog"]
-    Q1 -->|"How many times<br/>did x occur?"| CMS{"Key space bounded?"}
-    Q1 -->|"Top-K / heavy hitters?"| HH["CMS + Heap<br/>or Space-Saving"]
+    Q1 -->|"How many times<br >did x occur?"| CMS{"Key space bounded?"}
+    Q1 -->|"Top-K heavy hitters?"| HH["CMS + Heap<br/>or Space-Saving"]
 
     B -->|"No"| BF["Bloom filter<br/>(9.6 bits/key @1% FPR)"]
     B -->|"Yes"| CF{"Mutable & small?"}
     CF -->|"Yes"| CBF["Counting Bloom<br/>(4-bit counters)"]
-    CF -->|"No / large"| CKF["Cuckoo filter<br/>or Cuckoo + Bloom fallback"]
+    CF -->|"No large"| CKF["Cuckoo filter<br/>or Cuckoo + Bloom fallback"]
 
     CMS -->|"Yes — fits in hash map"| EXACT["Exact hash map<br/>(simpler, zero error)"]
-    CMS -->|"No — streaming / huge"| CMS2["Count-Min Sketch<br/>(ε=0.001, δ=0.01)"]
+    CMS -->|"No — streaming huge"| CMS2["Count-Min Sketch<br/>(ε=0.001, δ=0.01)"]
 
     style BF fill:#86efac,stroke:#166534,color:#000
     style HLL fill:#bfdbfe,stroke:#1e40af,color:#000

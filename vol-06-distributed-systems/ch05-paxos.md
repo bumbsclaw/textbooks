@@ -581,9 +581,9 @@ flowchart TB
     end
     CL -->|"2PC prepare"| L1
     CL -->|"2PC prepare"| L2
-    L1 -->|"vote yes, prepare record<br/>replicated via Paxos in group 1"| CL
-    L2 -->|"vote yes, prepare record<br/>replicated via Paxos in group 2"| CL
-    CL -->|"decision COMMIT written to<br/>coordinator group Paxos log FIRST"| CF1
+    L1 -->|"vote yes prepare record<br >replicated via Paxos in group 1"| CL
+    L2 -->|"vote yes prepare record<br >replicated via Paxos in group 2"| CL
+    CL -->|"decision COMMIT written to<br >coordinator group Paxos log FIRST"| CF1
     CL -->|"then announce commit"| L1
     CL -->|"then announce commit"| L2
 ```

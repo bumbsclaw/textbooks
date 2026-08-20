@@ -55,8 +55,8 @@ flowchart LR
   B --> C["Mirror<br/>full or partial local<br/>copy of upstream"]
   C --> D["Vendoring<br/>dependency source<br/>committed into your repo"]
   C --> E["Curated / allowlisted<br/>nothing enters without<br/>passing policy"]
-  A -.->|"least control<br/>least friction"| A
-  E -.->|"most control<br/>most friction"| E
+  A -.->|"least control<br >least friction"| A
+  E -.->|"most control<br >most friction"| E
 ```
 
 Note that this is not a strict linear ladder — vendoring and full curation are two different
@@ -298,7 +298,7 @@ flowchart TD
   HIT -->|"hit"| SERVE["Serve artifact<br/>log the pull"]
   HIT -->|"miss"| FETCH["Fetch from upstream<br/>into QUARANTINE"]
   FETCH --> COOL{"version age<br/>>= cooldown?"}
-  COOL -->|"no, too new"| BLOCK1["Refuse / hold<br/>410 or 404"]
+  COOL -->|"no too new"| BLOCK1["Refuse / hold<br/>410 or 404"]
   COOL -->|"yes"| SCAN{"SCA + malware<br/>+ license + provenance"}
   SCAN -->|"policy violation"| BLOCK2["Quarantine / block<br/>alert, log"]
   SCAN -->|"clean"| PROMOTE["Promote to cache"]
@@ -482,7 +482,7 @@ flowchart LR
   end
   C -->|"allowed"| REG["Internal registry<br/>artifacts.acme.internal"]
   C -.->|"BLOCKED at egress"| PUB["Public registries<br/>npmjs / PyPI / Maven Central"]
-  REG -->|"controlled fetch<br/>scan, cooldown, log"| PUB
+  REG -->|"controlled fetch<br >scan cooldown log"| PUB
   EGRESS["Egress firewall / proxy allowlist<br/>only artifacts.acme.internal permitted"] --- C
 ```
 
@@ -624,7 +624,7 @@ flowchart TD
     DEV["Developer / CI<br/>npm install"] --> PRIV["Private Registry<br/>(Artifactory / Nexus)"]
     PRIV --> POL{"Policy checks"}
     POL -->|Allowlist| ALLOW["Allowed package<br/>+ version"]
-    POL -->|Blocklist / quarantine| BLOCK["Blocked<br/>malicious / unvetted"]
+    POL -->|Blocklist quarantine| BLOCK["Blocked<br/>malicious / unvetted"]
     POL -->|Egress| FETCH["Fetch from upstream<br/>after approval"]
     FETCH --> CACHE["Cached +<br/>scanned copy"]
     CACHE --> DEV

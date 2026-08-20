@@ -50,7 +50,7 @@ flowchart LR
     C -->|Yes| E["Approval / Policy Gate"]
     E --> F["Apply<br/>call provider APIs"]
     F --> G["Actual State<br/>(cloud + state file)"]
-    G -.->|"Drift detection<br/>(scheduled re-plan)"| B
+    G -.->|"Drift detection<br > scheduled re-plan "| B
     F -.->|"Persist"| H["State Backend<br/>S3 / GCS / TFC"]
 
     style A fill:#e3f2fd
@@ -99,7 +99,7 @@ flowchart TB
     R --> Parse
     Apply <-->|"CRUD"| Providers
     Providers <-->|"API calls"| Cloud
-    Eval <-->|"read/write"| S3
+    Eval <-->|"read write"| S3
     Apply <-->|"persist"| S3
 
     style Core fill:#e3f2fd

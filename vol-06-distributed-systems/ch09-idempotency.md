@@ -532,11 +532,11 @@ flowchart LR
     B["Broker<br/>at-least-once;<br/>producer dedup covers<br/>broker retries only"]
     C["Consumer<br/>processed_messages<br/>insert + effect in<br/>ONE transaction;<br/>offset commit after"]
     P["Payment provider<br/>provider idempotency<br/>key derived from K:<br/>charge applied once"]
-    U -->|"POST with<br/>Idempotency-Key K"| A
+    U -->|"POST with<br >Idempotency-Key K"| A
     A -->|"outbox poll"| O
     O -->|"publish"| B
-    B -->|"deliver, possibly<br/>more than once"| C
-    C -->|"charge with<br/>Idempotency-Key"| P
+    B -->|"deliver possibly<br >more than once"| C
+    C -->|"charge with<br >Idempotency-Key"| P
 ```
 
 Walk the hops and name each one's discipline. The **browser** mints key `K` when the

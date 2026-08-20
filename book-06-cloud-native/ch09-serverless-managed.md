@@ -77,9 +77,9 @@ flowchart TB
     MICROVM["Isolation: microVM / kernel"]
     HV["Hypervisor + host + facility"]
   end
-  YOURS -->|"you build, scan, sign"| SHARED
+  YOURS -->|"you build scan sign"| SHARED
   SHARED -->|"runs on"| PROVIDER
-  PROVIDER -.->|"you trust, cannot fully verify"| ATTEST["Compliance attestations<br/>SOC 2 / ISO 27001 / FedRAMP"]
+  PROVIDER -.->|"you trust cannot fully verify"| ATTEST["Compliance attestations<br/>SOC 2 / ISO 27001 / FedRAMP"]
 ```
 
 The rest of the chapter walks this diagram from top to bottom: your code and dependencies first
@@ -350,7 +350,7 @@ flowchart TB
   APP --> PAY
   APP --> FLAG
   APP --> OBS
-  CDNJS -.->|"runs with your origin's trust<br/>on your users"| USER
+  CDNJS -.->|"runs with your origin's trust<br >on your users"| USER
 ```
 
 The defenses are a blend of vendor risk management and technical pinning. For browser scripts:
@@ -426,7 +426,7 @@ flowchart TB
   ATTEST["Compliance attestations<br/>SOC 2 / ISO 27001 / FedRAMP / PCI"]
   YOU -->|"runs on"| INHERITED
   INHERITED -->|"trust backed by"| ATTEST
-  ATTEST -.->|"evidence, not verification"| RESIDUAL["Residual, accepted risk<br/>(documented in threat model)"]
+  ATTEST -.->|"evidence not verification"| RESIDUAL["Residual, accepted risk<br/>(documented in threat model)"]
 ```
 
 | Concern | You can control | You must trust (backed by attestation) |
@@ -549,9 +549,9 @@ flowchart LR
 ```mermaid
 flowchart TD
   Q{"Where does attestation live?"}
-  Q -->|"Artifact-based (ECR image)"| A1["Sign OCI artifact<br/>verify at deploy (normal flow)"]
-  Q -->|"Zip / inline code"| A2["Sign zip hash<br/>store attestation out-of-band<br/>(S3 / in-toto)"]
-  Q -->|"Provider-built (managed)"| A3["No local artifact<br/>then rely on provider provenance<br/>(e.g., Cloud Build provenance)"]
+  Q -->|"Artifact-based ECR image "| A1["Sign OCI artifact<br/>verify at deploy (normal flow)"]
+  Q -->|"Zip inline code"| A2["Sign zip hash<br/>store attestation out-of-band<br/>(S3 / in-toto)"]
+  Q -->|"Provider-built managed "| A3["No local artifact<br/>then rely on provider provenance<br/>(e.g., Cloud Build provenance)"]
   A1 --> R["Policy gate checks<br/>attestation before deploy"]
   A2 --> R
   A3 --> R

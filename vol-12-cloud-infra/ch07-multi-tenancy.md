@@ -44,8 +44,8 @@ flowchart LR
         S_API2[Dedicated Stack<br/>tenant B] --> S_DB2[(DB B)]
         S_API3[Dedicated Stack<br/>tenant C] --> S_DB3[(DB C)]
     end
-    Pool -.->|evolve as<br/>enterprise needs grow| Bridge
-    Bridge -.->|compliance or<br/>blast radius demands| Silo
+    Pool -.->|evolve as<br >enterprise needs grow| Bridge
+    Bridge -.->|compliance or<br >blast radius demands| Silo
 
     style Pool fill:#e3f2fd
     style Bridge fill:#fff3e0

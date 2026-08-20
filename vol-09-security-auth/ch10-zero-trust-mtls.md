@@ -47,7 +47,7 @@ Zero trust collapses the perimeter to *each connection*: the network is assumed 
 ```mermaid
 flowchart TB
     subgraph PerimeterModel["Perimeter model — trust by location"]
-        C1["Caller (pod A)"] -->|"HTTP (plaintext<br/>or server-only TLS)<br/>no client cert"| S1["Callee (pod B)"]
+        C1["Caller (pod A)"] -->|"HTTP plaintext<br >or server-only TLS <br >no client cert"| S1["Callee (pod B)"]
         N1["Network: VPC / mesh<br/>is the trust boundary"] -. trust .- S1
         X1["Compromised pod C<br/>same VPC → calls B<br/>implicitly trusted"] -.-> S1
         style N1 fill:#f96,stroke:#333,color:#fff
@@ -55,9 +55,9 @@ flowchart TB
     end
 
     subgraph ZeroTrust["Zero-trust model — trust by identity"]
-        C2["Caller — SPIFFE ID<br/>spiffe://prod/ns/api/svc/frontend"] -->|"mTLS — client SVID + server SVID<br/>both sides verify SPIFFE ID"| S2["Callee — SPIFFE ID<br/>spiffe://prod/ns/api/svc/payments"]
+        C2["Caller — SPIFFE ID<br/>spiffe://prod/ns/api/svc/frontend"] -->|"mTLS — client SVID + server SVID<br >both sides verify SPIFFE ID"| S2["Callee — SPIFFE ID<br/>spiffe://prod/ns/api/svc/payments"]
         P2["AuthorizationPolicy<br/>allow: frontend → payments /charge<br/>deny: all else"] -. enforce .- S2
-        X2["Compromised pod C<br/>spiffe://prod/ns/batch/svc/untrusted<br/>mTLS succeeds but<br/>authZ denies /charge"] -.->|"mTLS ok, authZ DENY"| S2
+        X2["Compromised pod C<br/>spiffe://prod/ns/batch/svc/untrusted<br/>mTLS succeeds but<br/>authZ denies /charge"] -.->|"mTLS ok authZ DENY"| S2
         style P2 fill:#6a6,stroke:#333,color:#fff
         style X2 fill:#fa6,stroke:#333,color:#fff
     end
@@ -483,7 +483,7 @@ sequenceDiagram
         Server->>Server: Issue X509-SVID (TTL 1h)<br/>sign with trust-domain CA
         Server-->>Agent: X509-SVID + bundle
         Agent-->>Pod: X509-SVID + bundle (stream)
-        Note over Pod,Agent: Pod hot-reloads tls.Config<br/>no restart; Agent re-issues before expiry
+        Note over Pod,Agent: Pod hot-reloads tls.Config<br/>no restart, Agent re-issues before expiry
     else selectors do not match
         Agent-->>Pod: PermissionDenied — no entry
     end

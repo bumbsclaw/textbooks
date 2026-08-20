@@ -477,7 +477,7 @@ flowchart LR
   end
   FIND -->|"report"| REG["Registry security team<br/>-> package pulled"]
   VULN -->|"CVD"| MNT["Maintainer / vendor / CERT<br/>-> fix shipped"]
-  DET -->|"share (TLP)"| ISAC["ISAC / community / STIX-TAXII"]
+  DET -->|"share TLP "| ISAC["ISAC / community / STIX-TAXII"]
   ANAL -->|"publish"| DOWN["Downstream consumers<br/>-> false positives suppressed"]
   FIX -->|"upstream"| OSS["OSS project<br/>-> everyone benefits"]
   REG --> ECO["Healthier ecosystem"]

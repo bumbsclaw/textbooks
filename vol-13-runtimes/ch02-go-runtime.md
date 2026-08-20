@@ -67,7 +67,7 @@ flowchart TB
     GQ -->|distribute| PS
 
     GIO["G blocked on I/O<br/>(no M, no P)"] -.-> NP
-    NP -.->|I/O ready → runnable| GQ
+    NP -.->|I O ready → runnable| GQ
 
     GSYS["G in syscall<br/>(M blocked, P handed off)"] -.-> P2
 ```

@@ -532,13 +532,13 @@ flowchart LR
         RDS["RDS Postgres<br/>PII at rest"]
         KAFKA["Managed Kafka<br/>order events"]
     end
-    CO -->|"bi-dir, PII-order"| ORD
-    CO -->|"outbound, cardholder"| STRIPE
-    CO -->|"inbound, signing keys"| AUTH0
-    CO -->|"inbound, flags"| LD
-    CO -->|"outbound, telemetry"| DD
-    CO -->|"read/write, PII"| RDS
-    ORD -->|"produce, order events"| KAFKA
+    CO -->|"bi-dir PII-order"| ORD
+    CO -->|"outbound cardholder"| STRIPE
+    CO -->|"inbound signing keys"| AUTH0
+    CO -->|"inbound flags"| LD
+    CO -->|"outbound telemetry"| DD
+    CO -->|"read write PII"| RDS
+    ORD -->|"produce order events"| KAFKA
 
     classDef svc fill:#14532d,stroke:#4ade80,color:#fff;
     classDef ext fill:#7f1d1d,stroke:#f87171,color:#fff;

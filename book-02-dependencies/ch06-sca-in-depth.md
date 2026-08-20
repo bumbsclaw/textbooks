@@ -413,8 +413,8 @@ flowchart LR
     Build --> ArtReg["Artifact / image<br/>registry scan"]
     ArtReg --> Adm["Admission control<br/>(Book 6)"]
     Adm --> Runtime["Deployed"]
-    Runtime -.->|"re-match stored SBOMs<br/>as new CVEs land"| Cont["Continuous<br/>re-scanning"]
-    Cont -.->|"new finding on<br/>shipped artifact"| PR
+    Runtime -.->|"re-match stored SBOMs<br >as new CVEs land"| Cont["Continuous<br/>re-scanning"]
+    Cont -.->|"new finding on<br >shipped artifact"| PR
 ```
 
 - **IDE** — a plugin flags a vulnerable version as you add or update a dependency, at the moment

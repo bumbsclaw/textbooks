@@ -688,7 +688,7 @@ flowchart LR
   A["Author writes code"] --> B["Checkpoint 1: pre-commit<br/>(gitleaks / secretlint)<br/>local block"]
   B --> C["Checkpoint 2: push / PR<br/>(GitHub push protection,<br/>GitLab secret detection)"]
   C --> D["Checkpoint 3: post-commit<br/>(org-wide historical scan +<br/>alert + rotation ticket)"]
-  B -.->|"fastest, cheapest"| E["Ideal: catch before push"]
+  B -.->|"fastest cheapest"| E["Ideal: catch before push"]
   C -.->|"blocks leaked secret from history"| F["Second best"]
   D -.->|"detects legacy leaks"| G["Needs rotation workflow"]
   style D fill:#f85149,color:#fff

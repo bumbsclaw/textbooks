@@ -361,12 +361,12 @@ flowchart TD
   C -->|yes| D{"Old enough?<br/>minimumReleaseAge<br/>cooldown"}
   D -->|"too young"| E["Hold — pending"]
   E --> D
-  D -->|"past cooldown<br/>OR KEV fast-track"| F["Open update PR<br/>single pinned bump"]
+  D -->|"past cooldown<br >OR KEV fast-track"| F["Open update PR<br/>single pinned bump"]
   F --> G["Gate: full CI + build<br/>+ SCA scan (Ch 6)"]
   G -->|fail| H["Human triage"]
   G -->|pass| I{"Low risk?<br/>patch/minor,<br/>reachable-safe"}
   I -->|yes| J["Auto-merge<br/>update lockfile"]
-  I -->|"no — major /<br/>high blast radius"| K["Human review"]
+  I -->|"no — major <br >high blast radius"| K["Human review"]
   K --> J
   J --> A
 ```
@@ -517,7 +517,7 @@ flowchart TD
   C -->|no| D["Routine bump:<br/>batch, schedule,<br/>auto-merge if low-risk"]
   C -->|yes| E["Planned work:<br/>breaking changes,<br/>human-driven upgrade"]
   B -->|yes| F{"Reachable?<br/>(Ch 7)"}
-  F -->|"no — unreachable<br/>(VEX not_affected)"| G["De-prioritize:<br/>update on normal<br/>cadence, no scramble"]
+  F -->|"no — unreachable<br > VEX not_affected "| G["De-prioritize:<br/>update on normal<br/>cadence, no scramble"]
   F -->|yes| H{"KEV / actively<br/>exploited?"}
   H -->|yes| I["URGENT:<br/>fast-track past cooldown,<br/>expedite review, deploy now"]
   H -->|no| J["Prioritized:<br/>fix within SLA,<br/>normal cooldown OK"]
@@ -756,8 +756,8 @@ flowchart TD
     CI --> PASS{"All checks pass?"}
     PASS -->|Yes| AUTO{"Auto-merge<br/>policy?"}
     PASS -->|No| HOLD["Hold — human<br/>triage"]
-    AUTO -->|Patch/minor<br/>+ trusted| MERGE["Auto-merge"]
-    AUTO -->|Major /<br/>untrusted| REVIEW["Human review"]
+    AUTO -->|Patch minor<br >+ trusted| MERGE["Auto-merge"]
+    AUTO -->|Major <br >untrusted| REVIEW["Human review"]
     MERGE --> DEPLOY["Deploy"]
     REVIEW --> MERGE
     style HOLD fill:#ffcc00,stroke:#333

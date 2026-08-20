@@ -552,7 +552,7 @@ flowchart TD
   CLOSED --> SCHED["No new pods schedule"]
   SCHED --> SELF{"Is the controller / kube-system\nexcluded from the webhook?"}
   SELF -->|No| DEAD["Deadlock: controller can't restart itself\n→ whole fleet frozen"]
-  SELF -->|Yes, HA + exclusions| RECOV["Control plane &amp; controller keep running\n→ self-heal, workloads gate correctly"]
+  SELF -->|Yes HA + exclusions| RECOV["Control plane &amp; controller keep running\n→ self-heal, workloads gate correctly"]
 ```
 
 The resolution is not to pick a side but to **engineer the fail-closed posture so its blast radius
@@ -705,8 +705,8 @@ sequenceDiagram
 ```mermaid
 flowchart TD
   Q{"Cluster trust model?"}
-  Q -->|Single org, cloud-native| A1["Keyless (Fulcio) per CI workload<br/>verifier checks OIDC issuer + subject"]
-  Q -->|Air-gapped / private| A2["Private Fulcio + Rekor<br/>or long-lived KMS key<br/>(per-env)"]
+  Q -->|Single org cloud-native| A1["Keyless (Fulcio) per CI workload<br/>verifier checks OIDC issuer + subject"]
+  Q -->|Air-gapped private| A2["Private Fulcio + Rekor<br/>or long-lived KMS key<br/>(per-env)"]
   Q -->|Vendor images| A3["Vendor key (long-lived)<br/>pinned via TUF / policy<br/>+ transparency"]
   A1 --> POL["ClusterImagePolicy:<br/>authority: keyless + issuer"]
   A2 --> POL2["ClusterImagePolicy:<br/>authority: kms://..."]

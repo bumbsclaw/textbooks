@@ -154,8 +154,8 @@ for stat in snap.statistics('lineno')[:10]:
 flowchart TB
     REQ["Incoming request"] --> CHOICE{"Concurrency model?"}
 
-    CHOICE -->|I/O-bound, many conns| ASYNC["asyncio + ASGI<br/>1 process, 1 thread, N tasks<br/>cooperative at await<br/>uvloop for speed"]
-    CHOICE -->|I/O-bound, blocking libs| THREAD["ThreadPoolExecutor<br/>N threads, GIL released on I/O<br/>good for boto3, psycopg2 sync"]
+    CHOICE -->|I O-bound many conns| ASYNC["asyncio + ASGI<br/>1 process, 1 thread, N tasks<br/>cooperative at await<br/>uvloop for speed"]
+    CHOICE -->|I O-bound blocking libs| THREAD["ThreadPoolExecutor<br/>N threads, GIL released on I/O<br/>good for boto3, psycopg2 sync"]
     CHOICE -->|CPU-bound| PROC2["multiprocessing / ProcessPoolExecutor<br/>N processes, no GIL sharing<br/>IPC via pickle/queue/shared_memory"]
 
     ASYNC --> LOOP["Event loop<br/>selectors → callbacks → tasks"]
@@ -728,10 +728,10 @@ spec:
 ```mermaid
 flowchart TB
     REQ2["New backend service"] --> Q1{"Workload?"}
-    Q1 -->|CPU-bound / data-heavy| PYCPU["Python: offload to<br/>multiprocessing / Ray / Go sidecar<br/>Node: worker_threads / native addon"]
-    Q1 -->|I-O fan-out, many conns| ASYNC2["Both work:<br/>Python ASGI + asyncio<br/>Node event loop<br/>Pick by team + ecosystem"]
-    Q1 -->|Real-time (WS, SSE)| NODE2["Node: first-class WS/SSE<br/>Python: ASGI + websockets<br/>Both viable; Node slightly ahead"]
-    Q1 -->|ML / data pipeline| PY2["Python: numpy/torch/pandas<br/>Node: call Python sidecar<br/>Don't do ML in Node"]
+    Q1 -->|CPU-bound data-heavy| PYCPU["Python: offload to<br/>multiprocessing / Ray / Go sidecar<br/>Node: worker_threads / native addon"]
+    Q1 -->|I-O fan-out many conns| ASYNC2["Both work:<br/>Python ASGI + asyncio<br/>Node event loop<br/>Pick by team + ecosystem"]
+    Q1 -->|Real-time WS SSE| NODE2["Node: first-class WS/SSE<br/>Python: ASGI + websockets<br/>Both viable; Node slightly ahead"]
+    Q1 -->|ML data pipeline| PY2["Python: numpy/torch/pandas<br/>Node: call Python sidecar<br/>Don't do ML in Node"]
 
     PYCPU --> BOUND["Bound the weakness:<br/>cache, queue, circuit breaker<br/>separate CPU pool"]
     ASYNC2 --> BOUND

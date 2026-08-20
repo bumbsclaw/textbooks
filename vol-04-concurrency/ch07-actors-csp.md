@@ -149,7 +149,7 @@ flowchart TB
     ST["Private state<br/>no external access"]
     MB --> BEH
     BEH --> ST
-    BEH -->|"1 send messages<br/>2 create actors<br/>3 designate next behavior"| OUT["Effects"]
+    BEH -->|"1 send messages<br >2 create actors<br >3 designate next behavior"| OUT["Effects"]
   end
   W2 -.->|"is one of these"| MB
 ```
@@ -707,11 +707,11 @@ flowchart TB
   Q -->|"unbounded mailbox"| U1["Queue grows without limit"]
   U1 --> U2["Latency climbs: every message<br/>waits behind a longer queue"]
   U2 --> U3["Memory exhausted: OOM kill<br/>takes out ALL actors in the VM"]
-  Q -->|"bounded, capacity C"| B1["Queue fills to C"]
+  Q -->|"bounded capacity C"| B1["Queue fills to C"]
   B1 --> B2{"Full-queue policy"}
   B2 -->|"block sender"| B3["Backpressure propagates upstream<br/>producer slows to 1000 msg/s"]
   B2 -->|"shed or drop"| B4["Explicit loss, counted in metrics<br/>system stays alive"]
-  U3 -.->|"the unbounded path fails late,<br/>globally, and unaccountably"| B2
+  U3 -.->|"the unbounded path fails late <br >globally and unaccountably"| B2
 ```
 
 Go's buffered channels are always bounded, so Go fails the *other* way:

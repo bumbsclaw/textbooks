@@ -262,10 +262,10 @@ are so much easier in Java and Go than in C.
 ```mermaid
 flowchart TD
     Need{"What do you need?"}
-    Need -->|"short, no sleep"| Spin["Spinlock<br/>Busy-wait, no context switch<br/>Only for very short sections<br/>+ IRQ-disabled contexts"]
-    Need -->|"general, may sleep"| Mutex["Mutex (futex-based)<br/>Adaptive: spin briefly then sleep<br/>Default choice"]
+    Need -->|"short no sleep"| Spin["Spinlock<br/>Busy-wait, no context switch<br/>Only for very short sections<br/>+ IRQ-disabled contexts"]
+    Need -->|"general may sleep"| Mutex["Mutex (futex-based)<br/>Adaptive: spin briefly then sleep<br/>Default choice"]
     Need -->|"read-heavy"| RW["RW lock<br/>Many readers or one writer<br/>Writer starvation risk<br/>Often slower than mutex!"]
-    Need -->|"read-heavy + rare write<br/>+ seqlock pattern"| Seq["Seqlock / RCU<br/>Readers never block<br/>Writer copies, RCU grace period"]
+    Need -->|"read-heavy + rare write<br >+ seqlock pattern"| Seq["Seqlock / RCU<br/>Readers never block<br/>Writer copies, RCU grace period"]
     Need -->|"one-time init"| Once["Once / barrier / latch<br/>Single signal"]
     Trade["Benchmark: RW lock often loses to mutex<br/>due to cache-line bouncing on read count<br/>RCU wins when reads >> writes (100:1+)"]
     style Mutex fill:#d4edda,stroke:#155724
@@ -487,7 +487,7 @@ flowchart LR
     S1["Core 1<br/>stripe 1 line: M"]
     S2["Core 2<br/>stripe 2 line: M"]
   end
-  BAD -.->|"shard the lock, pad to cache lines"| GOOD
+  BAD -.->|"shard the lock pad to cache lines"| GOOD
 ```
 
 The Universal Scalability Law from Chapter 1 now has a concrete physical referent: **α is the

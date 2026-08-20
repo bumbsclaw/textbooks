@@ -338,9 +338,9 @@ is a floor on convergence time, never a ceiling.
 ```mermaid
 flowchart TD
     TTL{"TTL value"}
-    TTL -->|"low (10-60s)"| Low["Agile failover<br/>Fast cutover on deploy<br/>But: more queries, higher latency<br/>Cache miss on every burst"]
-    TTL -->|"medium (300s)"| Med["Balanced: 5 min<br/>Common for API records<br/>Brief stale on change"]
-    TTL -->|"high (3600s+)"| High["Scale: few queries<br/>CDN-friendly<br/>But: slow failover<br/>Need dual-publish for migration"]
+    TTL -->|"low 10-60s "| Low["Agile failover<br/>Fast cutover on deploy<br/>But: more queries, higher latency<br/>Cache miss on every burst"]
+    TTL -->|"medium 300s "| Med["Balanced: 5 min<br/>Common for API records<br/>Brief stale on change"]
+    TTL -->|"high 3600s+ "| High["Scale: few queries<br/>CDN-friendly<br/>But: slow failover<br/>Need dual-publish for migration"]
     Low --> Neg["Negative caching (NXDOMAIN)<br/>Also has TTL (SOA MINIMUM)<br/>Typos cached too!"]
     Med --> Neg
     High --> Neg

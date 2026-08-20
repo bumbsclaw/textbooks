@@ -358,8 +358,8 @@ CT has four roles, and each maps to a piece of machinery you should be able to n
 flowchart LR
   CA["CA issues cert /\nsubmits precert"] -->|"submit"| L1["CT Log A"]
   CA -->|"submit"| L2["CT Log B"]
-  L1 -->|"SCT (promise)"| CA
-  L2 -->|"SCT (promise)"| CA
+  L1 -->|"SCT promise "| CA
+  L2 -->|"SCT promise "| CA
   CA -->|"cert + embedded SCTs"| SRV["TLS server"]
   SRV -->|"TLS handshake:\ncert + SCTs"| BR["Browser"]
   BR -->|"require valid SCTs\nfrom N logs"| BR
@@ -449,7 +449,7 @@ sequenceDiagram
     CI->>CI: sign artifact digest at time t0+2m
     CI->>R: submit {digest, signature, cert}
     R-->>CI: inclusion proof + SET (integratedTime = t0+2m)
-    Note over CI: key discarded; cert will expire at t0+10m
+    Note over CI: key discarded, cert will expire at t0+10m
     Note over V: weeks later, cert long expired
     V->>R: fetch entry + inclusion proof + SET
     V->>V: verify SET signature (trusted Rekor key)
@@ -712,10 +712,10 @@ flowchart TB
   subgraph Writers
     BUILD["Build systems<br/>(signing)"] --> REKOR["Rekor (active shard)<br/>Merkle tree + signed tree head"]
   end
-  REKOR -->|"tree head (STH)"| MON["Monitor / Witness<br/>(e.g., Rekor monitor,<br/> Sigstore operated)"]
+  REKOR -->|"tree head STH "| MON["Monitor / Witness<br/>(e.g., Rekor monitor,<br/> Sigstore operated)"]
   REKOR -->|"inclusion proof"| VER["Verifier<br/>(cosign verify)"]
-  MON -->|"consistency proof<br/>shard N vs N+1"| AUDIT["Auditor<br/>detects split-view / fork"]
-  MON -->|"alert on unexpected<br/>signing identity"| SIEM["SIEM / alerting"]
+  MON -->|"consistency proof<br >shard N vs N+1"| AUDIT["Auditor<br/>detects split-view / fork"]
+  MON -->|"alert on unexpected<br >signing identity"| SIEM["SIEM / alerting"]
   style REKOR fill:#1f6feb,color:#fff
   style AUDIT fill:#2ea043,color:#fff
 ```

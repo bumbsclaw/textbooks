@@ -314,8 +314,8 @@ flowchart TB
   subgraph T2["Thread 2 — consume"]
     B1["(3) read ready == true<br/>VOLATILE read — acquire"] --> B2["(4) read data<br/>plain read"]
   end
-  A2 ==>|"happens-before edge<br/>volatile write to volatile read"| B1
-  A1 -.->|"transitivity: (1) to (4)<br/>data == 42 is GUARANTEED"| B2
+  A2 ==>|"happens-before edge<br >volatile write to volatile read"| B1
+  A1 -.->|"transitivity: 1 to 4 <br >data == 42 is GUARANTEED"| B2
 ```
 
 ### The DRF-SC guarantee
@@ -448,9 +448,9 @@ flowchart TB
   A["acquire / release<br/>pairwise synchronizes-with edge<br/>free on x86, cheap on ARM<br/>use: publication, lock-free structures"]
   S["seq_cst<br/>acquire-release PLUS one global total order<br/>full barrier on stores<br/>use: the default; anything you have not proven needs less"]
   H["high-level primitives<br/>mutex, channel, concurrent collections<br/>use: essentially always"]
-  R -->|"stronger, slower"| A -->|"stronger, slower"| S
+  R -->|"stronger slower"| A -->|"stronger slower"| S
   H -->|"built from"| S
-  S -.->|"prefer moving UP this list, not down"| H
+  S -.->|"prefer moving UP this list not down"| H
 ```
 
 ## Publication and safe initialization
@@ -579,7 +579,7 @@ sequenceDiagram
     alt p != null
         Sub->>Sub: p->field == 42 guaranteed<br/>(release hb acquire)
     end
-    Note over Pub,Sub: Alternatives: mutex, once_flag, static init<br/>All create hb; pick simplest that fits
+    Note over Pub,Sub: Alternatives: mutex, once_flag, static init<br/>All create hb, pick simplest that fits
 ```
 
 ## Practical rules

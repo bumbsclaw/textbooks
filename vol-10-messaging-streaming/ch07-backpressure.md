@@ -72,10 +72,10 @@ flowchart TB
     Saturated{Downstream<br/>saturated?}
     Saturated -->|No| Pass[Forward message<br/>L and W bounded]
     Saturated -->|Yes| Choice{Strategy}
-    Choice -->|Durable<br/>producer can wait| Throttle[Throttle / Block<br/>pause fetch, slow producer]
+    Choice -->|Durable<br >producer can wait| Throttle[Throttle / Block<br/>pause fetch, slow producer]
     Choice -->|Caller can retry| Shed[Load shed<br/>429 / NAK / Busy]
-    Choice -->|Loss-tolerant<br/>telemetry| Drop[Drop<br/>newest or oldest]
-    Choice -->|None set<br/>unbounded buffer| OOM([OOM / disk full<br/>uncontrolled failure])
+    Choice -->|Loss-tolerant<br >telemetry| Drop[Drop<br/>newest or oldest]
+    Choice -->|None set<br >unbounded buffer| OOM([OOM / disk full<br/>uncontrolled failure])
 
     style Throttle fill:#e8f5e9
     style Shed fill:#fff3e0

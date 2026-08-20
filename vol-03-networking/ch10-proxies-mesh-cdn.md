@@ -577,16 +577,16 @@ flowchart TB
     subgraph PodA["Pod A"]
         APPA["App A"]
         SCA["Sidecar proxy A"]
-        APPA -->|"loopback, plaintext"| SCA
+        APPA -->|"loopback plaintext"| SCA
     end
     subgraph PodB["Pod B"]
         SCB["Sidecar proxy B"]
         APPB["App B"]
-        SCB -->|"loopback, plaintext"| APPB
+        SCB -->|"loopback plaintext"| APPB
     end
     ISTIOD -.->|"xDS config plus SDS certs"| SCA
     ISTIOD -.->|"xDS config plus SDS certs"| SCB
-    SCA ==>|"mTLS, SPIFFE identities, L7 routing"| SCB
+    SCA ==>|"mTLS SPIFFE identities L7 routing"| SCB
     classDef cp fill:#fff3e0,stroke:#c77800
     classDef dp fill:#e8f0fe,stroke:#3b6fd4
     class ISTIOD,K8S cp
@@ -750,8 +750,8 @@ flowchart LR
     F3 --> Cost
     F4 --> Cost
     Cost --> Choice{"Worth it?"}
-    Choice -->|"large fleet, many teams"| Yes["Yes: uniform, no per-app library"]
-    Choice -->|"small fleet, few services"| No["Maybe not: library + gateway may suffice"]
+    Choice -->|"large fleet many teams"| Yes["Yes: uniform, no per-app library"]
+    Choice -->|"small fleet few services"| No["Maybe not: library + gateway may suffice"]
     style Features fill:#d4edda,stroke:#155724
     style Cost fill:#fff3cd,stroke:#856404
 ```

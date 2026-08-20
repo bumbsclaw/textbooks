@@ -577,7 +577,7 @@ flowchart TD
   OBSERVE --> DECODE["De-obfuscate blobs; if a dropper,<br/>capture stage-2 URL and pull it in the sandbox"]
   DECODE --> VERDICT{"Malicious?"}
   VERDICT -->|yes| IOC["Extract IOCs: C2 hosts, wallet addrs, hashes"]
-  VERDICT -->|no / gated| GATE["Note gating conditions;<br/>re-run mimicking target env"]
+  VERDICT -->|no gated| GATE["Note gating conditions;<br/>re-run mimicking target env"]
   IOC --> REPORT["Report to registry + OSSF malicious-packages;<br/>hand IOCs to IR (Book 8)"]
   IOC --> SCOPE["Scope: query fleet inventory —<br/>which services pulled this version? (SBOM, Book 3)"]
 ```

@@ -603,7 +603,7 @@ stateDiagram-v2
     Authorized --> Cancelled: CancelOrder → OrderCancelled
     Shipped --> [*]
     Cancelled --> [*]
-    Note right of Authorized: Aggregate enforces:<br/>placed before authorized<br/>authorized before shipped<br/>no ship after cancel
+    Note right of Authorized: Aggregate enforces - placed before authorized - authorized before shipped - no ship after cancel
 ```
 
 *Figure 5-4: Aggregate state machine — the set of valid event sequences. The aggregate rejects commands that would emit an invalid transition; the projector never needs to enforce these invariants again.*

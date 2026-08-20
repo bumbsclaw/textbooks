@@ -41,8 +41,8 @@ flowchart TB
     REQ["Incoming requests<br/>allocations/sec"] --> ALLOC["Allocator<br/>(bump pointer / free list / TLAB)"]
     ALLOC --> HEAP["Heap<br/>live set + garbage"]
     HEAP --> GC["Collector<br/>mark → sweep/compact/copy"]
-    GC -->|frees / compacts| HEAP
-    GC -->|STW pause / concurrent work| MUT["Mutator threads<br/>(your code)"]
+    GC -->|frees compacts| HEAP
+    GC -->|STW pause concurrent work| MUT["Mutator threads<br/>(your code)"]
     MUT -->|allocates| ALLOC
     MUT --> REQ
 
@@ -120,12 +120,12 @@ flowchart TB
         EDEN["Eden / Nursery<br/>bump-pointer alloc<br/>collect every ~10-100ms"]
         SURV["Survivor S0/S1<br/>copy survivors<br/>aging / tenuring threshold"]
         OLD["Old / Tenured / Major<br/>collect rarely<br/>mark-sweep-compact or concurrent"]
-        EDEN -->|minor GC<br/>copy survivors| SURV
-        SURV -->|tenure after N survivals<br/>promotion| OLD
-        OLD -.->|remembered set<br/>card table| EDEN
+        EDEN -->|minor GC<br >copy survivors| SURV
+        SURV -->|tenure after N survivals<br >promotion| OLD
+        OLD -.->|remembered set<br >card table| EDEN
     end
     ALLOC2["New allocation"] --> EDEN
-    OLD -->|major / full GC| RECLAIM["Reclaim / compact"]
+    OLD -->|major full GC| RECLAIM["Reclaim / compact"]
 ```
 
 ---
@@ -169,11 +169,11 @@ flowchart LR
         INCR["Incremental<br/>slice marking<br/>interleaved"]
     end
     MS -->|fragments| FRAG["Fragmentation:<br/>high"]
-    MC -->|no fragment<br/>moves objects| FRAG2["Fragmentation:<br/>none"]
-    CP -->|needs 2x heap<br/>pause ∝ live set| LIVE["Pause scales with:<br/>live set"]
+    MC -->|no fragment<br >moves objects| FRAG2["Fragmentation:<br/>none"]
+    CP -->|needs 2x heap<br >pause ∝ live set| LIVE["Pause scales with:<br/>live set"]
     GEN2 -->|most effective| BEST["Best for weak-gen<br/>workloads"]
-    CONC -->|low pause<br/>needs barriers + CPU| LOW["p99:<br/>lowest"]
-    INCR -->|main-thread slices<br/>still STW per slice| MID["p99:<br/>medium"]
+    CONC -->|low pause<br >needs barriers + CPU| LOW["p99:<br/>lowest"]
+    INCR -->|main-thread slices<br >still STW per slice| MID["p99:<br/>medium"]
 ```
 
 | Algorithm | Pause | Throughput | Fragmentation | Heap overhead | Barrier cost | Scales with |

@@ -70,7 +70,7 @@ flowchart TB
     Enc --> Barrier
     S --> Enc
 
-    KMS -.->|"auto-unseal<br/>on restart"| Vault
+    KMS -.->|"auto-unseal<br >on restart"| Vault
 
     style KEK fill:#ffcccc
     style DEK fill:#fff3cd
@@ -381,7 +381,7 @@ sequenceDiagram
     Rotator->>Vault: Generate new password (N+1)<br/>kv put / kv patch
     Vault-->>Rotator: version N+1, Zookie/revision
     Rotator->>DB: ALTER USER app WITH PASSWORD 'N+1'<br/>(both N and N+1 accepted during window)
-    Note over DB: Dual-password window (e.g., 10m)<br/>some extensions support this natively;<br/>otherwise keep two roles active
+    Note over DB: Dual-password window (e.g., 10m)<br/>some extensions support this natively,<br/>otherwise keep two roles active
     Rotator->>App: Rolling update — new pods read N+1<br/>old pods still on N, both valid
     App-->>Rotator: All pods on N+1 (readiness probes)
     Rotator->>Vault: Revoke / delete version N<br/>DB: drop old password
@@ -548,7 +548,7 @@ flowchart TB
         VS --> Raft2
         VS -.-> KMS2
     end
-    Primary -.->|"Vault Replication<br/>(performance + DR)"| DR
+    Primary -.->|"Vault Replication<br > performance + DR "| DR
     V1 --> App1["App Fleet"]
     VS --> App2["EU Fleet<br/>(local reads)"]
 

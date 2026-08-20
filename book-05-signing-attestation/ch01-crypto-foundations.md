@@ -168,14 +168,14 @@ your signatures, but none of them can forge one.
 ```mermaid
 flowchart LR
   subgraph Signer["Signer (holds private key)"]
-    A["Artifact bytes"] -->|"H()"| D["Digest (sha256)"]
+    A["Artifact bytes"] -->|"H "| D["Digest (sha256)"]
     D -->|"Sign with PRIVATE key"| S["Signature"]
   end
   A -->|"distributed"| A2["Artifact bytes"]
   S -->|"distributed"| S2["Signature"]
   PUB["Public key\n(published)"] --> V
   subgraph Verifier["Verifier (holds public key)"]
-    A2 -->|"H()"| D2["Digest'"]
+    A2 -->|"H "| D2["Digest'"]
     D2 --> V{"Verify(pub, digest', sig)"}
     S2 --> V
     V -->|valid| OK["Origin + integrity confirmed"]
@@ -513,7 +513,7 @@ flowchart TD
   P --> PAE
   T --> PAE
   PAE["PAE(payloadType, payload)\n= 'DSSEv1' SP len(type) SP type SP len(payload) SP payload"]
-  PAE -->|"Sign(PAE)"| SIG["signature"]
+  PAE -->|"Sign PAE "| SIG["signature"]
   SIG --> SIGS
 ```
 
@@ -679,8 +679,8 @@ flowchart LR
 ```mermaid
 flowchart TD
   Q{"Do verifier and signer<br/>share a secret?"}
-  Q -->|Yes, same trust domain| M["MAC / HMAC<br/>symmetric, fast<br/>no non-repudiation"]
-  Q -->|No, open verifier set| S{"Need non-repudiation?"}
+  Q -->|Yes same trust domain| M["MAC / HMAC<br/>symmetric, fast<br/>no non-repudiation"]
+  Q -->|No open verifier set| S{"Need non-repudiation?"}
   S -->|Yes| SIG["Digital signature<br/>asymmetric (Ed25519/ECDSA/RSA-PSS)"]
   S -->|Auditing only| SIG
   M --> E1["Example: internal artifact HMAC<br/>by build service + registry"]

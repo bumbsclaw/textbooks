@@ -423,7 +423,7 @@ flowchart LR
     subgraph NVMe["NVMe (modern)"]
         N1["64K queues, 64K depth each<br/>Doorbell per core, no locks<br/>3-14 GB/s, 10 us"]
     end
-    S1 -.->|"6x slower, 10x higher latency"| N1
+    S1 -.->|"6x slower 10x higher latency"| N1
     style SATA fill:#f8d7da,stroke:#721c24
     style NVMe fill:#d4edda,stroke:#155724
 ```
@@ -498,9 +498,9 @@ appending a record to a file:
 ```mermaid
 flowchart TB
     APP["Application<br/>write(fd, buf, n)"] --> PC["OS page cache (in DRAM)<br/>VOLATILE<br/>write() returns here!"]
-    PC -->|"fsync / fdatasync<br/>flush + cache-flush cmd"| DC["Drive write cache (DRAM on device)<br/>VOLATILE unless PLP"]
-    DC -->|"FUA / flush honored to media"| MEDIA["Non-volatile media<br/>(NAND / platter)<br/>DURABLE HERE"]
-    DC -.->|"power loss w/o PLP"| LOST["Data lost"]
+    PC -->|"fsync fdatasync<br >flush + cache-flush cmd"| DC["Drive write cache (DRAM on device)<br/>VOLATILE unless PLP"]
+    DC -->|"FUA flush honored to media"| MEDIA["Non-volatile media<br/>(NAND / platter)<br/>DURABLE HERE"]
+    DC -.->|"power loss w o PLP"| LOST["Data lost"]
     PC -.->|"crash before fsync"| LOST2["Data lost"]
 ```
 

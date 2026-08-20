@@ -187,7 +187,7 @@ flowchart TB
     Catalog --> Cache[(Cache<br/>SLO 99.9%<br/>degraded OK)]
     Cart --> DB2[(Cart DB<br/>SLO 99.99%)]
 
-    Auth -.->|"99.95% * 99.95% * 99.95%<br/>= 99.85% ceiling"| Frontend
+    Auth -.->|"99.95% * 99.95% * 99.95%<br >= 99.85% ceiling"| Frontend
 
     style Frontend fill:#fff3e0
     style Auth fill:#e3f2fd

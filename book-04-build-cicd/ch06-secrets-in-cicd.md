@@ -298,14 +298,14 @@ your real attack surface is that one token.
 ```mermaid
 flowchart TB
     subgraph naive["The secret zero problem"]
-        J1["CI job"] -->|"static Vault token<br/>(secret zero, stored in CI)"| V1["Vault / secret manager"]
+        J1["CI job"] -->|"static Vault token<br > secret zero stored in CI "| V1["Vault / secret manager"]
         V1 --> DB1["DB creds"]
         V1 --> CL1["Cloud creds"]
         V1 --> SK1["Signing key"]
         note1["Steal the one bootstrap token<br/>and everything unlocks."]
     end
     subgraph solved["Resolved with workload identity"]
-        J2["CI job"] -->|"signed OIDC token<br/>(minted per-run, not stored)"| IDP["Trust policy verifies<br/>issuer + claims"]
+        J2["CI job"] -->|"signed OIDC token<br > minted per-run not stored "| IDP["Trust policy verifies<br/>issuer + claims"]
         IDP -->|"short-lived credential"| V2["Vault / cloud API"]
         note2["Nothing at rest to steal.<br/>Identity is proven, not presented."]
     end

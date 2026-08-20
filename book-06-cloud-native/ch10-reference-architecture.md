@@ -113,9 +113,9 @@ flowchart TB
 
     subgraph reg["4. Registry — Ch 2 (chokepoint)"]
         IMG --> STORE["Internal registry"]
-        PROV -->|"cosign attest<br/>OCI referrers"| STORE
+        PROV -->|"cosign attest<br >OCI referrers"| STORE
         SBOM -->|"cosign attest"| STORE
-        CI -->|"cosign sign<br/>keyless"| STORE
+        CI -->|"cosign sign<br >keyless"| STORE
         STORE --> SCAN["Scan on push<br/>Trivy / Grype — Ch 4"]
         SCAN -->|"signed scan result"| STORE
     end
@@ -134,7 +134,7 @@ flowchart TB
     subgraph adm["7. Admission — Ch 5 & 6 (backstop)"]
         ARGO -->|"apply manifest"| GATE["Admission controller<br/>policy-controller / Kyverno"]
         POLICY["Central policy<br/>Book 8 Ch 4"] --> GATE
-        STORE -.->|"fetch + verify<br/>sig, provenance,<br/>SBOM, scan, digest"| GATE
+        STORE -.->|"fetch + verify<br >sig provenance <br >SBOM scan digest"| GATE
         REKOR -.->|"inclusion proof"| GATE
     end
 

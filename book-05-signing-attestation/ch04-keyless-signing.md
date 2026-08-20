@@ -71,13 +71,13 @@ Keyless signing closes the window by making it a few seconds wide and leaving no
 flowchart LR
   subgraph classic["Classic signing (Chapter 2)"]
     K1["Long-lived private key<br/>valid 1-3 years"]
-    K1 -->|"lives on disk / HSM / CI secret"| STEAL["Stealable for the<br/>entire validity window"]
+    K1 -->|"lives on disk HSM CI secret"| STEAL["Stealable for the<br/>entire validity window"]
     K1 -->|"IS the identity"| SILENT["Stolen key signs<br/>silently, as you"]
   end
   subgraph keyless["Keyless signing (this chapter)"]
     E1["Ephemeral private key<br/>valid seconds"]
-    E1 -->|"exists in memory only,<br/>then discarded"| NOTHING["Nothing durable to steal"]
-    E1 -->|"identity comes from<br/>OIDC token, not the key"| IDENT["Identity is the anchor;<br/>key is disposable"]
+    E1 -->|"exists in memory only <br >then discarded"| NOTHING["Nothing durable to steal"]
+    E1 -->|"identity comes from<br >OIDC token not the key"| IDENT["Identity is the anchor;<br/>key is disposable"]
   end
 ```
 
@@ -360,7 +360,7 @@ flowchart TB
   subgraph gh["GitHub Actions runtime"]
     JOB["Running job<br/>id-token: write granted"]
     EP["Token endpoint<br/>ACTIONS_ID_TOKEN_REQUEST_URL"]
-    JOB -->|"request (audience=sigstore)"| EP
+    JOB -->|"request audience=sigstore "| EP
     EP -->|"signed JWT"| TOK
   end
   subgraph tok["OIDC ID token (JWT) claims"]
@@ -765,10 +765,10 @@ sequenceDiagram
 flowchart TD
   Q1{"Who signs?"}
   Q1 -->|Human releasing locally| K1["Keyed: hardware key (YubiKey)<br/>or KMS — human holds identity"]
-  Q1 -->|CI/CD workload| Q2{"Can CI mint OIDC tokens?"}
-  Q2 -->|Yes (GHA, GCP, AWS IAM OIDC)| KL["Keyless: Fulcio + ephemeral key<br/>identity = workload sub claim"]
-  Q2 -->|No / air-gapped| K2["Keyed: KMS-anchored<br/>long-lived workload key"]
-  Q1 -->|Third-party / vendor| K3["Keyed + transparency<br/>vendor long-lived cert<br/>+ Rekor for auditability"]
+  Q1 -->|CI CD workload| Q2{"Can CI mint OIDC tokens?"}
+  Q2 -->|Yes GHA GCP AWS IAM OIDC| KL["Keyless: Fulcio + ephemeral key<br/>identity = workload sub claim"]
+  Q2 -->|No air-gapped| K2["Keyed: KMS-anchored<br/>long-lived workload key"]
+  Q1 -->|Third-party vendor| K3["Keyed + transparency<br/>vendor long-lived cert<br/>+ Rekor for auditability"]
   style KL fill:#2ea043,color:#fff
   style K1 fill:#1f6feb,color:#fff
 ```

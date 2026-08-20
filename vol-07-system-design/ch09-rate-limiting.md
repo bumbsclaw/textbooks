@@ -597,7 +597,7 @@ flowchart TD
     Req[Incoming request] --> Classify{Classify<br/>tier + priority}
     Classify -->|enterprise + interactive| Lane1[Lane 1 — 60% capacity<br/>shed last]
     Classify -->|pro + interactive| Lane2[Lane 2 — 30% capacity<br/>shed second]
-    Classify -->|free / batch| Lane3[Lane 3 — 10% capacity<br/>shed first]
+    Classify -->|free batch| Lane3[Lane 3 — 10% capacity<br/>shed first]
     Lane1 --> Check1{Within lane limit?}
     Lane2 --> Check2{Within lane limit?}
     Lane3 --> Check3{Within lane limit?}

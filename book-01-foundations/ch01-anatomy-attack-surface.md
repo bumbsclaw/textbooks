@@ -118,11 +118,11 @@ flowchart LR
     end
 
     WS -->|"push commit"| SCM
-    SCM -->|"webhook / trigger"| CI
+    SCM -->|"webhook trigger"| CI
     CI -->|"schedule job"| BLD
     BLD -->|"push artifact"| REG
     REG -->|"pull artifact"| CD
-    CD -->|"apply / rollout"| RT
+    CD -->|"apply rollout"| RT
 
     subgraph SIDE["Sidecar chains — external trust"]
         DEP["Dependency registries<br/>npm, PyPI, Maven, Go proxy"]
@@ -141,7 +141,7 @@ flowchart LR
     SAAS -.->|"tokens into"| SCM
     SAAS -.->|"tokens into"| CI
 
-    RT -.->|"pull at runtime:<br/>plugins, models, updates"| DEP
+    RT -.->|"pull at runtime:<br >plugins models updates"| DEP
 ```
 
 Read the diagram with three observations in mind.
@@ -255,14 +255,14 @@ of Book 6, and source-side controls of Book 7.
 
 ```mermaid
 flowchart LR
-    DEV["Developer"] -->|"A: unauthorized<br/>change"| SRC["Source repo"]
-    SRC -->|"B: compromise<br/>source repo"| SRC
-    SRC -->|"C: build from<br/>modified source"| BLD["Build"]
-    DEPCHAIN["Dependencies<br/>(this whole graph,<br/>recursively)"] -->|"D: compromised<br/>dependency"| BLD
-    BLD -->|"E: compromise<br/>build process"| BLD
-    BLD -->|"F: upload modified<br/>package"| PKG["Registry"]
-    PKG -->|"G: compromise<br/>registry"| PKG
-    PKG -->|"H: use compromised<br/>package"| CONS["Consumer /<br/>deployment"]
+    DEV["Developer"] -->|"A: unauthorized<br >change"| SRC["Source repo"]
+    SRC -->|"B: compromise<br >source repo"| SRC
+    SRC -->|"C: build from<br >modified source"| BLD["Build"]
+    DEPCHAIN["Dependencies<br/>(this whole graph,<br/>recursively)"] -->|"D: compromised<br >dependency"| BLD
+    BLD -->|"E: compromise<br >build process"| BLD
+    BLD -->|"F: upload modified<br >package"| PKG["Registry"]
+    PKG -->|"G: compromise<br >registry"| PKG
+    PKG -->|"H: use compromised<br >package"| CONS["Consumer /<br/>deployment"]
 ```
 
 When you encounter a new incident writeup, the first useful move is to place it on this
@@ -564,7 +564,7 @@ flowchart TB
     SN --> CDC
     CDC --> K8S["Production clusters"]
 
-    ATT(("Attacker")) -.->|"one change here<br/>reaches every service"| TPL
+    ATT(("Attacker")) -.->|"one change here<br >reaches every service"| TPL
 ```
 
 A concrete miniature of the multiplication problem, because it is the single most common

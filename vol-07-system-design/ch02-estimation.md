@@ -497,7 +497,7 @@ sequenceDiagram
     Eng->>WB: Revise: origin QPS 3.4k not 2k — add 2 DB replicas
     Eng->>Prod: Ship with 40% headroom + autoscaling
     Prod-->>Eng: Real p99 210ms, hit ratio 87% — tune and iterate
-    Note over Eng,Prod: Estimation → measurement → revision is the loop.<br/>Estimation prunes; measurement decides.
+    Note over Eng,Prod: Estimation → measurement → revision is the loop.<br/>Estimation prunes, measurement decides.
 ```
 
 *Figure 2-3: The estimation → validation → revision loop. Whiteboard numbers are hypotheses; load tests and production metrics are evidence.*

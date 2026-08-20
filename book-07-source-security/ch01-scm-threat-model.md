@@ -121,7 +121,7 @@ flowchart RL
     end
 
     C2 -->|tree| T["tree /<br/>(directory)"]
-    T -->|"entry: src/"| Tsrc["tree src/"]
+    T -->|"entry: src "| Tsrc["tree src/"]
     T -->|"entry: README.md"| B1["blob<br/>README bytes"]
     Tsrc -->|"entry: main.go"| B2["blob<br/>main.go bytes"]
     Tsrc -->|"entry: util.go"| B3["blob<br/>util.go bytes"]
@@ -496,7 +496,7 @@ flowchart LR
     B -->|"binds"| C["built artifact<br/>digest sha256:..."]
     C -->|"verify at deploy"| D["policy gate<br/>'built from expected commit<br/>in expected repo'"]
 
-    A -.->|"Book 7 makes this<br/>commit trustworthy"| A
+    A -.->|"Book 7 makes this<br >commit trustworthy"| A
     B -.->|"Book 4 Ch.3"| B
     C -.->|"Book 5 signing"| C
     D -.->|"Book 5 Ch.8 verify"| D
@@ -606,12 +606,12 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-  DEV["Developer + endpoint"] -->|"push (SSH/HTTPS+PAT)"| HOST["Git hosting<br/>(GitHub/GitLab)"]
+  DEV["Developer + endpoint"] -->|"push SSH HTTPS+PAT "| HOST["Git hosting<br/>(GitHub/GitLab)"]
   HOST -->|"webhook"| CI["CI (Actions / Jenkins)"]
   HOST -->|"protect via"| BRANCH["Branch protection<br/>+ required reviews"]
   DEV -.->|"sign commits"| SIG["Commit sig<br/>(GPG/SSH/Sigstore)"]
   SIG -.->|"verified by"| HOST
-  CI -.->|"deploy key / OIDC"| HOST2["Deploy via deploy key<br/>(privilege boundary!)"]
+  CI -.->|"deploy key OIDC"| HOST2["Deploy via deploy key<br/>(privilege boundary!)"]
   style HOST fill:#1f6feb,color:#fff
   style BRANCH fill:#2ea043,color:#fff
 ```

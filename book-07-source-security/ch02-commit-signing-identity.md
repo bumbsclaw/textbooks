@@ -96,8 +96,8 @@ flowchart LR
         B4["gpgsig / signature header<br/>over the commit content"]
         B5["hash over ALL of the above,<br/>including the signature"]
     end
-    unsigned -->|"author field is<br/>an unverifiable string"| SPOOF["Anyone can claim<br/>to be anyone"]
-    signed -->|"signature binds content<br/>to a verifiable key/identity"| VERIFY["Verify who<br/>actually signed"]
+    unsigned -->|"author field is<br >an unverifiable string"| SPOOF["Anyone can claim<br/>to be anyone"]
+    signed -->|"signature binds content<br >to a verifiable key identity"| VERIFY["Verify who<br/>actually signed"]
 ```
 
 ## Signing mechanics: what gets signed, and where the signature lives
@@ -363,11 +363,11 @@ GitHub's own signing on web merges, which may or may not be what you intended.
 ```mermaid
 flowchart TB
     V["Green 'Verified' badge"]
-    V -->|"YES, proves"| Y1["Signed by a key<br/>linked to an account"]
-    V -->|"YES, proves"| Y2["Signing email matches<br/>a verified account email"]
-    V -->|"NO, does NOT prove"| N1["The code is correct / safe<br/>(insider signs a backdoor)"]
-    V -->|"NO, does NOT prove"| N2["The account/key was not stolen<br/>(ATO signs valid commits)"]
-    V -->|"NO, does NOT prove"| N3["The AUTHOR field is real<br/>(badge is about the committer)"]
+    V -->|"YES proves"| Y1["Signed by a key<br/>linked to an account"]
+    V -->|"YES proves"| Y2["Signing email matches<br/>a verified account email"]
+    V -->|"NO does NOT prove"| N1["The code is correct / safe<br/>(insider signs a backdoor)"]
+    V -->|"NO does NOT prove"| N2["The account/key was not stolen<br/>(ATO signs valid commits)"]
+    V -->|"NO does NOT prove"| N3["The AUTHOR field is real<br/>(badge is about the committer)"]
     V -->|"CAVEAT"| N4["May be GitHub's own web-flow key,<br/>not the developer's key"]
 ```
 

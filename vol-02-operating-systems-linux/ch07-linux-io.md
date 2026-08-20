@@ -366,7 +366,7 @@ flowchart TD
     Loop --> Wait["epoll_wait(timeout)<br/>Block until events or timeout"]
     Wait --> Events{"Events?"}
     Events -->|"yes: N ready FDs"| Dispatch["For each ready FD:<br/>dispatch handler<br/>read/write until EAGAIN"]
-    Events -->|"timeout / signal"| Tick["Timers, housekeeping"]
+    Events -->|"timeout signal"| Tick["Timers, housekeeping"]
     Dispatch --> Dispatch
     Tick --> Loop
     Dispatch --> Loop
@@ -530,11 +530,11 @@ flowchart LR
         Worker["io_uring worker<br/>(or inline)"]
         Files["Files / sockets / disk"]
     end
-    App -->|"fill SQEs, no syscall<br/>(SQPOLL) or io_uring_submit"| SQ
+    App -->|"fill SQEs no syscall<br > SQPOLL or io_uring_submit"| SQ
     SQ -->|"kernel consumes"| Worker
     Worker --> Files
     Files -->|"completion"| CQ
-    CQ -->|"app polls CQ, no syscall"| App
+    CQ -->|"app polls CQ no syscall"| App
     Note["Batch: 1 syscall for N ops<br/>Zero-copy with fixed buffers<br/>~2-3x throughput vs epoll+read"]
     style SQ fill:#d4edda,stroke:#155724
     style CQ fill:#cce5ff,stroke:#004085
@@ -660,8 +660,8 @@ flowchart TD
     Uring["io_uring + fixed buffers<br/>Registered bufs, zero-copy<br/>Best for high-throughput proxy"]
     Sendfile --> Zero{"Need transform?"}
     Splice --> Zero
-    Zero -->|"no (static file, proxy)"| Good["Zero-copy wins<br/>10-30% less CPU, more BW"]
-    Zero -->|"yes (TLS, compress)"| MustCopy["Must copy to transform<br/>kTLS / KTLS offload helps"]
+    Zero -->|"no static file proxy "| Good["Zero-copy wins<br/>10-30% less CPU, more BW"]
+    Zero -->|"yes TLS compress "| MustCopy["Must copy to transform<br/>kTLS / KTLS offload helps"]
     style Classic fill:#f8d7da,stroke:#721c24
     style Sendfile fill:#d4edda,stroke:#155724
     style Good fill:#d4edda,stroke:#155724

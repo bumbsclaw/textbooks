@@ -94,7 +94,7 @@ Most verification failures at 02:00 UTC are item 6: the server sent an incomplet
 flowchart TD
     A["Client Hello<br/>supported versions, cipher suites"] --> B["Server Hello + Certificate<br/>leaf + intermediate chain<br/>CertificateVerify (proves possession of leaf private key)<br/>Finished"]
     B --> C{"Client path validation<br/>RFC 5280 section 6"}
-    C -->|Signature OK, validity OK, SAN matches, KU/EKU OK| D["Chain to trust anchor?<br/>SystemCertPool / Mozilla NSS"]
+    C -->|Signature OK validity OK SAN matches KU EKU OK| D["Chain to trust anchor?<br/>SystemCertPool / Mozilla NSS"]
     C -->|Any check fails| E["Handshake fails<br/>unknown authority / expired / SAN mismatch / revoked"]
     D -->|Yes| F["Verify CertificateVerify signature<br/>with leaf SPKI<br/>RFC 8446 section 4.4.3"]
     D -->|No| E

@@ -676,7 +676,7 @@ flowchart TD
   end
   subgraph GLOBAL["global secondary index — pain on writes"]
     W["write row to shard 2"] --> S2b["shard 2<br/>base row"]
-    S2b -->|"sync: 2PC<br/>or async: replicate"| GP["index partition 7<br/>keyed by email"]
+    S2b -->|"sync: 2PC<br >or async: replicate"| GP["index partition 7<br/>keyed by email"]
     QG["query: email = x"] --> GP
     GP --> ONE["single-partition read<br/>possibly stale if async"]
   end

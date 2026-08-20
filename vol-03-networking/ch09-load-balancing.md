@@ -129,9 +129,9 @@ flowchart LR
   end
   subgraph L7["L7 proxy: decision per request"]
     C3["Client C<br/>one TCP/TLS conn"] --> LB7["L7 proxy<br/>terminates TLS, parses HTTP"]
-    LB7 -->|"GET /cart to pool cart"| B3["cart-svc"]
-    LB7 -->|"POST /pay to pool pay"| B4["pay-svc"]
-    LB7 -->|"next GET /cart, same pool"| B5["cart-svc replica"]
+    LB7 -->|"GET cart to pool cart"| B3["cart-svc"]
+    LB7 -->|"POST pay to pool pay"| B4["pay-svc"]
+    LB7 -->|"next GET cart same pool"| B5["cart-svc replica"]
   end
 ```
 
@@ -167,7 +167,7 @@ table flaps and traffic goes to a random member. This is the canonical DSR bring
 flowchart TD
     Client["Client"] --> VIP["VIP (anycast / ECMP)<br/>L4 LB (IPVS, Maglev, Katran)"]
     VIP --> Choice{"L4 mode"}
-    Choice -->|"DR (DSR)"| DSR["Direct Server Return<br/>LB rewrites dst MAC only<br/>Response bypasses LB<br/>Best throughput"]
+    Choice -->|"DR DSR "| DSR["Direct Server Return<br/>LB rewrites dst MAC only<br/>Response bypasses LB<br/>Best throughput"]
     Choice -->|"NAT"| NAT["SNAT: LB rewrites IP<br/>Response via LB<br/>LB is bottleneck"]
     Choice -->|"Tunnel"| Tunnel["Encap (IPIP/GRE)<br/>LB encapsulates to backend<br/>Backend decaps"]
     DSR --> Backends["Backends (ECMP hash on 5-tuple)<br/>Consistent hash for stability"]
@@ -293,7 +293,7 @@ wave. Envoy's equivalent is `max_connection_duration` on the HTTP connection man
 ```mermaid
 flowchart TB
   subgraph P["Problem: L4 in front of HTTP/2"]
-    GC1["gRPC client 1"] -->|"1 TCP conn, 5k streams/s"| L4B["L4 LB<br/>picks backend at SYN"]
+    GC1["gRPC client 1"] -->|"1 TCP conn 5k streams s"| L4B["L4 LB<br/>picks backend at SYN"]
     GC2["gRPC client 2"] -->|"1 TCP conn"| L4B
     L4B --> PB1["backend 1<br/>10k rps"]
     L4B --> PB2["backend 2<br/>0 rps"]
@@ -545,7 +545,7 @@ you get consistent-hash behavior for ClusterIP Services without a userspace prox
 flowchart TD
     Req["Incoming request"] --> Alg{"Algorithm"}
     Alg -->|"round-robin"| RR["RR: cycle backends<br/>Simple, ignores load<br/>Fails with heterogeneous capacity"]
-    Alg -->|"least-conn / least-loaded"| LC["Least-conn: pick fewest active<br/>Or EWMA / P2C (power of two choices)<br/>Best for uneven latency"]
+    Alg -->|"least-conn least-loaded"| LC["Least-conn: pick fewest active<br/>Or EWMA / P2C (power of two choices)<br/>Best for uneven latency"]
     Alg -->|"consistent hash"| CH["Hash(key) -> backend<br/>Stable on membership change<br/>For caches, sharding"]
     Alg -->|"weighted"| W["Weight by capacity<br/>Manual or auto (CPU-based)"]
     LC --> Best["Production default:<br/>P2C + least-loaded<br/>O(1), adapts quickly"]

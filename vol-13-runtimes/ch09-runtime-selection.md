@@ -415,7 +415,7 @@ flowchart LR
     GW --> NEW["New runtime\nRust service"]
     OLD --> DB["Shared DB / queue"]
     NEW --> DB
-    GW -.->|"1-5% shadow<br/>compare responses"| SHADOW["Shadow verifier<br/>diff + metrics"]
+    GW -.->|"1-5% shadow<br >compare responses"| SHADOW["Shadow verifier<br/>diff + metrics"]
     NEW -.-> SHADOW
     OLD -.-> SHADOW
     SHADOW --> PROMOTE{"Promote when<br/>p99 within 10%<br/>and diff < 0.01%?"}

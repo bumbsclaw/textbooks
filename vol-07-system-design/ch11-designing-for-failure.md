@@ -356,7 +356,7 @@ flowchart LR
     BH2 --> Pay[(Payments<br/>healthy)]
     BH3 --> Search[(Search<br/>healthy)]
     Inv -.->|holds at most 30| BH1
-    BH1 -.->|remaining 170 threads<br/>still serve Pay + Search| BH2
+    BH1 -.->|remaining 170 threads<br >still serve Pay + Search| BH2
 
     style BH1 fill:#fff3e0
     style Inv fill:#ffebee

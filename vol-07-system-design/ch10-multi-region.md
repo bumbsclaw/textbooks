@@ -116,7 +116,7 @@ flowchart TB
     CP -.-> CellA
     CP -.-> CellB
     CP -.-> CellC
-    CellA <-.->|async replication<br/>for DR / analytics| CellB
+    CellA <-.->|async replication<br >for DR analytics| CellB
     CellA <-.-> CellB
     CellB <-.-> CellC
 

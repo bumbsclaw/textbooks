@@ -198,8 +198,8 @@ flowchart TB
     Counter -->|Count it| C["Counter<br/>http_requests_total<br/>query: rate/range"]
     Counter -->|Current value| G["Gauge<br/>memory_bytes<br/>in_flight<br/>query: direct"]
     Counter -->|Distribution| H{"Aggregatable?"}
-    H -->|Yes, fleet-wide quantiles| Hist["Histogram<br/>buckets + sum + count<br/>query: histogram_quantile"]
-    H -->|No, single instance| Summ["Summary<br/>precomputed quantiles<br/>query: direct quantile label"]
+    H -->|Yes fleet-wide quantiles| Hist["Histogram<br/>buckets + sum + count<br/>query: histogram_quantile"]
+    H -->|No single instance| Summ["Summary<br/>precomputed quantiles<br/>query: direct quantile label"]
     Hist --> Buckets["Buckets: cumulative counters<br/>le=0.05, 0.1, 0.2, 0.3, 0.5, 1.0, +Inf"]
     Hist --> Native["Native histogram<br/>exponential buckets<br/>auto-adaptive"]
 
@@ -491,7 +491,7 @@ flowchart TB
         API["Query API<br/>PromQL engine"]
     end
 
-    Targets -->|"HTTP GET /metrics<br/>text exposition format"| Scrape
+    Targets -->|"HTTP GET metrics<br >text exposition format"| Scrape
     Scrape --> TSDB
     TSDB --> Rules
     TSDB --> API

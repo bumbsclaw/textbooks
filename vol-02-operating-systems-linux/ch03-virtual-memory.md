@@ -154,7 +154,7 @@ kernel observe usage and modification cheaply without trapping every access.
 ```mermaid
 flowchart TB
   V["Virtual address<br/>from load/store"] --> TLB{"TLB lookup"}
-  TLB -->|"hit (~1 cycle)"| PA["Physical address<br/>access proceeds"]
+  TLB -->|"hit ~1 cycle "| PA["Physical address<br/>access proceeds"]
   TLB -->|"miss"| W["MMU page-table walk"]
   subgraph WALK["Hardware page walk (up to 4 memory refs)"]
     direction TB
@@ -297,7 +297,7 @@ Two categories of pages, with different lifecycles:
 flowchart TB
   ACC["CPU accesses virtual page"] --> PF{"PTE present?"}
   PF -->|"yes"| OK["Access proceeds"]
-  PF -->|"no / protection"| H["Page fault handler:<br/>find VMA"]
+  PF -->|"no protection"| H["Page fault handler:<br/>find VMA"]
   H --> LEGAL{"Legal access?"}
   LEGAL -->|"no"| SEG["SIGSEGV"]
   LEGAL -->|"yes"| KIND{"What backs it?"}
@@ -424,8 +424,8 @@ flowchart LR
   DISK["File on disk"]
   VP -->|"page fault -> map"| PC
   PC -->|"read: fault in"| DISK
-  PC -->|"MAP_SHARED write -> writeback / msync"| DISK
-  VP -.->|"same frames shared with read/write path<br/>and other mappers"| PC
+  PC -->|"MAP_SHARED write -> writeback msync"| DISK
+  VP -.->|"same frames shared with read write path<br >and other mappers"| PC
 ```
 
 Two controls matter for performance. **`MAP_POPULATE`** prefaults the whole mapping at `mmap`
@@ -586,7 +586,7 @@ flowchart TB
   D -->|"yes"| E["Reclaim: drop clean file pages,<br/>write back dirty, swap anon"]
   E --> F{"Reclaim recovered enough?"}
   F -->|"yes"| C
-  F -->|"no, nothing left"| G["OOM killer:<br/>pick victim by oom_score -> SIGKILL"]
+  F -->|"no nothing left"| G["OOM killer:<br/>pick victim by oom_score -> SIGKILL"]
 ```
 
 ### Overcommit in containers

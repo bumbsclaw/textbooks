@@ -82,7 +82,7 @@ flowchart TB
         R4D["N3 @ 0xC4<br/>owns (N2, N3] — unchanged"]
         R4A --> R4B --> R4C --> R4D --> R4A
     end
-    Ring3 -.->|"only keys in (0x20, 0x55] move<br/>(N1 → N4)"| Ring4
+    Ring3 -.->|"only keys in 0x20 0x55] move<br > N1 → N4 "| Ring4
 
     style R4B fill:#86efac,stroke:#166534,color:#000
     style R4C fill:#fde68a,stroke:#92400e,color:#000
@@ -438,7 +438,7 @@ flowchart TB
         Key2 --> T4["N4:0x0E"]
         Key2 --> T5["N5:0xC8 — new contender"]
         T2 --> W2["stays on N2 (4/5 of keys unaffected)"]
-        T5 -.->|"only keys where N5 happens<br/>to be max will move"| W2
+        T5 -.->|"only keys where N5 happens<br >to be max will move"| W2
     end
     style S2 fill:#86efac,stroke:#166534,color:#000
     style T2 fill:#86efac,stroke:#166534,color:#000
@@ -558,14 +558,14 @@ Balance is slightly tighter than the ring at `V=150` because there is no discret
 flowchart TB
     Q1{"How many nodes?"}
     Q1 -->|"≤ few thousand"| Q2{"Need to add/remove<br/>arbitrary nodes?"}
-    Q1 -->|"10k+ / dense 0..N-1"| JUMP["Jump consistent hash<br/>O(log N), no ring"]
-    Q2 -->|"Yes — churn, failures"| Q3{"Lookup cost sensitive?"}
-    Q2 -->|"Only grow/shrink at end"| JUMP
+    Q1 -->|"10k+ dense 0..N-1"| JUMP["Jump consistent hash<br/>O(log N), no ring"]
+    Q2 -->|"Yes — churn failures"| Q3{"Lookup cost sensitive?"}
+    Q2 -->|"Only grow shrink at end"| JUMP
 
-    Q3 -->|"N ≤ 1k, O(N) hash OK"| HRW["Rendezvous (HRW)<br/>simpler, perfect balance,<br/>stateless — LB, cache shard"]
+    Q3 -->|"N ≤ 1k O N hash OK"| HRW["Rendezvous (HRW)<br/>simpler, perfect balance,<br/>stateless — LB, cache shard"]
     Q3 -->|"N large or p99 critical"| RING["Consistent hash ring<br/>O(log V·N), vnodes=100-200<br/>storage, Dynamo/Cassandra"]
 
-    Q1 -->|"Weighted / heterogeneous"| W["Both support weights<br/>Ring: V·weight vnodes<br/>HRW: score·weight"]
+    Q1 -->|"Weighted heterogeneous"| W["Both support weights<br/>Ring: V·weight vnodes<br/>HRW: score·weight"]
 
     style HRW fill:#86efac,stroke:#166534,color:#000
     style RING fill:#bfdbfe,stroke:#1e40af,color:#000

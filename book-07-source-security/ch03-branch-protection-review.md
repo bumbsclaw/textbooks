@@ -415,10 +415,10 @@ security team, rather than hoping a generalist reviewer happens to notice.
 ```mermaid
 flowchart TD
     pr["PR touches multiple paths"] --> router{"which paths?"}
-    router -->|"src/feature.go"| gen["generalist reviewer<br/>(1 approval)"]
-    router -->|".github/workflows/*"| sec["security + ci-admins<br/>REQUIRED (CODEOWNERS)"]
-    router -->|"go.mod / go.sum"| sec2["security REQUIRED<br/>(dep + lockfile risk)"]
-    router -->|"deploy/*.tf"| cloud["cloud-security REQUIRED"]
+    router -->|"src feature.go"| gen["generalist reviewer<br/>(1 approval)"]
+    router -->|".github workflows *"| sec["security + ci-admins<br/>REQUIRED (CODEOWNERS)"]
+    router -->|"go.mod go.sum"| sec2["security REQUIRED<br/>(dep + lockfile risk)"]
+    router -->|"deploy *.tf"| cloud["cloud-security REQUIRED"]
     gen --> merge{"all required<br/>owners approved?"}
     sec --> merge
     sec2 --> merge
@@ -520,14 +520,14 @@ first-class thing to audit, not an afterthought.
 ```mermaid
 flowchart TD
     attacker["single compromised /<br/>malicious actor"] --> q{"can they reach<br/>the built branch?"}
-    q -->|"admin bypass<br/>(enforce-for-admins off)"| yes1["YES: merge past all rules"]
-    q -->|"push to UNPROTECTED branch<br/>that CI also builds"| yes2["YES: bypasses branch entirely"]
-    q -->|"force-push (if allowed)<br/>rewrites reviewed history"| yes3["YES: replace reviewed commits"]
-    q -->|"self-approve<br/>(GitLab, author-approval on)"| yes4["YES: one actor = author+approver"]
-    q -->|"bot / automation token<br/>on bypass list"| yes5["YES: compromise the bot"]
-    q -->|"self-hosted runner /<br/>CI token pushes to branch"| yes6["YES: pipeline writes source"]
-    q -->|"PR-based PPE: malicious CI<br/>runs on PR build (no merge)"| yes7["YES: exec + exfil pre-merge"]
-    q -->|"proper PR, 2 independent<br/>reviewers, all checks"| no["blocked: needs 2nd actor"]
+    q -->|"admin bypass<br > enforce-for-admins off "| yes1["YES: merge past all rules"]
+    q -->|"push to UNPROTECTED branch<br >that CI also builds"| yes2["YES: bypasses branch entirely"]
+    q -->|"force-push if allowed <br >rewrites reviewed history"| yes3["YES: replace reviewed commits"]
+    q -->|"self-approve<br > GitLab author-approval on "| yes4["YES: one actor = author+approver"]
+    q -->|"bot automation token<br >on bypass list"| yes5["YES: compromise the bot"]
+    q -->|"self-hosted runner <br >CI token pushes to branch"| yes6["YES: pipeline writes source"]
+    q -->|"PR-based PPE: malicious CI<br >runs on PR build no merge "| yes7["YES: exec + exfil pre-merge"]
+    q -->|"proper PR 2 independent<br >reviewers all checks"| no["blocked: needs 2nd actor"]
 ```
 
 Walk each path, with the mitigation:

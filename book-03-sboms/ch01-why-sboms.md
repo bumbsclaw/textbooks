@@ -182,8 +182,8 @@ flowchart LR
 
     D --> S --> B --> A --> DE --> R
 
-    D -.->|"earlier = cheaper,<br/>more speculative"| D
-    R -.->|"later = truer to reality,<br/>harder to attribute to source"| R
+    D -.->|"earlier = cheaper <br >more speculative"| D
+    R -.->|"later = truer to reality <br >harder to attribute to source"| R
 ```
 
 - **Design SBOM.** Produced before the software exists, from an architecture or an RFC:

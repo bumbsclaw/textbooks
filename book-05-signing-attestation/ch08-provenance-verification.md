@@ -418,11 +418,11 @@ where an artifact crosses from a lower-trust zone to a higher-trust one. The rul
 
 ```mermaid
 flowchart LR
-    ext["External deps<br/>(untrusted)"] -->|"verify provenance<br/>before use (aspirational)"| ci["CI build"]
-    ci -->|"cosign verify /<br/>slsa-verifier on ingest"| reg["Internal registry<br/>(Book 2, Ch 8)"]
+    ext["External deps<br/>(untrusted)"] -->|"verify provenance<br >before use aspirational "| ci["CI build"]
+    ci -->|"cosign verify <br >slsa-verifier on ingest"| reg["Internal registry<br/>(Book 2, Ch 8)"]
     reg -->|"verify before promote"| cd["CD pipeline"]
-    cd -->|"verify by digest<br/>before deploy"| adm["Admission controller<br/>(Book 6, Ch 5-6)"]
-    adm -->|"ENFORCE: identity +<br/>provenance + attestations"| run["Pod runs"]
+    cd -->|"verify by digest<br >before deploy"| adm["Admission controller<br/>(Book 6, Ch 5-6)"]
+    adm -->|"ENFORCE: identity +<br >provenance + attestations"| run["Pod runs"]
     adm -.->|"deny"| reject["Rejected"]
     style adm fill:#c0392b,color:#fff
     style run fill:#27ae60,color:#fff
@@ -515,8 +515,8 @@ stops gating.
 ```mermaid
 flowchart TD
     A["Verification cannot<br/>complete (log down,<br/>webhook timeout, root<br/>unreachable)"] --> B{"Workload<br/>sensitivity?"}
-    B -->|"High: prod, PCI,<br/>internet-facing"| C["FAIL CLOSED<br/>deny admission"]
-    B -->|"Low: dev, sandbox,<br/>batch"| D["FAIL OPEN<br/>admit + alert"]
+    B -->|"High: prod PCI <br >internet-facing"| C["FAIL CLOSED<br/>deny admission"]
+    B -->|"Low: dev sandbox <br >batch"| D["FAIL OPEN<br/>admit + alert"]
     C --> E["Availability risk:<br/>verifier is now on the<br/>critical path — must be<br/>tier-1, HA, monitored"]
     D --> F["Security risk:<br/>unverified code can run<br/>during the outage window"]
     E --> G["Mitigate: cache trust<br/>roots, staged rollout,<br/>break-glass with audit"]

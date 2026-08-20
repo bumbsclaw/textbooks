@@ -416,7 +416,7 @@ flowchart TD
     Trade1 --> Choice{"Workload?"}
     Trade2 --> Choice
     Choice -->|"overwrite-heavy DB"| Journal
-    Choice -->|"snapshot-heavy, integrity"| COW
+    Choice -->|"snapshot-heavy integrity"| COW
     style Journal fill:#fff3cd,stroke:#856404
     style COW fill:#d4edda,stroke:#155724
 ```
@@ -435,10 +435,10 @@ Follow a byte from `write()` to permanence:
 ```mermaid
 flowchart TB
     APP["app: write(fd, buf, n) returns"] --> PC["Page cache (dirty page)<br/>*** NOT DURABLE ***"]
-    PC -->|kernel writeback:<br/>dirty ratio / 30s / fsync| BL["Block layer + I/O scheduler<br/>*** NOT DURABLE ***"]
+    PC -->|kernel writeback:<br >dirty ratio 30s fsync| BL["Block layer + I/O scheduler<br/>*** NOT DURABLE ***"]
     BL --> DC["Device write cache (on the drive)<br/>*** usually NOT DURABLE ***"]
-    DC -->|FLUSH / FUA| MEDIA["Media: platter / NAND<br/>=== DURABLE ==="]
-    FS["fsync(fd) / fdatasync(fd)"] -.->|forces page cache to media<br/>and issues FLUSH/FUA| MEDIA
+    DC -->|FLUSH FUA| MEDIA["Media: platter / NAND<br/>=== DURABLE ==="]
+    FS["fsync(fd) / fdatasync(fd)"] -.->|forces page cache to media<br >and issues FLUSH FUA| MEDIA
     style PC fill:#fdd
     style BL fill:#fdd
     style DC fill:#fdd

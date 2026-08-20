@@ -287,7 +287,7 @@ flowchart TB
   C --> D["DETECTABLE: expired timestamp<br/>or lowered version number"]
 
   E["Attacker also steals the<br/>OFFLINE targets key"] --> F{"Enough to serve<br/>arbitrary malware?"}
-  F -->|"Only within delegation scope,<br/>and only if online keys also held"| G["Bounded blast radius<br/>(e.g. one project's paths)"]
+  F -->|"Only within delegation scope <br >and only if online keys also held"| G["Bounded blast radius<br/>(e.g. one project's paths)"]
 
   H["Attacker reaches THRESHOLD of<br/>OFFLINE root keys (m of n, many holders)"] --> I["Worst case:<br/>re-delegate every role"]
   I --> J["Requires compromising multiple<br/>people's hardware keys at once"]
@@ -314,23 +314,23 @@ sequenceDiagram
   Note over C: 1. Update ROOT (authority)
   C->>R: fetch N+1.root.json, N+2.root.json, ...
   R-->>C: newer root metadata (if any)
-  Note over C: verify each with OLD threshold AND NEW threshold;<br/>walk the chain to latest; check expiry
+  Note over C: verify each with OLD threshold AND NEW threshold<br/>walk the chain to latest, check expiry
   Note over C: 2. Update TIMESTAMP (freshness)
   C->>R: fetch timestamp.json
   R-->>C: timestamp metadata
-  Note over C: verify sig vs root-authorized timestamp keys;<br/>reject if version < trusted; reject if expired
+  Note over C: verify sig vs root-authorized timestamp keys,<br/>reject if version LT trusted, reject if expired
   Note over C: 3. Update SNAPSHOT (consistency)
   C->>R: fetch snapshot.json (version from timestamp)
   R-->>C: snapshot metadata
-  Note over C: verify length+hash vs timestamp;<br/>verify sig; reject any targets version rollback; check expiry
+  Note over C: verify length+hash vs timestamp,<br/>verify sig, reject any targets version rollback, check expiry
   Note over C: 4. Update TARGETS (content metadata)
   C->>R: fetch targets.json (version from snapshot)
   R-->>C: targets metadata
-  Note over C: verify length+hash vs snapshot; verify sig; check expiry;<br/>follow delegations to locate the target
+  Note over C: verify length+hash vs snapshot, verify sig, check expiry,<br/>follow delegations to locate the target
   Note over C: 5. DOWNLOAD + VERIFY the target
   C->>R: fetch target file
   R-->>C: file bytes
-  Note over C: verify length + hashes vs targets metadata;<br/>stop at declared length (endless-data defense)
+  Note over C: verify length + hashes vs targets metadata,<br/>stop at declared length (endless-data defense)
 ```
 
 Step by step, and why the order is what it is:
@@ -612,7 +612,7 @@ sequenceDiagram
 ```mermaid
 flowchart LR
   Q{"What is threatened?"}
-  Q -->|Mirror serves stale/rolled-back metadata| TUF["TUF defends<br/>signed timestamp + snapshot<br/>+ version monotonicity"]
+  Q -->|Mirror serves stale rolled-back metadata| TUF["TUF defends<br/>signed timestamp + snapshot<br/>+ version monotonicity"]
   Q -->|Signing event hidden or denied| LOG["Transparency log defends<br/>public inclusion proof<br/>+ monitors"]
   Q -->|Key compromise| BOTH["Both: TUF threshold + log detection"]
   TUF --> REC["Deploy together:<br/>TUF for update freshness,<br/>Rekor/CT for auditability"]

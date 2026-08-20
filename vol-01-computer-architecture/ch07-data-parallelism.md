@@ -388,7 +388,7 @@ flowchart TB
       GMEM["Global memory (HBM / GDDR, high bandwidth)"]
       SMS --> L2 --> GMEM
     end
-    CPU <-->|"PCIe / NVLink<br/>(data transfer bottleneck)"| GMEM
+    CPU <-->|"PCIe NVLink<br > data transfer bottleneck "| GMEM
 ```
 
 ### The memory hierarchy and latency hiding
@@ -473,13 +473,13 @@ services, serialize — is exactly this shape, which is why the CPU still runs t
 ```mermaid
 flowchart TD
     W["Workload"] --> Q1{"Massively data-parallel<br/>and uniform?"}
-    Q1 -->|No: branchy / sequential| CPU["CPU (scalar / light SIMD)"]
+    Q1 -->|No: branchy sequential| CPU["CPU (scalar / light SIMD)"]
     Q1 -->|Yes| Q2{"High arithmetic intensity?<br/>(compute-bound, data reuse)"}
-    Q2 -->|No: memory / transfer-bound| Q3{"Fits in a CPU core's<br/>SIMD reach?"}
+    Q2 -->|No: memory transfer-bound| Q3{"Fits in a CPU core's<br/>SIMD reach?"}
     Q3 -->|Yes| SIMD["CPU SIMD (vectorize in place)"]
-    Q3 -->|No, but huge| SIMD2["CPU SIMD across cores;<br/>GPU only if resident + bandwidth-bound"]
+    Q3 -->|No but huge| SIMD2["CPU SIMD across cores;<br/>GPU only if resident + bandwidth-bound"]
     Q2 -->|Yes| Q4{"Enough batch to fill the GPU<br/>and amortize PCIe transfer?"}
-    Q4 -->|No: tiny / latency-critical| CPU
+    Q4 -->|No: tiny latency-critical| CPU
     Q4 -->|Yes| GPU["GPU / accelerator"]
 ```
 

@@ -84,7 +84,7 @@ flowchart TB
       subgraph N1["Node 1 (socket 1)"]
         S1["Cores + caches"] --> IMC1["IMC 1"] --> D1["Local DIMMs"]
       end
-      IMC0 <-->|"inter-socket link<br/>(UPI / Infinity Fabric)"| IMC1
+      IMC0 <-->|"inter-socket link<br > UPI Infinity Fabric "| IMC1
     end
 ```
 
@@ -270,7 +270,7 @@ flowchart TD
         MC1["Memory controller<br/>Local DRAM 256 GiB"]
         C1 --- L3_1 --- MC1
     end
-    Socket0 <-->|"UPI / Infinity Fabric<br/>~30 GB/s, +80 ns"| Socket1
+    Socket0 <-->|"UPI Infinity Fabric<br >~30 GB s +80 ns"| Socket1
     IO0["PCIe NIC, NVMe (node 0 aff.)"] --- Socket0
     IO1["PCIe devices (node 1 aff.)"] --- Socket1
     Note["Local ~80 ns | Remote ~140 ns (+75%)<br/>Remote BW ~60% of local"]
@@ -340,7 +340,7 @@ flowchart TB
     subgraph BAD["Startup-thread init (all pages land on node 0)"]
       T0["Startup thread on node 0<br/>memset(whole buffer)"] --> P0["All pages -> node 0 DIMMs"]
       W0["Worker on node 0"] -->|local| P0
-      W1["Worker on node 1"] -->|"REMOTE (slow)"| P0
+      W1["Worker on node 1"] -->|"REMOTE slow "| P0
     end
     subgraph GOOD["Parallel first-touch (pages follow the toucher)"]
       A0["Worker on node 0<br/>writes its slice first"] --> Q0["Its pages -> node 0"]
@@ -445,7 +445,7 @@ flowchart TD
     Alloc["Allocation: malloc / mmap"] --> Policy{"NUMA policy"}
     Policy -->|"default: localalloc"| Local["Allocate on node of running CPU"]
     Policy -->|"interleave"| Inter["Stripe pages across nodes<br/>Max BW, avg latency"]
-    Policy -->|"bind / preferred"| Bind["Pin to node N"]
+    Policy -->|"bind preferred"| Bind["Pin to node N"]
     Policy -->|"first-touch"| FT["First faulting thread owns page<br/>Init locality matters!"]
     FT --> Mig{"AutoNUMA?"}
     Mig -->|"on"| Balance["Sample faults, migrate pages"]
@@ -574,11 +574,11 @@ structure is identical.
 flowchart LR
     subgraph NUMA_SIDE["Inside the box (NUMA)"]
       direction TB
-      NN0["NUMA node 0<br/>cores + local DRAM"] <-->|"interconnect<br/>(UPI / IF)"| NN1["NUMA node 1<br/>cores + local DRAM"]
+      NN0["NUMA node 0<br/>cores + local DRAM"] <-->|"interconnect<br > UPI IF "| NN1["NUMA node 1<br/>cores + local DRAM"]
     end
     subgraph DIST_SIDE["Across the datacenter"]
       direction TB
-      SRV0["Server / shard 0<br/>compute + local data"] <-->|"network<br/>(RPC)"| SRV1["Server / shard 1<br/>compute + local data"]
+      SRV0["Server / shard 0<br/>compute + local data"] <-->|"network<br > RPC "| SRV1["Server / shard 1<br/>compute + local data"]
     end
     NUMA_SIDE -.->|"same principles"| DIST_SIDE
 ```

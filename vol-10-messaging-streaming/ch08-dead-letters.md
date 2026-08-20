@@ -25,9 +25,9 @@ flowchart TB
     P[Producer] --> B[(Broker<br/>topic / queue)]
     B --> C[Consumer<br/>handler]
     C -->|success| Ack[Ack / commit offset<br/>message done]
-    C -->|transient failure<br/>503, timeout, deadlock| R[Retry<br/>backoff + jitter]
-    C -->|poison<br/>bad payload, bug, schema| D{Classify}
-    R -->|retryable<br/>attempts left| C
+    C -->|transient failure<br >503 timeout deadlock| R[Retry<br/>backoff + jitter]
+    C -->|poison<br >bad payload bug schema| D{Classify}
+    R -->|retryable<br >attempts left| C
     R -->|exhausted| DLQ[(Dead-letter<br/>queue / topic)]
     D -->|retryable| R
     D -->|non-retryable| DLQ
@@ -518,8 +518,8 @@ min.insync.replicas=2
 ```mermaid
 flowchart TB
     C[Consumer handler] --> Classify{Classify<br/>retryable vs poison}
-    Classify -->|Poison<br/>serialization, schema, 4xx| DLQ1[DLQ<br/>with failure headers<br/>+ original bytes]
-    Classify -->|Transient<br/>503, timeout, deadlock| Retry{Attempts left?}
+    Classify -->|Poison<br >serialization schema 4xx| DLQ1[DLQ<br/>with failure headers<br/>+ original bytes]
+    Classify -->|Transient<br >503 timeout deadlock| Retry{Attempts left?}
     Retry -->|Yes| Backoff[Backoff + jitter<br/>cap 30s<br/>non-blocking retry topic]
     Backoff --> C2[Retry on<br/>retry topic / queue]
     C2 -->|success| Ack[Ack / commit]
@@ -566,7 +566,7 @@ flowchart TB
     Try -->|No retriable| Retry["Retry queue<br/>backoff"]
     Retry --> Try
     Try -->|Exhausted| DLQ["DLQ<br/>dead.letter topic"]
-    Try -->|Poison<br/>non-retriable| DLQ
+    Try -->|Poison<br >non-retriable| DLQ
     DLQ --> Inspect["Inspect + re-drive"]
 ```
 

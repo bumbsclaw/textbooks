@@ -688,9 +688,9 @@ flowchart TD
     BASELINE["Baseline:<br/>normal build profile<br/>(duration, egress, steps)"] --> OBSERVE["Observe current<br/>build telemetry"]
     OBSERVE --> COMPARE{"Anomaly?"}
     COMPARE -->|No| PASS["Pass"]
-    COMPARE -->|Yes: new egress<br/>to unknown host| ALERT1["Alert: possible<br/>exfiltration"]
-    COMPARE -->|Yes: unexpected<br/>step / action| ALERT2["Alert: possible<br/>injection"]
-    COMPARE -->|Yes: artifact<br/>hash drift| ALERT3["Alert: possible<br/>tampering"]
+    COMPARE -->|Yes: new egress<br >to unknown host| ALERT1["Alert: possible<br/>exfiltration"]
+    COMPARE -->|Yes: unexpected<br >step action| ALERT2["Alert: possible<br/>injection"]
+    COMPARE -->|Yes: artifact<br >hash drift| ALERT3["Alert: possible<br/>tampering"]
 
     ALERT1 --> INVEST["Investigate +<br/>quarantine artifact"]
     style ALERT1 fill:#f88,stroke:#900

@@ -187,7 +187,7 @@ flowchart TB
     Pod2[Pod]
     Pod3[Pod]
 
-    Deploy -->|creates / updates| RS
+    Deploy -->|creates updates| RS
     RS -->|ensures replicas| Pod1
     RS -->|ensures replicas| Pod2
     RS -->|ensures replicas| Pod3

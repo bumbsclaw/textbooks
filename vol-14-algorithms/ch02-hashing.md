@@ -270,8 +270,8 @@ flowchart LR
     end
     Lookup["Lookup h=0x0A<br/>SIMD match → slots 0,2,6<br/>only compare those keys"]
 
-    Control -.->|"SIMD compare<br/>16 at once"| Lookup
-    Lookup -.->|"verify full key<br/>only on candidates"| Slots
+    Control -.->|"SIMD compare<br >16 at once"| Lookup
+    Lookup -.->|"verify full key<br >only on candidates"| Slots
 
     style C0 fill:#86efac,stroke:#166534,color:#000
     style C2 fill:#86efac,stroke:#166534,color:#000
@@ -611,8 +611,8 @@ flowchart TB
 ```mermaid
 flowchart LR
     USE{Use Case}
-    USE -->|Integrity / Security| CRYPTO[SHA-256 / BLAKE3]
-    USE -->|Hash Table / Dedup| FAST[murmur / xxHash / FNV]
+    USE -->|Integrity Security| CRYPTO[SHA-256 / BLAKE3]
+    USE -->|Hash Table Dedup| FAST[murmur / xxHash / FNV]
     USE -->|Password| SLOW[bcrypt / Argon2 - Slow]
 ```
 

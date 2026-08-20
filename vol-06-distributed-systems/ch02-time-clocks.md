@@ -332,7 +332,7 @@ flowchart LR
   subgraph P2["Process P2"]
     b1["event<br/>L = 1"] --> b2["event<br/>L = 2"] --> b3["event b<br/>L = 3"]
   end
-  a1 -.->|"L of a = 1, L of b = 3, so L a is less than L b<br/>yet a and b are CONCURRENT:<br/>no happens-before path exists between them.<br/>The converse of the clock condition FAILS."| b3
+  a1 -.->|"L of a = 1 L of b = 3 so L a is less than L b<br >yet a and b are CONCURRENT:<br >no happens-before path exists between them.<br >The converse of the clock condition FAILS."| b3
 ```
 
 What Lamport clocks *are* good for is manufacturing a **total order consistent with causality**.

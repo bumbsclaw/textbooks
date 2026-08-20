@@ -48,8 +48,8 @@ flowchart LR
   A --> R["Rewrite<br/>expand views<br/>flatten subqueries<br/>normalize predicates"]
   R --> O["Optimize<br/>search the plan space,<br/>cost each candidate"]
   O --> E["Execute<br/>run the physical plan,<br/>return rows"]
-  STATS["Statistics<br/>histograms, NDV,<br/>MCV lists, correlation"] -.->|"cardinality and<br/>cost estimates"| O
-  PC["Plan cache"] -.->|"skip straight to execute<br/>for repeated statements"| E
+  STATS["Statistics<br/>histograms, NDV,<br/>MCV lists, correlation"] -.->|"cardinality and<br >cost estimates"| O
+  PC["Plan cache"] -.->|"skip straight to execute<br >for repeated statements"| E
 ```
 
 **Parse** is ordinary compiler front-end work: tokenize, check the grammar, build a syntax tree.
@@ -622,9 +622,9 @@ flowchart TB
   end
   subgraph SH["Shuffle join — repartition both sides"]
     direction TB
-    SA["Table A shards"] -->|"re-hash every row<br/>on the join key"| SN1["Node 1<br/>key range 1"]
+    SA["Table A shards"] -->|"re-hash every row<br >on the join key"| SN1["Node 1<br/>key range 1"]
     SA --> SN2["Node 2<br/>key range 2"]
-    SB["Table B shards"] -->|"re-hash every row<br/>on the join key"| SN1
+    SB["Table B shards"] -->|"re-hash every row<br >on the join key"| SN1
     SB --> SN2
     SNOTE["Network cost: size of A plus size of B<br/>one full pass of both over the network<br/>Wins when both sides are large"]
   end

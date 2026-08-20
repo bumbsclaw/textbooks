@@ -361,10 +361,10 @@ point it inherits build-point accuracy.
 flowchart TD
     START["Need an SBOM. Where do I generate?"]
     START --> Q1{"Do I control the build?"}
-    Q1 -->|No — third-party<br/>artifact / image| BIN["Artifact scan:<br/>Syft / Trivy on the image"]
+    Q1 -->|No — third-party<br >artifact image| BIN["Artifact scan:<br/>Syft / Trivy on the image"]
     Q1 -->|Yes| Q2{"Is the build hermetic /<br/>plugin available?"}
     Q2 -->|Yes| BUILD["Build-time:<br/>language plugin / Bazel aspect /<br/>go version -m — highest fidelity"]
-    Q2 -->|No, but I have a lockfile| SRC["Source-point:<br/>cdxgen / cyclonedx-* from LOCKFILE"]
+    Q2 -->|No but I have a lockfile| SRC["Source-point:<br/>cdxgen / cyclonedx-* from LOCKFILE"]
     Q2 -->|No lockfile| FIX["Fix that first:<br/>commit a lockfile, then source-point"]
     BUILD --> COMBINE
     SRC --> COMBINE
@@ -733,7 +733,7 @@ flowchart TD
 
     CHOICE{"Need?"} -->|Image SBOM| SYFT
     CHOICE -->|Scan + SBOM| TRIVY
-    CHOICE -->|JS/Python depth| CDXGEN
+    CHOICE -->|JS Python depth| CDXGEN
     CHOICE -->|Translate SPDX to CDX| PROTOBOM
 ```
 

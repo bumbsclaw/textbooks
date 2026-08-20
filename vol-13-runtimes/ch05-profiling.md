@@ -33,8 +33,8 @@ Profiling answers three questions that metrics alone cannot:
 flowchart TB
     SYMPTOM["Symptom<br/>p99 ↑ / CPU ↑ / OOMs / throttle"] --> TRIAGE{"Triage:<br/>CPU-bound,<br/>memory-bound,<br/>or contention/I-O?"}
     TRIAGE -->|CPU high| CPU["CPU profile<br/>flame graph, top functions"]
-    TRIAGE -->|Heap / GC pressure| MEM["Allocation + heap profile<br/>alloc flame graph, live heap"]
-    TRIAGE -->|Latency w/o CPU| OFF["Off-CPU / lock / I-O profile<br/>blocked stacks, event-loop lag"]
+    TRIAGE -->|Heap GC pressure| MEM["Allocation + heap profile<br/>alloc flame graph, live heap"]
+    TRIAGE -->|Latency w o CPU| OFF["Off-CPU / lock / I-O profile<br/>blocked stacks, event-loop lag"]
     CPU --> HYP["Hypothesis:<br/>hot function / alloc site / lock"]
     MEM --> HYP
     OFF --> HYP
@@ -358,15 +358,15 @@ eBPF shines for questions runtime profilers cannot answer: "why is p99 high when
 ```mermaid
 flowchart TB
     FLAME["CPU flame graph<br/>widest = hottest"] --> HOT{"Hot leaf is..."}
-    HOT -->|your code<br/>(parse, serialize, hash)| CODE["Optimize code<br/>cache, batch, better algo"]
-    HOT -->|GC / alloc| GC2["Reduce allocation<br/>reuse buffers, pool"]
-    HOT -->|kernel / syscall| KERN["Batch I-O<br/>buffered writes, io_uring"]
-    HOT -->|lock / park| LOCK["Reduce contention<br/>shard, lock-free, bigger pool"]
+    HOT -->|your code<br > parse serialize hash| CODE["Optimize code<br/>cache, batch, better algo"]
+    HOT -->|GC alloc| GC2["Reduce allocation<br/>reuse buffers, pool"]
+    HOT -->|kernel syscall| KERN["Batch I-O<br/>buffered writes, io_uring"]
+    HOT -->|lock park| LOCK["Reduce contention<br/>shard, lock-free, bigger pool"]
 
     OFF2["Off-CPU / wall flame graph"] --> BLOCK{"Blocked on..."}
-    BLOCK -->|futex / mutex| LOCK
-    BLOCK -->|I-O / net| IO["I-O bottleneck<br/>pool size, timeout, retry"]
-    BLOCK -->|sleep / timer| TIMER["Timer churn<br/>coalesce timers"]
+    BLOCK -->|futex mutex| LOCK
+    BLOCK -->|I-O net| IO["I-O bottleneck<br/>pool size, timeout, retry"]
+    BLOCK -->|sleep timer| TIMER["Timer churn<br/>coalesce timers"]
 
     DIFF2["Differential flame graph<br/>before vs after"] --> VERIFY2{"Hotspot..."}
     VERIFY2 -->|shrunk| DONE["Tuning worked"]

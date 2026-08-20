@@ -262,7 +262,7 @@ flowchart TB
         ROOT --- EVENTS
     end
 
-    EXT1["Other aggregates\nreferenced by ID only"] -.->|"CustomerID (not Customer object)"| ROOT
+    EXT1["Other aggregates\nreferenced by ID only"] -.->|"CustomerID not Customer object "| ROOT
     EXT2["Shipment aggregate\n(order_id FK by value)"] -.->|"OrderID"| ROOT
 
     REPO["Repository\n(load/store whole aggregate\ntransactionally)"] --- Aggregate
@@ -417,19 +417,19 @@ flowchart TB
     subgraph Map["Context Map — Relationship Types"]
         direction TB
 
-        P1["Ordering"] <-->|"Partnership\n(shared planning,\ncoordinated releases)"| P2["Billing"]
+        P1["Ordering"] <-->|"Partnership\n shared planning \ncoordinated releases "| P2["Billing"]
 
-        CS1["Ordering\n(Customer)"] -->|"Customer / Supplier\n(ordering dictates,\nbilling conforms)"| CS2["Fulfillment\n(Supplier)"]
+        CS1["Ordering\n(Customer)"] -->|"Customer Supplier\n ordering dictates \nbilling conforms "| CS2["Fulfillment\n(Supplier)"]
 
-        CONF1["Catalog\n(upstream)"] -->|"Conformist\n(downstream conforms\nto upstream model)"| CONF2["Search Indexing\n(downstream)"]
+        CONF1["Catalog\n(upstream)"] -->|"Conformist\n downstream conforms\nto upstream model "| CONF2["Search Indexing\n(downstream)"]
 
-        ACL1["Legacy ERP\n(upstream, messy model)"] -->|"Anticorruption Layer\n(ACL translates\nand isolates)"| ACL2["Ordering\n(protected model)"]
+        ACL1["Legacy ERP\n(upstream, messy model)"] -->|"Anticorruption Layer\n ACL translates\nand isolates "| ACL2["Ordering\n(protected model)"]
 
-        SK1["Ordering"] -.->|"Shared Kernel\n(shared code — use sparingly)"| SK2["Pricing\n(tightly coupled)"]
+        SK1["Ordering"] -.->|"Shared Kernel\n shared code — use sparingly "| SK2["Pricing\n(tightly coupled)"]
 
-        OH1["Ordering"] -->|"Open Host Service\n(published API/event\ncontract for many consumers)"| OH2["Multiple downstream\nconsumers"]
+        OH1["Ordering"] -->|"Open Host Service\n published API event\ncontract for many consumers "| OH2["Multiple downstream\nconsumers"]
 
-        SEP1["Ordering"] -.-|"Separate Ways\n(no integration —\nduplicate simply)"| SEP2["Analytics\n(own copy via CDC)"]
+        SEP1["Ordering"] -.-|"Separate Ways\n no integration —\nduplicate simply "| SEP2["Analytics\n(own copy via CDC)"]
     end
 ```
 
@@ -648,7 +648,7 @@ flowchart TB
         MOD1["Ordering module\n(own package, own tables)"]
         MOD2["Billing module\n(own package, own tables)"]
         MOD3["Fulfillment module\n(own package, own tables)"]
-        MOD1 -.->|"domain events (in-process)"| MOD2
+        MOD1 -.->|"domain events in-process "| MOD2
         MOD1 -.-> MOD3
         DB2[("Shared DB\nbut table ownership\nis enforced by convention")]
         MOD1 --- DB2
@@ -671,8 +671,8 @@ flowchart TB
         SVC3 --- DB3C
     end
 
-    Phase1 -->|"Identify bounded contexts<br/>enforce module boundaries"| Phase2
-    Phase2 -->|"Extract services<br/>replace in-process events<br/>with broker + outbox"| Phase3
+    Phase1 -->|"Identify bounded contexts<br >enforce module boundaries"| Phase2
+    Phase2 -->|"Extract services<br >replace in-process events<br >with broker + outbox"| Phase3
 
     style Phase1 fill:#fa6,stroke:#333,color:#fff
     style Phase2 fill:#69c,stroke:#333,color:#fff

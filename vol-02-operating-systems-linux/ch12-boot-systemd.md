@@ -385,11 +385,11 @@ sequenceDiagram
   participant Svc as Service process
   Note over S: at boot, opens and binds<br/>orders-api.socket, LISTEN state
   C->>S: connect() to :8080
-  Note over S: socket buffers the SYN;<br/>connection queued
+  Note over S: socket buffers the SYN,<br/>connection queued
   S->>Svc: fork + exec service,<br/>pass listen fd (LISTEN_FDS=1)
   Svc->>Svc: sd_listen_fds(): adopt fd 3,<br/>accept() the queued connection
   Svc-->>C: serve response
-  Note over S,Svc: socket stays owned by systemd;<br/>service can restart without dropping it
+  Note over S,Svc: socket stays owned by systemd,<br/>service can restart without dropping it
 ```
 
 The mechanics: a `.socket` unit tells systemd what to listen on. systemd binds it early (before

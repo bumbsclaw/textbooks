@@ -557,8 +557,8 @@ Client ─► LB ──┤
 
 ```mermaid
 flowchart TB
-    Q{"Revocation & scale needs?"} -->|Immediate revoke<br/>server control| Session["Server sessions<br/>Redis/DB, opaque cookie"]
-    Q -->|Stateless, CDN, mobile| JWT["JWT<br/>short-lived access + refresh"]
+    Q{"Revocation & scale needs?"} -->|Immediate revoke<br >server control| Session["Server sessions<br/>Redis/DB, opaque cookie"]
+    Q -->|Stateless CDN mobile| JWT["JWT<br/>short-lived access + refresh"]
     Q -->|Both| Hybrid["Hybrid<br/>JWT 5m + Redis blocklist + refresh"]
 ```
 

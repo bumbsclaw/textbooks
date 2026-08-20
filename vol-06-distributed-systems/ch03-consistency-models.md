@@ -553,13 +553,13 @@ flowchart TB
         OLAP["Analytics<br/>eventual, batch"]
     end
     CLIENT["Clients"]
-    CLIENT -->|"decision-point writes<br/>uniqueness, money, leases"| SPINE
-    CLIENT -->|"reads, with session tokens<br/>where staleness would show"| PERI
-    OLTP -->|"async replication<br/>CDC, log shipping"| CACHE
+    CLIENT -->|"decision-point writes<br >uniqueness money leases"| SPINE
+    CLIENT -->|"reads with session tokens<br >where staleness would show"| PERI
+    OLTP -->|"async replication<br >CDC log shipping"| CACHE
     OLTP -->|"async"| SEARCH
     OLTP -->|"async"| FEED
     OLTP -->|"async"| OLAP
-    CONS -.->|"fencing tokens guard<br/>periphery writers — Chapter 2"| PERI
+    CONS -.->|"fencing tokens guard<br >periphery writers — Chapter 2"| PERI
 ```
 
 Two disciplines make this architecture work rather than merely exist. First, **per-operation

@@ -501,13 +501,13 @@ BBR's pacing) — but it is a policy decision, not a default you set blindly.
 flowchart TD
     Start["New connection<br/>cwnd = init (10 MSS)"] --> Slow["Slow start<br/>cwnd *= 2 per RTT<br/>Exponential until ssthresh or loss"]
     Slow --> Loss1{"Loss?"}
-    Loss1 -->|"no, cwnd >= ssthresh"| Avoid["Congestion avoidance<br/>AIMD: cwnd += 1 MSS per RTT<br/>(CUBIC: cubic curve, BBR: model-based)"]
-    Loss1 -->|"loss (3 dup ACKs)"| Fast["Fast retransmit + fast recovery<br/>ssthresh = cwnd/2<br/>cwnd = ssthresh (Reno)"]
+    Loss1 -->|"no cwnd >= ssthresh"| Avoid["Congestion avoidance<br/>AIMD: cwnd += 1 MSS per RTT<br/>(CUBIC: cubic curve, BBR: model-based)"]
+    Loss1 -->|"loss 3 dup ACKs "| Fast["Fast retransmit + fast recovery<br/>ssthresh = cwnd/2<br/>cwnd = ssthresh (Reno)"]
     Avoid --> Loss2{"Loss?"}
     Loss2 -->|"no"| Avoid
     Loss2 -->|"yes"| Fast
     Fast --> Avoid
-    Loss1 -->|"timeout (RTO)"| Timeout["RTO: ssthresh=cwnd/2<br/>cwnd=1 MSS, re-enter slow start"]
+    Loss1 -->|"timeout RTO "| Timeout["RTO: ssthresh=cwnd/2<br/>cwnd=1 MSS, re-enter slow start"]
     Timeout --> Slow
     Note["BBR: estimate BtlBw + RTprop<br/>Probe BW/RTT, no loss needed<br/>Better for bufferbloat"]
     style Slow fill:#fff3cd,stroke:#856404

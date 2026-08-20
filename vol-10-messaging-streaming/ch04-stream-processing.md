@@ -475,7 +475,7 @@ flowchart TB
     T1 <--> S1
     S0 <-.->|replicate| CL
     S1 <-.->|replicate| CL
-    T1 -->|transactional produce<br/>EOS v2| Out
+    T1 -->|transactional produce<br >EOS v2| Out
     T2 -->|transactional produce| Out
     T3 -->|transactional produce| Out
 

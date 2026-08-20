@@ -242,7 +242,7 @@ sequenceDiagram
     A->>B: RFO L (A wants to write)
     Note over B: B invalidates its copy (S to I)
     Note over A: A gains M, performs store
-    Note over A,B: A holds L in M; B holds nothing
+    Note over A,B: A holds L in M — B holds nothing
     B->>A: read L (miss, snoops A's M copy)
     A-->>B: fresh data (A writes back/forwards, M to S)
     Note over A,B: Both hold L in S again, both see the new value
@@ -349,7 +349,7 @@ flowchart TB
     end
     TA["Thread A on Core 0<br/>writes counter_a"] -->|"RFO: invalidates whole line in Core 1"| LINE
     TB["Thread B on Core 1<br/>writes counter_b"] -->|"RFO: invalidates whole line in Core 0"| LINE
-    LINE -.->|"line ping-pongs every write<br/>though A and B share no data"| LINE
+    LINE -.->|"line ping-pongs every write<br >though A and B share no data"| LINE
 ```
 
 Make it concrete. Two threads, each hammering its own counter:

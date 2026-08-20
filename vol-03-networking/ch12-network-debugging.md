@@ -62,19 +62,19 @@ before you interpret the result.
 ```mermaid
 flowchart TD
   S["Symptom: errors or latency on a specific call"] --> R{"Can you reproduce from a controlled client?"}
-  R -->|"no, intermittent or fleet-wide"| TEL["Start from always-on telemetry: RED metrics per hop, traces, LB and mesh access logs"]
+  R -->|"no intermittent or fleet-wide"| TEL["Start from always-on telemetry: RED metrics per hop, traces, LB and mesh access logs"]
   TEL --> LOC["Localize the failing hop, then reproduce there"]
   LOC --> D
   R -->|yes| D{"Does the name resolve, and to the address you expect?"}
-  D -->|"NXDOMAIN, SERVFAIL, timeout, or stale or wrong address"| DNS["DNS - Chapter 5: resolver path, TTL and cache, ndots, search domains, EDNS and TCP fallback"]
+  D -->|"NXDOMAIN SERVFAIL timeout or stale or wrong address"| DNS["DNS - Chapter 5: resolver path, TTL and cache, ndots, search domains, EDNS and TCP fallback"]
   D -->|ok| C{"Does a TCP connect to that address and port succeed?"}
   C -->|"connection refused"| REF["Nothing is listening: wrong port, process down, wrong address family, or an RST-generating middlebox"]
-  C -->|"timeout, no response"| NET["Silent drop: firewall or security group, routing or asymmetric return path, conntrack, SYN backlog - Chapters 1, 2, 3"]
+  C -->|"timeout no response"| NET["Silent drop: firewall or security group, routing or asymmetric return path, conntrack, SYN backlog - Chapters 1, 2, 3"]
   C -->|ok| T{"Does the TLS handshake complete and verify?"}
   T -->|no| TLS["TLS - Chapter 6: expiry, chain, SNI, ALPN, version and cipher, client cert, clock skew"]
   T -->|ok| H{"Does the application respond, correctly and in time?"}
-  H -->|"5xx, RST, GOAWAY, or gRPC UNAVAILABLE"| APP["Application and proxy layer - Chapters 7, 8, 9, 10: backend health, timeouts, circuit breaking, protocol errors"]
-  H -->|"slow, not failing"| LAT["Attribute latency: curl timing split, then per-hop spans - Volume 11 Chapter 4"]
+  H -->|"5xx RST GOAWAY or gRPC UNAVAILABLE"| APP["Application and proxy layer - Chapters 7, 8, 9, 10: backend health, timeouts, circuit breaking, protocol errors"]
+  H -->|"slow not failing"| LAT["Attribute latency: curl timing split, then per-hop spans - Volume 11 Chapter 4"]
   H -->|"works here but not in production"| DIFF["Enumerate the differences: source identity, policy, sidecar, protocol version, pooling, payload size"]
 ```
 

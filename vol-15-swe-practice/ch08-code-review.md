@@ -126,8 +126,8 @@ flowchart TB
     C -->|pass| D["Human review<br/>layered reading"]
     D --> E{"Verdict?"}
     E -->|"Approve"| F["Merge<br/>squash / rebase per policy"]
-    E -->|"Request changes<br/>(blocking)"| G["Author revises<br/>new commits, re-request review"]
-    E -->|"Comment<br/>(non-blocking)"| G
+    E -->|"Request changes<br > blocking "| G["Author revises<br/>new commits, re-request review"]
+    E -->|"Comment<br > non-blocking "| G
     G --> C
     F --> H["Post-merge<br/>deploy, observe, follow-ups<br/>filed as issues not TODOs"]
     D --> I["Async discussion<br/>threaded comments<br/>suggestion commits"]

@@ -408,7 +408,7 @@ flowchart LR
   E -->|"3 requests"| A["Service A<br/>up to 3 attempts"]
   A -->|"9 requests"| B["Service B<br/>up to 3 attempts"]
   B -->|"27 requests"| L["Leaf datastore<br/>27x offered load"]
-  L -.->|"more load, more timeouts,<br/>more retries"| L
+  L -.->|"more load more timeouts <br >more retries"| L
 ```
 
 Three layers of 3 attempts is 27× amplification at the leaf; four layers is 81×. The crucial property
@@ -572,8 +572,8 @@ emergent property of every layer's independent choices.
 ```mermaid
 flowchart TD
     Fail["Call failed"] --> Idem{"Idempotent?"}
-    Idem -->|"yes (GET, idempotent PUT)"| Safe["Safe to retry<br/>But still need budget"]
-    Idem -->|"no (POST, non-idempotent)"| Unsafe["Unsafe: may double-execute<br/>Need idempotency key<br/>Or exactly-once layer"]
+    Idem -->|"yes GET idempotent PUT "| Safe["Safe to retry<br/>But still need budget"]
+    Idem -->|"no POST non-idempotent "| Unsafe["Unsafe: may double-execute<br/>Need idempotency key<br/>Or exactly-once layer"]
     Safe --> Budget{"Retry budget<br/>(e.g. 20% of traffic)"}
     Budget -->|"under budget"| Retry["Retry with backoff + jitter<br/>Different backend (hedge)"]
     Budget -->|"over budget"| GiveUp["Fail fast, shed load<br/>Prevent retry storm"]

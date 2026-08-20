@@ -605,7 +605,7 @@ sequenceDiagram
   CA->>Cl: challenges valid
   Cl->>CA: finalize with CSR (public key)
   CA->>Cl: issued certificate: leaf + intermediate chain
-  Note over Cl: install cert; schedule auto-renew well before 90-day expiry
+  Note over Cl: install cert, schedule auto-renew well before 90-day expiry
 ```
 
 ### cert-manager in Kubernetes

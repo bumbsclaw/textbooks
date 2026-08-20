@@ -157,9 +157,9 @@ flowchart LR
     B --> C["Digest h<br/>fixed n bits"]
 
     C --> D{"Attacker goal?"}
-    D -->|"Given h, find m<br/>Preimage"| E["~2^n work<br/>2^256 for SHA-256"]
-    D -->|"Given m1, find m2<br/>Second preimage"| F["~2^n work"]
-    D -->|"Find any m1,m2 pair<br/>Collision"| G["~2^{n/2} work<br/>2^128 for SHA-256<br/>birthday bound"]
+    D -->|"Given h find m<br >Preimage"| E["~2^n work<br/>2^256 for SHA-256"]
+    D -->|"Given m1 find m2<br >Second preimage"| F["~2^n work"]
+    D -->|"Find any m1 m2 pair<br >Collision"| G["~2^{n/2} work<br/>2^128 for SHA-256<br/>birthday bound"]
 
     style G fill:#fff3cd
 ```

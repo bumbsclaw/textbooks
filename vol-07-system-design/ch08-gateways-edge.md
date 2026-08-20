@@ -339,10 +339,10 @@ flowchart TD
     L --> JWT[JWT filter<br/>validate + inject claims]
     JWT --> RL[Rate limit filter<br/>check Redis / gRPC service]
     RL --> Route{Route table<br/>prefix / header / canary}
-    Route -->|/api/v1/orders| Orders[Cluster: orders<br/>least-request + outlier]
+    Route -->|api v1 orders| Orders[Cluster: orders<br/>least-request + outlier]
     Route -->|x-canary=1| Canary[Cluster: orders-canary]
-    Route -->|/api/v1/users| Users[Cluster: users]
-    Route -->|/health| Direct[Direct 200]
+    Route -->|api v1 users| Users[Cluster: users]
+    Route -->|health| Direct[Direct 200]
     Orders --> CB[Circuit breaker<br/>max 2048 req / 3 retries]
     CB --> Upstream[(Upstream pods)]
     JWT -.->|401| Reject[401 Unauthorized]

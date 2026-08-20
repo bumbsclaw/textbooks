@@ -563,7 +563,7 @@ flowchart TD
         M1["Similarity + new-and-similar<br/>flags; dangling VCS owners;<br/>unverified repo links"]
     end
     reserve --> source --> verify --> monitor
-    S2 -.->|"enforcement<br/>chokepoint"| PROXY[["Internal registry / proxy"]]
+    S2 -.->|"enforcement<br >chokepoint"| PROXY[["Internal registry / proxy"]]
     S1 -.-> PROXY
     M1 -.-> PROXY
 ```
@@ -672,7 +672,7 @@ chokepoint you control.
 flowchart TD
     CODE["Source: import 'corp-auth'<br/>private package"] --> RESOLVE{"Resolver order"}
     RESOLVE -->|Check private first| PRIVATE["Private registry<br/>corp-auth v1.0 ok"]
-    RESOLVE -->|Check public first<br/>or public has higher version| PUBLIC["Public registry<br/>corp-auth v99.0.0 (attacker)"]
+    RESOLVE -->|Check public first<br >or public has higher version| PUBLIC["Public registry<br/>corp-auth v99.0.0 (attacker)"]
     PRIVATE --> SAFE["Safe install"]
     PUBLIC --> PWNED["Attacker code<br/>executed"]
     CONFIG["Registry config<br/>scoped vs unscoped"] -. determines .-> RESOLVE

@@ -161,7 +161,7 @@ flowchart LR
         C1 -->|"conn 2: req B → resp B"| S1
         C1 -->|"conn 3: req C → resp C"| S1
         C1 -.->|"conn 4-6 idle or reused"| S1
-        C1 -->|"req G waits: no free conn (HOL at L7)"| S1
+        C1 -->|"req G waits: no free conn HOL at L7 "| S1
     end
 ```
 

@@ -95,8 +95,8 @@ flowchart LR
     M --> C
     C -->|"resolve"| META
     C -->|"download"| ART
-    C -->|"write/verify"| L
-    C -->|"install (maybe run scripts)"| PROJ
+    C -->|"write verify"| L
+    C -->|"install maybe run scripts "| PROJ
     META -.->|"references by hash"| ART
 ```
 
@@ -352,7 +352,7 @@ flowchart TD
     P -->|"2. go.mod + zip"| B
     B -->|"3. lookup hash for module@version"| S["Checksum DB<br/>sum.golang.org<br/>(append-only Merkle log)"]
     S -->|"4. signed hash + inclusion proof"| B
-    B -->|"5. verify inclusion proof<br/>+ hash the downloaded zip"| V{"hash ==<br/>go.sum ?"}
+    B -->|"5. verify inclusion proof<br >+ hash the downloaded zip"| V{"hash ==<br/>go.sum ?"}
     V -->|"match"| OK["cache in module cache,<br/>trust in go.sum"]
     V -->|"mismatch"| FAIL["hard error: possible tampering"]
     P -.->|"origin fetch on cache miss"| VCS["Upstream VCS<br/>(github.com/... )"]

@@ -222,11 +222,11 @@ flowchart LR
     L3["L3<br/>isolated runs,<br/>signing key unreachable"]
     VER["VERIFY<br/>policy gate at deploy<br/>audit then enforce"]
 
-    L0 -->|"add generation step<br/><b>effort: low</b><br/>enabler: B4 Ch3"| L1
-    L1 -->|"hosted CI + OIDC + Sigstore<br/><b>effort: low-med (free-ish)</b><br/>enabler: B5 Ch3-4, B4 Ch3"| L2
-    L2 -->|"ephemeral runners, isolate signer<br/><b>effort: high (platform)</b><br/>enabler: B4 Ch8, B4 Ch10"| L3
-    L3 -->|"gate deploys on policy<br/><b>effort: med</b><br/>enabler: B5 Ch8/10, B6 Ch5-6"| VER
-    L2 -.->|"verify what you have,<br/>even at L2"| VER
+    L0 -->|"add generation step<br ><b>effort: low< b><br >enabler: B4 Ch3"| L1
+    L1 -->|"hosted CI + OIDC + Sigstore<br ><b>effort: low-med free-ish < b><br >enabler: B5 Ch3-4 B4 Ch3"| L2
+    L2 -->|"ephemeral runners isolate signer<br ><b>effort: high platform < b><br >enabler: B4 Ch8 B4 Ch10"| L3
+    L3 -->|"gate deploys on policy<br ><b>effort: med< b><br >enabler: B5 Ch8 10 B6 Ch5-6"| VER
+    L2 -.->|"verify what you have <br >even at L2"| VER
 ```
 
 ### The route in one table
@@ -378,8 +378,8 @@ flowchart TB
             S2["S2C2F<br/>ingest → scan → inventory → update<br/>→ enforce → audit → rebuild → fix<br/>your internal registry"]
         end
     end
-    SLSA -.->|"meet at the verifier:<br/>verify provenance of what you<br/>build AND what you ingest"| S2
-    SSDF -.->|"the level your federal<br/>attestation is written against<br/>(Book 8 Ch 1)"| PROD
+    SLSA -.->|"meet at the verifier:<br >verify provenance of what you<br >build AND what you ingest"| S2
+    SSDF -.->|"the level your federal<br >attestation is written against<br > Book 8 Ch 1 "| PROD
 ```
 
 The value of running them as one program is that production and consumption maturity *advance
@@ -403,9 +403,9 @@ flowchart LR
     P3["Phase 3 — Verification / Enforcement<br/>verify at admission (ENFORCE),<br/>L3 builds, ingestion enforcement,<br/>reachability + VEX<br/><b>S2C2F L3 · SLSA L3</b>"]
     P4["Phase 4 — Maturity<br/>rebuild from source, fix+upstream,<br/>continuous compliance,<br/>full attestation-gated deploy<br/><b>S2C2F L4</b>"]
     P1 --> P2 --> P3 --> P4
-    P1 -.->|"visibility funds<br/>the next phase"| P2
-    P2 -.->|"audit data closes<br/>the gap before enforce"| P3
-    P3 -.->|"critical set enforced,<br/>then deepen"| P4
+    P1 -.->|"visibility funds<br >the next phase"| P2
+    P2 -.->|"audit data closes<br >the gap before enforce"| P3
+    P3 -.->|"critical set enforced <br >then deepen"| P4
 ```
 
 ### Phase 1 — Foundation and visibility
@@ -541,7 +541,7 @@ flowchart TB
     PLAT --> T2["Team B<br/>inherits current level"]
     PLAT --> T3["Team C<br/>inherits current level"]
     PLAT --> TN["...400 teams<br/>inherit current level"]
-    T1 -.->|"leaving the road<br/>= tracked exception"| EXC["Exception register<br/>owner · reason · expiry ·<br/>risk acceptance"]
+    T1 -.->|"leaving the road<br >= tracked exception"| EXC["Exception register<br/>owner · reason · expiry ·<br/>risk acceptance"]
     T2 -.-> EXC
     TN -.-> EXC
     VER["Verifier's own logs<br/>measure real coverage,<br/>not self-declaration"] --- PLAT

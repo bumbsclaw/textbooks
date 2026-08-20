@@ -599,13 +599,13 @@ age must be acceptable *by design*, not by luck.
 ```mermaid
 flowchart LR
   APP["Application services"] -->|"transactional writes"| PG["Postgres<br/>system of record"]
-  PG -->|"WAL tail - CDC<br/>Debezium"| LOG["Event log<br/>Kafka"]
+  PG -->|"WAL tail - CDC<br >Debezium"| LOG["Event log<br/>Kafka"]
   LOG --> ES["Elasticsearch<br/>search index"]
   LOG --> RS["Redis<br/>cache warm and invalidate"]
   LOG --> DW["Warehouse<br/>analytics"]
-  APP -->|"reads, seconds stale"| ES
-  APP -->|"reads, ms to s stale"| RS
-  APP -.->|"NO dual writes from the app<br/>derived stores are downstream only"| LOG
+  APP -->|"reads seconds stale"| ES
+  APP -->|"reads ms to s stale"| RS
+  APP -.->|"NO dual writes from the app<br >derived stores are downstream only"| LOG
 ```
 
 ## The distributed-systems lens

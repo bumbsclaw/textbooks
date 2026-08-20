@@ -161,7 +161,7 @@ flowchart LR
         P2["Legacy Jenkins cluster<br/>SLSA L1 · feed: partial · signed: no · SBOM: no"]
         P3["Snowflake: payments build<br/>SLSA L0 · feed: no · signed: no · SBOM: no"]
     end
-    P3 -->|"highest risk × lowest maturity<br/>= start here"| FOCUS["Priority focus"]
+    P3 -->|"highest risk × lowest maturity<br >= start here"| FOCUS["Priority focus"]
 ```
 
 ### Threat-model-driven prioritization
@@ -752,10 +752,10 @@ flowchart LR
 ```mermaid
 flowchart TD
     BACKLOG["All supply-chain risks"] --> SCORE{"Score by<br/>exploitability x blast radius"}
-    SCORE -->|High / High| P0["P0: fix now<br/>e.g., unpinned CI, public confusion"]
-    SCORE -->|High / Low| P1["P1: this quarter<br/>e.g., missing SBOM"]
-    SCORE -->|Low / High| P1
-    SCORE -->|Low / Low| P2["P2: backlog<br/>e.g., SLSA L4 aspirational"]
+    SCORE -->|High High| P0["P0: fix now<br/>e.g., unpinned CI, public confusion"]
+    SCORE -->|High Low| P1["P1: this quarter<br/>e.g., missing SBOM"]
+    SCORE -->|Low High| P1
+    SCORE -->|Low Low| P2["P2: backlog<br/>e.g., SLSA L4 aspirational"]
     P0 --> SPRINT["Current sprint"]
     P1 --> NEXT["Next quarter"]
     P2 --> BACK["Backlog"]

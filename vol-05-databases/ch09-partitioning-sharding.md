@@ -397,7 +397,7 @@ flowchart TD
     W2["writers"] --> S0["star_99#0"] --> TA["shard A — 40%"]
     W2 --> S1["star_99#1"] --> TB["shard B — 41%"]
     W2 --> S2["star_99#2"] --> TC["shard C — 39%"]
-    RD["reader"] -.->|"fan-out and merge<br/>all 3 sub-keys"| TA
+    RD["reader"] -.->|"fan-out and merge<br >all 3 sub-keys"| TA
     RD -.-> TB
     RD -.-> TC
   end
@@ -446,7 +446,7 @@ flowchart TD
     M3["node C<br/>v8 v9 v10"]
     M4["node D<br/>v3 v7 v11"]
   end
-  B4 -->|"move v3, v7, v11<br/>update assignment map<br/>no key rehashed"| AF
+  B4 -->|"move v3 v7 v11<br >update assignment map<br >no key rehashed"| AF
 ```
 
 This design is ubiquitous because it is right:

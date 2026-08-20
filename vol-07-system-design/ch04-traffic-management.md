@@ -532,8 +532,8 @@ Without draining, a rolling deploy that restarts 10% of pods drops 10% of in-fli
 
 ```mermaid
 flowchart TD
-    Q{"Need content-aware routing?"} -->|No - TCP/UDP only| L4["L4 — NLB / IPVS<br/>packet rewrite, ultra-low latency<br/>no TLS termination, no header routing"]
-    Q -->|Yes - HTTP/gRPC| L7["L7 — ALB / Envoy / nginx<br/>header, path, cookie routing<br/>TLS, retries, rate limiting, tracing"]
+    Q{"Need content-aware routing?"} -->|No - TCP UDP only| L4["L4 — NLB / IPVS<br/>packet rewrite, ultra-low latency<br/>no TLS termination, no header routing"]
+    Q -->|Yes - HTTP gRPC| L7["L7 — ALB / Envoy / nginx<br/>header, path, cookie routing<br/>TLS, retries, rate limiting, tracing"]
     L4 --> S1["Scale: millions of conns<br/>use for DB, cache, raw TCP"]
     L7 --> S2["Scale: feature routing<br/>canary, A/B, BFF"]
 ```

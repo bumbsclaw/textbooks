@@ -74,7 +74,7 @@ flowchart LR
   RQ["Read quorum<br/>R = 3"] --> C
   RQ --> D
   RQ --> E
-  C ==>|"intersection is non-empty:<br/>R + W = 6 exceeds N = 5<br/>C saw the write and answers the read"| OUT["Read observes latest write"]
+  C ==>|"intersection is non-empty:<br >R + W = 6 exceeds N = 5<br >C saw the write and answers the read"| OUT["Read observes latest write"]
 ```
 
 Notice what the argument does and does not use. It uses only counting — no synchrony assumption,
@@ -330,7 +330,7 @@ flowchart TB
   A0 -.->|"step 1: roots differ — descend"| B0
   A1 -.->|"step 2: left halves match — prune subtree"| B1
   A2 -.->|"step 3: right halves differ — recurse"| B2
-  A2 ==>|"step 4: mismatching leaves found<br/>exchange only those keys"| B2
+  A2 ==>|"step 4: mismatching leaves found<br >exchange only those keys"| B2
 ```
 
 The cost that the paper is honest about, and that operators rediscover: the trees must be built,
@@ -370,7 +370,7 @@ flowchart TB
   D1["D1 via Sx<br/>vv Sx:1"] --> D2["D2 via Sx<br/>vv Sx:2"]
   D2 --> D3["D3 via Sy<br/>vv Sx:2, Sy:1"]
   D2 --> D4["D4 via Sz<br/>vv Sx:2, Sz:1"]
-  D3 -->|"concurrent with D4:<br/>kept as siblings"| D5["client reads both, merges,<br/>writes D5 via Sx<br/>vv Sx:3, Sy:1, Sz:1"]
+  D3 -->|"concurrent with D4:<br >kept as siblings"| D5["client reads both, merges,<br/>writes D5 via Sx<br/>vv Sx:3, Sy:1, Sz:1"]
   D4 --> D5
 ```
 

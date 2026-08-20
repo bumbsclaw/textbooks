@@ -590,7 +590,7 @@ watches make routine.
 ```mermaid
 flowchart LR
   E["etcd — revisions"] --> AS["API server<br/>watch cache"]
-  AS -->|"list at resourceVersion<br/>then watch from it"| INF["Informer cache"]
+  AS -->|"list at resourceVersion<br >then watch from it"| INF["Informer cache"]
   INF -->|"event nudges key onto queue"| WQ["Work queue<br/>coalesces duplicates"]
   WQ --> REC["reconcile:<br/>read desired and actual state<br/>compute diff, act"]
   REC -->|"writes via API server"| AS

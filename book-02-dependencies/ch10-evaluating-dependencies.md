@@ -159,8 +159,8 @@ flowchart TD
   B -->|"genuinely new need"| C["Run intake checklist +<br/>automated signals"]
   C --> D{"Health, license, provenance,<br/>footprint within policy?"}
   D -->|"clear fail"| R2["REJECT — or find alternative"]
-  D -->|"clear pass, low criticality"| E["ADOPT — normal path,<br/>proxy + policy handle the rest"]
-  D -->|"pass but load-bearing<br/>or borderline"| F["CURATE — add to golden set,<br/>assign owner, deeper review"]
+  D -->|"clear pass low criticality"| E["ADOPT — normal path,<br/>proxy + policy handle the rest"]
+  D -->|"pass but load-bearing<br >or borderline"| F["CURATE — add to golden set,<br/>assign owner, deeper review"]
   F --> G["Vetted internal catalog entry<br/>+ named owner + review cadence"]
   E --> H["Enters via proxy<br/>(Ch 8): scan, cooldown, pin"]
   R2 --> I["Log decision + rationale<br/>(auditable, reusable)"]
@@ -609,7 +609,7 @@ flowchart TB
   C3 --> U1
   U1 --> R1
   R1 --> R2
-  R2 -->|"remove / replace / fund"| I2
+  R2 -->|"remove replace fund"| I2
   G1 -.->|"intake gate"| I2
   G1 -.->|"ingest gate"| P2
   G1 -.->|"CI gate"| L1

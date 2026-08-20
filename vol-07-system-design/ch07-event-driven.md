@@ -38,8 +38,8 @@ The cost is that the system becomes *eventually consistent* by construction. Aft
 ```mermaid
 flowchart LR
     subgraph Sync[Synchronous — temporal + spatial coupling]
-        A1[Order Service] -->|gRPC ReserveInventory<br/>blocks, retries, timeouts| B1[Inventory]
-        A1 -->|gRPC ChargePayment<br/>blocks| C1[Payments]
+        A1[Order Service] -->|gRPC ReserveInventory<br >blocks retries timeouts| B1[Inventory]
+        A1 -->|gRPC ChargePayment<br >blocks| C1[Payments]
         B1 -.->|failure cascades| A1
     end
     subgraph Async[Event-driven — decoupled]
@@ -343,13 +343,13 @@ Operational notes:
 ```mermaid
 flowchart TD
     App[Order Service] -->|BEGIN| DB[(Postgres 16<br/>orders + outbox)]
-    App -->|INSERT orders + outbox<br/>COMMIT atomically| DB
-    DB -->|WAL / pgoutput| Deb[Debezium 2.5<br/>replication slot]
-    Deb -->|EventRouter SMT<br/>route by event_type| Kafka[(Kafka 3.7<br/>order.events)]
+    App -->|INSERT orders + outbox<br >COMMIT atomically| DB
+    DB -->|WAL pgoutput| Deb[Debezium 2.5<br/>replication slot]
+    Deb -->|EventRouter SMT<br >route by event_type| Kafka[(Kafka 3.7<br/>order.events)]
     Kafka --> C1[Inventory consumer]
     Kafka --> C2[Payments consumer]
     Kafka --> C3[Search indexer]
-    C1 -->|idempotent apply<br/>INSERT ... ON CONFLICT DO NOTHING| DB2[(Inventory DB)]
+    C1 -->|idempotent apply<br >INSERT ... ON CONFLICT DO NOTHING| DB2[(Inventory DB)]
     C3 --> ES[(Elasticsearch)]
 
     style DB fill:#e3f2fd

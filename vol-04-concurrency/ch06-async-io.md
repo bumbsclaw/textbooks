@@ -418,7 +418,7 @@ flowchart LR
     EXEC["Execute operations<br/>async, batched"]
   end
   PREP --> SQ
-  SQ -->|"io_uring_enter:<br/>one syscall per batch<br/>or none with SQPOLL"| EXEC
+  SQ -->|"io_uring_enter:<br >one syscall per batch<br >or none with SQPOLL"| EXEC
   EXEC -->|"post completion"| CQ
   CQ --> REAP
 ```
@@ -485,7 +485,7 @@ flowchart TD
   DEFER --> ALIVE{"Anything still pending?<br/>handles, timers, requests"}
   ALIVE -->|"yes"| START
   ALIVE -->|"no"| EXIT["Loop exits"]
-  DISPATCH -.->|"one callback blocks<br/>for 200 ms"| STALL["Every timer late by 200 ms<br/>every socket unserviced<br/>loop lag visible fleet-wide"]
+  DISPATCH -.->|"one callback blocks<br >for 200 ms"| STALL["Every timer late by 200 ms<br/>every socket unserviced<br/>loop lag visible fleet-wide"]
 ```
 
 **Timers.** Every loop needs "call me in 30 s" — connect timeouts, keepalives, retries. The

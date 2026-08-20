@@ -568,7 +568,7 @@ flowchart LR
   APP["checkout-service"]
   PAY["payments-api<br/>trust: third-party-pci<br/>PCI · outbound"]
   UP["user-profile<br/>trust: internal<br/>PII · bi-directional"]
-  APP -->|"outbound, crosses boundary"| PAY
+  APP -->|"outbound crosses boundary"| PAY
   APP <-->|"internal"| UP
   classDef ext fill:#f8d7da,stroke:#b02a37,color:#000;
   classDef int fill:#d1e7dd,stroke:#146c43,color:#000;

@@ -454,7 +454,7 @@ flowchart LR
   E -->|no| D
   E -->|yes| F["Respond\n(query inventory → contain →\nrotate → hunt)"]
   F --> A
-  D -->|tier change / re-assess| A
+  D -->|tier change re-assess| A
 ```
 
 ### Vendor incident response: the SolarWinds moment applied

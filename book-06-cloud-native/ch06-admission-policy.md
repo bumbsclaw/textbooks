@@ -333,7 +333,7 @@ flowchart TB
   API["kube-apiserver"] -->|AdmissionReview| GK["Gatekeeper<br/>validating webhook"]
   CT --> GK
   CO --> GK
-  GK -->|OPA evaluates Rego<br/>violation set empty?| DEC{"admit / deny / warn"}
+  GK -->|OPA evaluates Rego<br >violation set empty?| DEC{"admit / deny / warn"}
   DEC --> API
   GK -->|periodic| AUD["Audit<br/>re-eval etcd objects<br/>write violations to status"]
 ```
@@ -883,8 +883,8 @@ flowchart TB
 flowchart TD
   Q1{"Can webhook be reached?"}
   Q1 -->|Yes| V1["Verify path<br/>(normal)"]
-  Q1 -->|No / timeout| Q2{"failurePolicy?"}
-  Q2 -->|FailClosed (recommended prod)| BLOCK["Block (safe)<br/>may block deploys<br/>if webhook down"]
+  Q1 -->|No timeout| Q2{"failurePolicy?"}
+  Q2 -->|FailClosed recommended prod| BLOCK["Block (safe)<br/>may block deploys<br/>if webhook down"]
   Q2 -->|FailOpen| ALLOW["Allow (risky)<br/>unverified images may run"]
   Q2 -->|FailClosed + HA| HA["HA webhook (3 replicas)<br/>+ cache + timeout tuning"]
   style BLOCK fill:#d29922,color:#000

@@ -175,7 +175,7 @@ flowchart LR
   TF["terraform apply"] -->|"gRPC subprocess"| PR["Provider plugin<br/>(binary)"]
   ENVV["Cloud creds in env<br/>AWS_* / role"] --> PR
   PR -->|"declared CRUD calls"| API["Cloud API<br/>(intended)"]
-  PR -.->|"out-of-band calls<br/>not in the plan"| EXFIL["Attacker endpoint<br/>+ backdoor resources"]
+  PR -.->|"out-of-band calls<br >not in the plan"| EXFIL["Attacker endpoint<br/>+ backdoor resources"]
   API --> INFRA["Your infrastructure"]
   EXFIL -.-> INFRA
 ```
@@ -711,8 +711,8 @@ flowchart TB
   RECON --> DIFF{"Drift?"}
   DIFF -->|No| OK["In sync"]
   DIFF -->|Yes| CLASS{"Kind?"}
-  CLASS -->|Intended (approved)| APPROVE["Approve via PR<br/>+ audit log"]
-  CLASS -->|Unintended / manual| ALERT["Alert + auto-revert<br/>(GitOps) or ticket"]
+  CLASS -->|Intended approved| APPROVE["Approve via PR<br/>+ audit log"]
+  CLASS -->|Unintended manual| ALERT["Alert + auto-revert<br/>(GitOps) or ticket"]
   style ALERT fill:#f85149,color:#fff
   style APPROVE fill:#d29922,color:#000
 ```

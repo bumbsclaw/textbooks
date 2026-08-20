@@ -86,14 +86,14 @@ flowchart TB
     subgraph host["Bare metal / inside one VM"]
         R3["Ring 3 — user mode<br/>your service, libc<br/>privileged instrs TRAP"]
         R0["Ring 0 — kernel mode<br/>OS: schedulers, drivers,<br/>page tables, syscalls"]
-        R3 -->|"SYSCALL / trap"| R0
-        R0 -->|"IRET / SYSRET"| R3
+        R3 -->|"SYSCALL trap"| R0
+        R0 -->|"IRET SYSRET"| R3
     end
     subgraph virt["With hardware-assisted virtualization"]
         NONROOT["VMX non-root<br/>guest ring 3 AND guest ring 0<br/>guest kernel thinks it owns ring 0"]
         ROOT["VMX root<br/>hypervisor / VMM (ring 0)<br/>owns the real machine"]
-        NONROOT -->|"VM exit (privileged/sensitive op)"| ROOT
-        ROOT -->|"VMRESUME (VM entry)"| NONROOT
+        NONROOT -->|"VM exit privileged sensitive op "| ROOT
+        ROOT -->|"VMRESUME VM entry "| NONROOT
     end
 ```
 
@@ -267,8 +267,8 @@ virtualization cheap enough to be the default.
 
 ```mermaid
 flowchart LR
-    GVA["Guest-virtual<br/>address (GVA)"] -->|"guest page tables<br/>(owned by guest OS)"| GPA["Guest-physical<br/>address (GPA)"]
-    GPA -->|"EPT / NPT<br/>(owned by hypervisor)"| HPA["Host-physical<br/>address (HPA)"]
+    GVA["Guest-virtual<br/>address (GVA)"] -->|"guest page tables<br > owned by guest OS "| GPA["Guest-physical<br/>address (GPA)"]
+    GPA -->|"EPT NPT<br > owned by hypervisor "| HPA["Host-physical<br/>address (HPA)"]
     GVA -. "final translation cached in TLB<br/>tagged by VPID/ASID" .-> HPA
 ```
 
@@ -565,7 +565,7 @@ sequenceDiagram
     Note over CPU: Speculation squashed — architecturally "nothing happened"
     A->>CPU: Probe cache lines, measure access latency
     CPU-->>A: Fast line reveals secret value (timing leak)
-    Note over A,S: Architectural boundary held; microarch. state leaked across it
+    Note over A,S: Architectural boundary held — microarch. state leaked across it
 ```
 
 The landmark instances, accurately:

@@ -115,10 +115,10 @@ flowchart TB
   IDP -->|"2. ID token"| COSIGN
   COSIGN -->|"3. token + ephemeral pubkey"| FULCIO
   FULCIO -->|"4. logs pre-cert"| CTLOG
-  FULCIO -->|"5. signed cert (SCT embedded)"| COSIGN
+  FULCIO -->|"5. signed cert SCT embedded "| COSIGN
   COSIGN -->|"6. signature + cert"| REKOR
   REKOR -->|"7. inclusion proof + SET"| COSIGN
-  COSIGN -->|"8. push sig/cert as OCI artifact"| REG
+  COSIGN -->|"8. push sig cert as OCI artifact"| REG
   TUF -.->|"root of trust for all keys"| COSIGN
   TSA -.->|"optional signed timestamp"| COSIGN
 ```
@@ -326,7 +326,7 @@ flowchart LR
     NA["NotAfter<br/>t0 + 10 min"]
     NB --> SIGN --> LOG --> NA
   end
-  LOG ==>|"SET signed by Rekor's key<br/>attests this time"| PROOF["Durable proof:<br/>'signed while cert valid'"]
+  LOG ==>|"SET signed by Rekor's key<br >attests this time"| PROOF["Durable proof:<br/>'signed while cert valid'"]
   PROOF ==>|"checked years later"| VERIFY["Verifier (any time later):<br/>NotBefore &le; integratedTime &le; NotAfter<br/>&rArr; signature is trustworthy"]
 ```
 

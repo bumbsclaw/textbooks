@@ -88,8 +88,8 @@ flowchart TD
 
   APP --> TC1
   APP --> TC2
-  TC1 -->|"miss / batch refill"| A1
-  TC2 -->|"miss / batch refill"| A2
+  TC1 -->|"miss batch refill"| A1
+  TC2 -->|"miss batch refill"| A2
   A1 --> CENTRAL
   A2 --> CENTRAL
   CENTRAL -->|"grow"| KERNEL
@@ -207,11 +207,11 @@ flowchart LR
   end
   DISK["Disk / SSD"]
 
-  APP -->|"read(): hit → memcpy"| PC
+  APP -->|"read : hit → memcpy"| PC
   PC -->|"read miss → fault in"| DISK
-  APP -->|"write(): copy in, mark dirty, return"| PC
-  PC -->|"async write-back<br/>(dirty ratio / expiry)"| DISK
-  APP -.->|"fsync(): force flush + wait"| DISK
+  APP -->|"write : copy in mark dirty return"| PC
+  PC -->|"async write-back<br > dirty ratio expiry "| DISK
+  APP -.->|"fsync : force flush + wait"| DISK
   DISK -.->|"read-ahead: prefetch next pages"| PC
 ```
 
@@ -411,7 +411,7 @@ flowchart TD
     Trans["Transparent Huge Pages (THP)<br/>khugepaged coalesces<br/>defrag stalls, latency spikes"]
     Explicit["Explicit hugetlbfs<br/>Pre-allocated at boot<br/>Predictable, needs config"]
     Small --> Choose{"Need TLB reach?"}
-    Choose -->|"latency-sensitive, large heap"| Huge
+    Choose -->|"latency-sensitive large heap"| Huge
     Huge --> Trans
     Huge --> Explicit
     Trade["Trade: internal fragmentation<br/>2 MiB page for 4 KiB alloc wastes 99%<br/>Measure with perf stat dTLB-load-misses"]
@@ -547,7 +547,7 @@ flowchart TD
     Reclaim -->|"success"| OK["Continue"]
     Reclaim -->|"no reclaimable"| Swap{"Swap enabled?"}
     Swap -->|"yes"| SwapOut["Swap out cold pages<br/>Stalls, thrashing"]
-    Swap -->|"no / still no memory"| OOM{"OOM killer<br/>Select victim by oom_score"}
+    Swap -->|"no still no memory"| OOM{"OOM killer<br/>Select victim by oom_score"}
     OOM --> Kill["SIGKILL chosen process<br/>May not be the allocator!"]
     Kill --> Freed["Memory freed<br/>System recovers (or cascades)"]
     Score["oom_score = f(RSS, nice, cgroup)<br/>oom_score_adj -1000..1000<br/>Containers: per-cgroup OOM"]
@@ -626,9 +626,9 @@ difference between actionable pages and alert fatigue.
 ```mermaid
 flowchart TD
     Symptom["RSS growing or OOM?"] --> Check{"Check /proc/meminfo + cgroup"}
-    Check -->|"MemAvailable low, cache high"| Cache["Cache pressure, not leak<br/>Reclaimable, normal"]
+    Check -->|"MemAvailable low cache high"| Cache["Cache pressure, not leak<br/>Reclaimable, normal"]
     Check -->|"Slab high"| Slab["Slab leak (dentry/inode)<br/>Check /proc/slabinfo, drop_caches test"]
-    Check -->|"RSS high, cache low"| RSS{"RSS breakdown"}
+    Check -->|"RSS high cache low"| RSS{"RSS breakdown"}
     RSS --> Heap["Heap: brk/mmap anon<br/>jemalloc stats, heap profile<br/>(pprof, jeprof)"]
     RSS --> PageCache2["File RSS: page cache per cgroup<br/>memory.stat file_mapped"]
     RSS --> Huge2["Huge pages pinned<br/>Check HugePages_Total"]

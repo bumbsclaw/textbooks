@@ -400,7 +400,7 @@ Not every operation fits `200`/`201`. Two patterns handle the rest:
 
 ```mermaid
 flowchart LR
-    A[POST /orders] -->|201 Location: /orders/01H8X| B[GET /orders/01H8X]
+    A[POST /orders] -->|201 Location: orders 01H8X| B[GET /orders/01H8X]
     B -->|pending| C{Links}
     C -->|rel: cancel| D[POST /orders/01H8X:cancel]
     C -->|rel: pay| E[POST /orders/01H8X:pay]

@@ -39,7 +39,7 @@ flowchart LR
       A3[Module C] --- DB1
     end
     subgraph SOA[SOA / coarse services]
-      S1[Service A\nowns DB A] -->|gRPC / events| S2[Service B\nowns DB B]
+      S1[Service A\nowns DB A] -->|gRPC events| S2[Service B\nowns DB B]
       S2 --> S3[Service C\nowns DB C]
     end
     subgraph Micro[Microservices]
@@ -112,9 +112,9 @@ flowchart TD
     subgraph Identity[Identity bounded context\nowns: user, profile, authZ]
       U1[User / Profile]
     end
-    O2 -->|event: order.placed\nasync, at-least-once| I1
+    O2 -->|event: order.placed\nasync at-least-once| I1
     O2 -->|event: order.paid\nasync| F1
-    O2 -->|sync gRPC: GetUser\ntime-bounded, cached| U1
+    O2 -->|sync gRPC: GetUser\ntime-bounded cached| U1
     I1 -->|event: stock.reserved\nor stock.insufficient| O2
 
     style Ordering fill:#e3f2fd

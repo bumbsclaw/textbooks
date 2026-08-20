@@ -440,11 +440,11 @@ artifact meets policy, do not run it.
 ```mermaid
 flowchart TD
   req["Pod create request"] --> ev{"Gate can<br/>evaluate policy?"}
-  ev -->|"yes, compliant"| admit["ADMIT (pinned digest)"]
-  ev -->|"yes, non-compliant"| deny["DENY"]
-  ev -->|"no: verifier/log/<br/>registry down"| fp{"Fail policy?"}
-  fp -->|"prod tier<br/>failurePolicy: Fail"| deny
-  fp -->|"dev tier<br/>failurePolicy: Ignore"| admitOpen["ADMIT unverified<br/>(alert loudly)"]
+  ev -->|"yes compliant"| admit["ADMIT (pinned digest)"]
+  ev -->|"yes non-compliant"| deny["DENY"]
+  ev -->|"no: verifier log <br >registry down"| fp{"Fail policy?"}
+  fp -->|"prod tier<br >failurePolicy: Fail"| deny
+  fp -->|"dev tier<br >failurePolicy: Ignore"| admitOpen["ADMIT unverified<br/>(alert loudly)"]
   style deny fill:#b30000,color:#ffffff
   style admitOpen fill:#e0a030
 ```
@@ -475,11 +475,11 @@ source.**
 ```mermaid
 flowchart TD
   start["Image at gate"] --> src{"Source?"}
-  src -->|"first-party<br/>(we built it)"| env{"Environment /<br/>criticality?"}
-  src -->|"third-party<br/>(vendor/upstream)"| tp["Signature (if any)<br/>+ vuln-scan attestation<br/>+ from approved registry<br/>(cannot require our provenance)"]
+  src -->|"first-party<br > we built it "| env{"Environment /<br/>criticality?"}
+  src -->|"third-party<br > vendor upstream "| tp["Signature (if any)<br/>+ vuln-scan attestation<br/>+ from approved registry<br/>(cannot require our provenance)"]
   env -->|"prod tier-0"| strict["Keyless identity + SLSA L3<br/>provenance from approved repo<br/>+ SBOM + scan(no reachable KEV)<br/>+ Rekor + digest pin"]
-  env -->|"prod tier-1/internal"| mid["Keyless identity + provenance<br/>+ SBOM + scan (warn on vulns)"]
-  env -->|"dev / staging"| relaxed["Signature present<br/>+ digest pin<br/>(audit provenance)"]
+  env -->|"prod tier-1 internal"| mid["Keyless identity + provenance<br/>+ SBOM + scan (warn on vulns)"]
+  env -->|"dev staging"| relaxed["Signature present<br/>+ digest pin<br/>(audit provenance)"]
   style strict fill:#1b5e20,color:#ffffff
   style tp fill:#e0a030
 ```

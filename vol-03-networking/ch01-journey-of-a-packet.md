@@ -416,9 +416,9 @@ flowchart LR
     NET(("Internet<br/>many router hops"))
     H2["Host B<br/>IP 203.0.113.10<br/>MAC bb:bb"]
 
-    H1 -->|"dst MAC = router, dst IP = B"| SW
-    SW -->|"forward by MAC, frame unchanged"| R
-    R -->|"new dst MAC = next hop, dst IP = B, TTL−1"| NET
+    H1 -->|"dst MAC = router dst IP = B"| SW
+    SW -->|"forward by MAC frame unchanged"| R
+    R -->|"new dst MAC = next hop dst IP = B TTL−1"| NET
     NET -->|"final router: dst MAC = B"| H2
 ```
 

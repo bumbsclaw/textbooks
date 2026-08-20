@@ -135,7 +135,7 @@ flowchart TD
     Q -->|tenant_id| T[tenant_id as partition key\nmulti-tenant SaaS local\nskew risk: large tenants]
     U --> S1{Skew mitigation?}
     T --> S1
-    S1 -->|salting / splitting| Salt[Composite key:\n tenant_id + shard_id\nor user_id + time bucket]
+    S1 -->|salting splitting| Salt[Composite key:\n tenant_id + shard_id\nor user_id + time bucket]
     S1 -->|bounded load| Cap[Hash with load cap\nspill hot key to N shards]
     Salt --> Model[Model: keep common\ncase local, pay on\nrare cross-partition]
     Cap --> Model
@@ -456,8 +456,8 @@ flowchart TD
       SvcB[Search service\nowns Elasticsearch index]
       SvcC[Analytics service\nowns ClickHouse]
     end
-    SvcA -->|CDC / outbox -> Kafka| SvcB
-    SvcA -->|CDC / outbox -> Kafka| SvcC
+    SvcA -->|CDC outbox -> Kafka| SvcB
+    SvcA -->|CDC outbox -> Kafka| SvcC
     SvcB -->|API: search orders| Client
     SvcC -->|API: analytics| Client
     SvcA -->|API: CRUD orders| Client
@@ -505,7 +505,7 @@ flowchart TD
     P -->|Search| I3["Inverted / GIN index<br/>or external search"]
     I1 --> D{"Denormalize?"}
     I2 --> D
-    D -->|Hot path, bounded| M["Materialized / embedded copy<br/>with change stream sync"]
+    D -->|Hot path bounded| M["Materialized / embedded copy<br/>with change stream sync"]
     D -->|Rare| J["Join at read — keep normalized"]
 ```
 

@@ -105,9 +105,9 @@ flowchart LR
         COMP["Compliance,<br/>procurement"]
     end
 
-    VENDOR -->|"INBOUND<br/>supplier SBOMs for<br/>YOUR risk mgmt"| STORE
-    FLEET -->|"INTERNAL<br/>fleet SBOMs for<br/>YOUR vuln mgmt"| STORE
-    STORE -->|"OUTBOUND<br/>SBOMs + VEX for<br/>THEIR risk mgmt"| CUST
+    VENDOR -->|"INBOUND<br >supplier SBOMs for<br >YOUR risk mgmt"| STORE
+    FLEET -->|"INTERNAL<br >fleet SBOMs for<br >YOUR vuln mgmt"| STORE
+    STORE -->|"OUTBOUND<br >SBOMs + VEX for<br >THEIR risk mgmt"| CUST
     STORE --> IR
     STORE --> COMP
     COMP -.->|"intake + evaluate"| VENDOR
@@ -177,7 +177,7 @@ flowchart LR
     I --> C["CORRELATE<br/>vulns + VEX<br/>runtime truth"]
     C --> QY["QUERY + ALERT<br/>fleet inventory<br/>dashboards"]
     QY --> ACT["ACT<br/>patch, update-bot,<br/>incident response"]
-    ACT -.->|"verify fix<br/>rebuild"| G
+    ACT -.->|"verify fix<br >rebuild"| G
 
     classDef gen fill:#14532d,stroke:#4ade80,color:#fff;
     classDef mid fill:#1e3a5f,stroke:#60a5fa,color:#fff;

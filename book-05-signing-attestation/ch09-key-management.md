@@ -82,7 +82,7 @@ flowchart LR
   E["Passphrase-encrypted<br/>key file<br/>extraction: file + guess/keylog"]
   K["Cloud KMS<br/>(sign via API)<br/>extraction: breach the KMS boundary"]
   H["HSM / CloudHSM<br/>(non-exportable)<br/>extraction: defeat FIPS hardware"]
-  F -->|"raise extraction cost"| E -->|"cannot exfiltrate the key,<br/>only its use"| K -->|"key never exists<br/>outside hardware"| H
+  F -->|"raise extraction cost"| E -->|"cannot exfiltrate the key <br >only its use"| K -->|"key never exists<br >outside hardware"| H
   classDef bad fill:#fdd,stroke:#900
   classDef ok fill:#dfd,stroke:#090
   class F,E bad
@@ -265,11 +265,11 @@ flowchart TD
     INT2["Issuing CA: internal Fulcio<br/>keyless signing certs"]
     INT3["Issuing CA: code signing"]
   end
-  ROOT -->|"signs (ceremony)"| INT1
-  ROOT -->|"signs (ceremony)"| INT2
-  ROOT -->|"signs (ceremony)"| INT3
-  INT1 -->|"issues, TTL ~hours"| L1["service mTLS certs"]
-  INT2 -->|"issues, TTL ~10 min"| L2["workload signing certs"]
+  ROOT -->|"signs ceremony "| INT1
+  ROOT -->|"signs ceremony "| INT2
+  ROOT -->|"signs ceremony "| INT3
+  INT1 -->|"issues TTL ~hours"| L1["service mTLS certs"]
+  INT2 -->|"issues TTL ~10 min"| L2["workload signing certs"]
   INT3 -->|"issues"| L3["signed internal artifacts"]
 ```
 
@@ -507,14 +507,14 @@ go to Rekor. There is no key custody problem because there is no durable key.
 flowchart TD
   subgraph central["Centralized signing service (KMS-backed)"]
     T1["Team pipeline"] -->|"authN + request"| SS["Signing service<br/>(policy: who signs what)"]
-    SS -->|"kms:Sign (IAM-gated)"| KMS["KMS / HSM<br/>keys held here"]
+    SS -->|"kms:Sign IAM-gated "| KMS["KMS / HSM<br/>keys held here"]
     SS -->|"signature"| T1
     SS -.->|"every sign"| AUD["Central audit log"]
   end
   subgraph keyless["Keyless workload-identity signing"]
     T2["Build (workload identity)"] -->|"OIDC token + pubkey"| FUL["Fulcio<br/>(issues ~10-min cert)"]
     FUL -->|"cert"| T2
-    T2 -->|"sign w/ ephemeral key"| REK["Rekor<br/>(transparency log)"]
+    T2 -->|"sign w ephemeral key"| REK["Rekor<br/>(transparency log)"]
     REK -.->|"public record"| AUD2["Fleet-wide signing audit"]
   end
 ```
@@ -558,7 +558,7 @@ A self-hosted Sigstore is a set of cooperating services, each of which you now o
 ```mermaid
 flowchart TD
   IDP["Corporate OIDC IdP<br/>(Okta / Entra / CI tokens)"] -->|"identity token"| FUL["Private Fulcio (CA)<br/>signing key in KMS/HSM<br/>chains to internal root"]
-  FUL -->|"logs issuance (SCT)"| CT["Private CT log"]
+  FUL -->|"logs issuance SCT "| CT["Private CT log"]
   BUILD["Build / workload"] -->|"OIDC + pubkey"| FUL
   FUL -->|"~10-min cert"| BUILD
   BUILD -->|"signature + cert"| REK["Private Rekor<br/>Trillian + DB backend"]
@@ -567,7 +567,7 @@ flowchart TD
   TUF --> REK
   TUF --> CT
   TUF --> TSA
-  REK -->|"Merkle root / checkpoint"| KMS2["Rekor signing key<br/>(KMS/HSM)"]
+  REK -->|"Merkle root checkpoint"| KMS2["Rekor signing key<br/>(KMS/HSM)"]
 ```
 
 The components, and what operating each entails:

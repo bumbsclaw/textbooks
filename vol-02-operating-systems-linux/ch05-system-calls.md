@@ -88,7 +88,7 @@ flowchart LR
     ENTRY --> DISP --> HANDLER
   end
   LIBC --> GATE --> ENTRY
-  HANDLER -.->|"SYSRET, result in rax"| APP
+  HANDLER -.->|"SYSRET result in rax"| APP
 ```
 
 This is the mental model to hold for the whole chapter: **one gate, chosen by the kernel, that
@@ -346,7 +346,7 @@ because at their scale the boundary crossing is a line item.
 flowchart TD
     App["App: need time, I/O, etc."] --> Path{"Path"}
     Path -->|"naive: syscall per op"| Many["100k gettimeofday/s<br/>100k x 500 ns = 50 ms/s<br/>10% of one core"]
-    Path -->|"batched: vectored I/O"| Few["1 writev for 100 writes<br/>1 io_uring submit for N ops<br/>Amortize trap cost"]
+    Path -->|"batched: vectored I O"| Few["1 writev for 100 writes<br/>1 io_uring submit for N ops<br/>Amortize trap cost"]
     Path -->|"vDSO"| None["gettimeofday via vDSO<br/>Userspace read of kernel-mapped page<br/>~20 ns, no trap"]
     Path -->|"vsyscall trap path"| Trap["Legacy vsyscall: still traps<br/>Deprecated"]
     Many --> Opt["Optimize: batch, cache time<br/>reuse FDs, buffered I/O"]
@@ -407,9 +407,9 @@ to a real syscall.
 flowchart TD
   APP["Application: clock_gettime(CLOCK_MONOTONIC)"]
   APP --> V{"vDSO path in ring 3<br/>__vdso_clock_gettime"}
-  V -->|"fast, common case"| CALC["Read TSC + kernel scaling data<br/>from vvar page, compute time<br/>(no ring transition)"]
+  V -->|"fast common case"| CALC["Read TSC + kernel scaling data<br/>from vvar page, compute time<br/>(no ring transition)"]
   CALC --> RET["Return to caller"]
-  V -->|"unsupported clock / fallback"| SC["Real SYSCALL → ring 0"]
+  V -->|"unsupported clock fallback"| SC["Real SYSCALL → ring 0"]
   SC --> KH["kernel clock_gettime handler"]
   KH --> RET
   KUP["Kernel updates vvar page<br/>every tick"] -.->|read-only mapping| CALC

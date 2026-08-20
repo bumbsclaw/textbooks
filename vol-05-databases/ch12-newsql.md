@@ -138,9 +138,9 @@ flowchart TB
     L2 --> F2a
     L2 --> F2b
   end
-  C -->|"prepare / commit<br/>each message is a<br/>Paxos-replicated log entry"| L1
-  C -->|"prepare / commit"| L2
-  TT["TrueTime<br/>GPS + atomic clock<br/>time masters per datacenter"] -.->|"TT.now gives interval<br/>earliest to latest"| C
+  C -->|"prepare commit<br >each message is a<br >Paxos-replicated log entry"| L1
+  C -->|"prepare commit"| L2
+  TT["TrueTime<br/>GPS + atomic clock<br/>time masters per datacenter"] -.->|"TT.now gives interval<br >earliest to latest"| C
 ```
 
 ### TrueTime: bounded uncertainty as an API
@@ -279,12 +279,12 @@ flowchart TB
     LH["Leaseholder + Raft leader<br/>serves reads locally<br/>no consensus round trip"]
     F1["Follower replica"]
     F2["Follower replica"]
-    LH -->|"Raft log replication<br/>writes need a majority"| F1
+    LH -->|"Raft log replication<br >writes need a majority"| F1
     LH -->|"Raft log replication"| F2
   end
   GW -->|"read — one hop"| LH
   GW -->|"write — Raft quorum commit"| LH
-  GW -.->|"stale-tolerant read<br/>AS OF SYSTEM TIME<br/>follower read"| F2
+  GW -.->|"stale-tolerant read<br >AS OF SYSTEM TIME<br >follower read"| F2
 ```
 
 ### HLCs and the uncertainty window: honesty without TrueTime
@@ -500,8 +500,8 @@ flowchart TB
   B --> C
   C -->|"no — stay here"| B
   C -->|"yes"| D
-  D -->|"no — clean shard key,<br/>single-region"| E
-  D -->|"yes — cross-key transactions<br/>plus write scale plus geography"| F
+  D -->|"no — clean shard key <br >single-region"| E
+  D -->|"yes — cross-key transactions<br >plus write scale plus geography"| F
 ```
 
 Climb it in order. Chapter 14's operating levers first — a well-tuned single node with connection

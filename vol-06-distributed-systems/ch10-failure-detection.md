@@ -199,7 +199,7 @@ flowchart TD
   PLATER --> PHI["phi = -log10 of P_later"]
   PHI --> POLICY{"phi vs threshold"}
   POLICY -->|"phi below threshold"| TRUST["Keep trusting;<br/>phi keeps rising as silence grows"]
-  POLICY -->|"phi at or above threshold<br/>e.g. 8 means 10^-8 innocent"| CONVICT["Declare suspect or down<br/>threshold is pure policy"]
+  POLICY -->|"phi at or above threshold<br >e.g. 8 means 10^-8 innocent"| CONVICT["Declare suspect or down<br/>threshold is pure policy"]
 ```
 
 One more virtue of the continuous output: different consumers can apply different thresholds to

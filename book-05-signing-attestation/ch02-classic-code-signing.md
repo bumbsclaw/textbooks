@@ -65,7 +65,7 @@ flowchart LR
   Root["Trust anchor<br/>root cert in OS store"]
 
   CA -->|"issues code-signing cert"| Pub
-  Pub -->|"sign(hash, privkey)"| Art
+  Pub -->|"sign hash privkey "| Art
   Art -->|"delivered"| Con
   Con -->|"verify signature"| Art
   Con -->|"chain-build to root"| Root
@@ -643,7 +643,7 @@ sequenceDiagram
 flowchart TD
   ART["Artifact + detached sig<br/>(.asc / .sig)"] --> FETCH["Fetch signer's<br/>public key / cert"]
   FETCH --> CHK1{"Key authentic?<br/>(WoT / PKI)"}
-  CHK1 -->|No / TOFU| FAIL1["TOCTOU / impersonation<br/>attacker substitutes key"]
+  CHK1 -->|No TOFU| FAIL1["TOCTOU / impersonation<br/>attacker substitutes key"]
   CHK1 -->|Yes| CRYPTO{"Crypto valid?<br/>sig matches digest?"}
   CRYPTO -->|No| REJECT["Reject"]
   CRYPTO -->|Yes| CHK2{"Is this the<br/>expected identity?"}

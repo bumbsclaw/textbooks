@@ -227,7 +227,7 @@ flowchart TD
     Q5 -->|Yes| J5["NOT_AFFECTED<br/>inline_mitigations_already_exist"]
     Q5 -->|No| Q6{"Is a fix<br/>available yet?"}
     Q6 -->|Not yet| INV["Status: UNDER_INVESTIGATION<br/>or AFFECTED with<br/>mitigation guidance"]
-    Q6 -->|Yes, not applied| AFF["Status: AFFECTED<br/>action: upgrade to fixed version"]
+    Q6 -->|Yes not applied| AFF["Status: AFFECTED<br/>action: upgrade to fixed version"]
 ```
 
 The tree is worth internalizing because it is the same shape regardless of format: only
@@ -788,8 +788,8 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     CVE["CVE matches<br/>component in SBOM"] --> AFFECTED{"Are we<br/>affected?"}
-    AFFECTED -->|Vuln code reachable<br/>+ exploitable| AFF["affected<br/>→ patch priority P0/P1"]
-    AFFECTED -->|Vuln code not<br/>present / not reachable| NOT["not_affected<br/>→ justification: inline_mitigations /<br/>vulnerable_code_not_present"]
+    AFFECTED -->|Vuln code reachable<br >+ exploitable| AFF["affected<br/>→ patch priority P0/P1"]
+    AFFECTED -->|Vuln code not<br >present not reachable| NOT["not_affected<br/>→ justification: inline_mitigations /<br/>vulnerable_code_not_present"]
     AFFECTED -->|Patch available| FIXED["fixed<br/>→ update to version X"]
     AFFECTED -->|Still triaging| INVEST["under_investigation<br/>→ ETA + workaround"]
 

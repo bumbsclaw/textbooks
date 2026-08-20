@@ -585,7 +585,7 @@ function validateFilters(query) {
 ```mermaid
 flowchart LR
     A[GET /orders?filter + sort + page_token] --> B{Validate}
-    B -->|unknown field/sort| C[400 Bad Request]
+    B -->|unknown field sort| C[400 Bad Request]
     B -->|ok| D[Decode cursor]
     D --> E[Build WHERE: filters + keyset]
     E --> F[SELECT ... ORDER BY sort, id LIMIT page_size+1]
@@ -658,7 +658,7 @@ sequenceDiagram
 flowchart TB
     Req{"Need stable pagination<br/>under writes?"}
     Req -->|No small sets| Offset["Offset<br/>?page=3&size=20<br/>simple, drift on insert"]
-    Req -->|Yes large / live| Cursor["Cursor<br/>?cursor=xyz<br/>stable, no count"]
+    Req -->|Yes large live| Cursor["Cursor<br/>?cursor=xyz<br/>stable, no count"]
     Req -->|Need total count| Hybrid["Hybrid<br/>cursor + approximate count"]
 
 ```

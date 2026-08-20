@@ -586,7 +586,7 @@ sequenceDiagram
     SF-->>App: user
     App-->>LB: 200 + Cache-Control: max-age=30
     LB-->>C: 200
-    Note over C,DB: Next request hits Redis — no DB query.<br/>TTL 300s + jitter; background refresh at 270s.
+    Note over C,DB: Next request hits Redis — no DB query.<br/>TTL 300s + jitter, background refresh at 270s.
 ```
 
 *Figure 3-2: Read path with coalesced cache-aside, TTL with jitter, and background refresh. The single-flight prevents herds; the TTL bounds staleness; the jitter desynchronizes expirations.*

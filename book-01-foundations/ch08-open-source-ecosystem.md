@@ -85,10 +85,10 @@ flowchart LR
     C["Single-vendor OSS\nbus factor = company priorities"]
     D["Foundation-governed\nbus factor via process + org"]
     A --> B --> C --> D
-    A -.->|"burnout, hijack,\nabandonment"| RISK1["High trust-failure risk"]
+    A -.->|"burnout hijack \nabandonment"| RISK1["High trust-failure risk"]
     B -.->|"key person still\ndominates"| RISK2["Moderate risk"]
-    C -.->|"relicensing,\nEOL, layoffs"| RISK3["Strategic/legal risk"]
-    D -.->|"slow, but security\nteam + succession"| RISK4["Lower single-point risk"]
+    C -.->|"relicensing \nEOL layoffs"| RISK3["Strategic/legal risk"]
+    D -.->|"slow but security\nteam + succession"| RISK4["Lower single-point risk"]
 ```
 
 **Solo maintainer.** One person, usually unpaid, often maintaining the project on evenings and

@@ -58,9 +58,9 @@ Pure push collapses on celebrities (a 100M-follower account would require 100M i
 ```mermaid
 flowchart TB
     Post[Post created<br/>author_id, post_id] --> Router{Author class?}
-    Router -->|Normal user<br/> < 10K followers| Push[Fan-out on write<br/>append to follower timelines]
-    Router -->|Celebrity<br/> >= 10K followers| NoPush[Do NOT fan out<br/>leave in author outbox]
-    Router -->|Cold/inactive follower| Skip[Skip fan-out<br/>recompute on next read]
+    Router -->|Normal user<br > < 10K followers| Push[Fan-out on write<br/>append to follower timelines]
+    Router -->|Celebrity<br > >= 10K followers| NoPush[Do NOT fan out<br/>leave in author outbox]
+    Router -->|Cold inactive follower| Skip[Skip fan-out<br/>recompute on next read]
 
     Push --> Cache[(Timeline Cache<br/>Redis Cluster<br/>zset per user)]
     Push --> Store[(Timeline Store<br/>Cassandra / ScyllaDB)]
@@ -424,7 +424,7 @@ flowchart LR
     Priority -->|marketing| Throttled[Throttled lane<br/>rate-limited, shed first]
     Fast --> Providers[Channel Providers<br/>APNs / FCM / SES / Twilio]
     Throttled --> Providers
-    Batch -->|window fires<br/>15m / 1h / 1d| Digest[Digest Renderer<br/>aggregate → one email/push]
+    Batch -->|window fires<br >15m 1h 1d| Digest[Digest Renderer<br/>aggregate → one email/push]
     Digest --> Providers
     Providers --> DLQ[(DLQ + Retry<br/>exponential backoff,<br/>channel-specific)]
     Providers --> Inbox[(In-app Inbox<br/>Cassandra)]

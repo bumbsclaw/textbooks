@@ -79,7 +79,7 @@ flowchart LR
     A["npm install / pip install"] --> B["Resolve dependency graph<br/>(hundreds–thousands of pkgs)"]
     B --> C["Fetch tarballs / wheels<br/>from registry"]
     C --> D{"Lifecycle scripts?"}
-    D -->|"preinstall / install / postinstall<br/>setup.py"| E["Arbitrary code executes<br/>as installing user"]
+    D -->|"preinstall install postinstall<br >setup.py"| E["Arbitrary code executes<br/>as installing user"]
     D -->|"none"| F["Files copied to node_modules /<br/>site-packages"]
     F --> G["Code runs on import / require<br/>at build or runtime"]
     E --> H["Dev laptop, CI runner,<br/>build host, prod image"]

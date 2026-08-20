@@ -378,7 +378,7 @@ flowchart BT
   RC -->|"stronger"| IRR
   SI -->|"stronger"| SER
   IRR -->|"stronger"| SER
-  SI -.-|"incomparable siblings<br/>different anomaly profiles"| IRR
+  SI -.-|"incomparable siblings<br >different anomaly profiles"| IRR
 ```
 
 ## MVCC mechanics

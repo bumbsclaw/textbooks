@@ -795,11 +795,11 @@ flowchart TB
         Cache["Local flag cache<br/>polling / streaming"]
         SDK --> Cache
     end
-    Cache -->|poll every 10s<br/>or SSE stream| Provider["Flag provider<br/>LaunchDarkly / Unleash / Flipt"]
+    Cache -->|poll every 10s<br >or SSE stream| Provider["Flag provider<br/>LaunchDarkly / Unleash / Flipt"]
     Provider --> Store[(Flag store<br/>rules + targeting)]
 
     SDK -->|"1. cache hit: < 1ms"| Path["Flag-gated code path"]
-    SDK -.->|"2. cache miss / error:<br/>safe default"| Path
+    SDK -.->|"2. cache miss error:<br >safe default"| Path
 
     style Cache fill:#e8f5e9
     style Provider fill:#e3f2fd
@@ -1003,7 +1003,7 @@ spec:
 
 ```mermaid
 flowchart TB
-    Start{"Is the change\nlow-risk?"} -->|Yes: docs, copy, minor fix| Rolling["Rolling deploy<br/>simplest, fastest"]
+    Start{"Is the change\nlow-risk?"} -->|Yes: docs copy minor fix| Rolling["Rolling deploy<br/>simplest, fastest"]
     Start -->|No| Critical{"Is the service\ntier 0?"} 
     Critical -->|No: tier 1-2| BG{"Need instant rollback\nor version coexistence\nis problematic?"} 
     BG -->|Yes| BlueGreen["Blue/Green<br/>instant switch"]

@@ -746,8 +746,8 @@ flowchart TB
     end
 
     subgraph DistributedMonolith["Distributed Monolith (anti-pattern)"]
-        A2["Service A"] -->|"sync HTTP<br/>required for every request"| B2["Service B"]
-        B2 -->|"sync HTTP<br/>required"| C2["Service C"]
+        A2["Service A"] -->|"sync HTTP<br >required for every request"| B2["Service B"]
+        B2 -->|"sync HTTP<br >required"| C2["Service C"]
         C2 -->|"sync HTTP"| A2
         A2 --- DB2[("Shared DB<br/>cross-service FKs")]
         B2 --- DB2
@@ -758,9 +758,9 @@ flowchart TB
     end
 
     subgraph Proper["Properly Bounded Services"]
-        A3["Service A<br/>own DB"] -->|"async events<br/>eventual consistency"| B3["Service B<br/>own DB"]
+        A3["Service A<br/>own DB"] -->|"async events<br >eventual consistency"| B3["Service B<br/>own DB"]
         B3 -->|"async events"| C3["Service C<br/>own DB"]
-        A3 -.->|"sync only where<br/>strong consistency required"| B3
+        A3 -.->|"sync only where<br >strong consistency required"| B3
         style A3 fill:#6a6,stroke:#333,color:#fff
         style B3 fill:#6a6,stroke:#333,color:#fff
         style C3 fill:#6a6,stroke:#333,color:#fff

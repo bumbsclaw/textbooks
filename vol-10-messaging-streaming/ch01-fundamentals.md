@@ -71,7 +71,7 @@ flowchart TB
         Q --> C1[Consumer A]
         Q --> C2[Consumer B]
         Q --> C3[Consumer C]
-        note1>"Each message → exactly one consumer<br/>Destructive consume, ack removes it"
+        note1["Each message → exactly one consumer<br/>Destructive consume, ack removes it"]
     end
     subgraph Log["Log — partitioned, replayable"]
         P2[Producer] --> L1[Partition 0<br/>offset 0 1 2 3 ...]
@@ -80,14 +80,14 @@ flowchart TB
         L2 --> G1B[Group A / Consumer 2]
         L1 -.-> G2A[Group B / Consumer 1<br/>independent offset]
         L2 -.-> G2A
-        note2>"Append-only, retained, replayable<br/>Order within partition only"
+        note2["Append-only, retained, replayable<br/>Order within partition only"]
     end
     subgraph PubSub["Pub/Sub — fan-out"]
         P3[Publisher] --> T[(Topic)]
         T --> S1[Subscription 1<br/>→ Consumer A]
         T --> S2[Subscription 2<br/>→ Consumer B]
         T --> S3[Subscription 3<br/>→ Consumer C]
-        note3>"Each message → every subscription<br/>Per-subscription ack"
+        note3["Each message → every subscription<br/>Per-subscription ack"]
     end
     style Q fill:#fff3e0
     style L1 fill:#e8f5e9
