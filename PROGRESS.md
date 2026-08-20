@@ -288,11 +288,15 @@ until then their paths are as listed above).
 
 ## Volume 13 — Language Runtimes for Backend (`vol-13-runtimes/`)
 
-- [ ] 13.01 The JVM: Memory, GC, JIT — `ch01-jvm.md`
-- [ ] 13.02 The Go Runtime: Scheduler, Memory Model, GC — `ch02-go-runtime.md`
-- [ ] 13.03 Rust for Backend Systems — `ch03-rust.md`
+- [x] 13.01 The JVM: Memory, GC, JIT — `ch01-jvm.md`
+- [x] 13.02 The Go Runtime: Scheduler, Memory Model, GC — `ch02-go-runtime.md`
+- [x] 13.03 Rust for Backend Systems — `ch03-rust.md`
 - [ ] 13.04 Garbage Collection Across Runtimes — `ch04-gc.md`
 - [ ] 13.05 Profiling and Performance Tuning — `ch05-profiling.md`
+- [ ] 13.06 Python and Node.js Runtimes for Backend — `ch06-python-node.md`
+- [ ] 13.07 WebAssembly and Emerging Runtimes — `ch07-wasm.md`
+- [ ] 13.08 FFI, Native Extensions, and Polyglot Interop — `ch08-ffi.md`
+- [ ] 13.09 Runtime Selection and Performance Trade-offs — `ch09-runtime-selection.md`
 
 ## Volume 14 — Data Structures and Algorithms for Backend (`vol-14-algorithms/`)
 
@@ -352,3 +356,4 @@ until then their paths are as listed above).
 - 2026-08-20: Vol12 ch01-ch03 done (containers deep dive OCI/runc/gVisor/Kata, K8s control/data plane etcd/scheduler/controllers/kubelet, workloads/networking/storage Deployments/StatefulSets/Services/Gateway/CSI — ~5.0-8.0kw each, 4-6 Mermaid). Next: 12.04-12.06.
 - 2026-08-20: Vol11 ch04-ch06 done (distributed tracing & OTel Collector agent+gateway/tail sampling/W3C propagation, incident response lifecycle/severity/on-call/Alertmanager/PagerDuty/runbooks, blameless postmortems template/facilitation/action items — ~6.8-8.5kw each, 4-5 Mermaid). Next: 11.07-11.10.
 - 2026-08-20: Vol14 ch01-ch03 done (complexity/RAM vs I/O model/benchmarking, hashing/SwissTable/Robin Hood/concurrent maps, AVL/RB/B-tree/B+tree/skip list — ~3.3-4.6kw each, 3-5 Mermaid, real code + benchmarks). Next: 14.04-14.06.
+- 2026-08-20: Vol13 ch01-ch03 done (JVM memory/G1/ZGC/JIT/tuning, Go scheduler P/M/G + memory model + tri-color GC, Rust ownership/borrowing/tokio/axum — ~5-8kw each, 4-6 Mermaid, real configs/traces). Next: 13.04-13.06.
