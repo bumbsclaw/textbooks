@@ -731,3 +731,13 @@ sequenceDiagram
   base + auto-rebuild); Book 7, Chapter 4 (secrets in source); Book 8, Chapters 1, 3, 4, 5, 7, 8
   (regulatory reporting, vendor risk, policy-as-code, detection, threat intel, metrics); Book 11,
   Chapters 6 and 9 (blameless postmortems, safe deployment).
+
+
+- **NIST SP 800-61 Rev. 2 and Rev. 3 (2025)** — https://csrc.nist.gov/pubs/sp/800/61/r2/final and https://csrc.nist.gov/pubs/sp/800/61/r3/final
+- **SANS PICERL model** — https://www.sans.org/white-papers/incident-handlers-handbook/
+- **Mandiant SUNBURST / Microsoft Solorigate analyses** — https://www.mandiant.com/resources/blog/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor and https://www.microsoft.com/en-us/security/blog/2020/12/18/analyzing-solorigate-the-compromised-dll-file-that-started-a-sophisticated-cyberattack-and-how-microsoft-defender-helps-protect/
+- **Codecov post-mortem** — https://about.codecov.io/security-update/
+- **Apache Log4j advisories (CVE-2021-44228 et al.)** — https://logging.apache.org/log4j/2.x/security.html
+- **event-stream / flatmap-stream write-ups (2018)** — https://blog.npmjs.org/post/180565383195/details-about-the-event-stream-incident
+- **Sigstore Rekor** — https://docs.sigstore.dev/logging/overview/
+- **EU CRA incident-reporting obligations** — https://eur-lex.europa.eu/eli/reg/2024/2847/oj

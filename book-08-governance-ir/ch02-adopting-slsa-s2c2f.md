@@ -677,6 +677,41 @@ flowchart TB
   inherit the current level via the paved road. The unit of adoption is the shared capability, not the
   repo.
 
+
+```yaml
+# Paved-road provenance generation — reusable workflow that gives every caller SLSA Build L3 (as of early 2026)
+# .github/workflows/build-and-provenance.yml (shared, isolated per SLSA requirements)
+name: build-and-provenance
+on:
+  workflow_call:
+    inputs:
+      package-name: { required: true, type: string }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write   # OIDC for keyless signing via Fulcio
+      attestations: write
+    steps:
+      - uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0
+        with:
+          base64-subjects: "${{ needs.hash.outputs.digests }}"
+```
+
+```rego
+# Policy to verify the paved-road provenance at the deploy gate (OPA/Conftest, as of early 2026)
+package admission.provenance
+deny[msg] {
+  not input.predicate.buildDefinition.buildType == "https://slsa.dev/gha/generic/v1"
+  msg := "provenance must be from the isolated paved-road builder"
+}
+deny[msg] {
+  input.predicate.builder.id != "https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0"
+  msg := sprintf("unexpected builder %v", [input.predicate.builder.id])
+}
+```
+
 ## Further reading
 
 - **SLSA v1.0** — the specification at `slsa.dev`, especially the *Build track levels*,
@@ -705,3 +740,11 @@ flowchart TB
   builds, secure build platform); Book 5, Chapters 4, 8, 10 (keyless signing, verification, gates);
   Book 6, Chapters 5, 6, 10 (image signing, admission policy, reference architecture); Book 7 (source
   security); Book 8, Chapters 1 and 8 (regulation, metrics).
+
+
+- **SLSA v1.0 specification** — https://slsa.dev/spec/v1.0/ (Build track L0–L3; v1.0 drops L4)
+- **slsa-github-generator and actions/attest-build-provenance** — https://github.com/slsa-framework/slsa-github-generator and https://github.com/actions/attest-build-provenance
+- **S2C2F specification** — https://github.com/ossf/s2c2f
+- **NIST SSDF SP 800-218 v1.1** — https://csrc.nist.gov/pubs/sp/800/218/final
+- **slsa-verifier and cosign verify-attestation** — https://github.com/slsa-framework/slsa-verifier and https://docs.sigstore.dev/cosign/verify-attestation/
+- **OpenSSF Scorecard** — https://scorecard.dev/ and https://github.com/ossf/scorecard

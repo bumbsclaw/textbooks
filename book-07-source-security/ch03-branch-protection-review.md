@@ -15,6 +15,7 @@ is bypassed in the real world, and clear-eyed that code review catches obvious m
 subtle malice. Branch protection is not a magic wall; it is a set of specific, individually
 defeatable controls that, composed correctly and enforced org-wide, bound the blast radius of a
 single compromised or malicious actor.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 
@@ -243,7 +244,7 @@ from a blanket "someone reviewed it" into a **targeted, path-based two-person co
 the highest-leverage files. The last matching pattern wins (order matters), and only patterns
 with an owner enforce a requirement:
 
-```
+```text
 # CODEOWNERS — path-based required review for high-risk supply-chain paths
 
 # Default: any change needs a platform reviewer
@@ -747,8 +748,7 @@ flowchart TB
   MAIN --> C4["Restrict pushers /<br/>bypass list (audited)"]
   style MAIN fill:#f85149,color:#fff
   style C4 fill:#2ea043,color:#fff
-```
-
+```text
 ### PR review assignment and CODEOWNERS
 
 ```mermaid
@@ -768,8 +768,7 @@ sequenceDiagram
     else Any gate fails
         H->>A: merge blocked
     end
-```
-
+```text
 ### Bypass and break-glass audit flow
 
 ```mermaid

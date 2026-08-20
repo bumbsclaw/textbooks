@@ -664,6 +664,24 @@ flowchart LR
   the answer is **automated, authorship-blind gates and platform-level model governance**, not
   bans. This is fast-moving — trust the principles, expect the tools to change.
 
+
+```bash
+# Scan a model artifact for pickle-based code execution before loading (picklescan, as of early 2026)
+pip install picklescan
+picklescan --path ./models/fine-tuned-llm.bin
+# Expected on a clean safetensors file: "No pickle payload detected"
+# On a pickle file with embedded code: lists globals that would execute on load
+
+# Prefer safetensors for distribution — verify the format
+python -c "from safetensors import safe_open; f=safe_open('model.safetensors', framework='pt'); print(list(f.keys())[:5])"
+```
+
+```bash
+# Check whether LLM-suggested dependencies actually exist (hallucination / slopsquatting guard)
+# Extract imports from AI-generated code and verify against the registry
+grep -R "import " ai-generated/ | tr ',' '\n' | awk '{print $2}' | sort -u | xargs -I{} sh -c 'curl -sf https://pypi.org/pypi/{}/json >/dev/null || echo "MISSING: {}"'
+```
+
 ## Further reading
 
 - Pearce et al., "Asleep at the Keyboard? Assessing the Security of GitHub Copilot's Code
@@ -694,3 +712,11 @@ flowchart LR
   Book 4, Chapters 3 and 8 (SLSA provenance, ephemeral environments); Book 5 (signing and
   attestation); Book 6, Chapters 2 and 3 (registries, base images); Book 7, Chapters 1, 3, 4,
   and 5 (source integrity, review, secrets, backdoors/Trusting Trust).
+
+
+- **Safetensors format and pickle warning** — https://huggingface.co/docs/safetensors/index and https://docs.python.org/3/library/pickle.html
+- **picklescan and ModelScan** — https://github.com/mmaitre314/picklescan and https://github.com/protectai/modelscan
+- **OWASP Top 10 for LLM Applications and ML Security Top 10** — https://owasp.org/www-project-top-10-for-large-language-model-applications/ and https://owasp.org/www-project-machine-learning-security-top-10/
+- **MITRE ATLAS and NIST AI RMF** — https://atlas.mitre.org/ and https://www.nist.gov/itl/ai-risk-management-framework
+- **CycloneDX ML-BOM / model cards** — https://cyclonedx.org/capabilities/mlbom/ and https://cyclonedx.org/specification/overview/
+- **Sigstore model signing and SLSA** — https://docs.sigstore.dev/ and https://slsa.dev/spec/v1.0/

@@ -16,6 +16,7 @@ history second**, because the credential is burned the instant it is committed a
 does nothing to un-burn it. This is the source-side counterpart to Book 4, Chapter 6 — Secrets in
 CI, which concerns secrets a *pipeline* handles at runtime; here the secret is *committed to the
 repo itself*.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

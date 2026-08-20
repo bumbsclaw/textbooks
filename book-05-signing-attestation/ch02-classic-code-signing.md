@@ -14,6 +14,7 @@ in-toto's attestations (Chapter 6), TUF's key hierarchy (Chapter 7) — is a dir
 traceable response to a specific way classic signing broke. If you understand the failure
 modes concretely, the modern machinery stops looking like ceremony and starts looking like
 scar tissue. So we will be specific: real incidents, real mechanisms, real root causes.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 
@@ -726,3 +727,11 @@ flowchart LR
   Keyless Signing and Workload Identity; Chapter 5 — Transparency Logs; Chapter 6 — in-toto;
   Chapter 7 — TUF; Chapter 9 — Key Management and PKI for the Enterprise; Book 4, Chapter 2 —
   Hermetic and Reproducible Builds; Chapter 3 — SLSA Provenance; Chapter 6 — Secrets in CI/CD.
+
+
+- **Microsoft Authenticode and Trusted Root Program** — https://learn.microsoft.com/en-us/windows/win32/seccrypto/authenticode-portable-executable-format and https://learn.microsoft.com/en-us/security/trusted-root/program-requirements
+- **Apple code signing and notarization** — https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution and https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html
+- **Android APK Signature Schemes** — https://source.android.com/docs/security/features/apksigning and https://developer.android.com/studio/publish/app-signing
+- **Debian SecureApt / RPM signing** — https://wiki.debian.org/SecureApt and https://rpm.org/user_doc/signatures.html
+- **Certificate Transparency (RFC 9162)** — https://datatracker.ietf.org/doc/rfc9162/ and https://certificate.transparency.dev/
+- **Sigstore (forward ref) and SLSA** — https://docs.sigstore.dev/ and https://slsa.dev/spec/v1.0/

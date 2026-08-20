@@ -227,7 +227,7 @@ def render_mermaid(code: str, index: int) -> str:
             try:
                 subprocess.run(
                     ["mmdc", "-i", f.name, "-o", str(out), "-w", "800", "-b", "white",
-                     "--puppeteerConfigFile", "/dev/null"],
+                     "--puppeteerConfigFile", "/tmp/pptr.json"],
                     capture_output=True, timeout=30, check=True
                 )
             except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:

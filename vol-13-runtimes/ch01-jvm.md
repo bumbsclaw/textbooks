@@ -99,7 +99,7 @@ flowchart TB
 
 **G1 regions.** G1 divides the heap into ~2048 equal regions (1–32 MB each, power of two). Regions are tagged Eden/Survivor/Old/Humongous and collected as sets. There is no fixed Young/Old boundary — G1 adapts it (`-XX:G1NewSizePercent`, `-XX:G1MaxNewSizePercent`, `-XX:MaxGCPauseMillis`).
 
-**Compressed oops and compressed class pointers.** On 64-bit JVMs, object references compress to 32 bits when heap < ~32 GB (`UseCompressedOops`, `UseCompressedClassPointers`), saving ~20–30% heap. Above ~32 GB, oops widen and memory footprint jumps — the classic reason to size heaps at 26–30 GB rather than 32–36 GB.
+**Compressed oops and compressed class pointers.** On 64-bit JVMs, object references compress to 32 bits when heap < ~32 GiB (32,766 MB with default `ObjectAlignmentInBytes=8`; ~64 GiB with 16-byte alignment) (`UseCompressedOops`, `UseCompressedClassPointers`), saving ~20–30% heap. Above that threshold, oops widen and memory footprint jumps — the classic reason to size heaps at 26–30 GB rather than 32–36 GB.
 
 ### Non-heap memory
 

@@ -577,7 +577,7 @@ is broken," and they file a ticket, or find the escape hatch, or pressure someon
 all of which erode the policy. The `deny` messages in the Rego and Kyverno examples above are not
 decoration; they are the mechanism by which the policy *teaches* the developer what to do:
 
-```
+```text
 Error from server: admission webhook denied the request:
   image "registry.internal.example.com/app:latest" is not signed by an
   approved release identity. Sign it in your release workflow (see

@@ -418,7 +418,7 @@ The lesson: `min.insync.replicas` is the **durability floor that trades availabi
 ### Rack awareness and tiered storage
 
 - **Rack awareness** (`broker.rack=us-east-1a`) — the controller places replicas across racks/AZs so a rack loss does not take all replicas. The replica selector also prefers fetching from the closest replica (KIP-392, `client.rack`).
-- **Tiered storage** (KIP-405, early access in 3.7, `remote.log.storage`) — closed segments are offloaded to S3/GCS; the broker retains only the active working set. Consumers reading far behind fetch from remote storage via the broker. This decouples retention (now bounded by object-store cost, not broker disk) from broker sizing.
+- **Tiered storage** (KIP-405, early access in 3.7 — GA semantics in 3.8+, `remote.log.storage`) — closed segments are offloaded to S3/GCS; the broker retains only the active working set. Consumers reading far behind fetch from remote storage via the broker. This decouples retention (now bounded by object-store cost, not broker disk) from broker sizing.
 
 ### Monitoring that matters
 

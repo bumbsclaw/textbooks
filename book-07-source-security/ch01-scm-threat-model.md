@@ -16,6 +16,7 @@ because nearly every control in the following chapters (commit signing in Chapte
 protection in Chapter 3, secret scanning in Chapter 4) is a patch over a specific gap in what
 git guarantees natively. Get the primitives wrong and the controls look like magic; get them
 right and each one is an obvious, necessary response to a named weakness.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

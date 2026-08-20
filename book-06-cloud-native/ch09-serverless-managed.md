@@ -591,6 +591,24 @@ flowchart TD
 - **Least-privilege IAM per function and per service is the containment layer** that decides whether a
   supply-chain compromise is one bucket or the whole account.
 
+
+```bash
+# Verify a Lambda code-signing configuration still enforces the expected publisher (as of early 2026, ZIP only)
+aws lambda get-code-signing-config --code-signing-config-arn arn:aws:lambda:us-east-1:123456789012:code-signing-config:csc-abc123 \
+  --query 'CodeSigningConfig.CodeSigningPolicies.UntrustedArtifactOnDeployment'
+# Expected: "Enforce"  —  "Warn" lets unsigned code deploy; audit regularly with AWS Config rule
+```
+
+```json
+{
+  "CodeSigningConfig": {
+    "CodeSigningConfigId": "csc-abc123",
+    "AllowedPublishers": { "SigningProfileVersionArns": ["arn:aws:signer:us-east-1:123456789012:/signing-profiles/acme-lambda/AbCdEf123"] },
+    "CodeSigningPolicies": { "UntrustedArtifactOnDeployment": "Enforce" }
+  }
+}
+```
+
 ## Further reading
 
 - AWS, "Shared Responsibility Model" — the canonical statement of security *of* vs *in* the cloud;
@@ -619,3 +637,11 @@ flowchart TD
   SaaS; Book 5, Chapters 3 and 5 — Sigstore Architecture and Transparency Logs; Book 6, Chapters 1–6
   and Chapter 8 — the container and IaC supply chain; Book 8, Chapter 3 — Vendor and Third-Party
   Software Risk; Book 8, Chapter 6 — Incident Response for Supply Chain Events.
+
+
+- **Shared Responsibility Model** — https://aws.amazon.com/compliance/shared-responsibility-model/ , https://cloud.google.com/architecture/framework/security/shared-responsibility , https://learn.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility
+- **AWS Lambda and code signing** — https://docs.aws.amazon.com/lambda/latest/dg/lambda-layers.html and https://docs.aws.amazon.com/lambda/latest/dg/configuration-codesigning.html
+- **W3C Subresource Integrity (SRI) and CSP** — https://www.w3.org/TR/SRI/ and https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity
+- **CycloneDX services / SaaSBOM** — https://cyclonedx.org/capabilities/saasbom/ and https://cyclonedx.org/specification/overview/
+- **Sigstore, SLSA, and provider compliance portals** — https://docs.sigstore.dev/ , https://slsa.dev/spec/v1.0/ , https://aws.amazon.com/artifact/ , https://cloud.google.com/security/compliance
+- **Polyfill.io and Ledger connect-kit incident write-ups** — https://sansec.io/research/polyfill-supply-chain-attack and https://www.ledger.com/blog/security-incident-disclosure

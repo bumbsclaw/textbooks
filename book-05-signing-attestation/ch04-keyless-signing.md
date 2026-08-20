@@ -15,6 +15,7 @@ primitive that will show up again as the runtime service identity in zero-trust 
 we return to verification, where the entire security value lives or dies on one thing: **getting the
 identity-matching policy right**, tight enough that "any workflow in the org" cannot masquerade as
 "the release workflow."
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 
@@ -462,7 +463,7 @@ so build-time signing identity and runtime service identity can be *one thing*.
 
 **The SPIFFE ID.** A workload's identity is a URI:
 
-```
+```text
 spiffe://acme.example/ns/prod/sa/payments-api
         └── trust domain ──┘└─── workload path ───┘
 ```
@@ -540,7 +541,7 @@ problem Sigstore solves with TUF, solved here per trust domain.
 Whether the platform is GitHub, GitLab, a cloud, or SPIRE, the chain a keyless workload signature
 rides is the same:
 
-```
+```text
 workload  ──►  short-lived OIDC token / SVID   (signed by the platform IdP / trust-domain CA,
                 asserting "this is workload W")           minted per-run, expires in minutes)
           ──►  Fulcio verifies the token against the issuer's published keys,

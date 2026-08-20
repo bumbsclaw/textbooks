@@ -760,6 +760,31 @@ flowchart LR
   an engineered control system that drives its own error down. The mature end state is a fleet that can
   *prove* — not assert — that it is secure, and know when it isn't.
 
+
+```bash
+# Query the metadata store: "which workloads are affected by CVE-2026-xxxx?" (as of early 2026)
+# Assumes GUAC / Dependency-Track or equivalent SBOM inventory (Book 3 Ch 5)
+guac query --vuln CVE-2026-12345 --format json | jq -r '.packages[] | "\(.name) @ \(.version) — deployed in \(.deployments[])"'
+
+# Coverage of the paved road — the meta-metric (Book 1 Ch 10; Book 4 Ch 10)
+# Fraction of prod services whose last build has verified SLSA L3 provenance + signed SBOM
+psql "$METADATA_DB" -c "
+  SELECT
+    COUNT(*) FILTER (WHERE slsa_level >= 3 AND sbom_present) * 100.0 / COUNT(*) AS paved_road_pct,
+    COUNT(*) FILTER (WHERE slsa_level < 3) AS tail
+  FROM prod_services
+  WHERE last_build_at > NOW() - INTERVAL '30 days';
+"
+```
+
+```text
+Example executive readout slide structure (as of early 2026):
+  Progress:  SLSA L3 provenance 88% → 94% (+6pp); signed images 91% → 97%
+  Gaps:      18 services (6%) still on legacy builder; 3 base images >90d stale
+  Risk:      2 reachable criticals (KEV) in the tail — patch SLA: 7d
+  Next:      Retire legacy builder by 2026-10-01; expand VEX coverage to Tier 1 vendors
+```
+
 ## Further reading
 
 - **NIST SP 800-55, *Measurement Guide for Information Security*** — https://csrc.nist.gov/pubs/sp/800/55/v1/final —

@@ -445,7 +445,24 @@ wrong wastes fleet resources or adds tail latency.
 a time, a client that wants concurrency must hold *many* connections open to each upstream. Every
 HTTP client library exposes this: Go's `http.Transport` has `MaxIdleConnsPerHost` (default 2,
 almost always too low for a busy service — raise it) and `MaxConnsPerHost`; a JVM connection pool
-has a max-per-route; a Python `requests` session backed by `urllib3` has `pool_maxsize`. The pool
+has a max-per-route; a Python `requests` session backed by `urllib3` has `pool_maxsize`.
+
+```go
+// Go: tune the pool so the client — not a middlebox — reaps idle conns first.
+// IdleConnTimeout (client) < server's ReadIdleTimeout avoids the close-vs-request race.
+// For HTTP/2, this single Transport multiplexes all streams over one TCP connection;
+// pair it with L7 or client-side balancing — see Ch. 9 — to avoid the single-connection
+// pinning trap discussed below (also Ch. 11 for retry/idempotency).
+tr := &http.Transport{
+    MaxIdleConnsPerHost: 64,              // default 2 is pool-too-small under load
+    IdleConnTimeout:     60 * time.Second, // keep below server/middlebox idle timeout
+    MaxConnsPerHost:     0,                // 0 = no hard cap; bound via concurrency instead
+    // ForceAttemptHTTP2 is true by default; the same Transport negotiates h2 via ALPN.
+}
+client := &http.Client{Transport: tr, Timeout: 5 * time.Second}
+```
+
+The pool
 exists to amortize TCP and TLS handshakes and keep warm congestion windows. Three failure modes
 dominate. First, **pool too small**: requests queue waiting for a free connection, adding latency
 invisible in server-side metrics because the request has not left the client yet. Second, **idle

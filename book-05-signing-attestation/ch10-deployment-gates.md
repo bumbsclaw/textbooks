@@ -11,6 +11,7 @@ reads all that metadata, compares it to a **policy**, and refuses to run anythin
 chapter is about designing that gate — where it lives, what it checks, how you roll it out across a
 fleet without breaking every deploy on day one, and how you make "only verified artifacts run in
 production" a structural property of your platform rather than an aspiration on a slide.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

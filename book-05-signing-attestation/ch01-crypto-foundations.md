@@ -520,7 +520,7 @@ flowchart TD
 The subtle and important part is **PAE — Pre-Authentication Encoding**. The signature is *not*
 computed over the raw payload bytes. It is computed over:
 
-```
+```text
 PAE(payloadType, payload) = "DSSEv1" SP LEN(payloadType) SP payloadType SP LEN(payload) SP payload
 ```
 
@@ -751,3 +751,11 @@ flowchart LR
 - Book 5, Chapter 5 — Transparency Logs (Merkle trees applied to Rekor and CT); Chapters 3–4 —
   Sigstore and keyless signing (short-lived certs, Fulcio); Book 4, Chapter 3 — SLSA provenance
   (DSSE in production).
+
+
+- **NIST FIPS 180-4 / FIPS 202** — hash standards: https://csrc.nist.gov/pubs/fips/180-4/final and https://csrc.nist.gov/pubs/fips/202/final
+- **RFC 8032 (EdDSA), RFC 8017 (PKCS#1), RFC 5280 (X.509), RFC 6962 (CT)** — https://datatracker.ietf.org/doc/rfc8032/ , https://datatracker.ietf.org/doc/rfc8017/ , https://datatracker.ietf.org/doc/rfc5280/ , https://datatracker.ietf.org/doc/rfc6962/
+- **DSSE and TUF specifications** — https://github.com/secure-systems-lab/dsse and https://theupdateframework.io/specification/
+- **NIST PQC (FIPS 203/204/205) and SP 1800-38** — https://csrc.nist.gov/projects/post-quantum-cryptography and https://csrc.nist.gov/pubs/sp/1800/38/final
+- **Sigstore / Rekor / Fulcio (for forward refs)** — https://docs.sigstore.dev/ , https://github.com/sigstore/rekor , https://github.com/sigstore/fulcio
+- **SLSA provenance and in-toto** — https://slsa.dev/spec/v1.0/ and https://github.com/in-toto/attestation

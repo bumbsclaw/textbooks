@@ -16,6 +16,7 @@ pull actually prove?* — and then enumerates the threats and the controls that 
 assumes the image internals of Chapter 1 (manifests, config, layers, digests, the
 mutable-tag-versus-immutable-digest distinction) and hands off enforcement to Chapters 5 and 6
 (signing verification and admission control).
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

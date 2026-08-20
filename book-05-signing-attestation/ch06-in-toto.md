@@ -16,6 +16,7 @@ all ride inside — and then the original, still-conceptually-important **layout
 verifies an entire pipeline against a signed policy. We tie attestations to DSSE (Chapter 1) and
 Rekor (Chapter 5), show how `cosign` produces and verifies them, and end at the policy gate that
 turns a pile of signed metadata into an admit/deny decision.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 
@@ -386,13 +387,13 @@ asserts that an artifact **flows** correctly from one step to another. The rule 
 
 The **`MATCH`** rule is what stitches steps together. Its full grammar is:
 
-```
+```text
 MATCH <pattern> [IN <src-prefix>] WITH (MATERIALS | PRODUCTS) [IN <dst-prefix>] FROM <step-name>
 ```
 
 Read a concrete example. The `build` step's materials must be exactly the `clone` step's products:
 
-```
+```text
 # In the layout, for the "build" step:
 expected_materials:
   - ["MATCH", "src/*", "WITH", "PRODUCTS", "FROM", "clone"]

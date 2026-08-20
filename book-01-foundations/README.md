@@ -15,3 +15,5 @@ think about the problem as a senior engineer in a large distributed backend orga
 8. [The Open Source Ecosystem: Sustainability, Maintainership, and Risk](ch08-open-source-ecosystem.md)
 9. [Supply Chain Security in Distributed Backend Systems](ch09-distributed-systems-lens.md)
 10. [Building a Supply Chain Security Program](ch10-building-a-program.md)
+
+> **Boundary:** general crypto/auth/PKI/mTLS/secrets/appsec lives in Vol-09; companion instantiates for supply chain.

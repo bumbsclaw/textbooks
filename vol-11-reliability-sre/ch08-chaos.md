@@ -165,9 +165,9 @@ Chaos Mesh is the most widely used Kubernetes chaos tool — a CNCF incubating p
 **Installation:**
 
 ```bash
-# Helm install (requires Kubernetes 1.22+)
+# Helm install (requires Kubernetes 1.22+) — pin the chart version for reproducibility
 helm repo add chaos-mesh https://charts.chaos-mesh.org
-helm install chaos-mesh chaos-mesh/chaos-mesh \
+helm install chaos-mesh chaos-mesh/chaos-mesh --version 2.6.3 --atomic --wait \
   --namespace chaos-mesh --create-namespace \
   --set chaosDaemon.runtime=containerd \
   --set chaosDaemon.socketPath=/run/containerd/containerd.sock \

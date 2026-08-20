@@ -10,6 +10,8 @@ Learning goals — after this chapter you should be able to:
 - Design concurrent access: striped locks, lock-free buckets, RCU, and sharded maps — and know when each is appropriate.
 - Connect hash tables to storage engines: hash indexes vs B-tree indexes, LSM hash-assisted lookups, and hash-partitioned sharding.
 
+> **Boundary note.** This chapter covers single-node hash-table design (hash functions, collision resolution, resizing, concurrency). For hash-partitioned placement across a fleet see Ch. 5 — Consistent Hashing & Rendezvous Hashing; for probabilistic hash structures (Bloom, Cuckoo, HyperLogLog) see Ch. 4 — Probabilistic Data Structures. Hash-based sharding of storage engines is introduced here only as context for Ch. 5's ring and HRW analysis.
+
 ---
 
 ## 2.1 What a hash function must do
@@ -122,7 +124,7 @@ All entries live in a single contiguous array. On collision, probe for the next 
 | **Robin Hood** | Like linear, but steals from rich (close) to give to poor (far) | Reduces variance of probe length | Excellent p99 — see below |
 | **SwissTable** | SIMD group probing (16 slots at once) | Like linear within groups | Best — 16 slots checked per SIMD instruction |
 
-**Linear probing performance** degrades sharply above load factor ~0.7 due to clustering. The expected probe length is `1/(1 - alpha)` for unsuccessful search (Knuth). At alpha=0.5 it is 2, at alpha=0.9 it is 10, at alpha=0.99 it is 100. Keep load below 0.7 or use Robin Hood / SwissTable.
+**Linear probing performance** degrades sharply above load factor ~0.7 due to clustering. Expected probes: unsuccessful `1/(1 - alpha)`, successful `½(1 + 1/(1 - alpha))` (Knuth). At alpha=0.5 that is 2 / 1.5, at alpha=0.9 it is 10 / 5.5, at alpha=0.99 it is 100 / 50.5. Keep load below 0.7 or use Robin Hood / SwissTable.
 
 ### Robin Hood hashing
 
@@ -238,7 +240,7 @@ if __name__ == "__main__":
     # vs 8-15 with naive linear probing — that is the p99 win.
 ```
 
-### SwissTable (Abseil / Rust hashbrown / Go 1.24+)
+### SwissTable (Abseil / Rust hashbrown / Go swiss-table experiment)
 
 SwissTable is the current state of the art for open-addressing hash tables. Key ideas:
 
@@ -246,7 +248,7 @@ SwissTable is the current state of the art for open-addressing hash tables. Key 
 2. **7-bit control bytes + 1-bit sentinel.** Each slot has a control byte: `empty` (0b10000000), `deleted` (0b11111110), or `full` with 7 bits of hash. Lookup first matches control bytes via SIMD, then verifies the full key only on candidates. This filters 127/128 of non-matching slots without touching the keys array — cache win.
 3. **No per-entry pointers.** Everything is array-indexed. Excellent prefetcher behavior.
 
-SwissTable powers `absl::flat_hash_map` (C++), `hashbrown::HashMap` (Rust, and since Rust 1.56 the standard `HashMap`), and Go's `swiss` map experiment (Go 1.24+). If you use any of these languages, you already benefit — but knowing *why* they are faster (2-3x over chaining for small keys, better p99) helps you size and tune.
+SwissTable powers `absl::flat_hash_map` (C++), `hashbrown::HashMap` (Rust, and since Rust 1.56 the standard `HashMap`), and Go's `swiss` map experiment (expected Go 1.24; see golang/go#54766). If you use any of these languages, you already benefit — but knowing *why* they are faster (2-3x over chaining for small keys, better p99) helps you size and tune.
 
 ```mermaid
 flowchart LR
@@ -529,7 +531,7 @@ if __name__ == "__main__":
 **Choosing the table:**
 
 - Language default is usually right for general use. Override only with reason: `FxHash` for trusted integer keys where speed matters, `SipHash` when keys are adversarial.
-- For large, long-lived, read-heavy maps (>100K entries, >90% reads), consider SwissTable-backed types (`absl::flat_hash_map`, `hashbrown`, Go `swiss`) — measurable win.
+- For large, long-lived, read-heavy maps (>100K entries, >90% reads), consider SwissTable-backed types (`absl::flat_hash_map`, `hashbrown`, Go `swiss` experiment) — measurable win.
 - For highly concurrent maps, shard or use `ConcurrentHashMap` / `sync.Map` / RCU. Do not share a single-locked map across 32 cores.
 
 **Sizing:**
@@ -574,7 +576,7 @@ for n in [1_000, 100_000, 10_000_000]:
 - Knuth — *The Art of Computer Programming*, Vol. 3, Section 6.4 (hashing) — the classical analysis of chaining and open addressing.
 - Abseil SwissTable design doc (abseil.io/about/design/swisstables) — control bytes, SIMD probing, and why SwissTable beats chaining.
 - Rust `hashbrown` crate docs (docs.rs/hashbrown) — SwissTable implementation details and benchmarks.
-- Go `runtime/map` and `swiss` experiment (github.com/golang/go/issues/54766) — Go's map evolution toward SwissTable.
+- Go `runtime/map` and `swiss` experiment — Go's map evolution toward SwissTable (expected Go 1.24; see golang/go#54766) — hedged as forward-looking until release.
 - Crosby & Wallach — "Denial of Service via Algorithmic Complexity Attacks" (USENIX Security 2003) — the original hash-flooding paper.
 - RocksDB / LevelDB bloom filter docs — hash-assisted LSM point lookups at scale.
 

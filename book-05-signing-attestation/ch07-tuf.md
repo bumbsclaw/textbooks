@@ -652,6 +652,30 @@ flowchart LR
   root**, which distributes and rotates the Fulcio/Rekor/CT/TSA keys your cosign verifications
   depend on. TUF is the **root of trust for Sigstore's root of trust**.
 
+
+```json
+{
+  "signed": {
+    "_type": "targets",
+    "version": 7,
+    "expires": "2026-10-01T00:00:00Z",
+    "targets": {
+      "releases/app-v1.4.2.tar.gz": {
+        "hashes": { "sha256": "b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c" },
+        "length": 1842115
+      }
+    }
+  },
+  "signatures": [{ "keyid": "a1b2c3d4...", "sig": "3045022100..." }]
+}
+```
+
+```bash
+tuf-client refresh --metadata-url https://tuf-repo-cdn.sigstore.dev/ \
+  --targets-url https://tuf-repo-cdn.sigstore.dev/targets/
+# Verifies root → timestamp → snapshot → targets chain; exits non-zero on rollback, freeze, or threshold failure
+```
+
 ## Further reading
 
 - **The Update Framework specification** — the authoritative definition of the four roles, metadata

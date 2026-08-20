@@ -16,6 +16,7 @@ treatment it deserves and then present the two practical answers that break the 
 Bootstrappable Builds project. The through-line is uncomfortable and important: **source review
 has a floor it cannot see below**, and the only defenses that reach beneath it are diversity,
 reproducibility, and a minimized trusted base — not more careful reading.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 
@@ -432,8 +433,7 @@ flowchart TB
     style PC fill:#c0392b,color:#fff
     style PC2 fill:#c0392b,color:#fff
     style LB fill:#e67e22,color:#fff
-```
-
+```text
 The recursion in that diagram is the whole point: the poisoned binary produces a new poisoned
 binary that produces a new poisoned binary, and each one backdoors `login`. Diffing the compiler
 source against a known-good version finds nothing, because the source *is* known-good. Rebuilding
@@ -469,8 +469,7 @@ flowchart TB
     classDef partial fill:#f1c40f,color:#000
     classDef floor fill:#e67e22,color:#fff
     classDef unseen fill:#c0392b,color:#fff
-```
-
+```text
 Read that stack top to bottom as *decreasing visibility to source review*: green is what you
 actually read, yellow is source you *could* read but usually don't (deps, toolchain), orange is the
 Trusting-Trust floor (the compiler and OS binaries that source review cannot verify by reading),
@@ -536,8 +535,7 @@ flowchart TB
 
     style BAD fill:#c0392b,color:#fff
     style OK fill:#27ae60,color:#fff
-```
-
+```text
 Why this detects a Thompson attack: suppose `cT` carries a self-propagating backdoor that is *not*
 in `sT`. When `cT` compiles `sT` (step 3), the backdoor recognizes it is compiling the compiler and
 re-injects itself — so `cT`'s self-build contains the implant. But `stage2` was produced through
@@ -673,8 +671,7 @@ flowchart LR
   C -.->|"flags subtle 5%"| C1["Needs tuning"]
   E -.->|"catches build-time injection"| E1["Expensive"]
   style E fill:#1f6feb,color:#fff
-```
-
+```text
 ### Malicious commit pattern catalog
 
 ```mermaid
@@ -686,8 +683,7 @@ flowchart TD
   M --> P5["Small diff, big effect<br/>(one-liner in auth path)"]
   M --> DET["Detectors: AST diff, dep diff,<br/>workflow diff, egress policy"]
   style DET fill:#2ea043,color:#fff
-```
-
+```text
 ### Review red-flags decision tree
 
 ```mermaid

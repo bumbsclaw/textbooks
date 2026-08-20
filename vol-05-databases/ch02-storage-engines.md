@@ -119,7 +119,7 @@ adding order.
 
 ### Structure, and the arithmetic of fanout
 
-The B-tree family, introduced by Bayer and McCreight in 1970, is the ordered structure designed
+The B-tree family, introduced by Bayer and McCreight in 1972 (submitted 1970, published *Acta Informatica*), is the ordered structure designed
 for page-granular storage. What databases actually use is the **B+ tree** variant, with three
 defining properties:
 

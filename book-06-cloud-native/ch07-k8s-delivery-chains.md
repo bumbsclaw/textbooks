@@ -16,6 +16,7 @@ and why an in-cluster controller with broad RBAC is a supply-chain risk of the f
 its genuine new failure modes; and finally how these compose into a single **delivery chain of
 custody** — signed commit → verified chart → verified image → admission backstop — where every link
 must hold or the whole chain is theatre.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

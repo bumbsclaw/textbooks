@@ -378,21 +378,22 @@ slos:
     description: "99% of requests complete within 300 ms"
     sli:
       events:
+        # Latency errors are requests that exceed the threshold: total - good.
         error_query: |
+          sum(rate(http_request_duration_seconds_count{service="web-api"}[5m]))
+          -
           sum(rate(http_request_duration_seconds_bucket{service="web-api",le="0.3"}[5m]))
         total_query: |
           sum(rate(http_request_duration_seconds_count{service="web-api"}[5m]))
-      # Note: for latency the error_query counts GOOD events; Sloth's
-      # events model computes SLI as 1 - (error/total), so invert accordingly.
-      # Alternatively use the raw query mode:
     alerting:
       name: WebApiLatency
       labels:
         severity: warning
 
+  # Canonical raw form (equivalent to the events form above) — prefer one or the other:
   - name: "http-latency-p99-raw"
     objective: 99
-    description: "99% of requests under 300 ms (raw form)"
+    description: "99% of requests under 300 ms (raw form — same SLI as above)"
     sli:
       raw:
         error_ratio_query: |

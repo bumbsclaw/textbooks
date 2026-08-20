@@ -18,6 +18,7 @@ signing of Book 5 exactly. We are precise about what platform "Verified" badges 
 limitation: **signing proves who, not whether what they wrote is honest.** A signature is a
 control for *accountability*, not *correctness*. It is necessary for a defensible source supply
 chain and sufficient for none of it.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

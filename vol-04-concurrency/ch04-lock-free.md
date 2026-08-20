@@ -538,6 +538,8 @@ with per-participant values summed on read; both trade instantaneous exactness f
 contention-freedom; both are exact only once updates quiesce. Volume 6 develops CRDTs properly, but
 the intuition is already in your hands: if a value is hot and writes dominate, stop sharing it.
 
+**Where to go next.** Throughput and latency numbers for these structures under contention, and the jcstress/loom/TSan methodology for testing them, are in Chapter 10; the false-sharing physics that makes `LongAdder`'s padding matter is Volume 1, Chapter 8.
+
 ## Key takeaways
 
 - The **progress hierarchy** — blocking, obstruction-free, lock-free, wait-free — is precise.

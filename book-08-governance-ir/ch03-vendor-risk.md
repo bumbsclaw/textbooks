@@ -630,6 +630,22 @@ flowchart TD
   before the incident is what turns a vendor-compromise headline into an hour-scale "where is this
   in our fleet?" answer instead of a week-scale scramble. Vendor IR is fleet IR.
 
+
+```text
+Vendor tiering rubric (example — adapt to your risk appetite; as of early 2026)
+  Tier 1 (critical): direct prod dependency or handles regulated data → SBOM + provenance + continuous monitoring + annual re-assessment
+  Tier 2 (important): indirect dependency or privileged SaaS integration → SBOM on request + point-in-time attestation
+  Tier 3 (low): tooling with no data/prod access → questionnaire triage
+Signal: a Tier 1 vendor unwilling or unable to provide an SBOM/provenance is itself a risk finding.
+```
+
+```bash
+# Ingest and diff a vendor SBOM across releases to detect new transitive exposure (as of early 2026)
+osv-scanner --sbom=vendor-acme-sbom-v1.4.1.cyclonedx.json --format=json > /tmp/vendor-scan-$(date +%F).json
+jq -r '.results[].packages[].package.name' /tmp/vendor-scan-*.json | sort -u | comm -13 /tmp/known-good.txt -
+# Anything in the new release not in the known-good list is a net-new dependency to vet
+```
+
 ## Further reading
 
 - **NIST SP 800-161r1**, *Cybersecurity Supply Chain Risk Management Practices for Systems and
@@ -663,3 +679,12 @@ flowchart TD
   serverless/managed services); Book 7, Chapter 6 (account takeover, third-party access); Book 8,
   Chapters 1, 5, and 6 (regulation, detecting compromise, incident response).
 ```
+
+
+- **NIST SP 800-161r1 (C-SCRM)** — https://csrc.nist.gov/pubs/sp/800/161/r1/final
+- **ISO/IEC 27036 and 27001** — https://www.iso.org/standard/75234.html and https://www.iso.org/standard/27001
+- **AICPA SOC 2** — https://www.aicpa-cima.com/topic/audit-assurance/audit-and-assurance-greater-than-soc-2
+- **CISA attestation form and OMB M-22-18/M-23-16** — https://www.cisa.gov/secure-software-development-attestation-form and https://www.whitehouse.gov/wp-content/uploads/2022/09/M-22-18.pdf
+- **EU CRA (2024/2847)** — https://eur-lex.europa.eu/eli/reg/2024/2847/oj
+- **NTIA SBOM and CycloneDX/SPDX** — https://www.ntia.gov/page/software-bill-materials , https://cyclonedx.org/specification/overview/ , https://spdx.dev/learn/overview/
+- **OpenSSF S2C2F** — https://github.com/ossf/s2c2f and https://slsa.dev/spec/v1.0/

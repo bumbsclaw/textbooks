@@ -12,6 +12,7 @@ so it has a supply chain: reusable **modules**, plugin **providers**, persistent
 account. Compromise any of those four and you do not compromise one service — you compromise the
 foundation every service stands on. That is the argument of the chapter, and everything else is
 mechanism and defense.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 
@@ -766,3 +767,10 @@ flowchart TB
   CI/CD; Book 4, Chapter 7 — Pipeline Poisoning: PPE, Cache, and Artifact Attacks; Book 5, Chapter 4 —
   Keyless Signing and Workload Identity; Book 6, Chapter 6 — Admission Control and Policy Engines;
   Book 8, Chapter 4 — Policy as Code and Continuous Compliance.
+
+
+- **Terraform lock file and provider signing** — https://developer.hashicorp.com/terraform/language/files/dependency-lock and https://developer.hashicorp.com/terraform/registry/providers/signing
+- **OpenTofu documentation** — https://opentofu.org/docs/ and https://opentofu.org/registry/
+- **Sentinel, OPA/Conftest, Checkov, Trivy, Terrascan, KICS** — https://developer.hashicorp.com/sentinel , https://www.openpolicyagent.org/docs/ , https://www.checkov.io/ , https://aquasecurity.github.io/trivy/ , https://runterrascan.io/ , https://checkmarx.com/kics/
+- **Pulumi, AWS CDK, CloudFormation, Crossplane** — https://www.pulumi.com/docs/ , https://docs.aws.amazon.com/cdk/ , https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html , https://docs.crossplane.io/latest/
+- **SLSA, Sigstore, and policy-as-code** — https://slsa.dev/spec/v1.0/ , https://docs.sigstore.dev/ , https://www.openpolicyagent.org/docs/latest/policy-language/

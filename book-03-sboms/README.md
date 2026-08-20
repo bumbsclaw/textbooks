@@ -14,3 +14,5 @@ limits — from SPDX and CycloneDX to VEX and enterprise-scale SBOM pipelines.
 7. [SBOM Quality, Completeness, and Limitations](ch07-sbom-quality-limitations.md)
 8. [SBOMs for Services: Containers, Serverless, and SaaS](ch08-sboms-for-services.md)
 9. [Operationalizing SBOMs in the Enterprise](ch09-operationalizing-sboms.md)
+
+> **Boundary:** general crypto/auth/PKI/mTLS/secrets/appsec lives in Vol-09; companion instantiates for supply chain.

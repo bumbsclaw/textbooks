@@ -15,6 +15,7 @@ curated images like Chainguard's Wolfi; the CVE-reduction argument and its hones
 lifecycle discipline — freshness, digest-pinning, provenance — that keeps a minimal base from
 silently rotting; and the fleet-scale answer, a **golden base image program** that lets a platform
 team patch once and rebuild everything.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

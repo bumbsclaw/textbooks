@@ -722,7 +722,7 @@ flowchart LR
     L0["L0: Ad hoc<br/>No provenance"] --> L1["SLSA L1<br/>Provenance available"]
     L1 --> L2["SLSA L2<br/>Hosted build"]
     L2 --> L3["SLSA L3<br/>Hermetic + non-falsifiable"]
-    L3 --> L4["SLSA L4<br/>Two-party review + hermetic"]
+    L3 --> L4["SLSA L4 — v0.1 only (removed in v1.0)<br/>Two-party review + hermetic"]
 
     M0["SSDF: basic<br/>hygiene"] --> M1["SSDF: automated<br/>tooling"]
     M1 --> M2["SSDF: measured<br/>+ attested"]
@@ -765,3 +765,5 @@ flowchart LR
   provenance.
 - Microsoft **Security Development Lifecycle (SDL)** (`microsoft.com/sdl`) — the lifecycle-practices
   ancestor of SSDF, and the origin home of S2C2F.
+
+> **Boundary:** general crypto/auth/PKI/mTLS/secrets/appsec lives in Vol-09; companion instantiates for supply chain.

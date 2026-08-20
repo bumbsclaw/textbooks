@@ -807,3 +807,5 @@ flowchart TD
   and Chapter 2 (hermetic and reproducible builds); Book 5, Chapters 3–4, 6, 8, 10 (Sigstore,
   keyless/workload identity, in-toto, provenance verification, deployment gates); Book 3, Chapter 5
   (attestation storage); Book 6, Chapters 5–6 (admission-time verification).
+
+> **Boundary:** general crypto/auth/PKI/mTLS/secrets/appsec lives in Vol-09; companion instantiates for supply chain.

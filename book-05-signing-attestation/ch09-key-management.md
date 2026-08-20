@@ -14,6 +14,7 @@ how to store keys so they are hard to steal, how to build and run internal PKI, 
 whole fleet onto short-lived certificates so revocation stops mattering, how to run the key
 lifecycle as a disciplined operation rather than a folder of `.pem` files, and how to stand up a
 self-hosted Sigstore that meets the same tier-1 availability bar as the rest of your platform.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

@@ -19,6 +19,7 @@ and every project that transitively depended on it. When the unit of attack is "
 same upstream," the unit of defense has to be collective too. The organization that finds the malicious
 package and reports it to the registry protects everyone who has not yet pulled it. That is not altruism;
 it is the only defense that scales to the actual shape of the threat.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 
@@ -661,3 +662,14 @@ flowchart LR
   VEX); Book 4 (build integrity for T1195.002); Book 5, Chapter 5 (Rekor transparency-log monitoring); Book
   8, Chapters 1–3, 5–6 (regulatory/CRA disclosure duties, S2C2F Fix+Upstream, vendor IR, detection,
   incident response).
+
+
+- **CISA KEV catalog and BOD 22-01** — https://www.cisa.gov/known-exploited-vulnerabilities-catalog and https://www.cisa.gov/news-events/directives/bod-22-01-reducing-significant-risk-known-exploited-vulnerabilities
+- **FIRST EPSS and TLP 2.0, CVSS** — https://www.first.org/epss/ and https://www.first.org/tlp/ and https://www.first.org/cvss/
+- **OpenSSF Malicious Packages and Package Analysis** — https://github.com/ossf/malicious-packages and https://github.com/ossf/package-analysis
+- **OSV and GitHub Advisory Database** — https://osv.dev/ and https://github.com/advisories
+- **OASIS STIX 2.1 and TAXII 2.1** — https://oasis-open.github.io/cti-documentation/stix/intro.html and https://oasis-open.github.io/cti-documentation/taxii/intro.html
+- **CERT/CC CVD and VINCE** — https://vuls.cert.org/confluence/display/CVD/ and https://kb.cert.org/vince/
+- **MITRE ATT&CK T1195** — https://attack.mitre.org/techniques/T1195/
+- **CISA supply-chain advisories** — https://www.cisa.gov/topics/cybersecurity-best-practices/supply-chain-security
+- **CISA/NTIA VEX and CycloneDX/CSAF VEX** — https://www.cisa.gov/sbom and https://cyclonedx.org/capabilities/vex/

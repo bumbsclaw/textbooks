@@ -15,3 +15,5 @@ packages, vulnerability data, SCA, and dependency governance at scale.
 8. [Vendoring, Mirroring, and Internal Registries](ch08-vendoring-internal-registries.md)
 9. [Dependency Update Strategy and Automation](ch09-update-automation.md)
 10. [Evaluating Dependencies: Scorecards, Signals, and Policy](ch10-evaluating-dependencies.md)
+
+> **Boundary:** general crypto/auth/PKI/mTLS/secrets/appsec lives in Vol-09; companion instantiates for supply chain.

@@ -745,3 +745,11 @@ flowchart LR
   Platform; Book 5, Chapters 4–6, 10 — Keyless Signing, Transparency Logs, in-toto, Attestation Gates;
   Book 6, Chapters 1–8 — this book; Book 7 — Source, Code, and Insider Threat Security; Book 8,
   Chapters 1, 2, 4, 8 — Regulatory Landscape, Adopting SLSA/S2C2F, Policy as Code, Metrics and Reporting.
+
+
+- **SLSA v1.0 and Sigstore** — https://slsa.dev/spec/v1.0/ and https://docs.sigstore.dev/
+- **in-toto Attestation Framework and OpenVEX** — https://github.com/in-toto/attestation and https://github.com/openvex/spec
+- **SPDX and CycloneDX** — https://spdx.dev/ and https://cyclonedx.org/specification/overview/
+- **OCI Distribution / Image / Referrers API** — https://github.com/opencontainers/distribution-spec and https://github.com/opencontainers/image-spec
+- **GUAC, Dependency-Track, Kyverno, policy-controller** — https://guac.sh/ , https://dependencytrack.org/ , https://kyverno.io/docs/ , https://github.com/sigstore/policy-controller
+- **NIST SSDF (SP 800-218) and SP 800-204D** — https://csrc.nist.gov/pubs/sp/800/218/final and https://csrc.nist.gov/pubs/sp/800/204/d/final

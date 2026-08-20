@@ -21,6 +21,7 @@ positives in image scanning, where in the pipeline scanning happens (and why it 
 *continuously*, not once), and the operational reality that the dominant remediation for image
 CVEs is not patching packages one by one — it is **rebasing onto a fresher base image and
 rebuilding the fleet**.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

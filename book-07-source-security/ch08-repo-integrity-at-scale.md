@@ -19,6 +19,7 @@ configuration-management and governance problem, structurally identical to fleet
 admission control, or desired-state reconciliation anywhere else in a large backend estate. This is
 the capstone of Book 7: how to run source integrity as a **program** — a control plane over the
 whole repository fleet — rather than a checklist you apply repo by repo and hope holds.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

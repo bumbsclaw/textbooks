@@ -15,3 +15,5 @@ hermeticity, provenance, secrets, and pipeline attacks.
 8. [Ephemeral and Isolated Build Environments](ch08-ephemeral-build-environments.md)
 9. [Build Observability and Anomaly Detection](ch09-build-observability.md)
 10. [Designing a Secure Build Platform at Scale](ch10-secure-build-platform.md)
+
+> **Boundary:** general crypto/auth/PKI/mTLS/secrets/appsec lives in Vol-09; companion instantiates for supply chain.

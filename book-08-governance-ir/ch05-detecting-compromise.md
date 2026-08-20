@@ -570,6 +570,28 @@ flowchart TD
   verification (Book 5), egress/behavioral monitoring (Book 4, Ch 8–9), and reproducibility (Book 4,
   Ch 2). None is exotic; all were available. Operate them continuously, fleet-wide.**
 
+
+```bash
+# Hunt for SolarWinds-style beaconing in DNS/egress logs (illustrative, as of early 2026)
+# Flag long DGA-like subdomains under the SUNBURST pattern — tune for your DNS data source
+jq -r '.dns.question.name' /var/log/dns.json \
+  | grep -E '^[a-z0-9]{12,}\.[a-z0-9.-]+\.appsync-api\.' \
+  | sort -u > /tmp/dga-candidates.txt
+# Cross-reference with allowlisted beacon domains; alert on net-new
+
+# Detect anomalous Codecov-Bash-Uploader style exfiltration (unexpected egress from CI)
+# Baseline: CI jobs should only egress to registry + artifact store; anything to an unknown host is suspect
+tshark -r /var/log/ci-egress.pcap -Y 'dns.qry.name and not dns.qry.name contains "registry.internal"' -T fields -e dns.qry.name | sort -u
+```
+
+```bash
+# Compare a rebuild from VCS against the registry artifact (reproducibility as tamper detection)
+# Mismatch means the registry artifact is not what VCS says it should be — investigate as compromise
+docker build --no-cache -t rebuild:check .
+skopeo copy docker-daemon:rebuild:check oci:/tmp/rebuild-oci
+cosign verify-blob --certificate-identity-regexp '.*' --certificate-oidc-issuer https://token.actions.githubusercontent.com --bundle provenance.json /tmp/rebuild-oci
+```
+
 ## Further reading
 
 - **FireEye/Mandiant, "Highly Evasive Attacker Leverages SolarWinds Supply Chain" (SUNBURST
@@ -602,3 +624,13 @@ flowchart TD
   build observability); Book 5, Chapters 5 and 8 (transparency logs, verification); Book 6, Chapters 2
   and 5–6 (registry, admission); Book 7, Chapters 5, 6, 8 (source hiding spots, ATO/UEBA, protection);
   Book 8, Chapters 6 and 7 (incident response, threat intelligence).
+
+
+- **Mandiant SUNBURST disclosure (Dec 2020)** — https://www.mandiant.com/resources/blog/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor
+- **Codecov Bash Uploader post-mortem (Apr 2021)** — https://about.codecov.io/security-update/
+- **Andres Freund xz-utils disclosure (CVE-2024-3094, 29 Mar 2024)** — https://www.openwall.com/lists/oss-security/2024/03/29/4
+- **Reproducible Builds and Diverse Double-Compiling** — https://reproducible-builds.org/ and https://dwheeler.com/trusting-trust/wheeler-dcc-paper.pdf
+- **Sigstore Rekor** — https://docs.sigstore.dev/logging/overview/ and https://github.com/sigstore/rekor
+- **Falco and Tetragon** — https://falco.org/docs/ and https://tetragon.io/docs/
+- **OSV and OSV-Scanner** — https://osv.dev/ and https://google.github.io/osv-scanner/
+- **MITRE ATT&CK T1195 and CISA advisories** — https://attack.mitre.org/techniques/T1195/ and https://www.cisa.gov/topics/cybersecurity-best-practices/supply-chain-security

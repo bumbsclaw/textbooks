@@ -88,7 +88,8 @@ jobs:
     permissions:
       contents: read          # clone the repo, nothing else
     steps:
-      - uses: actions/checkout@<sha>   # see SHA-pinning below
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+          # see SHA-pinning below
 
   label:
     runs-on: ubuntu-latest

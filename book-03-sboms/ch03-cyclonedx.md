@@ -99,7 +99,7 @@ flowchart TD
   BOM["BOM root<br/>bomFormat, specVersion,<br/>serialNumber, version"]
   META["metadata<br/>timestamp, tools, authors,<br/>component (subject),<br/>lifecycles, manufacturer, supplier"]
   COMP["components[]<br/>type, name, version,<br/>bom-ref, purl, cpe,<br/>hashes, licenses, scope,<br/>evidence, nested components"]
-  SVC["services[]<br/>bom-ref, provider,<br/>endpoints, data flows,<br/>trust boundary"]
+  SVC["services[]<br/>bom-ref, provider,<br/>endpoints, data flows,<br/>`x-trust-boundary`"]
   DEP["dependencies[]<br/>ref, dependsOn[], provides[]"]
   VULN["vulnerabilities[]<br/>id, ratings, cwes,<br/>advisories, analysis (VEX),<br/>affects[]"]
   COMPOS["compositions[]<br/>aggregate: complete /<br/>incomplete / unknown"]
@@ -494,8 +494,8 @@ is the CycloneDX feature with no real SPDX analogue. A service entry carries:
   runs it.
 - **`endpoints`** — the URLs/URIs the service exposes or that you call.
 - **`authenticated`** — whether calls to it are authenticated.
-- **`x-trust-boundary`** — whether calling the service crosses a trust boundary (leaves your
-  security domain).
+- **`x-trust-boundary`** (`trust boundary` in prose) — whether calling the service crosses a trust boundary (leaves your
+  security domain). Use `x-trust-boundary` in code/JSON and \"trust boundary\" in prose.
 - **`trustZone`** — a label for the zone the service sits in.
 - **`data`** — the **data flows**: an array of classified flows, each with a `flow`
   direction (`inbound`, `outbound`, `bi-directional`, `unknown`), a `classification` (e.g.

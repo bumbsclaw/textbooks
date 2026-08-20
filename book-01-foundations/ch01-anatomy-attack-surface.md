@@ -742,3 +742,5 @@ flowchart TD
   https://www.enisa.europa.eu/publications/threat-landscape-for-supply-chain-attacks
 - CNCF Security TAG, "Software Supply Chain Best Practices" white paper:
   https://github.com/cncf/tag-security/blob/main/community/working-groups/supply-chain-security/supply-chain-security-paper/CNCF_SSCP_v1.pdf
+
+> **Boundary:** general crypto/auth/PKI/mTLS/secrets/appsec lives in Vol-09; companion instantiates for supply chain.

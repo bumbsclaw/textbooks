@@ -18,6 +18,7 @@ Connaisseur, Ratify+Gatekeeper, Binary Authorization) with working policy, the
 and the brutal operational reality that this webhook sits in the critical path of *every pod in
 the fleet*. The policy language itself — Rego, CEL, Kyverno's engine — is Chapter 6; here we stay
 on the image-verification aspect.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 

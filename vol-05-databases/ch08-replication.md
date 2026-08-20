@@ -90,7 +90,7 @@ pg_basebackup -h primary.db.internal -U replicator -D /var/lib/postgresql/17/mai
 
 ```ini
 # postgresql.conf on the primary
-wal_level = replica            # the default since PostgreSQL 10
+wal_level = replica            # the default since 9.6 (as `replica` since PG 10; renamed from `hot_standby`)
 max_wal_senders = 10
 # Replication slots make the primary retain WAL until this standby confirms it.
 # Cap the retention or a dead standby fills the primary's disk:

@@ -16,6 +16,7 @@ The single most important idea here is deceptively simple and constantly botched
 something is validly signed is nearly useless; you must verify that it was signed by the *expected*
 identity, and that the signed thing is *this* artifact.** Most of this chapter is spent making that
 distinction concrete and enforceable.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 
@@ -233,7 +234,7 @@ cosign verify --key awskms:///alias/prod-signing registry.example.com/app@sha256
 
 A successful run prints the verified DSSE/signature payloads (trimmed):
 
-```
+```text
 Verification for registry.example.com/app@sha256:3f7a...c19d --
 The following checks were performed on each of these signatures:
   - The cosign claims were validated

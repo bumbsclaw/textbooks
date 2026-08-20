@@ -616,6 +616,21 @@ sequenceDiagram
   events (new maintainer, protection disabled, token minted). The same SSO/OIDC fabric that enforces
   MFA also produces the telemetry and enables the fast revocation that response depends on.
 
+
+```bash
+# Query GitHub org audit log for anomalous push/auth events (as of early 2026, via gh CLI + audit-log API)
+gh api /orgs/acme/audit-log --paginate --jq '.[] | select(.action=="git.push" or .action=="org.enable_sso") | [.actor, .action, .created_at, .actor_location.country_code] | @tsv' \
+  | head -20
+# Pipe to your SIEM; alert on impossible-travel or dormant-account reactivation
+```
+
+```text
+# Example UEBA alert (pseudo — shape varies by vendor)
+ALERT 2026-05-10T03:14:22Z  actor=alice@acme.com  reason=dormant_account_push_after_90d
+  repo=acme/payments-api  new_country=XX  mfa_verified=true  session_cookie_replay_suspected=true
+  action=Suspend session, force re-auth, require step-up verification
+```
+
 ## Further reading
 
 - **CircleCI — January 4 & 13, 2023 security incident report.** The authoritative account of the

@@ -456,10 +456,10 @@ jobs:
           fail-on: ERR
 ```
 
-### Protobuf — `buf breaking` (buf 1.32.2)
+### Protobuf — `buf breaking` (buf 1.40.2)
 
 ```yaml
-# buf.yaml — buf 1.32.2
+# buf.yaml — buf 1.40.2
 version: v2
 lint:
   use: [DEFAULT]
@@ -564,7 +564,7 @@ stateDiagram-v2
 - IETF. *RFC 8594 — The Sunset HTTP Header Field* (2019) and *RFC 9745 — The Deprecation HTTP Header Field* (2024) — standard headers for deprecation and sunset signalling.
 - IETF. *RFC 9457 — Problem Details for HTTP APIs* (2023) — the `application/problem+json` envelope used for `410 Gone` responses.
 - Google. *API Improvement Proposals (AIPs)* — https://aip.dev/ — AIP-122 (resource names), AIP-136 (custom methods), AIP-149 (versioning), AIP-151 (long-running operations).
-- `buf` 1.32.2 — https://buf.build/docs/breaking — FILE vs PACKAGE vs WIRE breaking checks for Protobuf.
+- `buf` 1.40.2 — https://buf.build/docs/breaking — FILE vs PACKAGE vs WIRE breaking checks for Protobuf.
 - `oasdiff` 1.9.2 — https://github.com/Tufin/oasdiff — breaking-change detection for OpenAPI 3.x.
 - Fowler, M. *Parallel Change* (https://martinfowler.com/bliki/ParallelChange.html) — the expand-contract pattern's original formulation.
 - Newman, S. *Building Microservices* 2nd ed. (O'Reilly, 2021), Ch. 4 — versioning trade-offs and consumer-driven contracts.

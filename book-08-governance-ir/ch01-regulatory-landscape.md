@@ -675,6 +675,25 @@ flowchart TB
   (Books 3–6) produce automatically. The central SBOM/provenance/attestation store *is* the
   compliance evidence repository, and it is what makes the CRA's 24-hour clock survivable.
 
+
+```text
+Regulatory horizon as of early 2026 (verify current dates — CRA/DORA timelines evolve):
+  2021-05-12  EO 14028 issued → SSDF, SBOM, attestation chain begins
+  2022-02-18  NIST SP 800-218 (SSDF v1.1) published
+  2022-09-14  OMB M-22-18 (self-attestation deadline)
+  2024-09-10  EU CRA 2024/2847 enters into force
+  2025-01-17  DORA (2022/2554) applies
+  2026 ~Sep   CRA reporting obligations begin (hedged — check eur-lex.europa.eu)
+  2027        CRA full obligations expected
+```
+
+```bash
+# Map a CRA essential requirement to the control that satisfies it (example — check current CRA Annex I)
+# Requirement: "products shall be placed on the market without known exploitable vulnerabilities"
+# Control: SCA at the internal-proxy chokepoint + KEV-driven patch SLA (Book 2 Ch 6–7; Book 6 Ch 4)
+osv-scanner --sbom=sbom.cyclonedx.json --format=json | jq '[.results[].packages[] | select(.packageCommit.existingVulnerabilities)] | length'
+```
+
 ## Further reading
 
 - **Executive Order 14028**, "Improving the Nation's Cybersecurity," The White House, 12 May
@@ -705,3 +724,13 @@ flowchart TB
   exposure for false cybersecurity attestations.
 - For the frameworks the regulations lean on: **SLSA v1.0** (`slsa.dev`), **S2C2F** (OpenSSF),
   and Book 1, Chapter 7 — Risk Frameworks and Maturity Models: SLSA, SSDF, S2C2F.
+
+
+- **EO 14028** — https://www.whitehouse.gov/briefing-room/presidential-actions/2021/05/12/executive-order-on-improving-the-nations-cybersecurity/
+- **NIST SSDF SP 800-218 v1.1 and SP 800-218A** — https://csrc.nist.gov/pubs/sp/800/218/final and https://csrc.nist.gov/pubs/sp/800/218/a/final
+- **NIST SP 800-161 Rev. 1 (C-SCRM)** — https://csrc.nist.gov/pubs/sp/800/161/r1/final
+- **OMB M-22-18 / M-23-16 and CISA attestation form** — https://www.whitehouse.gov/wp-content/uploads/2022/09/M-22-18.pdf and https://www.cisa.gov/secure-software-development-attestation-form
+- **NTIA SBOM Minimum Elements** — https://www.ntia.gov/page/software-bill-materials
+- **EU Cyber Resilience Act and DORA** — https://eur-lex.europa.eu/eli/reg/2024/2847/oj and https://eur-lex.europa.eu/eli/reg/2022/2554/oj
+- **FDA premarket cybersecurity guidance** — https://www.fda.gov/media/119933/download
+- **SLSA and S2C2F** — https://slsa.dev/spec/v1.0/ and https://github.com/ossf/s2c2f

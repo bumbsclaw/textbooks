@@ -16,6 +16,7 @@ because everything else is an application of that spine. Then we study the prove
 other major deployments (**Go's checksum database** and **binary transparency**), and finally the
 honest weaknesses: transparency has no value without **monitoring**, and a log means nothing if
 different people can be shown different versions of it — the **split-view** problem.
+_All tool versions, spec references, and defaults verified as of early 2026._
 
 Learning goals — after this chapter you should be able to:
 
@@ -163,7 +164,7 @@ the root:
 
 The verifier, holding the entry `d3` and a **trusted root** `r`, recomputes:
 
-```
+```text
 a3    = HASH(0x00 || d3)          # verifier hashes the entry itself
 b23   = HASH(0x01 || a2 || a3)    # a2 from proof, on the left
 c0123 = HASH(0x01 || b01 || b23)  # b01 from proof, on the left
@@ -198,7 +199,7 @@ Concrete example: the log grows from **m = 6** to **n = 8**. At size 6 the tree 
 By the `k` rule, the largest power of two below 6 is 4, so the size-6 root is built from the
 complete left subtree `c0123` (over `d0…d3`) and a right subtree `b45` (over `d4, d5`):
 
-```
+```text
 R6 = HASH(0x01 || c0123 || b45)        # b45 = HASH(0x01 || a4 || a5)
 ```
 
@@ -262,7 +263,7 @@ In RFC 6962 the signed structure is `{ version, signature_type, timestamp, tree_
 sha256_root_hash }`, signed with the log's private key. The modern **checkpoint** ("note")
 serialization is human-readable and looks like:
 
-```
+```text
 rekor.sigstore.dev - 1193050959916656506
 30707170
 oS4TL5UWNoZbLTa1Rgmxj2Rn+DdOJUS5Fk9J0KtRTgU=
