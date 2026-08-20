@@ -233,9 +233,9 @@ until then their paths are as listed above).
 
 ## Volume 9 — Security, Authentication, and Cryptography (`vol-09-security-auth/`)
 
-- [ ] 9.01 Applied Cryptography for Engineers — `ch01-applied-crypto.md`
-- [ ] 9.02 Hashing, MACs, KDFs, Password Storage — `ch02-hashing-passwords.md`
-- [ ] 9.03 Symmetric and Asymmetric Encryption in Practice — `ch03-encryption.md`
+- [x] 9.01 Applied Cryptography for Engineers — `ch01-applied-crypto.md`
+- [x] 9.02 Hashing, MACs, KDFs, Password Storage — `ch02-hashing-passwords.md`
+- [x] 9.03 Symmetric and Asymmetric Encryption in Practice — `ch03-encryption.md`
 - [ ] 9.04 Certificates, PKI, and TLS Operations — `ch04-pki-tls-ops.md`
 - [ ] 9.05 Authentication: Sessions, Tokens, JWTs — `ch05-authentication.md`
 - [ ] 9.06 OAuth 2.0 and OpenID Connect — `ch06-oauth-oidc.md`
