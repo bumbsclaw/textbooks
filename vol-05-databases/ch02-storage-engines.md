@@ -174,7 +174,14 @@ flowchart TD
     P1 --> L1
   end
   subgraph AFTER["After the split"]
-    P2["parent: ... 12 |27 ..."] L2["leaf: 12 23"] L3["new leaf: 27 31 47"] P2 --> L2 P2 --> L3 L2 -.->|"sibling link"|L3 end BEFORE ==>|"split leaf, promote 27"| AFTER
+    P2["parent: ... 12 |27 ..."]
+    L2["leaf: 12 23"]
+    L3["new leaf: 27 31 47"]
+    P2 --> L2
+    P2 --> L3
+    L2 -.->|"sibling link"|L3
+  end
+  BEFORE ==>|"split leaf, promote 27"| AFTER
 ```
 
 Amortized, splits are rare — with fanout 100+, fewer than a percent of inserts split — but they

@@ -257,16 +257,16 @@ At 20 orders this is 21 queries; at 200 (a large page or a nested traversal) it 
 
 ```mermaid
 flowchart TB
-    subgraph Naive[N+1 — naive resolvers]
-        Q1[Query.orders — 1 SELECT] --> R1[Order 1 — SELECT customer]
-        Q1 --> R2[Order 2 — SELECT customer]
-        Q1 --> R3[Order N — SELECT customer]
-        R1 & R2 & R3 -.-> D1['N sequential round-trips']
+    subgraph Naive["N+1 -- naive resolvers"]
+        Q1["Query.orders -- 1 SELECT"] --> R1["Order 1 -- SELECT customer"]
+        Q1 --> R2["Order 2 -- SELECT customer"]
+        Q1 --> R3["Order N -- SELECT customer"]
+        R1 & R2 & R3 -.-> D1["N sequential round-trips"]
     end
-    subgraph Batched[Batched — DataLoader]
-        Q2[Query.orders — 1 SELECT] --> B1[customerLoader.load × N — batched]
-        B1 --> S1['1 SELECT ... WHERE id IN (...)']
-        S1 --> C1['N customers — single round-trip']
+    subgraph Batched["Batched -- DataLoader"]
+        Q2["Query.orders -- 1 SELECT"] --> B1["customerLoader.load x N -- batched"]
+        B1 --> S1["1 SELECT ... WHERE id IN (...)"]
+        S1 --> C1["N customers -- single round-trip"]
     end
 ```
 

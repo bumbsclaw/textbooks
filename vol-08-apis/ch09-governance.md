@@ -463,15 +463,15 @@ sequenceDiagram
     participant Dev as Developer
     participant GH as GitHub PR + CI
     participant Spec as Spectral / buf lint
-    participant Break as oasdiff / buf breaking
+    participant Brk as oasdiff / buf breaking
     participant Review as CODEOWNERS / Guild
     participant Reg as Catalog / BSR / Registry
 
     Dev->>GH: open PR (openapi.yaml / proto)
     GH->>Spec: spectral lint + buf lint
     Spec-->>GH: errors / warnings (annotated on PR)
-    GH->>Break: oasdiff breaking vs main<br/>buf breaking vs main/BSR
-    Break-->>GH: ERR blocks merge<br/>WARN as PR comment
+    GH->>Brk: oasdiff breaking vs main<br/>buf breaking vs main/BSR
+    Brk-->>GH: ERR blocks merge<br/>WARN as PR comment
     alt automated gates fail
         GH-->>Dev: block — fix or justify with MAJOR bump
     else gates pass
@@ -677,13 +677,13 @@ sequenceDiagram
     participant Dev as Developer
     participant CI as CI
     participant Lint as Spectral / buf lint
-    participant Break as Breaking check
+    participant Brk as Breaking check
     participant Score as API Scoreboard
     Dev->>CI: push spec
     CI->>Lint: lint + style
     Lint-->>CI: report
-    CI->>Break: diff vs main
-    Break-->>CI: pass/fail
+    CI->>Brk: diff vs main
+    Brk-->>CI: pass/fail
     CI->>Score: publish score
     Score-->>Dev: badge + merge gate
 ```

@@ -584,15 +584,15 @@ function validateFilters(query) {
 
 ```mermaid
 flowchart LR
-    A[GET /orders?filter + sort + page_token] --> B{Validate}
-    B -->|unknown field sort| C[400 Bad Request]
-    B -->|ok| D[Decode cursor]
-    D --> E[Build WHERE: filters + keyset]
-    E --> F[SELECT ... ORDER BY sort, id LIMIT page_size+1]
-    F --> G{Rows > page_size?}
-    G -->|yes| H[has_more=true, next_token=encode(last)]
-    G -->|no| I[has_more=false, next_token=null]
-    H --> J[200 + Cache-Control: private, no-store]
+    A["GET /orders?filter + sort + page_token"] --> B{Validate}
+    B -->|"unknown field sort"| C["400 Bad Request"]
+    B -->|"ok"| D["Decode cursor"]
+    D --> E["Build WHERE: filters + keyset"]
+    E --> F["SELECT ... ORDER BY sort, id LIMIT page_size+1"]
+    F --> G{"Rows > page_size?"}
+    G -->|"yes"| H["has_more=true, next_token=encode(last)"]
+    G -->|"no"| I["has_more=false, next_token=null"]
+    H --> J["200 + Cache-Control: private, no-store"]
     I --> J
 ```
 

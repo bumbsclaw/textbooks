@@ -265,7 +265,9 @@ NIST SP 800-63B Digital Identity Guidelines (rev. 4 draft, 2023; rev. 3 is 2017)
 flowchart TD
     A["User registers<br/>password: s3cret!"] --> B["Generate 16-byte salt<br/>crypto/rand"]
     B --> C["Argon2id<br/>m=64 MiB, t=3, p=1<br/>per RFC 9106"]
-    C --> D["Hash ||salt||params<br >PHC string format<br >$argon2id$v=19$m=65536 t=3 p=1$salt$hash"] D --> E["Store in DB<br >one row per user"] F["User logs in<br >password attempt"] --> G["Fetch PHC string<br >parse salt + params"] G --> H["Argon2id with same params<br >same salt"] H --> I{"hmac.Equal?"} I -->|"Yes"|J["Authenticated<br >optionally rehash if params stale"] I -->|"No"| K["Reject<br/>constant-time, no oracle"]
+    C --> D["Hash with salt and params<br/>PHC string format<br/>argon2id v=19 m=65536 t=3 p=1 salt hash"]
+    D --> E["Store in DB<br/>one row per user"]
+    F["User logs in<br/>password attempt"] --> G["Fetch PHC string<br/>parse salt + params"] G --> H["Argon2id with same params<br >same salt"] H --> I{"hmac.Equal?"} I -->|"Yes"|J["Authenticated<br >optionally rehash if params stale"] I -->|"No"| K["Reject<br/>constant-time, no oracle"]
 
     L["Pepper 32 bytes<br/>stored in KMS/HSM<br/>not in DB"] -.-> C
     L -.-> H

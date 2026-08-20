@@ -637,7 +637,7 @@ sequenceDiagram
     participant DB as Consumer DB
     Prod->>Bus: Publish event id=abc (may duplicate)
     Bus->>Cons: Deliver id=abc
-    Cons->>DB: BEGIN; INSERT processed(id=abc) IF NOT EXISTS
+    Cons->>DB: BEGIN, INSERT processed(id=abc) IF NOT EXISTS
     alt First delivery
         DB-->>Cons: Inserted — process
         Cons->>DB: Business update + COMMIT

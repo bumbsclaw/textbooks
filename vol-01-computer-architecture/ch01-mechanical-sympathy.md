@@ -294,9 +294,16 @@ vectorize the loop with SIMD, the data is already in the shape the vector units 
 flowchart TB
     subgraph AoS["Array of Structs -- hot loop reads only x"]
         direction LR
-        A1["x0 |y0| z0 |...meta0"] A2["x1| y1 |z1| ...meta1"]
-        A3["x2 |y2| z2 |...meta2"] A1 --> A2 --> A3 end subgraph SoA["Struct of Arrays -- hot loop reads only x"] direction LR X["x0| x1 |x2| x3 |x4| x5"]
-        Y["y0 |y1| y2 |y3| y4 |y5"] Z["z0| z1 |z2| z3 |z4| z5"]
+        A1["x0, y0, z0, ...meta0"]
+        A2["x1, y1, z1, ...meta1"]
+        A3["x2, y2, z2, ...meta2"]
+        A1 --> A2 --> A3
+    end
+    subgraph SoA["Struct of Arrays -- hot loop reads only x"]
+        direction LR
+        X["x0, x1, x2, x3, x4, x5"]
+        Y["y0, y1, y2, y3, y4, y5"]
+        Z["z0, z1, z2, z3, z4, z5"]
     end
     AoS -. "each cache line wastes bandwidth on y,z,meta" .-> SoA
 ```

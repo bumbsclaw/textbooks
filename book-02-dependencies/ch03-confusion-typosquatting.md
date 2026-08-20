@@ -332,7 +332,7 @@ is the lure, and the install script is the trigger.
 flowchart TD
     A["Developer types / copies<br/>a dependency name"] --> B{"Name correct?"}
     B -->|"Yes"| C["Legit package resolves"]
-    B -->|"Typo: reqeusts<br/>Combo: python3-dateutil<br/>Homoglyph"] --> D["Squatted package resolves"]
+    B -->|"Typo: reqeusts<br/>Combo: python3-dateutil<br/>Homoglyph"| D["Squatted package resolves"]
     D --> E["Install-time hook fires<br/>preinstall / setup.py"]
     E --> F["Payload runs in dev or CI:<br/>steal env, tokens, ~/.npmrc"]
     F --> G["Often: re-publish, spread,<br/>or beacon out"]

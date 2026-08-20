@@ -67,16 +67,16 @@ flowchart TB
     Kafka[(Kafka<br/>orders topic<br/>Data store)]
     PSP([External PSP<br/>External entity])
 
-    U -->|1 HTTPS POST v1 orders<br >JWT bearer| GW
-    GW -->|2 Validate JWT<br >OIDC userinfo| Auth
-    GW -->|3 gRPC CreateOrder<br >mTLS + JWT| Orders
-    Orders -->|4 SQL INSERT<br >orders + outbox| DB
-    Orders -->|5 Produce OrderPlaced<br >mTLS + SASL| Kafka
+    U -->|1 HTTPS POST v1 orders<br/>JWT bearer| GW
+    GW -->|2 Validate JWT<br/>OIDC userinfo| Auth
+    GW -->|3 gRPC CreateOrder<br/>mTLS + JWT| Orders
+    Orders -->|4 SQL INSERT<br/>orders + outbox| DB
+    Orders -->|5 Produce OrderPlaced<br/>mTLS + SASL| Kafka
     Kafka -->|6 Consume OrderPlaced| Payments
-    Payments -->|7 HTTPS POST charge<br >API key + mTLS| PSP
-    P -->|8 Webhook POST v1 psp callback<br >HMAC verify| GW
+    Payments -->|7 HTTPS POST charge<br/>API key + mTLS| PSP
+    P -->|8 Webhook POST v1 psp callback<br/>HMAC verify| GW
     GW -->|9 gRPC PaymentCallback| Payments
-    Admin -->|10 HTTPS GET v1 orders {id}<br >RBAC| GW
+    Admin -->|10 HTTPS GET v1 orders id<br/>RBAC| GW
     GW -->|11 gRPC GetOrder| Orders
     Orders -->|12 SQL SELECT| DB
     GW --- Cache

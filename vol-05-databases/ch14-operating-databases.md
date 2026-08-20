@@ -778,15 +778,15 @@ gantt
     dateFormat X
     axisFormat %L
     section Backup
-    Base backup Sunday 00:00    :0, 2
-    WAL segments continuous     :0, 14
-    Incremental Mon             :3, 1
-    Incremental Tue             :6, 1
-    Crash Wed 14:00             :10, 1
+    Base backup Sun 00-00       :a1, 0, 2
+    WAL segments continuous     :a2, 0, 14
+    Incremental Mon             :a3, 3, 1
+    Incremental Tue             :a4, 6, 1
+    Crash Wed 14-00             :a5, 10, 1
     section Recovery
-    Restore base backup         :11, 2
-    Replay WAL to 13:59         :13, 2
-    Consistent at target time   :15, 1
+    Restore base backup         :b1, 11, 2
+    Replay WAL to 13-59         :b2, 13, 2
+    Consistent at target time   :b3, 15, 1
 ```
 
 ```mermaid

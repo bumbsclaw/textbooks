@@ -597,11 +597,11 @@ flowchart LR
     subgraph SW["SolarWinds (2020)"]
         SW1["Build server<br/>compromise"] --> SW2["Source injection<br/>at build time"] --> SW3["Signed artifact<br/>via update channel"]
     end
-    subgraph CX3["3CX (2023)"]
-        CX1["Upstream dependency<br/>compromise"] --> CX2["Trojanized<br/>FFmpeg build"] --> CX3["Bundled installer<br/>signed & distributed"]
+    subgraph CX3SG["3CX (2023)"]
+        CX1["Upstream dependency<br/>compromise"] --> CX2["Trojanized<br/>FFmpeg build"] --> CX3N["Bundled installer<br/>signed & distributed"]
     end
     SW3 -. both bypass .-> TRUST["Trust in signature<br/>without provenance"]
-    CX3 -. both bypass .-> TRUST
+    CX3N -. both bypass .-> TRUST
     style TRUST fill:#ffcc00,stroke:#333
 ```
 

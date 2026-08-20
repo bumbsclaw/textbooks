@@ -361,8 +361,10 @@ A B-tree generalizes the BST: each node holds many keys and many children. A B-t
 ```mermaid
 flowchart TB
     subgraph BTree["B-tree  order m=5  —  height 2, fanout 4-5"]
-        R["Root: [30 |60]"] C1["[10| 20]"]
-        C2["[40 |50]"] C3["[70| 80 | 90]"]
+        R["Root: [30, 60]"]
+        C1["[10, 20]"]
+        C2["[40, 50]"]
+        C3["[70, 80, 90]"]
         L1["[5,8]"]
         L2["[12,15]"]
         L3["[22,25]"]

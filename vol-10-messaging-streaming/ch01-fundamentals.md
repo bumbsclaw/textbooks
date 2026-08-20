@@ -228,17 +228,17 @@ Replay is the superpower that justifies the complexity. New consumer? Start from
 
 ```mermaid
 flowchart LR
-    Prod[Producer\nkey=user-42] --> Part0[Partition 0\n0: {k:A,v:1}\n1: {k:B,v:1}\n2: {k:A,v:2} ← latest A]
-    Prod --> Part1[Partition 1\n0: {k:C,v:1}\n1: {k:D,v:1}]
+    Prod["Producer<br/>key=user-42"] --> Part0["Partition 0<br/>0: k=A,v=1<br/>1: k=B,v=1<br/>2: k=A,v=2 -- latest A"]
+    Prod --> Part1["Partition 1<br/>0: k=C,v=1<br/>1: k=D,v=1"]
 
-    Part0 --> SegA[Segment 00000000.log\n+ index + timeindex]
-    Part1 --> SegB[Segment 00000000.log]
+    Part0 --> SegA["Segment 00000000.log<br/>+ index + timeindex"]
+    Part1 --> SegB["Segment 00000000.log"]
 
-    SegA --> RetTime[Retention:\n7 days / 10 GB]
-    SegA --> RetCompact[Compaction:\nkeep latest per key\nA:1 → A:2 tombstones A:1]
+    SegA --> RetTime["Retention:<br/>7 days / 10 GB"]
+    SegA --> RetCompact["Compaction:<br/>keep latest per key<br/>A:1 - A:2 tombstones A:1"]
 
-    G1[Consumer Group: serving\nreads tail, offset 3] -.-> Part0
-    G2[Consumer Group: backfill\nreads from offset 0] -.-> Part0
+    G1["Consumer Group: serving<br/>reads tail, offset 3"] -.-> Part0
+    G2["Consumer Group: backfill<br/>reads from offset 0"] -.-> Part0
     G2 -.-> Part1
 
     style Part0 fill:#e8f5e9
