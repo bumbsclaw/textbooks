@@ -303,11 +303,11 @@ until then their paths are as listed above).
 - [x] 14.01 Complexity That Matters in Practice — `ch01-complexity.md`
 - [x] 14.02 Hashing and Hash Tables at Scale — `ch02-hashing.md`
 - [x] 14.03 Balanced Trees and Ordered Structures — `ch03-trees.md`
-- [ ] 14.04 Probabilistic Structures: Bloom, HLL, Count-Min — `ch04-probabilistic.md`
-- [ ] 14.05 Consistent Hashing and Rendezvous Hashing — `ch05-consistent-hashing.md`
-- [ ] 14.06 Sorting, External Sorting, Streaming — `ch06-sorting.md`
-- [ ] 14.07 Graphs in Systems — `ch07-graphs.md`
-- [ ] 14.08 Rate-Limiting and Scheduling Algorithms — `ch08-rate-limiting-scheduling.md`
+- [x] 14.04 Probabilistic Structures: Bloom, HLL, Count-Min — `ch04-probabilistic.md`
+- [x] 14.05 Consistent Hashing and Rendezvous Hashing — `ch05-consistent-hashing.md`
+- [x] 14.06 Sorting, External Sorting, Streaming — `ch06-sorting.md`
+- [x] 14.07 Graphs in Systems — `ch07-graphs.md`
+- [x] 14.08 Rate-Limiting and Scheduling Algorithms — `ch08-rate-limiting-scheduling.md`
 
 ## Volume 15 — Software Engineering Practice (`vol-15-swe-practice/`)
 
@@ -366,3 +366,5 @@ until then their paths are as listed above).
 - 2026-08-20: Vol12 ch09-ch11 done (capacity planning Little/USL/queueing + HPA/KEDA/Karpenter/ASG + Graviton, cloud networking VPC/subnets/PrivateLink + IAM least-privilege/IRSA/SPIFFE + GuardDuty, platform engineering paved roads/IDP/Backstage templates+TechDocs+scorecards — ~4.1-4.6kw each, 3-5 Mermaid). Vol 12 remaining tail: 12.07-12.08 (multi-tenancy, cost/FinOps).
 - 2026-08-20: *** VOLUME 11 (Reliability/SRE) COMPLETE — 10 chapters. *** *** VOLUME 12 (Cloud/Infra) COMPLETE — 11 chapters. *** Vol11 ch10 done (resilience: timeouts/deadlines/hedging, retries with jitter+budgets, circuit breakers Resilience4j+Istio+Envoy state machine, bulkheads, adaptive concurrency limiting, fallbacks, composition order, chaos validation — ~5.5kw, 4 Mermaid). Vol12 ch07-ch08 done (multi-tenancy silo/pool/bridge/cells + K8s tenancy quotas/NetworkPolicy/gVisor/Kata + RLS/per-tenant KMS + noisy-neighbor; cloud cost CUR/Athena+tagging, pricing models RI/SP/spot/Graviton, right-sizing VPA/HPA/Karpenter, storage/transfer/managed costs, capacity math USL/Little's Law, FinOps budgets+OPA — ~4.2-4.6kw each, 3-4 Mermaid). Next: Vol13 13.04-13.09 + Vol14 14.04-14.08 + Vol15 15.01-15.10 (remaining 21).
 - 2026-08-20: *** VOLUME 13 (Runtimes) COMPLETE — 9 chapters. *** Vol13 ch04-ch06 done (GC across runtimes G1/ZGC/Shenandoah/Go tri-color/V8 Orinoco/CPython/.NET generational, profiling sampling/eBPF perf/async-profiler/pprof/py-spy/clinic, Python GIL+free-threaded 3.13t/asyncio+ASGI and Node V8+libuv/event loop/workers/cluster — ~3.8-5.5kw each, 3-6 Mermaid). Vol13 ch07-ch09 done (Wasm sandbox/Component Model/WASI Wasmtime/WasmEdge/Spin+Fastly, FFI JNI/Panama/cgo/pyo3/N-API ownership+signal+thread failure modes, runtime selection benchmarks/TCO/selection matrix/strangler+shadow migration — ~4.3-6.2kw each, 2-4 Mermaid, real Wasm/JNI/FFI/bench configs).
+- 2026-08-20: Vol14 ch04-ch06 done (probabilistic: Bloom sizing/FPR+vnode impl/Cuckoo+counting+blocked variants+LSM use+RocksDB, HLL harmonic mean+sparse/dense+bias correction+Redis PFADD+12KB@1M, CMS ε·N guarantee+conservative update+CMS+heap top-K; consistent hashing ring+vnodes V=100-200 balance/churn/weighted+bounded loads+rack-aware replication vs rendezvous HRW O(N) stateless + Jump; sorting Ω(n log n) bound/introsort+Timsort, counting/radix/bucket O(n), external sort runs+k-way heap merge+replacement selection, streaming top-K/reservoir/sliding windows — 3 Mermaid ch04, 5 Mermaid ch05, 3 Mermaid ch06, real runnable code each). Next: 14.07-14.08 + 15.01-15.10 (remaining 12).
+- 2026-08-20: *** VOLUME 14 (Algorithms) COMPLETE — 8 chapters. *** Vol14 ch07-ch08 done (graphs: adj list/matrix/edge/CSR + BFS/DFS + Dijkstra/Bellman-Ford/Floyd comparison + topo sort Kahn+DFS + cycle/SCC Kosaraju + Union-Find+Kruskal MST; rate limiting: fixed/sliding log/sliding counter/token bucket/leaky bucket/GCRA TAT + distributed Redis GCRA Lua + local/hybrid sharding + concurrency+adaptive Vegas + scheduling FIFO/priority/WFQ/DRR/EDF — 6 Mermaid ch07, 7 Mermaid ch08, real runnable code each). Next: Vol15 15.01-15.10 (remaining 10).
