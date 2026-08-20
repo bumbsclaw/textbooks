@@ -552,7 +552,7 @@ flowchart TD
   CLOSED --> SCHED["No new pods schedule"]
   SCHED --> SELF{"Is the controller / kube-system\nexcluded from the webhook?"}
   SELF -->|No| DEAD["Deadlock: controller can't restart itself\n→ whole fleet frozen"]
-  SELF -->|Yes, HA + exclusions| RECOV["Control plane & controller keep running\n→ self-heal, workloads gate correctly"]
+  SELF -->|Yes, HA + exclusions| RECOV["Control plane &amp; controller keep running\n→ self-heal, workloads gate correctly"]
 ```
 
 The resolution is not to pick a side but to **engineer the fail-closed posture so its blast radius

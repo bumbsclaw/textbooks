@@ -10,7 +10,7 @@ Usage:
 Output: ~/textbooks/output/a5/<volume-slug>.pdf
 """
 
-import sys, os, re, subprocess, tempfile, hashlib, shutil
+import sys, os, re, subprocess, tempfile, hashlib, shutil, time
 from pathlib import Path
 from textwrap import dedent
 
@@ -220,7 +220,16 @@ def render_mermaid(code: str, index: int) -> str:
     """Render a mermaid code block to a PNG, return the <img> tag."""
     h = hashlib.md5(code.encode()).hexdigest()[:12]
     out = MERMAID_CACHE / f"mm_{h}.png"
-    if not out.exists():
+    # If already cached, return immediately
+    if out.exists() and out.stat().st_size > 0:
+        return f'<div class="mermaid-img"><img src="file://{out}" alt="diagram"></div>'
+    # Retry loop for transient Puppeteer/Chromium failures (concurrent mmdc collisions)
+    for attempt in range(3):
+        if out.exists() and out.stat().st_size > 0:
+            return f'<div class="mermaid-img"><img src="file://{out}" alt="diagram"></div>'
+        # Small jitter to de-conflict concurrent Chromium launches
+        if attempt > 0:
+            time.sleep(0.5 * attempt)
         with tempfile.NamedTemporaryFile(mode="w", suffix=".mmd", delete=False) as f:
             f.write(code)
             f.flush()
@@ -228,15 +237,26 @@ def render_mermaid(code: str, index: int) -> str:
                 subprocess.run(
                     ["mmdc", "-i", f.name, "-o", str(out), "-w", "800", "-b", "white",
                      "--puppeteerConfigFile", "/tmp/pptr.json"],
-                    capture_output=True, timeout=30, check=True
+                    capture_output=True, timeout=45, check=True
                 )
+                if out.exists() and out.stat().st_size > 0:
+                    return f'<div class="mermaid-img"><img src="file://{out}" alt="diagram"></div>'
             except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-                # Fallback: keep as code block if mermaid fails
-                return f'<pre><code>{code}</code></pre>'
+                # Remove zero-byte file on failure so retry can recreate
+                try:
+                    if out.exists() and out.stat().st_size == 0:
+                        out.unlink()
+                except:
+                    pass
+                if attempt == 2:
+                    print(f"  WARN: mermaid render failed after 3 attempts (block {index}): {str(e)[:120]}", flush=True)
             finally:
-                os.unlink(f.name)
-    if out.exists():
-        return f'<div class="mermaid-img"><img src="file://{out}" alt="diagram"></div>'
+                try:
+                    os.unlink(f.name)
+                except:
+                    pass
+    # Final fallback only after 3 failures — include error hint
+    print(f"  WARN: mermaid block {index} fell back to raw code", flush=True)
     return f'<pre><code>{code}</code></pre>'
 
 
