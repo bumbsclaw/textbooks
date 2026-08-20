@@ -81,6 +81,13 @@ of what "using transactions well" means.
 
 ## ACID, precisely
 
+The acronym comes from Theo Härder and Andreas Reuter's 1983 survey "Principles of
+Transaction-Oriented Database Recovery," which packaged concepts Jim Gray and colleagues had
+developed at IBM System R through the 1970s. The four letters are not four parallel guarantees —
+two are about failure, one is about concurrency, and one is a statement about your application —
+and collapsing them into a vague aura of "safety" is the root of most transaction folklore. Take
+them one at a time.
+
 ### Atomicity: all or nothing — under *failure*
 
 Atomicity says: either every write of the transaction takes effect, or none does. If the
@@ -128,6 +135,18 @@ precondition of the C definition), and durability ensures a crash does not silen
 state your logic never produced. A + I + D turn per-transaction correctness into whole-database
 correctness. That is the actual content of the C, and it is why several authors have observed,
 only half-jokingly, that it is in the acronym mostly to make the acronym work.
+
+The database's genuine contribution to consistency is **declared constraints**: primary keys,
+foreign keys, `UNIQUE`, `NOT NULL`, `CHECK`, exclusion constraints. These move a class of
+invariants from "every code path must remember" to "the engine refuses to violate," and a senior
+engineer should push as many invariants as possible into that form — a constraint is an invariant
+enforced against every writer, including tomorrow's batch job and next year's second service.
+But most business invariants ("an account's balance never goes below its credit limit minus pending
+holds," "every published article has at least one reviewer approval") are not expressible as row-
+or table-level constraints, and for those the C is entirely on you. Note the term collision, and
+keep the concepts apart: this C has nothing to do with *replica consistency* in the CAP sense
+(Volume 6) or *memory consistency* (Volume 4). Three fields, three unrelated meanings, one
+overloaded word.
 
 ### Isolation: the freedom to ignore concurrency
 
@@ -401,6 +420,17 @@ flowchart LR
 
 ### Multiversion: MVCC
 
+The dominant modern design — Postgres, InnoDB, Oracle, and most newcomers — refuses the premise
+that readers and writers must fight at all. Writers never overwrite: each write creates a new
+**version** of the row, stamped with its creator transaction. Each transaction reads from a
+**snapshot** — the set of versions committed as of some instant — so **readers never block writers
+and writers never block readers**. A long analytics query and a stream of updates coexist without a
+single read lock; the pure-2PL cost of reads simply vanishes. Writes still conflict with writes,
+so every MVCC engine pairs versioning with something for its write path — row write locks
+(InnoDB, Postgres), first-committer-wins aborts, or SSI's validation — which is why MVCC is best
+understood not as a third family but as a substrate that makes reads free and lets the engine
+choose pessimism or optimism for writes only.
+
 The catch, and it is the theme of two later sections: old versions must be kept as long as *any*
 snapshot might need them, and reclaimed afterward — Postgres's VACUUM, InnoDB's purge. That garbage
 collection is gated by the *oldest live snapshot*, which hands every long-running transaction a
@@ -420,6 +450,17 @@ rows it touched. All three costs scale with wall-clock duration, so the rule is 
 Volume 4, Chapter 2 — **no I/O under a lock** — applied at the next layer up, where it becomes:
 
 > **Never hold a transaction across user think-time or a call to another system.**
+
+The classic sins: opening a transaction when a form is displayed and committing when the user
+submits (your lock hold time is now a coffee break); calling a payment gateway, an email API, or
+another microservice between `BEGIN` and `COMMIT` (your lock hold time is now their p99, and their
+outage is now your database outage). Run the arithmetic that Volume 4 ran for locks: a pool of 50
+connections and transactions held open 2 s caps you at 25 transactions/s regardless of how fast the
+database is; row locks held for seconds turn hot-row workloads into convoys; and a snapshot pinned
+for minutes forces every MVCC table in the system to retain minutes of dead versions. The correct
+shape is always: gather inputs first, then one short transaction that does all the reads and writes
+back-to-back, then act on the outside world *after* commit (and if that outside action must be
+reliable, see the outbox pattern below — that ordering problem has a name and a solution).
 
 ### Retry: serialization failures and deadlocks are not errors, they are the protocol
 
@@ -503,6 +544,24 @@ computed from a stale one. "I used a transaction" did not help, because the tran
 executed a non-serializable interleaving that read committed permits. The fixes, in order of
 preference:
 
+1. **Push the computation into the write.** `UPDATE accounts SET balance = balance - 30 WHERE id =
+   7 AND balance >= 30` is a single atomic read-modify-write inside the engine; the row lock covers
+   the read and the write together. When the new value is a function of the old, this is the whole
+   fix, at any isolation level, in one statement.
+2. **`SELECT ... FOR UPDATE`** when the application genuinely needs the value in hand before
+   deciding (multi-row logic, branching): take the exclusive row lock at *read* time, so the
+   concurrent reader blocks *before* seeing the stale value — converting the optimistic interleaving
+   into strict-2PL behavior for exactly these rows. (`FOR NO KEY UPDATE` is the politer Postgres
+   variant when you won't touch key columns; `FOR UPDATE SKIP LOCKED` turns the same primitive into
+   a work queue — Chapter 14.)
+3. **Raise isolation.** At `REPEATABLE READ` in Postgres, B's `UPDATE` fails with `40001` instead
+   of proceeding on a stale snapshot (first-updater-wins); at `SERIALIZABLE`, all such patterns are
+   caught. The retry loop above becomes mandatory equipment.
+4. **Version-column OCC** when the read and write are separated by user think-time — the one case
+   where you *cannot* hold a transaction (or its locks) across the gap, so you detect staleness at
+   write time instead: `UPDATE ... SET ..., version = version + 1 WHERE id = ? AND version = ?` and
+   treat zero rows updated as "someone else got there first."
+
 ```mermaid
 sequenceDiagram
     participant A as Session A
@@ -560,6 +619,19 @@ per transaction (a savepoint-per-statement ORM habit) degrade performance measur
 operational story.
 
 ### Autocommit and transaction hygiene
+
+Every mainstream driver defaults to **autocommit**: each statement is its own transaction. Both
+directions of confusion hurt. Engineers who don't notice autocommit write two `UPDATE`s in a row
+and believe they are atomic — they are not; a crash or a concurrent reader can fall between them.
+Engineers whose driver *disables* autocommit (psycopg2's historical behavior, Java with
+`setAutoCommit(false)`) get the opposite failure: the driver silently opened a transaction at the
+first statement, nobody ever commits, and the connection sits **idle in transaction** — holding its
+snapshot and locks — for hours. That state is the classic silent killer of MVCC systems, which is
+why Postgres grew `idle_in_transaction_session_timeout`; set it in every production config. The
+hygiene rules are short: know your driver's autocommit mode; make transaction boundaries explicit
+and visible in the code (a `with`-block or a decorator, not connection state mutated at a
+distance); and never let a transaction's lifetime be controlled by anything other than the code
+inside it.
 
 ### The long transaction as a systemic hazard
 

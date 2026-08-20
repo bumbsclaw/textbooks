@@ -38,6 +38,16 @@ Learning goals — after this chapter you should be able to:
 
 ## Codd's model: relations, tuples, and the great separation
 
+E. F. Codd's 1970 paper, *A Relational Model of Data for Large Shared Data Banks*, is nine
+pages long and is plausibly the highest-leverage systems paper ever published. To see why, you
+have to see what it was written against. The databases of 1970 — IBM's hierarchical IMS, the
+CODASYL network model — exposed physical structure directly to applications. A program
+navigated from record to record by following pointers; queries were expressed as traversal
+code. If the database administrator changed an access path, added an index, or reordered
+records, application code broke. Codd names this failure precisely in the paper's opening: the
+data dependencies of ordering, indexing, and access path. His proposal was to eliminate all
+three at once.
+
 The model itself is austere. A **relation** is a *set* of **tuples**. Each tuple assigns a
 value to each of a fixed collection of named, typed **attributes**; the type of an attribute —
 its **domain** — is the set of values it may take. Three consequences of the word "set" do all
@@ -53,6 +63,25 @@ the work, and each one is a promise the model makes to the optimizer:
 Every value in a tuple is atomic with respect to the model — the model gives you no way to
 reach inside a value and address its parts relationally. (This is the seed of first normal
 form, which we return to later.)
+
+The payoff of this austerity is **data independence**, and it is the single most important
+idea in this volume. Because the application speaks only in terms of relations, attributes,
+and predicates — never in terms of files, pages, pointers, or indexes — the physical layer
+underneath is free to change without breaking anything above it. Codd distinguished what we
+now call *physical* data independence (storage layout, access paths, and indexes can change
+under a fixed schema) from *logical* data independence (the schema itself can evolve, with
+views insulating applications from the change).
+
+It is worth pausing on how much rode on this bet, because we live in its consequences.
+Everything in Chapters 2 through 4 of this volume — heap files versus clustered B-trees versus
+LSM-trees, every index type, every join algorithm, cost-based optimization itself — exists
+*below* the line Codd drew, and could therefore be invented, deployed, and replaced for five
+decades without applications changing a line of SQL. Your query from 1995 runs against a
+storage engine designed in 2020. Row stores became column stores for analytics; nested-loop
+joins became hash joins; single machines became clusters — and the interface held. No other
+interface in computing has absorbed this much implementation churn. When Chapter 12 shows you
+distributed SQL systems executing ordinary SQL across dozens of sharded nodes, that is not a
+new idea succeeding; it is the 1970 idea being cashed out one more time.
 
 ### Keys
 
@@ -210,7 +239,24 @@ multiple sources — where "field not populated by that source" is routine — t
 that multiplies. Two datasets that each look complete produce a join that is quietly missing
 every row either side left NULL.
 
+Two final notes for calibration. First, `GROUP BY`, `DISTINCT`, and `ORDER BY` do *not* use
+UNKNOWN-producing comparison — they treat NULLs as a single group / duplicate class, and sort
+them together (last by default in Postgres ascending order; `NULLS FIRST/LAST` controls it).
+SQL is not even consistently three-valued, which is part of why it is hard. Second, the
+standard's own committee has been ambivalent about NULL for forty years, and C. J. Date has
+argued for decades that 3VL was a mistake. You do not get to relitigate it; you get to declare
+`NOT NULL` wherever a value is genuinely required — the cheapest bug-prevention available in a
+schema — and reach for `IS DISTINCT FROM` when you need two-valued comparison.
+
 ## Relational algebra: the vocabulary of query plans
+
+Codd gave the model two equivalent query languages: relational *calculus* (declarative —
+describe the tuples you want) and relational *algebra* (operational — a set of operators that
+each take relations and produce a relation). SQL descends from the calculus side, but the
+algebra is what you must know, for one compelling reason: **query plans are algebra trees.**
+When Chapter 4 shows the optimizer parsing your SQL, rewriting it, and choosing among physical
+plans, every intermediate form is relational algebra. `EXPLAIN` is printed algebra. Learn the
+operators and plans stop being wall-of-text and start being sentences.
 
 The operators, with their SQL correspondences:
 
@@ -237,6 +283,13 @@ nested loop) like any other join. This is also where Trap 2 comes home: the opti
 convert `NOT IN` to an anti join *only* when it can prove the relevant columns are NOT NULL —
 otherwise it must preserve the deranged 3VL semantics with a slower plan. Your `NOT NULL`
 declarations are optimizer input.
+
+The property that makes the algebra an algebra is **closure**: every operator consumes
+relations and produces a relation. Closure is why operators compose into arbitrary trees, why
+a view or CTE can be substituted anywhere a table can, and why the optimizer may legally
+rewrite your tree into any equivalent one — pushing a selection below a join, reordering
+joins, splitting an aggregation. Hold onto closure; the distributed-systems lens at the end of
+this chapter rests on it.
 
 Here is the correspondence made concrete. The query: revenue per customer for large completed
 orders since a date, for customers in a given region.
@@ -305,6 +358,30 @@ flowchart LR
 ```
 
 This one diagram resolves a whole family of "why won't SQL let me…" questions mechanically:
+
+- **Why can't WHERE see a SELECT alias?** `SELECT price * qty AS total … WHERE total > 100`
+  fails because WHERE runs before the SELECT list exists. Repeat the expression, or compute it
+  in a subquery/CTE and filter outside. (`ORDER BY` runs *after* SELECT, which is why it *can*
+  use the alias.)
+- **Why HAVING at all?** WHERE filters rows before grouping; HAVING filters *groups* after
+  aggregation. `WHERE count(*) > 5` is meaningless — there are no groups yet — and
+  `HAVING price > 100` on a non-grouped column is equally confused in the other direction.
+- **Why can't WHERE contain a window function?** Windows are computed with the SELECT list,
+  after WHERE. Filtering on `row_number()` requires wrapping the query and filtering the
+  outer level — the top-N-per-group idiom below.
+- **Why does `ON` versus `WHERE` matter for outer joins?** For an inner join, a predicate in
+  `ON` and the same predicate in `WHERE` are equivalent. For a `LEFT JOIN` they are not: `ON`
+  decides *what matches* (unmatched left rows survive, NULL-padded), while `WHERE` filters the
+  joined result — and a WHERE predicate on right-side columns silently turns your left join
+  back into an inner join, because the NULL-padded rows evaluate to UNKNOWN and are dropped
+  (Trap 1 again, wearing a join costume).
+- **Why is `LIMIT` without `ORDER BY` nondeterministic?** LIMIT runs last, over a result whose
+  order is — per the model — undefined. It cuts *some* N rows. The order you observed in
+  development was a physical accident (a sequential scan of a fresh heap); the different order
+  in production (an index scan, a parallel scan, post-vacuum layout) is equally legal.
+  Relatedly, `OFFSET`-based pagination without a total order over a *unique* key skips or
+  repeats rows across pages; keyset pagination (`WHERE (placed_at, id) > (:last_at, :last_id)
+  ORDER BY placed_at, id LIMIT 50`) fixes both correctness and the O(offset) cost.
 
 ### GROUP BY correctness
 
@@ -609,6 +686,23 @@ constraint is a defensible stopping point. Second, higher forms (4NF, 5NF) addre
 and join dependencies; they matter occasionally, mostly when someone crams two independent
 many-to-many relationships into one table, and we leave them to the references.
 
+Now the guidance, stated plainly. **Normalization is about write correctness; denormalization
+is about read performance.** A normalized schema makes updates cheap and safe (touch one row)
+and reads potentially expensive (joins); a denormalized one inverts the deal, buying join-free
+reads at the price of redundancy that some mechanism — triggers, application code, an async
+pipeline — must now keep consistent, and that mechanism *is* the update anomaly, readmitted
+deliberately and hopefully managed. Sometimes that trade is right: read-heavy paths at scale,
+precomputed aggregates, the fan-out patterns of Chapter 9, and the read-model side of CQRS
+designs (Volume 7, Chapter 5 — Data Modeling — treats this in design terms). The modern answer
+is a sequenced policy, not a side in a war: **normalize until it hurts — as the default, in
+the system of record, because correctness bugs compound and storage-layer reads are cheaper
+than your intuition says (Chapters 2–3) — then denormalize where measured**, deliberately,
+with the consistency mechanism written down and owned. Denormalizing up front, on anticipated
+performance grounds, buys real anomalies today against hypothetical latency tomorrow; it is
+premature optimization applied to the one layer where mistakes are hardest to unwind — as
+Chapter 14 will show, schema migrations at scale are among the most dangerous operations in
+production databases.
+
 ## Declarative SQL and the optimizer's bargain
 
 SQL is declarative: you state *what* — a predicate over relations — and the system chooses
@@ -618,6 +712,20 @@ computation, and it is a bargain with two faces.
 The bright face: fifty years of physical innovation arrived without application rewrites, and
 the optimizer applies plan-quality expertise at every query, every time, adapting to data
 statistics as tables grow — something no hand-written imperative traversal does.
+
+The dark face: the abstraction leaks under pressure, and it leaks in performance, not
+correctness. Two semantically equivalent formulations can differ by orders of magnitude — the
+`NOT IN` versus `NOT EXISTS` pair above is exactly such a case (one is anti-joinable, the
+other must preserve 3VL semantics); so is a filter the optimizer can push into an index versus
+one wrapped in a function call that blinds it; so is the correlated subquery a given engine
+happens not to decorrelate; so is a stale statistics estimate flipping a hash join to a nested
+loop, turning a 10 ms query into a 10 s one — a 1000× swing with zero code change. The
+practitioner's response is not to memorize incantations, which rot as optimizers evolve, but
+to understand the model well enough to read the plan: know the algebra, know what rewrites are
+legal, know what information the optimizer has (constraints, statistics, your NOT NULLs) and
+what you have denied it. `EXPLAIN` is the conversation; Chapter 4 teaches you to hold up your
+end. Everything in this chapter — algebra trees, semi/anti joins, functional dependencies,
+NULL-ability — is precisely the vocabulary that conversation is conducted in.
 
 ## Standard SQL and the dialects you actually run
 

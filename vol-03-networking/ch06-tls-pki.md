@@ -20,6 +20,23 @@ it at mechanism depth throughout.
 
 Learning goals — after this chapter you should be able to:
 
+- State precisely what TLS provides — confidentiality, integrity, and authentication — and what
+  it does *not* provide, and locate it in the stack over TCP and embedded in QUIC (Chapter 4).
+- Trace the TLS 1.3 1-RTT handshake message by message, explain how ephemeral ECDHE gives
+  forward secrecy, and describe the key schedule (HKDF-Extract/Expand) at a working level.
+- Explain what TLS 1.3 *removed* relative to TLS 1.2 — RSA key transport, CBC and RC4, static
+  renegotiation, compression — and why each removal closed a class of real attacks.
+- Reason about 0-RTT resumption honestly, including the replay-attack caveat and which requests
+  are safe to send as early data.
+- Distinguish server-only TLS from mutual TLS (mTLS), and explain why mTLS is the basis of
+  service-to-service zero-trust authentication (Book 5, Chapter 4; Volume 9).
+- Describe the Web PKI: X.509 certificates, the root/intermediate/leaf chain of trust, trust
+  stores, and the full client validation algorithm (chain, validity, hostname/SAN, revocation).
+- Explain SNI and Encrypted Client Hello, why certificate revocation is genuinely hard, and how
+  OCSP stapling and Certificate Transparency (Book 5, Chapter 5) work around and around it.
+- Operate TLS at fleet scale: ACME/Let's Encrypt issuance, cert-manager in Kubernetes,
+  rotation, expiry outages, wildcard-versus-SAN trade-offs, and termination architecture.
+
 ## What TLS provides, and where it sits
 
 TLS delivers three properties over an insecure transport, and it is worth being pedantic about
@@ -87,6 +104,16 @@ by security teams.
 ### The 1-RTT full handshake
 
 Here is the full handshake, message by message. The client speaks first.
+
+The **ClientHello** carries: the highest supported protocol version (encoded, for
+middlebox-compatibility, in a `supported_versions` extension rather than the legacy version field,
+frozen at 1.2); a random 32-byte nonce; a list of acceptable `cipher_suites`; and — the crucial 1.3
+change — a `key_share` extension holding one or more *ephemeral Diffie-Hellman public keys*, one per
+named group the client will use (say an X25519 and a secp256r1 key). The client does not wait to be
+told which group to use; it guesses the server will accept one and speculatively sends the public keys
+up front. That speculation is what buys the round trip. The ClientHello also carries the target
+hostname in the `server_name` (SNI) extension and, for HTTP, an ALPN extension advertising `h2`,
+`http/1.1`, and so on.
 
 The server picks a cipher suite and a named group from the client's `key_share` entries and generates
 its *own* ephemeral key pair in that group. It now has everything it needs for the shared secret: its
@@ -273,6 +300,19 @@ CertificateVerify signature proving it holds the private key. Now *both* peers h
 authenticated identities before any application data flows, each having validated the other's
 certificate against its own trust store. mTLS does not replace server TLS; it adds the symmetric half.
 
+For backend engineers, mTLS is the cryptographic substrate of **zero-trust service-to-service
+authentication.** The traditional perimeter model ("we're all inside the VPC, so we trust each
+other") is exactly the assumption that lateral movement in a breach exploits. Zero trust flips it:
+every call is authenticated and encrypted regardless of network location, and mTLS is how a service
+proves *"I am the `payments` service"* to the `ledger` service on every connection, with no shared
+secret to leak and no topology assumption to violate. This is where mTLS connects to the identity
+systems of Book 5, Chapter 4 and Volume 9: in a SPIFFE/SPIRE deployment each workload receives a
+short-lived X.509 SVID whose SAN is a SPIFFE ID like `spiffe://prod.example.com/ns/payments/sa/api`,
+and services authenticate and authorize on that ID over mTLS. A service mesh (Chapter 10; Volume 6)
+automates the pattern via sidecar proxies so application code never touches a certificate. The point
+is architectural: **mTLS is the layer at which "which service is this?" gets a cryptographic, not a
+network, answer.**
+
 ```mermaid
 sequenceDiagram
   participant A as "Service A (client)"
@@ -301,6 +341,24 @@ the client has decided, out of band, to trust.
 
 A TLS certificate is an X.509 (v3) structure — DER-encoded ASN.1, usually shown to humans in
 PEM (base64) form. The fields that matter operationally:
+
+- **Subject** — historically a Distinguished Name including a Common Name (CN). For hostname
+  validation the CN is now **ignored** by browsers; identity lives in the SAN.
+- **Subject Alternative Name (SAN)** — the identities the certificate is valid for: DNS names
+  (`api.example.com`, `*.example.com`), IP addresses, or URIs (a SPIFFE ID). One certificate can cover
+  many names; this is the field clients check against the hostname.
+- **Issuer** — the DN of the signing CA. The leaf's issuer is an intermediate; the intermediate's is
+  (eventually) a root.
+- **Validity** — `notBefore` and `notAfter`. Invalid outside this window, full stop — the single field
+  behind the most common self-inflicted TLS outage in the industry.
+- **Public key** — the subject's public key and algorithm (RSA-2048/3072, or EC on P-256/P-384,
+  increasingly Ed25519).
+- **Basic Constraints** — `CA:TRUE` or `CA:FALSE`. Leaves are `CA:FALSE`; only CA certificates may
+  sign others, which stops a valid leaf from being abused to mint further certificates.
+- **Key Usage / Extended Key Usage** — what the key may do (`digitalSignature`, `keyEncipherment`; EKU
+  `serverAuth`, `clientAuth`). A `serverAuth` cert cannot be used for client auth where EKU is enforced.
+- **AIA / CRL Distribution Points / SCTs** — URLs for the issuer certificate and OCSP responder,
+  revocation-list locations, and Signed Certificate Timestamps for Certificate Transparency.
 
 You will read these constantly with `openssl`:
 
@@ -347,6 +405,23 @@ flowchart TD
 
 When the client receives the server's Certificate message, it runs a validation algorithm that is
 worth committing to memory because misconfigurations map directly onto its steps:
+
+1. **Path building.** From the leaf, chain each certificate to its issuer until reaching a root in the
+   local trust store. The server should send the intermediates; if it forgets (a classic
+   misconfiguration), some clients recover via the AIA URL and some — notably many non-browser clients
+   — do not, producing the maddening "works in my browser, fails in curl/Java" bug.
+2. **Signature verification.** Verify each certificate's signature with its issuer's public key up to
+   the trusted root. One broken signature invalidates the path.
+3. **Validity window.** Every certificate must be within its `notBefore`/`notAfter` window *at the
+   current time* — where clock skew and expiry outages bite.
+4. **Constraints.** Every non-leaf must have `CA:TRUE`; path-length and name constraints must hold; EKU
+   must permit `serverAuth`.
+5. **Hostname / SAN matching.** The intended hostname (the SNI value, the URL host for HTTPS) must
+   match a DNS name in the leaf's SAN, honoring the single-label wildcard rule (`*.example.com` matches
+   `api.example.com` but *not* `example.com` or `a.b.example.com`). The legacy CN fallback is dead in
+   modern clients.
+6. **Revocation.** Check whether the certificate has been revoked since issuance — the weakest step in
+   practice (next section).
 
 Only if all six pass is the CertificateVerify signature checked against the now-trusted public key. The
 intuition: the PKI establishes that *this public key is authorized for this hostname*, and
@@ -401,6 +476,16 @@ round trip and no privacy leak to the CA. Stapling is a genuine improvement and 
 **Must-Staple** extension was meant to close that by telling clients to *hard*-fail without a staple,
 but it saw little adoption and browser support has waned.
 
+The industry's actual answer to revocation's brokenness is threefold, and it drives modern practice.
+First, browsers ship **proprietary aggregated revocation sets** — Mozilla's CRLite and Chrome's
+CRLSets compress the whole Web PKI's revocation state into a pushed, locally-checked structure,
+sidestepping per-connection queries. Second, and most important for backend engineers, the
+CA/Browser Forum has been **driving certificate lifetimes steadily down** — from years, to 398 days,
+with a plan (ratified in 2025) to reach roughly 47-day maximum validity by 2029 — on the logic that a
+certificate that expires in weeks barely needs revocation. Third, short lifetimes are only tolerable
+if issuance is *automated* (ACME, below). The revocation story and the automation story are one:
+**make certificates cheap and short-lived, and revocation stops being the load-bearing control.**
+
 ## Certificate Transparency
 
 Revocation answers "this specific certificate is now bad." **Certificate Transparency (CT)** answers
@@ -426,6 +511,15 @@ to monitor CT logs for your own domains — a free, high-signal control that cos
 both attacks and your own teams' shadow certificates.
 
 ## ACME and Let's Encrypt
+
+The transformation of the Web PKI over the last decade came from one idea: **issuance as an automated
+protocol.** Before 2015, getting a certificate meant a manual purchase, an out-of-band domain-control
+check, an emailed file, and a hand-installed key — painful enough that certificates were long-lived
+and HTTPS was the exception. **Let's Encrypt**, a free nonprofit CA launched in 2015, and the **ACME
+protocol** (Automatic Certificate Management Environment, RFC 8555, 2019) inverted this: a machine can
+prove control of a domain and obtain a certificate in seconds, for free, with no human involved. This
+is why the web went from minority to vast-majority HTTPS in a few years, and it is what makes
+short-lived certificates operationally viable.
 
 ACME issuance works as an automated proof-of-control protocol between your **ACME client** (Certbot,
 `acme.sh`, Caddy's built-in client, cert-manager, Traefik) and the CA:
@@ -561,6 +655,23 @@ of SANs, tilting the modern trade-off toward narrowly-scoped, per-service certif
 
 *Where* TLS terminates is one of the more consequential design decisions in a backend system, and
 there is no single right answer — only trade-offs to make deliberately.
+
+- **Edge termination at the load balancer / reverse proxy.** TLS is decrypted at the LB (an ALB, an
+  NGINX/Envoy edge, a CDN). This centralizes certificate management, enables L7 routing and WAF
+  inspection on cleartext, and offloads handshake CPU from application servers. The cost is a plaintext
+  segment behind the LB — fine at the perimeter of a trusted network, unacceptable under zero trust if
+  left plaintext.
+- **End-to-end (re-encrypted) TLS.** The LB terminates for inspection and routing, then opens a
+  *fresh* TLS connection to the backend, so no segment is ever plaintext. The common compliance-driven
+  pattern (PCI, HIPAA): edge L7 features with no plaintext hop, at the cost of two handshakes and
+  certificate management on the backends too.
+- **Passthrough.** The LB does L4 forwarding only and the backend terminates TLS itself; the LB
+  cannot route on L7. Used when the backend must own the certificate and no intermediary may see
+  plaintext.
+- **Mesh mTLS everywhere.** In a service mesh (Chapter 10; Volume 6), sidecar proxies terminate and
+  originate mTLS for every workload, so *every* internal hop is mutually authenticated and encrypted
+  with zero application-code involvement — the zero-trust end state, sane only because the mesh
+  automates the lifecycle for thousands of short-lived workload identities.
 
 ### Performance: handshakes, resumption, offload
 

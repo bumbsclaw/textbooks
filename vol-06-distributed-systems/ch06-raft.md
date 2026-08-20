@@ -87,6 +87,13 @@ logical epoch Chapter 2 developed: it is a Lamport-style counter, advanced by ev
 by any physical clock, and it totally orders leadership eras without requiring any two servers to
 agree on what time it is.
 
+Every server persists `currentTerm` and follows two absolute rules. If any RPC — request or
+response — carries a term *greater* than `currentTerm`, the server updates `currentTerm` and
+immediately reverts to follower. If an RPC *request* carries a term less than `currentTerm`, the
+server rejects it. These two rules do most of the work of neutralizing stale leaders: a deposed
+leader's RPCs carry its old term and are refused, and the refusal carries the new term, which
+demotes the sender. Hold that thought for the distributed-systems lens — it is a fencing token.
+
 ### The three states
 
 Every server is in exactly one of three states, and the transition rules are short enough to state
@@ -169,6 +176,19 @@ A voter grants its vote if and only if all of the following hold:
 
 Rules 1 and 2, plus majority intersection, give Election Safety: two leaders in one term would
 require two disjoint majorities of voters, and majorities intersect.
+
+Rule 3 — the **election restriction** — is the single rule that makes elections *safe with respect
+to committed data*, and it is worth staring at. A committed entry is, by definition, on a majority
+of servers. A candidate needs votes from a majority. The two majorities share at least one server,
+and that server will refuse the candidate unless the candidate's log is at least as up-to-date as
+its own — which, by the (term, index) comparison, means the candidate's log contains everything
+that server's log contains from committed prefixes. Therefore no candidate missing a committed
+entry can assemble a majority. This is how Raft eliminates Multi-Paxos's leader-recovery phase:
+instead of electing anyone and having the new leader pull missing decisions from the quorum, Raft
+refuses to elect anyone who would need to pull. The comparison must be (term, index) in that order,
+not log length alone — a longer log full of uncommitted entries from a stale term loses to a
+shorter log whose last entry has a higher term, and Figure 8 below shows exactly why length alone
+would be catastrophic.
 
 ```mermaid
 sequenceDiagram
@@ -349,6 +369,19 @@ The paper's Figure 3 states the guarantees; all have now appeared:
 | Leader Completeness | If an entry is committed in term T, it is present in the logs of the leaders of all terms > T. |
 | State Machine Safety | If a server has applied the entry at a given index, no server ever applies a different entry at that index. |
 
+The keystone is **Leader Completeness**, and the argument sketch is the one made twice above, run
+as an induction over terms: an entry committed in term T is on a majority with term ≤ T
+certificates — either directly (current-term commit, so on a majority with term T as their last
+relevant term) or via a current-term successor entry. Any leader of term U > T was elected by a
+majority that intersects the storing majority; the intersection voter's up-to-date check forces the
+winner's log to dominate its own by (term, index); a case analysis on whether the last terms were
+equal or the winner's was higher shows the winner's log must contain the committed entry (the
+higher-term case leans on the induction hypothesis: whoever created that higher-term entry was a
+leader whose log, by induction, contained the entry). Ongaro's thesis gives the full proof; the
+protocol was subsequently machine-verified in TLA+ and, in the Verdi project, in Coq. State Machine
+Safety follows: apply order is log order below `commitIndex`, and Leader Completeness plus Log
+Matching pin the committed prefix on every server forever.
+
 ## Practical Raft
 
 Everything so far replicates a log among a fixed set of servers with an ever-growing log. Real
@@ -370,6 +403,19 @@ once that commits the old servers can be shut down. At no point can two disjoint
 because any quorum during the transition includes a C_old majority. A distinctive wrinkle:
 configuration entries take effect on each server **as soon as they are appended**, not when
 committed — a server always uses the latest configuration in its log.
+
+Ongaro's thesis proposes the simpler mechanism most implementations actually use: **single-server
+changes**. Add or remove one server at a time, and any majority of the old configuration overlaps
+any majority of the new one arithmetically, so no joint phase is needed. Honesty requires the
+footnote: in 2015 Ongaro himself reported a safety bug in the single-server algorithm as described
+in the thesis — with concurrent changes across leader turnover, a specific interleaving can commit
+a configuration entry that a later leader removes, reintroducing disjoint quorums. The fix he
+published is that a leader must not append a configuration change until it has committed an entry
+in its current term (the no-op above suffices) and must not start one while a previous change is
+uncommitted. etcd's raft library implements single-server changes with these guards (and grew
+optional joint consensus later, for atomic multi-server swaps). The moral is squarely on-theme:
+even the understandable consensus algorithm has corners subtle enough to catch its own author, and
+they are precisely the corners a library has already debugged for you.
 
 Two operational details. New servers should join as **non-voting learners** first, catching up on
 the log without counting toward (or endangering) quorum, and be promoted only when nearly current —
@@ -395,6 +441,20 @@ implementations tune log retention to make it rare, and why CockroachDB and TiKV
 spend real ink on snapshot rate-limiting and scheduling.
 
 ### Client sessions and exactly-once at the state machine
+
+Raft gives you a linearizable *log*; it does not by itself give clients exactly-once semantics. A
+client whose leader crashed after committing its command but before replying will retry — against
+the new leader — and without protection the command executes twice. The at-least-once retry plus
+deduplication pattern of Chapter 9 applies, implemented *inside the state machine*: each client
+opens a **session** (itself a committed log entry), tags every command with a monotonic **sequence
+number**, and the state machine keeps, per session, the highest sequence applied and the cached
+response. A committed duplicate is not re-executed; the cached response is returned. Because the
+session table is part of the state machine, it is replicated and snapshotted with everything else,
+and deduplication survives leader changes. This is exactly-once *effect at the state machine*, not
+exactly-once delivery — the network still delivers at-least-once; the state machine makes
+re-delivery harmless. Sessions must eventually expire (unbounded response caches are a leak), and
+expiry must be a deterministic, log-driven decision — expire by log-time agreement, never by each
+replica's local clock, or replicas diverge.
 
 ### Linearizable reads
 
@@ -457,6 +517,15 @@ purpose and labeled is a feature; staleness by accident is the classic bug.
 
 Two refinements from Section 9.6 of the thesis and production practice, briefly:
 
+**PreVote.** A partitioned server times out repeatedly, incrementing `currentTerm` each time.
+When the partition heals it carries an inflated term that — by the higher-term rule — instantly
+deposes a perfectly healthy leader, causing a needless election (and in pathological flapping,
+repeated ones). PreVote adds a preliminary round: a would-be candidate asks peers whether they
+*would* vote for it — same up-to-date and timeout checks — **without anyone incrementing terms**,
+and only proceeds to a real election on a majority of yeses. A node partitioned from a live leader
+never gets them (peers with a fresh leader refuse), so its term never inflates. etcd, TiKV, and
+hashicorp/raft all ship PreVote (etcd off-by-default historically, on in current practice).
+
 **Leader transfer.** For planned maintenance or load balancing, the leader stops accepting new
 proposals, brings the target follower fully up to date, and sends it a TimeoutNow instruction; the
 target starts an election immediately — bypassing its randomized timeout — and wins, since its log
@@ -500,6 +569,21 @@ proposal numbers; Raft's election is Paxos's phase 1 amortized over a term; Raft
 is phase 2 over a contiguous batch of slots.
 
 The real differences are the constraints Raft adds:
+
+- **Strong leader, always.** Multi-Paxos permits any replica to propose into any slot (at a cost);
+  Raft forbids it. This simplifies reasoning and repair but makes the leader a throughput and
+  latency bottleneck by construction — every byte flows through it, and a leader in the wrong
+  region taxes every write (see below).
+- **Log contiguity.** Multi-Paxos acceptors can accept slot 100 before slot 99 exists; a Raft
+  follower cannot. Out-of-order acceptance lets Multi-Paxos variants pipeline aggressively across
+  slots and recover holes lazily; Raft trades that flexibility for the trivial repair story and
+  the hole-free invariant. Protocols in the Egalitarian Paxos family exploit exactly the freedom
+  Raft renounces (leaderless, per-command quorums) and pay for it in complexity — the trade is
+  real, and Raft sits deliberately at the simple end.
+- **Election-time recovery versus post-election recovery.** Raft's up-to-date check moves log
+  recovery *into* the election; Multi-Paxos elects, then recovers. Net messages are similar; the
+  difference is where the subtlety lives, and Raft chose to put it in one comparison of two
+  integers.
 
 The understandability payoff is not that Raft is *smarter* — as an algorithm it is arguably less
 general — but that its state space is small enough that implementations tend toward correctness,

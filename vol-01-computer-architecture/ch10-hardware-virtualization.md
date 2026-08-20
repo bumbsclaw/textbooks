@@ -19,6 +19,21 @@ to the multi-tenant cloud (Volume 12): the backend engineer does not run on hard
 
 Learning goals — after this chapter you should be able to:
 
+- Explain the base isolation primitive — **privilege levels** (ring 3 vs. ring 0) — and why user
+  code physically cannot touch hardware without trapping into the kernel, and how virtual memory
+  (the MMU/TLB of Chapter 3) turns that into per-process **address-space isolation**.
+- State the **Popek–Goldberg** criterion, explain *why classic x86 was not virtualizable*
+  (sensitive-but-unprivileged instructions), and describe the three historical fixes: binary
+  translation, paravirtualization, and hardware-assisted virtualization.
+- Describe **VT-x/AMD-V** precisely — VMX root vs. non-root mode, the VMCS, VM exits and entries as
+  the cost model — and **second-level address translation** (EPT/NPT) as the replacement for shadow
+  page tables, plus the **IOMMU** (VT-d/AMD-Vi) and **SR-IOV** for device isolation and passthrough.
+- Place **VMs, microVMs (Firecracker/Kata), gVisor, and containers** on the isolation-strength ×
+  overhead × density triangle and choose correctly for a given trust model.
+- Reason honestly about **confidential computing** (what SEV-SNP/TDX/SGX do and do *not* guarantee)
+  and about the **microarchitectural side-channel** class (Meltdown, Spectre, L1TF, MDS) as the
+  permanent tax of sharing silicon in a multi-tenant fleet.
+
 ## Why isolation is a hardware problem
 
 Isolation is usually discussed as an operating-system or cloud-platform feature — namespaces,
@@ -189,6 +204,18 @@ The transitions between these modes are the two operations that define hardware 
   hypercall, etc. The CPU atomically saves guest state, restores host state, and jumps to the
   hypervisor's exit handler in root mode.
 
+Both modes are backed by a control block that is the heart of the mechanism: Intel's **VMCS**
+(Virtual Machine Control Structure); AMD's equivalent is the **VMCB**. The VMCS is a per-vCPU
+in-memory structure holding the *guest state* to load on entry, the *host state* to restore on exit,
+and — most importantly — the **control fields** that decide *which* operations cause a VM exit. The
+hypervisor configures the VMCS to say, in effect: exit on `CR3` writes if I am using shadow paging
+(but *not* if I am using EPT); exit on I/O to these ports; exit on these MSR accesses; exit on
+`HLT`, on external interrupts, on exceptions of this type. Fine-grained control over exit causes is
+how the hypervisor keeps overhead down: the more it can let the guest do natively without exiting,
+the less it pays. The problematic sensitive-but-unprivileged instructions of classic x86 are now
+handled directly by the hardware in non-root mode — they either behave correctly against guest
+state or cause a clean VM exit — so the Popek–Goldberg gap is closed in silicon.
+
 **The VM exit is the cost model of virtualization.** A VM exit is a full pipeline serialization plus
 a state save/restore — historically hundreds to low thousands of cycles, driven down steadily across
 CPU generations but never free. Every intercepted operation pays it. This is why the entire art of
@@ -335,7 +362,35 @@ hardened, heavily audited surface. The cost is that each VM carries a full kerne
 footprint, boots in seconds, and you fit fewer per host. This is the right default when tenants are
 mutually untrusting and the workload is long-lived.
 
+**Containers** sit at the opposite corner. A container is not a virtualization construct at all — it
+is a normal process with a restricted view, built from two Linux kernel features: **namespaces**
+(which virtualize the *names* a process sees — PID, network, mount, UTS, IPC, user, cgroup namespaces)
+and **cgroups** (which limit and account resources — CPU, memory, I/O). These are the subject of
+Volume 2, Chapter 9. The decisive fact is that **all containers on a host share the single host
+kernel**. Isolation is process-level, drawn by the kernel in software, and the attack surface is the
+*entire Linux system-call interface* — hundreds of syscalls, historically a steady source of
+privilege-escalation CVEs. One kernel vulnerability, reachable from an unprivileged container, is a
+host compromise and therefore a compromise of every co-tenant. Containers win overwhelmingly on
+density (thousands per host), startup (milliseconds), and overhead (near zero — it *is* a native
+process), which is why they dominate — but their boundary is the weakest of the four, which is why
+you do not put mutually hostile tenants in bare containers on a shared kernel.
+
 Between these poles are two designs that try to buy VM-grade isolation without VM-grade cost.
+
+**MicroVMs** keep the real hardware-virtualization boundary — a genuine guest kernel, VT-x/EPT — but
+strip the *VMM* down to the bone. **Firecracker**, AWS's Rust VMM built on KVM, ships a minimal
+device model (a handful of `virtio` devices, no BIOS, no PCI, no legacy emulation), which shrinks
+both the attack surface and the boot time: a Firecracker microVM boots in ~125 ms and adds only a few
+megabytes of memory overhead per VM, enabling thousands per host. This is the technology under **AWS
+Lambda and Fargate** — every function invocation and every Fargate task gets its *own* microVM, so
+one tenant's code runs behind a hardware-virtualization boundary from the next tenant's, at a density
+and startup latency that used to require containers. This reconciliation — hardware isolation at
+serverless density — is why microVMs are the quiet backbone of modern serverless (tie to Volume 12
+and to the supply-chain volume, Book 6, Chapter 8, on the trust properties of serverless platforms).
+**Kata Containers** applies the same idea from the container direction: it is an OCI-compatible
+runtime that transparently runs each pod inside a lightweight VM (backed by QEMU, Firecracker, or
+Cloud Hypervisor), so your Kubernetes workloads get a VM boundary while still looking and deploying
+like containers.
 
 **gVisor** takes an entirely different route: a **user-space kernel**. Google's `runsc` runtime runs
 the container as normal but interposes a process called the **Sentry** — a re-implementation of a
@@ -473,6 +528,33 @@ sequenceDiagram
 ```
 
 The landmark instances, accurately:
+
+- **Meltdown** (CVE-2017-5754, 2018) exploited that some CPUs (chiefly Intel, some ARM) would let an
+  out-of-order load *speculatively* read kernel memory from user mode and forward it to dependent
+  instructions before the permission check retired — long enough to leak it through cache. It broke the
+  user/kernel boundary directly. The mitigation, **KPTI** (Kernel Page-Table Isolation), stops mapping
+  the kernel into the user address space at all, so there is nothing to speculatively read — at the cost
+  of a page-table switch (and TLB pressure) on every syscall and interrupt, i.e., a real,
+  syscall-rate-dependent performance tax.
+- **Spectre** (v1 = bounds-check bypass, CVE-2017-5753; v2 = branch-target injection, CVE-2017-5715)
+  is more general and harder to kill: it abuses the *branch predictor*. In v1 the attacker trains a
+  bounds check to predict "in range," so the CPU speculatively reads out-of-bounds; in v2 the attacker
+  poisons the indirect-branch predictor so speculation lands in an attacker-chosen "gadget." Spectre
+  works *within* a privilege level and across the VM boundary. Mitigations are a grab-bag: `lfence`
+  speculation barriers and `array_index_nospec()` for v1; **retpoline** (replacing indirect branches
+  with a construct the predictor can't poison) and microcode controls **IBRS/IBPB/STIBP** for v2. All
+  cost performance, and Spectre v1 in particular cannot be fully fixed in hardware — it is mitigated
+  case by case in software, effectively forever.
+- **L1TF / Foreshadow** (CVE-2018-3615/3620/3646, 2018) — the **L1 Terminal Fault** — let speculation
+  read any data present in the **L1 data cache** past a permission fault, including *another VM's* data
+  and *SGX enclave* data. In a multi-tenant host this is a cross-VM read. Mitigation: **flush the L1D
+  cache on VM entry**, and — because a sibling SMT thread shares the L1 — either **disable SMT** or use
+  core scheduling so a core is never shared across trust boundaries.
+- **MDS** (Microarchitectural Data Sampling — RIDL, Fallout, ZombieLoad, 2019) leaks from even more
+  transient buffers — **line-fill buffers, store buffers, load ports** — that are shared and not
+  cleared at boundaries, sampling data in flight regardless of address. Mitigation: a microcode-assisted
+  **buffer overwrite** (`VERW`) on every transition across a boundary, and again **disabling SMT** for
+  the strongest guarantee, because the sibling thread shares those buffers.
 
 Notice the recurring villain: **SMT** (Chapter 2). Simultaneous multithreading shares the L1 cache and
 these buffers between two threads on one core, so if those two threads are in different trust domains,

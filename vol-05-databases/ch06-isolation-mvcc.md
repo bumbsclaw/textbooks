@@ -10,6 +10,18 @@ this chapter will feel like déjà vu, deliberately. The same bargain reappears 
 strong is easy to reason about and slow; weak is fast and treacherous; and the vendor's default
 is weak.
 
+We start by making that parallel explicit, then examine the ANSI SQL isolation levels and the
+famous 1995 Berkeley critique that demonstrated the standard's definitions were broken — they
+missed entire anomalies and could not even describe snapshot isolation, the level half the
+industry actually runs. We work each anomaly with a concrete two-transaction example, then survey
+the real landscape engine by engine, where the trap is that **the same level name means different
+guarantees in different engines**. The second half opens the hood on MVCC — versioned tuples,
+snapshots, visibility rules, and garbage collection, contrasting PostgreSQL's copy-on-write heap
+with InnoDB's undo-log architecture — because you cannot operate these systems well without
+understanding why old versions accumulate and what makes them go away. We close with locking
+reads, a practical decision framework, and the distributed-systems lens, where this vocabulary
+reappears yet again across replicas.
+
 Learning goals — after this chapter you should be able to:
 
 - Map isolation levels onto the memory-model framework from Volume 4, Chapter 3: serializable as
@@ -280,6 +292,19 @@ first-committer-wins, and it means lost updates are *detected* at this level —
 read-modify-write aborts instead of clobbering. Write skew, of course, is still permitted:
 disjoint write sets never trigger the check.
 
+**MySQL/InnoDB REPEATABLE READ — the default level in MySQL — is a different animal.**
+Non-locking `SELECT`s use a consistent snapshot established at the first read, so plain reads
+behave like SI. But there is no first-committer/updater check: a concurrent transaction can
+modify a row after your snapshot, and your subsequent `UPDATE` of that row simply proceeds
+against the *current* committed version — **lost updates via read-modify-write are permitted at
+InnoDB REPEATABLE READ**, where PostgreSQL's level of the same name aborts them. Furthermore,
+your UPDATE reads and writes the current version, not your snapshot's, so a transaction can act
+on data newer than what its SELECTs showed — a mind-bending mix of snapshot reads and current
+writes. On the other hand, InnoDB's *locking* reads and writes take **next-key locks** — a lock
+on the index record plus the gap before it — so a `SELECT ... FOR UPDATE` over a range prevents
+concurrent inserts into that range: phantoms are blocked for locking reads, which is a guarantee
+PostgreSQL SI does not express in locking terms at all.
+
 Same words on the wire — `SET TRANSACTION ISOLATION LEVEL REPEATABLE READ` — and materially
 different anomaly profiles. **Never port an application between engines, or reason about one from
 experience with the other, on the assumption that the level names carry the semantics.** They
@@ -307,6 +332,25 @@ reads not — is the entire gap between SI and serializability, and closing it i
 does.
 
 ### SERIALIZABLE — two implementations, two cost models
+
+**PostgreSQL: Serializable Snapshot Isolation (SSI).** Based on Michael Cahill's work (Cahill,
+Röhm, Fekete, SIGMOD 2008) and brought to PostgreSQL 9.1 by Dan Ports and Kevin Grittner (VLDB
+2012). The theory: every SI anomaly requires a cycle in the transaction dependency graph
+containing two consecutive **rw-antidependency** edges — T1 reads something T2 then overwrites
+("T2 invalidates T1's read"), and T2's read is in turn invalidated by T3 (possibly T1 itself).
+In the doctors example, A's count is invalidated by B's update and B's count by A's update: two
+rw edges forming the dangerous structure. SSI runs transactions optimistically under plain SI,
+tracks reads with in-memory **SIREAD locks** (including predicate/range information), watches for
+pairs of consecutive rw-antidependencies, and aborts one transaction of any dangerous structure
+with SQLSTATE 40001. The detection is conservative — dangerous structures do not always complete
+a cycle, so **false-positive aborts happen by design** — but it never admits a non-serializable
+execution. Costs: memory and CPU for read tracking, reduced concurrency from aborts, and a hard
+requirement that **every serializable transaction be wrapped in a retry loop**, because any of
+them can fail through no fault of its own. Readers never block writers and writers never block
+readers — the MVCC property survives; conflict resolution happens by abort, not by waiting. Two
+operational notes: SIREAD tracking can escalate from row to page to relation granularity under
+memory pressure, raising false-positive rates; and `SELECT ... FOR UPDATE` inside serializable
+transactions adds nothing to correctness — SSI already covers reads.
 
 **MySQL/InnoDB: two-phase locking.** `SERIALIZABLE` in InnoDB converts plain `SELECT`s into
 `SELECT ... FOR SHARE` — every read takes shared next-key locks, held to commit. This is
@@ -446,6 +490,38 @@ with commit time and compare timestamps instead of consulting XID sets.
 MVCC's contract is "keep old versions as long as someone might need them." The corollary defines
 the operational pain of both engines: **the oldest snapshot in the system determines what can be
 reclaimed, so one long-running transaction blocks cleanup for everyone.**
+
+**PostgreSQL: VACUUM.** A dead tuple — superseded or deleted, and invisible to every current and
+future snapshot — is reclaimable. VACUUM (normally autovacuum) scans for dead tuples, removes
+them, updates indexes, and makes space reusable (it does not usually shrink files; that is
+`VACUUM FULL`, which rewrites the table under an exclusive lock). The horizon rule: VACUUM may
+only remove tuples deleted before the oldest `xmin` any active snapshot might use — the minimum
+across all running transactions' snapshots (visible in `pg_stat_activity.backend_xmin`), held
+prepared transactions, replication slots, and, with `hot_standby_feedback`, the standbys'
+readers too. A single idle-in-transaction session holding a snapshot from six hours ago pins six
+hours of dead versions *in every table in the database* — cleanup is blocked fleet-wide, tables
+and indexes bloat, scans slow down as they wade through dead tuples, and the damage persists
+after the culprit exits until vacuum catches up. Defenses: `idle_in_transaction_session_timeout`,
+monitoring for old `backend_xmin`/`xact_start`, and treating long transactions as incidents.
+Separately, XIDs are 32-bit and comparison is circular, so tuples must eventually be **frozen**
+(marked as "committed in the infinite past") before the counter wraps; autovacuum does this on
+schedule, and a cluster that cannot vacuum — often *because* of the same horizon problems —
+marches toward wraparound protection, where PostgreSQL first warns and ultimately refuses new
+writes. Every serious PostgreSQL operator eventually learns this the hard way; monitor
+`datfrozenxid` age.
+
+**InnoDB: purge and the history list.** Same disease, different organ. Undo records for
+committed transactions cannot be purged while any ReadView might still need them; the pending
+backlog is the **history list**, whose length is visible in `SHOW ENGINE INNODB STATUS` and
+`information_schema.innodb_metrics` (`trx_rseg_history_len`). A long-running consistent-read
+transaction pins the tail of the undo log: history list length climbs into the millions, undo
+tablespaces grow (before MySQL 8.0's separate truncatable undo tablespaces, this permanently
+grew the system tablespace), and — the InnoDB-specific symptom — reads get *slower*, because
+every read of a hot row by an old snapshot walks an ever-longer version chain. Where PostgreSQL
+bloat slows scans by volume, InnoDB history slows point reads by chain length. The operational
+posture is identical: alert on history list length, kill long transactions, keep OLTP
+transactions short and move analytics to a replica (where, note, long queries create the
+analogous problem via replication conflict or feedback — Chapter 8).
 
 The design lesson: **MVCC converts blocking into garbage.** You pay either way; MVCC's genius is
 deferring the payment off the critical path, and its trap is that deferred payments compound.
