@@ -243,7 +243,7 @@ until then their paths are as listed above).
 - [x] 9.08 Secrets Management — `ch08-secrets-management.md`
 - [x] 9.09 Application Security: OWASP, Injection, SSRF — `ch09-appsec.md`
 - [x] 9.10 Zero Trust and Service-to-Service Auth: mTLS, SPIFFE — `ch10-zero-trust-mtls.md`
-- [ ] 9.11 Threat Modeling and Secure Design — `ch11-threat-modeling.md`
+- [x] 9.11 Threat Modeling and Secure Design — `ch11-threat-modeling.md`
 
 ## Volume 10 — Messaging, Streaming, and Event Systems (`vol-10-messaging-streaming/`)
 
@@ -253,8 +253,8 @@ until then their paths are as listed above).
 - [x] 10.04 Stream Processing — `ch04-stream-processing.md`
 - [x] 10.05 Event Sourcing and CQRS — `ch05-event-sourcing-cqrs.md`
 - [x] 10.06 The Outbox Pattern and the Dual-Write Problem — `ch06-outbox.md`
-- [ ] 10.07 Backpressure and Flow Control — `ch07-backpressure.md`
-- [ ] 10.08 Dead Letters, Retries, Poison Messages — `ch08-dead-letters.md`
+- [x] 10.07 Backpressure and Flow Control — `ch07-backpressure.md`
+- [x] 10.08 Dead Letters, Retries, Poison Messages — `ch08-dead-letters.md`
 
 ## Volume 11 — Reliability, Observability, and SRE (`vol-11-reliability-sre/`)
 
@@ -341,3 +341,4 @@ until then their paths are as listed above).
 - 2026-08-20: *** VOLUME 7 (System Design) COMPLETE — 12 chapters. *** Vol07 ch10-ch12 done (multi-region/geo-distributed, designing for failure bulkheads/breakers/shedding, case studies feed/chat/notifications/global KV — ~4.0-6.3kw each, 4-6 Mermaid). Next: 8.07-8.09 + 9.10 batch.
 - 2026-08-20: Vol08 ch07-ch08 + Vol09 ch10 done (error handling/status semantics, compatibility/wire formats, zero trust/mTLS/SPIFFE — ~5.5-6.5kw each, 4-6 Mermaid). Next: 8.09-8.11 + 9.11.
 - 2026-08-20: Vol10 ch04-ch06 done (stream processing Flink/Kafka Streams, event sourcing/CQRS Postgres+EventStoreDB, outbox/dual-write/Debezium CDC — ~4.6-5.4kw each, 4-5 Mermaid). Next: 10.07-10.08.
+- 2026-08-20: *** VOLUME 9 (Security) COMPLETE — 11 chapters. *** *** VOLUME 10 (Messaging/Streaming) COMPLETE — 8 chapters. *** Vol10 ch07-ch08 + Vol09 ch11 done (backpressure/flow control, DLQ/retries/poison, threat modeling/STRIDE — ~4.5-5.5kw each, 3-6 Mermaid). Next: Vol11 ch04-ch06.
