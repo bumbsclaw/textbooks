@@ -118,25 +118,6 @@ design must either avoid or explicitly pay to remove.
    replication stream.
 4. **The network is secure.** Modern instance: a service mesh rolled out with mTLS in permissive
    mode "temporarily," internal APIs that trust any caller inside the VPC, and then a single
-   compromised pod can read everything. Volume 9 treats zero-trust properly; the fallacy here is
-   assuming the network boundary does security work it cannot do.
-5. **Topology doesn't change.** In the Kubernetes era this fallacy is almost charmingly obsolete
-   in its original form — pods are rescheduled constantly, IPs are ephemeral, autoscalers add and
-   remove nodes by the minute. Yet it survives in subtler forms: DNS results cached forever,
-   connection pools that never re-resolve, clients pinned to a load balancer IP that moved.
-6. **There is one administrator.** Modern instance: your service depends on a managed database, a
-   third-party auth provider, a CDN, and a payments API — four organizations' change calendars,
-   none of which consult yours. Even in-house, the team that owns the message broker will upgrade
-   it on their schedule. Design implication: you cannot coordinate maintenance globally, so you
-   must tolerate dependencies degrading without notice.
-7. **Transport cost is zero.** Serialization burns CPU (Volume 8 quantifies this for JSON versus
-   protobuf), and cloud providers bill for cross-AZ and egress traffic in real money. Modern
-   instance: a data platform whose inter-AZ replication traffic quietly becomes one of the largest
-   line items on the cloud bill.
-8. **The network is homogeneous.** Different links have wildly different latency, loss, and MTU;
-   different stacks speak subtly different dialects. Modern instance: a protocol tuned in a
-   single-AZ test environment melting down over a VPN link with 2% loss, or path-MTU blackholes
-   that only affect the one customer behind a misconfigured firewall.
 
 The fallacies are the informal statement of this chapter's thesis. The formal statement is the
 system model, to which we now turn.
@@ -485,21 +466,6 @@ semantics" actually promises and where its edges are.
 broadcast primitives, of ascending strength:
 
 - **Best-effort broadcast:** if the *sender* stays up, all correct processes receive the message.
-  A crash mid-broadcast may leave some receivers with the message and others without — usually
-  unacceptable, since it creates permanent disagreement about what was even said.
-- **Reliable broadcast:** all *correct* processes agree on the set of delivered messages — if any
-  correct process delivers m, every correct process eventually delivers m, even if the sender
-  crashed mid-send. The standard construction: every receiver re-broadcasts what it delivers, so
-  a message that reaches anyone correct reaches everyone correct.
-- **Uniform reliable broadcast:** strengthens "any correct process" to "any process at all" — if
-  *any* process delivers m, even one that crashes immediately after, all correct processes
-  eventually deliver m. The distinction sounds fussy and is not: a non-uniform protocol allows a
-  process to deliver a message, act on it (respond to a client, apply a write), and crash, leaving
-  a system in which that message otherwise never happened. Uniformity is what you need when
-  delivery triggers externally visible effects — which is to say, almost always in this volume;
-  the commit rules of Paxos and Raft (Chapters 5 and 6) are, in this vocabulary, machinery for a
-  uniform primitive, and Chapter 3's replication anomalies are what non-uniformity looks like from
-  the client's seat.
 
 None of these order messages; adding ordering yields FIFO, causal, and — the crown jewel — *total
 order* broadcast, which is equivalent to consensus itself. That equivalence, and the whole
@@ -537,19 +503,6 @@ cites them. Second, testing distributed systems means *attacking assumptions dir
 partitions, pause processes, skew clocks, kill nodes mid-commit — which is why Chapter 12 is
 structured as an assault on every assumption this chapter has named.
 
-**The running example.** Each chapter of this volume upgrades the same system: a key-value store
-with `GET` and `PUT`. Its Chapter 1 form is deliberately primitive: **one node, an in-memory hash
-map, a write-ahead log fsync'd on every `PUT`** — the crash-recovery model made concrete: crash
-and restart, replay the log, and no acknowledged write is lost. Its deficiencies define the rest
-of the volume. It has no replicas, so a dead disk loses everything and a dead node is an outage:
-Chapter 3 adds replication and immediately collides with consistency. Its clients already face Two
-Generals — a timed-out `PUT` may or may not have committed — which Chapter 9 fixes with idempotent
-request IDs. Once replicated, its replicas will disagree about event order (Chapter 2), split
-brain under partition (Chapters 4 and 5), need leader election and log replication done right
-(Chapter 6), or renounce leaders for quorums (Chapter 7) or for CRDTs (Chapter 11). It will need
-to detect failed peers (Chapter 10), coordinate configuration (Chapter 8), and prove any of this
-works (Chapter 12). Keep the little store in mind throughout: every abstraction in this volume
-earns its place by fixing a concrete way this system loses data, serves lies, or goes down.
 
 ## The distributed-systems lens
 

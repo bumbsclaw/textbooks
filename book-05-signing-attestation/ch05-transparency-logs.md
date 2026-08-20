@@ -332,26 +332,6 @@ not logged is not trusted.
 CT has four roles, and each maps to a piece of machinery you should be able to name.
 
 - **Logs.** Independently operated append-only Merkle logs (RFC 6962 construction) run by Google,
-  Cloudflare, Let's Encrypt (Sectigo, DigiCert, and others). CAs submit every certificate (in
-  practice a **precertificate**, a poison-extended variant submitted before final issuance) to
-  several logs.
-- **SCTs (Signed Certificate Timestamps).** When a CA submits a (pre)certificate, the log returns
-  an **SCT**: a signed promise, `{ timestamp, log_id, signature }`, that the log **will**
-  incorporate this certificate into its tree within the **Maximum Merge Delay** (MMD, usually
-  24h). Crucially, the SCT is a **promise, not a proof of inclusion** — at SCT-issue time the
-  entry may not yet be merged into the tree. Browsers require a certificate to carry **SCTs from
-  multiple independent logs**, delivered by one of three channels: embedded as an **X.509
-  extension** in the certificate (by far the most common), via a **TLS extension** during the
-  handshake, or via **OCSP stapling**.
-- **Monitors.** Parties who **download the logs and watch for entries of interest** — most
-  importantly, certificates for **their own domains**. A monitor for `yourcompany.com` fetches
-  every new entry and flags any certificate naming your domains that your team did not request.
-  This is the role that actually *catches misissuance*. Services like Cloudflare's and Facebook's
-  monitors, plus commercial and DIY tooling querying `crt.sh`, fill it.
-- **Auditors.** Parties who verify the logs **behave correctly**: that they are genuinely
-  append-only (consistency proofs check out), and that certificates promised by SCTs actually
-  **appear** in the tree within the MMD (inclusion proofs check out). Lightweight auditing is
-  built into browsers; standalone auditors and the log operators' peers do the heavier checking.
 
 ```mermaid
 flowchart LR
@@ -383,15 +363,6 @@ CT worked. Misissuance today is *detectable and routinely detected*: Symantec's 
 misissuance was surfaced through CT-based analysis, and domain owners now catch unauthorized
 certificates within hours. It changed CA behavior, because every issuance is now public.
 
-But CT's limits are instructive too. CT proves a certificate **exists and was logged**; it says
-nothing about whether the certificate **should** have been issued — that judgment is the
-monitor's, and it requires the domain owner to actually run or subscribe to monitoring. The SCT
-is a *promise*, so a colluding or buggy log could issue an SCT and never merge the entry;
-catching that requires auditors to check SCT-to-inclusion, which browsers historically did only
-partially (fetching inclusion proofs raises privacy questions — the browser reveals which sites
-you visit to the log). And CT does nothing about the **split-view** problem on its own: a log
-could theoretically present different trees to different auditors. These gaps drove the gossip and
-witness work discussed at the end of the chapter.
 
 ## Rekor: Sigstore's transparency log
 
@@ -617,19 +588,6 @@ The defense is not more Merkle math; it is **distributed agreement about which c
 canonical**:
 
 - **Gossip.** Clients, monitors, and auditors **exchange the checkpoints they have seen**. If two
-  parties hold two checkpoints for the **same tree size with different roots**, or two checkpoints
-  that cannot be reconciled by a consistency proof, the fork is exposed. Gossip converts a
-  split-view from an invisible attack into a detectable inconsistency the moment two victims
-  compare notes.
-- **Witnesses (co-signing).** A stronger, proactive defense: a set of independent **witnesses**
-  each track the log and **co-sign** a checkpoint only after verifying it is consistent with the
-  last checkpoint they signed. A verifier then requires a checkpoint carrying signatures from a
-  quorum of witnesses. To mount a split-view, the log would now have to **collude with a quorum of
-  independent witnesses** to get them to co-sign two forking histories — a far higher bar than
-  compromising the log alone. Sigstore and the Go/`transparency-dev` community have been building
-  exactly this **witness network** (the checkpoint "note" format carries multiple signatures for
-  precisely this reason). The idea generalizes: consistency proofs make a single log honest;
-  witnesses make the *set of observers* agree on one log.
 
 For a distributed-systems engineer this should feel familiar: it is a consensus problem dressed in
 cryptography. The log alone is an append-only data structure; witnesses and gossip are the
@@ -675,34 +633,6 @@ A transparency log is, stripped of the security framing, a **distributed data st
 particularly elegant one, which is why it rewards a backend engineer's attention.
 
 - **It is a verifiable, replicated, tamper-evident append-only log.** The Merkle tree is the
-  authenticated data structure; inclusion and consistency proofs are `O(log n)` membership and
-  prefix queries with cryptographic integrity; the checkpoint is a signed vector-clock-like
-  commitment to a specific state. If you have built event-sourced systems or append-only ledgers,
-  this is that, with the added property that **clients can verify the log's integrity without
-  trusting the operator**.
-- **Consistency proofs are the local invariant; witnesses/gossip are the global consensus.** The
-  math makes any *single* log honest with itself; the split-view problem is the classic
-  distributed-systems difficulty of getting many observers to agree on one history, and the
-  solution — a quorum of independent witnesses co-signing checkpoints — is recognizably a
-  consensus/quorum design. Do not mistake the cryptography for the whole system; the interesting
-  hardness is in the agreement layer.
-- **Monitors are watchers; at fleet scale, watch your own log.** Just as you run alerting on your
-  own infra, run **Rekor (or self-hosted log) monitoring for all your signing identities** — every
-  CI workflow, every release identity, every service that signs. This is how transparency becomes
-  *detection* (Book 8): an unexpected entry for one of your identities is a high-signal compromise
-  alert. A log you do not monitor is telemetry you are not collecting.
-- **The log lets you trust artifacts across untrusted intermediaries.** Content-addressing
-  (digests) plus a transparency log means a **registry, mirror, CDN, or proxy in the middle need
-  not be trusted**: the consumer verifies the digest against a publicly-logged signing event, and
-  a tampering intermediary is caught because it cannot forge an inclusion proof against a
-  witnessed checkpoint. This is the property that makes global software distribution over
-  untrusted infrastructure safe — the same reason Go can serve modules through `proxy.golang.org`
-  without you trusting the proxy.
-- **Treat the log as tier-1.** If it gates deploys, it has the availability and scale requirements
-  of any critical dependency: cache aggressively, decide your fail-open/fail-closed posture
-  deliberately, capacity-plan the write and read paths, and — if privacy or availability demands
-  it — **self-host** (Chapter 9). The log is not a nice-to-have side service; when verification
-  depends on it, it is production infrastructure.
 
 ## Key takeaways
 

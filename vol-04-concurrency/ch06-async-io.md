@@ -219,19 +219,6 @@ sequenceDiagram
     Note over ET: therefore ET code must loop<br/>reading until EAGAIN before waiting
 ```
 
-The ET contract is therefore: **on every event, drain the fd — loop the operation until it
-returns `EAGAIN` — before returning to `epoll_wait`.** (This is also why ET plus a blocking fd
-is doubly wrong: the drain loop's final read would hang.) But the fix creates the opposite
-hazard. Draining means doing *unbounded* work per event: a peer that streams data as fast as you
-read — a fast producer on a fat pipe — keeps the drain loop spinning on one fd while every
-other connection in the loop starves. One hot connection becomes a livelock-flavored starvation
-of thousands (Chapter 5's vocabulary applies exactly). Production ET code therefore bounds the
-work — read at most N buffers per event, and if not yet at `EAGAIN`, put the fd on an
-application-level ready list to resume after one full pass over the other ready fds. At which
-point you have reimplemented, in userspace, the fairness that LT gives you for free. This is why
-the honest guidance is: **use LT until you have a measured reason not to**; ET saves wakeups and
-syscalls for high-throughput streaming workloads, and nginx uses it, but it moves two
-correctness obligations (drain-to-EAGAIN, fairness) from the kernel into your code.
 
 Why ET exists at all: LT has a multi-consumer problem. If several threads wait on one epoll fd
 in LT mode, a single readable socket can wake more than one of them, and both race into the same
@@ -499,20 +486,6 @@ hogging thread, because scheduling is now cooperative and the unit of yielding i
 Latency SLOs on an event-loop service are therefore SLOs on the *longest callback*, and the
 p99.9 of "callback duration" is a metric worth having.
 
-**The escape hatch: the thread pool.** Work that is CPU-bound or unavoidably blocking gets
-handed to a pool of worker threads, with completion marshalled back to the loop as an event
-(typically by writing to a pipe or `eventfd` that the loop polls, so the loop wakes through the
-same mechanism as any I/O). libuv is the canonical example, and the *reason* it has a pool is
-the fact flagged earlier: **regular-file I/O has no useful readiness semantics on Linux** —
-epoll will not even accept a regular-file fd (`epoll_ctl` returns `EPERM`). So every `fs.*`
-operation in Node, plus `getaddrinfo` DNS lookups and some crypto, executes as a blocking call
-on a libuv pool thread (default 4, `UV_THREADPOOL_SIZE` to raise it), and only the *completion*
-flows through the loop. The "async" file API is threads in a trench coat — not a criticism, but
-a fact with operational teeth: four pool threads shared by file I/O and DNS means four slow disk
-reads make DNS resolution mysteriously slow. The same pattern under different names: Netty's
-`blockingTaskExecutor` conventions, Tokio's `spawn_blocking`, Go's runtime quietly parking a
-thread per blocking file syscall. io_uring is the first Linux interface that could retire this
-hack, and libuv has experimental io_uring support for exactly this reason.
 
 ## Case studies, done mechanically
 
@@ -633,22 +606,6 @@ stateDiagram-v2
     Closed --> [*]
 ```
 
-The remaining question is the queue's bound, and here is the classic bug: **the unbounded write
-queue.** The application produces data at its own rate — a pub/sub fanout, a log tail, a big
-query result — while the socket drains at the client's rate. Any gap accumulates in your heap.
-One stalled client on a high-volume feed grows its queue without limit; a few hundred of them
-OOM the process, taking down every healthy client with them. The signature in the postmortem is
-memory growth proportional to the *slowest* consumers, not to load. The defenses are policy, and
-they must be chosen, not defaulted: **bound the queue** and then either disconnect the slow
-client (Redis's `client-output-buffer-limit` does exactly this for pub/sub clients), drop or
-coalesce intermediate updates (fine for market data ticks or metrics, where the latest value
-supersedes), or **propagate the stall backward** — stop reading from whatever source feeds this
-connection, so the pressure transmits upstream link by link. Propagation is what
-`stream.pipe`/`pipeline` implement in Node (a `write` returning `false` pauses the readable
-side until `'drain'`) and what TCP itself does with its windows. The same three options —
-disconnect, drop, or propagate — reappear at fleet scale in messaging systems, and Volume 10,
-Chapter 7 treats backpressure there; the socket-level version here is the atom from which those
-designs are built.
 
 ## The thundering herd, and sharing accept
 
@@ -664,21 +621,6 @@ everyone interested.)
 Three mitigations, in historical order:
 
 - **Userspace serialization.** nginx's classic `accept_mutex`: workers take turns holding the
-  right to register the listen fd. Works, adds latency and its own small contention.
-- **`EPOLLEXCLUSIVE`** (Linux 4.5): register the listen fd with this flag in every worker's
-  epoll set, and the kernel wakes only one (or at least fewer — the contract is "one or more")
-  of the waiters per event. Simple, effective, keeps one shared accept queue, so load balances
-  naturally to whichever worker is free.
-- **`SO_REUSEPORT`** (Linux 3.9): each worker binds its *own* listening socket to the same
-  address and port; the kernel hashes each incoming connection's 4-tuple to pick exactly one
-  socket. No shared fd, no herd at all, and the accept path itself scales across cores. Two
-  costs worth knowing. First, balance: the hash distributes *connections*, not load — long-lived
-  heavy connections can pile onto one worker; nginx added `reuseport` and Envoy supports the
-  same for these wins and with these caveats. Second, drain: when a worker dies or you remove a
-  socket during a reload, connections already queued on that socket's accept queue but not yet
-  accepted are reset — a small but real error blip on every restart, which schedulers and
-  runtimes mitigate with careful drain sequencing (Volume 11's deployment chapters touch the
-  operational side).
 
 ## The distributed-systems lens
 

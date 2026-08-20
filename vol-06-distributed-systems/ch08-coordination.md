@@ -179,19 +179,6 @@ the grain of the system.
 
 ### ZAB, and how it relates to Raft
 
-Underneath, ZooKeeper replicates via **ZAB** (ZooKeeper Atomic Broadcast; Junqueira, Reed, and
-Serafini, DSN 2011), a leader-based atomic broadcast protocol for primary-backup replication. A
-leader is elected, brings a quorum of followers to an identical log prefix in an explicit
-*synchronization* phase (sending a diff, a truncation, or a full snapshot as needed), then
-broadcasts state changes as idempotent transactions identified by zxid; commits require majority
-acknowledgment. The mapping to Chapter 6 is almost mechanical: epoch ≈ term, zxid ≈ (term, index),
-and ZAB's election favors the server with the most up-to-date history much as Raft's election
-restriction does. The structural difference: ZAB separates recovery into its own phase — a new
-leader first makes a quorum identical to itself, then resumes broadcast — whereas Raft repairs
-followers lazily during normal AppendEntries traffic; and ZAB is framed as *primary order* atomic
-broadcast rather than a general replicated state machine. For this chapter's purposes the systems
-are peers: both yield a majority-committed, totally ordered log, the raw material every guarantee
-above is made of.
 
 ### The recipes
 
@@ -445,19 +432,6 @@ section whenever the lock protects an external resource.
 Walk through it concretely. Client A holds a lock: an etcd key on a 15-second lease (the ZooKeeper
 version with a session and an ephemeral is identical in every step that matters).
 
-1. *t = 0 s* — A acquires the lock, begins a read-modify-write against shared storage.
-2. *t = 5 s* — A's process enters a stop-the-world GC pause. (Or: the container is descheduled by
-   the CPU quota; the VM is live-migrated; a page-fault storm; `SIGSTOP`; a network partition.
-   The cause is irrelevant — what matters is that A stops running *and cannot know for how long*.)
-3. *t = 15+ s* — No keep-alives have arrived. etcd expires the lease and deletes the lock key.
-   From the cluster's perspective this is correct behavior — it is exactly what leases are for; the
-   alternative is a lock held forever by a corpse.
-4. *t = 16 s* — Client B's watch fires; B's claim transaction succeeds; B legitimately holds the
-   lock and starts writing.
-5. *t = 25 s* — A's GC pause ends. **A resumes exactly where it stopped, mid-critical-section,
-   with no indication anything happened.** Its next line of code is a write to shared storage. The
-   expiry notice is sitting unread in a socket buffer; checking the lease *before* the write only
-   shrinks the window, since a pause can strike between check and write.
 
 Two clients now believe they hold mutual exclusion, and the invariant the lock protected is gone.
 Note what this is *not*: not an etcd or ZooKeeper bug, not a mistuned timeout, not fixable by
@@ -538,26 +512,6 @@ Google's Chubby (Burrows, "The Chubby lock service for loosely-coupled distribut
 running coordination as a service, several of which the industry keeps relearning:
 
 - **A lock service, not a library.** Burrows argues the choice deliberately: a service lets a
-  system of two clients use locks without itself running consensus replicas; it centralizes
-  availability engineering in one specialist team; and — subtle but decisive — electing a leader
-  usually requires *advertising the result*, so the service doubles as a small consistent store for
-  the winner's identity. ZooKeeper and etcd inherited all three arguments.
-- **Coarse-grained locks.** Chubby is designed for locks held for hours or days — electing a
-  primary — not milliseconds. Coarse grain keeps load independent of application transaction rate
-  and makes brief outages survivable by holders. Fine-grained locking, Burrows advises, belongs in
-  the application, optionally bootstrapped from a coarse Chubby lock.
-- **Advisory, not mandatory.** Chubby locks only exclude other Chubby lock attempts; they do not
-  protect the data. Every recipe in this chapter is advisory in the same sense — which is why
-  fencing at the resource is the load-bearing safety mechanism, and Chubby supplies it as
-  **sequencers**: an opaque string naming the lock, its mode, and a generation counter, which
-  servers receiving requests from lock holders validate. Fencing tokens, 2006.
-- **Sessions and KeepAlives**, with a client-side *grace period* during which a client that has
-  lost its master blocks operations rather than failing them — the disconnected-versus-expired
-  distinction, designed in from the start.
-- **Clients will surprise you.** In practice Chubby became Google's internal name service — most
-  load being reads and caching, not locking — and the paper is frank that developers neither plan
-  for its unavailability nor resist storing inappropriate data in it, forcing quotas and review.
-  Every ZooKeeper and etcd operator since has rediscovered both facts.
 
 ## Case study: Kubernetes
 
@@ -616,18 +570,6 @@ maintenance or a zone loss; almost never more, since every write pays the majori
 the fsync floor. Spread members across failure domains, remembering from Chapter 6 that
 geo-spreading a quorum moves the WAN into your write latency.
 
-**The failure amplifier.** Because everything coordinates through it, the service's outage is a
-fleet-wide coordination outage: no lock handoffs, no failovers, no membership changes, control
-planes read-only or down. Two disciplines follow. *Consumers* must degrade to last-known state and
-keep serving — the level-triggered pattern above; a service that halts because it cannot renew a
-lease has chosen the wrong failure mode for most purposes. *Operators* must protect the service's
-headroom, which mostly means saying no: coordination stores are for coordination-scale data —
-identities, endpoints, leases, small configs — at low write rates. The moment application data or
-high-frequency state (per-request counters, queue payloads, metrics) lands there, you have coupled
-your most critical dependency's capacity to your least disciplined workload. etcd enforces some of
-this mechanically: ~1.5 MiB default max request size and a backend quota (2 GiB default, 8 GiB the
-advised ceiling) beyond which the cluster raises a `NOSPACE` alarm and refuses writes until
-compacted, defragmented, and disarmed.
 
 **Watch fan-out.** Watches invert write cost: one write to a key watched by 10,000 clients is
 10,000 notifications, and a popular prefix can turn a modest write rate into an outbound-bandwidth
@@ -686,20 +628,6 @@ The failure amplifier argument cuts both ways: every use you *avoid* shrinks the
 Decline the coordination service when:
 
 - **The data path is high-throughput.** A majority-fsync per write and a few-GiB working set is the
-  wrong engine for request-rate traffic. Coordination stores hold the *pointers* — who is primary,
-  where the shards live — while the bytes flow elsewhere. If your coordination cluster's write rate
-  scales with user traffic, the design is wrong.
-- **You are building a queue.** Sequential znodes look temptingly like one; the result inherits
-  `getChildren` scans over unbounded children, watch herds, and the 1 MiB payload ceiling. Use a
-  queue (Volume 10); coordinate the queue's *consumers* here if needed.
-- **Stale reads are acceptable.** Config that can lag by seconds, discovery that briefly tolerates
-  a dead endpoint — DNS with TTLs, or any replicated cache, does this with none of the consensus
-  tax. Paying linearizability costs for data you then cache client-side anyway is the most common
-  oversubscription.
-- **The lock only protects efficiency.** Vol 4, Ch 2's lock-avoidance ladder applies with more
-  force here: if the worst case of two workers duplicating work is wasted compute, you want no
-  lock, or an unfenced advisory one at most. Reserve the fenced apparatus for locks whose violation
-  corrupts state.
 
 The rule of thumb: a coordination service should hold data that is small, slow-changing, and worth
 a consensus round-trip *because it is load-bearing for correctness*. Everything else has a cheaper

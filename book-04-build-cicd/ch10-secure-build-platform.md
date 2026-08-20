@@ -184,15 +184,6 @@ from the platform's identity for a scoped, minutes-long credential (Ch 6). There
 `REGISTRY_PASSWORD` in an environment variable to leak; the identity is the runner's, ephemeral and
 attested, and least-privileged to exactly the push target for this tenant.
 
-**Provenance, SBOM, signing (Ch 3, Book 3 Ch 4, Book 5).** This is where the platform's leverage is
-most visible. Because the platform owns the build environment and the signing identity, it generates
-**SLSA Build L3 provenance** — an in-toto attestation with the `slsa.dev/provenance/v1` predicate,
-recording what was built, from which source commit, by which builder, wrapped in a DSSE envelope —
-and it does so with the isolation between the build step and the signing step that L3 requires (Ch
-3). In the same pass it generates an **SBOM** (SPDX or CycloneDX) from the resolved dependency graph
-(Book 3, Chapter 4), and it **signs** the artifact, the provenance, and the SBOM keylessly via
-Sigstore — Fulcio issues a short-lived cert bound to the build's OIDC identity, Rekor logs it
-transparently (Book 5, Chapters 3–4). The tenant wrote none of this. They inherited all of it.
 
 **Observability (Ch 9).** Throughout, the platform emits structured telemetry — process, network,
 and filesystem events — into an anomaly-detection pipeline. A build that suddenly reaches a new
@@ -250,19 +241,6 @@ where security platforms quietly fail. The isolation you provide *between* build
 *between tenants*. Concretely, separate along every axis a compromised tenant could exploit:
 
 - **Runners.** Single-use per job (Ch 8) gives you time isolation for free. Add space isolation:
-  strong per-job boundaries — microVMs (Firecracker/Kata) rather than shared-kernel containers for
-  the untrusted tier — so a runner escape cannot reach the host or a neighboring tenant's build.
-- **Caches.** The remote build cache (Bazel-style, Ch 2, Ch 7) is a *shared trusted input* and thus
-  a cross-tenant poisoning vector. Namespace cache entries per trust scope so an untrusted context
-  can never write an entry a trusted context reads (the cross-context poisoning inversion of Ch 7).
-  Give untrusted contexts read-only cache access at most.
-- **Secrets and identities.** Each tenant's workload identity is scoped to *its* push targets and
-  deploy reach only. Tenant A's build must be unable to mint a credential for tenant B's registry
-  path. This is the least-privilege boundary of Chapter 6 applied per tenant.
-- **Provenance identity.** Provenance must record *which tenant* and *which builder configuration*
-  produced the artifact, so a downstream verifier can require "built by platform, for tenant X, from
-  repo X." A shared builder identity that erases the tenant boundary makes cross-tenant artifact
-  substitution invisible to verification.
 
 The trusted/untrusted execution split of Chapter 7 is the backbone here: it is not only a per-repo
 control but the platform's tenancy model. Untrusted execution — fork PRs, unreviewed code — runs in
@@ -498,35 +476,9 @@ The platform builds everything the org ships. That makes it a **tier-0** depende
 identity, KMS, and the production control plane — and it must be run like one:
 
 - **High availability.** A build platform outage does not just slow feature work; it can block
-  *security* releases — the emergency patch you cannot ship because CI is down. Multi-AZ, autoscaling
-  runner fleets, no single control-plane instance whose loss halts builds.
-- **Disaster recovery.** Backed-up and reproducible platform configuration, provenance/attestation
-  stores, and the transparency log (Rekor) — with a tested restore. A DR plan you have never
-  exercised is a hypothesis.
-- **Access control.** Who can modify the golden workflows, the runner images, the signing identity,
-  the admission policy? These are the platform's crown jewels — modifying them modifies *every*
-  artifact — and they demand the strongest controls in the org: strict RBAC, two-person review on
-  every change (the two-person rule of Book 7, Chapter 3 applied to the platform itself), and full
-  audit. A malicious or careless change to a golden workflow is a supply-chain compromise of the
-  entire org in one commit. Treat the platform's own repo as the highest-trust repo you own.
-- **The platform's own provenance.** The platform must produce provenance and signatures for *its
-  own* artifacts — runner images, the golden workflows, the provenance generator itself — so that
-  its components are as verifiable as the tenant artifacts it vouches for. Which brings us to the
-  recursion at the bottom of everything.
 
 ### Who builds the builder?
 
-Every argument in this book reduces, eventually, to a question of what you trust *without checking*,
-and a build platform makes the question sharp: **the platform vouches for every artifact — so who
-vouches for the platform?** The platform is itself software. It is built from something. Its runner
-images come from base images; its golden workflows run tools; its signing depends on keys and a
-transparency log. If an attacker compromises *what builds the build platform*, they compromise
-everything the platform subsequently vouches for — and the platform's own attestations will happily
-certify the compromised outputs, because from the platform's perspective nothing is wrong. This is
-Ken Thompson's *Reflections on Trusting Trust* (Book 7, Chapter 5; Book 1's trust framing in Chapter
-6) at the level of an entire organization: a compromised builder can produce clean-looking
-attestations for backdoored artifacts, and the attestation machinery cannot detect its own
-subversion.
 
 ```mermaid
 flowchart TD
@@ -544,22 +496,6 @@ You cannot escape the recursion — every builder is built by *some* prior build
 the trusted computing base you must take on faith:
 
 - **Minimize the TCB.** The fewer components the platform trusts implicitly, the smaller the surface
-  where trust must be assumed rather than verified. A minimal, distroless runner image (Book 6,
-  Chapter 3) is less to trust than a fat one.
-- **Reproducibility as the escape route.** This is the deepest reason Chapter 2 mattered. If the
-  platform's own components — its runner images, its generator binaries — are built **reproducibly**,
-  then independent parties can rebuild them from source and confirm bit-for-bit that the running
-  binary corresponds to the audited source. Reproducibility is what lets you *verify* the builder
-  instead of *trusting* it, and it is the practical answer to Trusting Trust: diverse double-
-  compilation and independent reproduction detect a subverted compiler that a single toolchain
-  hides.
-- **Transparency as the external witness.** The platform's own signing goes into the same public/
-  internal transparency log (Rekor, Book 5, Chapters 3 and 5) as everything else, so that a
-  surreptitious change to the platform's signing behavior leaves an append-only, tamper-evident
-  trace someone can audit after the fact.
-- **Bootstrap trust from something small and external** — a hardware root of trust, an offline root
-  key, a minimal bootstrapping toolchain — so the base of the recursion is something you can actually
-  inspect, not another sprawling system that itself needs a build platform to trust.
 
 The honest position is that you will always trust *something* without fully verifying it. The
 engineering goal is to make that something as small, as external, as verifiable, and as intensely

@@ -196,15 +196,6 @@ payload (`data`..`tail`), and **tailroom**. As a packet goes down the stack, eac
 That is why drivers reserve generous headroom, and why XDP (below) needs headroom to insert
 encapsulation.
 
-Two more features matter. First, **cloning**: `skb_clone()` produces a second skb head sharing
-the same data (via a reference-counted `skb_shared_info`); TCP uses this to keep a copy for
-retransmission while the original travels down the stack. Copy-on-write kicks in only if
-someone must modify the shared data. Second, **fragments**: the `skb_shared_info` at the end of
-the data area holds an array of page fragments, so a large segment (from TSO/GSO or `sendfile`)
-can reference payload pages directly without linearizing them into one contiguous buffer —
-essential for zero-copy TX. Allocating and freeing skbs at millions of packets per second is
-itself a cost the whole stack is designed to minimize, which is one reason coalescing (GRO,
-TSO) and kernel bypass exist.
 
 ## Interrupts, NAPI, and coalescing
 
@@ -338,14 +329,6 @@ to **4096** in Linux 5.4; on older kernels or containers you must set it explici
 Full TCP — congestion control, loss recovery, the state machine — is Volume 3. Here are the
 kernel behaviors that change how your *application* code performs.
 
-**Nagle's algorithm and delayed ACK.** Nagle (`RFC 896`) withholds a small segment until the
-previous small segment is ACKed, coalescing tiny writes to avoid flooding the network with
-40-byte-header, 1-byte-payload packets. Delayed ACK (`RFC 1122`) withholds an ACK briefly
-(up to ~40 ms on Linux) hoping to piggyback it on a reply. Individually reasonable, **together
-they interact pathologically**: a request/response protocol that does a small write then waits
-can stall — Nagle holds the request waiting for an ACK, the peer's delayed-ACK timer holds the
-ACK waiting for data, and you eat tens of milliseconds per exchange. The fix for latency-
-sensitive request/response traffic is `TCP_NODELAY`, which disables Nagle:
 
 ```c
 int one = 1;
@@ -374,15 +357,6 @@ OUTPUT, POSTROUTING). `iptables` and its successor `nftables` install rules at t
 Kubernetes' `kube-proxy` in iptables mode, Docker's port publishing, and every host firewall
 you run are netfilter rules.
 
-The performance story matters because in a Kubernetes cluster these rule sets are enormous.
-**`iptables` evaluates rules linearly**: a packet is tested against rules in order until one
-matches. With one Service that is trivial; with thousands of Services and endpoints,
-`kube-proxy` in iptables mode generates tens of thousands of rules, and every new connection
-walks a long chain — O(n) per connection, with rule-set *update* cost that can spike CPU when
-endpoints churn. **`nftables`** replaces linear chains with a bytecode VM and, crucially,
-**maps and sets** that give O(1) or O(log n) lookups (hash/interval maps), so a Service lookup
-is a single map dereference rather than a chain walk. This is why `kube-proxy`'s nftables mode
-and eBPF dataplanes (Cilium, below) exist: to escape the linear-scan cost.
 
 ### Connection tracking (conntrack)
 
@@ -424,12 +398,6 @@ to move the dataplane to eBPF, which can bypass conntrack for known flows.
 
 ## The qdisc layer and bufferbloat
 
-On transmit, every interface has a **queueing discipline**. The historical default,
-`pfifo_fast`, is a simple three-band FIFO. Its problem is **bufferbloat**: large, dumb FIFO
-buffers (in the qdisc, the driver ring, and the NIC) fill up under load and add enormous
-queueing delay — a bulk transfer fills the buffer, and every latency-sensitive packet behind
-it waits through the whole backlog. Bufferbloat is why a large upload can wreck the latency of
-an interactive session sharing the link.
 
 The modern default is **`fq_codel`** (Fair Queuing with Controlled Delay). CoDel is an
 **active queue management** algorithm: instead of only dropping when the buffer is full (tail
@@ -601,16 +569,6 @@ bind(fd, ...);      // each worker binds its own fd to the same addr:port
 listen(fd, backlog);
 ```
 
-This solves a real scaling problem. In the classic model, N workers share one listening socket
-and one accept queue; they contend on that socket's lock and suffer the "thundering herd" of
-many workers waking for one connection. With `SO_REUSEPORT`, the kernel distributes connections
-in-kernel across independent queues — no shared lock, no herd, and near-linear accept scaling
-across cores. NGINX, Envoy, and HAProxy all support it for exactly this. The caveats: the hash
-distribution is not perfectly even, and a worker that dies with connections sitting in its
-private accept queue *drops them* (they were already assigned to that queue) — so graceful
-restart needs care. Combined with multi-queue RSS (packets for a flow already land on a
-particular CPU) and CPU-pinned workers, `SO_REUSEPORT` lets a whole request ride one core from
-NIC queue to accept to processing, maximizing cache locality.
 
 ## Tuning knobs, gathered
 
@@ -707,14 +665,6 @@ flowchart LR
     end
 ```
 
-**XDP (eXpress Data Path)** runs an **eBPF program at the earliest point in the driver**, on the
-raw DMA'd buffer **before an `sk_buff` is even allocated**. The program returns a verdict:
-`XDP_DROP` (discard immediately — the fastest possible drop, used for DDoS filtering at tens of
-millions of pps), `XDP_PASS` (continue up the normal stack), `XDP_TX` (bounce the packet back
-out the same NIC, e.g. as a load-balancer redirect), or `XDP_REDIRECT` (send to another
-interface or to an AF_XDP socket). Because it runs before skb allocation and is JIT-compiled and
-verified, XDP delivers line-rate packet manipulation *inside* the kernel, without leaving it —
-the sweet spot when you need speed but also want to coexist with the normal stack.
 
 **AF_XDP** is a socket family that lets a userspace application receive raw frames with
 **zero copy** via shared memory rings (`XDP_REDIRECT` into an AF_XDP socket), getting most of

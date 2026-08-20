@@ -136,15 +136,6 @@ flowchart LR
     style recover fill:#7f1d1d,color:#fff
 ```
 
-The consequences compound. Because the secret is reachable from history, *the only* way to truly
-remove it is to **rewrite history** — produce a new set of commits, from the poisoned commit
-forward, whose trees never contained the secret — which, per Chapter 3's treatment of force-pushes,
-changes every commit hash from the rewrite point onward and requires a force-push plus a coordinated
-re-clone by everyone. And even that does not reach **forks, existing clones on other machines, CI
-caches, and the hosting platform's own cached views** of the old objects. We return to this in the
-remediation section; for now, hold onto the conclusion it forces: because you can rarely guarantee
-the secret is gone from *everywhere*, you must treat it as *already gone to an adversary*. That is
-the whole argument for rotation-first.
 
 ## Detection: how secret scanners actually work
 
@@ -250,17 +241,6 @@ leaked key is the secret-scanning equivalent of a reachable, exploited-in-the-wi
 | **GitLab Secret Detection** | Yes | Yes | No | Yes | CI pipeline | Runs Gitleaks under the hood as a CI job; pipeline-native. |
 | **GitGuardian / Spectral (commercial)** | Yes | Yes | Yes | Yes | pre-commit, CI, platform, history, dashboards | Managed detection, org dashboards, remediation workflows, incident tracking. |
 
-A few clarifications the table compresses. **git-secrets** is deliberately minimal — it is git hooks
-plus a registry of prohibited patterns, born to stop AWS keys, and it does exactly that and little
-more. **Gitleaks** has no native live-verification, but it is fast, trivially embeddable in CI, and
-configured entirely through a readable TOML file, which is why it is the most common default and why
-GitLab's own Secret Detection wraps it. **detect-secrets**' distinctive contribution is not a
-detection technique but a *workflow*: the **baseline**, discussed under prevention, which is how you
-make scanning usable on a repo that already contains a hundred grandfathered findings. And **GitHub
-secret scanning** is not just a scanner but a *revocation network*: through its partner program, when
-it detects a supported provider's credential in a public repo it notifies the *issuer* (AWS, Stripe,
-Slack, npm, …), who can automatically revoke or quarantine the key — remediation the repo owner did
-not have to initiate.
 
 ### Where to scan: prevent, detect, remediate
 
@@ -292,17 +272,6 @@ flowchart LR
 ```
 
 - **Pre-commit** (client-side git hook): the secret never even becomes a commit. Cheapest possible
-  fix, but *bypassable* — a hook lives on the developer's machine and any developer can skip it with
-  `git commit --no-verify` or by not installing it.
-- **Push protection** (platform, at push time): the platform inspects the pushed commits and
-  **rejects the push** if it contains a detected secret. This is the best place, because it is
-  *server-side prevention* — it stops the secret at the door, cannot be silently skipped like a
-  local hook, and there is nothing to clean up afterward because nothing landed.
-- **CI / pre-receive** (server-side, before merge): a scan that fails the build or blocks the merge.
-  The secret may already be in a branch's history, but you can stop it reaching the protected branch.
-- **Continuous repo + history scanning**: periodic full scans of every repo and its *entire history*
-  to find secrets that were committed before you had the earlier gates, or that slipped through.
-  This is *detection after the fact*, and it feeds remediation.
 
 The ordering principle is blunt: **prevention beats detection beats cleanup**, and the earlier you
 catch a secret the less you have to do. A secret stopped by push protection costs a developer thirty
@@ -559,19 +528,6 @@ A committed secret — especially a *verified-live* one — is a security **inci
 in your incident-response process (Book 8, Chapter 6 — Incident Response). The full response is not
 "scrub and move on":
 
-1. **Rotate/revoke** immediately (step 1).
-2. **Scope the blast radius.** What did that credential access? A leaked read-only metrics token and
-   a leaked AWS key with `AdministratorAccess` are different incidents. Enumerate the permissions and
-   the systems reachable through them — a leaked cloud key or CI token is *lateral-movement fuel*
-   (Book 4, Chapter 6), and the blast radius is every system that trusts it.
-3. **Check for abuse.** Pull the provider's audit logs (CloudTrail, GitHub audit log, the SaaS
-   access log) for use of the credential between commit time and revocation. Look for calls from
-   unexpected IPs, unusual regions, resource creation, or data access. *Assume* the public-repo case
-   was used until logs show otherwise.
-4. **Then clean history** (step 2), and contact the platform about forks/caches if the exposure was
-   public or high-severity.
-5. **Feed it back.** Record the finding, MTTR, and root cause into metrics (Book 8, Chapter 8) and
-   ask the paved-road question: *why was hardcoding the easy path here, and how do we close it?*
 
 The remediation checklist, in order:
 
@@ -661,17 +617,6 @@ no cleanup tail, no fork chase, and usually no rotation. Nothing else in this ch
 leverage: every detection-and-remediate path is per-incident labor, while push protection is a single
 configuration that removes the incidents before they start.
 
-And the deepest fix is to **have fewer long-lived secrets to leak at all.** Every control here is
-managing the risk of static, long-lived credentials sitting in files. The structural solution is to
-stop issuing those credentials: adopt **workload identity** and **short-lived credentials** (Book 4,
-Chapter 6; Book 5, Chapter 4 — Keyless Signing and OIDC) so services authenticate with ephemeral,
-automatically-rotated, identity-derived tokens instead of static keys a human could paste into a
-commit. A credential that lives for five minutes and is minted from the workload's identity is
-nearly worthless to an attacker who scrapes it from history an hour later, and there is no static
-value to hardcode in the first place. Secret scanning defends the world of long-lived secrets;
-workload identity shrinks that world. The mature program does both — scans aggressively for the
-secrets that still exist, while systematically reducing how many long-lived secrets exist to be
-found.
 
 Finally, the program only *works* if it closes the loop into the rest of your security operation:
 findings feed **incident response** (Book 8, Chapter 6), verified-live leaks page like any other

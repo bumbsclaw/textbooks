@@ -209,17 +209,6 @@ if ((options == (__WCLONE|__WALL)) && (current->uid = 0))
         retval = -EINVAL;
 ```
 
-Read it the way a reviewer reads it: a guard that returns `-EINVAL` (invalid argument) when
-`wait4` is called with a particular, unusual combination of options and some uid condition. It
-looks like defensive input validation. It is a root backdoor. The payload is the inner
-`current->uid = 0` — a single `=`, an assignment, not the `==` comparison the eye supplies. When a
-process calls `wait4` with `options == (__WCLONE|__WALL)`, the first conjunct is true, so C
-evaluates the second, and evaluating `current->uid = 0` *sets the calling process's user ID to 0*,
-which is root. The expression's value is the assigned value, `0`, which is false, so `&&`
-short-circuits to false and the `if` body never runs — `retval` is untouched, `wait4` returns
-normally, and there is not even the `-EINVAL` symptom the code pretends to produce. The attacker
-calls `wait4` with those flags from an unprivileged process and comes back as root, with no error,
-no log, and a diff that reads like a bounds check.
 
 Two things make this the definitive example. First, the mechanism is the purest possible
 demonstration of `=` versus `==` weaponized: everything about the line is chosen so that the
@@ -290,26 +279,6 @@ flowchart TB
 The catalogue, with the mechanism for each:
 
 - **Build scripts, configure, and macro files.** `Makefile`, `configure.ac`, autotools `.m4`
-  macros, Bazel `BUILD`/`.bzl`, `package.json` lifecycle scripts, `setup.py`. These run with the
-  developer's or CI's privileges at build time and can fetch, generate, or modify code arbitrarily.
-  xz lived here. A `preinstall` hook or a `build.rs` code-generation step is executed, not merely
-  compiled, and almost never reviewed with the seriousness of application code.
-- **Test fixtures and binary test data.** Golden files, recorded captures, compressed corpora,
-  sample images — anything binary is unreadable by a human and therefore a safe place to carry a
-  payload that a build step later extracts.
-- **Generated, minified, and vendored code.** Nobody reads the output of a protobuf compiler, a
-  bundler, or a code generator, and nobody reads `third_party/` or `vendor/`. A change that
-  "regenerates" a file, or lands in a vendored copy, hides in content the reviewer skips by habit.
-- **Dependencies.** The purest blind spot: the backdoor is not in your repository at all. It is in
-  a transitive dependency and never appears in any diff a reviewer sees (Book 2 is the full
-  treatment; the point here is that "review your PRs" does not cover it).
-- **Binary blobs and artifacts committed to source.** A checked-in `.so`, a prebuilt binary, a
-  firmware image, a container base layer — opaque by construction, and load-bearing at runtime.
-- **Long, boring diffs and complexity as camouflage.** Review attention per line falls as diff size
-  rises, so a defect buried in a thousand-line mechanical refactor is far more likely to be
-  rubber-stamped than the same defect in a ten-line change. Deliberately convoluted control flow is
-  itself camouflage: the reviewer who cannot easily trace the logic defers to the author rather than
-  insisting on a rewrite.
 
 ## Detecting and defending against subtle backdoors
 
@@ -349,21 +318,6 @@ delete the assumption "this file is boring, so I'll skim it."
   ```
 
 - **SAST / static analysis.** Static analyzers catch *classes* of the semantic footguns:
-  assignment-in-conditional (`-Wparentheses` and equivalents), integer-overflow and
-  signedness-narrowing warnings, uninitialized reads, dead-code-after-`goto`. They do not understand
-  intent, so they will not tell you a bounds check is deliberately one byte short — but they
-  eliminate the *accidental* versions and force an underhanded author to work harder and more
-  visibly.
-- **Binary-blob and generated-code detection.** A CI check that flags new binary files entering the
-  tree and fails when a committed generated file does not match a fresh regeneration removes two of
-  the biggest hiding places.
-- **Reproducible builds and provenance.** The control that catches the xz-class *build-time*
-  injection is a **reproducible build** (Book 4, Chapter 2): rebuild the artifact from source in a
-  clean, hermetic environment and compare bit-for-bit against the released binary. A payload
-  injected by a `configure`-time macro that is not in the reviewed source produces a mismatch. This
-  is the point at which "review the source" stops being the only tool — you are now checking that
-  the *binary corresponds to the source*, which is a different and stronger claim, and it is the
-  hinge to the second half of this chapter.
 
 **Minimize the trust surface.** Every one of the above is easier the smaller the surface. Fewer
 dependencies (Book 2, Chapter 10) means fewer repos where a backdoor can live. Building from
@@ -602,20 +556,6 @@ argument that trust is unavoidable is not an argument that trust is unmanageable
 defense in this chapter reduces to one of four moves, and together they are a coherent program:
 
 - **Reduce the trusted base.** Fewer dependencies (Book 2, Chapter 10). No unexplained binaries in
-  the tree. A minimized, ideally bootstrappable toolchain. Build from version-controlled source,
-  not from tarballs. Every deletion here is a place a backdoor can no longer hide.
-- **Verify by diversity and reproducibility.** Reproducible, hermetic builds (Book 4, Chapter 2) so
-  that "the binary corresponds to the source" becomes a checkable claim; diverse rebuilds and DDC so
-  that an implant *not* in the source is detected; rebuilders operated independently so no single
-  build environment is the sole witness.
-- **Review the blind spots, not just the app code.** Force security-grade review onto build scripts,
-  CI config, test data, generated code, and dependency manifests. Reject invisible/bidirectional
-  Unicode in source. Diff generated against regenerated. This is where the xz-class backdoor lives,
-  and it is cheap to cover.
-- **Use transparency to detect misuse after the fact.** Transparency logs and provenance (Book 5,
-  Chapter 5; Book 4, Chapter 3) do not prevent a subtle backdoor, but they make the *history* of
-  what was built, from what source, by what toolchain, tamper-evidently observable — so a later
-  discovery has a trail to follow and a blast radius to bound.
 
 No single control is sufficient — that is the defining property of subtle malice, and it is why the
 answer is defense in depth. Review catches the obvious and raises the bar; reproducibility and DDC

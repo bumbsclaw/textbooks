@@ -184,22 +184,6 @@ no bedrock of self-evidently trustworthy tooling; verification does not terminat
 This is the strongest possible statement of why trust cannot be *eliminated* — at some point
 every verification chain rests on a tool or a person you did not, and cannot, fully verify.
 
-For years this was treated as an unanswerable koan. It is not. David A. Wheeler's 2009
-doctoral work, "Fully Countering Trusting Trust through Diverse Double-Compiling" (DDC),
-provides a practical rebuttal — not by achieving perfect trust, but by making the attack
-detectable under a realistic assumption. The idea: to check whether compiler binary *A* is
-honest, compile *A's own source* using a second, *independent* compiler *B* (different
-codebase, ideally different author lineage) to get a first-stage result. Then use that result
-to recompile *A's* source again. If *A* is honest, this diverse rebuild reproduces *A*
-bit-for-bit. If *A* carries a trusting-trust backdoor, *B* does not know the trigger, so the
-rebuilt compiler differs — the discrepancy exposes the implant. The attacker would now have to
-have subverted *both* independent compiler lineages *in the same way* to hide, which is a far
-higher bar. DDC does not eliminate trust; it *relocates* it onto the assumption that two
-independent toolchains are not identically backdoored, and makes any failure of that
-assumption *detectable*. That is the whole spirit of modern supply chain defense in one
-result, and it depends utterly on **reproducible builds** (Book 4, Chapter 2), because
-"reproduces bit-for-bit" is only a meaningful test if honest builds are bit-for-bit
-reproducible in the first place. We treat the mechanics fully in Book 7, Chapter 5.
 
 ### Trust minimization, not trust elimination
 
@@ -262,48 +246,6 @@ different cost functions. Modeling them distinctly is what lets you predict *whe
 adversary will actually strike. The supply-chain-relevant actors:
 
 - **External attacker (unauthenticated).** No access, no insider position. Must acquire
-  access by exploiting a vulnerability, phishing a credential, or exploiting a resolution
-  policy (dependency confusion, typosquatting). Motivation varies; the defining trait is
-  *starting from outside*. Favors the consumption and distribution stages, where publishing a
-  package or squatting a name needs no prior access.
-- **Malicious maintainer.** A legitimate, authorized maintainer of an upstream component who
-  turns hostile — voluntarily inserting a backdoor or protestware into code they are entitled
-  to change. Defeats every control that assumes the maintainer is honest: review, branch
-  protection, and commit signing all faithfully authorize the malicious change. Favors the
-  source stage of *their own* project. (event-stream's handoff and node-ipc are the archetypes;
-  Book 1, Chapter 4.)
-- **Compromised maintainer.** A legitimate maintainer whose *account* is taken over — stolen
-  token, phished password, no MFA — so the attacker acts with the maintainer's authority
-  without the maintainer's knowledge or consent. Same downstream effect as a malicious
-  maintainer, different root cause and different fix (account security vs. governance). Favors
-  source and distribution (publishing) stages.
-- **Malicious insider.** An employee or contractor of *your* organization who abuses
-  legitimate internal access — pushing to internal repos, touching the build farm, publishing
-  to the internal registry. Motivations: money, coercion, grievance, or planted-agent
-  intent. Favors whatever internal stage their role touches; disproportionately dangerous at
-  the build and distribution stages because internal trust there is broad.
-- **Compromised insider.** An internal account or workstation taken over by an external
-  actor, who then operates from inside your trust boundary. Identical downstream access to a
-  malicious insider; the two are worth separating because the *detection signal* differs
-  (anomalous behavior vs. authorized-but-hostile behavior) and the *control* differs (endpoint
-  and credential hygiene vs. separation of duties).
-- **Nation-state.** Patient, well-resourced, willing to spend months and burn bespoke
-  tooling for strategic access. Distinctive traits: long dwell time, operational discipline
-  (SUNSPOT's benign trial run), and willingness to invest in the *hardest, highest-leverage*
-  stage — build-system compromise — because the payoff (SolarWinds' ~18,000-org fan-out with
-  ~100 selected for exploitation) justifies the cost. Favors the build stage and long-game
-  maintainer infiltration (the xz operation's multi-year social engineering fits here).
-- **Opportunistic criminal.** The economic inverse of the nation-state: optimizes for
-  *scale at low effort*. Publishes hundreds of typosquats and confusion packages, sprays
-  crypto-stealers and credential-harvesters, and moves on. Does not care *who* they hit, only
-  *how many* cheaply. Favors the consumption stage almost exclusively — publishing malicious
-  packages is the lowest-effort, highest-volume path in the entire chain.
-- **Hacktivist.** Motivated by a cause rather than money or espionage. In the supply chain
-  this manifests as **protestware**: a maintainer (usually acting as a malicious maintainer)
-  sabotages their own widely-used package to make a political statement — wiping files based
-  on geolocation, printing propaganda, degrading service. Favors the source stage of popular
-  packages, and is uniquely *self-disclosing* (the point is to be noticed), which makes it
-  loud but sometimes destructive before it is caught (node-ipc, 2022).
 
 The single most important modeling insight from this list: **cost function predicts stage.**
 The opportunistic criminal minimizes effort and lands in consumption; the nation-state
@@ -650,22 +592,6 @@ deviation is visible. The failure modes are symmetric: too rigid and teams shado
 you, re-fragmenting trust; too loose and the paved road is a suggestion nobody follows and you
 have central cost with distributed risk.
 
-**The internal registry/proxy is the trust chokepoint — for better and worse.** At scale,
-almost every organization funnels dependency acquisition through an internal registry or
-pull-through proxy (Artifactory, Nexus, an internal PyPI/npm mirror). This is a natural and
-powerful *control gate*: it is the one place every build's dependencies flow through, so it is
-the ideal spot to enforce scanning, block known-malicious packages, quarantine new releases,
-reserve namespaces against confusion, and pin what the fleet may consume — fleet-wide coverage
-from one control. But concentration cuts both ways: the same chokepoint is now a single
-high-value target. Compromise the internal registry and you have compromised the dependency
-supply of every service that trusts it — the distribution-stage attack, aimed at *your own*
-infrastructure. So the chokepoint must be treated as tier-0 infrastructure, hardened and
-monitored to the standard of the build farm, precisely because so much trust has been
-deliberately concentrated there. Book 2, Chapter 8 (Vendoring, Mirroring, and Internal
-Registries) and Book 6, Chapter 2 (Registries) build this out; the risk-modeling point for now
-is that concentrating trust into a chokepoint is *correct* — trust minimization made
-operational — but it relocates rather than removes the risk, and the new location must be
-defended accordingly.
 
 ## Key takeaways
 
