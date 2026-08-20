@@ -282,9 +282,9 @@ until then their paths are as listed above).
 - [x] 12.06 Managed Data and Platform Services — `ch06-managed-services.md`
 - [ ] 12.07 Multi-Tenancy and Isolation — `ch07-multi-tenancy.md`
 - [ ] 12.08 Cloud Cost and Capacity Engineering — `ch08-cost-capacity.md`
-- [ ] 12.09 Capacity Planning and Performance at Cloud Scale — `ch09-capacity-performance.md`
-- [ ] 12.10 Cloud Networking, IAM, and Security Foundations — `ch10-cloud-networking-iam.md`
-- [ ] 12.11 Platform Engineering: Paved Roads and IDPs — `ch11-platform-engineering.md`
+- [x] 12.09 Capacity Planning and Performance at Cloud Scale — `ch09-capacity-performance.md`
+- [x] 12.10 Cloud Networking, IAM, and Security Foundations — `ch10-cloud-networking-iam.md`
+- [x] 12.11 Platform Engineering: Paved Roads and IDPs — `ch11-platform-engineering.md`
 
 ## Volume 13 — Language Runtimes for Backend (`vol-13-runtimes/`)
 
@@ -362,4 +362,5 @@ until then their paths are as listed above).
 - 2026-08-20: Vol14 ch01-ch03 done (complexity/RAM vs I/O model/benchmarking, hashing/SwissTable/Robin Hood/concurrent maps, AVL/RB/B-tree/B+tree/skip list — ~3.3-4.6kw each, 3-5 Mermaid, real code + benchmarks). Next: 14.04-14.06.
 - 2026-08-20: Vol13 ch01-ch03 done (JVM memory/G1/ZGC/JIT/tuning, Go scheduler P/M/G + memory model + tri-color GC, Rust ownership/borrowing/tokio/axum — ~5-8kw each, 4-6 Mermaid, real configs/traces). Next: 13.04-13.06.
 - 2026-08-20: Vol11 ch07-ch09 done (load testing open/closed models/USL/k6+Vegeta+distributed, chaos hypothesis lifecycle/Chaos Mesh+Litmus+FIS/safety gates/game days, deployment strategies rolling/blue-green/canary Argo Rollouts+Flagger/Gateway API/feature flags OpenFeature — ~6-9kw each, 2-7 Mermaid). Next: 11.10.
-- 2026-08-20: Vol12 ch04-ch06 done (IaC declarative/HCL/Terraform+OpenTofu/state/pipeline/policy/testing/secrets, cloud primitives EC2/S3+EBS+EFS/VPC+ALB+CloudFront, managed RDS+Aurora+ElastiCache+OpenSearch+SQS+SNS+Kinesis+Secrets+ECR+AppConfig — ~5.7-6.1kw each, 4-6 Mermaid). Next: 12.07-12.09.
+- 2026-08-20: Vol12 ch04-ch06 done (IaC declarative/HCL/Terraform+OpenTofu/state/pipeline/policy/testing/secrets, cloud primitives EC2/S3+EBS+EFS/VPC+ALB+CloudFront, managed RDS+Aurora+ElastiCache+OpenSearch+SQS+SNS+Kinesis+Secrets+ECR+AppConfig — ~5.7-6.1kw each, 4-6 Mermaid). Next: 12.09-12.11.
+- 2026-08-20: Vol12 ch09-ch11 done (capacity planning Little/USL/queueing + HPA/KEDA/Karpenter/ASG + Graviton, cloud networking VPC/subnets/PrivateLink + IAM least-privilege/IRSA/SPIFFE + GuardDuty, platform engineering paved roads/IDP/Backstage templates+TechDocs+scorecards — ~4.1-4.6kw each, 3-5 Mermaid). Vol 12 remaining tail: 12.07-12.08 (multi-tenancy, cost/FinOps).
