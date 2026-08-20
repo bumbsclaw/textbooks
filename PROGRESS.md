@@ -264,9 +264,9 @@ until then their paths are as listed above).
 - [x] 11.01 SLIs, SLOs, and Error Budgets — `ch01-slos.md`
 - [x] 11.02 Metrics and the Golden Signals — `ch02-metrics.md`
 - [x] 11.03 Logging at Scale — `ch03-logging.md`
-- [ ] 11.04 Distributed Tracing and OpenTelemetry — `ch04-tracing.md`
-- [ ] 11.05 Incident Response and On-Call — `ch05-incident-response.md`
-- [ ] 11.06 Blameless Postmortems — `ch06-postmortems.md`
+- [x] 11.04 Distributed Tracing and OpenTelemetry — `ch04-tracing.md`
+- [x] 11.05 Incident Response and On-Call — `ch05-incident-response.md`
+- [x] 11.06 Blameless Postmortems — `ch06-postmortems.md`
 - [ ] 11.07 Load Testing and Capacity Planning — `ch07-load-testing.md`
 - [ ] 11.08 Chaos Engineering — `ch08-chaos.md`
 - [ ] 11.09 Deployment Strategies: Blue/Green, Canary, Flags — `ch09-deployment-strategies.md`
@@ -349,3 +349,5 @@ until then their paths are as listed above).
 - 2026-08-20: Vol10 ch04-ch06 done (stream processing Flink/Kafka Streams, event sourcing/CQRS Postgres+EventStoreDB, outbox/dual-write/Debezium CDC — ~4.6-5.4kw each, 4-5 Mermaid). Next: 10.07-10.08.
 - 2026-08-20: *** VOLUME 9 (Security) COMPLETE — 11 chapters. *** *** VOLUME 10 (Messaging/Streaming) COMPLETE — 8 chapters. *** Vol10 ch07-ch08 + Vol09 ch11 done (backpressure/flow control, DLQ/retries/poison, threat modeling/STRIDE — ~4.5-5.5kw each, 3-6 Mermaid). Next: Vol11 ch04-ch06.
 - 2026-08-20: *** VOLUME 8 (APIs) COMPLETE — 11 chapters. *** Vol08 ch09-ch11 done (governance/linting/breaking-change, schema registry/codegen/SDK delivery, contract testing/evolution — ~5.3-5.7kw each, 2-4 Mermaid). Next: Vol11 batch.
+- 2026-08-20: Vol12 ch01-ch03 done (containers deep dive OCI/runc/gVisor/Kata, K8s control/data plane etcd/scheduler/controllers/kubelet, workloads/networking/storage Deployments/StatefulSets/Services/Gateway/CSI — ~5.0-8.0kw each, 4-6 Mermaid). Next: 12.04-12.06.
+- 2026-08-20: Vol11 ch04-ch06 done (distributed tracing & OTel Collector agent+gateway/tail sampling/W3C propagation, incident response lifecycle/severity/on-call/Alertmanager/PagerDuty/runbooks, blameless postmortems template/facilitation/action items — ~6.8-8.5kw each, 4-5 Mermaid). Next: 11.07-11.10.
