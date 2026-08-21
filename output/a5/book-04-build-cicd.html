@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -251,37 +333,7 @@ build.</strong> The artifact inherits the trustworthiness of the <em>least</em> 
 one of source, a single transitive dependency, the compiler, a Gradle plugin, an environment
 variable, or a build-server process is adversary-controlled, the output is
 adversary-influenced — and it is signed and shipped as if it were not.</p>
-<p><pre><code>flowchart LR
-  subgraph inputs["Trusted inputs (each an ingestion path)"]
-    S["Source at commit"]
-    D["Dependencies (libs, plugins, base images)"]
-    T["Toolchain (compilers, orchestrators)"]
-    C["Build config / scripts"]
-    E["Environment (vars, OS, clock, network)"]
-    K["Secrets (signing keys, registry creds, cloud IAM)"]
-  end
-
-  subgraph fn["build( ... )"]
-    X["Transform: compile / link / package / test"]
-  end
-
-  subgraph outputs["Outputs the world trusts"]
-    A["Artifact (jar / wheel / binary / image)"]
-    P["Provenance (signed: what, how, from what)"]
-  end
-
-  S --> X
-  D --> X
-  T --> X
-  C --> X
-  E --> X
-  K --> X
-  X --> A
-  X --> P
-
-  A -.->|"consumed and trusted by"| Down["Registries, deployers, downstream builds, end users"]
-  P -.->|"verified by"| Down
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_985879e82ea3.png" alt="diagram"></div></p>
 <p>The dashed line on the right is the trust that flows <em>out</em>. A registry accepts the artifact;
 a deployment system rolls it out; another team's build depends on it; an end user installs
 it. Every one of them is trusting the build function to have been honest. That is the trust
@@ -339,22 +391,7 @@ narrow and hard to spot.</p>
    bytes, leaking the signing key, or pushing to a registry the attacker controls.</p>
 </li>
 </ol>
-<p><pre><code>flowchart TD
-  A["1. Source checkout"] --> B["2. Dependency resolution"]
-  B --> C["3. Compile / transpile"]
-  C --> D["4. Link"]
-  D --> E["5. Package"]
-  E --> F["6. Test"]
-  F --> G["7. Publish (sign + push)"]
-
-  A -. "(B) build from modified / wrong source" .-> A
-  B -. "(D) poisoned dependency, executed during build" .-> B
-  C -. "(C) compromised compiler / build process" .-> C
-  D -. "(C) substituted library at link" .-> D
-  E -. "(C) injection during packaging" .-> E
-  F -. "(C)/(D) malicious test dep runs with build privilege" .-> F
-  G -. "(E) artifact swapped before publish / (F) registry compromise" .-> G
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ed5622084e39.png" alt="diagram"></div></p>
 <p>The parenthetical letters are SLSA v1.0 threat identifiers, which the next section defines.
 The point of the diagram is spatial: the threats are not clustered at "the end" where you
 sign — they are smeared across every stage, and several of them (dependency resolution,
@@ -555,21 +592,7 @@ hold the signing key. Your developer laptops do not (or should not) hold product
 credentials <em>and</em> the ability to emit signed releases. The build host holds all of it at
 once. It is, in the language of Book 1, Chapter 9, a <strong>concentration point</strong>: a node whose
 compromise yields disproportionate reward.</p>
-<p><pre><code>flowchart TD
-  subgraph BE["Build runner — one node, four superpowers"]
-    R1["Read: private source"]
-    R2["Reach: network egress to registries"]
-    R3["Hold: signing keys, registry creds, cloud IAM"]
-    R4["Emit: trusted artifacts + signatures"]
-  end
-
-  Src["Source repos"] --> R1
-  Net["Package registries / internet"] --> R2
-  Vault["Secret store / KMS"] --> R3
-  R4 --> World["Everything downstream trusts the output"]
-
-  Attacker["Adversary who owns this node"] -. "inherits all four at once" .-> BE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f2f44f0713e.png" alt="diagram"></div></p>
 <p>The reason this concentration is <em>fatal</em> rather than merely risky is that build compromise
 defeats the two controls organizations invest in most heavily and trust most deeply: <strong>source
 review</strong> and <strong>code signing</strong>. Consider what each control actually proves:</p>
@@ -598,24 +621,7 @@ developers' checkouts were clean, and yet the <em>shipped</em> Orion binaries co
 which SolarWinds' build then signed with SolarWinds' code-signing key and distributed through
 SolarWinds' official update channel. Customers' update clients verified the signature — a
 valid signature, over the tampered artifact — and installed it exactly as designed.</p>
-<p><pre><code>sequenceDiagram
-    participant Dev as Developer
-    participant VCS as Source control (clean)
-    participant Build as Build server (implanted: SUNSPOT)
-    participant Sign as Signing (valid key)
-    participant Cust as Customer
-
-    Dev->>VCS: Commit reviewed, benign source
-    Note over VCS: Code review PASSES — source is clean
-    Build->>VCS: Check out source
-    Note over Build: Implant swaps source for<br/>trojanized version at compile time,<br/>then restores the original
-    Build->>Sign: Emit tampered artifact
-    Sign->>Sign: Sign the bytes it is given
-    Note over Sign: Signature is VALID —<br/>over the attacker's artifact
-    Sign->>Cust: Distribute signed update
-    Cust->>Cust: Verify signature — PASSES
-    Cust->>Cust: Install backdoor
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2736c218b6dd.png" alt="diagram"></div></p>
 <p>Read the diagram as a checklist of every defense that did its job faithfully and still failed
 to help: source control served the honest source; code review approved honest source; the
 signing key signed; the customer verified. Each control answered the question it was designed
@@ -867,6 +873,10 @@ transform the source?" becomes a question you can actually answer.</p>
   SolarWinds. Multi-tenant isolation and non-forgeable <strong>build identity</strong> are what turn a shared
   platform from a single point of catastrophic failure into a single point of leverage.</li>
 </ul>
+<h3 id="slsa-threats-a-h-mapped-to-build-pipeline">SLSA threats A-H mapped to build pipeline</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c1869f6ca7af.png" alt="diagram"></div></p>
+<h3 id="build-as-a-pure-function-ideal-vs-reality">Build as a pure function: ideal vs reality</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_de3acc8f3f16.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SLSA v1.0</strong>, <em>Supply-chain Levels for Software Artifacts</em> — the specification, the
@@ -1016,25 +1026,8 @@ pin.</p>
 </ul>
 <p>So: pursue hermeticity to control what goes in and to make reproducibility <em>achievable</em>; pursue
 reproducibility to make what comes out <em>verifiable</em>. They compose, but you have to do both.</p>
-<p><pre><code>flowchart LR
-  subgraph NH["Non-hermetic build"]
-    direction TB
-    S1["Source @ HEAD"] --> B1["build step"]
-    NET["Network: pip install,<br/>go get, apt-get, curl"] -.->|"mid-build fetch"| B1
-    ENV["Ambient env:<br/>clock, HOME, PATH,<br/>installed packages, user"] -.->|"undeclared"| B1
-    B1 --> O1["artifact<br/>(varies run to run)"]
-  end
-</code></pre></p>
-<p><pre><code>flowchart LR
-  subgraph H["Hermetic build"]
-    direction TB
-    S2["Source @ pinned commit"] --> SEAL
-    DEPS["Deps: vendored /<br/>pre-fetched, hash-pinned"] --> SEAL
-    TC["Toolchain: pinned,<br/>content-addressed"] --> SEAL
-    CFG["Config: declared inputs"] --> SEAL
-    SEAL["Sealed sandbox<br/>no network, read-only inputs,<br/>clamped clock, fixed paths"] --> O2["artifact<br/>(deterministic)"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2e6e9227b6a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4306bf115dab.png" alt="diagram"></div></p>
 <h3 id="why-each-matters-for-security">Why each matters for security</h3>
 <p><strong>Hermeticity shrinks the attack surface and underpins provenance.</strong> Chapter 1 called the
 build the most over-privileged node in the pipeline. A non-hermetic build multiplies that
@@ -1061,29 +1054,7 @@ infrastructure at all.</p>
 still yield different bytes. This is unglamorous, empirical work — the Reproducible Builds
 project has spent a decade cataloguing these — but the categories are finite and well
 understood. Here is the taxonomy.</p>
-<p><pre><code>flowchart TD
-  ND["Sources of<br/>non-determinism"] --> T["Time"]
-  ND --> ORD["Ordering"]
-  ND --> LOC["Locale / environment"]
-  ND --> PATH["Paths"]
-  ND --> RAND["Randomness"]
-  ND --> PAR["Parallelism"]
-  ND --> TOOL["Toolchain internals"]
-  ND --> INP["Unstable inputs"]
-
-  T --> T1["build date embedded<br/>(__DATE__, __TIME__)"]
-  T --> T2["mtimes in archives<br/>(tar, zip, jar)"]
-  ORD --> O1["readdir() filesystem order"]
-  ORD --> O2["tar/zip entry order,<br/>glob expansion order"]
-  ORD --> O3["hash-map iteration order"]
-  LOC --> L1["LC_ALL sort order,<br/>date/number formatting"]
-  LOC --> L2["TZ timezone,<br/>hostname, username leak"]
-  PATH --> P1["build dir baked in<br/>(__FILE__, debug info)"]
-  RAND --> R1["UUIDs, random seeds,<br/>ephemeral temp names"]
-  PAR --> PP1["job completion order<br/>affecting output layout"]
-  TOOL --> TT1["ASLR-influenced output,<br/>uninitialized memory, PGO"]
-  INP --> I1["network-fetched deps<br/>that change under you"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e95f78f13976.png" alt="diagram"></div></p>
 <h3 id="timestamps">Timestamps</h3>
 <p>The single most common source. Compilers embed build dates via <code>__DATE__</code>/<code>__TIME__</code> macros;
 archive formats store per-entry modification times; documentation tools stamp "generated on…";
@@ -1417,16 +1388,7 @@ key matches, the cached output is <em>guaranteed</em> to be the output this acti
 because nothing outside the declared inputs can influence it. Hermeticity and cache correctness
 are the same property viewed from two angles (we return to this under the distributed-systems
 lens).</p>
-<p><pre><code>flowchart TD
-  subgraph BZ["Bazel action"]
-    IN["Declared inputs<br/>srcs + deps + toolchain"] --> K["Action key =<br/>hash(inputs, argv, env)"]
-    K --> Q{"Key in<br/>remote cache?"}
-    Q -->|hit| C["Fetch cached output<br/>(no execution)"]
-    Q -->|miss| SB["Execute in sandbox<br/>(only declared inputs visible,<br/>no network)"]
-    SB --> OUT["Declared outputs"]
-    OUT --> UP["Upload to cache<br/>keyed by action key"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f10d882387db.png" alt="diagram"></div></p>
 <h4 id="nix-the-derivation">Nix: the derivation</h4>
 <p>Nix takes hermeticity furthest, treating the entire build as a <strong>pure function</strong> in a
 purpose-built functional language. The unit is a <strong>derivation</strong>: a complete, serialized
@@ -1441,15 +1403,7 @@ inputs land at the same path and can be shared. NixOS builds an entire operating
 way, which is why Nix is frequently called the gold standard for hermeticity: there is no
 <code>/usr</code> for a build to accidentally depend on — everything, down to <code>libc</code> and the compiler, is
 an explicit input in the store.</p>
-<p><pre><code>flowchart TD
-  D[".nix expression"] --> DRV["Derivation<br/>(inputs, builder, args, env)"]
-  DRV --> HP["Store path =<br/>hash(derivation)"]
-  HP --> Q{"Path already<br/>in /nix/store<br/>(or binary cache)?"}
-  Q -->|yes| USE["Use existing output"]
-  Q -->|no| BUILD["Build in sandbox:<br/>only input store paths,<br/>no network*"]
-  BUILD --> STORE["/nix/store/&lt;hash&gt;-name"]
-  Q2["* except fixed-output<br/>derivations (output hash<br/>pre-declared)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c6a6728c4074.png" alt="diagram"></div></p>
 <p>The distinction between Bazel and Nix is largely one of scope. Bazel is a <em>build tool</em> whose
 hermeticity is strong within a workspace and whose toolchains you configure. Nix is a <em>package
 manager and build system</em> whose hermeticity extends to the entire dependency closure including
@@ -1486,19 +1440,7 @@ rebuild the same source with the same declared inputs and publish the hash of wh
 consumer (or a distribution) collects these attestations and accepts the artifact only if
 enough independent rebuilders agree on the hash — and, crucially, if that agreed hash matches
 the officially published artifact.</p>
-<p><pre><code>flowchart LR
-  SRC["Source @ pinned commit<br/>+ declared inputs"] --> BA["Rebuilder A<br/>(org 1, infra 1)"]
-  SRC --> BB["Rebuilder B<br/>(org 2, infra 2)"]
-  SRC --> BOFF["Official builder<br/>(vendor)"]
-  BA --> HA["hash A"]
-  BB --> HB["hash B"]
-  BOFF --> HO["published hash"]
-  HA --> CMP{"All hashes<br/>equal?"}
-  HB --> CMP
-  HO --> CMP
-  CMP -->|yes| OK["Verified: artifact = source"]
-  CMP -->|no| BAD["Divergence =<br/>tampering / non-determinism<br/>→ investigate with diffoscope"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6848170528ef.png" alt="diagram"></div></p>
 <p>The security property is powerful: to slip a backdoor past this, an attacker must either
 compromise the <em>source</em> (which is watched, reviewed, and public) or simultaneously compromise
 <em>enough independent rebuilders on independent infrastructure</em> to forge a consensus — a far
@@ -1608,6 +1550,10 @@ laptop build was not.</p>
   integrity-protected, and the durable design is a two-track split: fast ambient dev builds,
   hermetic reproducible release builds.</li>
 </ul>
+<h3 id="hermetic-vs-reproducible-venn-and-payoff">Hermetic vs reproducible: Venn and payoff</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_95ba7adf5874.png" alt="diagram"></div></p>
+<h3 id="sources-of-non-determinism-and-fixes">Sources of non-determinism and fixes</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ee02184c4f03.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>Reproducible Builds project</strong> — https://reproducible-builds.org/ — the definitions, the
@@ -1720,29 +1666,7 @@ the organizing spine of the whole schema:</p>
   verifier enforce policy on <em>how</em> the build was invoked (e.g., "only from the <code>main</code> branch
   via the release workflow").</li>
 </ul>
-<p><pre><code>flowchart TD
-  subgraph PROV["SLSA v1.0 provenance predicate"]
-    subgraph SUBJ["subject  →  WHAT was built"]
-      SD["artifact name + digest (sha256)"]
-    end
-    subgraph BD["buildDefinition  →  FROM WHAT / HOW"]
-      BT["buildType (URI: how to interpret params)"]
-      EP["externalParameters (user-controlled inputs)"]
-      IP["internalParameters (platform-set inputs)"]
-      RD["resolvedDependencies (source repo+commit, deps)"]
-    end
-    subgraph RUN["runDetails  →  BY WHAT / HOW"]
-      BID["builder.id  (WHICH platform ran this)"]
-      MD["metadata (invocationId, startedOn, finishedOn)"]
-      BP["byproducts (logs, intermediate outputs)"]
-    end
-  end
-
-  SD -. "bound by digest to a real artifact" .-> ART["The jar / image / binary"]
-  BID -. "trust anchor: is this the builder I expect?" .-> V["Verifier"]
-  RD -. "is this the source I expect?" .-> V
-  EP -. "policy on how it was invoked" .-> V
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_754257f50440.png" alt="diagram"></div></p>
 <h3 id="the-slsa-v10-provenance-predicate-schema">The SLSA v1.0 provenance predicate schema</h3>
 <p>The v1.0 provenance is identified by the predicate type <strong><code>https://slsa.dev/provenance/v1</code></strong>.
 Its predicate object has exactly <strong>two top-level fields</strong>: <code>buildDefinition</code> and <code>runDetails</code>.
@@ -1828,21 +1752,7 @@ platform obtains a short-lived certificate from <strong>Fulcio</strong> bound to
 the DSSE, and records the signature in the <strong>Rekor</strong> transparency log. The <code>builder.id</code> in
 <code>runDetails</code> and the OIDC identity in the signing certificate should <em>agree</em> — that agreement is
 what makes the provenance unforgeable by anyone who is not that builder.</p>
-<p><pre><code>flowchart TD
-  P["SLSA predicate\n{ buildDefinition, runDetails }\npredicateType: slsa.dev/provenance/v1"]
-  P --> S
-  subgraph S["in-toto Statement (Book 5 Ch 6)"]
-    ST["_type: in-toto.io/Statement/v1\nsubject: [ {name, digest} ]  ← WHAT\npredicateType: slsa.dev/provenance/v1\npredicate: { ...the SLSA predicate... }"]
-  end
-  S -->|"serialize to JSON, base64-encode"| D
-  subgraph D["DSSE envelope"]
-    DE["payloadType: application/vnd.in-toto+json\npayload: <base64 Statement>\nsignatures: [ {sig, keyid} ]"]
-  end
-  D -->|"sign PAE(payloadType, payload)"| SIG["Signature\n(keyed OR Sigstore keyless:\nFulcio cert bound to OIDC identity,\nlogged in Rekor)"]
-
-  Note["Same three layers carry ANY predicate:\nSBOM, VEX, test results — provenance is\njust ONE predicate type."]:::note
-  classDef note fill:#eef,stroke:#88a,color:#224;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9ef0458f27eb.png" alt="diagram"></div></p>
 <p>The payoff of this layering is <em>generality</em>: the signing and transport machinery (in-toto +
 DSSE + Sigstore) is predicate-agnostic. Provenance is "just" the predicate type
 <code>https://slsa.dev/provenance/v1</code>. The same pipeline that signs and stores provenance stores
@@ -1938,24 +1848,7 @@ forged provenance would fail.</p>
 everything in L2. The progression is not "more provenance fields" — it is <em>increasing
 trustworthiness of the same provenance</em>, driven by <em>who generates it</em> and <em>how well the build
 is isolated from tampering with its own attestation</em>.</p>
-<p><pre><code>flowchart LR
-  L0["L0\nNo guarantees\n(no provenance)"]
-  L1["L1\nProvenance EXISTS\n• scripted build\n• provenance describes it\n• may be unsigned/forgeable"]
-  L2["L2\nSIGNED provenance from\na HOSTED platform\n• build runs on a service,\n  not a laptop\n• platform signs with\n  its own identity"]
-  L3["L3\nHARDENED builds\n• unforgeable provenance\n• isolated build runs\n• signing key inaccessible\n  to build steps\n• ephemeral environment"]
-
-  L0 -->|"+ generate provenance"| L1
-  L1 -->|"+ hosted builder signs it"| L2
-  L2 -->|"+ isolation & non-forgeability"| L3
-
-  L1 -. "defends: nothing strong;\nestablishes transparency,\ncatches mistakes" .-> D1[" "]
-  L2 -. "defends: forged provenance,\npost-hoc tampering,\n'built on my laptop'" .-> D2[" "]
-  L3 -. "defends: a malicious build\nforging its own provenance —\nthe SolarWinds class" .-> D3[" "]
-
-  style D1 fill:none,stroke:none
-  style D2 fill:none,stroke:none
-  style D3 fill:none,stroke:none
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eebba292e7c5.png" alt="diagram"></div></p>
 <h3 id="build-l0-no-guarantees">Build L0 — no guarantees</h3>
 <p>L0 is the absence of any SLSA claim: no provenance is produced. This is where most software in
 the world sits today. There is nothing to verify, so a consumer has no machine-checkable basis
@@ -2160,25 +2053,7 @@ That is the point of the paved road.</p>
   signer</em> — is precisely the L3 property, expressed in Kubernetes terms. Chains can store the
   attestation in an OCI registry (as a referring artifact) or a transparency log.</li>
 </ul>
-<p><pre><code>sequenceDiagram
-    participant User as User build steps (UNTRUSTED)
-    participant Plat as Build platform (TRUSTED)
-    participant OIDC as OIDC provider / Fulcio
-    participant Store as Attestation store (registry / Rekor)
-    participant Ver as Verifier (at deploy)
-
-    User->>Plat: Produce artifact, report its digest
-    Note over User,Plat: Build steps CANNOT reach the signing identity — this is the L3 boundary
-    Plat->>OIDC: Request identity for THIS build (workflow/workload identity)
-    OIDC-->>Plat: Short-lived signing credential (cert bound to OIDC SAN)
-    Plat->>Plat: Assemble provenance (subject, buildDefinition, runDetails)
-    Plat->>Plat: Wrap in in-toto Statement → DSSE, sign
-    Plat->>Store: Store signed provenance (+ log in transparency log)
-    Note over Store: Provenance flows into the SBOM/attestation store (Book 3 Ch 5)
-    Ver->>Store: Fetch provenance for artifact digest
-    Ver->>Ver: Check signature, signer identity, source, digest, policy
-    Ver-->>Ver: PASS → admit / FAIL → block (Book 6)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f497c20eaea7.png" alt="diagram"></div></p>
 <h2 id="verifying-provenance-the-consumer-side">Verifying provenance: the consumer side</h2>
 <p>Producing provenance is inert without verification — an unverified attestation is a comment
 field. Verification is where provenance <em>does work</em>, and it is the subject of Book 5, Chapter 8
@@ -2323,6 +2198,12 @@ hopeful assertion.</p>
   ephemeral, tenant-isolated builds (Chapter 8)</strong> — and reaching L3 across a fleet is the platform
   team's job, not a per-repo one.</li>
 </ul>
+<h3 id="slsa-provenance-generation-to-verification">SLSA provenance: generation to verification</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5f7c7bfdf127.png" alt="diagram"></div></p>
+<h3 id="provenance-fields-what-is-attested">Provenance fields: what is attested</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_57129ca4335e.png" alt="diagram"></div></p>
+<h3 id="provenance-verification-decision">Provenance verification decision</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a6cabb62cb2c.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SLSA v1.0</strong> — the specification, especially <em>Build track / levels</em> and the <em>Provenance</em>
@@ -2345,7 +2226,10 @@ hopeful assertion.</p>
   and Chapter 2 (hermetic and reproducible builds); Book 5, Chapters 3–4, 6, 8, 10 (Sigstore,
   keyless/workload identity, in-toto, provenance verification, deployment gates); Book 3, Chapter 5
   (attestation storage); Book 6, Chapters 5–6 (admission-time verification).</li>
-</ul></div><div id="ch04-cicd-platform-threats"><h1 id="chapter-4-cicd-platform-threat-models-actions-gitlab-jenkins-tekton">Chapter 4 — CI/CD Platform Threat Models: Actions, GitLab, Jenkins, Tekton</h1>
+</ul>
+<blockquote>
+<p><strong>Boundary:</strong> general crypto/auth/PKI/mTLS/secrets/appsec lives in Vol-09; companion instantiates for supply chain.</p>
+</blockquote></div><div id="ch04-cicd-platform-threats"><h1 id="chapter-4-cicd-platform-threat-models-actions-gitlab-jenkins-tekton">Chapter 4 — CI/CD Platform Threat Models: Actions, GitLab, Jenkins, Tekton</h1>
 <p><em>What this chapter covers.</em> Chapter 1 modelled the build in the abstract — a function whose
 compromise defeats both source review and code signing. But nobody runs an abstract build.
 They run GitHub Actions, or GitLab CI, or a Jenkins controller inherited from 2016, or a
@@ -2406,35 +2290,7 @@ source and you still face review and signing. Compromise production directly and
 face the source of truth. Compromise CI/CD and you have both ends of the pipe at once — which
 is exactly why, as Chapter 1 argued with SolarWinds, this node's compromise is uniquely
 catastrophic.</p>
-<p><pre><code>flowchart TB
-  subgraph external["Untrusted / semi-trusted inputs"]
-    PR["Pull requests (incl. forks)"]
-    DEP["3rd-party actions / plugins / orbs / includes"]
-    SRC["Source across many repos"]
-  end
-
-  subgraph platform["CI/CD platform (single concentration point)"]
-    RUN["Runners / agents / pods (execute repo code)"]
-    SEC["Secrets store (signing keys, registry creds)"]
-    ID["Cloud identity (OIDC / service accounts)"]
-  end
-
-  subgraph downstream["Trusted on sight"]
-    REG["Artifact registries"]
-    PROD["Production deploy"]
-    CLOUD["Cloud control plane"]
-  end
-
-  PR --> RUN
-  DEP --> RUN
-  SRC --> RUN
-  RUN --> SEC
-  RUN --> ID
-  SEC --> REG
-  ID --> PROD
-  ID --> CLOUD
-  RUN --> REG
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b6c8bac9d38.png" alt="diagram"></div></p>
 <p>The picture is a bowtie: many partly-trusted inputs on the left, a small set of
 highly-trusted outputs on the right, and the platform as the knot in the middle holding the
 credentials that make the right side possible. Everything an attacker wants is reachable <em>if</em>
@@ -2528,22 +2384,7 @@ is the vocabulary.</p>
   untrusted PR code with real privileges (the <code>pull_request_target</code> footgun below, or a
   non-ephemeral self-hosted runner), the fork PR becomes remote code execution inside CI.</li>
 </ul>
-<p><pre><code>sequenceDiagram
-  autonumber
-  participant A as Attacker
-  participant R as Repo (VCS)
-  participant CI as CI/CD platform
-  participant Sec as Secrets / cloud identity
-  participant Prod as Registry / prod
-
-  A->>R: Modify pipeline def (direct) OR<br/>a file it executes (indirect) OR<br/>open fork PR (public)
-  R->>CI: Trigger pipeline on push / PR
-  CI->>CI: Execute repo-controlled code<br/>(YAML, Makefile, tests, scripts)
-  CI->>Sec: Read secrets / assume cloud identity
-  Sec-->>CI: Signing key, registry creds, OIDC token
-  CI->>Prod: Exfiltrate secrets and/or push<br/>poisoned artifact / deploy
-  Note over A,Prod: One code-execution foothold in CI → full downstream trust
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10003877f492.png" alt="diagram"></div></p>
 <p>The defining feature is step 3: the platform runs code that an attacker influenced, holding
 credentials the attacker wants. Everything else is consequence. The rest of this chapter is,
 in effect, a survey of <em>how each platform makes step 3 reachable</em> and <em>what it hands you when
@@ -2585,21 +2426,7 @@ public PPE. The correct pattern is: use <code>pull_request</code> for anything t
 and reserve <code>pull_request_target</code> for jobs that do <em>not</em> check out or execute PR content, or
 split into a trusted labelling job and an unprivileged build job. Chapter 5 details the safe
 patterns.</p>
-<p><pre><code>sequenceDiagram
-  autonumber
-  participant Fork as Attacker fork
-  participant GH as GitHub
-  participant Job as Workflow job (pull_request_target)
-  participant S as Secrets + write token
-
-  Fork->>GH: Open PR from fork
-  GH->>Job: Run workflow from BASE branch<br/>(privileged: secrets + RW token)
-  Job->>Fork: checkout ref = PR head SHA
-  Fork-->>Job: Untrusted code enters trusted job
-  Job->>Job: npm ci / make / test (executes attacker code)
-  Job->>S: Read secrets, use write token
-  S-->>Fork: Exfiltrate via network / logs
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f91196b76ab7.png" alt="diagram"></div></p>
 <p><strong><code>GITHUB_TOKEN</code> permissions.</strong> Each workflow run gets an automatically-minted <code>GITHUB_TOKEN</code>
 scoped to the repository. Its permissions are configurable per-workflow or per-job with a
 <code>permissions:</code> block. Historically the default was broadly read-write; GitHub now lets orgs
@@ -3048,6 +2875,12 @@ in Chains.</p>
   rather than trusting every team's YAML, and scope the <strong>CI identity</strong> — the keys to the
   kingdom — as tightly and short-lived as possible.</li>
 </ul>
+<h3 id="cicd-platform-attack-surface">CI/CD platform attack surface</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5ecbaeba845.png" alt="diagram"></div></p>
+<h3 id="self-hosted-vs-hosted-runner-risk-tradeoff">Self-hosted vs hosted runner risk tradeoff</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_704dae3611ac.png" alt="diagram"></div></p>
+<h3 id="secrets-sprawl-in-cicd">Secrets sprawl in CI/CD</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c821dda84ae2.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>OWASP</strong>, <em>Top 10 CI/CD Security Risks</em> (2022) — the canonical taxonomy used throughout this
@@ -3127,15 +2960,7 @@ on the <code>on:</code> key at the top, because the event determines three thing
 </ol>
 <p>Hold those three variables in your head; the rest of this chapter is largely about how each
 trigger sets them.</p>
-<p><pre><code>flowchart LR
-  EV["Event / trigger"] --> CTX["Security context"]
-  CTX --> R["Which ref's workflow runs<br/>(head vs base)"]
-  CTX --> S["Secrets available?"]
-  CTX --> T["GITHUB_TOKEN permissions<br/>(read-only vs read-write)"]
-  R --> RUN["Runner executes steps"]
-  S --> RUN
-  T --> RUN
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b72ca36c0675.png" alt="diagram"></div></p>
 <h3 id="the-github_token">The <code>GITHUB_TOKEN</code></h3>
 <p>At the start of every workflow run, GitHub mints a fresh installation access token for the
 repository and exposes it as the <code>GITHUB_TOKEN</code> secret (and as <code>github.token</code>). It is scoped
@@ -3156,7 +2981,8 @@ key, ideally at the job level so each job gets exactly what it needs:</p>
 <span class="w">    </span><span class="nt">permissions</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">read</span><span class="w">          </span><span class="c1"># clone the repo, nothing else</span>
 <span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@&lt;sha&gt;</span><span class="w">   </span><span class="c1"># see SHA-pinning below</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683</span><span class="w">  </span><span class="c1"># v4.2.2</span>
+<span class="w">          </span><span class="c1"># see SHA-pinning below</span>
 
 <span class="w">  </span><span class="nt">label</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
@@ -3241,18 +3067,7 @@ attacker's code executes <strong>in that privileged context</strong>. The <code>
 uses the write token to push a commit, publish a package, or open a PR that adds a backdoor.
 The attacker never needed commit access; opening a fork PR was enough. This is remote code
 execution with your secrets.</p>
-<p><pre><code>sequenceDiagram
-    participant A as Attacker (fork)
-    participant GH as GitHub
-    participant R as Runner (base context)
-    participant X as Attacker server
-    A->>GH: Open fork PR (malicious package.json / tests)
-    GH->>R: pull_request_target run<br/>secrets + write token in scope
-    R->>GH: checkout head.sha (untrusted code)
-    R->>R: npm ci / npm test → attacker code executes
-    R->>X: exfiltrate NPM_TOKEN, GITHUB_TOKEN
-    R->>GH: (optional) push commit / publish with write token
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_864b4b96fa80.png" alt="diagram"></div></p>
 <h3 id="the-safe-patterns">The safe patterns</h3>
 <p>There are three defensible options, in rough order of preference.</p>
 <p><strong>1. Use <code>pull_request</code> and do without secrets for untrusted PRs.</strong> If the job only needs to
@@ -3291,19 +3106,7 @@ vulnerable pattern.</p>
 <span class="w">        </span><span class="c1"># labeler reads changed paths from the API, does not run PR code</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TB
-  PR["Fork PR (untrusted)"]
-  subgraph unpriv["pull_request — NO secrets, read-only token"]
-    BUILD["checkout head + build/test"]
-    ART["upload inert artifact"]
-  end
-  subgraph priv["workflow_run — secrets + write token"]
-    DL["download artifact (treat as data)"]
-    POST["post comment / publish"]
-  end
-  PR --> BUILD --> ART
-  ART -. triggers .-> DL --> POST
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eccf8b9194c8.png" alt="diagram"></div></p>
 <h2 id="script-injection-untrusted-input-into-run">Script injection: untrusted input into <code>run:</code></h2>
 <p>The second endemic class of Actions vulnerability needs no privileged trigger at all — only a
 <code>run:</code> step that interpolates attacker-controlled data. GitHub Actions expression
@@ -3372,15 +3175,7 @@ credential used to retarget the tags is believed to have been obtained via an ea
 compromise of another action (<code>reviewdog/action-setup</code>) that leaked a token belonging to the
 <code>tj-actions</code> automation. That is the transitive-graph risk made concrete — a compromise two
 hops away from your workflow.</p>
-<p><pre><code>flowchart LR
-  M["Maintainer credential compromised"] --> T["Retarget tags<br/>v1..v44 → malicious commit"]
-  T --> W["Your workflow: uses tj-actions/changed-files@v44"]
-  W --> P["Runner fetches malicious code<br/>runs with your token + secrets"]
-  P --> L["Secrets dumped to public logs"]
-  subgraph safe["Pinned by SHA"]
-    S["uses ...@a1b2c3...<br/>immutable — unaffected"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_58c2934742a7.png" alt="diagram"></div></p>
 <h3 id="pin-by-commit-sha">Pin by commit SHA</h3>
 <p>The fix is to pin every third-party action by its <strong>full 40-character commit SHA</strong>, not a tag:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Tag — mutable, resolved fresh every run</span>
@@ -3478,17 +3273,7 @@ provider, which <strong>validates GitHub's signature and checks the claims again
 if they match, it issues <strong>short-lived</strong> cloud credentials (an AWS STS session, a GCP access
 token, an Azure token). No secret is stored anywhere; the trust is rooted in GitHub's signed
 assertion of <em>which workflow is running</em>.</p>
-<p><pre><code>sequenceDiagram
-    participant W as Workflow (id-token: write)
-    participant G as GitHub OIDC provider
-    participant C as Cloud STS / IdP
-    W->>G: Request OIDC token
-    G-->>W: Signed JWT with claims<br/>(sub=repo:org/repo:environment:prod, aud, ...)
-    W->>C: Present JWT (AssumeRoleWithWebIdentity / WIF)
-    C->>C: Verify signature + match trust policy<br/>(issuer, aud, sub conditions)
-    C-->>W: Short-lived credentials (minutes)
-    W->>C: Deploy using temporary creds
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8023846fa774.png" alt="diagram"></div></p>
 <p>Here is the AWS shape — federate into a role instead of storing keys:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">permissions</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">id-token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span><span class="w">     </span><span class="c1"># REQUIRED to request the OIDC token</span>
@@ -3766,31 +3551,7 @@ them once, let Dependabot bump them thereafter.</p>
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-  subgraph L1["Design — write safe YAML"]
-    A["Least-priv permissions"]
-    B["Safe triggers / no untrusted checkout"]
-    C["No injection into run:"]
-  end
-  subgraph L2["Supply chain — trust the graph"]
-    D["SHA-pin + Dependabot"]
-    E["Allowlisted actions"]
-  end
-  subgraph L3["Identity — no stored secrets"]
-    F["OIDC scoped to repo/env"]
-    G["Environment protection gates"]
-  end
-  subgraph L4["Runtime — contain mistakes"]
-    H["Ephemeral runners / ARC"]
-    I["Harden-Runner egress control"]
-  end
-  subgraph L5["Enforce + observe"]
-    J["Org policy: default perms, allowed actions"]
-    K["Static analysis in CI"]
-    M["Audit log monitoring"]
-  end
-  L1 --> L2 --> L3 --> L4 --> L5
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a18d21ae876b.png" alt="diagram"></div></p>
 <h2 id="distributed-systems-lens-the-org-config-is-a-fleet-control-plane">Distributed-systems lens: the org config is a fleet control plane</h2>
 <p>Everything above is written as if one engineer hardens one workflow. At fleet scale — hundreds
 of repos, dozens of teams, thousands of workflow files — that model fails. You cannot rely on
@@ -3866,6 +3627,10 @@ and <strong>Book 8's</strong> governance chapters.</p>
   OIDC trust, and org-wide egress and audit monitoring beat asking every team to write secure
   YAML.</li>
 </ul>
+<h3 id="github-actions-hardening-checklist-flow">GitHub Actions hardening checklist flow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b463b2a0ec0b.png" alt="diagram"></div></p>
+<h3 id="pinned-action-tag-vs-sha">Pinned action: tag vs SHA</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_999ac4943a5b.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>GitHub Docs</strong>, <em>Security hardening for GitHub Actions</em> — the authoritative reference on
@@ -3962,17 +3727,7 @@ untrusted-adjacent input, and its runtime environment is stuffed with credential
 properties should never coexist, and in a naive CI setup they always do.</p>
 <p>The exposure is not one surface but many. It is worth enumerating them, because a mitigation
 that closes one leaves the others open.</p>
-<p><pre><code>flowchart TB
-    S["Secret in CI job"]
-    S --> E["Environment variables<br/>(readable by every step and child process)"]
-    S --> L["Build logs<br/>(echoed, printed on error, verbose flags)"]
-    S --> F["Forked-PR execution<br/>(untrusted code, elevated context)"]
-    S --> A["Artifacts<br/>(secret packaged into image/tarball)"]
-    S --> C["Caches<br/>(secret written into a cached layer or dir)"]
-    S --> M["Error messages / stack traces<br/>(credential in a URL, dumped on failure)"]
-    S --> P["Child processes<br/>(malicious dependency install scripts)"]
-    S --> V["Provider breach<br/>(the CI SaaS itself is compromised)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_94468867fb16.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Environment variables</strong> are the default injection mechanism and the worst one. An env var
   is process-global: every step in the job, every subprocess, and every dependency's lifecycle
@@ -4014,19 +3769,7 @@ ladder climbs toward.</p>
 <p>Frame everything that follows as four rungs. Each rung is a strict improvement in blast radius
 and exposure window over the one below it. You do not need to reach the top for every credential
 on day one, but you should know which rung each secret is on and be climbing.</p>
-<p><pre><code>flowchart LR
-    R1["Rung 1<br/>Long-lived secrets<br/>in env vars /<br/>CI secret store"]
-    R2["Rung 2<br/>Scoped, masked,<br/>least-privilege<br/>secrets"]
-    R3["Rung 3<br/>Short-lived /<br/>dynamic secrets<br/>(Vault, short TTL)"]
-    R4["Rung 4<br/>No stored secrets<br/>Workload identity /<br/>OIDC federation"]
-    R1 -->|"scope + mask + minimize"| R2
-    R2 -->|"make them ephemeral"| R3
-    R3 -->|"eliminate the stored root"| R4
-    style R1 fill:#3a1a1a,color:#fff
-    style R2 fill:#3a2f1a,color:#fff
-    style R3 fill:#1a3a2a,color:#fff
-    style R4 fill:#1a2a3a,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bdd0f8d38d71.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -4185,20 +3928,7 @@ the CI provider, then everything above it inherits the weaknesses of rung 1: it 
 the leak surfaces, it is useful indefinitely if stolen, and it is exactly what a provider breach
 hands the attacker. Wrapping a thousand dynamic secrets behind one static bootstrap token means
 your real attack surface is that one token.</p>
-<p><pre><code>flowchart TB
-    subgraph naive["The secret zero problem"]
-        J1["CI job"] -->|"static Vault token<br/>(secret zero, stored in CI)"| V1["Vault / secret manager"]
-        V1 --> DB1["DB creds"]
-        V1 --> CL1["Cloud creds"]
-        V1 --> SK1["Signing key"]
-        note1["Steal the one bootstrap token<br/>and everything unlocks."]
-    end
-    subgraph solved["Resolved with workload identity"]
-        J2["CI job"] -->|"signed OIDC token<br/>(minted per-run, not stored)"| IDP["Trust policy verifies<br/>issuer + claims"]
-        IDP -->|"short-lived credential"| V2["Vault / cloud API"]
-        note2["Nothing at rest to steal.<br/>Identity is proven, not presented."]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2fe3a94598c4.png" alt="diagram"></div></p>
 <p>The resolution is to replace the <em>stored bearer secret</em> with a <em>proof of identity that is minted
 fresh for each run and verified cryptographically</em>. The CI platform signs a token asserting "I am
 a job from repo X, branch Y, environment Z," and the resource verifies that assertion against a
@@ -4219,25 +3949,7 @@ cloud provider or secret manager is configured with a <strong>trust policy</stro
 object an OIDC identity provider plus an IAM role's trust relationship; GCP calls it a Workload
 Identity Federation pool) that says: "I trust tokens from this issuer, and if the claims match
 these conditions, I will exchange the token for a short-lived credential to this role."</p>
-<p><pre><code>sequenceDiagram
-    participant Job as "CI job"
-    participant IdP as "CI OIDC provider"
-    participant Cloud as "Cloud STS / secret manager"
-    participant Role as "Scoped role + short-lived creds"
-
-    Job->>IdP: Request OIDC token (aud = cloud)
-    IdP-->>Job: Signed JWT (iss, sub, repo, ref, environment)
-    Job->>Cloud: AssumeRoleWithWebIdentity(JWT)
-    Cloud->>Cloud: Verify signature against IdP JWKS
-    Cloud->>Cloud: Check claims vs trust policy<br/>(repo? ref? environment?)
-    alt claims satisfy trust policy
-        Cloud-->>Role: Issue short-lived credentials (e.g. 1h STS)
-        Role-->>Job: Temporary credentials
-        Job->>Cloud: Use creds for the job, then they expire
-    else claims do not match
-        Cloud-->>Job: AccessDenied
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7179e223354a.png" alt="diagram"></div></p>
 <p>The trust chain has three verifiable links. First, the cloud verifies the <strong>JWT signature</strong>
 against the CI provider's published JWKS (JSON Web Key Set) at a well-known URL — this proves the
 token was minted by the genuine CI OIDC provider and not forged. Second, it checks the <strong>audience</strong>
@@ -4497,18 +4209,7 @@ learned of their exposure months after the fact).</p>
 response is governed by the concentration property: you must rotate <em>everything the pipeline could
 touch</em>, not just the one credential you noticed. This is the instruction Codecov and CircleCI both
 gave their customers, and it is correct precisely because CI holds the whole drawer.</p>
-<p><pre><code>flowchart TB
-    D["Leak detected / suspected<br/>(scanner alert, provider breach,<br/>anomalous access)"]
-    D --> I["Inventory: what could this pipeline reach?<br/>registry, cloud, DB, signing, deploy"]
-    I --> R["Rotate every credential in scope<br/>(not just the one seen)"]
-    R --> Rev["Revoke active sessions/tokens<br/>minted by the leaked credential"]
-    Rev --> A["Audit usage during the exposure window<br/>look for attacker use"]
-    A --> Sig{"Could a signing key<br/>have been used?"}
-    Sig -->|yes| SigResp["Investigate all artifacts signed<br/>in the window; consider re-signing<br/>and revocation (Book 8, Ch 6)"]
-    Sig -->|no| Hard["Harden: move the leaked class<br/>of secret up the ladder"]
-    SigResp --> Hard
-    Hard --> Post["Post-incident: eliminate the stored secret<br/>so this class of leak can't recur"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4592e7677fca.png" alt="diagram"></div></p>
 <p>The blast-radius reasoning is the payoff of the whole chapter. On rung 1, the "inventory" step is
 enormous and the "rotate everything" step is a multi-day cross-team scramble touching every system
 the pipeline ever authenticated to — because the leaked credential was long-lived and broadly
@@ -4583,6 +4284,10 @@ notifications and had almost nothing to rotate.</p>
   weakest pipeline. Standardize workload identity as a paved-road capability so no team stores a
   long-lived secret; the payoff is super-linear in fleet size.</li>
 </ul>
+<h3 id="secret-exfiltration-paths-in-ci">Secret exfiltration paths in CI</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_337ed1b4774d.png" alt="diagram"></div></p>
+<h3 id="oidc-federation-short-lived-tokens">OIDC federation: short-lived tokens</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aa858fdd7b71.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>HashiCorp Vault</strong>, <em>Dynamic Secrets</em>, <em>Database Secrets Engine</em>, and <em>JWT/OIDC Auth Method</em>
@@ -4672,31 +4377,7 @@ direct, indirect, public — comes from the CI/CD attack research originally pub
 Security (later Palo Alto Networks / Prisma Cloud), which also seeded the OWASP Top 10 CI/CD
 Security Risks. The three flavours differ only in <em>which</em> node of the tree the attacker
 influences and <em>how</em> they trigger execution; the payoff is identical.</p>
-<p><pre><code>flowchart TB
-  subgraph def["Pipeline definition (root)"]
-    YAML[".github/workflows/ci.yml<br/>.gitlab-ci.yml / Jenkinsfile"]
-  end
-  subgraph invoked["Files the definition invokes (subtree)"]
-    MK["Makefile"]
-    PKG["package.json scripts<br/>(preinstall/postinstall)"]
-    DF["Dockerfile"]
-    TST["test files (pytest/jest)"]
-    LNT["linter / formatter configs"]
-    PC[".pre-commit-config.yaml"]
-    GR["build.gradle / conftest.py"]
-  end
-  EXEC["Execution context:<br/>secrets, GITHUB_TOKEN,<br/>signing key, OIDC / cloud identity"]
-
-  YAML -->|"D-PPE: edit the root"| EXEC
-  YAML --> MK & PKG & DF & TST & LNT & PC & GR
-  MK -->|"I-PPE: edit a leaf<br/>the root still calls"| EXEC
-  PKG --> EXEC
-  DF --> EXEC
-  TST --> EXEC
-  LNT --> EXEC
-  PC --> EXEC
-  GR --> EXEC
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ee396bf51c6e.png" alt="diagram"></div></p>
 <h2 id="direct-ppe-d-ppe-editing-the-pipeline-definition">Direct PPE (D-PPE): editing the pipeline definition</h2>
 <p>Direct PPE is the obvious case. The attacker modifies the pipeline definition itself and the
 platform runs the modified version. The subtlety is not the concept but the <em>triggering
@@ -4827,28 +4508,7 @@ who trusts it.</p>
 <strong>ephemeral, isolated</strong> runners, and never on a runner or in a job that can reach production
 credentials. Public PPE is simply the trusted/untrusted split failing at the repository's outer
 boundary.</p>
-<p><pre><code>sequenceDiagram
-  autonumber
-  participant A as Attacker (no commit access)
-  participant F as Fork PR / feature branch
-  participant CI as Pipeline run
-  participant Def as Pipeline definition
-  participant Inv as Invoked files (make/npm/tests)
-  participant P as Privilege (secrets, deploy, cloud)
-
-  Note over A,Def: Direct PPE
-  A->>F: Edit ci.yml to add malicious step
-  F->>CI: Trigger (push / same-repo PR)
-  CI->>Def: Run modified definition
-  Def->>P: Read secrets → exfiltrate / deploy
-
-  Note over A,Inv: Indirect PPE
-  A->>F: Edit Makefile / postinstall / conftest
-  F->>CI: Trigger
-  CI->>Def: Run clean, locked-down definition
-  Def->>Inv: make build / npm ci / pytest
-  Inv->>P: Malicious leaf runs with same privilege
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4200f33539dc.png" alt="diagram"></div></p>
 <h3 id="ppe-at-a-glance">PPE at a glance</h3>
 <table>
 <thead>
@@ -4959,21 +4619,7 @@ and tooling exists to automate planting poisoned entries; GitHub's scope restric
 not eliminate the readable-upward path, and fork PRs are more constrained (they cannot write into
 the base repo's cache scope). The residual risk lives in the <em>same-repo lower-trust</em> write that a
 higher-trust read consumes.</p>
-<p><pre><code>sequenceDiagram
-  autonumber
-  participant Att as Attacker (low-priv context)
-  participant Low as PR / feature-branch build<br/>(no secrets)
-  participant Cache as Shared cache (keyed)
-  participant High as main / release build<br/>(secrets, signing, deploy)
-  participant Out as Signed artifact / prod
-
-  Att->>Low: Trigger low-priv build (I-PPE or just a PR)
-  Low->>Cache: save_cache key=deps-<lockfile-hash><br/>(poisoned node_modules / .o files)
-  Note over Cache: Entry now restorable by<br/>base / default branch
-  High->>Cache: restore_cache key=deps-<lockfile-hash>
-  Cache-->>High: poisoned bytes (trusted as prior output)
-  High->>Out: build + sign + deploy poisoned result
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9686fba8695b.png" alt="diagram"></div></p>
 <p>The defense is <strong>trust-scoping</strong>: the cache namespace a trusted build reads must be writable <em>only</em>
 by equally-trusted contexts. Concretely — separate cache keys or separate cache backends for
 PR/untrusted builds versus protected-branch builds; never let a build that runs untrusted code
@@ -5062,19 +4708,7 @@ provenance at every trust transition</strong> — publish, admission, deploy. Pr
 <em>digest</em>; signing binds that digest to a builder identity. Any post-build swap changes the digest,
 so the signature no longer verifies and the provenance subject no longer matches — the substitution
 is caught at the gate.</p>
-<p><pre><code>flowchart LR
-  SRC["Reviewed source"] --> BUILD["Isolated build (L3)"]
-  BUILD -->|"produces X<br/>digest = d(X)"| ART["Artifact X"]
-  BUILD -->|"at build time"| PROV["Provenance: subject digest = d(X)<br/>+ signature over d(X)"]
-  ART --> TAMPER{"Post-build tamper<br/>swap X → X'"}
-  TAMPER -->|"if tampered"| ARTP["Artifact X'<br/>digest = d(X') ≠ d(X)"]
-  TAMPER -->|"if clean"| ARTOK["Artifact X"]
-  ARTP --> GATE
-  ARTOK --> GATE
-  PROV --> GATE{"Verify at publish / admission:<br/>digest match + signature valid?"}
-  GATE -->|"d(X') ≠ signed d(X)"| REJECT["REJECTED — tamper detected"]
-  GATE -->|"d(X) matches, sig valid"| ACCEPT["Accepted → deploy"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0dc95dabaa47.png" alt="diagram"></div></p>
 <p>This is why provenance and signing are framed throughout this suite as <em>detection</em> controls, not
 prevention: they do not stop a privileged actor from replacing the artifact, but they guarantee the
 replacement cannot pass as the original. The detection is only as strong as the isolation of the
@@ -5167,27 +4801,7 @@ subsumes the others. The single structural defense against pipeline poisoning is
 execution into an untrusted zone that runs repo/PR/fork code with no secrets and no deploy path,
 and a trusted zone that holds privilege but never executes unreviewed input</strong> — with a hard
 boundary, and only vetted data crossing it.</p>
-<p><pre><code>flowchart TB
-  subgraph untrusted["Untrusted zone — runs repo/PR/fork code"]
-    direction TB
-    U1["PR / fork builds, tests, linters"]
-    U2["No secrets, read-only token"]
-    U3["Ephemeral, isolated runners (Ch 8)"]
-    U4["Read-only / separate caches"]
-  end
-  subgraph boundary["Trust boundary"]
-    B1["Only vetted, content-addressed<br/>artifacts + provenance cross"]
-    B2["Verify signature + digest before accepting"]
-  end
-  subgraph trusted["Trusted zone — holds privilege"]
-    direction TB
-    T1["Protected-branch / release builds"]
-    T2["Secrets, signing key, deploy, cloud identity"]
-    T3["Least-privilege, short-lived creds (Ch 6)"]
-    T4["Writable trusted caches, isolated signing"]
-  end
-  untrusted --> boundary --> trusted
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1cab3405efaf.png" alt="diagram"></div></p>
 <p>Everything else in the chapter is an attack that <em>violates</em> this boundary: PPE runs untrusted code
 in the trusted zone; cross-context cache poisoning lets untrusted-zone writes flow into
 trusted-zone reads; artifact tampering slips modified bytes across the boundary without
@@ -5259,6 +4873,10 @@ rather than something each team must instrument itself.</p>
   into, a context holding secrets or deploy privileges without a trust boundary. Standardize that
   split in the paved-road pipeline so no team can accidentally opt out of it.</li>
 </ul>
+<h3 id="cache-poisoning-attack">Cache poisoning attack</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_90ea84b97822.png" alt="diagram"></div></p>
+<h3 id="pipeline-injection-via-untrusted-input">Pipeline injection via untrusted input</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d0cac30507e0.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>OWASP Top 10 CI/CD Security Risks (2022)</strong> — especially CICD-SEC-4 (Poisoned Pipeline
@@ -5367,29 +4985,7 @@ weak isolation can fail the other way: the job is destroyed after, but <em>durin
 escape reached a co-tenant on the same host. Neither property substitutes for the other. SLSA L3's
 isolation requirement and the anti-persistence goal are two axes, and a serious build platform sits
 in the corner where both are satisfied.</p>
-<p><pre><code>flowchart TB
-  subgraph persistent["Persistent runner — state accumulates"]
-    direction TB
-    P0["Runner boots once"]
-    PJ1["Job 1 (malicious dep)<br/>drops shim on PATH,<br/>leaves creds cache"]
-    PJ2["Job 2 (trusted, has secrets)<br/>uses tampered tool,<br/>secret harvested"]
-    PJ3["Job 3 (other tenant)<br/>reads leftover workspace"]
-    P0 --> PJ1 --> PJ2 --> PJ3
-    IMPLANT["implant + creds survive<br/>across every job"]
-    PJ1 -.persists.-> IMPLANT
-    IMPLANT -.affects.-> PJ2
-    IMPLANT -.affects.-> PJ3
-  end
-
-  subgraph ephemeral["Ephemeral runner — fresh per job"]
-    direction TB
-    E1["provision fresh env"] --> EJ1["Job 1 (malicious dep)<br/>compromise contained"] --> ED1["destroy"]
-    E2["provision fresh env"] --> EJ2["Job 2 (trusted)<br/>clean start"] --> ED2["destroy"]
-    E3["provision fresh env"] --> EJ3["Job 3 (other tenant)<br/>clean start"] --> ED3["destroy"]
-    ED1 -.nothing survives.-> E2
-    ED2 -.nothing survives.-> E3
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_52695a13a08d.png" alt="diagram"></div></p>
 <h2 id="the-isolation-spectrum">The isolation spectrum</h2>
 <p>"Isolated" is not binary. It is a spectrum of mechanisms with a hard trade-off: stronger isolation
 costs more startup latency, more memory, and often more operational complexity. The single most
@@ -5469,20 +5065,7 @@ of anything above the hypervisor with other tenants. It is also the heaviest: se
 OS image, a whole guest to schedule. At fleet scale you amortize this with warm pools and image
 snapshots, but the cold-start and per-VM memory cost is real. When a build is fully untrusted and you
 want the least clever, most auditable boundary, a fresh VM per job is it.</p>
-<p><pre><code>flowchart LR
-  A["Namespace container<br/>(Docker/containerd, pod)"] --> B["Rootless container<br/>+ seccomp/AppArmor"]
-  B --> C["gVisor<br/>(user-space kernel)"]
-  C --> D["Kata / Firecracker<br/>microVM"]
-  D --> E["Full VM per job<br/>(GitHub-hosted)"]
-
-  A -. "weakest isolation<br/>lowest overhead<br/>~10ms start" .-> A
-  E -. "strongest isolation<br/>highest overhead<br/>seconds start" .-> E
-
-  classDef weak fill:#fde,stroke:#a33
-  classDef strong fill:#dfe,stroke:#3a3
-  class A weak
-  class E strong
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3d3e72738e3a.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -5577,24 +5160,7 @@ layered tarball with a manifest. That does not intrinsically require host-level 
   privileged daemon.</li>
 <li><strong><code>img</code></strong> is a further daemonless, rootless BuildKit frontend in the same family.</li>
 </ul>
-<p><pre><code>flowchart TB
-  subgraph bad["Dangerous: privileged DinD"]
-    B1["CI job container<br/>--privileged"]
-    B2["nested dockerd<br/>(full caps, no seccomp)"]
-    B3["host kernel"]
-    B1 --> B2 -. "one cgroup/kernel trick" .-> B3
-    HOST1["HOST ROOT + co-tenants"]
-    B3 --> HOST1
-  end
-
-  subgraph good["Safer: rootless daemonless builder"]
-    G1["CI job container<br/>non-root, user-ns"]
-    G2["Kaniko / Buildah /<br/>rootless BuildKit"]
-    G3["registry (push via OIDC token)"]
-    G1 --> G2 --> G3
-    G2 -. "no daemon, no --privileged,<br/>no host socket" .-> G1
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a30d3aac9b60.png" alt="diagram"></div></p>
 <p>The security win is direct: none of these need <code>--privileged</code>, none need the host Docker socket, and
 all run as (or close to) an unprivileged user. You keep the container-build capability without
 punching the isolation hole. On stronger substrates you can go further — run the rootless builder
@@ -5639,22 +5205,7 @@ Each job therefore gets a clean pod with clean volumes, and the isolation is wha
 sandbox provides (namespace container by default; gVisor via a <code>RuntimeClass</code>, or a microVM runtime, if
 you want a stronger boundary). ARC is the canonical "ephemeral isolated runners as a platform capability"
 implementation for GitHub-centric orgs.</p>
-<p><pre><code>sequenceDiagram
-  autonumber
-  participant GH as GitHub (job queue)
-  participant ARC as ARC controller
-  participant K8s as Kubernetes
-  participant Pod as Runner pod (ephemeral)
-  GH-->>ARC: job queued (webhook / poll)
-  ARC->>GH: request JIT runner config (single-use)
-  ARC->>K8s: create fresh runner pod (JIT config)
-  K8s->>Pod: schedule on node (sandboxed runtime)
-  Pod->>GH: register (ephemeral), pull the one job
-  Pod->>Pod: run job (build/test), OIDC token JIT
-  Pod-->>GH: report status + provenance
-  ARC->>K8s: delete pod (destroy)
-  Note over Pod,K8s: volumes, secrets, workspace gone — nothing persists
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e47c639768d5.png" alt="diagram"></div></p>
 <h3 id="gitlab-and-jenkins">GitLab and Jenkins</h3>
 <p>The same pattern appears everywhere the ecosystem runs at scale:</p>
 <ul>
@@ -5846,27 +5397,7 @@ distinction from Chapter 5, backed by <em>physically separate runner groups</em>
 more important than any single isolation technology: perfect microVM isolation on a pool that
 nonetheless holds production secrets <em>and</em> runs fork code has still handed the fork code a shot at those
 secrets during the build.</p>
-<p><pre><code>flowchart TB
-  subgraph untrusted["Untrusted pool"]
-    UT["fork PRs, public CI,<br/>unreviewed code"]
-    UI["microVM / VM per job<br/>NO secrets, no privileged OIDC<br/>egress: source + proxy only"]
-    UT --> UI
-  end
-  subgraph trusted["Trusted pool"]
-    TT["post-merge, release, deploy<br/>reviewed code only"]
-    TI["secrets + OIDC deploy identity<br/>signing access"]
-    TT --> TI
-  end
-  PROD["Production, signing key, registry"]
-  TI --> PROD
-  UI -. "no path" .- PROD
-  UI -. "separate nodes, networks,<br/>secret scopes, identities" .- TI
-
-  classDef u fill:#fde,stroke:#a33
-  classDef t fill:#dfe,stroke:#3a3
-  class UT,UI u
-  class TT,TI t
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4b28b3b413f2.png" alt="diagram"></div></p>
 <h2 id="achieving-slsa-l3-through-the-build-environment">Achieving SLSA L3 through the build environment</h2>
 <p>Now tie it together. Chapter 3 defined SLSA Build L3 as adding, on top of L2's signed provenance from a
 hosted platform, two requirements: the build must be <strong>isolated</strong> (builds cannot influence one another,
@@ -5890,21 +5421,7 @@ on; it is what you get when the environment is built correctly.</p>
   isolated context using GitHub's OIDC identity — the ephemeral, isolated hosted runner is the substrate
   that makes the attestation trustworthy.</li>
 </ul>
-<p><pre><code>flowchart TB
-  subgraph env["Ephemeral, isolated runner (platform-owned)"]
-    BUILD["Build steps<br/>(user-controlled, unprivileged,<br/>sandboxed, no signing access)"]
-    ART["Artifact + digest"]
-    BUILD --> ART
-  end
-  subgraph plat["Platform-owned, outside build steps"]
-    OIDC["Platform OIDC identity"]
-    PROV["Generate + sign provenance<br/>(Sigstore, keyless)"]
-    OIDC --> PROV
-  end
-  ART --> PROV
-  BUILD -. "cannot reach" .- OIDC
-  PROV --> OUT["SLSA L3 provenance<br/>(non-falsifiable by the build)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_50100b8dab29.png" alt="diagram"></div></p>
 <p>This is why L3 is achievable "for free" on a well-designed hosted platform and painful to bolt onto a
 persistent self-hosted runner: on the hosted platform the ephemerality, isolation, and out-of-band
 signing are structural; on the persistent runner you have to <em>recreate</em> all three, and if the build
@@ -5983,6 +5500,10 @@ the only way it survives contact with a hundred teams shipping continuously.</p>
   construction — which is why L3 is nearly free on a well-designed hosted platform and hard to retrofit
   onto persistent self-hosted runners.</li>
 </ul>
+<h3 id="ephemeral-runner-lifecycle">Ephemeral runner lifecycle</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0ac689603897.png" alt="diagram"></div></p>
+<h3 id="persistent-vs-ephemeral-blast-radius">Persistent vs ephemeral: blast radius</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6add50b14b42.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SLSA v1.0 — Build track requirements and Threats.</strong> The normative L3 isolation and provenance-
@@ -6137,25 +5658,7 @@ to at least one of them.</p>
 <p>Detection is only as good as its inputs. A build has six telemetry sources worth collecting, each
 answering a different question and each catching a different attack. Treat them as a portfolio: no
 single source is sufficient, and the strongest detections correlate across two or more.</p>
-<p><pre><code>flowchart LR
-  subgraph Build["Build / CI execution"]
-    A["Audit logs\n(config, perms, secrets, runners)"]
-    P["Process / syscall events\n(eBPF: Falco, Tetragon,\nHarden-Runner)"]
-    N["Network egress\n(DNS, connections, bytes)"]
-    F["Filesystem access\n(secrets, keys, tool tamper)"]
-    R["Artifact / provenance\n(output hash, attestations)"]
-    D["Dependency resolution\n(new deps, install scripts)"]
-  end
-  A --> SIEM["Central detection\nplatform (SIEM)"]
-  P --> SIEM
-  N --> SIEM
-  F --> SIEM
-  R --> SIEM
-  D --> SIEM
-  SIEM --> DET["Detection rules\n+ baselines"]
-  DET --> AL["Alerts"]
-  AL --> IR["Incident response\n(Book 8, Ch 6)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3d50416d2f0b.png" alt="diagram"></div></p>
 <h3 id="1-build-and-ci-audit-logs-who-changed-the-machine">1. Build and CI audit logs — who changed the machine</h3>
 <p>The control plane of your CI system emits an audit stream, and it is the cheapest, highest-value
 telemetry you are probably already ignoring. GitHub emits an <strong>organization and enterprise audit
@@ -6321,15 +5824,7 @@ until anomalies have nowhere to hide.</strong> The more hermetic the build, the 
 higher the signal-to-noise of any deviation. A build that should only ever contact your internal
 proxy, caught contacting an external IP, is not a subtle statistical anomaly requiring machine
 learning — it is a boolean rule with near-zero false positives.</p>
-<p><pre><code>flowchart TD
-  C["Build step opens\noutbound connection"] --> Q{"Destination in\negress allowlist?"}
-  Q -->|Yes| OK["Permit + log"]
-  Q -->|No| MODE{"Enforcement mode?"}
-  MODE -->|Audit| A["Alert:\nunexpected egress\n(host, step, process)"]
-  MODE -->|Block| B["Drop connection\n+ alert"]
-  A --> SIEM["SIEM / IR"]
-  B --> SIEM
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_208a171aa14d.png" alt="diagram"></div></p>
 <p>Operationally: run in <strong>audit mode</strong> first to <em>learn</em> the legitimate set (this is how
 Harden-Runner's "recommended policy" is generated), review the learned set, promote it to an
 allowlist, then move to <strong>block mode</strong>. Audit mode is itself detection — you are watching what the
@@ -6340,24 +5835,7 @@ model.</p>
 for a pipeline is the learned answer to: what hosts does this build contact? what processes does it
 run? what files does it read and write? Build the profile from a window of known-good runs, then
 alert on deviation.</p>
-<p><pre><code>flowchart LR
-  subgraph Baseline["Learned baseline (known-good runs)"]
-    H["Hosts:\nregistry, source, artifact store"]
-    PR["Processes:\ncc, ld, go, npm, test"]
-    FL["Files:\nsrc/, build/, cache/"]
-  end
-  subgraph Run["This run"]
-    H2["Contacts 203.0.113.9"]
-    PR2["Spawns /bin/sh -> curl"]
-    FL2["Reads ~/.aws/credentials"]
-  end
-  H -. compare .-> H2
-  PR -. compare .-> PR2
-  FL -. compare .-> FL2
-  H2 --> DEV["Deviation:\nalert"]
-  PR2 --> DEV
-  FL2 --> DEV
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd50b55aa57d.png" alt="diagram"></div></p>
 <p>Baselining is more powerful than a single allowlist dimension and correspondingly more work: you
 must handle <em>legitimate</em> drift (a new dependency that adds a compiler, a new registry mirror) without
 drowning in false positives every time a <code>package.json</code> changes. Two things make it survivable.
@@ -6457,19 +5935,7 @@ long-lived runners.</p>
 <strong>independent rebuild and compare.</strong> If a build is reproducible — same source, same inputs, byte-for-byte
 same output — then you can detect tampering <em>without ever inspecting the builder</em> by rebuilding the
 artifact on independent infrastructure and comparing digests.</p>
-<p><pre><code>sequenceDiagram
-  participant Src as Source (pinned commit)
-  participant B1 as Production builder
-  participant B2 as Independent rebuilder
-  participant Cmp as Comparator
-  Src->>B1: build
-  Src->>B2: rebuild (isolated, different infra)
-  B1->>Cmp: artifact digest A
-  B2->>Cmp: artifact digest B
-  Cmp->>Cmp: A == B ?
-  Note over Cmp: match -> no tamper detected
-  Note over Cmp: mismatch -> builder/cache/implant compromise
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_78a4d93ea1aa.png" alt="diagram"></div></p>
 <p>This is not theoretical. Debian's reproducible-builds effort and the <em>rebuilderd</em> project operate
 exactly this pipeline at distribution scale: rebuild published packages independently and flag any
 that do not reproduce. Applied to your own build, an independent rebuilder that disagrees with your
@@ -6484,19 +5950,7 @@ have caught Codecov?</p>
 <p>The malicious behavior, stripped to its network essence, was: the tampered Bash Uploader, running
 inside a customer's CI job, read the job's environment variables (secrets) and sent them via an
 outbound connection to an attacker-controlled host that the legitimate uploader never contacted.</p>
-<p><pre><code>flowchart TD
-  U["Codecov uploader\nruns in CI step"] --> ENV["Reads environment\n(secrets, tokens)"]
-  ENV --> OUT["Outbound connection\nto attacker host"]
-  subgraph Monitored["With build observability"]
-    OUT --> Q{"Host in egress\nallowlist?"}
-    Q -->|No| AL["ALERT:\nunexpected egress\n+ prior secret read\n= exfiltration"]
-    AL --> IR["Block / rotate / IR"]
-  end
-  subgraph Unmonitored["What actually happened"]
-    OUT --> SILENT["No egress monitoring\n-> silent for ~2 months"]
-    SILENT --> LUCK["Found by a customer's\nchecksum comparison"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_29fcf3c05515.png" alt="diagram"></div></p>
 <p>Every layer of this chapter would have caught it independently:</p>
 <ul>
 <li><strong>Egress allowlisting</strong> (Approach 1): the uploader contacted a host outside the tiny set a coverage
@@ -6523,25 +5977,7 @@ investigate later. On an ephemeral runner <strong>there is no later</strong>: th
 is destroyed and every process list, every open-file record, every connection log dies with it. The
 telemetry must be <strong>streamed out in real time, during the job</strong>, to a central platform, or it does not
 exist when you need it.</p>
-<p><pre><code>flowchart LR
-  subgraph R1["Ephemeral runner (job 1)"]
-    A1["eBPF agent"] --> S1["Log shipper"]
-  end
-  subgraph R2["Ephemeral runner (job 2)"]
-    A2["eBPF agent"] --> S2["Log shipper"]
-  end
-  subgraph R3["Ephemeral runner (job N)"]
-    A3["eBPF agent"] --> S3["Log shipper"]
-  end
-  S1 --> COL["Collector /\nlog pipeline"]
-  S2 --> COL
-  S3 --> COL
-  COL --> SIEM["SIEM /\nlog platform"]
-  SIEM --> DET["Detection +\nbaselines"]
-  DET --> AL["Alerts"]
-  R1 -. destroyed after job .-> X1["(gone)"]
-  R2 -. destroyed after job .-> X2["(gone)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8c7bd39c316b.png" alt="diagram"></div></p>
 <p>Concretely: run the eBPF agent (Falco, Tetragon, Harden-Runner) as a sidecar or DaemonSet co-located
 with the runner, and have it push events continuously to a collector — a Fluent Bit / Vector /
 OpenTelemetry pipeline, or the agent's native sink — that lands them in a SIEM (Splunk, Elastic,
@@ -6692,6 +6128,10 @@ platform</strong>, and it has the same shape as production observability:</p>
   are the SLOs of the detective program. The goal is endogenous detection at single-build-run timescale,
   not a customer's incident two months later.</li>
 </ul>
+<h3 id="build-observability-pillars">Build observability pillars</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_edb72535300c.png" alt="diagram"></div></p>
+<h3 id="detecting-anomalous-builds">Detecting anomalous builds</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1e3ff406f0f1.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>CISA / Mandiant (FireEye) — SolarWinds SUNBURST and SUNSPOT analysis.</strong> CrowdStrike's technical
@@ -6826,39 +6266,7 @@ and no amount of policy enforcement saves you.</p>
 <h2 id="the-reference-architecture">The reference architecture</h2>
 <p>Here is the whole book, composed into one system. Every stage maps to a chapter; the platform's job
 is to own each stage so the tenant inherits it.</p>
-<p><pre><code>flowchart LR
-  subgraph Tenant["Tenant repo (application team)"]
-    SRC["Signed commits,<br/>branch protection,<br/>CODEOWNERS<br/>(Book 7)"]
-    CFG["Thin build config:<br/>uses: platform/build@vX"]
-  end
-
-  subgraph Platform["SECURE BUILD PLATFORM — tier-0 trust boundary"]
-    direction TB
-    TRIG["Trigger + trust classifier<br/>(trusted vs untrusted, Ch 7)"]
-    subgraph Exec["Ephemeral isolated build (Ch 2, Ch 8)"]
-      RUN["Single-use runner,<br/>hermetic inputs,<br/>egress-controlled (Ch 8-9)"]
-      WID["Workload identity /<br/>OIDC, no static secrets (Ch 6)"]
-    end
-    PROV["Provenance generator<br/>SLSA L3 (Ch 3)"]
-    SBOM["SBOM generator<br/>(Book 3 Ch 4)"]
-    SIGN["Keyless signing<br/>Fulcio/Rekor (Book 5)"]
-    OBS["Telemetry + anomaly<br/>detection (Ch 9)"]
-  end
-
-  subgraph Downstream["Downstream"]
-    REG["Internal registry<br/>(Book 2 Ch 8, Book 6 Ch 2)"]
-    ADM["Admission / deploy gate:<br/>verify signature +<br/>provenance + policy<br/>(Book 5 Ch 10, Book 6 Ch 6)"]
-    PROD["Production"]
-  end
-
-  SRC --> CFG --> TRIG --> RUN
-  WID -.-> RUN
-  RUN --> PROV --> SIGN
-  RUN --> SBOM --> SIGN
-  RUN -.-> OBS
-  SIGN --> REG --> ADM --> PROD
-  ADM -. "reject unverified" .-> STOP["Blocked"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a9c448d759d7.png" alt="diagram"></div></p>
 <p>Read the diagram left to right as a chain of custody, and notice that the tenant's contribution is
 tiny: signed source and a one-line build config. Everything inside the platform boundary is provided.</p>
 <p><strong>Source integrity (Book 7).</strong> The chain begins before the platform: the platform builds only from
@@ -7034,19 +6442,7 @@ individual pipeline, can quietly grant untrusted code the privileges of trusted 
 <p>A platform nobody uses secures nothing. Adoption is the whole game, and adoption is an
 organizational problem at least as much as a technical one. The technical lever is to make the
 secure path <em>dramatically</em> easier than rolling your own.</p>
-<p><pre><code>flowchart TD
-  T["App team"] -->|"uses: platform/build@v3"| GP["Golden pipeline<br/>(reusable workflow)"]
-  GP --> A["Ephemeral isolated build"]
-  GP --> B["Least-priv OIDC secrets"]
-  GP --> C["Provenance + SBOM + signing"]
-  GP --> D["Egress control + telemetry"]
-  A --> INH["Security inherited<br/>— team wrote none of it"]
-  B --> INH
-  C --> INH
-  D --> INH
-  INH --> SHIP["Artifact ships,<br/>verified at deploy"]
-  T -.->|"studies nothing"| INH
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e2fc0f821576.png" alt="diagram"></div></p>
 <h3 id="the-build-abstraction">The <code>build</code> abstraction</h3>
 <p>The unit of adoption is a <strong>thin abstraction</strong> that hides the security machinery. On GitHub Actions
 this is a <strong>reusable workflow</strong> or a small set of composite actions the platform team owns and
@@ -7291,15 +6687,7 @@ Ken Thompson's <em>Reflections on Trusting Trust</em> (Book 7, Chapter 5; Book 1
 6) at the level of an entire organization: a compromised builder can produce clean-looking
 attestations for backdoored artifacts, and the attestation machinery cannot detect its own
 subversion.</p>
-<p><pre><code>flowchart TD
-  ART["Tenant artifacts<br/>(everything the org ships)"] -->|"built and vouched for by"| BP["Build platform"]
-  BP -->|"is itself built by"| BB["Builder-of-the-builder<br/>(runner images, golden workflows,<br/>provenance generator)"]
-  BB -->|"anchored in"| TCB["Trusted Computing Base<br/>— minimal, external, verifiable"]
-  TCB -->|"grounded in"| ANCHOR["Trust anchors:<br/>reproducible base images,<br/>transparency log (Rekor),<br/>bootstrapping / diverse double-compilation,<br/>hardware root of trust"]
-
-  BP -. "recursion:<br/>who builds the builder?" .-> BB
-  BB -. "must bottom out somewhere" .-> TCB
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_33863f246b89.png" alt="diagram"></div></p>
 <p>You cannot escape the recursion — every builder is built by <em>some</em> prior builder — but you can
 <strong>bottom it out</strong> in a small, well-defended, externally-verifiable trust anchor, and you can shrink
 the trusted computing base you must take on faith:</p>
@@ -7332,21 +6720,7 @@ center of its supply chain.</p>
 <p>You do not build all of this at once, and you should not try. Book 1, Chapter 10 framed supply-chain
 programs as a maturity progression, and the build platform follows the same crawl/walk/run arc. Each
 level is independently valuable, shippable, and a prerequisite for the next.</p>
-<p><pre><code>flowchart LR
-  L1["L1 — Crawl<br/>Centralized CI +<br/>hardened templates +<br/>secret hygiene"] --> L2["L2 — Walk<br/>Ephemeral isolation +<br/>provenance L2 +<br/>SBOM + signing"]
-  L2 --> L3["L3 — Run<br/>Hermetic/reproducible +<br/>SLSA L3 + egress control +<br/>observability"]
-  L3 --> L4["L4 — Fly<br/>Verify-at-deploy +<br/>continuous compliance +<br/>anomaly detection"]
-
-  L1 -.->|"Ch 4-6"| M1[" "]
-  L2 -.->|"Ch 8, 3, 6; Bk3 Ch4; Bk5"| M2[" "]
-  L3 -.->|"Ch 2, 8, 9"| M3[" "]
-  L4 -.->|"Bk5 Ch10, Bk6, Bk8"| M4[" "]
-
-  style M1 fill:none,stroke:none
-  style M2 fill:none,stroke:none
-  style M3 fill:none,stroke:none
-  style M4 fill:none,stroke:none
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2f5e1509c479.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -7557,6 +6931,10 @@ for everything you ship.</p>
   and anchor trust in something small, external, and verifiable — the organizational answer to
   Trusting Trust.</li>
 </ul>
+<h3 id="secure-build-platform-reference-architecture">Secure build platform reference architecture</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_142cd9778024.png" alt="diagram"></div></p>
+<h3 id="platform-hardening-layers">Platform hardening layers</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_83465462e92d.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SLSA v1.0 — Build track and Threats &amp; mitigations.</strong> The normative basis for "everything built
