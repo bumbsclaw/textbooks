@@ -402,3 +402,49 @@ until then their paths are as listed above).
 - [x] 17.10 Tooling Deep Dive: Race Detector, pprof, execution trace, and vet — `ch10-tooling.md`
 - [x] 17.11 cgo, Assembly, and Foreign-Function Interoperability — `ch11-cgo-assembly.md`
 - [x] 17.12 Production Go: Cross-Compilation, Workspaces, Telemetry, and Deployment at Scale — `ch12-production.md`
+
+## Volume 18 — Java, Kotlin, and the JVM (`vol-18-jvm-kotlin/`)
+
+- [ ] 18.01 The JVM Architecture: Classfiles, Bytecode, and the Execution Model — `ch01-jvm-architecture.md`
+- [ ] 18.02 Class Loading, Linking, Verification, and Modules (JPMS) — `ch02-class-loading.md`
+- [ ] 18.03 The Java Memory Model, Object Layout, and Heap Organization — `ch03-jmm-object-layout.md`
+- [ ] 18.04 Garbage Collection: Serial, Parallel, G1, ZGC, Shenandoah, and Generational ZGC — `ch04-garbage-collection.md`
+- [ ] 18.05 The JIT: Interpreters, C1, C2, and Graal — Deoptimization, Inlining, and Intrinsics — `ch05-jit-compilation.md`
+- [ ] 18.06 Concurrency on the JVM: Threads, Monitors, VarHandles, Loom, and Structured Concurrency — `ch06-concurrency-loom.md`
+- [ ] 18.07 Kotlin on the JVM: Interop, Null-Safety, Coroutines, and Compiler Intrinsics — `ch07-kotlin-interop.md`
+- [ ] 18.08 The Kotlin Type System, Generics, and Reified Types — `ch08-kotlin-type-system.md`
+- [ ] 18.09 Build Tooling, Dependency Management, and the Module/Artifact Ecosystem — `ch09-build-tooling.md`
+- [ ] 18.10 Profiling, Observability, and Performance Tuning (JFR, async-profiler, JMC, heap dumps) — `ch10-profiling-observability.md`
+- [ ] 18.11 Native Interop: JNI, Panama (FFM), and GraalVM Native Image — `ch11-native-interop.md`
+- [ ] 18.12 Production JVM: Container-Aware Tuning, GC Sizing, Class-Data Sharing, and Deployment at Scale — `ch12-production-jvm.md`
+
+## Volume 19 — JavaScript, Node.js, and Frontend Frameworks (`vol-19-javascript-frontend/`)
+
+- [ ] 19.01 JavaScript Engines: V8, SpiderMonkey, JavaScriptCore — Parsing, Hidden Classes, Inline Caches — `ch01-js-engines.md`
+- [ ] 19.02 The Event Loop, Microtasks, Macrotasks, and Timers — Browser vs Node — `ch02-event-loop.md`
+- [ ] 19.03 Node.js Internals: libuv, the Thread Pool, and Native Addons — `ch03-nodejs-internals.md`
+- [ ] 19.04 The JavaScript Type System, Prototypes, Proxies, and the Module System (ESM/CJS) — `ch04-type-system-modules.md`
+- [ ] 19.05 Async JavaScript: Promises, async/await, Generators, and the Promise Job Queue — `ch05-async-promises.md`
+- [ ] 19.06 Build Tooling and Bundlers: RSPack, Vite, esbuild — Treeshaking, Code Splitting, HMR — `ch06-bundlers-tooling.md`
+- [ ] 19.07 React Internals: The Fiber Reconciler, Hooks, Suspense, and Concurrent Features — `ch07-react-internals.md`
+- [ ] 19.08 Vue and Svelte Internals: Reactivity, Virtual DOM vs Compiled Output — `ch08-vue-svelte-internals.md`
+- [ ] 19.09 Rendering at Scale: SSR, SSG, ISR, Streaming SSR, Hydration, Islands — `ch09-rendering-strategies.md`
+- [ ] 19.10 State Management, Data Fetching, and Caching — `ch10-state-data-fetching.md`
+- [ ] 19.11 Testing, Linting, and Tooling for Frontend at Scale — `ch11-testing-tooling.md`
+- [ ] 19.12 Production Frontend: Observability, Performance, and Deployment — `ch12-production-frontend.md`
+
+## Volume 20 — Rust for Backend Systems (`vol-20-rust-backend/`)
+
+- [ ] 20.01 Rust Architecture: Toolchain, Crates, and the Compilation Model — `ch01-rust-architecture.md`
+- [ ] 20.02 Ownership, Borrowing, and the Borrow Checker — The Core Invariants — `ch02-ownership-borrow-checker.md`
+- [ ] 20.03 Lifetimes, Variance, and Interior Mutability — `ch03-lifetimes-variance.md`
+- [ ] 20.04 Traits, Generics, and Monomorphization — `ch04-traits-generics.md`
+- [ ] 20.05 Async Rust: Futures, Pin/Unpin, the Tokio Runtime, and Work-Stealing — `ch05-async-tokio.md`
+- [ ] 20.06 Memory Management: Ownership vs Arc/Mutex, Allocators, and Zero-Copy — `ch06-memory-allocators.md`
+- [ ] 20.07 Error Handling, Panics, and Unsafe Rust — `ch07-error-unsafe.md`
+- [ ] 20.08 Concurrency Primitives: Send/Sync, Atomics, Channels, and Lock-Free — `ch08-concurrency-primitives.md`
+- [ ] 20.09 Macros, Procedural Macros, and Code Generation — `ch09-macros-codegen.md`
+- [ ] 20.10 FFI, Native Extensions, and Polyglot Interop — `ch10-ffi-interop.md`
+- [ ] 20.11 Testing, Linting, and Tooling — `ch11-testing-linting.md`
+- [ ] 20.12 Production Rust: Cross-Compilation, Workspaces, Telemetry, and Deployment at Scale — `ch12-production-rust.md`
+

@@ -39,6 +39,9 @@ VOLUMES = [
     ("vol-15-swe-practice",                "Software Engineering Practice"),
     ("vol-16-python-cpython-internals",      "Python and CPython Internals"),
     ("vol-17-go-internals",                  "Golang and Go Internals"),
+    ("vol-18-jvm-kotlin",                      "Java, Kotlin, and the JVM"),
+    ("vol-19-javascript-frontend",             "JavaScript, Node.js, and Frontend Frameworks"),
+    ("vol-20-rust-backend",                    "Rust for Backend Systems"),
 ]
 
 COMPANION = [

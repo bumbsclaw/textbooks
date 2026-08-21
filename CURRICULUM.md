@@ -38,7 +38,7 @@ is a prerequisite for SRE (Vol 11). Chapters note these explicitly.
 - **Part III — Security:** Vol 9 (Security/Auth/Crypto) + Companion Series (supply-chain depth)
 - **Part IV — Systems:** Vol 7 (System Design), Vol 8 (APIs), Vol 10 (Messaging), Vol 12 (Cloud/Infra), Vol 11 (Reliability/SRE)
 - **Part V — Fundamentals:** Vol 13 (Runtimes), Vol 14 (Algorithms), Vol 15 (SWE Practice)
-- **Part VI — Language Internals:** Vol 16 (Python/CPython), Vol 17 (Go)
+- **Part VI — Language Internals:** Vol 16 (Python/CPython), Vol 17 (Go), Vol 18 (Java/Kotlin/JVM), Vol 19 (JavaScript/Node/Frontend), Vol 20 (Rust)
 
 ## Volumes — At a Glance
 
@@ -63,8 +63,12 @@ is a prerequisite for SRE (Vol 11). Chapters note these explicitly.
 | 15 | Software Engineering Practice | 10 | Testing (3 ch), design docs, DDD, patterns, refactoring, code review, teams |
 | 16 | Python and CPython Internals | 12 | Source→bytecode, ceval, objects, GIL/free-threading, types, GC/pymalloc, import, C API, JIT |
 | 17 | Golang and Go Internals | 12 | Toolchain, types/generics, ABI/defer, scheduler/GC, memory model, interfaces, channels, SSA, tooling, cgo |
+| 18 | Java, Kotlin, and the JVM | 12 | Bytecode/classfile, classloading, memory/GC, JIT tiered, concurrency/loom, Kotlin interop, build tooling |
+| 19 | JavaScript, Node.js, and Frontend Frameworks | 12 | Engines (V8/JSC), event loop, async, bundles, React/Vue reactivity & rendering, SSR/hydration, prod deploy |
+| 20 | Rust for Backend Systems | 12 | Ownership/borrow checker, lifetimes, async/tokio, traits/generics, memory/allocators, FFI & prod |
 
-**Main library total:** ~166 chapters (Vols 1–17 + 8-ch Essentials). Companion adds 75 ch for reference. Vols 16–17 are post-Vol-13 deep dives.
+
+**Main library total:** ~202 chapters (Vols 1–20 + 8-ch Essentials). Companion adds 75 ch for reference. Vols 16–20 are post-Vol-13 deep dives.
 
 ---
 
@@ -348,3 +352,55 @@ The Companion is the specialist reference. Vol 9 ch 11 and Vol 12 ch 4 cross-ref
 12. Production Go: Cross-Compilation, Workspaces, Telemetry, and Deployment at Scale
 
 > **Dependency note:** Vol 13 ch02 is the prerequisite service-level view of the Go runtime. Vol 17 is the internals deep dive (toolchain → SSA → runtime → tooling). Vol 4 (Concurrency) and Vol 1 ch02 (CPU pipelining) are useful background for the scheduler and compiler chapters.
+
+## Volume 18 — Java, Kotlin, and the JVM
+
+1. The JVM Architecture: Classfiles, Bytecode, and the Execution Model
+2. Class Loading, Linking, Verification, and Modules (JPMS)
+3. The Java Memory Model, Object Layout, and Heap Organization
+4. Garbage Collection: Serial, Parallel, G1, ZGC, Shenandoah, and Generational ZGC
+5. The JIT: Interpreters, C1, C2, and Graal — Deoptimization, Inlining, and Intrinsics
+6. Concurrency on the JVM: Threads, Monitors, VarHandles, Loom, and Structured Concurrency
+7. Kotlin on the JVM: Interop, Null-Safety, Coroutines, and Compiler Intrinsics
+8. The Kotlin Type System, Generics, and Reified Types
+9. Build Tooling, Dependency Management, and the Module/Artifact Ecosystem (Maven, Gradle, sbt)
+10. Profiling, Observability, and Performance Tuning (JFR, async-profiler, JMC, heap dumps)
+11. Native Interop: JNI, Panama (FFM), and GraalVM Native Image
+12. Production JVM: Container-Aware Tuning, GC Sizing, Class-Data Sharing, and Deployment at Scale
+
+> **Dependency note:** Vol 13 ch01 is the prerequisite service-level view of the JVM. Vol 18 is the internals deep dive. Vol 1 (Architecture), Vol 2 (OS/Linux), and Vol 4 (Concurrency) are useful background for memory layout, GC, and the JMM.
+
+## Volume 19 — JavaScript, Node.js, and Frontend Frameworks
+
+1. JavaScript Engines: V8, SpiderMonkey, and JavaScriptCore — Parsing, Hidden Classes, and Inline Caches
+2. The Event Loop, Microtasks, Macrotasks, and Timers — Browser vs Node
+3. Node.js Internals: libuv, the Thread Pool, and Native Addons (N-API, napi-rs)
+4. The JavaScript Type System, Prototypes, Proxies, and the Module System (ESM/CJS)
+5. Async JavaScript: Promises, async/await, Generators, and the Promise Job Queue
+6. Build Tooling and Bundlers: RSPack, Vite, esbuild — Treeshaking, Code Splitting, and HMR
+7. React Internals: The Fiber Reconciler, Hooks, Suspense, and Concurrent Features
+8. Vue and Svelte Internals: Reactivity (Proxy vs Signals vs Compile-Time), Virtual DOM vs Compiled Output
+9. Rendering at Scale: SSR, SSG, ISR, Streaming SSR, Hydration, Islands, and Partial Hydration
+10. State Management, Data Fetching, and Caching (TanStack Query, SWR, Zustand/Jotai, cache invalidation)
+11. Testing, Linting, and Tooling for Frontend at Scale (Vitest, Playwright, ESLint, TypeScript)
+12. Production Frontend: Observability, Performance (Core Web Vitals, Lighthouse), and Deployment (CDN, Edge, RSC)
+
+> **Dependency note:** Vol 13 ch06 (Python/Node) and Vol 3 ch04 (HTTP) set context; Vol 19 is the full-stack deep dive. Vol 8 (APIs) and Vol 11 (SRE) complement the prod chapters.
+
+## Volume 20 — Rust for Backend Systems
+
+1. Rust Architecture: Toolchain, Crates, and the Compilation Model (rustc, Cargo, rustup)
+2. Ownership, Borrowing, and the Borrow Checker — The Core Invariants
+3. Lifetimes, Variance, and Interior Mutability (Cell, RefCell, OnceLock)
+4. Traits, Generics, and Monomorphization — Dynamic vs Static Dispatch
+5. Async Rust: Futures, Pin/Unpin, the Tokio Runtime, and Work-Stealing
+6. Memory Management: Ownership vs Arc/Mutex, Allocators (jemalloc, mimalloc, tcmalloc), and Zero-Copy
+7. Error Handling, Panics, and Unsafe Rust — Soundness, Miri, and Fuzzing
+8. Concurrency Primitives: Send/Sync, Atomics, Channels, and Lock-Free Structures
+9. Macros, Procedural Macros, and Code Generation — Build Scripts and build.rs
+10. FFI, Native Extensions, and Polyglot Interop (C, Python, Node, WASM)
+11. Testing, Linting, and Tooling (clippy, rustfmt, cargo-audit, criterion, cargo-nextest, Miri)
+12. Production Rust: Cross-Compilation, Workspaces, Telemetry, and Deployment at Scale
+
+> **Dependency note:** Vol 13 ch03 is the prerequisite service-level survey of Rust. Vol 20 is the internals deep dive. Vol 1 (Architecture) and Vol 4 (Concurrency) help with ownership/memory and async.
+
