@@ -479,3 +479,6 @@ Batch 43 — 2026-08-21: Vol20 ch01 (retry-5, finally landed) + Vol19 ch03 fix (
 Batch 44 — 2026-08-21: Vol18 ch07 + Vol20 ch03 expanded to gate (batch 3a interim).
 - Vol18 ch07 Kotlin Interop (properties/data class, null-safety, coroutines state machine, reified, 6,011w, 8 mermaid — was 5,305)
 - Vol20 ch03 Lifetimes/Variance/Interior Mutability (elision, HRTB, RefCell state, 6,320w, 8 mermaid — was 5,651)
+
+Batch 45 — 2026-08-21: Vol18 ch08 landed (batch 3b — 1 ch).
+- Vol18 ch08 Kotlin Types/Generics/Reified (nullable/platform types, variance in/out, reified, star projection, 9,352w, 7 mermaid)
