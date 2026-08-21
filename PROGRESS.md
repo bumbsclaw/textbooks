@@ -482,3 +482,6 @@ Batch 44 — 2026-08-21: Vol18 ch07 + Vol20 ch03 expanded to gate (batch 3a inte
 
 Batch 45 — 2026-08-21: Vol18 ch08 landed (batch 3b — 1 ch).
 - Vol18 ch08 Kotlin Types/Generics/Reified (nullable/platform types, variance in/out, reified, star projection, 9,352w, 7 mermaid)
+
+Batch 46 — 2026-08-21: Vol20 ch01 resolved (competing writes — kept latest 6,050w short-prompt version).
+- Vol20 ch01 Rust Architecture (kept 6,050w / 7 mermaid — 45cf6f08's 8,301w overwritten by 80cb's leaner version; both >= 6k, using concise)
