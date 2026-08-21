@@ -455,3 +455,10 @@ Batch 39 — 2026-08-21: Vol18 ch01-ch03 + Vol19 ch01-ch02 landed (batch 1/6 of 
 - Vol18 ch03 JMM/Object Layout (happens-before, visibility, safe publication, mark word, TLAB, ~9.1k words, 8 mermaid)
 - Vol19 ch01 JS Engines (V8 Ignition/Maglev/TurboFan, hidden classes/ICs, SpiderMonkey/JSC, ~6.6k words, 8 mermaid)
 - Vol19 ch02 Event Loop (browser vs libuv phases, microtasks, starvation, ~7.1k words, 8 mermaid — trimmed gantt)
+
+Batch 40 — 2026-08-21: Vol18 ch04-ch06 + Vol19 ch04 + Vol20 ch02 landed (batch 2/6 — 5 ch retry pending 2).
+- Vol18 ch04 GC (Serial→G1→ZGC/Shenandoah/Gen ZGC, Xlog, 9,428w, 8 mermaid)
+- Vol18 ch05 JIT (interpreter/C1/C2/Graal, deopts, compilation logs, 7,199w, 7 mermaid)
+- Vol18 ch06 Concurrency/Loom (monitors, VarHandle, carrier vs virtual, AQS, 7,171w, 8 mermaid)
+- Vol19 ch04 Types/Prototypes/Modules (coercion, prototype chain, Proxy, CJS vs ESM, 10,833w, 8 mermaid)
+- Vol20 ch02 Ownership/Borrow Checker (move, Copy/Clone, NLL/Polonius, 7,743w, 7 mermaid)
