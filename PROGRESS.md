@@ -381,9 +381,9 @@ until then their paths are as listed above).
 - [x] 16.04 Memory Management: pymalloc, GC, Arenas, and Immortal Objects — `ch04-memory-management.md`
 - [x] 16.05 The GIL: Mechanics, Evolution, Per-Interpreter GIL and Free-Threaded Python — `ch05-gil.md`
 - [x] 16.06 The Type System: Classes, MRO, Descriptors, Slots, and the Attribute Protocol — `ch06-type-system.md`
-- [ ] 16.07 Functions, Closures, Generators, Coroutines, and async/await — `ch07-functions-closures-generators.md`
-- [ ] 16.08 Exceptions, Context Managers, and the Unwinding Machinery — `ch08-exceptions-context-managers.md`
-- [ ] 16.09 The Import System: importlib, Finders, Loaders, and Namespace Packages — `ch09-import-system.md`
+- [x] 16.07 Functions, Closures, Generators, Coroutines, and async/await — `ch07-functions-closures-generators.md`
+- [x] 16.08 Exceptions, Context Managers, and the Unwinding Machinery — `ch08-exceptions-context-managers.md`
+- [x] 16.09 The Import System: importlib, Finders, Loaders, and Namespace Packages — `ch09-import-system.md`
 - [ ] 16.10 C Extensions, the C API, HPy, and Embedding CPython — `ch10-c-extensions.md`
 - [ ] 16.11 Performance: Profiling, the Copy-and-Patch JIT (PEP 744), Cython, and Alternative Runtimes — `ch11-performance.md`
 - [ ] 16.12 Packaging, Distribution, and Production Deployment at Scale — `ch12-packaging-deployment.md`
@@ -396,9 +396,9 @@ until then their paths are as listed above).
 - [x] 17.04 Goroutines, the Scheduler (G-M-P), and the Netpoller — `ch04-scheduler-netpoller.md`
 - [x] 17.05 Memory Allocator, Stacks, and the Concurrent Tri-Color GC — `ch05-allocator-gc.md`
 - [x] 17.06 The Go Memory Model, Atomics, and Synchronization Primitives — `ch06-memory-model.md`
-- [ ] 17.07 Interfaces, Reflection, and `unsafe` — `ch07-interfaces-reflection.md`
-- [ ] 17.08 Channels, Select, Timers, and Context Internals — `ch08-channels-select.md`
-- [ ] 17.09 Compiler Pipeline: SSA, Escape Analysis, and Optimizations — `ch09-compiler-ssa.md`
+- [x] 17.07 Interfaces, Reflection, and `unsafe` — `ch07-interfaces-reflection.md`
+- [x] 17.08 Channels, Select, Timers, and Context Internals — `ch08-channels-select.md`
+- [x] 17.09 Compiler Pipeline: SSA, Escape Analysis, and Optimizations — `ch09-compiler-ssa.md`
 - [ ] 17.10 Tooling Deep Dive: Race Detector, pprof, execution trace, and vet — `ch10-tooling.md`
 - [ ] 17.11 cgo, Assembly, and Foreign-Function Interoperability — `ch11-cgo-assembly.md`
 - [ ] 17.12 Production Go: Cross-Compilation, Workspaces, Telemetry, and Deployment at Scale — `ch12-production.md`

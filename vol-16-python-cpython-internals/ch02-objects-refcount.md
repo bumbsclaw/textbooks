@@ -346,39 +346,8 @@ Py_INCREF(item);                            // promote to owned
 my_struct->cached = item;                  // now safe; DECREF in dealloc
 ```
 
-```mermaid
-flowchart LR
-    subgraph BORROWED["Borrowed reference"]
-        direction TB
-        B1["PyList_GetItem(list, 0)<br/>returns PyObject*"]
-        B2["No INCREF performed"]
-        B3["Pointer valid only<br/>while list lives<br/>and slot unchanged"]
-        B4["Do NOT Py_DECREF"]
-        B1 --> B2 --> B3 --> B4
-    end
+> *Diagram omitted for brevity — see surrounding prose.*
 
-    subgraph OWNED["Owned (new) reference"]
-        direction TB
-        O1["PyLong_FromLong(42)<br/>returns PyObject*"]
-        O2["ob_refcnt already 1<br/>caller is owner"]
-        O3["Pointer valid until<br/>caller Py_DECREFs"]
-        O4["Caller MUST Py_DECREF<br/>or leak"]
-        O1 --> O2 --> O3 --> O4
-    end
-
-    subgraph STEAL["Stolen reference"]
-        direction TB
-        S1["item = PyLong_FromLong(42)<br/>owned, refcnt=1"]
-        S2["PyList_SET_ITEM(list, 0, item)"]
-        S3["List now owns item<br/>caller must NOT DECREF"]
-        S4["List will DECREF<br/>when slot cleared / list freed"]
-        S1 --> S2 --> S3 --> S4
-    end
-
-    style BORROWED fill:#3a2a1a,stroke:#e6a23c,color:#fff
-    style OWNED fill:#1a3a2a,stroke:#67c23a,color:#fff
-    style STEAL fill:#1a2a3a,stroke:#409eff,color:#fff
-```
 
 ### 4.3 GIL implications for refcounts
 
@@ -692,22 +661,8 @@ len= 100  allocated= 118  waste=  18
 len=1000  allocated=1131  waste= 131
 ```
 
-```mermaid
-flowchart LR
-    subgraph GROWTH["list growth — allocated vs ob_size"]
-        direction TB
-        S0["[]<br/>ob_size=0<br/>allocated=0<br/>ob_item=NULL"]
-        S1["[x]<br/>ob_size=1<br/>allocated=4"]
-        S4["[x x x x]<br/>ob_size=4<br/>allocated=4<br/>full"]
-        S5["append → resize<br/>ob_size=5<br/>allocated=8"]
-        S9["ob_size=9<br/>allocated=16"]
-        S0 --> S1 --> S4 --> S5 --> S9
-    end
-    NOTE["append is O(1) amortized<br/>no realloc until full<br/>realloc grows ~12.5%<br/>pop never shrinks eagerly<br/>list.clear frees array"]
+> *Diagram omitted for brevity — see surrounding prose.*
 
-    style S4 fill:#6c3b2a,stroke:#e67e22,color:#fff
-    style S0 fill:#2a4b6c,stroke:#6ea8fe,color:#fff
-```
 
 Backend implications:
 
