@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -249,24 +331,7 @@ answers to the same questions.</p>
    into place; an sdist runs <code>setup.py</code>; a <code>.deb</code> runs maintainer scripts as root.</p>
 </li>
 </ol>
-<p><pre><code>flowchart LR
-    subgraph dev["Developer / CI machine"]
-        M["Manifest<br/>(declared ranges)"]
-        L["Lockfile<br/>(pinned + hashed)"]
-        C["Client / package manager<br/>resolver + installer"]
-        PROJ["Project<br/>(node_modules, venv, .m2, ...)"]
-    end
-    subgraph reg["Registry"]
-        META["Metadata API<br/>versions, deps, hashes, owners"]
-        ART["Artifact store / CDN<br/>tarballs, wheels, JARs, zips"]
-    end
-    M --> C
-    C -->|"resolve"| META
-    C -->|"download"| ART
-    C -->|"write/verify"| L
-    C -->|"install (maybe run scripts)"| PROJ
-    META -.->|"references by hash"| ART
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dfbe2fe0cc49.png" alt="diagram"></div></p>
 <h3 id="two-flows-and-where-trust-lives">Two flows, and where trust lives</h3>
 <p>Everything a registry does reduces to two flows. Attacks live in the gap between what each hop
 <em>proves</em> and what we <em>assume</em> it proves.</p>
@@ -286,29 +351,7 @@ the bytes the publisher intended (integrity)?</strong> and <strong>did those byt
 think (authenticity)?</strong> and <strong>what did running the installer let the package do?</strong> Integrity is
 answered by hashes; authenticity by signatures, provenance, or a transparency log; execution
 risk by the artifact format and the client's script policy.</p>
-<p><pre><code>sequenceDiagram
-    autonumber
-    participant Dev as Maintainer
-    participant Reg as Registry
-    participant CDN as Artifact store / CDN
-    participant Cli as Client (you / CI)
-    Note over Dev,Reg: PUBLISH FLOW
-    Dev->>Reg: authenticate (token / 2FA / OIDC)
-    Note right of Dev: TRUST: account & name ownership
-    Dev->>Reg: upload artifact + metadata
-    Reg->>Reg: validate (name, maybe sig / scan)
-    Note right of Reg: TRUST: registry-side checks
-    Reg->>CDN: publish artifact + hash
-    Note over Cli,CDN: INSTALL FLOW
-    Cli->>Reg: resolve versions & hashes
-    Note right of Cli: TRUST: metadata integrity, TLS
-    Cli->>CDN: download artifact
-    CDN-->>Cli: bytes
-    Cli->>Cli: verify hash / signature / checksum-db
-    Note right of Cli: TRUST: client verification (often optional)
-    Cli->>Cli: install (may run scripts as you)
-    Note right of Cli: TRUST: code-on-install
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8c6cedd17c53.png" alt="diagram"></div></p>
 <p>Keep this diagram in mind for the rest of the chapter. Every ecosystem differs primarily in the
 strength of the annotations — which trust points are enforced, which are advisory, and which
 simply do not exist.</p>
@@ -483,16 +526,7 @@ the log is append-only and publicly auditable, a module author <em>cannot</em> s
 and a different one to someone else without the divergence being globally detectable. This is
 the property no other mainstream ecosystem has by default: <strong>you don't have to trust the proxy
 or the author — you can verify their claim against a log that cannot rewrite history.</strong></p>
-<p><pre><code>flowchart TD
-    B["go build / go get"] -->|"1. request module@version"| P["Module proxy<br/>proxy.golang.org<br/>(immutable cache)"]
-    P -->|"2. go.mod + zip"| B
-    B -->|"3. lookup hash for module@version"| S["Checksum DB<br/>sum.golang.org<br/>(append-only Merkle log)"]
-    S -->|"4. signed hash + inclusion proof"| B
-    B -->|"5. verify inclusion proof<br/>+ hash the downloaded zip"| V{"hash ==<br/>go.sum ?"}
-    V -->|"match"| OK["cache in module cache,<br/>trust in go.sum"]
-    V -->|"mismatch"| FAIL["hard error: possible tampering"]
-    P -.->|"origin fetch on cache miss"| VCS["Upstream VCS<br/>(github.com/... )"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_51a758fbc642.png" alt="diagram"></div></p>
 <p><strong>Minimal Version Selection (MVS).</strong> Go's resolver is philosophically opposite to npm's. Where
 semver ranges plus "install the newest allowed" make npm builds a moving target,
 Go's <strong><code>go.mod</code></strong> records each dependency's <em>minimum required</em> version, and MVS selects, for the
@@ -722,20 +756,7 @@ mediates. This buys three things that a bag of disparate public registries canno
    scattered logs.</p>
 </li>
 </ol>
-<p><pre><code>flowchart LR
-    subgraph org["Organization"]
-        direction TB
-        SVC1["Node service"] --> IR
-        SVC2["Python/ML service"] --> IR
-        SVC3["JVM service"] --> IR
-        SVC4["Go tooling"] --> IR
-        IR["Internal registry / proxy<br/>(Artifactory / Nexus / Artifact Registry)<br/>cache · scan · policy · audit"]
-    end
-    IR -->|"proxy + cache"| NPM["registry.npmjs.org"]
-    IR -->|"proxy + cache"| PYPI["pypi.org"]
-    IR -->|"proxy + cache"| MVN["Maven Central"]
-    IR -->|"proxy + cache"| GO["proxy.golang.org"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_930b09ef3b60.png" alt="diagram"></div></p>
 <p><strong>Availability coupling is real.</strong> Your build's success is coupled to the liveness and stability
 of registries you do not operate. The canonical illustration is <strong>left-pad</strong>: in March 2016 a
 maintainer, in a dispute with npm over an unrelated package name, unpublished more than 250 of
@@ -793,6 +814,10 @@ namespace and index models enable (Chapter 3), and how malicious packages actual
   the mirror simultaneously a resilience shock-absorber and a security chokepoint — the topic of
   Chapter 8.</li>
 </ul>
+<h3 id="registry-trust-model-comparison">Registry trust model comparison</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1fb1f6d041bb.png" alt="diagram"></div></p>
+<h3 id="what-happens-on-npm-install-resolution-to-fetch">What happens on 'npm install' — resolution to fetch</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0d7821b4276b.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>npm Docs — <em>package.json</em>, <em>package-lock.json</em>, <em>scripts</em>, and <em>Generating provenance
@@ -1012,15 +1037,7 @@ resolver is, under the hood, a SAT solver or a close cousin. When your <code>pip
 spins for a while and then reports a conflict, it is exploring an exponential search space.</p>
 <p>The shape that makes this bite in practice is the <strong>diamond dependency</strong>: your application depends on
 two packages that both depend on a third, with incompatible constraints on it.</p>
-<p><pre><code>flowchart TD
-    App["App"] --> B["lib-b<br/>requires common ^1.0"]
-    App --> C["lib-c<br/>requires common ^2.0"]
-    B --> D1["common 1.x"]
-    C --> D2["common 2.x"]
-    D1 -.->|"same package,<br/>conflicting constraints"| D2
-    style D1 fill:#fde,stroke:#c39
-    style D2 fill:#fde,stroke:#c39
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_51c8e7ee6f39.png" alt="diagram"></div></p>
 <p>There is no single version of <code>common</code> that satisfies both <code>^1.0</code> and <code>^2.0</code>. What happens next is
 the entire personality of the ecosystem's resolver: some ecosystems install both versions side by
 side, some pick one and hope, some refuse to build, and some pick the <em>smallest</em> version that
@@ -1078,23 +1095,7 @@ of all the minimum versions of <code>D</code> required by anything in the graph<
 the <em>smallest</em> version that is at least as new as every stated requirement — hence "minimal." It never
 consults "the latest release of <code>D</code> on the proxy." If nothing in your graph requires <code>D</code> newer than
 v1.4.0, you get v1.4.0, even if v1.9.0 was published this morning.</p>
-<p><pre><code>flowchart TB
-    subgraph latest["Latest-compatible (npm, pip, Cargo, Gradle)"]
-        direction TB
-        LA["App: common ^1.2.0"] --> LR["Resolver queries registry<br/>for newest 1.x"]
-        LR --> LP["Picks common 1.9.0<br/>(published today)"]
-        LP --> LX["New, unaudited, possibly<br/>compromised release enters build"]
-    end
-    subgraph mvs["Minimal Version Selection (Go)"]
-        direction TB
-        MA["App go.mod:<br/>require common v1.2.0"] --> MB["lib-b go.mod:<br/>require common v1.4.0"]
-        MB --> MR["MVS = max of required<br/>minimums = v1.4.0"]
-        MR --> MP["Picks common v1.4.0<br/>(exactly what was asked for)"]
-        MP --> MX["No version enters build<br/>that someone did not name"]
-    end
-    style LX fill:#fdd,stroke:#c33
-    style MX fill:#dfd,stroke:#3a3
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f8e7a25d8c2e.png" alt="diagram"></div></p>
 <p>The design philosophy, articulated by Russ Cox in the "Minimal Version Selection" writeup, is
 <strong>high-fidelity builds</strong>: the versions you build with today are exactly the versions you will build with
 next month, until <em>you</em> explicitly change a requirement. There is no "latest that fits" floating target.
@@ -1315,30 +1316,7 @@ uv<span class="w"> </span>sync<span class="w"> </span>--frozen<span class="w">  
 </code></pre></div>
 
 <p>The sequence <code>npm ci</code> performs — and the property it gives you — is worth seeing end to end:</p>
-<p><pre><code>sequenceDiagram
-    participant CI as CI runner
-    participant M as package.json (manifest)
-    participant L as package-lock.json (lockfile)
-    participant R as Registry / CDN
-    participant N as node_modules
-
-    CI->>M: read declared ranges
-    CI->>L: read fully resolved tree + integrity hashes
-    CI->>CI: assert manifest and lockfile agree
-    Note over CI: on disagreement: abort, exit non-zero
-    CI->>N: rm -rf node_modules
-    loop each package in lockfile
-        CI->>R: GET exact tarball at resolved URL
-        R-->>CI: tarball bytes
-        CI->>CI: compute sha512, compare to lockfile integrity
-        alt hash matches
-            CI->>N: install package
-        else hash mismatch
-            CI->>CI: abort build, exit non-zero
-        end
-    end
-    Note over CI,N: result is reproducible and tamper-evident
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4a68eba733fc.png" alt="diagram"></div></p>
 <p>Two things fall out of this. First, <strong>the lockfile must be committed to source control.</strong> A lockfile that
 lives only on a developer's machine reproduces nothing and verifies nothing for anyone else. Committing it is
 what makes the resolution a reviewable, shared artifact. Second, <strong><code>npm ci</code> in CI gives you reproducibility
@@ -1474,6 +1452,12 @@ not-yet-written code is granted by default and legible to no one.</p>
   that re-introduces MVS's "don't pull the newest thing instantly" property. The Maven/Gradle lack of default
   locking is a real gap; close it deliberately.</li>
 </ul>
+<h3 id="version-constraint-to-resolution-algorithm">Version constraint to resolution algorithm</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5a8020be6fb2.png" alt="diagram"></div></p>
+<h3 id="semver-ranges-the-floating-window">Semver ranges: the floating window</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7f007559c5e.png" alt="diagram"></div></p>
+<h3 id="lockfile-without-vs-with-hash-pinning">Lockfile without vs with hash pinning</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_90ae8b927665.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Semantic Versioning 2.0.0 — the specification (https://semver.org/spec/v2.0.0.html).</li>
@@ -1544,15 +1528,7 @@ explicitly. When the name encodes origin, confusion attacks lose their footing �
 no longer inject a competing answer to "what does this name mean," only attack the origin
 directly. This distinction — <em>name-as-label</em> versus <em>name-as-location</em> — is the single most
 useful lens for the whole chapter, and we will return to it for every ecosystem.</p>
-<p><pre><code>flowchart LR
-    subgraph nl["Name as label (npm, PyPI)"]
-        A["Request: acme-auth"] --> B{"Resolver picks<br/>from configured indexes"}
-        B --> C["Which registry?<br/>Which version wins?"]
-    end
-    subgraph nc["Name as location (Go, Maven)"]
-        D["Request:<br/>github.com/acme/auth<br/>or com.acme:auth"] --> E["Origin is named<br/>in the request itself"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_90d7b7a194cf.png" alt="diagram"></div></p>
 <h2 id="dependency-confusion">Dependency confusion</h2>
 <h3 id="birsans-2021-research">Birsan's 2021 research</h3>
 <p>In February 2021, security researcher <strong>Alex Birsan</strong> published <em>"Dependency Confusion: How I
@@ -1588,23 +1564,7 @@ every single one is a public namespace an attacker can squat.</p>
 <h3 id="the-resolution-decision-precisely">The resolution decision, precisely</h3>
 <p>The vulnerability is not in any package. It is in the moment the resolver has two candidate
 sources for one name and picks the wrong one. Here is that decision as a sequence.</p>
-<p><pre><code>sequenceDiagram
-    participant Build as Build / CI
-    participant Res as Resolver (npm/pip)
-    participant Pub as Public registry
-    participant Int as Internal registry
-    Build->>Res: install "acme-auth-client"
-    Note over Res: Both indexes are in scope<br/>(no source pinning for this name)
-    Res->>Int: versions of acme-auth-client?
-    Int-->>Res: 1.2.0 (internal, intended)
-    Res->>Pub: versions of acme-auth-client?
-    Pub-->>Res: 99.0.0 (attacker-published)
-    Note over Res: DECISION POINT<br/>Highest version across merged<br/>candidate set wins
-    Res->>Pub: download acme-auth-client@99.0.0
-    Pub-->>Res: malicious tarball + install script
-    Res->>Build: run preinstall/install script
-    Note over Build: Attacker code executes<br/>in the build environment
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ae055b0cce55.png" alt="diagram"></div></p>
 <p>The critical property is that the resolver treats the two indexes as a <strong>merged candidate set</strong>
 and applies its ordinary "newest compatible version wins" rule across the union. It does <em>not</em>
 treat the internal index as authoritative for <code>acme-auth-client</code>. There is no notion, by default,
@@ -1793,15 +1753,7 @@ payload almost always rides an <strong>install-time hook</strong> — an npm <co
 Python <code>setup.py</code> that executes on <code>pip install</code> — so that merely <em>installing</em> the wrong name,
 without ever importing it, runs the attacker's code. This is the direct tie to Chapter 4: the name
 is the lure, and the install script is the trigger.</p>
-<p><pre><code>flowchart TD
-    A["Developer types / copies<br/>a dependency name"] --> B{"Name correct?"}
-    B -->|"Yes"| C["Legit package resolves"]
-    B -->|"Typo: reqeusts<br/>Combo: python3-dateutil<br/>Homoglyph"] --> D["Squatted package resolves"]
-    D --> E["Install-time hook fires<br/>preinstall / setup.py"]
-    E --> F["Payload runs in dev or CI:<br/>steal env, tokens, ~/.npmrc"]
-    F --> G["Often: re-publish, spread,<br/>or beacon out"]
-    C --> H["Build proceeds normally"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aae3b188d254.png" alt="diagram"></div></p>
 <h3 id="real-incidents-described-accurately">Real incidents, described accurately</h3>
 <p><strong>crossenv (npm, 2017).</strong> In August 2017 the npm registry removed a batch of malicious packages,
 the best known of which was <strong><code>crossenv</code></strong> — a typosquat of the very popular <strong><code>cross-env</code></strong>
@@ -1873,19 +1825,7 @@ imports <code>github.com/olduser/pkg</code> will, on a fresh resolution, fetch f
 <code>go.sum</code> verification — but a <em>new</em> version tag, or a first-time fetch, is not protected by a prior
 hash.) But repojacking also hits redirect-based package references and any build step that trusts a
 GitHub path.</p>
-<p><pre><code>sequenceDiagram
-    participant Owner as Original owner
-    participant GH as GitHub namespace
-    participant Att as Attacker
-    participant Vic as Victim build (go get)
-    Owner->>GH: rename or delete "olduser"
-    Note over GH: "olduser/pkg" references<br/>still exist in the wild
-    Att->>GH: register username "olduser"
-    Att->>GH: create repo "pkg" with malicious code
-    Vic->>GH: go get github.com/olduser/pkg
-    GH-->>Vic: attacker-controlled repository
-    Note over Vic: Malicious module enters the build
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d21517fdae7b.png" alt="diagram"></div></p>
 <p>GitHub's mitigation is <strong>popular-repository namespace retirement</strong>: when a repository that has
 crossed a popularity threshold (historically framed around clone/traffic volume — on the order of
 "more than 100 clones in the week before the owner's account was renamed or deleted") is orphaned by
@@ -1984,25 +1924,7 @@ touch the real project (typosquat, starjack); at the other, <em>takeover</em> of
 resolver (confusion), the human (squatting), and the identity (namespace/ATO). A defensible posture
 runs a control at each layer and routes enforcement through one chokepoint. The model, in one
 picture:</p>
-<p><pre><code>flowchart TD
-    subgraph reserve["1. Reserve"]
-        R1["Own your scope/prefix<br/>publicly (npm @acme,<br/>PyPI placeholders)"]
-    end
-    subgraph source["2. Source"]
-        S1["Single internal index<br/>--index-url, scoped .npmrc"]
-        S2["Proxy blocks external<br/>resolution for internal names"]
-    end
-    subgraph verify["3. Verify"]
-        V1["Lockfile integrity hashes<br/>Inventory from tarballs,<br/>not manifests"]
-    end
-    subgraph monitor["4. Monitor"]
-        M1["Similarity + new-and-similar<br/>flags; dangling VCS owners;<br/>unverified repo links"]
-    end
-    reserve --> source --> verify --> monitor
-    S2 -.->|"enforcement<br/>chokepoint"| PROXY[["Internal registry / proxy"]]
-    S1 -.-> PROXY
-    M1 -.-> PROXY
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7a89ad8167a.png" alt="diagram"></div></p>
 <p>The mapping of each attack to its primary control is the operational summary of the chapter:</p>
 <table>
 <thead>
@@ -2127,6 +2049,10 @@ chokepoint you control.</p>
   as versioned, reviewed policy through golden images and CI templates. See Book 2, Chapter 8 —
   Vendoring, Mirroring, and Internal Registries.</li>
 </ul>
+<h3 id="dependency-confusion-resolver-order-exploit">Dependency confusion: resolver order exploit</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c446ae3cd407.png" alt="diagram"></div></p>
+<h3 id="namespace-defense-scopes-and-prefixes">Namespace defense: scopes and prefixes</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0d7c55454a60.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Alex Birsan, "Dependency Confusion: How I Hacked Into Apple, Microsoft and Dozens of Other
@@ -2197,28 +2123,7 @@ worked specimens of <em>mechanism</em>.</p>
 <p>Before you can detect a malicious package you have to know <em>when</em> its code gets control. There
 are three distinct phases, and they differ sharply in how easy they are to gate. A defense that
 stops one does nothing for the others.</p>
-<p><pre><code>flowchart TD
-  subgraph INSTALL["Install-time — runs on 'npm install' / 'pip install'"]
-    A1["npm lifecycle scripts<br/>preinstall / install / postinstall"]
-    A2["Python sdist build<br/>setup.py, PEP 517 build hooks"]
-    A3["RubyGems extconf.rb<br/>gemspec eval, native ext build"]
-  end
-  subgraph IMPORT["Import-time / runtime — runs on require / import"]
-    B1["Top-level module body<br/>side effects on load"]
-    B2["Monkey-patched exports<br/>malice inside a real function"]
-  end
-  subgraph BUILD["Build-time — runs during compile / bundle"]
-    C1["Build plugins<br/>webpack/rollup, gyp bindings"]
-    C2["Native addons<br/>node-gyp, C/C++ extensions"]
-    C3["Rust proc-macros,<br/>Gradle/Maven build steps"]
-  end
-  DEV["Developer laptop or CI runner"] --> INSTALL
-  INSTALL -->|"code already ran"| IMPORT
-  IMPORT --> BUILD
-  INSTALL -. "most incidents land here" .-> P["Payload: exfil, dropper, backdoor"]
-  IMPORT -.-> P
-  BUILD -.-> P
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8976803ae14a.png" alt="diagram"></div></p>
 <h3 id="install-time-execution-the-dominant-vector">Install-time execution: the dominant vector</h3>
 <p>The single most important sentence in this chapter: <strong>in npm, pip's source-distribution path,
 and RubyGems, merely installing a package can execute arbitrary attacker-controlled code, with
@@ -2346,25 +2251,7 @@ the malice runs when you compile.</p>
 <p>Once attacker code has control, in any phase, what does it do? The behaviors cluster into a
 handful of categories. Detection tooling is largely organized around recognizing these
 behaviors, so the taxonomy is not academic — it is the target list for your heuristics.</p>
-<p><pre><code>flowchart TD
-  ROOT["Malicious package behaviors"]
-  ROOT --> RECON["Reconnaissance / beaconing"]
-  ROOT --> CRED["Credential & secret theft"]
-  ROOT --> MINE["Cryptomining"]
-  ROOT --> BACK["Backdoors / RATs / reverse shells"]
-  ROOT --> STEAL["Wallet / clipboard stealers"]
-  ROOT --> WIPE["Wipers / sabotage / protestware"]
-  ROOT --> DROP["Downloaders / droppers (stage-2)"]
-  RECON --> R1["hostname, username, IP, package name"]
-  RECON --> R2["DNS exfiltration (covert channel)"]
-  CRED --> C1["env vars / CI tokens"]
-  CRED --> C2["~/.aws, ~/.ssh, .npmrc"]
-  CRED --> C3["cloud metadata 169.254.169.254"]
-  CRED --> C4["browser data"]
-  BACK --> B1["persistent C2 channel"]
-  STEAL --> S1["clipboard crypto-address swap"]
-  DROP --> D1["fetch & exec stage-2 (gated)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fb298f73c4d0.png" alt="diagram"></div></p>
 <h3 id="reconnaissance-and-beaconing">Reconnaissance and beaconing</h3>
 <p>The lowest-effort payload just proves it ran and reports where. It collects <code>hostname</code>,
 <code>username</code>, the current working directory, external IP, and — critically for
@@ -2558,24 +2445,7 @@ isolated sandbox, and records what it actually does: every syscall, file access,
 network connection, and DNS query. Because it observes behavior rather than reading code, it
 sees through obfuscation and catches the dropper <em>fetching</em> its stage-2 — the network
 connection is right there in the trace even if the code that made it is an encrypted blob.</p>
-<p><pre><code>flowchart LR
-  FEED["Package feed<br/>new versions from npm/PyPI"] --> ORCH["Orchestrator"]
-  ORCH --> SBX
-  subgraph SBX["Isolated sandbox VM / gVisor container (no real creds)"]
-    direction TB
-    RUN["Run 'npm install' and 'import pkg'"]
-    MON["Instrumentation: strace / eBPF"]
-    RUN --> MON
-  end
-  MON --> NET["Network + DNS capture"]
-  MON --> FS["Filesystem access log"]
-  MON --> PROC["Process / syscall log"]
-  NET --> ANALYZE["Behavior analysis & rules"]
-  FS --> ANALYZE
-  PROC --> ANALYZE
-  ANALYZE --> VERDICT["Verdict + IOCs"]
-  VERDICT --> DB["OSF malicious-packages / advisories"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f6c2c8ee9b84.png" alt="diagram"></div></p>
 <p>The reference open-source implementation is <strong>OpenSSF Package Analysis</strong>. It consumes a feed of
 newly-published packages, installs and imports each one inside a sandbox (it has used
 gVisor-based sandboxing with <code>strace</code>-level syscall monitoring), and records the files accessed,
@@ -2689,21 +2559,7 @@ collective detection for free; contributing your own findings back closes the lo
 have to analyze it <em>without detonating it on a machine that matters</em>. Never <code>npm install</code> a
 suspected-malicious package on your laptop, on a shared runner, or anywhere with real
 credentials; installation is execution.</p>
-<p><pre><code>flowchart TD
-  START["Flagged / suspected package + exact version"] --> ISO["Provision throwaway VM or container<br/>no real creds, disposable identity"]
-  ISO --> CAP["Enable full capture:<br/>network proxy + DNS log + filesystem + process audit"]
-  CAP --> FETCH["Download the exact version tarball/sdist<br/>do NOT install yet"]
-  FETCH --> READ["Static pass:<br/>read package.json scripts, setup.py,<br/>unpack & grep for eval/exec/net/paths"]
-  READ --> INSTALL["Install with capture on<br/>('npm install' / 'pip install --no-binary')"]
-  INSTALL --> IMPORT["Import/require the module<br/>with capture on"]
-  IMPORT --> OBSERVE["Observe: outbound hosts, DNS queries,<br/>files touched, processes spawned, dropped binaries"]
-  OBSERVE --> DECODE["De-obfuscate blobs; if a dropper,<br/>capture stage-2 URL and pull it in the sandbox"]
-  DECODE --> VERDICT{"Malicious?"}
-  VERDICT -->|yes| IOC["Extract IOCs: C2 hosts, wallet addrs, hashes"]
-  VERDICT -->|no / gated| GATE["Note gating conditions;<br/>re-run mimicking target env"]
-  IOC --> REPORT["Report to registry + OSSF malicious-packages;<br/>hand IOCs to IR (Book 8)"]
-  IOC --> SCOPE["Scope: query fleet inventory —<br/>which services pulled this version? (SBOM, Book 3)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_34a3a191df65.png" alt="diagram"></div></p>
 <p>The non-negotiables of the runbook:</p>
 <ol>
 <li><strong>Isolation first.</strong> A disposable VM or a strongly-sandboxed container (gVisor,
@@ -2809,6 +2665,10 @@ problem is, at scale, an inventory and chokepoint problem as much as a code-anal
   smash-and-grab. Feed detections into SBOM-keyed inventory so a hit yields a precise blast
   radius, not a fleet-wide guess.</li>
 </ul>
+<h3 id="malicious-package-lifecycle">Malicious package lifecycle</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ff200a1d4b3f.png" alt="diagram"></div></p>
+<h3 id="detection-layers-for-malicious-packages">Detection layers for malicious packages</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3942fee30dc2.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>OpenSSF Package Analysis — dynamic sandboxing of newly-published packages
@@ -2887,18 +2747,7 @@ those chapters assume.</p>
 <p>Before the details, hold the whole flow in your head. A vulnerability travels from discovery
 to your alert queue through a pipeline of independent organizations, each adding or
 re-describing information, none of them fully authoritative over the others.</p>
-<p><pre><code>flowchart TD
-    R["Researcher / maintainer<br/>discovers a flaw"] --> CNA["CNA<br/>(CVE Numbering Authority)<br/>reserves + publishes a CVE ID<br/>= identifier + description"]
-    CNA --> CVEList["CVE List<br/>(MITRE, JSON 5.x records)"]
-    CVEList --> NVD["NVD (NIST)<br/>enrichment: CVSS, CWE, CPE"]
-    CVEList --> GHSA["GitHub Advisory DB<br/>(GHSA IDs)"]
-    R -.->|"often no CVE at all"| Eco["Ecosystem DBs:<br/>RustSec, PySec/PyPA,<br/>Go vuln DB, npm, FriendsOfPHP"]
-    GHSA --> OSV["OSV.dev<br/>normalized schema:<br/>package + ecosystem + ranges"]
-    Eco --> OSV
-    NVD -.->|"CPE feed"| Scanner
-    OSV --> Scanner["SCA scanners<br/>(osv-scanner, Trivy, Grype,<br/>Dependabot, Snyk, ...)"]
-    Scanner --> You["Your alert queue"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2e1ab2a7afc8.png" alt="diagram"></div></p>
 <p>Three things about this picture matter more than any single box. First, <strong>the identifier and
 the severity are produced by different organizations</strong> — MITRE's CNA network mints the CVE;
 NIST's NVD scores it — and those steps can desynchronize, which is exactly what happened in
@@ -3001,15 +2850,7 @@ NVD historically used for matching. NVD re-derives affected ranges into <strong>
 statements, which is where the trouble begins (next section).</p>
 <h3 id="the-lifecycle-reserved-published-rejecteddisputed">The lifecycle: reserved → published → rejected/disputed</h3>
 <p>A CVE ID moves through a small state machine:</p>
-<p><pre><code>stateDiagram-v2
-    [*] --> RESERVED: CNA reserves an ID
-    RESERVED --> PUBLISHED: details disclosed,<br/>record populated
-    RESERVED --> REJECTED: not a real vuln /<br/>duplicate / withdrawn
-    PUBLISHED --> REJECTED: retracted after publication
-    PUBLISHED --> PUBLISHED: DISPUTED tag added<br/>(still published)
-    REJECTED --> [*]
-    PUBLISHED --> [*]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f93745782181.png" alt="diagram"></div></p>
 <ul>
 <li><strong>RESERVED</strong>: an ID is allocated but details are embargoed or not yet filled in. During
   coordinated disclosure a CNA reserves the ID early so everyone can reference it, but the
@@ -3149,21 +2990,7 @@ scanner; both are the direct result of forcing package-manager coordinates throu
 product-inventory naming scheme. This is the single most important structural fact in the
 chapter, and the problem OSV exists to solve.</p>
 <p>Here is the mismatch drawn out:</p>
-<p><pre><code>flowchart LR
-    subgraph Your world
-      Coord["Package coordinate<br/>pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1"]
-    end
-    subgraph "CPE path (NVD)"
-      Coord -->|"manual, lossy,<br/>often missing"| Guess["Guessed CPE string<br/>cpe:2.3:a:apache:log4j:2.14.1"]
-      Guess -->|"exact-ish string +<br/>version range match"| CPEmatch["Match?"]
-      CPEmatch --> FP["false positives<br/>+ false negatives"]
-    end
-    subgraph "purl / OSV path"
-      Coord -->|"identity, no guessing"| Purl["purl<br/>pkg:maven/...@2.14.1"]
-      Purl -->|"ecosystem-native<br/>range compare"| OSVmatch["Match against<br/>affected ranges"]
-      OSVmatch --> Precise["precise per-ecosystem<br/>version decision"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2f40a4bc8e44.png" alt="diagram"></div></p>
 <h3 id="the-downstream-impact-of-the-2024-backlog">The downstream impact of the 2024 backlog</h3>
 <p>Because so many scanners were built to consume NVD's CPE feed as a primary source, the 2024
 enrichment slowdown propagated directly into their output: newly published CVEs arrived
@@ -3301,17 +3128,7 @@ ordering (Maven's, PyPI's PEP 440, etc.), or <code>GIT</code> for commit-range o
 graph. That last one matters: OSV can express "affected between these two <em>commits</em>," which is
 exactly what you need for Go modules, C/C++ projects vendored by hash, and anything without
 clean release versions.</p>
-<p><pre><code>flowchart LR
-    subgraph "affected entry"
-      P["package:<br/>ecosystem=Maven<br/>name=...log4j-core<br/>purl=pkg:maven/...."]
-      R["range type=ECOSYSTEM"]
-      P --- R
-      R --> E1["introduced: 2.0-beta9"]
-      E1 --> E2["fixed: 2.15.0"]
-    end
-    Q["Query: is 2.14.1 affected?"] --> Cmp["compare 2.14.1<br/>with ECOSYSTEM ordering:<br/>2.0-beta9 <= 2.14.1 < 2.15.0"]
-    Cmp --> Ans["AFFECTED"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd9e4497704e.png" alt="diagram"></div></p>
 <h3 id="why-this-is-dramatically-better-for-scanning">Why this is dramatically better for scanning</h3>
 <p>Contrast the OSV query with the CPE query. To decide whether <em>your</em> <code>log4j-core:2.14.1</code> is
 affected, an OSV-based scanner does something you can verify by hand: take the package's
@@ -3454,21 +3271,7 @@ OSV/purl in one example.</p>
 <h3 id="how-a-scanner-turns-feeds-into-findings">How a scanner turns feeds into findings</h3>
 <p>Every SCA scanner, under the branding, runs the same pipeline. Understanding it tells you which
 knobs actually matter.</p>
-<p><pre><code>flowchart TD
-    subgraph Ingest
-      F1["NVD (CVE + CPE + CVSS)"] --> Norm
-      F2["OSV.dev (GHSA, PySec,<br/>RustSec, Go, ...)"] --> Norm
-      F3["EPSS + KEV"] --> Norm
-      Norm["Normalize to one model:<br/>id + aliases + affected(purl+ranges)<br/>+ severity + exploit signals"]
-    end
-    Norm --> DB[("Local vuln DB")]
-    subgraph Match
-      Inv["Your inventory:<br/>lockfile / SBOM →<br/>purl coordinates"] --> M["Match:<br/>purl identity +<br/>ecosystem-aware<br/>range compare"]
-      DB --> M
-      M --> Dedup["Dedup by alias graph;<br/>optional reachability filter"]
-    end
-    Dedup --> Out["Findings:<br/>prioritized by KEV/EPSS/CVSS<br/>+ reachability"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e22a4e590caa.png" alt="diagram"></div></p>
 <p>The identifier plumbing you have to get right is concentrated in two places. In <strong>normalize</strong>,
 you must build the <em>alias graph</em> correctly — collapsing CVE, GHSA, RUSTSEC, GO-<em>, and PYSEC
 identifiers that refer to one flaw into one logical vulnerability — or you will double-count and
@@ -3645,6 +3448,10 @@ redundant sources, local caches, provenance.</p>
   motivates reachability and VEX, and design for the upstream data being imperfect,
   single-point-of-failure infrastructure.</li>
 </ul>
+<h3 id="vulnerability-data-flow-cve-to-scanner">Vulnerability data flow: CVE to scanner</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8e96fa91c9f2.png" alt="diagram"></div></p>
+<h3 id="why-matching-is-hard-version-ranges-vs-actual-impact">Why matching is hard: version ranges vs actual impact</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_68cce8903f06.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>The CVE Program — official site, CNA rules, and program documentation
@@ -3723,19 +3530,7 @@ Chapter 4, and conflating it with vulnerability scanning is a category error we 
 the end.</p>
 <h2 id="what-sca-actually-is">What SCA actually is</h2>
 <p>Strip away the branding and every SCA tool does the same three things in the same order:</p>
-<p><pre><code>flowchart LR
-    subgraph S1["1 · Discovery / inventory"]
-      T["Target:<br/>repo / build / artifact / image"] --> D["Extract components<br/>→ purl coordinates<br/>+ direct/transitive flags"]
-    end
-    subgraph S2["2 · Matching"]
-      D --> M["Match components<br/>against normalized<br/>vuln data (Ch 5)"]
-      VD[("Vuln DB:<br/>OSV / NVD / GHSA<br/>+ EPSS / KEV")] --> M
-    end
-    subgraph S3["3 · Results / policy"]
-      M --> P["Dedup, prioritize,<br/>suppress (VEX),<br/>apply policy gate"]
-      P --> O["Findings / exit code /<br/>report / ticket"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a63f37e4529f.png" alt="diagram"></div></p>
 <p>The stages are genuinely independent, and this independence is the single most useful thing to
 internalize about SCA architecture. Discovery produces an <strong>inventory</strong> — a list of
 components, ideally as purls. Matching joins that inventory against a <strong>vulnerability
@@ -4045,17 +3840,7 @@ an <strong>SBOM</strong> the durable interface between them. Generate a Software
 build time, when you have maximum information (the full build context, the exact artifact). Then
 match that SBOM against vulnerability data <em>repeatedly</em>, forever, as new advisories arrive —
 without ever rebuilding or re-discovering.</p>
-<p><pre><code>flowchart TD
-    B["Build (once)"] --> G["Generate SBOM<br/>(syft / build plugin / Trivy)<br/>components as purls"]
-    G --> Store[("SBOM store")]
-    Store --> M1["Match @ T0"]
-    Store --> M2["Match @ T0 + 1 week"]
-    Store --> M3["Match @ T0 + 3 months<br/>(new CVE disclosed)"]
-    VD[("Vuln feed:<br/>OSV / NVD / GHSA<br/>continuously updated")] --> M1
-    VD --> M2
-    VD --> M3
-    M3 --> Alert["'Shipped artifact X<br/>is now affected by<br/>CVE-Y disclosed today'"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ddad345fe05d.png" alt="diagram"></div></p>
 <p>This is not a minor optimization; it changes what SCA <em>is</em>. In the scan-the-repo model, a
 vulnerability disclosed against code you shipped three months ago is invisible until someone
 happens to rebuild and rescan. In the SBOM-driven model, the newly disclosed CVE is matched
@@ -4070,17 +3855,7 @@ depth; the point <em>here</em> is that the SBOM is what makes "scan once, re-mat
 trade-off. The design principle is <strong>shift left for fast feedback, but keep scanning right
 because new vulnerabilities are disclosed against old code.</strong> The two are complementary, not
 alternatives.</p>
-<p><pre><code>flowchart LR
-    IDE["IDE plugin<br/>(as you add a dep)"] --> PC["Pre-commit hook"]
-    PC --> PR["PR / CI check<br/>(lockfile / build-graph scan)"]
-    PR --> Reg["Registry-proxy<br/>ingestion scan (Ch 8)"]
-    PR --> Build["Build:<br/>generate SBOM<br/>+ image scan"]
-    Build --> ArtReg["Artifact / image<br/>registry scan"]
-    ArtReg --> Adm["Admission control<br/>(Book 6)"]
-    Adm --> Runtime["Deployed"]
-    Runtime -.->|"re-match stored SBOMs<br/>as new CVEs land"| Cont["Continuous<br/>re-scanning"]
-    Cont -.->|"new finding on<br/>shipped artifact"| PR
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9a66d50b6754.png" alt="diagram"></div></p>
 <ul>
 <li><strong>IDE</strong> — a plugin flags a vulnerable version as you add or update a dependency, at the moment
   the fix is cheapest (you're already editing that file). Advisory, never blocking.</li>
@@ -4195,19 +3970,7 @@ reports, because the fleet-critical question — "<strong>who across the whole f
 CVE-X?</strong>" — is then answerable only by a fleet-wide rescan, which at 2 a.m. during a Log4Shell is
 exactly what you don't have time for. The correct architecture <strong>decouples inventory from matching
 and centralizes both</strong>, so that question is a single database query.</p>
-<p><pre><code>flowchart TD
-    subgraph Fleet["Many services / pipelines"]
-      S1["service A build"] -->|SBOM| Store
-      S2["service B build"] -->|SBOM| Store
-      S3["service C build"] -->|SBOM| Store
-      Sn["... service N"] -->|SBOM| Store
-    end
-    Store[("Central SBOM /<br/>inventory store")] --> Corr["Correlation engine:<br/>match purl inventory<br/>× vuln records,<br/>dedup by alias graph"]
-    Feeds[("Vuln feeds:<br/>OSV / NVD / GHSA<br/>+ EPSS / KEV")] --> Corr
-    VEX[("VEX statements:<br/>'not affected' decisions")] --> Corr
-    Corr --> Q["Query:<br/>'which services ship<br/>an affected log4j-core?'<br/>→ answered in seconds"]
-    Corr --> Dash["Fleet dashboard,<br/>prioritized, deduped"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4a750840fb0e.png" alt="diagram"></div></p>
 <p>This is the <strong>Dependency-Track</strong> pattern (OWASP Dependency-Track is the reference open-source
 implementation; several commercial platforms do the same). Every build submits its SBOM to a
 central store; the store continuously correlates the accumulated inventory against updated
@@ -4333,6 +4096,10 @@ paved-road-plus-warn-then-enforce pattern that governs every fleet-wide control 
   packages (Chapter 4's different problem), zero-days, unadvised bugs, first-party vulnerabilities,
   or logic/config flaws. It is necessary, not sufficient; a green gate is not "secure."</li>
 </ul>
+<h3 id="sca-scan-modes-where-it-runs">SCA scan modes: where it runs</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_37d8660b6703.png" alt="diagram"></div></p>
+<h3 id="sca-false-positive-taxonomy">SCA false-positive taxonomy</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ff8f4825ea9e.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>OWASP Dependency-Track — the reference central SBOM/vulnerability aggregation platform
@@ -4436,17 +4203,7 @@ sees a list, and the filter must rank by risk <em>to your system</em>, not by ab
 CVE-Z, and it is in your inventory" — passes through a sequence of filters, each of which
 asks a sharper, more context-dependent question, and each of which typically removes a large
 fraction of what the previous layer let through.</p>
-<p><pre><code>flowchart TD
-    A["All findings from the scanner<br/>(package present + version in affected range)"] --> B{"Is the vulnerable code<br/>reachable from our entrypoints?"}
-    B -->|"no — present but unused"| X1["Deprioritize / VEX: not_affected<br/>(vulnerable_code_not_in_execute_path)"]
-    B -->|"yes"| C{"Is it reachable with<br/>attacker-controlled input?"}
-    C -->|"no — internal-only data"| X2["Lower priority"]
-    C -->|"yes"| D{"Exploitable in our<br/>configuration / version / mitigations?"}
-    D -->|"no — mitigation present"| X3["VEX: not_affected<br/>(inline_mitigations_already_exist)"]
-    D -->|"yes"| E{"Being exploited in the wild?<br/>(KEV / high EPSS / public exploit)"}
-    E -->|"no"| F["Fix on normal SLA,<br/>weighted by exposure + criticality"]
-    E -->|"yes"| G["Drop everything.<br/>Emergency remediation."]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e510d24f1450.png" alt="diagram"></div></p>
 <p>Read the funnel top to bottom as a series of independent yes/no gates, roughly in increasing
 order of how much context and how much analysis each requires:</p>
 <ol>
@@ -4511,19 +4268,7 @@ it is where the real precision — and the real difficulty — lives. The questi
 from my program's entrypoints, does any call path in the program's call graph actually reach
 the specific vulnerable function (symbol) named by the advisory?</em></p>
 <p>The mechanism, in three steps:</p>
-<p><pre><code>flowchart LR
-    subgraph build["1. Build the call graph"]
-      E["Entrypoints<br/>(main, HTTP handlers,<br/>exported API)"] --> F1["your funcs"]
-      F1 --> F2["lib funcs"]
-    end
-    subgraph mark["2. Mark vulnerable symbols"]
-      ADV["Advisory data<br/>(Go vuln DB, GHSA<br/>with affected symbols)"] --> V["e.g. text/template.Execute,<br/>vuln pkg.Decode()"]
-    end
-    build --> R{"3. Reachability check:<br/>is any vulnerable symbol<br/>on a path from an entrypoint?"}
-    mark --> R
-    R -->|"yes"| CALLED["REPORT — vulnerable symbol called"]
-    R -->|"no"| UNCALLED["SUPPRESS — present but uncalled"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e1543b88dd67.png" alt="diagram"></div></p>
 <ol>
 <li><strong>Build a call graph</strong> of the whole program: nodes are functions/methods, edges are "may
    call." You root it at the program's entrypoints (<code>main</code>, exported library API, HTTP/gRPC
@@ -4676,18 +4421,7 @@ verdict override a KEV listing.</p>
 <p>Everything so far is <em>static</em> reachability — analyzing code without running it. There is a
 second family: <strong>runtime (dynamic) reachability</strong>, which observes what actually loads and
 executes in a running process.</p>
-<p><pre><code>flowchart TB
-    subgraph S["Static reachability"]
-      SA["Analyze code / bytecode / SSA<br/>pre-deploy, in CI"]
-      SA --> SB["Whole-program call graph<br/>from entrypoints"]
-      SB --> SC["Complete-ish but imprecise:<br/>sees ALL possible paths,<br/>over/under-approximates dynamics"]
-    end
-    subgraph D["Runtime reachability"]
-      DA["Instrument the process:<br/>eBPF probes, in-proc agent,<br/>classloader hooks"]
-      DA --> DB["Observe what actually<br/>loads + executes in prod"]
-      DB --> DC["Precise for observed paths<br/>but only sees what ran;<br/>a cold path looks unused"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7dab00b20e4.png" alt="diagram"></div></p>
 <p>Runtime approaches instrument the process and watch. Two common mechanisms:</p>
 <ul>
 <li><strong>eBPF and OS-level probes.</strong> Attach to the running process from the kernel side and observe
@@ -4933,24 +4667,7 @@ tree rather than implicitly in a threshold.</p>
 <p>The leaves are four actions: <strong>Track</strong> (no action beyond normal updates), <strong>Track*</strong> (track
 closely, act if things change), <strong>Attend</strong> (bring in the team, act sooner than the next
 normal cycle), and <strong>Act</strong> (remediate as fast as you can, out of band).</p>
-<p><pre><code>flowchart TD
-    START["New finding<br/>(present + reachable enough to enter tree)"] --> EX{"Exploitation?"}
-    EX -->|"None"| AUT1{"Automatable?"}
-    EX -->|"Public PoC"| AUT2{"Automatable?"}
-    EX -->|"Active (KEV)"| TI3{"Technical Impact?"}
-    AUT1 -->|"No"| MW1{"Mission & Well-being?"}
-    AUT1 -->|"Yes"| MW2{"Mission & Well-being?"}
-    MW1 -->|"Low/Med"| TRK["Track"]
-    MW1 -->|"High"| TRKS["Track*"]
-    MW2 -->|"Low"| TRK
-    MW2 -->|"Med/High"| ATT["Attend"]
-    AUT2 -->|"No/Yes"| MW3{"Mission & Well-being?"}
-    MW3 -->|"Low"| TRKS
-    MW3 -->|"Med"| ATT
-    MW3 -->|"High"| ACT["Act"]
-    TI3 -->|"Partial"| ATT
-    TI3 -->|"Total"| ACT
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_98dcb11fcebc.png" alt="diagram"></div></p>
 <p>The tree above is illustrative, not the normative CISA table cell-for-cell — the real
 decision table has more paths — but the <em>shape</em> is faithful: exploitation is the dominant
 first cut, KEV/active pushes hard toward Act, and your mission/exposure context is what
@@ -5004,15 +4721,7 @@ payments, secrets), and its criticality tier — and feed those directly into th
 model or the SSVC "Mission &amp; Well-being" and exposure inputs. Exposure that a human has to
 look up by hand is exposure that will not be looked up. Derive it from the mesh, the ingress
 rules, and the catalog.</p>
-<p><pre><code>flowchart LR
-    SCAN["Fleet SCA<br/>(Ch 6): findings<br/>package + version + service"] --> JOIN
-    CAT["Service catalog<br/>tier, owner, data class,<br/>internet-facing?"] --> JOIN
-    REACH["Reachability<br/>(govulncheck / static / runtime)"] --> JOIN
-    EXPL["Exploitation feeds<br/>KEV, EPSS, exploit-db"] --> JOIN
-    JOIN["Central prioritization engine<br/>(multiplicative model / SSVC)"] --> VEX["Central VEX store<br/>(triage recorded once)"]
-    VEX --> Q["Per-team queues,<br/>ranked by risk to US"]
-    VEX -.->|"reused, not re-triaged"| Q2["Other teams'<br/>same transitive CVE"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b57f1eba5931.png" alt="diagram"></div></p>
 <p><strong>Centralize triage; do not let 500 teams re-triage the same transitive CVE.</strong> In a
 microservice fleet, a single popular transitive dependency — a logging library, a serializer,
 a base-image package — appears in hundreds of services. When a CVE lands on it, the <em>default</em>
@@ -5082,6 +4791,10 @@ each team's list is, actually, the thing most worth their next hour.</p>
   KEV, EPSS, and exposure all change daily. Ship each team a risk-ranked queue, not a
   severity-sorted CSV.</li>
 </ul>
+<h3 id="reachability-analysis-levels">Reachability analysis levels</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4e6ae2c299cf.png" alt="diagram"></div></p>
+<h3 id="prioritization-matrix-reachability-x-exploitability">Prioritization matrix: reachability x exploitability</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a6e0032a7d4f.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>The Go vulnerability database and govulncheck — design, the symbol-level OSV data, and how
@@ -5155,14 +4868,7 @@ it is a deliberate trade of friction against control. Most organizations drift t
 low-control end by default — nobody <em>decides</em> to let ten thousand builds hit <code>registry.npmjs.org</code>
 directly, it is simply what happens when you <code>npm install</code> with no configuration — and then get
 dragged rightward by an incident.</p>
-<p><pre><code>flowchart LR
-  A["Direct-from-public<br/>builds hit npmjs / PyPI /<br/>Maven Central directly"] --> B["Pull-through cache<br/>local proxy caches<br/>upstream on first request"]
-  B --> C["Mirror<br/>full or partial local<br/>copy of upstream"]
-  C --> D["Vendoring<br/>dependency source<br/>committed into your repo"]
-  C --> E["Curated / allowlisted<br/>nothing enters without<br/>passing policy"]
-  A -.->|"least control<br/>least friction"| A
-  E -.->|"most control<br/>most friction"| E
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bbc062874ce6.png" alt="diagram"></div></p>
 <p>Note that this is not a strict linear ladder — vendoring and full curation are two different
 answers to "I want reproducibility and control," reachable from a mirror, with different
 ergonomics. Let us take them in turn.</p>
@@ -5369,21 +5075,7 @@ across ecosystems and you do not want five different policy engines.</p>
   repositories and resolves requests across them in a configured order. This is the URL your
   developers and CI actually point at. They see one registry; behind it sits the resolution logic.</li>
 </ul>
-<p><pre><code>flowchart TB
-  DEV["Developer / CI<br/>npm install, pip install, go get"] --> V
-
-  subgraph REG["Internal repository manager"]
-    V{{"VIRTUAL repository<br/>single URL clients use<br/>resolution order: local first"}}
-    L[("LOCAL / hosted repo<br/>@acme/* first-party<br/>packages")]
-    R[("REMOTE / proxy repo<br/>caches registry.npmjs.org")]
-    V -->|"1 - check local"| L
-    V -->|"2 - fall through if not internal"| R
-  end
-
-  R -->|"cache miss only"| UP["registry.npmjs.org<br/>(public upstream)"]
-
-  L -. "internal names<br/>NEVER reach upstream" .-> R
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_787562dc8a25.png" alt="diagram"></div></p>
 <p>The resolution order in the virtual repository is the whole game. A client asks the virtual
 repository for a package; the virtual repository consults its members in order. Put the local
 (hosted) repository first and the remote (proxy) second, and an internal name is answered <em>locally</em>
@@ -5453,17 +5145,7 @@ attack class from Chapter 3 across every ecosystem at once.</p>
 a cache and becomes a <em>policy enforcement plane</em>. This is the strategic payoff of the whole
 exercise: controls you would otherwise have to deploy and verify on every laptop and every runner
 now run <em>once</em>, at ingestion, and protect the entire fleet.</p>
-<p><pre><code>flowchart TD
-  REQ["Client requests<br/>foo@1.2.3"] --> HIT{"in local<br/>cache?"}
-  HIT -->|"hit"| SERVE["Serve artifact<br/>log the pull"]
-  HIT -->|"miss"| FETCH["Fetch from upstream<br/>into QUARANTINE"]
-  FETCH --> COOL{"version age<br/>>= cooldown?"}
-  COOL -->|"no, too new"| BLOCK1["Refuse / hold<br/>410 or 404"]
-  COOL -->|"yes"| SCAN{"SCA + malware<br/>+ license + provenance"}
-  SCAN -->|"policy violation"| BLOCK2["Quarantine / block<br/>alert, log"]
-  SCAN -->|"clean"| PROMOTE["Promote to cache"]
-  PROMOTE --> SERVE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3586af20573e.png" alt="diagram"></div></p>
 <h3 id="ingestion-scanning-scan-once-protect-the-fleet">Ingestion scanning: scan once, protect the fleet</h3>
 <p>At ingestion you can run the full detection toolchain from Chapters 4 and 6 — SCA against
 vulnerability databases <em>and</em> behavioral/malware heuristics — on every artifact <em>before</em> it is
@@ -5613,15 +5295,7 @@ the package index, not just tarballs) are often the hot path, so cache metadata 
    dependency-confusion and cooldown controls above cannot be bypassed by a misconfigured or
    malicious build.</li>
 </ol>
-<p><pre><code>flowchart LR
-  subgraph BUILD["Build environment (CI runner / dev container)"]
-    C["npm / pip / go / mvn"]
-  end
-  C -->|"allowed"| REG["Internal registry<br/>artifacts.acme.internal"]
-  C -.->|"BLOCKED at egress"| PUB["Public registries<br/>npmjs / PyPI / Maven Central"]
-  REG -->|"controlled fetch<br/>scan, cooldown, log"| PUB
-  EGRESS["Egress firewall / proxy allowlist<br/>only artifacts.acme.internal permitted"] --- C
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6e7f5106655f.png" alt="diagram"></div></p>
 <p>Egress control is what converts the registry from <em>optional convenience</em> to <em>mandatory control
 point</em>. Without it, every security property above is advisory.</p>
 <h3 id="go-specific-internal-goproxy-and-the-checksum-database">Go-specific: internal GOPROXY and the checksum database</h3>
@@ -5722,6 +5396,10 @@ is the difference between a query and a guess.</p>
   <code>GONOPROXY</code> and <code>GONOSUMDB</code>) to carve out internal namespaces — not <code>GOINSECURE</code>, and not a
   blanket <code>GOSUMDB=off</code>.</li>
 </ul>
+<h3 id="vendoring-vs-proxy-vs-mirror">Vendoring vs proxy vs mirror</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7d4ecd5a5fd.png" alt="diagram"></div></p>
+<h3 id="private-registry-as-policy-enforcement-point">Private registry as policy enforcement point</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da3d51604b4b.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>JFrog Artifactory — repository types (local, remote, virtual) and include/exclude patterns
@@ -5835,14 +5513,7 @@ written against the old APIs; and the transitive graph has shifted so far that r
 consistent set at all becomes a research project. A drift that would have cost an hour a week
 compounds into a quarter of a senior engineer's time, taken all at once, under deadline pressure,
 with maximal risk.</p>
-<p><pre><code>flowchart LR
-  subgraph cont["Continuous small updates"]
-    C1["small diff"] --> C2["small diff"] --> C3["small diff"] --> C4["always near HEAD"]
-  end
-  subgraph big["Deferral then big-bang"]
-    B1["ignore"] --> B2["ignore"] --> B3["ignore"] --> B4["3 majors behind:<br/>EOL / critical CVE forces it"] --> B5["multi-month<br/>upgrade project"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f293fa24874b.png" alt="diagram"></div></p>
 <p>The economics are not close, and the security economics are worse than the engineering economics: a
 fleet that defers cannot adopt a security patch on demand, because "adopt the patch" for a
 three-major-versions-behind service <em>is</em> the death march. Continuous updating is not merely tidier;
@@ -6109,22 +5780,7 @@ is adopted automatically. Floating ranges are the auto-updating attack surface w
 first section, dressed up as convenience. Pinning plus a bot gives you the <em>same currency</em> with a
 <em>review gate and a cooldown and a reproducible result</em> — strictly better on every axis that matters.</p>
 <p>The loop:</p>
-<p><pre><code>flowchart TD
-  A["Pinned lockfile<br/>exact versions committed"] --> B["Bot scans registry<br/>Dependabot / Renovate"]
-  B --> C{"Newer version<br/>exists?"}
-  C -->|no| A
-  C -->|yes| D{"Old enough?<br/>minimumReleaseAge<br/>cooldown"}
-  D -->|"too young"| E["Hold — pending"]
-  E --> D
-  D -->|"past cooldown<br/>OR KEV fast-track"| F["Open update PR<br/>single pinned bump"]
-  F --> G["Gate: full CI + build<br/>+ SCA scan (Ch 6)"]
-  G -->|fail| H["Human triage"]
-  G -->|pass| I{"Low risk?<br/>patch/minor,<br/>reachable-safe"}
-  I -->|yes| J["Auto-merge<br/>update lockfile"]
-  I -->|"no — major /<br/>high blast radius"| K["Human review"]
-  K --> J
-  J --> A
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3af2e13cc08e.png" alt="diagram"></div></p>
 <p>Every arrow back to "Pinned lockfile" is the invariant closing: the repository is <em>always</em> in a
 pinned, reproducible state, and the only way a version changes is through a PR that passed the gate.
 The bot is a proposer; the gate is the decider; the human is in the loop exactly where risk requires
@@ -6146,18 +5802,7 @@ window between publication and yank.</p>
 organization that refuses to adopt any version younger than, say, seven days simply <em>is not in the
 building</em> when the smash-and-grab happens — the malicious version is discovered and yanked long
 before the cooldown expires, and the org never proposes it at all.</p>
-<p><pre><code>timeline
-  title Malicious-release window vs. cooldown adoption
-  section Attacker's version
-    t=0 published : malicious version hits registry
-    t~hours : researchers / users notice
-    t~1-2 days : version yanked, advisory published
-  section No cooldown
-    t=0 : instant adoption — INSIDE the window
-  section 7-day cooldown
-    t=0..7d : version held, never proposed
-    t=7d : if still present & clean, proposed
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7f140cc141e2.png" alt="diagram"></div></p>
 <p>The elegance is that the cooldown costs you almost nothing on the legitimate path. A normal patch
 release that fixes a real bug is just as good on day seven as on day zero; you lose a week of being
 marginally-more-current on routine bumps, which is noise against the drift you are preventing. The
@@ -6247,17 +5892,7 @@ human toil.</p>
 <p>The tiering above is about <em>risk of the change</em>. Orthogonal to it is <em>urgency of the change</em>, and the
 two must not be confused. Urgency is driven by <em>why</em> you are updating, and it maps directly onto the
 prioritization model of Chapter 7.</p>
-<p><pre><code>flowchart TD
-  A["Update available"] --> B{"Fixes a<br/>vulnerability?"}
-  B -->|no| C{"Major<br/>version?"}
-  C -->|no| D["Routine bump:<br/>batch, schedule,<br/>auto-merge if low-risk"]
-  C -->|yes| E["Planned work:<br/>breaking changes,<br/>human-driven upgrade"]
-  B -->|yes| F{"Reachable?<br/>(Ch 7)"}
-  F -->|"no — unreachable<br/>(VEX not_affected)"| G["De-prioritize:<br/>update on normal<br/>cadence, no scramble"]
-  F -->|yes| H{"KEV / actively<br/>exploited?"}
-  H -->|yes| I["URGENT:<br/>fast-track past cooldown,<br/>expedite review, deploy now"]
-  H -->|no| J["Prioritized:<br/>fix within SLA,<br/>normal cooldown OK"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35fbda6900aa.png" alt="diagram"></div></p>
 <p>Walk the three update <em>types</em>:</p>
 <ul>
 <li><strong>Security updates</strong> patch a known vulnerability, and their urgency is <em>not uniform</em> — this is the
@@ -6339,18 +5974,7 @@ Executive Reporting).</p>
 <li><strong>Auto-merge rate and PR-close latency</strong>: how much of the update flow is friction-free versus
   stuck. A falling auto-merge rate is an early warning that CI or trust is degrading.</li>
 </ul>
-<p><pre><code>flowchart TD
-  subgraph inv["Inventory (Book 3) + bot state"]
-    S1["svc-a<br/>fresh, 0 alerts"]
-    S2["svc-b<br/>drift 90d, 2 alerts"]
-    S3["svc-c<br/>UNOWNED<br/>drift 900d"]
-    S4["svc-d<br/>1 KEV, reachable"]
-  end
-  inv --> DASH["Fleet dashboard<br/>freshness · MTTR-to-patch · auto-merge rate"]
-  DASH --> SLO{"Within SLO?"}
-  SLO -->|"yes"| OK["Green"]
-  SLO -->|"no"| ESC["Escalate:<br/>owner nudged / policy enforced"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_236b87e388c3.png" alt="diagram"></div></p>
 <p>Make freshness an <strong>SLO with teeth</strong>, not a vanity chart. "Every production service must be within N
 days of current and must carry no reachable, unpatched KEV vulnerability older than its SLA" is a
 policy you can enforce — in CI (fail the build that falls too far behind), in the paved-road platform
@@ -6461,6 +6085,10 @@ once.</p>
   CVE drops, inventory (Book 3) tells you where it is and update automation pushes the fix everywhere
   fast — but only if the fleet was already near-current. You cannot sprint if you have not been walking.</li>
 </ul>
+<h3 id="automated-update-pipeline-with-gates">Automated update pipeline with gates</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d6a672cde7fe.png" alt="diagram"></div></p>
+<h3 id="update-risk-vs-staleness-tradeoff">Update risk vs staleness tradeoff</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_488b8fb8d6a0.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>GitHub — Dependabot version updates configuration (<code>dependabot.yml</code>)
@@ -6671,19 +6299,7 @@ because a proposed dependency that drags in a <em>banned</em> transitive package
 routed to a curated fork — the closure is part of what you are adopting.</p>
 <p>The output of intake is one of three decisions, and the whole point of the checklist is to make
 that decision explicit rather than a silent <code>install</code>:</p>
-<p><pre><code>flowchart TD
-  A["Dependency proposed"] --> B{"Function truly needed?<br/>stdlib / platform / existing golden-set dep?"}
-  B -->|"already covered"| R1["REJECT — use existing"]
-  B -->|"genuinely new need"| C["Run intake checklist +<br/>automated signals"]
-  C --> D{"Health, license, provenance,<br/>footprint within policy?"}
-  D -->|"clear fail"| R2["REJECT — or find alternative"]
-  D -->|"clear pass, low criticality"| E["ADOPT — normal path,<br/>proxy + policy handle the rest"]
-  D -->|"pass but load-bearing<br/>or borderline"| F["CURATE — add to golden set,<br/>assign owner, deeper review"]
-  F --> G["Vetted internal catalog entry<br/>+ named owner + review cadence"]
-  E --> H["Enters via proxy<br/>(Ch 8): scan, cooldown, pin"]
-  R2 --> I["Log decision + rationale<br/>(auditable, reusable)"]
-  R1 --> I
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0da8619263dc.png" alt="diagram"></div></p>
 <p>Notice the asymmetry: a low-criticality dependency that passes the automated signals should flow
 straight through on the paved road — the proxy, cooldown, pinning, and SCA (Chapters 4, 8, 2, 6)
 handle it without a human in the loop — while a load-bearing or borderline one is <em>promoted</em> into
@@ -6802,15 +6418,7 @@ xz-utils library scored as broadly critical infrastructure precisely because hal
 transitively links it — which is exactly what made it a target.</p>
 <p>The reason both scores exist is that you use them <em>together</em>. Chapter-8-of-Book-1's quadrant is the
 canonical framing, and here it becomes the triage engine of the whole program:</p>
-<p><pre><code>flowchart TB
-  subgraph Q["Criticality (Y) × Health (X)"]
-    direction TB
-    A["<b>High criticality · Low health</b><br/>load-bearing AND fragile<br/><br/>ACT NOW — fund, fork, mirror,<br/>find a replacement, or sponsor.<br/>These are your xz-shaped risks."]
-    B["<b>High criticality · High health</b><br/>load-bearing and well-run<br/><br/>MONITOR — keep current,<br/>watch for maintainer/ownership<br/>changes, ensure a mirror exists."]
-    C["<b>Low criticality · Low health</b><br/>minor and fragile<br/><br/>REVIEW / REMOVE — cheap to<br/>drop or vendor; do so to shrink<br/>the surface. Rarely worth funding."]
-    D["<b>Low criticality · High health</b><br/>minor and well-run<br/><br/>ACCEPT — routine hygiene,<br/>let automation carry it."]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_528bf7f914a0.png" alt="diagram"></div></p>
 <p>The top-left quadrant — high criticality, low health — is where a dependency-governance program
 earns its budget, because it is where the next xz lives. It is a small set (that is the point:
 criticality is concentrated), so you can afford <em>human</em> attention there: sponsor the maintainer,
@@ -6913,38 +6521,7 @@ automatically at defined points. A dependency policy typically encodes:</p>
   (golden set) or always forbidden (known-malicious, unlicensed, or superseded).</li>
 </ul>
 <p>The same policy is enforced at several points, and choosing the right point matters as much as the rule:</p>
-<p><pre><code>flowchart LR
-  subgraph S["Signals"]
-    S1["Scorecard / health"]
-    S2["Criticality"]
-    S3["OSV advisories"]
-    S4["License (SPDX)"]
-    S5["Behavior:<br/>scripts, obfuscation,<br/>maintainer change"]
-    S6["Version age / provenance"]
-  end
-  subgraph P["Policy as code"]
-    P1["Health thresholds"]
-    P2["License allow/deny"]
-    P3["Cooldown / max-age"]
-    P4["No-scripts-without-review"]
-    P5["Provenance required"]
-    P6["Allow/deny lists"]
-  end
-  subgraph E["Enforcement points"]
-    E1["Intake review<br/>(human, golden set)"]
-    E2["Internal proxy<br/>(ingest gate, Ch 8)"]
-    E3["CI gate<br/>(PR / build fail)"]
-    E4["Admission<br/>(deploy-time, OPA/Kyverno)"]
-  end
-  S1 --> P1 --> E1
-  S2 --> P1 --> E3
-  S3 --> P6 --> E2
-  S4 --> P2 --> E2
-  S5 --> P4 --> E2
-  S6 --> P3 --> E2
-  P5 --> E4
-  P6 --> E3
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3301f1fbe9fd.png" alt="diagram"></div></p>
 <p>The proxy (Chapter 8) is the highest-leverage enforcement point because it is the <em>chokepoint</em>: a rule
 enforced there — cooldown, license, no-scripts, banned-package — applies to every build in the org
 without depending on ten thousand developer laptops running the same check. CI gates catch what must be
@@ -7048,53 +6625,7 @@ enforcement across the fleet — which is the capstone.</p>
 <p>Every chapter of this book has been one control on one dependency lifecycle. Assembled, they form a
 pipeline in which a dependency is <em>evaluated before entry, controlled at ingest, pinned, scanned,
 kept current, and continuously re-evaluated</em> — with policy enforced at every stage. This is the capstone.</p>
-<p><pre><code>flowchart TB
-  subgraph Intake["1 · Intake — EVALUATE (this chapter)"]
-    I1["Proposed dependency"] --> I2["Intake checklist<br/>+ Scorecard / criticality /<br/>license / footprint"]
-    I2 --> I3{"Adopt · Reject · Curate"}
-    I3 -->|"curate"| I4["Golden set<br/>(owned, vetted)"]
-  end
-  subgraph Proxy["2 · Internal proxy — INGEST (Ch 8)"]
-    P1["Pull-through chokepoint"] --> P2["Malicious scan (Ch 4)"]
-    P2 --> P3["Cooldown / quarantine"]
-    P3 --> P4["License + provenance gate (Book 5)"]
-  end
-  subgraph Pin["3 · Pin + lock — RESOLVE (Ch 2)"]
-    L1["Lockfile: exact versions<br/>+ integrity hashes"]
-  end
-  subgraph Scan["4 · SCA + reachability — ASSESS (Ch 6-7)"]
-    C1["SBOM (Book 3)"] --> C2["OSV / SCA (Ch 5-6)"]
-    C2 --> C3["Reachability + VEX (Ch 7)"]
-  end
-  subgraph Update["5 · Automated updates — MAINTAIN (Ch 9)"]
-    U1["Renovate / Dependabot<br/>+ cooldown + auto-merge"]
-  end
-  subgraph Reeval["6 · Continuous re-evaluation"]
-    R1["Refresh health + criticality<br/>weekly (Scorecard dataset)"]
-    R2["Quadrant triage:<br/>act on top-left"]
-  end
-  subgraph Policy["Policy as code — enforced THROUGHOUT"]
-    G1["Thresholds · license · cooldown ·<br/>no-scripts · provenance · allow/deny"]
-  end
-
-  I3 -->|"adopt"| P1
-  P4 --> L1
-  L1 --> C1
-  C3 --> U1
-  U1 --> R1
-  R1 --> R2
-  R2 -->|"remove / replace / fund"| I2
-  G1 -.->|"intake gate"| I2
-  G1 -.->|"ingest gate"| P2
-  G1 -.->|"CI gate"| L1
-  G1 -.->|"portfolio policy"| C2
-  G1 -.->|"admission"| U1
-
-  Inv["Org-wide dependency inventory<br/>(Book 3) — the substrate under all of it"]
-  Inv -.-> Scan
-  Inv -.-> Reeval
-  Inv -.-> Policy
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_be16eddf2918.png" alt="diagram"></div></p>
 <p>Read it as a loop, not a line. A dependency is evaluated (this chapter), enters only through the proxy
 (Chapter 8) where it is scanned, cooled down, and provenance-checked, is pinned into a lockfile with
 integrity hashes (Chapter 2), is inventoried as an SBOM (Book 3) and continuously assessed by SCA and
@@ -7204,6 +6735,10 @@ reason you weight your human attention that way.</p>
   continuous re-evaluation, with policy enforced throughout and the org-wide inventory (Book 3) as substrate.
   Measure it with <em>criticality-weighted</em> fleet metrics, not raw counts.</li>
 </ul>
+<h3 id="dependency-evaluation-scorecard">Dependency evaluation scorecard</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_72f23ac2cb39.png" alt="diagram"></div></p>
+<h3 id="alternative-analysis-build-vs-buy-vs-borrow">Alternative analysis: build vs buy vs borrow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_adf6b4b10413.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>OpenSSF Scorecard — project, the authoritative per-check documentation, and the public API/dataset
