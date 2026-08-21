@@ -471,3 +471,7 @@ Batch 41 — 2026-08-21: Vol19 ch03, ch05-ch06 landed (batch 2b — 3 ch).
 Batch 42 — 2026-08-21: Vol19 ch06 + Vol20 ch04 landed (batch 2c — 2 ch).
 - Vol19 ch06 Bundlers (RSPack/Vite/esbuild, pre-bundle, treesaking, splitChunks, HMR, 7,634w, 8 mermaid — trimmed from 9)
 - Vol20 ch04 Traits/Generics/Monomorphization (orphan rule, vtable, const generics, 6,046w, 8 mermaid — trimmed from 9)
+
+Batch 43 — 2026-08-21: Vol20 ch01 (retry-5, finally landed) + Vol19 ch03 fix (batch 2a retry).
+- Vol20 ch01 Rust Architecture (rustup/Cargo, HIR→MIR→LLVM, monomorphization, 8,301w, 6 mermaid)
+- Vol19 ch03 Node.js Internals re-fixed (was 413w stub → 11,100w, 8 mermaid, trim of 1 diagram)
