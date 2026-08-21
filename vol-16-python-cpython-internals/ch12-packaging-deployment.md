@@ -1,1075 +1,683 @@
 # Chapter 12 — Packaging, Distribution, and Production Deployment at Scale
 
-**What this chapter covers.** The gap between `pip install -e .` on a laptop and a reproducible, auditable, autoscaled production deployment is not a line — it is a pipeline with fifteen failure modes. This chapter walks the full path: defining your package metadata and build system with `pyproject.toml` (PEP 517/518 build isolation, PEP 621 project metadata, PEP 660 editable installs); choosing among sdist, pure-Python wheel, platform wheel, and `abi3` stable-ABI wheel; cross-compiling platform wheels for manylinux and musllinux via `auditwheel` and `delocate`; locking dependencies with `pip-tools`, `poetry.lock`, `pdm.lock`, or `uv.lock`; managing environments from `venv` to `conda`/`micromamba` to Docker multi-stage images with `python -m compileall`; building hermetic containers from a vendored wheelhouse; generating SBOMs with `cyclonedx-python` and scanning with `pip-audit`; and deploying at scale with Gunicorn/Uvicorn workers, preloading, graceful reload, health probes, autoscaling with JIT warmup considerations, and OpenTelemetry/structlog observability. Every tool is shown with real configuration, real commands, and the failure modes that only surface when you run at scale.
+**What this chapter covers.** Packaging Python for production is a pipeline that touches build backends, wheel formats, platform ABI tags, lockfiles, container images, supply-chain security, and runtime orchestration. This chapter dissects the modern packaging stack — `pyproject.toml` as the universal metadata format (PEP 517/518/621/660), build isolation, sdist vs wheel vs abi3 wheel, manylinux/musllinux platform tags, auditwheel and delocate for binary redistribution, lockfiles across the tool ecosystem, hermetic builds, SBOMs, Docker multi-stage images, and deployment topologies from gunicorn workers to autoscaled Kubernetes with JIT warmup. Every section connects back to the CPython internals you learned in earlier chapters — why `__pycache__` matters for image layering, why the import lock affects warmup, why bytecode compilation strategy changes cold-start latency.
 
 Learning goals — after this chapter you should be able to:
 
-- Write a `pyproject.toml` that is compliant with PEP 517 (build system declaration), PEP 518 (build requirements), PEP 621 (project metadata), and PEP 660 (editable installs), and explain which fields control what.
-- Distinguish sdist, pure-Python wheel, platform wheel, and `abi3` wheel, and choose among them based on your distribution target and ABI constraints.
-- Cross-compile C extensions into manylinux2014, manylinux_2_17, and musllinux_1_1 wheels using `cibuildwheel`, `auditwheel repair`, and `delocate`, and understand why platform tags exist.
-- Compare lockfile strategies (`pip-tools`/`pip-compile`, `poetry.lock`, `pdm.lock`, `uv.lock`) and pick one based on whether you need deterministic resolution, hash verification, or multi-platform support.
-- Build a reproducible Docker image using multi-stage builds: `python:3.x-slim` for build, `python:3.x-slim` or distroless for runtime, `python -m compileall` for pre-compiled `.pyc`, and `PYTHONDONTWRITEBYTECODE` with awareness of the tradeoffs.
-- Create a hermetic build by vendoring a wheelhouse (`pip download --dest wheelhouse`) and installing with `pip install --no-index --find-links=wheelhouse`.
-- Generate an SBOM with `cyclonedx-python`, scan dependencies with `pip-audit` and `--require-hashes`, and integrate both into CI.
-- Configure Gunicorn/Uvicorn with workers, preload, graceful reload, and health probes; explain how autoscaling interacts with JIT warmup and import-time latency.
+- Construct a `pyproject.toml` that satisfies PEP 517, PEP 518, PEP 621, and PEP 660, choosing among setuptools, hatch, poetry, pdm, and uv as the build backend.
+- Explain the difference between sdist, pure-Python wheel, platform-specific wheel, and abi3 wheel, and predict which `pip install` produces which artifact.
+- Decode wheel filename tags (`cp311-cp311-manylinux_2_17_x86_64`) and explain how manylinux (PEP 600), musllinux, auditwheel, and delocate produce cross-distribution binary wheels.
+- Generate and verify a lockfile (pip-tools `requirements.txt`, poetry.lock, pdm.lock, uv.lock), explain pinning semantics, and enforce `--require-hashes` for supply-chain hardening.
+- Build a hermetic Docker image using multi-stage builds, choosing between `python:slim`, `python:distroless`, and `alpine`, and explain the trade-offs for image size, cold start, and attack surface.
+- Generate a CycloneDX SBOM and run `pip-audit` in CI, integrating vulnerability scanning into a reproducible pipeline.
+- Configure gunicorn/uvicorn workers with preloading, graceful reload, health probes, and autoscaling with JIT warmup in a Kubernetes environment.
+- Instrument a production deployment with OpenTelemetry and structlog for observability.
 
-> **Prerequisites.** Chapter 9 (import system, `ExtensionFileLoader`, editable installs, `__pycache__` behavior) and Chapter 10 (C extensions, `abi3` wheels, `SOABI`) provide the foundation this chapter builds on. Chapter 11 (JIT warmup, copy-and-patch compilation) is referenced in the autoscaling discussion. Volume 13, Chapter 6 (Python runtime posture) provides operational context for container choices.
-
----
-
-## 1. The packaging problem — why `pip install` is not enough
-
-Most backend teams discover packaging the hard way. A library works in development. The first `pip install` from PyPI succeeds. Then someone on a different OS hits an `ImportError` for a C extension. Then CI passes but staging fails because the transitive dependency resolved differently. Then a new contributor discovers that `setup.py` and `pyproject.toml` disagree about the package name. Then a security audit asks for an SBOM and the team has `pip freeze` output that includes 400 transitive dependencies with no hashes.
-
-The core problem is that Python's packaging ecosystem evolved through five eras with five different mental models:
-
-| Era | Tool | Metadata | Build | Distribution |
-|-----|------|----------|-------|-------------|
-| Pre-2013 | `setup.py` | `setup()` kwargs | `python setup.py bdist` | `python setup.py sdist upload` |
-| 2013–2017 | `setup.cfg` | Declarative section in INI | `python -m build` (manual) | `twine upload` |
-| 2017–2020 | `pyproject.toml` + `setup.cfg` | Split between two files | PEP 517 build isolation | `twine upload` |
-| 2020–2023 | `pyproject.toml` PEP 621 | Single-file, declarative | PEP 517/518 + build backend | `twine upload` |
-| 2023+ | `pyproject.toml` + lockfile | Single-file + locked resolution | PEP 517/518 + PEP 660 editable | `twine upload` + lockfile in repo |
-
-`pyproject.toml` won. Not because it is perfect, but because it replaced three files (`setup.py`, `setup.cfg`, `MANIFEST.in`) with one, and because PEP 517/518 made build isolation the default. The rest of this chapter assumes you are on this era.
+> **Prerequisites.** Chapter 1 (source → bytecode → `__pycache__`), Chapter 9 (import system mechanics), and Chapter 10 (C extensions) provide foundational context for understanding why packaging formats, ABI tags, and bytecode compilation matter. Volume 13, Chapter 6 (Python runtime posture for services) covers runtime tuning.
 
 ---
 
-## 2. Modern packaging — `pyproject.toml` and the PEP stack
+## 1. The packaging landscape — a taxonomy of formats and metadata
 
-### 2.1 PEP 518 — build requirements
+Before diving into tools, you need the conceptual map. Python packaging has three orthogonal concerns:
 
-PEP 518 (2016) introduced `[build-system.requires]` — the list of packages needed *before* the build backend can even run. This replaced the fragile `setup_requires` and the `use-builtin-magic` of `pip` auto-detecting build dependencies.
+| Concern | Question | Solved by |
+|---------|----------|-----------|
+| **Metadata** | What is this project? What does it depend on? | `pyproject.toml` (PEP 518/621) |
+| **Build** | How do I produce an installable artifact? | Build backend (setuptools, hatch, poetry, pdm, uv) via PEP 517 |
+| **Distribution** | How do I ship the artifact to users/CI? | PyPI, private index, vendored wheelhouse |
 
-```toml
-[build-system]
-requires = ["hatchling", "hatch-vcs"]
-build-backend = "hatchling.build"
+These are layered. PEP 518 defines the `pyproject.toml` format and the `[build-system]` table. PEP 517 defines the API that a build backend must expose (`build_wheel`, `build_sdist`, `get_requires_for_build_wheel`). PEP 621 defines the project metadata fields in `[project]`. PEP 660 defines the editable install protocol. Your build backend implements the PEP 517 API; your project metadata lives in `[project]`; and the rest of the tooling (pip, build, twine) calls the backend through that API.
+
+```mermaid
+flowchart TD
+    A["pyproject.toml"] --> B{"[build-system] table"}
+    B --> C["PEP 518: build dependencies"]
+    B --> D["PEP 517: build backend API"]
+    A --> E["[project] table"]
+    E --> F["PEP 621: project metadata"]
+    E --> G["PEP 660: editable install protocol"]
+    D --> H["setuptools"]
+    D --> I["hatchling"]
+    D --> J["poetry-core"]
+    D --> K["pdm-backend"]
+    D --> L["uv (build)"]
+    H --> M["sdist + wheel"]
+    I --> M
+    J --> M
+    K --> M
+    L --> M
 ```
 
-When `pip install .` or `pip wheel .` runs, pip:
+### 1.1 pyproject.toml — the universal metadata file
 
-1. Creates an isolated build environment (a temporary `venv`).
-2. Installs `requires` into that environment.
-3. Calls `build-backend.build_wheel(...)` (or `build_sdist`).
-4. Installs the resulting wheel into the target environment.
-
-This isolation is the key guarantee: your build dependencies do not pollute your runtime environment, and vice versa.
-
-### 2.2 PEP 517 — the build backend interface
-
-PEP 517 (2017) defined the abstract interface between frontends (`pip`, `build`) and backends (`hatchling`, `setuptools`, `poetry-core`, `pdm-backend`). The two critical hooks:
-
-| Hook | When called | Returns |
-|------|------------|---------|
-| `build_wheel(wheel_directory, config_settings=None, metadata_directory=None)` | `pip install .` or `python -m build --wheel` | Path to `.whl` file |
-| `build_sdist(sdist_directory, config_settings=None)` | `python -m build --sdist` | Path to `.tar.gz` file |
-| `build_editable(wheel_directory, config_settings=None, metadata_directory=None)` | `pip install -e .` (PEP 660) | Path to editable `.whl` file |
-
-The backend is a Python package you trust to turn your source into an artifact. `hatchling` is the default for new projects; `setuptools` is the legacy default; `poetry-core` and `pdm-backend` serve their respective ecosystems.
-
-### 2.3 PEP 621 — project metadata in `pyproject.toml`
-
-PEP 621 (2021) standardized `[project]` as the single source of package metadata, replacing `setup()` kwargs. Every field you would have put in `setup()` now lives in TOML:
+`pyproject.toml` replaced `setup.py`, `setup.cfg`, and `MANIFEST.in` with a single TOML file. Here is a complete example:
 
 ```toml
+# pyproject.toml — complete example for a backend service library
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = ["hatchling>=1.21.0", "hatch-vcs>=0.4.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "acme-api"
+name = "acme-observability"
 dynamic = ["version"]
-description = "Production backend API service"
+description = "Structured observability toolkit for Python backends"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
 authors = [
-    { name = "Platform Team", email = "platform@acme.io" },
+    { name = "Platform Team", email = "platform@acme.corp" },
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
-    "Framework :: FastAPI",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Framework :: AsyncIO",
     "Typing :: Typed",
 ]
 dependencies = [
-    "fastapi>=0.115,<1.0",
-    "uvicorn[standard]>=0.30,<1.0",
-    "pydantic>=2.8,<3.0",
-    "sqlalchemy[asyncio]>=2.0,<3.0",
-    "asyncpg>=0.29,<1.0",
-    "structlog>=24.0,<25.0",
+    "structlog>=24.1.0",
+    "opentelemetry-api>=1.24.0",
+    "opentelemetry-sdk>=1.24.0",
+    "pydantic>=2.6.0,<3",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
-    "pytest-asyncio>=0.24",
-    "mypy>=1.11",
-    "ruff>=0.6",
+    "pytest-asyncio>=0.23",
+    "mypy>=1.8",
+    "ruff>=0.3.0",
 ]
-migrations = [
-    "alembic>=1.13",
-]
-otel = [
-    "opentelemetry-api>=1.27",
-    "opentelemetry-sdk>=1.27",
-    "opentelemetry-exporter-otlp>=1.27",
+kafka = [
+    "aiokafka>=0.10.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/acme/acme-api"
-Documentation = "https://docs.acme.io/api"
-Changelog = "https://github.com/acme/acme-api/blob/main/CHANGELOG.md"
-"Bug Tracker" = "https://github.com/acme/acme-api/issues"
+Homepage = "https://github.com/acme/observability"
+Documentation = "https://docs.acme.corp/observability"
+Repository = "https://github.com/acme/observability"
 
-[project.scripts]
-acme-api = "acme_api.cli:main"
-
-# hatch-vcs reads version from git tags:
 [tool.hatch.version]
 source = "vcs"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/acme_api"]
+packages = ["src/acme"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
 ```
 
-Key fields a backend engineer should understand:
+Key points:
 
-- `dynamic = ["version"]` — version is derived at build time (from git tags via `hatch-vcs`, not hardcoded). This prevents the "forgot to bump version" problem.
-- `requires-python` — the *runtime* Python version constraint. `pip install` will refuse to install if the current Python does not satisfy this. Separate from `build-system.requires`.
-- `dependencies` — the *runtime* dependency list. Pip resolves these at install time.
-- `[project.optional-dependencies]` — extras. `pip install acme-api[otel]` installs the `otel` extra alongside the base.
-- `[tool.hatch.build.targets.wheel]` — backend-specific configuration. This tells hatchling which subdirectory to package.
+- `[build-system]` tells PEP 517 which backend to use. `requires` lists the build-time dependencies that pip installs in an isolated environment before calling the backend.
+- `[project]` (PEP 621) is pure metadata — no Python code, no `setup()` function. It declares dependencies, optional dependencies, classifiers, URLs, and license.
+- `dynamic = ["version"]` tells the backend to derive the version at build time (here, from git tags via `hatch-vcs`).
+- `[tool.hatch.build.targets.wheel]` is backend-specific configuration that hatchling understands.
 
-### 2.4 PEP 660 — editable installs
+### 1.2 Build isolation — the process boundary that saves you
 
-PEP 660 (2021) replaced `setup.py develop` with a standardized `build_editable` hook. The goal: `pip install -e .` should make your source directory importable *without copying files*.
+When you run `pip install .` or `python -m build`, pip creates an isolated build environment:
 
-How it works under the hood (the details that matter for debugging):
+1. A temporary directory is created.
+2. The `[build-system].requires` packages are installed into it via pip.
+3. The build backend is invoked inside that environment to produce the artifact.
+4. The artifact is then installed into the target environment.
 
-1. `pip install -e .` calls `build_editable(...)` on the build backend.
-2. The backend produces an editable wheel containing a `MetaPathFinder` (installed via a `.pth` file or `__editable__.*` finder).
-3. At Python startup, this finder maps `acme_api` → `/path/to/your/src/acme_api`, so `import acme_api` reads directly from your source tree.
+This isolation prevents the build from depending on packages that happen to be installed in your system Python. It is the mechanism that makes `pyproject.toml` self-describing — the build requirements are explicit, not implicit.
 
-The practical consequence: changes to `.py` files are immediately visible (no re-install needed), but changes to `pyproject.toml`, `setup.cfg`, or C extension source *do* require re-running `pip install -e .`.
+```mermaid
+flowchart LR
+    A["Source tree"] --> B["pip install . / python -m build"]
+    B --> C["Create temp venv"]
+    C --> D["Install [build-system].requires"]
+    D --> E["Invoke build backend"]
+    E --> F["build_sdist / build_wheel / build_editable"]
+    F --> G["Wheel or sdist artifact"]
+    G --> H["Install into target env"]
+```
 
-### 2.5 The four build backends
+Build isolation has a cost: the first build of a project installs all build dependencies from scratch. For CI, this is typically fine. For local development, tools like `pip install --no-build-isolation -e .` skip the isolation — but you must then ensure the build dependencies are already installed. Modern tools like uv handle this transparently.
 
-| Backend | Philosophy | `pyproject.toml` support | Editable | Lockfile |
-|---------|-----------|------------------------|---------|---------|
-| **hatchling** | Opinionated, fast, PEP 621 native | Full | PEP 660 via hatch | No (use `uv` or `pip-tools` externally) |
-| **setuptools** | Legacy default, maximal backward compat | Via `setup.cfg` or `pyproject.toml` | PEP 660 (since 67.0) | No |
-| **poetry-core** | All-in-one: packaging + dependency resolution + lockfile | Custom `[tool.poetry]` section | PEP 660 (since 1.2) | `poetry.lock` |
-| **pdm-backend** | PEP 621 native, PEP 621 lockfile | Full | PEP 660 | `pdm.lock` |
+### 1.3 Build backends compared
 
-For new projects, hatchling + `uv` (or `pip-tools`) for locking is the lightest stack that does everything correctly. Poetry is still the right choice for teams that want `poetry.lock` and a single CLI.
+| Feature | setuptools | hatchling | poetry-core | pdm-backend | uv |
+|---------|-----------|-----------|-------------|-------------|-----|
+| `pyproject.toml` native | With `setup.cfg` or `pyproject.toml` | Yes (primary) | Yes (primary) | Yes (primary) | Yes (primary) |
+| Plugin ecosystem | Extensive (decades) | Growing | Limited | Growing | Limited (new) |
+| VCS version | `setuptools-scm` | `hatch-vcs` | Built-in | `pdm-version` | Built-in |
+| Custom build steps | `cmdclass` / `setup.py` | Hatch build hooks | Poetry plugins | `pdm-backend` hooks | Build scripts |
+| Speed | Baseline | Fast | Moderate | Fast | Fastest |
+| Editable installs | PEP 660 (legacy `.pth`) | PEP 660 | PEP 660 | PEP 660 | PEP 660 |
+
+For new projects, hatchling or uv offer the cleanest `pyproject.toml`-only experience. setuptools remains dominant in existing codebases. Poetry excels for application development where its lockfile + dependency resolver is valuable. pdm is PEP-compliant and offers a poetry-like UX. uv is the fastest, combining a resolver, installer, build backend, and virtual environment manager.
 
 ---
 
-## 3. Distribution formats — sdist, wheel, and abi3 wheel
+## 2. Artifact formats — sdist, wheel, and the ABI3 story
 
-### 3.1 Source distributions (sdist)
+### 2.1 Source distributions (sdist)
 
-An sdist (`.tar.gz` or `.zip`) contains source code and the files needed to *build* the package. It is not directly installable — pip builds a wheel from the sdist first.
+An sdist is a tarball (`.tar.gz` or `.zip`) containing the source code plus the metadata needed to build the wheel. It is *not* directly installable — pip builds a wheel from it in an isolated environment, then installs the wheel. sdists exist for backward compatibility and for source-only distribution (pure-Python projects where there is no compilation step).
 
-When to use:
-- You need to support platforms without pre-built wheels (rare for pure Python, common for exotic architectures).
-- PyPI requires at least one sdist per release as a fallback.
-- Regulators or auditors may require source distribution.
+Key properties:
+- Contains `pyproject.toml`, source files, and any files listed in `MANIFEST.in` or generated by the build backend.
+- Building an sdist from a git repository requires all files to be tracked by git (setuptools uses `git archive`, hatchling uses `git` directly).
+- sdists are used as the source-of-truth for reproducible builds: given the same sdist, the same environment, and the same build backend, you get the same wheel.
 
-### 3.2 Wheels
+### 2.2 Wheels
 
-A wheel (`.whl`) is a pre-built, ready-to-install zip archive. No compilation, no build dependencies — just copy files into the right place. This is why `pip install` is fast when a wheel is available: it skips the entire build.
+A wheel (`.whl`) is a zip archive with a specific directory layout. It is the installable unit — pip unpacks it directly into `site-packages` without invoking the build backend.
 
-Wheel filenames encode metadata in the tag:
-
-```
-acme_api-1.2.0-py3-none-any.whl
-     │       │  │  │    │     └─ format
-     │       │  │  │    └─ platform: "none" = pure Python
-     │       │  │  └─ ABI: "none" = pure Python
-     │       │  └─ Python version: "py3" = any Python 3
-     │       └─ version
-     └─ name
-```
-
-For C extensions, the tag changes:
+The filename encodes everything:
 
 ```
-cryptography-43.0.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-                  │     │     │       │                  └─ legacy alias
-                  │     │     │       └─ manylinux_2_17 = glibc 2.17+
-                  │     │     └─ ABI tag (cpython-specific)
-                  │     └─ CPython version (implementation)
-                  └─ wheel format version
+acme-observability-0.1.0-cp311-cp311-manylinux_2_17_x86_64.whl
+│                  │       │    │    │
+│                  │       │    │    └─ platform tag
+│                  │       │    └─ ABI tag
+│                  │       └─ Python tag
+│                  └─ version
+└─ distribution name
 ```
 
-### 3.3 abi3 wheels — one wheel, all Pythons
-
-Chapter 10 §9 covered the Limited API and `abi3` wheels in depth. The summary for packaging:
+For a pure-Python project:
 
 ```
-# A full-API wheel — one per CPython version:
-cryptography-43.0.0-cp311-cp311-manylinux_2_17_x86_64.whl
-cryptography-43.0.0-cp312-cp312-manylinux_2_17_x86_64.whl
-cryptography-43.0.0-cp313-cp313-manylinux_2_17_x86_64.whl
-
-# An abi3 wheel — one wheel for all CPython 3.11+:
-cryptography-43.0.0-cp311-abi3-manylinux_2_17_x86_64.whl
+acme-observability-0.1.0-py3-none-any.whl
 ```
 
-The tradeoff: `abi3` constrains you to the subset of the C API guaranteed stable across versions (no direct struct access, no `Py_SIZE` as lvalue, no CPython-specific optimizations). For thin wrappers around C libraries (`grpcio`, `cryptography`, `psycopg`), this is almost always the right choice.
+The `py3-none-any` tag means: compatible with Python 3, no specific ABI, any platform. This is the universal wheel — installable on any system with Python 3+.
 
-### 3.4 manylinux and musllinux — binary portability
+```mermaid
+flowchart TD
+    subgraph "Wheel filename components"
+        A["acme-observability"] --> B["0.1.0"]
+        B --> C["cp311"]
+        C --> D["cp311"]
+        D --> E["manylinux_2_17_x86_64"]
+    end
+    subgraph "Tag meanings"
+        C --> F["Python implementation + version"]
+        D --> G["ABI + Python version"]
+        E --> H["OS + glibc version + arch"]
+    end
+    subgraph "Common tags"
+        I["py3-none-any"] --> J["Pure Python, any platform"]
+        K["cp311-cp311-linux_x86_64"] --> L["CPython 3.11, Linux x86_64"]
+        M["cp311-cp311-macosx_14_0_arm64"] --> N["CPython 3.11, macOS ARM64"]
+        O["cp311-abi3-manylinux_2_17_x86_64"] --> P["Stable ABI, Linux x86_64"]
+    end
+```
 
-A `.so` compiled on Ubuntu 22.04 will not load on Alpine Linux or on Ubuntu 18.04 — the glibc version differs, the C++ standard library differs, the libssl differs. Platform tags encode the minimum glibc/libstdc++ version the wheel requires.
+### 2.3 The stable ABI and abi3 wheels
 
-| Tag | Meaning | Minimum glibc |
-|-----|---------|--------------|
+CPython's stable ABI (introduced in PEP 384, refined in later PEPs) guarantees that C extensions compiled against the stable ABI on Python 3.2+ will work on any later Python 3.x without recompilation. The `abi3` tag in a wheel filename means the extension was compiled against the stable ABI.
+
+A typical abi3 wheel:
+
+```
+acme_native-0.1.0-cp311-abi3-manylinux_2_17_x86_64.whl
+```
+
+The `cp311` means it was *built* with CPython 3.11, but `abi3` means it will *run* on 3.11, 3.12, 3.13, and beyond. This dramatically reduces the number of wheels you need to build and upload — one wheel covers all future CPython versions.
+
+To use abi3, your C extension must:
+1. Define `Py_LIMITED_API` before including `Python.h`.
+2. Use only stable ABI functions and types.
+3. Be compiled with `-DPy_LIMITED_API=0x030b0000` (for Python 3.11 minimum) or similar.
+
+This is a real trade-off: you gain distribution simplicity but lose access to internal CPython APIs (which is why most ML libraries with deep CPython integration do *not* use abi3).
+
+---
+
+## 3. Platform tags — manylinux, musllinux, and binary distribution
+
+### 3.1 The problem
+
+Binary extensions (`.so` files) link against system libraries — `libpython`, `glibc`, `libm`, `libpthread`, and optionally `libssl`, `libcrypto`, `numpy`, `BLAS`, etc. A wheel built on Ubuntu 22.04 with glibc 2.35 will not run on a system with glibc 2.17 (CentOS 7). The platform tag in the wheel filename communicates the minimum OS/libc requirements.
+
+### 3.2 manylinux (PEP 600)
+
+The original manylinux standards (manylinux1, manylinux2010, manylinux2014) mapped to specific CentOS versions:
+
+| Tag | CentOS version | glibc minimum |
+|-----|----------------|---------------|
 | `manylinux1` | CentOS 5 | 2.5 |
 | `manylinux2010` | CentOS 6 | 2.12 |
-| `manylinux2014` / `manylinux_2_17` | CentOS 7 | 2.17 |
-| `manylinux_2_28` | AlmaLinux 8 | 2.28 |
-| `manylinux_2_35` | Ubuntu 22.04 | 2.35 |
-| `musllinux_1_1` | Alpine 3.13+ | musl 1.1 |
-| `musllinux_2_12` | Alpine 3.13+ | musl 1.1 |
+| `manylinux2014` | CentOS 7 | 2.17 |
 
-The `auditwheel` tool (for Linux) and `delocate` tool (for macOS) inspect a built wheel, find all shared libraries it links against (directly or transitively), copy them into the wheel's `.libs/` directory, and rewrite the tag to the appropriate `manylinux_*` or `delocate` tag. This is what makes a wheel self-contained.
+PEP 600 replaced the named versions with an explicit glibc version: `manylinux_2_17` means glibc ≥ 2.17. This is more transparent and future-proof — no more mapping between tag names and CentOS versions.
 
-```mermaid
-flowchart TB
-    subgraph BUILD_ENV["Build environment"]
-        SRC["C extension source<br/>cythonize / gcc -shared"]
-        BUILD_LIB["build/lib.linux-x86_64-3.11/<br/>mymod.cpython-311-x86_64-linux-gnu.so"]
-    end
+### 3.3 musllinux
 
-    subgraph RAW_WHEEL["Raw wheel (before auditwheel)"]
-        EXT_SO["mymod.cpython-311-x86_64-linux-gnu.so<br/>links: libfoo.so.3 (system)"]
-        TAG["Tag: cp311-cp311-linux_x86_64<br/>NOT portable — depends on system libfoo"]
-    end
+`musllinux` covers Alpine Linux and other musl libc-based distributions. The tag format is `musllinux_1_2` (for musl libc ≥ 1.2). Alpine is popular in containers for its small image size, but many wheels are not published for musllinux, requiring compilation from source.
 
-    subgraph REPAIR["auditwheel repair / delocate-wheel"]
-        WHEEL["mymod-1.0-cp311-cp311-linux_x86_64.whl"]
-        ANALYZE["Audit: ldd / otool<br/>finds libfoo.so.3"]
-        BUNDLE["Bundles libfoo.so.3<br/>into .libs/ directory"]
-        REWRITE["Rewrites tag:<br/>cp311-cp311-manylinux_2_17_x86_64"]
-    end
+### 3.4 Auditwheel and delocate
 
-    subgraph FINAL_WHEEL["Final portable wheel"]
-        SELF["mymod-1.0-cp311-cp311-manylinux_2_17_x86_64.whl<br/>libfoo.so.3 bundled in .libs/<br/>runs on any glibc >= 2.17"]
-    end
+These tools inspect a wheel's shared library dependencies and either:
+- **Verify** the wheel is manylinux-compliant (no unexpected system library links).
+- **Repair** the wheel by copying required `.so` files into the wheel and adjusting RPATHs.
 
-    SRC --> BUILD_LIB
-    BUILD_LIB --> WHEEL
-    WHEEL --> ANALYZE
-    ANALYZE --> BUNDLE
-    BUNDLE --> REWRITE
-    REWRITE --> SELF
+```bash
+# auditwheel: Linux
+auditwheel repair my_extension-1.0-cp311-cp311-linux_x86_64.whl
+# Produces: my_extension-1.0-cp311-cp311-manylinux_2_17_x86_64.whl
 
-    TAG -.->|"not portable"| ANALYZE
+# delocate: macOS
+delocate-wheel -w wheelhouse/ my_extension-1.0-cp311-cp311-macosx_14_0_arm64.whl
+# Copies dylibs and adjusts @rpath
 ```
 
-### 3.5 `cibuildwheel` — multi-platform CI
+Auditwheel works by:
+1. Scanning the wheel for `.so` files.
+2. Running `ldd` on each to find shared library dependencies.
+3. Checking each dependency against a whitelist (the manylinux allowed libraries).
+4. If dependencies are outside the whitelist, copying them into the wheel and rewriting RPATHs.
 
-`cibuildwheel` automates building wheels across Python versions and platforms. It spins up containers (manylinux, musllinux) or uses native CI runners (macOS, Windows), runs `auditwheel repair` / `delocate-wheel`, and produces uploadable wheels.
-
-```yaml
-# .github/workflows/wheels.yml
-name: Build wheels
-on:
-  push:
-    tags: ["v*"]
-jobs:
-  build_wheels:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pypa/cibuildwheel@v2.21
-        env:
-          CIBW_BUILD: "cp311-* cp312-* cp313-*"
-          CIBW_SKIP: "*-musllinux_i686"
-          CIBW_BEFORE_ALL_LINUX: "yum install -y libfoo-devel"
-          CIBW_TEST_COMMAND: "python -c 'import mymod; mymod.hello()'"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: wheels
-          path: ./wheelhouse/*.whl
-```
+This is the mechanism that makes binary wheels portable across Linux distributions.
 
 ---
 
-## 4. Wheel tag matrix — understanding compatibility
+## 4. Lockfiles — pinning the dependency graph
 
-```mermaid
-flowchart TB
-    WHEEL["Wheel filename tag:<br/>pyVER-ABI-PLATFORM"]
+### 4.1 Why lockfiles matter
 
-    WHEEL --> VER["Python version tag<br/>py3, py311, cp311, cp311-abi3"]
-    WHEEL --> ABI["ABI tag<br/>none (pure), cp311 (CPython ext), abi3 (stable)"]
-    WHEEL --> PLAT["Platform tag<br/>any, linux_x86_64,<br/>manylinux_2_17_x86_64,<br/>musllinux_2_17_x86_64"]
+A `requirements.txt` with `requests>=2.31` is a *specification*, not a lockfile. The actual resolved versions depend on when you install, what other packages are present, and what the resolver decides. In production, you want deterministic dependency resolution — the same lockfile on every machine, in every CI run, in every container build.
 
-    VER --> PY3["py3 — any Python 3<br/>(pure Python only)"]
-    VER --> CP311["cp311 — CPython 3.11 only"]
-    VER --> ABI3_T["cp311-abi3 — CPython 3.11+ stable ABI"]
+Lockfiles capture the *resolved* dependency graph — every direct and transitive dependency at an exact version, with hashes for verification.
 
-    ABI --> NONE["none — no native code<br/>(pure Python)"]
-    ABI --> ABI3_A["abi3 — stable ABI subset<br/>(Limited API)"]
+### 4.2 The lockfile ecosystem
 
-    PLAT --> ANY["any — no platform dependency"]
-    PLAT --> MANY["manylinux_2_17_x86_64<br/>(glibc >= 2.17, x86_64)"]
-    PLAT --> MUSL["musllinux_2_17_x86_64<br/>(musl >= 1.1, x86_64)"]
+| Tool | Lockfile | Resolver | Notes |
+|------|----------|----------|-------|
+| pip-tools | `requirements.txt` (pinned) | pip resolver | Simple, pip-native, best for plain `pip` workflows |
+| Poetry | `poetry.lock` | Custom resolver | Full project management, not pip-compatible lockfile |
+| PDM | `pdm.lock` | Custom resolver | PEP-compliant, pyproject.toml-native |
+| uv | `uv.lock` | Rust-based resolver | Fastest, pip-compatible output, uv-native |
+| pip (lock mode) | `requirements.txt` (with hashes) | pip resolver | New in pip 24.0+, experimental |
 
-    style VER fill:#2a6,stroke:#333,color:#fff
-    style ABI fill:#48a,stroke:#333,color:#fff
-    style PLAT fill:#a64,stroke:#333,color:#fff
-```
+### 4.3 pip-compile workflow
 
-The compatibility rule: a wheel installs if *and only if* the running interpreter satisfies all three tags. A wheel `cp311-cp311-manylinux_2_17_x86_64` installs only on CPython 3.11, with the CPython 3.11 ABI, on a glibc 2.17+ x86_64 system. A wheel `cp311-abi3-manylinux_2_17_x86_64` installs on CPython 3.11 *or newer*, because `abi3` signals a stable ABI.
-
----
-
-## 5. Lockfiles — deterministic dependency resolution
-
-### 5.1 The problem
-
-`pip install` resolves dependencies freshly every time. Two runs minutes apart can produce different dependency trees if a maintainer pushes a new version. A `pip freeze` output is a snapshot of what resolved *now*, but it does not distinguish between direct and transitive dependencies, and it does not encode hashes.
-
-Lockfiles solve three problems:
-1. **Determinism** — the same lockfile produces the same dependency tree.
-2. **Auditability** — every package and its hash are recorded.
-3. **Speed** — lockfile installation skips resolution entirely.
-
-### 5.2 `pip-tools` / `pip-compile`
-
-The simplest lockfile for pip-native workflows. `pip-compile` reads `requirements.in` (direct dependencies) and produces `requirements.txt` (all dependencies pinned to exact versions with hashes).
+pip-tools (`pip-compile`) is the most widely used lockfile generator for plain pip projects:
 
 ```bash
-# requirements.in — direct dependencies only
-fastapi>=0.115,<1.0
-uvicorn[standard]>=0.30,<1.0
-pydantic>=2.8,<3.0
-sqlalchemy[asyncio]>=2.0,<3.0
-asyncpg>=0.29,<1.0
-structlog>=24.0,<25.0
+# Compile a pinned requirements file from a loose requirements.in
+pip-compile requirements.in --output-file=requirements.txt --generate-hashes
 
-# Compile to locked requirements.txt:
-pip-compile --generate-hashes --upgrade --strip-extras \
-    requirements.in -o requirements.txt
-
-# Result: requirements.txt with every line pinned + sha256 hash
-# Install is reproducible:
-pip install -r requirements.txt
+# Install from the pinned file — guarantees exact versions
+pip install -r requirements.txt --require-hashes
 ```
 
-### 5.3 `poetry.lock`
+Example `requirements.in`:
 
-Poetry's lockfile is a TOML file that records every resolved package, version, hash, and marker. It is designed for the `pyproject.toml` ecosystem.
-
-```bash
-# Initialize (if not already using pyproject.toml):
-poetry init
-
-# Lock dependencies:
-poetry lock
-
-# Install from lock:
-poetry install
-
-# Add a dependency:
-poetry add pydantic@^2.8
-# This updates pyproject.toml AND poetry.lock in one step.
+```
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+structlog>=24.1.0
 ```
 
-### 5.4 `pdm.lock`
+Example output of `requirements.txt` (trimmed):
 
-PDM's lockfile is similar in spirit to `poetry.lock` but uses PEP 621 metadata. PDM is the only major tool that implements PEP 685 (dependency specifiers for lockfiles).
-
-```bash
-pdm lock
-pdm install
-pdm add pydantic@^2.8
+```txt
+#
+# This file is autogenerated by pip-compile with Python 3.11
+# Hashes for the following packages are verified for reproducibility.
+#
+fastapi==0.109.2 \
+    --hash=sha256:a1b2c3... \
+    --hash=sha256:d4e5f6...
+    # via -r requirements.in
+uvicorn==0.27.1 \
+    --hash=sha256:789abc... \
+    # via -r requirements.in
+structlog==24.1.0 \
+    --hash=sha256:def456... \
+    # via -r requirements.in
 ```
 
-### 5.5 `uv.lock`
+The `--generate-hashes` flag adds SHA-256 hashes for every wheel/sdist, enabling `--require-hashes` on install to verify integrity.
 
-`uv` (from Astral, the `ruff` team) is a Rust-based pip replacement with a lockfile format. It is dramatically faster (10–100×) than pip and uses the same resolution algorithm as Cargo.
+### 4.4 uv.lock — the fast path
+
+uv generates and resolves lockfiles at Rust speed:
 
 ```bash
-uv pip compile requirements.in --output-file requirements.txt --generate-hashes
+# Initialize a project with uv
+uv init my-service
+cd my-service
 
-# Or with uv's native lockfile:
-uv lock
+# Add dependencies
+uv add fastapi uvicorn[standard] structlog
+
+# The lockfile uv.lock is created automatically
+# Install from the lockfile
 uv sync
+
+# Or export to requirements.txt for pip users
+uv export --no-hashes -o requirements.txt
 ```
 
-### 5.6 Choosing a lockfile
+uv.lock is TOML-based, stores the full dependency graph, and resolves in seconds where pip-compile might take minutes.
 
-| Tool | Resolution speed | Hash verification | Integration | When to use |
-|------|-----------------|-------------------|-------------|-------------|
-| `pip-tools` | ~5s per compile | `--generate-hashes` | pip-native, simple | Teams that want "pip but reproducible" |
-| `poetry.lock` | ~2s | Automatic | Poetry CLI, `pyproject.toml` | Teams already using Poetry |
-| `pdm.lock` | ~2s | Automatic | PEP 621 native, PDM CLI | Teams wanting PEP 621 + lockfile |
-| `uv.lock` | ~0.1s | Automatic | `uv` CLI, pip-compatible | Teams wanting speed + lockfile |
+### 4.5 Requirements hashing and supply-chain hardening
 
----
-
-## 6. Environments — venv, conda, and Docker layering
-
-### 6.1 `venv` — lightweight isolation
-
-Python's built-in `venv` creates a directory tree with a symlinked or copied Python binary and a `site-packages` directory. It is the right choice for local development and CI.
+Hash verification protects against three attack vectors:
+1. **Typosquatting** — a malicious package with a name similar to a popular one.
+2. **Dependency confusion** — a private package name published to a public index.
+3. **PyPI account takeover** — a legitimate package replaced with a malicious version.
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+# Generate hashes for a requirements file
+pip-compile requirements.in --generate-hashes
+
+# Install with hash verification — pip rejects any package whose hash doesn't match
+pip install -r requirements.txt --require-hashes --no-deps
+
+# For a private index + hash verification
+pip install -r requirements.txt --require-hashes \
+    --extra-index-url https://pypi.acme.corp/simple/ \
+    --no-index
 ```
 
-What `venv` actually does:
-- Creates `.venv/bin/python` (symlink to system Python or a copy on Windows).
-- Creates `.venv/pyvenv.cfg` recording the home directory and version.
-- Sets `sys.prefix` to `.venv/` so `site-packages` resolves inside the venv.
-- Does *not* isolate the Python binary itself — it is the same CPython, same stdlib, same C extensions from the system.
-
-### 6.2 Conda / Mamba / Micromamba — language-agnostic environments
-
-Conda (and its faster alternatives `mamba` and `micromamba`) creates fully isolated environments with their own Python binary, stdlib, and native libraries. This matters when you need:
-- A different Python version than the system Python.
-- Non-Python dependencies (libprotobuf, libssl, CUDA libraries) that `pip` cannot install.
-- Exact C library versions across platforms.
-
-```
-micromamba create -n myenv python=3.12 -c conda-forge
-micromamba activate myenv
-conda install numpy pandas sqlalchemy
-pip install -r requirements.txt  # pip inside conda env is fine
-```
-
-The key distinction: conda installs packages from conda-forge (built for specific glibc/musl/libstdc++ combinations), while pip installs from PyPI (built as manylinux/musllinux wheels or sdists). Mixing both in one environment is fine if you are careful about not overwriting each other's files, but can cause subtle breakage.
-
-### 6.3 venv vs container — the layering model
-
-```mermaid
-flowchart TB
-    subgraph HOST["Host machine"]
-        SYS_PY["System Python 3.11<br/>(/usr/bin/python3.11)"]
-        SYS_LIBS["System libraries<br/>glibc, libssl, libffi"]
-    end
-
-    subgraph VENV["venv (lightweight isolation)"]
-        V_PY[".venv/bin/python3<br/>(symlink to system Python)"]
-        V_PKGS[".venv/lib/python3.11/site-packages/<br/>fastapi, uvicorn, ..."]
-        V_CFG["pyvenv.cfg<br/>home = /usr"]
-    end
-
-    subgraph CONDA["conda/mamba environment"]
-        C_PY["envs/myenv/bin/python3.11<br/>(own copy of Python)"]
-        C_LIBS["envs/myenv/lib/<br/>libssl, libffi, ..."]
-        C_PKGS["envs/myenv/lib/python3.11/site-packages/"]
-    end
-
-    subgraph DOCKER["Docker container"]
-        D_BASE["python:3.11-slim base image<br/>(own Python, own glibc)"]
-        D_APP["/app/<br/>your code"]
-        D_DEPS["/usr/local/lib/python3.11/site-packages/"]
-    end
-
-    V_PY -->|symlink| SYS_PY
-    C_PY -.->|independent copy| C_PY
-    D_BASE -.->|completely isolated| D_BASE
-
-    style HOST fill:#6c757d,stroke:#333,color:#fff
-    style VENV fill:#2a6,stroke:#333,color:#fff
-    style CONDA fill:#a64,stroke:#333,color:#fff
-    style DOCKER fill:#48a,stroke:#333,color:#fff
-```
-
-The decision matrix:
-
-| Scenario | Right tool | Why |
-|----------|-----------|-----|
-| Local dev, same Python version as CI | `venv` | Fast, lightweight, no overhead |
-| Local dev, needs different Python version | `pyenv` + `venv` or `conda` | Version flexibility |
-| Local dev, needs CUDA / libprotobuf | `conda` | Manages non-Python native deps |
-| CI (GitHub Actions, GitLab) | `venv` in Docker, or native runner with `uv` | Fastest path to isolation |
-| Production | Docker | Full reproducibility, layer caching, hermetic |
+The `--no-index` flag with a vendored wheelhouse makes the install fully hermetic — no network access at all.
 
 ---
 
-## 7. Docker multi-stage for Python — building the production image
+## 5. Environments — venv, conda, and container layering
 
-A Python Docker image is not "install Python, copy code, run." The details determine whether your image is 1.5 GB or 200 MB, whether it boots in 5 seconds or 500 milliseconds, and whether two builds from the same commit produce the same image.
+### 5.1 venv vs conda/mamba
 
-### 7.1 Slim vs distroless
+| Aspect | venv | conda/mamba |
+|--------|------|-------------|
+| Scope | Python packages only | Python + non-Python (C libs, R, etc.) |
+| Resolver | pip (or uv) | conda resolver (or mamba/libmamba) |
+| Python versions | System Python or pyenv | Separate Python installations per env |
+| Speed | Fast (lightweight) | Slow (full solver), mamba is faster |
+| Use case | Backend services, libraries | Data science, ML, system-level deps |
 
-| Base | Size (Python 3.12) | Includes | Missing | Use when |
-|------|-------------------|----------|---------|----------|
-| `python:3.12` | ~900 MB | Full Debian, compilers, headers | — | Build stage only |
-| `python:3.12-slim` | ~150 MB | Minimal Debian, no compilers | gcc, headers, git | Most production apps |
-| `python:3.12-alpine` | ~60 MB | musl-based, minimal | glibc, some pip wheels | Small pure-Python apps |
-| `gcr.io/distroless/python3-debian12` | ~50 MB | Python runtime, nothing else | shell, package manager | Maximum security, no debugging |
-| `chainguard/python` | ~45 MB | Signed, minimal, SBOM | Package manager | Supply-chain-critical deploys |
+For backend services, venv + pip/uv is the standard. conda is valuable when you need `libopenblas`, `libhdf5`, or other system-level libraries without installing them via the OS package manager.
 
-For most backend services, `python:3.x-slim` as the runtime base is the right choice: small enough, has a shell for debugging, compatible with the `manylinux` wheels your C extensions produce.
+### 5.2 venv activation — what actually happens
 
-### 7.2 Multi-stage build
+When you run `source .venv/bin/activate`, a shell script modifies three environment variables:
+
+1. `PATH` — prepends `.venv/bin/` so that `python`, `pip`, `uvicorn`, etc. resolve to the venv's versions.
+2. `VIRTUAL_ENV` — set to the venv root, used by tools to detect they are inside a venv.
+3. `PS1` — modified to show the venv name in your shell prompt.
+
+Critically, the venv's `python` binary is either a symlink or a copy of the system Python. The venv does not contain a separate Python installation — it contains only `site-packages`, `bin/` symlinks, and `pyvenv.cfg`.
+
+```mermaid
+flowchart TD
+    A["source .venv/bin/activate"] --> B["Modify PATH"]
+    A --> C["Set VIRTUAL_ENV"]
+    A --> D["Modify PS1"]
+    B --> E[".venv/bin/ on PATH first"]
+    E --> F["python → .venv/bin/python"]
+    E --> G["pip → .venv/bin/pip"]
+    E --> H["uvicorn → .venv/bin/uvicorn"]
+    I[".venv/"] --> J["bin/ (symlinks)"]
+    I --> K["lib/pythonX.Y/site-packages/"]
+    I --> L["pyvenv.cfg"]
+    L --> M["home = /usr (system Python)"]
+    L --> N["include-system-site-packages = false"]
+```
+
+### 5.3 Python-specific Docker images
+
+| Image | Base | Size (approx) | Python | Use case |
+|-------|------|---------------|--------|----------|
+| `python:3.12` | Debian Bookworm | ~1 GB | Full CPython | Development, debugging |
+| `python:3.12-slim` | Debian Bookworm (minimal) | ~150 MB | Full CPython | Production (most common) |
+| `python:3.12-alpine` | Alpine Linux | ~50 MB | Full CPython + musl | Smallest images, musl caveats |
+| `gcr.io/distroless/python3-debian12` | Distroless | ~40 MB | Python only | Minimal attack surface |
+| `chainguard/python` | Wolfi | ~40 MB | Python only | Supply-chain hardened |
+
+The trade-off is clear: smaller base image means faster pulls and smaller attack surface, but Alpine uses musl (ABI incompatibility with manylinux wheels), and distroless has no shell (harder to debug).
+
+### 5.4 venv vs container layering
+
+```mermaid
+flowchart TD
+    subgraph "venv approach"
+        A1["System Python"] --> B1[".venv/bin/"]
+        B1 --> C1["site-packages/"]
+        C1 --> D1["Your application"]
+    end
+    subgraph "Container approach"
+        A2["Base image (slim)"] --> B2["System Python"]
+        B2 --> C2["pip install deps"]
+        C2 --> D2["COPY application"]
+        D2 --> E2["Final image"]
+    end
+    subgraph "Layer caching"
+        F["Layer 1: base image"] --> G["Layer 2: dependencies (slow, cached)"]
+        G --> H["Layer 3: application code (fast, changes often)"]
+    end
+```
+
+In a container, you typically do *not* use venv — the container itself is the isolation boundary. The base image provides Python, `pip install` adds dependencies, and `COPY` adds your code. Layer ordering matters for cache efficiency: change the layer that changes most often (your code) last.
+
+---
+
+## 6. Docker multi-stage builds for Python
+
+Multi-stage builds separate the build environment from the runtime environment. This is critical for Python because build tools (compilers, header files, build dependencies) are large and should not ship in the final image.
+
+### 6.1 The Dockerfile
 
 ```dockerfile
-# =============================================================================
-# Stage 1: build — install all dependencies including C build tools
-# =============================================================================
+# Stage 1: Build dependencies and wheel
 FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
-# Install system build dependencies needed to compile C extensions
-# that don't have pre-built wheels for this platform:
+# Install build essentials for any C extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    g++ \
+    build-essential \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python build dependencies:
-RUN pip install --no-cache-dir pip==24.3 wheel==0.45.1
+# Create a virtualenv to isolate from the system Python
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy only the lockfile first (layer cache optimization):
+# Install dependencies from lockfile (layer cached)
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install all dependencies into a staging directory:
-# --prefix installs to /app/deps so we can copy only site-packages later.
-RUN pip install --no-cache-dir --prefix=/app/deps -r requirements.txt
+# Install the application itself
+COPY . .
+RUN pip install --no-cache-dir .
 
-# Copy application source:
-COPY pyproject.toml README.md ./
-COPY src/ ./src/
+# Stage 2: Runtime image
+FROM python:3.12-slim AS runtime
 
-# Install the application itself (not from a wheel, since we're developing):
-RUN pip install --no-cache-dir --prefix=/app/deps --no-deps .
+# Install runtime-only system libraries
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    tini \
+    && rm -rf /var/lib/apt/lists/*
 
-# Pre-compile to .pyc (deterministic, fast startup, no runtime __pycache__ writes):
-RUN python -m compileall \
-    --invalidation-mode=unchecked-hash \
-    --optimize=2 \
-    -q \
-    /app/deps/lib/python3.12/site-packages
+# Copy the virtualenv from the builder
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# =============================================================================
-# Stage 2: runtime — minimal image
-# =============================================================================
-FROM python:3.11-slim AS runtime
+# Compile bytecode for faster startup
+RUN python -m compileall /opt/venv/lib/python3.12/site-packages/ \
+    --optimize=1 \
+    -q
 
-# Metadata
-LABEL org.opencontainers.image.source="https://github.com/acme/acme-api"
-LABEL org.opencontainers.image.description="ACME API service"
-
-# Create non-root user:
-RUN groupadd -r apiuser && useradd -r -g apiuser -d /app -s /sbin/nologin apiuser
-
-WORKDIR /app
-
-# Copy only the installed packages from builder:
-COPY --from=builder /app/deps /usr/local
-
-# Copy application source:
-COPY --from=builder /app/src /app/src
-
-# Copy any static files, configs, etc.:
-COPY --from=builder /app/pyproject.toml /app/
-
-# Set up bytecode compilation policy:
-# PYTHONDONTWRITEBYTECODE=1 — don't write .pyc at runtime.
-# We already pre-compiled in the builder stage.
+# Suppress bytecode recompilation at runtime
 ENV PYTHONDONTWRITEBYTECODE=1
 
-# If you want hash-based validation of pre-compiled .pyc at import time:
-# ENV PYTHONPYCACHEPREFIX=/dev/null
+# Create a non-root user
+RUN groupadd -r app && useradd -r -g app -d /app app
+WORKDIR /app
+USER app
 
-# PYTHONUNBUFFERED — ensure stdout/stderr are not buffered (important for Docker):
-ENV PYTHONUNBUFFERED=1
-
-# SOURCE_DATE_EPOCH — make any remaining mtime-dependent behavior deterministic:
-ENV SOURCE_DATE_EPOCH=0
-
-# Don't run as root:
-USER apiuser
-
-# Health check:
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
 
-EXPOSE 8000
-
-# The application:
-CMD ["python", "-m", "uvicorn", "acme_api.main:app", \
-     "--host", "0.0.0.0", \
-     "--port", "8000", \
-     "--workers", "4", \
-     "--loop", "uvloop", \
-     "--http", "httptools", \
-     "--log-level", "info"]
+ENTRYPOINT ["tini", "--"]
+CMD ["uvicorn", "acme_service.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
 ```
 
-### 7.3 `PYTHONDONTWRITEBYTECODE` — the tradeoffs
+### 6.2 Key decisions in the Dockerfile
 
-Setting `PYTHONDONTWRITEBYTECODE=1` tells CPython not to write `.pyc` files to `__pycache__/`. This is common in Docker images, but the tradeoffs matter:
+**Why venv inside the container?** Even though the container is an isolation boundary, using a venv ensures that system Python packages (pip, setuptools) do not interfere with your application's dependencies. It also makes `COPY --from=builder` clean — you copy a self-contained directory, not a mutation of the system Python.
 
-**Benefits:**
-- No runtime filesystem writes (read-only containers, faster cold start).
-- Smaller working set — no `__pycache__/` directories.
-- Deterministic — no mtime-dependent `.pyc` headers.
+**`python -m compileall --optimize=1`** pre-compiles `.py` files to `.pyc` bytecode. The `--optimize=1` flag strips assertion bytecode (the `-O` flag), making bytecode slightly smaller. This runs during build, not at runtime, so the cold-start cost is paid once.
 
-**Costs:**
-- First import of every module is slower (must recompile from source).
-- Requires the source `.py` files to be present and readable at runtime.
+**`PYTHONDONTWRITEBYTECODE=1`** prevents Python from writing `.pyc` files at runtime. Since we pre-compiled bytecode in the build, there is no need to regenerate it — and suppressing writes saves I/O and keeps the filesystem immutable.
 
-**Mitigation:** Pre-compile with `python -m compileall` during the build stage (as shown in the Dockerfile above). The `.pyc` files live in the `site-packages/` directory, not in `__pycache__/`, so they are found by the normal import path. `PYTHONDONTWRITEBYTECODE` prevents *new* writes but does not prevent *reading* pre-compiled `.pyc` files.
+**`tini`** is a minimal init process that handles signal forwarding and zombie reaping. Without it, your Python process becomes PID 1 and must handle `SIGTERM` for graceful shutdown. With `tini`, signals are forwarded correctly.
 
-**Alternative:** `PYTHONPYCACHEPREFIX=/dev/null` (Python 3.8+) redirects `__pycache__/` writes to `/dev/null`, which effectively discards them. This is semantically equivalent to `PYTHONDONTWRITEBYTECODE` but allows the interpreter to go through the write path (relevant for some profiling tools).
+**Layer ordering** is optimized for cache:
+1. System packages (change rarely).
+2. `requirements.txt` + `pip install` (change when dependencies change).
+3. Application code + `pip install .` (changes on every commit).
 
-### 7.4 Image size vs cold-start
+### 6.3 Slim vs distroless vs Alpine
 
-```mermaid
-flowchart LR
-    subgraph SIZE["Image size components"]
-        BASE["Base image<br/>python:3.11-slim = 150MB"]
-        DEPS["Dependencies<br/>fastapi + uvicorn + pg<br/>~80MB"]
-        APP["Application code<br/>~5MB"]
-        PYC["Pre-compiled .pyc<br/>~15MB"]
-    end
+| Criterion | `python:slim` | `python:alpine` | distroless |
+|-----------|---------------|-----------------|------------|
+| Size | ~150 MB | ~50 MB | ~40 MB |
+| libc | glibc | musl | glibc |
+| Shell | Yes | Yes | No |
+| Package manager | apt | apk | None |
+| Debugging | Easy | Easy | `debug` variant only |
+| manylinux wheels | Yes | No (musl) | Yes |
+| Cold start | Baseline | Slightly faster (less to load) | Fastest (minimal) |
 
-    subgraph STARTUP["Cold-start latency"]
-        LOAD["Image layer loading<br/>~200ms (cached)"]
-        IMPORT["Python import graph<br/>~500ms (200-600 modules)"]
-        JIT_WARM["JIT warmup<br/>~2-5s (if JIT enabled)"]
-        READY["Ready to serve"]
-    end
+**Alpine caveat**: musl libc means manylinux wheels (which link against glibc) do not work. You must compile everything from source, which increases build time and complexity. For most backend services, `python:slim` is the right choice.
 
-    BASE --> DEPS --> APP --> PYC
-    LOAD --> IMPORT --> JIT_WARM --> READY
-
-    style BASE fill:#6c757d,stroke:#333,color:#fff
-    style DEPS fill:#a64,stroke:#333,color:#fff
-    style APP fill:#2a6,stroke:#333,color:#fff
-    style PYC fill:#48a,stroke:#333,color:#fff
-```
+**Distroless** is ideal for supply-chain hardening: no shell means a compromised package cannot spawn a reverse shell. But debugging requires the `-debug` variant or `kubectl exec` with a sidecar. Teams comfortable with sidecar debugging patterns get the smallest, most secure runtime.
 
 ---
 
-## 8. Hermetic builds — vendored wheelhouse
+## 7. Hermetic builds — no network, no surprises
 
-A hermetic build guarantees that the build does not fetch anything from the network. This is critical for reproducible builds, air-gapped environments, and supply-chain security.
+A hermetic build is one where no external resources are fetched during installation. The dependencies are vendored in a wheelhouse directory, and `pip install` uses `--no-index` to prevent any network access.
 
-### 8.1 Creating the wheelhouse
+### 7.1 Creating a wheelhouse
 
 ```bash
-# Download all wheels (with hashes) into a local directory:
-pip download \
-    -r requirements.txt \
+# Download all wheels to a local directory
+pip download -r requirements.txt \
     --dest wheelhouse/ \
     --only-binary=:all: \
-    --platform manylinux_2_17_x86_64 \
     --python-version 3.12 \
-    --implementation cp
+    --platform manylinux_2_17_x86_64 \
+    --platform musllinux_1_2_x86_64 \
+    --platform macosx_14_0_arm64 \
+    --platform win_amd64
 
-# Verify no sdists slipped through:
-ls wheelhouse/*.tar.gz && echo "ERROR: sdists found" || echo "OK: all wheels"
-
-# For multi-platform wheelhouses:
-pip download -r requirements.txt --dest wheelhouse/ --only-binary=:all:
+# Verify all wheels have hashes
+pip-compile requirements.in --generate-hashes --output-file=requirements-hashed.txt
 ```
 
-### 8.2 Installing from the wheelhouse
+### 7.2 Installing from the wheelhouse
 
 ```dockerfile
-# Hermetic install — no network access needed:
-RUN pip install \
-    --no-index \
+# In the Dockerfile
+COPY wheelhouse /wheelhouse
+RUN pip install --no-index \
     --find-links=/wheelhouse \
-    -r requirements.txt
-
-# For the application itself:
-RUN pip install \
-    --no-index \
-    --find-links=/wheelhouse \
-    --no-deps \
-    .
+    -r requirements-hashed.txt \
+    --require-hashes \
+    --no-deps
 ```
 
-### 8.3 `pip install --require-hashes`
+The `--no-deps` flag is important — it tells pip to trust the lockfile and not attempt any further resolution. Combined with `--require-hashes`, this ensures that every installed package was explicitly declared, pinned, and verified.
 
-Hash verification ensures that the installed package is exactly the one you downloaded — no substitution, no tampering.
+### 7.3 Supply-chain threat model
 
-```txt
-# requirements.txt (pip-tools output with --generate-hashes):
-fastapi==0.115.6 --hash=sha256:abc123... --hash=sha256:def456...
-uvicorn==0.34.0 --hash=sha256:789abc... --hash=sha256:012def...
-pydantic==2.10.4 --hash=sha256:345678... --hash=sha256:901234...
-```
-
-```bash
-# Install with hash verification (fails if any hash doesn't match):
-pip install --require-hashes -r requirements.txt
-```
+| Threat | Mitigation |
+|--------|-----------|
+| Typosquatting (e.g., `python-dateutil` vs `python-dateutil2`) | Lockfile with hashes — only known packages are installed |
+| Dependency confusion (private name published to PyPI) | `--extra-index-url` priority + `--no-index` in production |
+| Compromised maintainer account | Hash pinning + `pip-audit` in CI + Sigstore verification |
+| Malicious build script (`setup.py` code execution) | Build isolation (PEP 517) + no `setup.py` in pyproject.toml-only projects |
+| Compromised base image | Distroless / Chainguard images + image signing |
 
 ---
 
+## 8. SBOMs and vulnerability scanning
 
-```mermaid
-flowchart TB
-    LOCK["Lockfile (requirements.txt<br/>with --generate-hashes)"] --> FETCH["Fetch stage<br/>pip download --no-deps<br/>into wheelhouse/"]
-    FETCH --> SBOM["SBOM generation<br/>cyclonedx-bom" ]
-    SBOM --> AUDIT["Vuln audit<br/>pip-audit" ]
-    AUDIT --> VERIFY["Hash verification<br/>pip install --require-hashes<br/>--no-index --find-links=wheelhouse"]
-    VERIFY --> BUILD["Build & image<br/>python -m build → wheel<br/>Docker multi-stage<br/>python -m compileall" ]
-    BUILD --> SIGN["Sign & attest<br/>cosign / sigstore<br/>cyclonedx.json" ]
-```
+### 8.1 Software Bill of Materials (SBOM)
 
-## 9. Supply-chain security for Python
+An SBOM is a machine-readable inventory of every component in your software. For Python, this includes every direct and transitive dependency, their versions, licenses, and origins.
 
-Python's supply chain is fragile. PyPI allows anyone to publish a package with any name. Typosquatting, dependency confusion, and maintainer account compromise are real, ongoing attacks.
-
-### 9.1 Typosquatting
-
-The most common attack vector: register `requessts` (note the extra `s`), `python-dateutil2`, or `colourama` — names that look like popular packages. Users who type quickly install the malicious package.
-
-**Mitigations:**
-- Use `--require-hashes` — typosquatted packages have different hashes.
-- Use a lockfile — resolution is recorded, new typosquats cannot inject.
-- Use `pip-audit` — checks installed packages against OSV vulnerability database.
-- Monitor PyPI for packages matching your name + common typos.
-
-### 9.2 Dependency confusion
-
-If your organization publishes private packages to an internal index (e.g., `internal.acme.io/simple/`), an attacker can publish a package with the same name to PyPI. If pip searches PyPI before the internal index, the attacker's package wins.
-
-**Mitigations:**
-- Use `--index-url` and `--extra-index-url` with `--trusted-host` in the correct order.
-- Use `pip install --no-deps` for private packages and resolve their dependencies explicitly.
-- Use namespace packages (`acme-internal-*`) to avoid name collisions.
-
-### 9.3 Hash verification
+CycloneDX is the standard format. The `cyclonedx-bom` tool generates SBOMs:
 
 ```bash
-# Generate hashes for all packages:
-pip-compile --generate-hashes requirements.in -o requirements.txt
-
-# Install with hash verification:
-pip install --require-hashes -r requirements.txt
-
-# Verify an existing installation:
-pip install pip-audit && pip-audit
-```
-
----
-
-## 10. SBOMs — Software Bill of Materials for Python
-
-An SBOM is a machine-readable inventory of every component in your software, including versions, licenses, and vulnerabilities. For Python, the standard formats are CycloneDX and SPDX.
-
-```mermaid
-flowchart LR
-    REQ["requirements.in<br/>direct dependencies only"]
-    LOCK["pip-compile --generate-hashes<br/>&rarr; requirements.txt<br/>pinned versions + sha256 hashes"]
-    SBOM_GEN["cyclonedx-py requirements<br/>&rarr; sbom.json<br/>CycloneDX SBOM"]
-    VULN["pip-audit -r requirements.txt<br/>&require-hashes<br/>&rarr; vulnerability report"]
-    CI["CI gate<br/>fail on CVE or stale lock"]
-
-    REQ --> LOCK
-    LOCK --> SBOM_GEN
-    LOCK --> VULN
-    SBOM_GEN --> CI
-    VULN --> CI
-
-    style REQ fill:#6c757d,stroke:#333,color:#fff
-    style LOCK fill:#2a6,stroke:#333,color:#fff
-    style SBOM_GEN fill:#48a,stroke:#333,color:#fff
-    style VULN fill:#a64,stroke:#333,color:#fff
-    style CI fill:#a4a,stroke:#333,color:#fff
-```
-
-### 10.1 `cyclonedx-python`
-
-```bash
-# Install the SBOM generator:
+# Install the SBOM generator
 pip install cyclonedx-bom
 
-# Generate SBOM from installed packages:
-cyclonedx-py environment --format CycloneDX --output-file sbom.json
+# Generate an SBOM from a requirements file
+cyclonedx-py environment \
+    --output-file sbom.json \
+    --format json \
+    --spec-version 1.6
 
-# Generate from requirements.txt:
-cyclonedx-py requirements --format CycloneDX --output-file sbom.json
-
-# Generate SPDX instead:
-cyclonedx-py environment --format SPDX --output-file sbom.spdx.json
+# Or generate from a pip freeze
+pip freeze --exclude-editable | cyclonedx-py requirements \
+    --output-file sbom.json \
+    --format json \
+    --spec-version 1.6
 ```
 
-### 10.2 `pip-audit`
+### 8.2 pip-audit — vulnerability scanning
+
+`pip-audit` checks installed packages against the OSV (Open Source Vulnerabilities) database:
 
 ```bash
-# Audit installed packages for known vulnerabilities:
+# Install pip-audit
+pip install pip-audit
+
+# Audit installed packages
 pip-audit
 
-# Audit from requirements file:
+# Audit a requirements file (without installing)
 pip-audit -r requirements.txt
 
-# Audit with hash verification:
+# Audit with hashes for supply-chain verification
 pip-audit -r requirements.txt --require-hashes
 
-# Output as CycloneDX SBOM:
-pip-audit --format cyclonedx --output sbom-audit.json
-
-# Fix vulnerabilities automatically:
-pip-audit --fix
+# Output as CycloneDX SBOM
+pip-audit --format cyclonedx-json --output sbom-vuln.json
 ```
 
-### 10.3 `pip freeze` vs `pipdeptree`
-
-`pip freeze` is the naive approach — it dumps every installed package with no structure:
-
-```bash
-$ pip freeze
-fastapi==0.115.6
-uvicorn==0.34.0
-pydantic==2.10.4
-pydantic-core==2.27.2
-...
-```
-
-`pipdeptree` shows the dependency tree — which packages are direct dependencies and which are transitive:
-
-```bash
-$ pipdeptree
-acme-api==1.2.0
-├── fastapi==0.115.6
-│   ├── pydantic==2.10.4
-│   │   └── pydantic-core==2.27.2
-│   ├── starlette==0.41.3
-│   └── uvicorn==0.34.0
-│       ├── h11==0.14.0
-│       └── httptools==0.6.4
-├── sqlalchemy[asyncio]==2.0.36
-│   └── greenlet==3.1.1
-└── structlog==24.4.0
-```
-
-For SBOM generation, always use `pipdeptree` or `cyclonedx-py` rather than `pip freeze` — the tree structure is essential for vulnerability tracking and license compliance.
-
----
-
-## 11. Deployment at scale — Gunicorn, Uvicorn, and autoscaling
-
-### 11.1 Gunicorn with Uvicorn workers
-
-The standard production deployment for FastAPI/Django ASGI applications:
-
-```bash
-gunicorn acme_api.main:app \
-    --worker-class uvicorn.workers.UvicornWorker \
-    --workers 4 \
-    --bind 0.0.0.0:8000 \
-    --timeout 120 \
-    --graceful-timeout 30 \
-    --max-requests 10000 \
-    --max-requests-jitter 500 \
-    --preload-app \
-    --access-logfile - \
-    --error-logfile -
-```
-
-Key settings explained:
-
-| Setting | Value | Why |
-|---------|-------|-----|
-| `--worker-class uvicorn.workers.UvicornWorker` | Uvicorn worker | ASGI support, async I/O |
-| `--workers 4` | 4 worker processes | Rule of thumb: `2 * CPU cores + 1` |
-| `--timeout 120` | 120s | Kill workers stuck for >120s |
-| `--graceful-timeout 30` | 30s | Time to finish in-flight requests on reload |
-| `--max-requests 10000` | 10k requests | Restart worker after 10k requests (memory leak mitigation) |
-| `--max-requests-jitter 500` | ±500 | Randomize restart to prevent thundering herd |
-| `--preload-app` | Load app before forking | Saves memory, fails fast on import errors |
-
-### 11.2 Preloading — the import-time tradeoff
-
-`--preload-app` imports your application in the master process before forking workers. This has significant implications:
-
-**Benefits:**
-- Memory savings: shared libraries (Python modules) are copy-on-write across forked workers.
-- Fast fail: if your app fails to import, Gunicorn fails immediately rather than after forking.
-- Faster worker startup: workers inherit the pre-loaded import graph.
-
-**Costs:**
-- If your app modifies global state at import time (database connections, logging configuration, `os.environ`), those changes are shared across workers — which may cause connection pool exhaustion or race conditions.
-- The JIT (if enabled) warms up in the master, not in each worker. Forking copies the warm JIT state, but this is wasted work if the JIT state is process-specific.
-
-### 11.3 Graceful reload
-
-Gunicorn supports two reload mechanisms:
-1. **Signal-based:** Send `SIGHUP` to the master process. Workers finish in-flight requests (up to `--graceful-timeout`) and are replaced with fresh workers.
-2. **File-watching:** `--reload` watches files for changes and triggers a graceful restart. Useful in development, dangerous in production (don't mount your source code as a writable volume).
-
-### 11.4 Health probes
-
-Every production deployment needs two health endpoints:
-
-```python
-# acme_api/health.py
-import asyncio
-from fastapi import APIRouter, Response
-
-router = APIRouter()
-
-@router.get("/health/live")
-async def liveness():
-    """Kubernetes liveness probe — is the process alive?"""
-    return {"status": "alive"}
-
-@router.get("/health/ready")
-async def readiness():
-    """Kubernetes readiness probe — can the service handle traffic?"""
-    # Check database connectivity:
-    try:
-        from sqlalchemy import text
-        from acme_api.db import async_session
-        async with async_session() as session:
-            await session.execute(text("SELECT 1"))
-    except Exception as e:
-        return Response(
-            content=f'database unreachable: {e}',
-            status_code=503,
-        )
-    return {"status": "ready"}
-```
-
-### 11.5 Autoscaling with JIT warmup considerations
-
-```mermaid
-flowchart TB
-    subgraph LB["Load balancer"]
-        LB_NGINX["nginx / ALB / Cloud LB"]
-    end
-
-    subgraph POOL["Worker pool"]
-        W1["Gunicorn master 1<br/>4 Uvicorn workers"]
-        W2["Gunicorn master 2<br/>4 Uvicorn workers"]
-        W3["Gunicorn master N<br/>4 Uvicorn workers"]
-    end
-
-    subgraph SHARED["Shared state"]
-        DB["PostgreSQL<br/>(connection pool per worker)"]
-        CACHE["Redis<br/>(connection pool per worker)"]
-        OBJ["Object storage<br/>(S3 / GCS)"]
-    end
-
-    LB_NGINX -->|round-robin / least-conn| W1 & W2 & W3
-    W1 & W2 & W3 -->|async I/O| DB
-    W1 & W2 & W3 -->|async I/O| CACHE
-    W1 & W2 & W3 -->|HTTP| OBJ
-
-    style LB fill:#2a6,stroke:#333,color:#fff
-    style POOL fill:#48a,stroke:#333,color:#fff
-    style SHARED fill:#a64,stroke:#333,color:#fff
-```
-
-Autoscaling policy must account for three Python-specific warmup costs:
-
-1. **Import graph:** A new worker must import 200–600 modules. With `--preload-app`, this happens once per master process (amortized across workers). Without it, every scale-up event pays the full import cost.
-
-2. **JIT warmup (if enabled):** CPython's tier-1 specialization (PEP 659) needs a few hundred calls per function to specialize. The tier-2 JIT (PEP 744, Python 3.13+) needs thousands. A freshly scaled worker serves requests at interpreter speed until the JIT warms up. Autoscaling policies should:
-   - Use `--preload-app` to amortize JIT warmup across workers.
-   - Set a higher initial capacity (min replicas) to avoid cold-start-heavy traffic.
-   - Consider "warm pool" strategies — keep extra workers idle rather than at zero.
-
-3. **Connection pools:** Each worker maintains its own database connection pool. If `--workers=4` and you have 8 pods, you have 32 database connections. Autoscaling to 16 pods means 64 connections. Ensure your database `max_connections` can handle peak pod count × workers × connections_per_worker.
-
-### 11.6 Observability — OpenTelemetry and structlog
-
-```python
-# acme_api/observability.py
-import structlog
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-
-# Structured logging with structlog:
-structlog.configure(
-    processors=[
-        structlog.contextvars.merge_contextvars,
-        structlog.processors.add_log_level,
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
-        structlog.processors.JSONRenderer(),
-    ],
-    wrapper_class=structlog.make_filtering_bound_logger(
-        structlog.get_config()["wrapper_class"]
-    ),
-    context_class=dict,
-    logger_factory=structlog.PrintLoggerFactory(),
-)
-
-# OpenTelemetry tracing:
-provider = TracerProvider()
-provider.add_span_processor(
-    BatchSpanProcessor(OTLPSpanExporter(endpoint="otel-collector:4317"))
-)
-trace.set_tracer_provider(provider)
-tracer = trace.get_tracer("acme-api")
-```
-
-```python
-# acme_api/main.py
-from fastapi import FastAPI, Request
-from acme_api.observability import tracer
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-
-app = FastAPI()
-FastAPIInstrumentor.instrument_app(app)
-
-@app.get("/users/{user_id}")
-async def get_user(user_id: int):
-    with tracer.start_as_current_span("get_user") as span:
-        span.set_attribute("user.id", user_id)
-        # ... database query ...
-        return {"user_id": user_id}
-```
-
-The production observability stack:
-- **structlog** — structured JSON logs, every request gets `request_id`, `user_id`, `latency_ms`.
-- **OpenTelemetry** — distributed tracing across services, propagated via `traceparent` header.
-- **Metrics** — Prometheus via `prometheus-fastapi-instrumentator` or OpenTelemetry Metrics SDK.
-- **Correlation** — `trace_id` from OpenTelemetry is injected into structlog context, linking logs to traces.
-
----
-
-## 12. CI pipeline — pip-compile, pip-audit, SBOM, and wheel build
-
-### 12.1 Complete CI workflow
+### 8.3 CI pipeline — pip-compile + pip-audit
 
 ```yaml
-# .github/workflows/ci.yml
-name: CI
+# .github/workflows/security.yml
+name: Supply Chain Security
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"  # Weekly audit
 
 jobs:
-  # -------------------------------------------------------------------------
-  # Job 1: Lock and audit dependencies
-  # -------------------------------------------------------------------------
-  lock-audit:
+  compile-and-audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -1077,20 +685,27 @@ jobs:
       - name: Install tools
         run: pip install pip-tools pip-audit cyclonedx-bom
 
-      - name: Compile requirements
+      - name: Compile requirements with hashes
         run: |
-          pip-compile --generate-hashes --upgrade \
-            requirements.in -o requirements.txt
+          pip-compile requirements.in \
+            --output-file=requirements.txt \
+            --generate-hashes
 
-      - name: Audit for vulnerabilities
-        run: pip-audit -r requirements.txt --require-hashes
+      - name: Install from pinned requirements
+        run: pip install -r requirements.txt --require-hashes
+
+      - name: Audit installed packages
+        run: pip-audit --strict --progress-spinner off
+
+      - name: Audit requirements file
+        run: pip-audit -r requirements.txt --require-hashes --strict
 
       - name: Generate SBOM
         run: |
-          cyclonedx-py requirements \
-            --format CycloneDX \
+          cyclonedx-py environment \
             --output-file sbom.json \
-            requirements.txt
+            --format json \
+            --spec-version 1.6
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
@@ -1098,232 +713,485 @@ jobs:
           name: sbom
           path: sbom.json
 
-      - name: Fail if lockfile is stale
+      - name: Check lockfile is up to date
         run: |
-          git diff --exit-code requirements.txt || {
-            echo "::error::requirements.txt is out of date. Run 'pip-compile --generate-hashes' locally."
-            exit 1
-          }
+          pip-compile requirements.in \
+            --output-file=requirements-check.txt \
+            --generate-hashes
+          diff requirements.txt requirements-check.txt || \
+            (echo "Lockfile is stale — run pip-compile" && exit 1)
+```
 
-  # -------------------------------------------------------------------------
-  # Job 2: Test
-  # -------------------------------------------------------------------------
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11", "3.12", "3.13"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
+This pipeline does four things:
+1. Compiles a fresh lockfile with hashes.
+2. Installs from the lockfile and audits both the installed environment and the lockfile.
+3. Generates a CycloneDX SBOM for compliance and tracking.
+4. Verifies that the checked-in lockfile is up to date (catches stale lockfiles).
 
-      - name: Install dependencies
-        run: |
-          pip install --require-hashes -r requirements.txt
-          pip install --no-deps -e ".[dev]"
-
-      - name: Lint
-        run: ruff check src/ tests/
-
-      - name: Type check
-        run: mypy src/
-
-      - name: Test
-        run: pytest tests/ -v --tb=short
-
-  # -------------------------------------------------------------------------
-  # Job 3: Build and publish
-  # -------------------------------------------------------------------------
-  build-publish:
-    needs: [lock-audit, test]
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write  # For trusted publishing
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Build sdist and wheel
-        run: |
-          pip install build
-          python -m build
-
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+```mermaid
+flowchart LR
+    A["requirements.in"] --> B["pip-compile"]
+    B --> C["requirements.txt (pinned + hashed)"]
+    C --> D["pip install --require-hashes"]
+    D --> E["pip-audit"]
+    C --> F["pip-audit -r"]
+    D --> G["cyclonedx-py"]
+    G --> H["sbom.json"]
+    E --> I{"Vulnerabilities?"}
+    F --> I
+    I -->|"None"| J["Deploy"]
+    I -->|"Found"| K["Block + Alert"]
 ```
 
 ---
 
-## 13. Backend lens — reproducible deploys, supply-chain, and cold start
+## 9. Deployment at scale — gunicorn, uvicorn, and the process model
 
-### 13.1 Reproducible deploys
+### 9.1 The worker process model
 
-Two builds from the same commit should produce the same image. This requires:
+A Python web service at scale runs multiple worker processes, each with its own GIL, memory space, and event loop (for async frameworks). The process manager (gunicorn, uvicorn with workers, or Kubernetes) handles lifecycle:
 
-1. **Pinned lockfile** — `requirements.txt` with `--generate-hashes`, committed to the repo.
-2. **Fixed base image tag** — `python:3.12.7-slim`, not `python:3.12-slim` (which is a moving target).
-3. **`SOURCE_DATE_EPOCH`** — set to the commit timestamp, making `.pyc` headers deterministic.
-4. **`--no-cache-dir`** in pip — prevents pip's local cache from leaking into the image.
-5. **No `pip install .` at runtime** — build wheels at CI time, install from vendored wheels in the Docker image.
+```mermaid
+flowchart TD
+    subgraph "Master process"
+        M["Master / Orchestrator"]
+        M --> W1["Worker 1"]
+        M --> W2["Worker 2"]
+        M --> W3["Worker 3"]
+        M --> W4["Worker 4"]
+    end
+    subgraph "Worker internals"
+        W1 --> L["Event loop (asyncio)"]
+        L --> H["Request handler"]
+        H --> B["Business logic"]
+        B --> D["Database / Cache"]
+    end
+    subgraph "Lifecycle"
+        S["SIGUSR2"] --> R["Graceful reload (rolling)"]
+        T["SIGTERM"] --> G["Graceful shutdown (drain connections)"]
+    end
+    M -.-> S
+    M -.-> T
+```
 
-### 13.2 Supply-chain checklist
+### 9.2 gunicorn configuration
 
-| Control | Implementation | Protects against |
-|---------|---------------|------------------|
-| Lockfile with hashes | `pip-compile --generate-hashes` | Dependency confusion, version drift |
-| Hash verification | `pip install --require-hashes` | Tampered wheels |
-| Vulnerability scanning | `pip-audit` in CI | Known CVEs in dependencies |
-| SBOM generation | `cyclonedx-bom` in CI | Auditability, license compliance |
-| Private index isolation | `--index-url` (not `--extra-index-url`) | Dependency confusion |
-| Pre-built wheelhouse | `pip download --only-binary` | Build-time network access |
-| Signed images | `cosign sign` + attestation | Image tampering |
+```python
+# gunicorn.conf.py — production configuration
+import multiprocessing
+import os
 
-### 13.3 Image size vs cold-start
+# Server mechanics
+bind = os.getenv("BIND", "0.0.0.0:8000")
+workers = int(os.getenv("WEB_CONCURRENCY", multiprocessing.cpu_count() * 2 + 1))
+worker_class = "uvicorn.workers.UvicornWorker"
+worker_connections = 1000
+timeout = 120
+graceful_timeout = 30
+keepalive = 5
 
-The tradeoffs are real and measurable:
+# Preloading — import the application in the master, fork into workers
+preload_app = True
 
-| Strategy | Image size | Cold start | Tradeoff |
-|----------|-----------|------------|---------|
-| `python:3.12` (full Debian) | ~900 MB | ~800 ms | Debugging is easy, image is huge |
-| `python:3.12-slim` | ~150 MB | ~500 ms | Best balance for most services |
-| `python:3.12-alpine` | ~60 MB | ~600 ms (no pre-built manylinux wheels, must compile from source at build time) | Small image, but build time increases |
-| `distroless` | ~50 MB | ~400 ms | No shell, no debugging, maximum security |
-| Pre-compiled `.pyc` | +15 MB | -200 ms | Faster startup, larger image |
+# Logging
+loglevel = os.getenv("LOG_LEVEL", "info")
+accesslog = "-"  # stdout
+errorlog = "-"   # stderr
+access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(D)s'
 
-For serverless and autoscaling environments where cold start directly impacts latency, the investment in `compileall --optimize=2` and `PYTHONDONTWRITEBYTECODE=1` pays for itself within weeks of operation.
+# Worker recycling — prevent memory leaks
+max_requests = 10000
+max_requests_jitter = 1000
+```
+
+Key decisions:
+
+- **`preload_app = True`** imports the application in the master process before forking. This means:
+  - The import graph is resolved once, not per-worker.
+  - Memory is shared (copy-on-write) across workers for imported modules.
+  - But: any import-time side effects run in the master — if the master crashes during import, no workers start.
+
+- **`worker_class = "uvicorn.workers.UvicornWorker"`** runs ASGI applications (FastAPI, Starlette) inside gunicorn. Gunicorn handles process management; uvicorn handles the ASGI protocol.
+
+- **`max_requests = 10000`** restarts workers after 10k requests, preventing slow memory leaks. The jitter (±1000) prevents all workers from restarting simultaneously.
+
+### 9.3 uvicorn standalone configuration
+
+For ASGI-only deployments, uvicorn can manage workers directly:
+
+```bash
+uvicorn acme_service.main:app \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --workers 4 \
+    --loop uvloop \
+    --http httptools \
+    --log-level info \
+    --access-log
+```
+
+uvloop and httptools are C extensions that accelerate the event loop and HTTP parsing respectively — typically 2-4x faster than the pure-Python asyncio event loop for I/O-bound workloads.
+
+### 9.4 Health probes
+
+Kubernetes uses liveness, readiness, and startup probes to manage traffic routing:
+
+```python
+# acme_service/main.py
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+import asyncio
+
+app = FastAPI()
+
+# Application state — set during startup
+_app_ready = False
+_db_connected = False
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global _app_ready, _db_connected
+    # Startup: connect to DB, load ML models, etc.
+    _db_connected = await connect_to_database()
+    _app_ready = True
+    yield
+    # Shutdown: close connections, flush buffers
+    await close_database()
+
+
+app = FastAPI(lifespan=lifespan)
+
+
+@app.get("/health")
+async def health():
+    """Liveness probe — is the process alive and responsive?"""
+    return {"status": "ok"}
+
+
+@app.get("/ready")
+async def readiness():
+    """Readiness probe — is the service ready to serve traffic?"""
+    if not _app_ready:
+        return {"status": "not_ready", "reason": "application not initialized"}, 503
+    if not _db_connected:
+        return {"status": "not_ready", "reason": "database not connected"}, 503
+    return {"status": "ok"}
+
+
+@app.get("/startup")
+async def startup():
+    """Startup probe — has the application finished initializing?"""
+    if _app_ready:
+        return {"status": "ok"}
+    return {"status": "starting"}, 503
+```
+
+In Kubernetes:
+
+```yaml
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 30
+  failureThreshold: 3
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+startupProbe:
+  httpGet:
+    path: /startup
+    port: 8000
+  periodSeconds: 5
+  failureThreshold: 30  # 150s max startup time
+```
+
+The startup probe allows slow-starting services (loading large ML models, establishing connection pools) without being killed by the liveness probe.
+
+### 9.5 Autoscaling with JIT warmup
+
+Python services have a warm-up phase after startup: JIT compilers (PyPy, or Python's own adaptive interpreter) need to observe hot code paths before optimizing. ML services need to load models into GPU memory. The import graph itself takes time to resolve (as covered in Chapter 9).
+
+**JIT warmup strategy**: trigger representative traffic through the service before marking it ready, so the JIT has seen real patterns.
+
+```python
+# Warmup endpoint — called by load balancer or orchestrator
+@app.post("/warmup")
+async def warmup():
+    """Execute representative code paths to trigger JIT optimization."""
+    from acme_service.analytics import compute_metrics
+    from acme_service.serialization import serialize_response
+    from acme_service.validation import validate_payload
+
+    # Run 100 representative iterations
+    for _ in range(100):
+        result = compute_metrics(sample_payload)
+        serialized = serialize_response(result)
+        validate_payload(sample_payload)
+
+    return {"status": "warmed_up", "iterations": 100}
+```
+
+For Kubernetes autoscaling (HPA), use custom metrics to trigger scale-up *before* latency degrades:
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: acme-service
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: acme-service
+  minReplicas: 3
+  maxReplicas: 50
+  metrics:
+    - type: Pods
+      pods:
+        metric:
+          name: http_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: "1000"
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Pods
+          value: 4
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 10
+          periodSeconds: 120
+```
+
+The scale-down stabilization window (300s) is intentionally slow to prevent flapping and to allow JIT-warmed instances to absorb traffic spikes.
 
 ---
 
-## 14. Full pyproject.toml — production example
+## 10. Observability — OpenTelemetry and structlog
 
-```toml
-# Complete pyproject.toml for a production backend service
-[build-system]
-requires = ["hatchling", "hatch-vcs"]
-build-backend = "hatchling.build"
+### 10.1 OpenTelemetry for Python
 
-[project]
-name = "acme-api"
-dynamic = ["version"]
-description = "Production backend API service"
-readme = "README.md"
-license = "MIT"
-requires-python = ">=3.11"
-authors = [
-    { name = "Platform Team", email = "platform@acme.io" },
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Framework :: FastAPI",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Typing :: Typed",
-]
-dependencies = [
-    "fastapi>=0.115,<1.0",
-    "uvicorn[standard]>=0.30,<1.0",
-    "pydantic>=2.8,<3.0",
-    "sqlalchemy[asyncio]>=2.0,<3.0",
-    "asyncpg>=0.29,<1.0",
-    "structlog>=24.0,<25.0",
-]
+OpenTelemetry (OTel) is the vendor-neutral observability standard. For Python, the SDK provides automatic instrumentation for common libraries (FastAPI, requests, SQLAlchemy, etc.) and manual instrumentation for custom code.
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "pytest-asyncio>=0.24",
-    "mypy>=1.11",
-    "ruff>=0.6",
-    "pip-audit>=2.7",
-    "cyclonedx-bom>=5.0",
-]
-otel = [
-    "opentelemetry-api>=1.27",
-    "opentelemetry-sdk>=1.27",
-    "opentelemetry-exporter-otlp>=1.27",
-    "opentelemetry-instrumentation-fastapi>=0.48",
-]
-migrations = [
-    "alembic>=1.13",
-]
+```python
+# acme_service/telemetry.py
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
 
-[project.urls]
-Homepage = "https://github.com/acme/acme-api"
-Documentation = "https://docs.acme.io/api"
-Changelog = "https://github.com/acme/acme-api/blob/main/CHANGELOG.md"
-"Bug Tracker" = "https://github.com/acme/acme-api/issues"
 
-[project.scripts]
-acme-api = "acme_api.cli:main"
+def setup_telemetry(service_name: str, otlp_endpoint: str = "http://otel-collector:4317"):
+    """Initialize OpenTelemetry tracing and auto-instrumentation."""
+    # Configure the tracer
+    provider = TracerProvider(resource={"service.name": service_name})
+    exporter = OTLPSpanExporter(endpoint=otlp_endpoint)
+    provider.add_span_processor(BatchSpanProcessor(exporter))
+    trace.set_tracer_provider(provider)
 
-[tool.hatch.version]
-source = "vcs"
+    # Auto-instrument common libraries
+    FastAPIInstrumentor.instrument()
+    HTTPXClientInstrumentor.instrument()
+    # SQLAlchemyInstrumentor.instrument(engine=db_engine)  # after engine creation
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/acme_api"]
+    return provider
+```
 
-[tool.ruff]
-target-version = "py311"
-line-length = 88
-src = ["src", "tests"]
+### 10.2 structlog — structured logging
 
-[tool.ruff.lint]
-select = ["E", "F", "I", "N", "UP", "B", "SIM", "TCH"]
+structlog produces structured (JSON) logs that are machine-parseable and correlated with traces via trace IDs:
 
-[tool.mypy]
-python_version = "3.11"
-strict = true
-warn_return_any = true
-warn_unused_configs = true
+```python
+# acme_service/logging_config.py
+import structlog
+import logging
+from opentelemetry import trace
 
-[tool.pytest.ini_options]
-asyncio_mode = "auto"
-testpaths = ["tests"]
+
+def add_trace_context(logger, method_name, event_dict):
+    """Inject current trace/span IDs into structured logs."""
+    span = trace.get_current_span()
+    ctx = span.get_span_context()
+    if ctx and ctx.trace_id:
+        event_dict["trace_id"] = format(ctx.trace_id, "032x")
+        event_dict["span_id"] = format(ctx.span_id, "016x")
+    return event_dict
+
+
+structlog.configure(
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        add_trace_context,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.add_log_level,
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.JSONRenderer(),
+    ],
+    wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
+    context_class=dict,
+    logger_factory=structlog.PrintLoggerFactory(),
+    cache_logger_on_first_use=True,
+)
+
+
+# Usage in application code
+log = structlog.get_logger()
+
+
+@app.post("/api/v1/events")
+async def create_event(payload: EventPayload):
+    log.info("event_received", event_type=payload.type, size=len(payload.data))
+    result = await process_event(payload)
+    log.info("event_processed", event_type=payload.type, duration_ms=result.duration_ms)
+    return result
+```
+
+The correlation between traces (OpenTelemetry) and logs (structlog) via `trace_id` and `span_id` is what makes debugging distributed systems feasible — you can jump from a log line to the full trace, or from a trace to all related logs.
+
+### 10.3 The full observation stack
+
+```mermaid
+flowchart LR
+    A["Application"] --> B["OpenTelemetry SDK"]
+    B --> C["OTLP Exporter"]
+    C --> D["OTel Collector"]
+    D --> E["Traces → Tempo"]
+    D --> F["Metrics → Mimir"]
+    D --> G["Logs → Loki"]
+    A --> H["structlog (JSON)"]
+    H --> I["stdout / file"]
+    I --> J["Fluent Bit / Promtail"]
+    J --> G
+    E --> K["Grafana"]
+    F --> K
+    G --> K
+```
+
+---
+
+## 11. Reproducible build verification
+
+Reproducibility means: given the same source, the same environment, and the same tools, you produce the same artifact. For Python, this requires controlling:
+
+1. **Source** — same commit, same working tree.
+2. **Build dependencies** — same versions of the build backend and its plugins.
+3. **System dependencies** — same OS, same libc, same compilers.
+4. **Environment variables** — `SOURCE_DATE_EPOCH`, `PYTHONDONTWRITEBYTECODE`, `LC_ALL=C`.
+5. **Timestamps** — `SOURCE_DATE_EPOCH` pins the modification time in archives and pyc headers.
+
+```mermaid
+flowchart TD
+    A["Source (git commit SHA)"] --> B{"Reproducible?"}
+    B --> C["Build in controlled env"]
+    C --> D["Same pyproject.toml"]
+    C --> E["Same lockfile"]
+    C --> F["Same base image"]
+    D --> G["Same build backend version"]
+    E --> H["Same dependency versions"]
+    F --> I["Same system packages"]
+    G --> J["Byte-identical wheel"]
+    H --> J
+    I --> J
+    J --> K["Compare SHA-256 with reference"]
+    K --> L{"Hashes match?"}
+    L -->|"Yes"| M["Verified reproducible"]
+    L -->|"No"| N["Investigate drift"]
+```
+
+Verification command:
+
+```bash
+# Build twice and compare
+SOURCE_DATE_EPOCH=0 python -m build --wheel -o dist1/
+SOURCE_DATE_EPOCH=0 python -m build --wheel -o dist2/
+
+# Compare checksums
+sha256sum dist1/*.whl dist2/*.whl
+# Should be identical
+```
+
+---
+
+## 12. End-to-end deployment flow
+
+Putting it all together: a modern Python service goes from code to production through this pipeline:
+
+```mermaid
+flowchart TD
+    A["Developer pushes code"] --> B["CI: lint + type check + test"]
+    B --> C["CI: pip-compile + pip-audit"]
+    C --> D["CI: docker build (multi-stage)"]
+    D --> E["CI: generate SBOM"]
+    E --> F["CI: image scan (Trivy / Grype)"]
+    F --> G["CI: push to registry"]
+    G --> H["Staging: deploy + smoke test"]
+    H --> I["Canary: 5% traffic"]
+    I --> J["Full rollout"]
+    J --> K["Monitor: traces + metrics + logs"]
+    K --> L{"Anomaly?"}
+    L -->|"Yes"| M["Rollback"]
+    L -->|"No"| N["Steady state"]
 ```
 
 ---
 
 ## Key takeaways
 
-- **`pyproject.toml` is the single source of truth.** PEP 517 (build backend interface), PEP 518 (build requirements), PEP 621 (project metadata), and PEP 660 (editable installs) together replace `setup.py`, `setup.cfg`, and `MANIFEST.in`. Use `hatchling` or `poetry-core` as the build backend; use `uv` or `pip-tools` for locking.
+- **`pyproject.toml` is the single source of truth** for Python project metadata. PEP 517 (build API), PEP 518 (build dependencies), PEP 621 (project metadata), and PEP 660 (editable installs) define the complete contract. Use hatchling or uv for clean `pyproject.toml`-only projects; setuptools for legacy compatibility.
 
-- **Wheel tags encode the three dimensions of compatibility.** `pyVER-ABI-PLATFORM` — Python version, ABI (pure/CPython/abi3), and platform (any/manylinux/musllinux). The `abi3` tag (Stable ABI, Chapter 10 §9) collapses one wheel to work across all CPython 3.x versions above the minimum.
+- **Wheels are the installable unit; sdists are the source-of-truth.** Pure-Python wheels (`py3-none-any`) are universal. Binary wheels carry platform tags (`manylinux_2_17_x86_64`) that encode glibc minimums. The stable ABI (`abi3`) lets one wheel cover all future CPython versions.
 
-- **manylinux and musllinux exist because C extensions link to system libraries.** `auditwheel repair` bundles shared libraries into the wheel and rewrites the tag. Without this step, your wheel only works on the exact machine it was built on.
+- **Lockfiles with hashes are non-negotiable for production.** `pip-compile --generate-hashes` or `uv.lock` captures the exact dependency graph. `--require-hashes` on install rejects tampered packages. This is your primary defense against typosquatting, dependency confusion, and account takeover.
 
-- **Lockfiles are not optional in production.** `pip-compile --generate-hashes` produces a `requirements.txt` that is deterministic, auditable, and tamper-resistant. `poetry.lock`, `pdm.lock`, and `uv.lock` provide the same guarantees with different ergonomics. The choice is workflow preference, not correctness.
+- **Docker multi-stage builds separate build from runtime.** Build dependencies (compilers, headers) stay in the builder stage; only the virtualenv and runtime libraries ship in the final image. Pre-compile bytecode (`compileall --optimize=1`) and suppress runtime writes (`PYTHONDONTWRITEBYTECODE=1`) for faster cold starts.
 
-- **Docker multi-stage builds are the standard for Python services.** Build in a full image (with compilers), copy only `site-packages/` and application code into a slim runtime image. Pre-compile with `python -m compileall --invalidation-mode=unchecked-hash --optimize=2` for fast cold start. Set `PYTHONDONTWRITEBYTECODE=1` to prevent runtime `__pycache__/` writes.
+- **Hermetic builds (`--no-index` + vendored wheelhouse) eliminate network surprises.** Combined with hash verification, they produce fully reproducible installations. The `--no-deps` flag tells pip to trust the lockfile without resolving.
 
-- **Hermetic builds (`--no-index` + vendored wheelhouse) eliminate network dependency.** This is required for reproducible builds, air-gapped environments, and supply-chain security. Combine with `--require-hashes` for tamper detection.
+- **SBOMs and vulnerability scanning are not optional.** `cyclonedx-bom` generates machine-readable inventories; `pip-audit` checks against the OSV database. Integrate both into CI with a stale-lockfile check to catch drift.
 
-- **SBOMs are a compliance requirement, not a nice-to-have.** `cyclonedx-bom` generates a machine-readable inventory of every dependency. `pip-audit` checks that inventory against known vulnerabilities. Both belong in CI, blocking merges on known CVEs.
+- **gunicorn + uvicorn workers with preloading give you process isolation + async performance.** `preload_app = True` shares the import graph across workers via copy-on-write. `max_requests` with jitter prevents slow memory leaks. Health probes (`/health`, `/ready`, `/startup`) map to Kubernetes liveness, readiness, and startup probes.
 
-- **Autoscaling must account for Python warmup.** Import-time latency (200–600 modules), JIT warmup (PEP 659 specialization + PEP 744 tier-2), and connection pool sizing all affect time-to-healthy. `--preload-app` amortizes import and JIT warmup across workers. Set minimum replica counts above zero for latency-sensitive services.
+- **Autoscaling needs JIT warmup.** Python's adaptive interpreter, JIT compilers, and ML model loading all require warm-up traffic. Trigger representative requests during startup, and configure HPA with custom metrics and generous scale-down stabilization.
 
-- **Supply-chain defense is layered.** Lockfile hashes prevent version drift. `--require-hashes` prevents tampered wheels. `pip-audit` finds known CVEs. Private index isolation prevents dependency confusion. No single control is sufficient; all are necessary.
+- **Observability requires correlated traces + logs.** OpenTelemetry provides traces; structlog provides structured logs. Inject `trace_id` and `span_id` into every log line to enable cross-signal correlation.
 
 ---
 
 ## Further reading
 
-- PEP 517 — *A build-system interface for source trees* (2017, the abstraction between pip and build backends). <https://peps.python.org/pep-0517/> **(pinned)**
-- PEP 518 — *Specifying minimum build system requirements* (2016, `[build-system] requires`). <https://peps.python.org/pep-0518/> **(pinned)**
-- PEP 621 — *Storing project metadata in pyproject.toml* (2021, `[project]` table). <https://peps.python.org/pep-0621/> **(pinned)**
-- PEP 660 — *Editable installs* (2021, `build_editable`, finder-based editable mapping). <https://peps.python.org/pep-0660/> **(pinned)**
-- *Python Packaging User Guide* — packaging.python.org (the authoritative guide for wheels, sdists, `pyproject.toml`, PyPI upload, and tool recommendations). <https://packaging.python.org/> **(pinned)**
-- `pip-audit` — PyPI and vulnerability scanning for Python dependencies. <https://github.com/pypa/pip-audit> **(pinned)**
-- `auditwheel` — Repair Linux wheels for manylinux compliance. <https://github.com/pypa/auditwheel>
-- `cibuildwheel` — Build wheels across platforms and Python versions in CI. <https://github.com/pypa/cibuildwheel>
-- `cyclonedx-python` — Generate CycloneDX SBOMs for Python projects. <https://github.com/CycloneDX/cyclonedx-python-lib>
-- PEP 384 — *Defining a Stable ABI* (2011, the foundation for `abi3` wheels). <https://peps.python.org/pep-0384/>
-- PEP 440 — *Version Identification and Dependency Specification* (2012, version specifiers like `>=2.0,<3.0`). <https://peps.python.org/pep-0440/>
-- `structlog` — Structured logging for Python. <https://www.structlog.org/>
-- *OpenTelemetry Python SDK* — Instrumentation, traces, metrics, and logs. <https://opentelemetry.io/docs/instrumentation/python/>
+**Pinned references (start here):**
+
+- [PEP 517 — Build backend API](https://peps.python.org/pep-0517/) — defines the interface that build backends must implement (`build_wheel`, `build_sdist`, `get_requires_for_build_wheel`).
+- [PEP 518 — pyproject.toml and build dependencies](https://peps.python.org/pep-0518/) — defines the `[build-system]` table and how build dependencies are specified.
+- [PEP 621 — Project metadata in pyproject.toml](https://peps.python.org/pep-0621/) — defines the `[project]` table for all project metadata.
+- [PEP 660 — Editable installs](https://peps.python.org/pep-0660/) — defines the editable install protocol for build backends.
+- [PEP 600 — Flexible manylinux platform tags](https://peps.python.org/pep-0600/) — replaces named manylinux versions with explicit glibc minimums (`manylinux_2_17`).
+- [pip-audit](https://github.com/pypa/pip-audit) — vulnerability scanner for Python packages, backed by the OSV database.
+- [packaging.python.org](https://packaging.python.org/) — the official Python packaging user guide, covering pyproject.toml, build backends, and distribution.
+- [CycloneDX Python](https://github.com/CycloneDX/cyclonedx-python) — SBOM generation for Python environments.
+
+**Additional references:**
+
+- [manylinux](https://github.com/pypa/manylinux) — the manylinux Docker images and auditwheel tooling for building portable Linux wheels.
+- [auditwheel](https://github.com/pypa/auditwheel) — repair and audit Linux wheels for manylinux compliance.
+- [uv](https://github.com/astral-sh/uv) — Rust-based Python package manager, resolver, and build backend.
+- [structlog](https://www.structlog.org/) — structured logging library for Python.
+- [OpenTelemetry Python](https://opentelemetry.io/docs/languages/python/) — auto-instrumentation and manual tracing for Python services.
+- [gunicorn](https://docs.gunicorn.org/) — Python WSGI HTTP server with preloading, worker management, and graceful reload.
+- [Docker best practices for Python](https://docs.docker.com/build/building/best-practices/) — official Docker guidance on layer caching, multi-stage builds, and image size.

@@ -135,19 +135,19 @@ The GIL drop path is the `GIL_DROP_REQUEST` bit. The full cycle:
 ```mermaid
 flowchart TB
     subgraph HOLDER["Thread A — GIL holder (running Python)"]
-        A1["Executing bytecodes<br/>_PyEval_EvalFrameDefault"] --> A2{"eval_breaker != 0 ?"}
+        A1["Executing bytecodes _PyEval_EvalFrameDefault"] --> A2{"eval_breaker != 0 ?"}
         A2 -->|no| A1
-        A2 -->|yes — GIL_DROP_REQUEST set| A3["handle_eval_breaker():<br/>drop_gil()<br/>  mutex lock<br/>  gil_locked = 0<br/>  COND SIGNAL<br/>  COND WAIT (with timeout)"]
-        A3 --> A4["Re-acquire: take_gil()<br/>  mutex lock loop<br/>  wait on COND<br/>  gil_locked = 1"]
+        A2 -->|yes — GIL_DROP_REQUEST set| A3["handle_eval_breaker(): drop_gil()   mutex lock   gil_locked = 0   COND SIGNAL   COND WAIT (with timeout)"]
+        A3 --> A4["Re-acquire: take_gil()   mutex lock loop   wait on COND   gil_locked = 1"]
         A4 --> A1
     end
 
     subgraph WAITER["Thread B — wants GIL"]
-        B1["PyEval_RestoreThread()<br/>take_gil()"] --> B2["mutex lock<br/>gil_locked == 1 ?"]
-        B2 -->|yes| B3["Set GIL_DROP_REQUEST<br/>on holder's eval_breaker<br/>COND WAIT"]
-        B3 --> B4{"COND signaled<br/>+ gil_locked == 0 ?"}
+        B1["PyEval_RestoreThread() take_gil()"] --> B2["mutex lock gil_locked == 1 ?"]
+        B2 -->|yes| B3["Set GIL_DROP_REQUEST on holder's eval_breaker COND WAIT"]
+        B3 --> B4{"COND signaled + gil_locked == 0 ?"}
         B4 -->|no| B3
-        B4 -->|yes| B5["gil_locked = 1<br/>clear drop request<br/>return — now holder"]
+        B4 -->|yes| B5["gil_locked = 1 clear drop request return — now holder"]
     end
 
     A3 -.->|SIGNAL wakes| B4
@@ -221,15 +221,15 @@ Lifecycle diagram — the full acquire/release state machine including the I/O p
 
 ```mermaid
 stateDiagram-v2
-    [*] --> HasGIL: thread start<br/>PyGILState_Ensure / PyEval_RestoreThread
-    HasGIL --> HasGIL: execute bytecodes<br/>eval_breaker == 0
-    HasGIL --> Dropping: eval_breaker GIL_DROP_REQUEST<br/>or explicit PyEval_SaveThread
-    Dropping --> NoGIL: drop_gil()<br/>COND SIGNAL waiters
+    [*] --> HasGIL: thread start PyGILState_Ensure / PyEval_RestoreThread
+    HasGIL --> HasGIL: execute bytecodes eval_breaker == 0
+    HasGIL --> Dropping: eval_breaker GIL_DROP_REQUEST or explicit PyEval_SaveThread
+    Dropping --> NoGIL: drop_gil() COND SIGNAL waiters
     NoGIL --> Acquiring: PyEval_RestoreThread / GILState_Ensure
-    Acquiring --> HasGIL: take_gil()<br/>COND WAIT until gil_locked==0<br/>gil_locked=1
-    HasGIL --> NoGIL_IO: Py_BEGIN_ALLOW_THREADS<br/>PyEval_SaveThread()
-    NoGIL_IO --> HasGIL: Py_END_ALLOW_THREADS<br/>PyEval_RestoreThread()
-    NoGIL --> [*]: thread exit<br/>PyGILState_Release
+    Acquiring --> HasGIL: take_gil() COND WAIT until gil_locked==0 gil_locked=1
+    HasGIL --> NoGIL_IO: Py_BEGIN_ALLOW_THREADS PyEval_SaveThread()
+    NoGIL_IO --> HasGIL: Py_END_ALLOW_THREADS PyEval_RestoreThread()
+    NoGIL --> [*]: thread exit PyGILState_Release
     HasGIL --> [*]: Py_FinalizeEx
 
     note right of Dropping
@@ -382,21 +382,21 @@ Signaling comparison:
 flowchart TB
     subgraph OLD["Old tick GIL (≤ 3.1) — opportunistic handoff"]
         direction TB
-        O1["Holder: --ticker each opcode<br/>every 100 ticks check gil_requested"] --> O2{"gil_requested?"}
-        O2 -->|yes| O3["PyThread_release_lock(gil)<br/>PyThread_acquire_lock(gil) — RACE"]
+        O1["Holder: --ticker each opcode every 100 ticks check gil_requested"] --> O2{"gil_requested?"}
+        O2 -->|yes| O3["PyThread_release_lock(gil) PyThread_acquire_lock(gil) — RACE"]
         O2 -->|no| O1
         O3 --> O4{"Who wins race?"}
-        O4 -->|Usually holder<br/>OS wakes releaser first| O5["Holder re-acquires<br/>waiter starves"]
-        O4 -->|Sometimes waiter| O6["Waiter acquires<br/>unfair, unpredictable"]
+        O4 -->|Usually holder OS wakes releaser first| O5["Holder re-acquires waiter starves"]
+        O4 -->|Sometimes waiter| O6["Waiter acquires unfair, unpredictable"]
         style O5 fill:#7a1a1a,stroke:#f87171,color:#fff
     end
 
     subgraph NEW["New GIL (3.2+) — forced handoff"]
         direction TB
-        N1["Holder runs<br/>interval = 5ms wall time"] --> N2["Waiter: take_gil()<br/>set gil_drop_request=1<br/>set holder eval_breaker=1<br/>COND_TIMED_WAIT"]
-        N2 -.->|eval_breaker| N3["Holder at next opcode:<br/>handle_eval_breaker()<br/>drop_gil(): gil.locked=0<br/>COND SIGNAL waiter<br/>holder COND WAITs"]
-        N3 --> N4["Waiter woken<br/>gil.locked=1 — guaranteed<br/>switch_number++"]
-        N4 --> N5["Waiter runs 5ms<br/>holder is now waiter"]
+        N1["Holder runs interval = 5ms wall time"] --> N2["Waiter: take_gil() set gil_drop_request=1 set holder eval_breaker=1 COND_TIMED_WAIT"]
+        N2 -.->|eval_breaker| N3["Holder at next opcode: handle_eval_breaker() drop_gil(): gil.locked=0 COND SIGNAL waiter holder COND WAITs"]
+        N3 --> N4["Waiter woken gil.locked=1 — guaranteed switch_number++"]
+        N4 --> N5["Waiter runs 5ms holder is now waiter"]
         style N4 fill:#1a7a3a,stroke:#4ade80,color:#fff
         style N5 fill:#2a4b8d,stroke:#6ea8fe,color:#fff
     end
@@ -425,17 +425,17 @@ PEP 684 ("A Per-Interpreter GIL", Eric Snow, 3.12) fixes the first half: **each 
 ```mermaid
 flowchart TB
     subgraph PROC["Process — one PID, shared address space"]
-        subgraph INTERP0["Interpreter 0 — main<br/>PyInterpreterState *interp0"]
-            GIL0["GIL 0<br/>ceval_gil.c state<br/>cond + mutex<br/>interval 5ms"]
-            MODS0["sys.modules₀<br/>import state₀<br/>GC generation 0"]
-            OBJ0["Objects₀<br/>pymalloc arenas*<br/>type caches₀"]
+        subgraph INTERP0["Interpreter 0 — main PyInterpreterState *interp0"]
+            GIL0["GIL 0 ceval_gil.c state cond + mutex interval 5ms"]
+            MODS0["sys.modules₀ import state₀ GC generation 0"]
+            OBJ0["Objects₀ pymalloc arenas* type caches₀"]
             GIL0 --- MODS0
             MODS0 --- OBJ0
         end
-        subgraph INTERP1["Interpreter 1 — subinterpreter<br/>PyInterpreterState *interp1"]
-            GIL1["GIL 1<br/>independent<br/>cond + mutex"]
-            MODS1["sys.modules₁<br/>import state₁<br/>GC generation 1"]
-            OBJ1["Objects₁<br/>pymalloc arenas*<br/>type caches₁"]
+        subgraph INTERP1["Interpreter 1 — subinterpreter PyInterpreterState *interp1"]
+            GIL1["GIL 1 independent cond + mutex"]
+            MODS1["sys.modules₁ import state₁ GC generation 1"]
+            OBJ1["Objects₁ pymalloc arenas* type caches₁"]
             GIL1 --- MODS1
             MODS1 --- OBJ1
         end
@@ -446,11 +446,11 @@ flowchart TB
             GIL2 --- MODS2
             MODS2 --- OBJ2
         end
-        SHARED["Process-shared (still global in 3.12):<br/>pymalloc (partially) · obmalloc global lock<br/>_PyRuntime global state · signal handling<br/>C extension static globals (PEP 3121 fixes)"]
+        SHARED["Process-shared (still global in 3.12): pymalloc (partially) · obmalloc global lock _PyRuntime global state · signal handling C extension static globals (PEP 3121 fixes)"]
     end
 
-    INTERP0 -.->|shares address space<br/>but not GIL| INTERP1
-    INTERP1 -.->|true parallel<br/>Python execution| INTERP2
+    INTERP0 -.->|shares address space but not GIL| INTERP1
+    INTERP1 -.->|true parallel Python execution| INTERP2
 
     style GIL0 fill:#2a4b8d,stroke:#6ea8fe,color:#fff
     style GIL1 fill:#1a7a3a,stroke:#4ade80,color:#fff
@@ -865,33 +865,22 @@ Takeaway: single-threaded free-threaded is ~5–15% slower (atomics, wider heade
 Before free-threaded, a contended GIL looks like this in a `py-spy --gil` recording:
 
 ```mermaid
-gantt
-    title GIL contention timeline — 4 CPU-bound threads, GIL build (5ms switch interval)
-    dateFormat X
-    axisFormat %L ms
-    section Thread 0 (holder)
-    holds GIL           :active, t0, 5ms
-    take_gil wait       :crit, after t0, 15ms
-    holds GIL           :active, after t0, 5ms
-    take_gil wait       :crit, after t0, 15ms
-    holds GIL           :active, after t0, 5ms
-    section Thread 1
-    take_gil wait       :crit, t1, 5ms
-    holds GIL           :active, after t1, 5ms
-    take_gil wait       :crit, after t1, 15ms
-    holds GIL           :active, after t1, 5ms
-    section Thread 2
-    take_gil wait       :crit, t2, 10ms
-    holds GIL           :active, after t2, 5ms
-    take_gil wait       :crit, after t2, 15ms
-    section Thread 3
-    take_gil wait       :crit, t3, 15ms
-    holds GIL           :active, after t3, 5ms
-    take_gil wait       :crit, after t3, 10ms
-    section OS runqueue
-    serialized          :milestone, m0, 0ms
-    serialized          :milestone, m1, 20ms
-    serialized          :milestone, m2, 40ms
+sequenceDiagram
+    participant T0 as Thread 0
+    participant T1 as Thread 1
+    participant T2 as Thread 2
+    participant T3 as Thread 3
+    Note over T0,T3: GIL build -- 5ms switch interval
+    T0->>T0: holds GIL 5ms
+    T1-->>T0: waits for GIL
+    T0->>T1: releases GIL
+    T1->>T1: holds GIL 5ms
+    T2-->>T1: waits for GIL
+    T1->>T2: releases GIL
+    T2->>T2: holds GIL 5ms
+    T3-->>T2: waits for GIL
+    T2->>T3: releases GIL
+    T3->>T3: holds GIL 5ms
 ```
 
 Wider `_PyEval_EvalFrameDefault` in `py-spy` flames = holder; narrow `take_gil` / `COND_WAIT` = waiter. Under contention each thread spends ~75% of wall time in `take_gil` — pure waste. `yappi` quantifies it:
@@ -915,15 +904,15 @@ Performance comparison matrix — when free-threaded wins, loses, or ties:
 flowchart TB
     subgraph MATRIX["Throughput vs. GIL — decision matrix (backend lens)"]
         direction TB
-        Q1{"Workload<br/>CPU-bound?"}
-        Q1 -->|yes — pure Python<br/>loops, JSON, templates| WIN["Free-threaded WINS<br/>3-6× on 8 cores<br/>use ThreadPoolExecutor<br/>instead of multiprocessing"]
-        Q1 -->|no| Q2{"I/O-bound?<br/>DB, HTTP, cache"}
-        Q2 -->|yes — GIL released<br/>during I/O| TIE["TIE — both parallel<br/>GIL released on I/O<br/>no migration needed"]
-        Q2 -->|no — mixed| Q3{"Shared containers<br/>hot dict/list?"}
-        Q3 -->|yes — contention<br/>on PyMutex| MAYBE["MAYBE — measure<br/>per-object lock contention<br/>may need sharding"]
-        Q3 -->|no — sharded /<br/>per-request state| WIN2["Free-threaded WINS<br/>modest — scales request<br/>CPU portion"]
-        SINGLE{"Single-threaded<br/>no parallelism?"}
-        SINGLE --> LOSE["Free-threaded LOSES<br/>5-15% slower<br/>stay on GIL build"]
+        Q1{"Workload CPU-bound?"}
+        Q1 -->|yes — pure Python loops, JSON, templates| WIN["Free-threaded WINS 3-6× on 8 cores use ThreadPoolExecutor instead of multiprocessing"]
+        Q1 -->|no| Q2{"I/O-bound? DB, HTTP, cache"}
+        Q2 -->|yes — GIL released during I/O| TIE["TIE — both parallel GIL released on I/O no migration needed"]
+        Q2 -->|no — mixed| Q3{"Shared containers hot dict/list?"}
+        Q3 -->|yes — contention on PyMutex| MAYBE["MAYBE — measure per-object lock contention may need sharding"]
+        Q3 -->|no — sharded / per-request state| WIN2["Free-threaded WINS modest — scales request CPU portion"]
+        SINGLE{"Single-threaded no parallelism?"}
+        SINGLE --> LOSE["Free-threaded LOSES 5-15% slower stay on GIL build"]
     end
 
     style WIN fill:#1a7a3a,stroke:#4ade80,color:#fff
@@ -1107,12 +1096,12 @@ with ProcessPoolExecutor(max_workers=8) as ex:
 ```mermaid
 flowchart LR
     subgraph GIL_BUILD["GIL build — today"]
-        G1["Request<br/>CPU chunk"] --> G2["ThreadPool 8<br/>serialized on GIL<br/>wall = 8× single"]
-        G1 --> G3["ProcessPool 8<br/>8 GILs, 8 cores<br/>wall = 1× single<br/>+ pickle cost"]
+        G1["Request CPU chunk"] --> G2["ThreadPool 8 serialized on GIL wall = 8× single"]
+        G1 --> G3["ProcessPool 8 8 GILs, 8 cores wall = 1× single + pickle cost"]
     end
     subgraph FREE["Free-threaded (3.13t) — near future"]
-        F1["Request<br/>CPU chunk"] --> F2["ThreadPool 8<br/>true parallel<br/>wall ≈ 1× single<br/>no pickle"]
-        F1 -.->|still works| F3["ProcessPool 8<br/>heavier — rarely needed"]
+        F1["Request CPU chunk"] --> F2["ThreadPool 8 true parallel wall ≈ 1× single no pickle"]
+        F1 -.->|still works| F3["ProcessPool 8 heavier — rarely needed"]
     end
 
     style G3 fill:#2a4b8d,stroke:#6ea8fe,color:#fff
@@ -1182,17 +1171,17 @@ perf stat -e context-switches,cycles -p <pid> -- sleep 10
 ```mermaid
 flowchart LR
     subgraph PAST["Past — one GIL, one interpreter (≤ 3.11)"]
-        P1["Process<br/>PyInterpreterState (1)<br/>GIL: process-wide<br/>_PyRuntime.gil"]
-        P1 --> P2["All threads<br/>serialized<br/>multiprocessing<br/>is the escape hatch"]
+        P1["Process PyInterpreterState (1) GIL: process-wide _PyRuntime.gil"]
+        P1 --> P2["All threads serialized multiprocessing is the escape hatch"]
     end
     subgraph NOW["Now — per-interpreter GIL (3.12, PEP 684)"]
-        N1["Process<br/>Interpreter 0: GIL 0<br/>Interpreter 1: GIL 1<br/>... Interpreter N: GIL N"]
-        N1 --> N2["Subinterpreters run<br/>Python in parallel<br/>shared-nothing via channels<br/>extensions need PEP 3121"]
+        N1["Process Interpreter 0: GIL 0 Interpreter 1: GIL 1 ... Interpreter N: GIL N"]
+        N1 --> N2["Subinterpreters run Python in parallel shared-nothing via channels extensions need PEP 3121"]
     end
     subgraph FUTURE["Future — free-threaded (3.13t+, PEP 703)"]
-        F1["Any interpreter<br/>GIL disabled<br/>biased refcounts<br/>mimalloc<br/>PyMutex / critical sections"]
-        F1 --> F2["Threads run Python<br/>in parallel freely<br/>shared objects via<br/>per-object locks"]
-        F2 --> F3["Single interpreter<br/>is enough — GIL<br/>is not the bottleneck"]
+        F1["Any interpreter GIL disabled biased refcounts mimalloc PyMutex / critical sections"]
+        F1 --> F2["Threads run Python in parallel freely shared objects via per-object locks"]
+        F2 --> F3["Single interpreter is enough — GIL is not the bottleneck"]
     end
 
     PAST --> NOW --> FUTURE

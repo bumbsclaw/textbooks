@@ -839,7 +839,7 @@ sequenceDiagram
     G->>POLL: Read: syscall Read → EAGAIN
     POLL->>RT: poll_runtime_pollWait(pd, 'r')
     RT->>POLL: netpollcheckerr → not ready
-    RT->>POLL: lock pd; pd.rg = G
+    RT->>POLL: lock pd and set pd.rg
     RT->>SCHED: gopark(IO wait)<br/>G Running→Waiting<br/>save gobuf, unlock, park_m
     Note over SCHED: M/P free → runs other Gs
     PEER->>EP: data arrives on fd

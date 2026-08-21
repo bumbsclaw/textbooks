@@ -32,15 +32,15 @@ CPython follows a yearly release cadence (3.11, 3.12, 3.13, …), each with a si
 
 ```mermaid
 flowchart TB
-    SPEC["Python Language Spec<br/>(Reference + PEPs)"]
-    CPY["CPython<br/>reference interpreter<br/>C + Python (Lib/)"]
-    ALT1["PyPy<br/>(JIT, GC)"]
-    ALT2["GraalPy / RustPython<br/>WASM / embedded"]
+    SPEC["Python Language Spec (Reference + PEPs)"]
+    CPY["CPython reference interpreter C + Python (Lib/)"]
+    ALT1["PyPy (JIT, GC)"]
+    ALT2["GraalPy / RustPython WASM / embedded"]
     SPEC -->|defines| CPY
     SPEC -.->|implements subset| ALT1
     SPEC -.->|implements subset| ALT2
-    CPY -->|is the arbiter| BEH["Runtime behavior:<br/>syntax, import, bytecode,<br/>C API, startup"]
-    BEH --> PROD["Your backend fleet<br/>containers, lambdas, jobs"]
+    CPY -->|is the arbiter| BEH["Runtime behavior: syntax, import, bytecode, C API, startup"]
+    BEH --> PROD["Your backend fleet containers, lambdas, jobs"]
 ```
 
 ---
@@ -109,16 +109,16 @@ Source text becomes running code in a strict, observable pipeline. Every stage h
 
 ```mermaid
 flowchart LR
-    SRC["Source<br/>.py bytes<br/>(utf-8 + cookie)"] --> TOK["Tokenizer<br/>Parser/token.c<br/>bytes → Token stream"]
-    TOK --> PEG["PEG Parser<br/>Parser/parser.c<br/>(from Grammar/python.gram)<br/>Token stream → AST"]
-    PEG --> AST["AST<br/>Python/ast.c<br/>validated tree<br/>(Python.asdl)"]
-    AST --> SYM["Symbol Table<br/>Python/symtable.c<br/>scopes, free vars,<br/>cell vars"]
-    SYM --> CMP["Compiler<br/>Python/compile.c<br/>AST → bytecode<br/>+ PyCodeObject"]
+    SRC["Source .py bytes (utf-8 + cookie)"] --> TOK["Tokenizer Parser/token.c bytes → Token stream"]
+    TOK --> PEG["PEG Parser Parser/parser.c (from Grammar/python.gram) Token stream → AST"]
+    PEG --> AST["AST Python/ast.c validated tree (Python.asdl)"]
+    AST --> SYM["Symbol Table Python/symtable.c scopes, free vars, cell vars"]
+    SYM --> CMP["Compiler Python/compile.c AST → bytecode + PyCodeObject"]
     CMP --> PYC{"Cache?"}
-    PYC -->|write| CACHE["__pycache__/*.pyc<br/>marshal + header"]
-    PYC -->|load| CODE["PyCodeObject<br/>co_code, co_consts,<br/>co_names, ..."]
-    CODE --> EVAL["Eval Loop<br/>Python/ceval.c<br/>_PyEval_EvalFrame<br/>bytecode → effect"]
-    EVAL --> OUT["Execution<br/>objects, frames,<br/>side effects"]
+    PYC -->|write| CACHE["__pycache__/*.pyc marshal + header"]
+    PYC -->|load| CODE["PyCodeObject co_code, co_consts, co_names, ..."]
+    CODE --> EVAL["Eval Loop Python/ceval.c _PyEval_EvalFrame bytecode → effect"]
+    EVAL --> OUT["Execution objects, frames, side effects"]
 
     CACHE -.->|import fast path| CODE
 
@@ -234,15 +234,15 @@ python -m tokenize Lib/pathlib.py | head -30
 ```mermaid
 sequenceDiagram
     participant SRC as Source bytes
-    participant TOK as Tokenizer<br/>Parser/token.c
-    participant PAR as PEG Parser
-    participant AST as AST builder<br/>Python/ast.c
+    participant TOK as Tokenizer
+    participant PARS as PEG Parser
+    participant AST as AST builder
     SRC->>TOK: raw bytes (utf-8 + cookie)
-    TOK->>TOK: detect encoding<br/>handle continuations<br/>track indent stack
-    TOK->>PAR: TokenInfo stream<br/>NAME / NUMBER / STRING<br/>OP / INDENT / DEDENT<br/>NL / NEWLINE / ENDMARKER
-    PAR->>PAR: PEG rules from<br/>Grammar/python.gram<br/>memoization table
-    PAR->>AST: CST → AST nodes<br/>(Python.asdl types)
-    AST->>AST: validate + set<br/>lineno / col_offset<br/>end_lineno / end_col_offset
+    TOK->>TOK: detect encoding handle continuations track indent stack
+    TOK->>PARS: TokenInfo stream
+    PARS->>PARS: PEG rules from Grammar/python.gram memoization table
+    PARS->>AST: CST → AST nodes (Python.asdl types)
+    AST->>AST: validate + set lineno / col_offset end_lineno / end_col_offset
 ```
 
 ---
@@ -458,17 +458,17 @@ Every function, class body, module, lambda, and comprehension gets its own `PyCo
 flowchart TB
     subgraph CO["PyCodeObject  (Include/cpython/code.h)"]
         direction TB
-        CODE["co_code: bytes<br/>raw bytecode stream<br/>(opcode + oparg pairs)"]
-        CONSTS["co_consts: tuple<br/>literals + nested code objects<br/>(None, 1, 'hello', &lt;code f&gt;)"]
-        NAMES["co_names: tuple<br/>global / attr names<br/>(print, os, path)"]
-        VARNAMES["co_varnames: tuple<br/>local variable names<br/>(x, y, total)"]
-        CELLFREE["co_cellvars / co_freevars<br/>closure cells"]
-        FLAGS["co_flags: int<br/>CO_OPTIMIZED | CO_NEWLOCALS<br/>CO_GENERATOR | CO_COROUTINE ..."]
-        META["co_filename, co_name, co_qualname<br/>co_firstlineno, co_argcount<br/>co_kwonlyargcount, co_posonlyargcount"]
-        LINES["co_exceptiontable: bytes<br/>co_positions / co_lines<br/>bytecode offset → source line"]
-        ADAPTIVE["co_warmup / inline caches<br/>(3.11+ adaptive specialization)"]
+        CODE["co_code: bytes raw bytecode stream (opcode + oparg pairs)"]
+        CONSTS["co_consts: tuple literals + nested code objects (None, 1, 'hello', &lt;code f&gt;)"]
+        NAMES["co_names: tuple global / attr names (print, os, path)"]
+        VARNAMES["co_varnames: tuple local variable names (x, y, total)"]
+        CELLFREE["co_cellvars / co_freevars closure cells"]
+        FLAGS["co_flags: int CO_OPTIMIZED | CO_NEWLOCALS CO_GENERATOR | CO_COROUTINE ..."]
+        META["co_filename, co_name, co_qualname co_firstlineno, co_argcount co_kwonlyargcount, co_posonlyargcount"]
+        LINES["co_exceptiontable: bytes co_positions / co_lines bytecode offset → source line"]
+        ADAPTIVE["co_warmup / inline caches (3.11+ adaptive specialization)"]
     end
-    FRAME["PyFrameObject<br/>(Objects/frameobject.c)<br/>holds mutable execution state:<br/>locals array, stack, lasti,<br/>exc state, builtins ref"]
+    FRAME["PyFrameObject (Objects/frameobject.c) holds mutable execution state: locals array, stack, lasti, exc state, builtins ref"]
     CO -->|instantiated per call| FRAME
     FRAME -->|interprets| CODE
 ```
@@ -637,22 +637,22 @@ PEP 302/451 formalized import as two-phase:
 
 ```mermaid
 flowchart TB
-    IMP["import foo.bar<br/>(ceval.c → import.c<br/> → importlib._bootstrap)"]
-    META["sys.meta_path<br/>ordered finders"]
-    F1["BuiltinImporter<br/>(sys, time, _io)"]
-    F2["FrozenImporter<br/>(importlib._bootstrap)"]
-    F3["PathFinder<br/>(sys.path)"]
-    HOOKS["sys.path_hooks<br/>FileFinder, ZipImporter,<br/>custom hooks"]
+    IMP["import foo.bar (ceval.c → import.c  → importlib._bootstrap)"]
+    META["sys.meta_path ordered finders"]
+    F1["BuiltinImporter (sys, time, _io)"]
+    F2["FrozenImporter (importlib._bootstrap)"]
+    F3["PathFinder (sys.path)"]
+    HOOKS["sys.path_hooks FileFinder, ZipImporter, custom hooks"]
 
     IMP --> META
     META --> F1 -->|miss| F2 -->|miss| F3
     F3 --> HOOKS
-    HOOKS -->|stat + cache check| PYC{"__pycache__<br/>valid?"}
-    PYC -->|hit| LOAD_PYC["SourcelessLoader<br/>marshal.loads(pyc)"]
-    PYC -->|miss / no pyc| LOAD_SRC["SourceFileLoader<br/>tokenize → parse → compile<br/>→ marshal → write pyc"]
-    LOAD_PYC --> EXEC["Loader.exec_module<br/>populate module.__dict__<br/>insert sys.modules[name]"]
+    HOOKS -->|stat + cache check| PYC{"__pycache__ valid?"}
+    PYC -->|hit| LOAD_PYC["SourcelessLoader marshal.loads(pyc)"]
+    PYC -->|miss / no pyc| LOAD_SRC["SourceFileLoader tokenize → parse → compile → marshal → write pyc"]
+    LOAD_PYC --> EXEC["Loader.exec_module populate module.__dict__ insert sys.modules[name]"]
     LOAD_SRC --> EXEC
-    EXEC --> MODS["sys.modules<br/>import lock released"]
+    EXEC --> MODS["sys.modules import lock released"]
 
     style PYC fill:#fff3e0
     style EXEC fill:#e8f5e9
@@ -686,19 +686,19 @@ When you run `python app.py`, the OS `execve`s the `python` binary; what follows
 
 ```mermaid
 flowchart TB
-    EXEC["execve(python, argv)<br/>OS loads ELF/Mach-O"]
-    MAIN["Programs/python.c: Py_Main<br/>or embedding: Py_InitializeFromConfig"]
-    CFG["PyConfig init<br/>Python/initconfig.c<br/>read env, argv, -E/-I/-S flags<br/>compute sys.path, PYTHONPATH,<br/>PYTHONHOME, isolated mode"]
-    PRE["pylifecycle.c: Py_Initialize<br/>preinitialize: alloc runtime<br/>init GC, allocators, codecs"]
-    CORE["Core interpreter init<br/>init_interp_main<br/>create sys, builtins<br/>unmarshal frozen importlib<br/>init import.c + codecs<br/>init sys.path / sys.meta_path"]
-    SITE["Site initialization<br/>import site.py (unless -S)<br/>process .pth files<br/>add site-packages to sys.path<br/>set sys.ps1/ps2 if interactive"]
-    USER["Run user code<br/>PyRun_SimpleFile / pymain_run<br/>tokenize → parse → compile → ceval<br/>or import entry point"]
+    EXEC["execve(python, argv) OS loads ELF/Mach-O"]
+    MAIN["Programs/python.c: Py_Main or embedding: Py_InitializeFromConfig"]
+    CFG["PyConfig init Python/initconfig.c read env, argv, -E/-I/-S flags compute sys.path, PYTHONPATH, PYTHONHOME, isolated mode"]
+    PRE["pylifecycle.c: Py_Initialize preinitialize: alloc runtime init GC, allocators, codecs"]
+    CORE["Core interpreter init init_interp_main create sys, builtins unmarshal frozen importlib init import.c + codecs init sys.path / sys.meta_path"]
+    SITE["Site initialization import site.py (unless -S) process .pth files add site-packages to sys.path set sys.ps1/ps2 if interactive"]
+    USER["Run user code PyRun_SimpleFile / pymain_run tokenize → parse → compile → ceval or import entry point"]
 
     EXEC --> MAIN --> CFG --> PRE --> CORE --> SITE --> USER
 
-    CFG -.->|config knobs| ENV["Env vars & flags<br/>PYTHONPATH, PYTHONHOME<br/>PYTHONDONTWRITEBYTECODE<br/>PYTHONPYCACHEPREFIX<br/>PYTHONHASHSEED, -E -I -S -B<br/>SOURCE_DATE_EPOCH"]
-    CORE -.->|frozen modules| FROZEN["Python/importlib.h<br/>_frozen_importlib*<br/>marshalled bytecode"]
-    SITE -.->|can be skipped| NOSITE["-S / PyConfig.site_import=0<br/>hermetic embeds do this"]
+    CFG -.->|config knobs| ENV["Env vars & flags PYTHONPATH, PYTHONHOME PYTHONDONTWRITEBYTECODE PYTHONPYCACHEPREFIX PYTHONHASHSEED, -E -I -S -B SOURCE_DATE_EPOCH"]
+    CORE -.->|frozen modules| FROZEN["Python/importlib.h _frozen_importlib* marshalled bytecode"]
+    SITE -.->|can be skipped| NOSITE["-S / PyConfig.site_import=0 hermetic embeds do this"]
 ```
 
 ### Walk the stages

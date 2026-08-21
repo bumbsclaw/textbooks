@@ -159,13 +159,13 @@ static PyType_Spec MyObject_spec = {
 ```mermaid
 flowchart TB
     subgraph PYTYPES["PyTypeObject instances (all live on the heap or staticaly)"]
-        PYTYPE["PyType_Type<br/>tp_name='type'<br/>ob_type=&PyType_Type (self)"]
-        PYOBJ["PyBaseObject_Type<br/>tp_name='object'<br/>ob_type=&PyType_Type"]
-        PYLONG["PyLong_Type<br/>tp_name='int'"]
-        PYLIST["PyList_Type<br/>tp_name='list'"]
+        PYTYPE["PyType_Type tp_name='type' ob_type=&PyType_Type (self)"]
+        PYOBJ["PyBaseObject_Type tp_name='object' ob_type=&PyType_Type"]
+        PYLONG["PyLong_Type tp_name='int'"]
+        PYLIST["PyList_Type tp_name='list'"]
         PYDICT["PyDict_Type"]
-        USERBASE["MyModel<br/>(heap type)<br/>Py_TPFLAGS_HEAPTYPE<br/>tp_base=&PyBaseObject_Type"]
-        USERSUB["User(MyModel)<br/>tp_base=&MyModel<br/>tp_mro=(User, MyModel, object)"]
+        USERBASE["MyModel (heap type) Py_TPFLAGS_HEAPTYPE tp_base=&PyBaseObject_Type"]
+        USERSUB["User(MyModel) tp_base=&MyModel tp_mro=(User, MyModel, object)"]
     end
 
     PYLONG & PYLIST & PYDICT & PYOBJ -->|ob_type| PYTYPE
@@ -177,7 +177,7 @@ flowchart TB
     USERBASE -->|tp_base| PYOBJ
     USERSUB -->|tp_base| USERBASE
 
-    PYOBJ -.->|tp_base NULL<br/>root of hierarchy| NIL["(null)"]
+    PYOBJ -.->|tp_base NULL root of hierarchy| NIL["(null)"]
 
     style PYTYPE fill:#2a4b8d,stroke:#6ea8fe,color:#fff
     style USERBASE fill:#3a7a44,stroke:#7ed48a,color:#fff
@@ -447,22 +447,22 @@ Every `obj.attr` and `type(obj).attr` lookup executes a precise sequence in `PyO
 
 ```mermaid
 flowchart TB
-    START(["obj.attr<br/>(PyObject_GetAttr)"]) --> GETATTRO{"tp_getattro?<br/>(usually<br/>GenericGetAttr)"}
-    GETATTRO -->|custom __getattribute__| CUSTOM["Call tp_getattro<br/>(user __getattribute__)"]
+    START(["obj.attr (PyObject_GetAttr)"]) --> GETATTRO{"tp_getattro? (usually GenericGetAttr)"}
+    GETATTRO -->|custom __getattribute__| CUSTOM["Call tp_getattro (user __getattribute__)"]
     GETATTRO -->|default path| SEARCH["Search type MRO for 'attr'"]
 
-    SEARCH --> FOUND{"Found in<br/>type/MRO dict?"}
-    FOUND -->|No| INSTDICT{"Instance __dict__<br/>has 'attr'?"}
-    FOUND -->|Yes: data descriptor<br/>has tp_descr_set| DATADESCR["Data descriptor wins<br/>→ descr.__get__(obj, type)"]
-    FOUND -->|Yes: non-data / plain| NONDATA{"Instance __dict__<br/>has 'attr'?"}
+    SEARCH --> FOUND{"Found in type/MRO dict?"}
+    FOUND -->|no| INSTDICT{"Instance __dict__ has 'attr'?"}
+    FOUND -->|data descriptor| DATADESCR["Data descriptor wins → descr.__get__(obj, type)"]
+    FOUND -->|non-data| NONDATA{"Instance __dict__ has 'attr'?"}
 
-    INSTDICT -->|Yes| RETINST["Return instance dict value"]
-    INSTDICT -->|No| GETATTR Fallback
+    INSTDICT -->|yes| RETINST["Return instance dict value"]
+    INSTDICT -->|no| Fallback
 
-    NONDATA -->|Yes: shadows plain attr<br/>but NOT data descr| RETINST2["Return instance dict value"]
-    NONDATA -->|No| INVOKE{"Invoke descriptor?"}
+    NONDATA -->|instance shadows| RETINST2["Return instance dict value"]
+    NONDATA -->|no| INVOKE{"Invoke descriptor?"}
 
-    INVOKE -->|has tp_descr_get| NONDESCR["→ descr.__get__(obj, type)<br/>(functions become methods here)"]
+    INVOKE -->|has tp_descr_get| NONDESCR["→ descr.__get__(obj, type) (functions become methods here)"]
     INVOKE -->|plain value| RETCLASS["Return class attribute"]
 
     DATADESCR --> RET1(["Return value"])
@@ -471,8 +471,8 @@ flowchart TB
     RETINST & RETINST2 --> RET4(["Return value"])
 
     Fallback["__getattr__ fallback"] --> HASGETATTR{"type has __getattr__?"}
-    HASGETATTR -->|Yes| CALLGETATTR["Call __getattr__('attr')"]
-    HASGETATTR -->|No| ATTRERR(["Raise AttributeError"])
+    HASGETATTR -->|yes| CALLGETATTR["Call __getattr__('attr')"]
+    HASGETATTR -->|no| ATTRERR(["Raise AttributeError"])
 
     CUSTOM -.->|may call| SEARCH
 
@@ -579,24 +579,24 @@ class Descriptor:
 
 ```mermaid
 sequenceDiagram
-    participant User as "User code<br/>obj.attr"
-    participant GetAttr as "GenericGetAttr<br/>Objects/object.c"
-    participant TypeDict as "type(obj).tp_dict<br/>along tp_mro"
-    participant Descr as "Descriptor object<br/>tp_descr_get / tp_descr_set"
+    participant User as "User code obj.attr"
+    participant GetAttr as "GenericGetAttr Objects/object.c"
+    participant TypeDict as "type(obj).tp_dict along tp_mro"
+    participant Descr as "Descriptor object tp_descr_get / tp_descr_set"
 
     User->>GetAttr: PyObject_GetAttr(obj, "attr")
-    GetAttr->>TypeDict: _PyType_Lookup("attr")<br/>walk MRO dicts
+    GetAttr->>TypeDict: _PyType_Lookup("attr") walk MRO dicts
     alt Found & is descriptor (tp_descr_get/set)
         TypeDict-->>GetAttr: descr (has tp_descr_get)
-        GetAttr->>GetAttr: Is data descriptor?<br/>(tp_descr_set != NULL?)
+        GetAttr->>GetAttr: Is data descriptor? (tp_descr_set != NULL?)
         alt Data descriptor
             GetAttr->>Descr: tp_descr_get(descr, obj, type(obj))
             Descr-->>GetAttr: computed value
-            GetAttr-->>User: return value<br/>(instance dict NOT checked)
+            GetAttr-->>User: return value (instance dict NOT checked)
         else Non-data descriptor
             GetAttr->>GetAttr: Check obj.__dict__ first
             alt Instance dict has attr
-                GetAttr-->>User: instance dict value<br/>(shadows descriptor)
+                GetAttr-->>User: instance dict value (shadows descriptor)
             else
                 GetAttr->>Descr: tp_descr_get(descr, obj, type(obj))
                 Descr-->>GetAttr: computed value
@@ -762,18 +762,18 @@ With `__slots__ = ("x", "y")`:
 flowchart TB
     subgraph DICT["Without __slots__ — instance has __dict__"]
         direction TB
-        OBJ1["PyObject_HEAD<br/>ob_refcnt / ob_type<br/>tp_dictoffset → offset of dict ptr"]
-        DICT1["__dict__: PyDictObject<br/>┌─────────────────┐<br/>│ 'x': 1          │<br/>│ 'y': 2          │<br/>│ '_cache': {...} │  ← arbitrary keys<br/>│ overhead: ~56B + table │<br/>└─────────────────┘"]
+        OBJ1["PyObject_HEAD ob_refcnt / ob_type tp_dictoffset → offset of dict ptr"]
+        DICT1["__dict__: PyDictObject ┌─────────────────┐ │ 'x': 1          │ │ 'y': 2          │ │ '_cache': {...} │  ← arbitrary keys │ overhead: ~56B + table │ └─────────────────┘"]
         WEAK1["__weakref__ ptr (if flagged)"]
         OBJ1 --> DICT1
         OBJ1 --> WEAK1
     end
     subgraph SLOTS["With __slots__ = ('x','y') — inline pointers, no dict"]
         direction TB
-        OBJ2["PyObject_HEAD<br/>ob_refcnt / ob_type<br/>tp_dictoffset = 0"]
-        SLOTX["slot 'x' → PyObject*<br/>offset 16 (tp_members[0].offset)"]
-        SLOTY["slot 'y' → PyObject*<br/>offset 24 (tp_members[1].offset)"]
-        NO_DICT["No __dict__<br/>No per-instance hash table"]
+        OBJ2["PyObject_HEAD ob_refcnt / ob_type tp_dictoffset = 0"]
+        SLOTX["slot 'x' → PyObject* offset 16 (tp_members[0].offset)"]
+        SLOTY["slot 'y' → PyObject* offset 24 (tp_members[1].offset)"]
+        NO_DICT["No __dict__ No per-instance hash table"]
         OBJ2 --- SLOTX
         OBJ2 --- SLOTY
         OBJ2 --- NO_DICT

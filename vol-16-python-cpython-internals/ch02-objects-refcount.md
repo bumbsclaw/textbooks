@@ -23,14 +23,14 @@ This uniformity flows from one C struct. Every Python value begins with the same
 flowchart TB
     subgraph HEAP["CPython private heap (pymalloc + malloc)"]
         direction TB
-        PYINT["PyLongObject<br/>ob_refcnt=3  ob_type=&PyLong_Type<br/>ob_size=2  ob_digit=[...]  →  represents 123456"]
-        PYSTR["PyUnicodeObject<br/>ob_refcnt=1  ob_type=&PyUnicode_Type<br/>length=5  kind=1  data='hello'"]
-        PYLIST["PyListObject<br/>ob_refcnt=2  ob_type=&PyList_Type<br/>ob_size=3  allocated=4<br/>ob_item=[ptr, ptr, ptr]"]
-        PYTYPE["PyTypeObject<br/>ob_refcnt=immortal  ob_type=&PyType_Type<br/>tp_name='list'  tp_methods=..."]
-        PYNONE["PyObject _Py_NoneStruct<br/>ob_refcnt=immortal  ob_type=&PyNone_Type"]
+        PYINT["PyLongObject ob_refcnt=3  ob_type=&PyLong_Type ob_size=2  ob_digit=[...]  →  represents 123456"]
+        PYSTR["PyUnicodeObject ob_refcnt=1  ob_type=&PyUnicode_Type length=5  kind=1  data='hello'"]
+        PYLIST["PyListObject ob_refcnt=2  ob_type=&PyList_Type ob_size=3  allocated=4 ob_item=[ptr, ptr, ptr]"]
+        PYTYPE["PyTypeObject ob_refcnt=immortal  ob_type=&PyType_Type tp_name='list'  tp_methods=..."]
+        PYNONE["PyObject _Py_NoneStruct ob_refcnt=immortal  ob_type=&PyNone_Type"]
     end
 
-    VAR_A["variable 'x'<br/>(C stack / frame)"] -->|PyObject*| PYINT
+    VAR_A["variable 'x' (C stack / frame)"] -->|PyObject*| PYINT
     VAR_B["variable 'y'"] -->|PyObject*| PYINT
     VAR_C["variable 's'"] -->|PyObject*| PYSTR
     VAR_D["variable 'items'"] -->|PyObject*| PYLIST
@@ -109,13 +109,13 @@ block-beta
   columns 1
   block:OBJ["PyObject / PyVarObject — memory layout (64-bit build)"]
     columns 4
-    EXTRA[" _ob_next/_ob_prev<br/>(debug only)<br/>16 bytes"]
-    REFCNT["ob_refcnt<br/>8 bytes<br/>Py_ssize_t"]
-    TYPE["ob_type<br/>8 bytes<br/>PyTypeObject*"]
-    SIZE["ob_size<br/>8 bytes<br/>(PyVarObject only)"]
+    EXTRA[" _ob_next/_ob_prev (debug only) 16 bytes"]
+    REFCNT["ob_refcnt 8 bytes Py_ssize_t"]
+    TYPE["ob_type 8 bytes PyTypeObject*"]
+    SIZE["ob_size 8 bytes (PyVarObject only)"]
     PAYLOAD["type-specific payload — inline fields + trailing variable array"]
   end
-  NOTE["Every PyObject* points at the start of this layout.<br/>Casting to any subtype is just reinterpreting the payload bytes."]
+  NOTE["Every PyObject* points at the start of this layout. Casting to any subtype is just reinterpreting the payload bytes."]
 ```
 
 Concrete examples — how three types extend the prefix:
@@ -221,19 +221,19 @@ Key fields to internalize:
 ```mermaid
 flowchart TB
     subgraph INSTANCES["Instances (PyObject*)"]
-        A["42<br/>PyLongObject<br/>ob_type → PyLong_Type"]
-        B["'hello'<br/>PyUnicodeObject<br/>ob_type → PyUnicode_Type"]
-        C["[1,2]<br/>PyListObject<br/>ob_type → PyList_Type"]
-        D["MyClass()<br/>instance<br/>ob_type → MyClass"]
+        A["42 PyLongObject ob_type → PyLong_Type"]
+        B["'hello' PyUnicodeObject ob_type → PyUnicode_Type"]
+        C["[1,2] PyListObject ob_type → PyList_Type"]
+        D["MyClass() instance ob_type → MyClass"]
     end
 
     subgraph TYPES["Type objects (PyTypeObject*)"]
-        T_INT["PyLong_Type<br/>tp_name='int'<br/>tp_base → PyBaseObject_Type"]
-        T_STR["PyUnicode_Type<br/>tp_name='str'"]
-        T_LIST["PyList_Type<br/>tp_name='list'"]
-        T_CLASS["MyClass<br/>tp_name='MyClass'<br/>tp_base → object<br/>tp_mro=(MyClass, object)"]
-        T_OBJECT["PyBaseObject_Type<br/>tp_name='object'<br/>tp_base → NULL"]
-        T_TYPE["PyType_Type<br/>tp_name='type'<br/>ob_type → itself"]
+        T_INT["PyLong_Type tp_name='int' tp_base → PyBaseObject_Type"]
+        T_STR["PyUnicode_Type tp_name='str'"]
+        T_LIST["PyList_Type tp_name='list'"]
+        T_CLASS["MyClass tp_name='MyClass' tp_base → object tp_mro=(MyClass, object)"]
+        T_OBJECT["PyBaseObject_Type tp_name='object' tp_base → NULL"]
+        T_TYPE["PyType_Type tp_name='type' ob_type → itself"]
     end
 
     A --> T_INT
@@ -301,13 +301,13 @@ What `_Py_Dealloc` does, in order:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Alive: PyObject_New / PyLong_FromLong<br/>ob_refcnt = 1
-    Alive --> Alive: Py_INCREF<br/>ob_refcnt++
-    Alive --> Alive: Py_DECREF<br/>ob_refcnt-- but >0
-    Alive --> Dead: Py_DECREF<br/>ob_refcnt reaches 0
-    Dead --> [*]: tp_dealloc<br/>releases children<br/>frees memory
-    Alive --> Immortal: PEP 683<br/>ob_refcnt = IMMORTAL
-    Immortal --> Immortal: Py_INCREF / Py_DECREF<br/>no-op (3.12+)
+    [*] --> Alive: PyObject_New / PyLong_FromLong ob_refcnt = 1
+    Alive --> Alive: Py_INCREF ob_refcnt++
+    Alive --> Alive: Py_DECREF ob_refcnt-- but >0
+    Alive --> Dead: Py_DECREF ob_refcnt reaches 0
+    Dead --> [*]: tp_dealloc releases children frees memory
+    Alive --> Immortal: PEP 683 ob_refcnt = IMMORTAL
+    Immortal --> Immortal: Py_INCREF / Py_DECREF no-op (3.12+)
     note right of Alive
         ob_refcnt tracks owned refs.
         Every new ownership must INCREF;
@@ -707,18 +707,18 @@ Splits storage into a dense entries array (insertion-ordered) and a sparse indic
 ```mermaid
 flowchart TB
     subgraph OLD["Pre-3.6 dict — sparse entries"]
-        OLD_TBL["dk_table (combined)<br/>[entry0, empty, entry1, empty, dummy, entry2]<br/>insertion order NOT preserved<br/>~2/3 empty slots for probing"]
-        OLD_MEM["Memory: 72 + 24*table_size<br/>Iteration: skip empties"]
+        OLD_TBL["dk_table (combined) [entry0, empty, entry1, empty, dummy, entry2] insertion order NOT preserved ~2/3 empty slots for probing"]
+        OLD_MEM["Memory: 72 + 24*table_size Iteration: skip empties"]
     end
 
     subgraph NEW["3.6+ compact dict — split table"]
-        DK["dk_indices<br/>sparse hash → index<br/>[2, -1, 0, -1, 1]<br/>(bytes when small, int16/int32 as needed)"]
-        ENTRIES["dk_entries (dense, insertion-ordered)<br/>[entry0: 'a'→1, entry1: 'b'→2, entry2: 'c'→3]<br/>no empty slots — iteration is linear scan"]
+        DK["dk_indices sparse hash → index [2, -1, 0, -1, 1] (bytes when small, int16/int32 as needed)"]
+        ENTRIES["dk_entries (dense, insertion-ordered) [entry0: 'a'→1, entry1: 'b'→2, entry2: 'c'→3] no empty slots — iteration is linear scan"]
         DK -->|index| ENTRIES
-        NEW_MEM["Memory: ~56 + indices + dense entries<br/>Iteration: just walk dense array<br/>Ordered by spec since 3.7"]
+        NEW_MEM["Memory: ~56 + indices + dense entries Iteration: just walk dense array Ordered by spec since 3.7"]
     end
 
-    OLD -.->|compacted<br/>in 3.6| NEW
+    OLD -.->|compacted in 3.6| NEW
 
     style NEW fill:#1a3a2a,stroke:#67c23a,color:#fff
     style OLD fill:#3a2a1a,stroke:#e6a23c,color:#fff
@@ -814,17 +814,17 @@ Two storage modes:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> ASCII: "hello"<br/>all c < 128
-    [*] --> Latin1: "café"<br/>all c < 256
-    [*] --> UCS2: "naïve — test"<br/>all c < 65536
-    [*] --> UCS4: "hello 🌍"<br/>any c >= 65536
+    [*] --> ASCII: "hello" all c < 128
+    [*] --> Latin1: "café" all c < 256
+    [*] --> UCS2: "naïve — test" all c < 65536
+    [*] --> UCS4: "hello 🌍" any c >= 65536
 
-    ASCII --> CompactASCII: compact=1 ascii=1<br/>kind=1<br/>1 byte/char inline
-    Latin1 --> CompactLatin1: compact=1 ascii=0<br/>kind=1<br/>1 byte/char inline
-    UCS2 --> CompactUCS2: compact=1<br/>kind=2<br/>2 bytes/char inline
-    UCS4 --> CompactUCS4: compact=1<br/>kind=4<br/>4 bytes/char inline
+    ASCII --> CompactASCII: compact=1 ascii=1 kind=1 1 byte/char inline
+    Latin1 --> CompactLatin1: compact=1 ascii=0 kind=1 1 byte/char inline
+    UCS2 --> CompactUCS2: compact=1 kind=2 2 bytes/char inline
+    UCS4 --> CompactUCS4: compact=1 kind=4 4 bytes/char inline
 
-    CompactASCII --> CachedUTF8: utf8 cached<br/>on first encode
+    CompactASCII --> CachedUTF8: utf8 cached on first encode
     CompactLatin1 --> CachedUTF8
     CompactUCS2 --> CachedUTF8
     CompactUCS4 --> CachedUTF8
@@ -884,21 +884,21 @@ struct _longobject {
 flowchart TB
     subgraph INT1234["int 12345678901234567890 — how it looks in memory"]
         direction TB
-        HDR["PyLongObject header<br/>ob_refcnt=1  ob_type=&PyLong_Type<br/>ob_size=3  (3 digits)"]
-        D0["ob_digit[0] = 0x3456789A<br/>least significant<br/>bits 0..29"]
-        D1["ob_digit[1] = 0x1A2B3C4D<br/>bits 30..59"]
-        D2["ob_digit[2] = 0x00000A2B<br/>most significant<br/>bits 60..89"]
+        HDR["PyLongObject header ob_refcnt=1  ob_type=&PyLong_Type ob_size=3  (3 digits)"]
+        D0["ob_digit[0] = 0x3456789A least significant bits 0..29"]
+        D1["ob_digit[1] = 0x1A2B3C4D bits 30..59"]
+        D2["ob_digit[2] = 0x00000A2B most significant bits 60..89"]
         HDR --> D0 --> D1 --> D2
-        VAL["value = D0 + D1·2³⁰ + D2·2⁶⁰<br/>= D0 + D1·1073741824 + D2·1152921504606846976"]
+        VAL["value = D0 + D1·2³⁰ + D2·2⁶⁰ = D0 + D1·1073741824 + D2·1152921504606846976"]
         D2 --> VAL
     end
 
     subgraph SMALL["Small int (fits in one digit)"]
-        S_HDR["ob_size=1<br/>ob_digit[0]=42<br/>value=42"]
+        S_HDR["ob_size=1 ob_digit[0]=42 value=42"]
     end
 
     subgraph ZERO["Zero"]
-        Z_HDR["ob_size=0<br/>no digits<br/>value=0"]
+        Z_HDR["ob_size=0 no digits value=0"]
     end
 
     style HDR fill:#2a4b8d,stroke:#6ea8fe,color:#fff
@@ -1045,18 +1045,18 @@ del a, b
 ```mermaid
 flowchart TB
     subgraph ACYCLIC["Acyclic — refcount suffices"]
-        A1["x = [1,2]"] --> L1["list [1,2]<br/>ob_refcnt=1"]
+        A1["x = [1,2]"] --> L1["list [1,2] refcnt=1"]
         A1 -.->|del x| L1
-        L1 -.->|ob_refcnt→0<br/>dealloc immediately| FREE1["freed<br/>no GC needed"]
+        L1 -.->|refcnt→0 dealloc immediately| FREE1["freed no GC needed"]
         style FREE1 fill:#1a3a2a,stroke:#67c23a,color:#fff
     end
 
     subgraph CYCLIC["Cyclic — refcount alone leaks"]
-        C1["a = {}"] --> D1["dict a<br/>ob_refcnt=1→2"]
-        C2["b = {'ref': a}"] --> D2["dict b<br/>ob_refcnt=1→2"]
-        D1 <-->|a['ref']=b<br/>b['ref']=a| D2
-        DEL["del a; del b<br/>each ob_refcnt 2→1<br/>neither reaches 0"] --> LEAK["leaked!<br/>reachable only from each other"]
-        LEAK --> GC["Cyclic GC<br/>traverse → detect cycle<br/>tp_clear → break refs<br/>→ refcnt→0 → freed"]
+        C1["a = {}"] --> D1["dict a refcnt=1→2"]
+        C2["b = {'ref': a}"] --> D2["dict b refcnt=1→2"]
+        D1 <-->|cross-ref| D2
+        DEL["del a; del b each refcnt 2→1 neither reaches 0"] --> LEAK["leaked! reachable only from each other"]
+        LEAK --> GC["Cyclic GC traverse → detect cycle tp_clear → break refs → refcnt→0 → freed"]
         style LEAK fill:#6c1a1a,stroke:#f56c6c,color:#fff
         style GC fill:#1a3a2a,stroke:#67c23a,color:#fff
     end

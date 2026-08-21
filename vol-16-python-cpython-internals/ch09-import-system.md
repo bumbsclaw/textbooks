@@ -95,17 +95,17 @@ At the language level, `import foo.bar` is syntactic sugar for a call to `__impo
 
 ```mermaid
 flowchart TB
-    SRC["import foo.bar<br/>or __import__('foo.bar')<br/>IMPORT_NAME bytecode"]
-    GCD["_gcd_import(name, package, level)<br/>_bootstrap.py<br/>resolves relative → absolute name"]
-    LOCK{"sys.modules cache?<br/>_bootstrap._find_and_load"}
-    HIT["Return sys.modules[name]<br/>fast path — no finder consulted"]
-    FIND["_find_spec(name, path, target)<br/>iterate sys.meta_path<br/>each finder.find_spec()"]
-    SPEC{"find_spec returned<br/>ModuleSpec?"}
+    SRC["import foo.bar or __import__('foo.bar') IMPORT_NAME bytecode"]
+    GCD["_gcd_import(name, package, level) _bootstrap.py resolves relative → absolute name"]
+    LOCK{"sys.modules cache? _bootstrap._find_and_load"}
+    HIT["Return sys.modules[name] fast path — no finder consulted"]
+    FIND["_find_spec(name, path, target) iterate sys.meta_path each finder.find_spec()"]
+    SPEC{"find_spec returned ModuleSpec?"}
     MISS["Raise ModuleNotFoundError"]
-    CREATE["spec.loader.create_module(spec)<br/>or default module creation<br/>sets __spec__, __loader__"]
-    EXEC["spec.loader.exec_module(module)<br/>SourceFileLoader: read → compile → exec<br/>ExtensionFileLoader: dlopen → init hook"]
-    CACHE["Insert into sys.modules[name]<br/>set __package__, __path__, __cached__<br/>release import lock"]
-    RET["Return module<br/>bind name in caller's namespace"]
+    CREATE["spec.loader.create_module(spec) or default module creation sets __spec__, __loader__"]
+    EXEC["spec.loader.exec_module(module) SourceFileLoader: read → compile → exec ExtensionFileLoader: dlopen → init hook"]
+    CACHE["Insert into sys.modules[name] set __package__, __path__, __cached__ release import lock"]
+    RET["Return module bind name in caller's namespace"]
 
     SRC --> GCD --> LOCK
     LOCK -->|hit| HIT --> RET
@@ -202,19 +202,19 @@ Three attributes on `sys` form the dispatch table. Understanding their precedenc
 
 ```mermaid
 flowchart TB
-    IMPORT["import foo.bar<br/>_find_spec('foo.bar', path=None)"]
-    META{"Iterate sys.meta_path<br/>in order"}
-    F1["BuiltinImporter.find_spec<br/>is it a built-in?"]
-    F2["FrozenImporter.find_spec<br/>is it frozen?"]
-    F3["PathFinder.find_spec<br/>sys.path-based search"]
-    CUSTOM["Custom MetaPathFinder<br/>user-inserted at index 0"]
+    IMPORT["import foo.bar _find_spec('foo.bar', path=None)"]
+    META{"Iterate sys.meta_path in order"}
+    F1["BuiltinImporter.find_spec is it a built-in?"]
+    F2["FrozenImporter.find_spec is it frozen?"]
+    F3["PathFinder.find_spec sys.path-based search"]
+    CUSTOM["Custom MetaPathFinder user-inserted at index 0"]
 
-    PATHLOOP{"For each entry in sys.path<br/>or parent.__path__"}
-    CACHE{"sys.path_importer_cache<br/>hit?"}
-    HOOKS{"Try each hook in<br/>sys.path_hooks in order"}
-    ZIP["zipimport.zipimporter(path)<br/>is this entry a zip?"]
-    FILE["FileFinder(path)<br/>scan directory"]
-    FINDER_SPEC["finder.find_spec('foo.bar')<br/>checks _BootstrapExternal<br/>SOURCE_SUFFIXES / etc."]
+    PATHLOOP{"For each entry in sys.path or parent.__path__"}
+    CACHE{"sys.path_importer_cache hit?"}
+    HOOKS{"Try each hook in sys.path_hooks in order"}
+    ZIP["zipimport.zipimporter(path) is this entry a zip?"]
+    FILE["FileFinder(path) scan directory"]
+    FINDER_SPEC["finder.find_spec('foo.bar') checks _BootstrapExternal SOURCE_SUFFIXES / etc."]
 
     RESULT["ModuleSpec or None"]
 
@@ -473,24 +473,24 @@ PEP 451's `ModuleSpec` is the central data structure. The finder creates it; the
 
 ```mermaid
 flowchart TB
-    FINDER["Finder.find_spec(fullname, path, target)<br/>constructs ModuleSpec"]
-    SPEC["ModuleSpec<br/>PEP 451 contract"]
-    CREATE["loader.create_module(spec)<br/>→ module object<br/>or None → default creation"]
-    MOD["module object<br/>types.ModuleType instance"]
-    EXEC["loader.exec_module(module)<br/>populates module.__dict__"]
-    SYS["sys.modules[spec.name] = module<br/>import returns module"]
+    FINDER["Finder.find_spec(fullname, path, target) constructs ModuleSpec"]
+    SPEC["ModuleSpec PEP 451 contract"]
+    CREATE["loader.create_module(spec) → module object or None → default creation"]
+    MOD["module object types.ModuleType instance"]
+    EXEC["loader.exec_module(module) populates module.__dict__"]
+    SYS["sys.modules[spec.name] = module import returns module"]
 
     FINDER --> SPEC --> CREATE --> MOD --> EXEC --> SYS
 
     subgraph Fields ["ModuleSpec fields"]
         direction TB
-        NAME["name: str<br/>fully-qualified 'pkg.sub.mod'"]
-        LOADER["loader: Loader | None<br/>None for namespace packages"]
-        ORIGIN["origin: str | None<br/>path, 'built-in', 'frozen', or None"]
-        LOC["has_location: bool<br/>False for namespace / built-in"]
-        PARENT["parent: str<br/>parent package name<br/>'a.b.c' → 'a.b'"]
-        SEARCH["submodule_search_locations: list[str] | None<br/>None → not a package<br/>list → package __path__<br/>_NamespacePath for PEP 420"]
-        CACHED["cached: str | None<br/>__pycache__ path or None"]
+        NAME["name: str fully-qualified 'pkg.sub.mod'"]
+        LOADER["loader: Loader | None None for namespace packages"]
+        ORIGIN["origin: str | None path, 'built-in', 'frozen', or None"]
+        LOC["has_location: bool False for namespace / built-in"]
+        PARENT["parent: str parent package name 'a.b.c' → 'a.b'"]
+        SEARCH["submodule_search_locations: list[str] | None None → not a package list → package __path__ _NamespacePath for PEP 420"]
+        CACHED["cached: str | None __pycache__ path or None"]
         STATE["loader_state, _initializing, _set_fileattr, ..."]
     end
 
@@ -613,14 +613,14 @@ Import is not free-threaded. CPython protects the `sys.modules` insertion + `exe
 ```mermaid
 flowchart TB
     T1["Thread A: import foo"]
-    T2["Thread B: import foo<br/>(concurrent)"]
-    LOCK["Per-module lock<br/>_ModuleLock('foo')<br/>backed by _imp.acquire_lock"]
-    CHECK1["A: sys.modules miss<br/>→ acquire lock for 'foo'"]
-    CHECK2["B: sys.modules miss<br/>→ try acquire lock for 'foo'"]
-    EXEC_A["A: find_spec → create_module<br/>sys.modules['foo'] = module<br/>exec_module (holds lock)"]
-    WAIT_B["B: blocks on lock<br/>or re-checks sys.modules<br/>after A releases"]
-    HIT_B["B: sys.modules hit<br/>return sys.modules['foo']<br/>no second exec_module"]
-    DONE["Both threads share<br/>same module object<br/>exec_module ran exactly once"]
+    T2["Thread B: import foo (concurrent)"]
+    LOCK["Per-module lock _ModuleLock('foo') backed by _imp.acquire_lock"]
+    CHECK1["A: sys.modules miss → acquire lock for 'foo'"]
+    CHECK2["B: sys.modules miss → try acquire lock for 'foo'"]
+    EXEC_A["A: find_spec → create_module sys.modules['foo'] = module exec_module (holds lock)"]
+    WAIT_B["B: blocks on lock or re-checks sys.modules after A releases"]
+    HIT_B["B: sys.modules hit return sys.modules['foo'] no second exec_module"]
+    DONE["Both threads share same module object exec_module ran exactly once"]
 
     T1 --> CHECK1 --> LOCK
     T2 --> CHECK2 --> LOCK
@@ -727,17 +727,17 @@ Before PEP 420 (Python 3.3), every package required an `__init__.py`. A director
 flowchart TB
     subgraph Regular ["Regular package  (with __init__.py)"]
         R1["pkg/__init__.py  exists"]
-        R2["FileFinder finds pkg/__init__.py<br/>→ ModuleSpec<br/>origin='/.../pkg/__init__.py'<br/>loader=SourceFileLoader<br/>has_location=True"]
-        R3["exec_module runs __init__.py<br/>module.__path__ = ['/.../pkg']<br/>single directory, single owner"]
+        R2["FileFinder finds pkg/__init__.py → ModuleSpec origin='/.../pkg/__init__.py' loader=SourceFileLoader has_location=True"]
+        R3["exec_module runs __init__.py module.__path__ = ['/.../pkg'] single directory, single owner"]
         R1 --> R2 --> R3
     end
 
     subgraph Namespace ["Namespace package  (PEP 420, no __init__.py)"]
-        N1["pkg/  directory exists<br/>no __init__.py in any sys.path entry"]
-        N2["FileFinder: no __init__.py found<br/>but directory exists<br/>→ record as namespace candidate"]
-        N3["PathFinder merges candidates<br/>from ALL sys.path entries<br/>where pkg/ exists"]
-        N4["ModuleSpec<br/>origin=None, loader=None<br/>has_location=False<br/>submodule_search_locations=_NamespacePath([...])"]
-        N5["No exec_module — package has no code<br/>import pkg.sub still works<br/>via _NamespacePath search"]
+        N1["pkg/  directory exists no __init__.py in any sys.path entry"]
+        N2["FileFinder: no __init__.py found but directory exists → record as namespace candidate"]
+        N3["PathFinder merges candidates from ALL sys.path entries where pkg/ exists"]
+        N4["ModuleSpec origin=None, loader=None has_location=False submodule_search_locations=_NamespacePath([...])"]
+        N5["No exec_module — package has no code import pkg.sub still works via _NamespacePath search"]
         N1 --> N2 --> N3 --> N4 --> N5
     end
 
@@ -812,21 +812,21 @@ PEP 660 standardizes editable installs via `importlib.machinery` and a build-bac
 ```mermaid
 flowchart TB
     subgraph Build ["Build backend  (setuptools, hatch, poetry, ...)"]
-        BACKEND["build_wheel hook<br/>+ get_requires_for_build_wheel"]
-        EDITABLE["prepare_metadata_for_build_editable<br/>+ build_editable wheel"]
-        FINDER mod["Synthesizes a MetaPathFinder<br/>that maps 'my_pkg' → /work/src/my_pkg"]
+        BACKEND["build_wheel hook + get_requires_for_build_wheel"]
+        EDITABLE["prepare_metadata_for_build_editable + build_editable wheel"]
+        FINDER_MOD["Synthesizes a MetaPathFinder that maps 'my_pkg' → /work/src/my_pkg"]
     end
 
     subgraph SitePackages ["site-packages after pip install -e ."]
-        DIST["my_pkg-1.0.dist-info/<br/>direct_url.json  (file:// → /work)<br/>METADATA, RECORD"]
-        PTH["_editable_impl.pth<br/>or my_pkg.pth<br/>adds finder to sys.meta_path<br/>at interpreter startup"]
-        HOOK["__editable___my_pkg...finder.py<br/>MetaPathFinder + Loader<br/>that redirects find_spec"]
+        DIST["my_pkg-1.0.dist-info/ direct_url.json  (file:// → /work) METADATA, RECORD"]
+        PTH["_editable_impl.pth or my_pkg.pth adds finder to sys.meta_path at interpreter startup"]
+        HOOK["__editable___my_pkg...finder.py MetaPathFinder + Loader that redirects find_spec"]
     end
 
     subgraph Import ["import my_pkg"]
-        META["sys.meta_path<br/>editable finder at position 0 or 1<br/>find_spec('my_pkg', None, None)"]
-        SPEC["ModuleSpec<br/>origin='/work/src/my_pkg/__init__.py'<br/>loader=SourceFileLoader<br/>submodule_search_locations=['/work/src/my_pkg']"]
-        LOAD["SourceFileLoader.exec_module<br/>reads from /work/src/<br/>edits are live on next import<br/>(after invalidate_caches)"]
+        META["sys.meta_path editable finder at position 0 or 1 find_spec('my_pkg', None, None)"]
+        SPEC["ModuleSpec origin='/work/src/my_pkg/__init__.py' loader=SourceFileLoader submodule_search_locations=['/work/src/my_pkg']"]
+        LOAD["SourceFileLoader.exec_module reads from /work/src/ edits are live on next import (after invalidate_caches)"]
     end
 
     BACKEND --> EDITABLE --> FINDER

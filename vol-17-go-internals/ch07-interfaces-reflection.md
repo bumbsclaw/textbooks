@@ -531,7 +531,7 @@ flowchart TB
     end
     subgraph VALUE_GRAPH["What Value points at"]
         HDR["Value.ptr<br/>→ concrete storage<br/>(stack copy, heap box,<br/>or original if Elem/Adrr)"]
-        TAG["StructTag<br/>`json:\"name\" validate:\"...\"`<br/>parsed by Lookup/Get"]
+        TAG["StructTag<br/>json tag<br/>parsed by Lookup/Get"]
     end
     RTYPE --> RT
     RTYPE --> RV
@@ -680,7 +680,7 @@ func demo() {
         Zip  string `json:"zip"`
     }
     type Person struct {
-        Name    string  `json:"name"`
+        Name    string  json tag
         Age     int     `json:"age"`
         Address Address `json:"address"`
         hidden  string

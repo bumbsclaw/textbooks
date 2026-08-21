@@ -128,28 +128,28 @@ import _testcapi  # debug builds only
 flowchart TB
     subgraph ARENA["Arena — 256 KiB (1 << 18), mmap'd from OS"]
         direction TB
-        AHDR["Arena header<br/>struct arena_object<br/>address, nfreepools,<br/>nTotalpools = 64, freepools list"]
+        AHDR["Arena header struct arena_object address, nfreepools, nTotalpools = 64, freepools list"]
         subgraph POOLS["64 pools × 4 KiB each"]
             direction LR
-            P0["Pool 0<br/>pool_header<br/>szidx=3 (32 B)<br/>freeblock → block chain<br/>nextpool / prevpool"]
-            P1["Pool 1<br/>szidx=7 (64 B)"]
-            P2["Pool 2<br/>szidx=0 (8 B)"]
-            PN["Pool 63<br/>..."]
+            P0["Pool 0 pool_header szidx=3 (32 B) freeblock → block chain nextpool / prevpool"]
+            P1["Pool 1 szidx=7 (64 B)"]
+            P2["Pool 2 szidx=0 (8 B)"]
+            PN["Pool 63 ..."]
             P0 --- P1 --- P2 --- PN
         end
         AHDR --- POOLS
         subgraph BLOCKS_DETAIL["Inside one pool (e.g. szidx=3 → 32-byte blocks)"]
             direction LR
-            B0["Block 0<br/>32 B<br/>PyObject*"]
-            B1["Block 1<br/>32 B"]
-            B2["Block 2<br/>free → next free"]
+            B0["Block 0 32 B PyObject*"]
+            B1["Block 1 32 B"]
+            B2["Block 2 free → next free"]
             B3["... ~127 blocks/pool"]
             B0 --- B1 --- B2 --- B3
         end
         P0 -.-> BLOCKS_DETAIL
     end
 
-    OS["OS virtual memory<br/>mmap(MAP_ANONYMOUS) / VirtualAlloc<br/>256 KiB aligned"] --> ARENA
+    OS["OS virtual memory mmap(MAP_ANONYMOUS) / VirtualAlloc 256 KiB aligned"] --> ARENA
     ARENA --> NEXT_ARENA["Next arena (linked list)"]
 
     style ARENA fill:#1a3a4a,stroke:#4fc3f7,color:#fff
@@ -231,14 +231,14 @@ A pool transitions through three states during its lifetime:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Virgin: arena mmap'd,<br/>pool header zeroed
-    Virgin --> Partial: bump alloc<br/>nextoffset += block_size
-    Partial --> Partial: freeblock pop<br/>(reused block)
-    Partial --> Full: ref.count == capacity<br/>remove from freepools
-    Full --> Partial: PyObject_Free<br/>push onto freeblock<br/>reinsert in freepools
-    Partial --> Empty: all blocks freed<br/>ref.count == 0<br/>return pool to arena freelist
-    Empty --> Virgin: reassign to<br/>different szidx
-    Empty --> [*]: arena unmapped<br/>if all 64 pools empty
+    [*] --> Virgin: arena mmap'd, pool header zeroed
+    Virgin --> Partial: bump alloc nextoffset += block_size
+    Partial --> Partial: freeblock pop (reused block)
+    Partial --> Full: ref.count == capacity remove from freepools
+    Full --> Partial: PyObject_Free push onto freeblock reinsert in freepools
+    Partial --> Empty: all blocks freed ref.count == 0 return pool to arena freelist
+    Empty --> Virgin: reassign to different szidx
+    Empty --> [*]: arena unmapped if all 64 pools empty
 ```
 
 ### 3.3 Size classes and free lists
@@ -341,25 +341,25 @@ if (--pool->ref.count == 0) {
 flowchart LR
     subgraph ALLOC["Allocation path"]
         REQ["PyObject_Malloc(n)"] --> SMALL{"n ≤ 512?"}
-        SMALL -->|yes| POOL["carve from pool<br/>in current arena"]
-        SMALL -->|no| MMAP_LARGE["malloc(n)<br/>system heap"]
-        POOL --> ARENA_CHECK{"arena pool<br/>exhausted?"}
+        SMALL -->|yes| POOL["carve from pool in current arena"]
+        SMALL -->|no| MMAP_LARGE["malloc(n) system heap"]
+        POOL --> ARENA_CHECK{"arena pool exhausted?"}
         ARENA_CHECK -->|yes| MMAP_ARENA["mmap new 256 KiB arena"]
     end
 
     subgraph FREE["Free path"]
         FREE_REQ["PyObject_Free(p)"] --> SIZE_CHECK{"p in pymalloc range?"}
-        SIZE_CHECK -->|yes| POOL_FREE["push to pool.freeblock<br/>ref.count--"]
+        SIZE_CHECK -->|yes| POOL_FREE["push to pool.freeblock ref.count--"]
         SIZE_CHECK -->|no| MFR["free(p)"]
         POOL_FREE --> POOL_EMPTY{"pool empty?"}
         POOL_EMPTY -->|yes| ARENA_EMPTY{"arena fully empty?"}
-        ARENA_EMPTY -->|yes| MADV["madvise(DONTNEED)<br/>keep virtual mapping<br/>munmap if >16 empty"]
+        ARENA_EMPTY -->|yes| MADV["madvise(DONTNEED) keep virtual mapping munmap if >16 empty"]
     end
 
     subgraph RSS["RSS accounting"]
-        RSS1["Virtual: arena mapped<br/>256 KiB address space"]
-        RSS2["Resident: pages touched<br/>grows per-pool"]
-        RSS3["After madvise: pages reclaimed<br/>RSS drops, virtual stays"]
+        RSS1["Virtual: arena mapped 256 KiB address space"]
+        RSS2["Resident: pages touched grows per-pool"]
+        RSS3["After madvise: pages reclaimed RSS drops, virtual stays"]
         RSS1 --> RSS2 --> RSS3
     end
 ```
@@ -584,29 +584,29 @@ typedef struct {
 ```mermaid
 flowchart TB
     subgraph GEN0["Generation 0 — youngest (most GC pressure)"]
-        G0LIST["Doubly-linked list<br/>PyGC_Head chain<br/>new containers land here"]
+        G0LIST["Doubly-linked list PyGC_Head chain new containers land here"]
         G0_NEXT["gc_next / gc_prev"]
     end
     subgraph GEN1["Generation 1 — survivors of one collection"]
         G1LIST["Doubly-linked list"]
     end
     subgraph GEN2["Generation 2 — oldest (long-lived)"]
-        G2LIST["Doubly-linked list<br/>rarely collected"]
-        PERM["Permanent generation (3.12+)<br/>gc.freeze() — never collected"]
+        G2LIST["Doubly-linked list rarely collected"]
+        PERM["Permanent generation (3.12+) gc.freeze() — never collected"]
     end
 
     NEW["PyObject_GC_New + Track"] --> G0LIST
     G0LIST -->|survives collection| G1LIST
     G1LIST -->|survives collection| G2LIST
-    G2LIST -->|gc.freeze()| PERM
+    G2LIST -->|gc freeze| PERM
 
     CHECK{"allocs - frees > threshold?"}
     G0LIST -.-> CHECK
-    CHECK -->|count0 > 700| COLLECT0["collect gen 0<br/>move survivors → gen 1"]
+    CHECK -->|count0 > 700| COLLECT0["collect gen 0 move survivors → gen 1"]
     COLLECT0 --> CHECK1{"gen1 count > 10?"}
-    CHECK1 -->|yes| COLLECT1["collect gen 1<br/>survivors → gen 2"]
+    CHECK1 -->|yes| COLLECT1["collect gen 1 survivors → gen 2"]
     COLLECT1 --> CHECK2{"gen2 count > 10?"}
-    CHECK2 -->|yes| COLLECT2["collect gen 2<br/>full collection"]
+    CHECK2 -->|yes| COLLECT2["collect gen 2 full collection"]
 
     style GEN0 fill:#4a2a1a,stroke:#ff9800,color:#fff
     style GEN1 fill:#2a3a1a,stroke:#8bc34a,color:#fff
@@ -778,10 +778,10 @@ for (op = gen_list; op; op = next) {
 ```mermaid
 flowchart TB
     subgraph BEFORE["Before collection — generation 0 list"]
-        A["a: dict<br/>ob_refcnt=2<br/>gc_refs=2"]
-        B["b: list<br/>ob_refcnt=2<br/>gc_refs=2"]
-        C["c: dict<br/>ob_refcnt=1<br/>gc_refs=1"]
-        D["x: list (root)<br/>ob_refcnt=1<br/>gc_refs=1<br/>referenced from stack"]
+        A["a: dict ob_refcnt=2 gc_refs=2"]
+        B["b: list ob_refcnt=2 gc_refs=2"]
+        C["c: dict ob_refcnt=1 gc_refs=1"]
+        D["x: list (root) ob_refcnt=1 gc_refs=1 referenced from stack"]
         A -->|a→b| B
         B -->|b→a| A
         B -->|b→c| C
@@ -789,10 +789,10 @@ flowchart TB
     end
 
     subgraph PHASE2["Phase 2: subtract internal refs"]
-        A2["a: gc_refs 2→0<br/>(refs from b and x)"]
-        B2["b: gc_refs 2→1<br/>(ref from a)"]
-        C2["c: gc_refs 1→0<br/>(ref from b)"]
-        D2["x: gc_refs 1→1<br/>(external ref only)"]
+        A2["a: gc_refs 2→0 (refs from b and x)"]
+        B2["b: gc_refs 2→1 (ref from a)"]
+        C2["c: gc_refs 1→0 (ref from b)"]
+        D2["x: gc_refs 1→1 (external ref only)"]
         A2 -.->|decremented| B2
         B2 -.->|decremented| A2
         B2 -.->|decremented| C2
@@ -800,15 +800,15 @@ flowchart TB
     end
 
     subgraph PHASE3["Phase 3: DFS from gc_refs>0 (x)"]
-        D3["x: REACHABLE<br/>DFS visits a"]
-        A3["a: REACHABLE<br/>DFS visits b"]
-        B3["b: REACHABLE<br/>DFS visits c via b"]
+        D3["x: REACHABLE DFS visits a"]
+        A3["a: REACHABLE DFS visits b"]
+        B3["b: REACHABLE DFS visits c via b"]
         C3["c: REACHABLE"]
         D3 --> A3 --> B3 --> C3
     end
 
     subgraph RESULT["Result — if x is removed"]
-        R1["Without x→a:<br/>a: gc_refs 2→1 (only b)<br/>b: gc_refs 2→1 (only a)<br/>c: gc_refs 1→0<br/>DFS from no roots →<br/>all stay 0 → UNREACHABLE → collected"]
+        R1["Without x→a: a: gc_refs 2→1 (only b) b: gc_refs 2→1 (only a) c: gc_refs 1→0 DFS from no roots → all stay 0 → UNREACHABLE → collected"]
     end
 
     style BEFORE fill:#1a2a3a,stroke:#64b5f6,color:#fff
@@ -831,21 +831,21 @@ Between "find unreachable" and "delete unreachable" sits the most delicate code 
 
 ```mermaid
 flowchart TB
-    UNREACHABLE["Unreachable islands<br/>(gc_refs == 0)"] --> WK{"Has weakrefs?"}
-    WK -->|yes| CLEAR_WK["Clear weakrefs<br/>defer callbacks"]
+    UNREACHABLE["Unreachable islands (gc_refs == 0)"] --> WK{"Has weakrefs?"}
+    WK -->|yes| CLEAR_WK["Clear weakrefs defer callbacks"]
     WK -->|no| FIN
     CLEAR_WK --> FIN{"Has tp_del / __del__?"}
 
-    FIN -->|yes, PEP 442| ORDER["Order finalizers<br/>topological sort<br/>by object graph"]
-    ORDER --> CALL_DEL["Call tp_del / __del__<br/>each exactly once"]
-    CALL_DEL --> RESURRECT{"Resurrected?<br/>(reachable again)"}
-    RESURRECT -->|yes| MOVE_REACHABLE["Move to reachable<br/>do not free"]
+    FIN -->|yes, PEP 442| ORDER["Order finalizers topological sort by object graph"]
+    ORDER --> CALL_DEL["Call tp_del / __del__ each exactly once"]
+    CALL_DEL --> RESURRECT{"Resurrected? (reachable again)"}
+    RESURRECT -->|yes| MOVE_REACHABLE["Move to reachable do not free"]
     RESURRECT -->|no| DEL
 
-    FIN -->|no| DEL["tp_clear all objects<br/>break cycles<br/>Py_DECREF → free"]
+    FIN -->|no| DEL["tp_clear all objects break cycles Py_DECREF → free"]
     MOVE_REACHABLE --> DONE
-    DEL --> CALLBACKS["Invoke deferred<br/>weakref callbacks"]
-    CALLBACKS --> DONE["Done — unreachable freed<br/>survivors promoted"]
+    DEL --> CALLBACKS["Invoke deferred weakref callbacks"]
+    CALLBACKS --> DONE["Done — unreachable freed survivors promoted"]
 
     style UNREACHABLE fill:#4a1a1a,stroke:#ef5350,color:#fff
     style DEL fill:#1a2a1a,stroke:#81c784,color:#fff
@@ -1119,15 +1119,15 @@ Immortal objects eliminate that cost entirely for the hottest objects:
 ```mermaid
 flowchart TB
     subgraph GIL["With GIL (3.12 default)"]
-        A1["Py_INCREF(None)<br/>ob_refcnt++<br/>non-atomic, GIL-protected<br/>~1 ns"]
+        A1["Py_INCREF(None) ob_refcnt++ non-atomic, GIL-protected ~1 ns"]
     end
     subgraph NOGIL_NOIMMORTAL["Free-threaded without immortal"]
-        B1["Py_INCREF(None)<br/>atomic_fetch_add(&ob_refcnt, 1)<br/>cache-line bounce<br/>~20-50 ns under contention"]
-        B1 --> B2["64 cores × millions/sec<br/>→ scalability collapse"]
+        B1["Py_INCREF(None) atomic_fetch_add(&ob_refcnt, 1) cache-line bounce ~20-50 ns under contention"]
+        B1 --> B2["64 cores × millions/sec → scalability collapse"]
     end
     subgraph NOGIL_IMMORTAL["Free-threaded with immortal (3.12+)"]
-        C1["Py_INCREF(None)<br/>if (_Py_IsImmortal(op)) return<br/>~1 ns (branch predictor)"]
-        C1 --> C2["No atomic, no bounce<br/>scales linearly"]
+        C1["Py_INCREF(None) if (_Py_IsImmortal(op)) return ~1 ns (branch predictor)"]
+        C1 --> C2["No atomic, no bounce scales linearly"]
     end
     style GIL fill:#1a2a1a,stroke:#81c784,color:#fff
     style NOGIL_NOIMMORTAL fill:#4a1a1a,stroke:#ef5350,color:#fff
@@ -1241,12 +1241,12 @@ gc.collect()
 ```mermaid
 flowchart TB
     subgraph APP["Python code"]
-        MALLOC["PyObject_Malloc(n)<br/>or PyMem_Malloc(n)"]
+        MALLOC["PyObject_Malloc(n) or PyMem_Malloc(n)"]
     end
     subgraph TRACEMALLOC["tracemalloc hook (_tracemalloc.c)"]
-        HOOK["pymem_malloc hook<br/>intercepts allocation"]
-        TABLE["Hash table<br/>address → (size, traceback)"]
-        TRACE["Traceback capture<br/>PyTraceback_Here<br/>up to 25 frames"]
+        HOOK["pymem_malloc hook intercepts allocation"]
+        TABLE["Hash table address → (size, traceback)"]
+        TRACE["Traceback capture PyTraceback_Here up to 25 frames"]
     end
     subgraph PYMALLOC["pymalloc / malloc"]
         POOL["Pool block or malloc()"]
@@ -1256,11 +1256,11 @@ flowchart TB
     HOOK --> TRACE --> TABLE
     TABLE --> POOL
 
-    SNAP["take_snapshot()<br/>copies table<br/>→ Snapshot object"] -.-> TABLE
-    STATS["statistics('lineno')<br/>group + sum sizes<br/>per file:line"] -.-> SNAP
-    DIFF["compare_to(prev)<br/>size_diff per group<br/>→ leak candidates"] -.-> SNAP
+    SNAP["take_snapshot() copies table → Snapshot object"] -.-> TABLE
+    STATS["statistics('lineno') group + sum sizes per file:line"] -.-> SNAP
+    DIFF["compare_to(prev) size_diff per group → leak candidates"] -.-> SNAP
 
-    OVERHEAD["Overhead: ~1-2× memory<br/>hash table + traceback objects<br/>~5-10% CPU"] -.-> TABLE
+    OVERHEAD["Overhead: ~1-2× memory hash table + traceback objects ~5-10% CPU"] -.-> TABLE
 
     style TRACEMALLOC fill:#2a2a4a,stroke:#b39ddb,color:#fff
     style TABLE fill:#1a2a3a,stroke:#64b5f6,color:#fff
