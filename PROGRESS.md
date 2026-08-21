@@ -491,3 +491,9 @@ Batch 47 — 2026-08-21: Vol18 ch10-ch12 + Vol19 ch07 landed (batch 4a — 4 ch)
 - Vol18 ch11 Native Interop (JNI, Panama FFM, Native Image, 9,347w, 7 mermaid)
 - Vol18 ch12 Production JVM (container-aware, GC sizing, CDS/AppCDS, CRaC, 9,548w, 6 mermaid)
 - Vol19 ch07 React Internals (Fiber, reconciler, Hooks, Suspense, 9,207w, 8 mermaid — trimmed 12→8)
+
+Batch 48 — 2026-08-21: ch07/ch03 rewrites expanded + Vol18 ch09 + Vol19 ch08 landed (batch 4b — 4 ch).
+- Vol18 ch07 Kotlin Interop expanded (6,011→10,347w, 8 mermaid — now full javap/state machine depth)
+- Vol20 ch03 Lifetimes/Variance expanded (6,320→8,736w, 8 mermaid — now full E0597/E0382 + PhantomData)
+- Vol18 ch09 Build Tooling (Maven POM/lifecycle, Gradle DSL/cache, sbt, BOM, 6,001w, 8 mermaid)
+- Vol19 ch08 Vue/Svelte (reactive Proxy vs $state runes, patch block, compiled output, 8,454w, 8 mermaid — trimmed 9→8)

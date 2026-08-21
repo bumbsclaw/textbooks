@@ -460,20 +460,25 @@ The diff is where React earns its performance. Given the old child fibers and th
 
 ```mermaid
 flowchart TB
-    A["reconcileChildrenArray<br/>oldFiber list vs newElements"] --> B{"Both lists non-empty<br/>and keys match in order?"}
-    B -->|yes — common prefix| C["Update in place<br/>advance both pointers"]
-    C --> D{"One list exhausted?"}
-    D -->|no| B
-    D -->|yes| E["Remaining new → Placement<br/>Remaining old → Deletion"]
-    B -->|no — mismatch or key change| F["Build Map of remaining<br/>old fibers by key"]
-    F --> G["For each new element<br/>lookup Map by key"]
-    G --> H{"Found old fiber<br/>with same key and type?"}
-    H -->|yes| I["Reuse fiber — Update or Move<br/>delete from Map"]
-    H -->|no| J["Create new fiber — Placement"]
-    I --> K{"More new elements?"}
-    J --> K
-    K -->|yes| G
-    K -->|no| L["Remaining Map entries → Deletion"]
+    subgraph Mount["Mount — call order defines slots"]
+        H0["Hook 0 — useState count<br/>fiber.memoizedState → H0"]
+        H1["Hook 1 — useState extra<br/>H0.next → H1"]
+        H2["Hook 2 — useState name<br/>H1.next → H2"]
+        H0 --> H1 --> H2
+    end
+    subgraph UpdateBroken["Update enabled=false — BROKEN<br/>conditional Hook skips slot 1"]
+        B0["call 0: useState count → Hook 0 ✓"]
+        B1["call 1: useState name → Hook 1 ✗<br/>reads extra state"]
+        B0 --> B1
+        ERR["silent corruption<br/>name gets extra value"]
+        B1 --> ERR
+    end
+    subgraph UpdateFixed["Update — FIXED — always call in order"]
+        F0["call 0: useState count → Hook 0 ✓"]
+        F1["call 1: useState extra → Hook 1 ✓"]
+        F2["call 2: useState name → Hook 2 ✓"]
+        F0 --> F1 --> F2
+    end
 ```
 
 Concrete demo — an instrumented reconciler trace for a reorder:

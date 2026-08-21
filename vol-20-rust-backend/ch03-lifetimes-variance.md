@@ -232,6 +232,8 @@ flowchart TB
 
 **Diagram 3 — Variance table matrix.** Covariant positions preserve subtyping direction; contravariant positions reverse it; invariant positions block it entirely.
 
+`*mut T` vs `&mut T` — why raw pointers are special: `&mut T` is **invariant** in `T` (aliasing XOR mutability must hold), but `*mut T` is **covariant** in `T`. A `*mut &'long str` can coerce to `*mut &'short str` because raw pointers carry no aliasing guarantee — the compiler does not assume exclusive access, so shortening the lifetime is sound. This is why `unsafe` code that converts `&mut T` to `*mut T` can perform lifetime coercions that safe code cannot — and why getting that conversion wrong is a soundness hole.
+
 The full matrix:
 
 | Type | In `'a` | In `T` |
@@ -641,6 +643,20 @@ This is the fundamental trade-off: `RefCell` gives you flexibility at the cost o
 
 ---
 
+```toml
+# Cargo.toml — interior mutability needs no extra dependencies;
+# OnceLock is in std since 1.70. For lazy statics with initialization:
+[dependencies]
+once_cell = "1.19"  # legacy — prefer std::sync::LazyLock on Rust >= 1.80
+```
+
+```bash
+# Verify Send/Sync bounds and catch variance errors early
+cargo check                          # fast — borrow checker + trait bounds
+RUSTFLAGS="-Z polonius" cargo +nightly check  # preview Polonius (fewer false E0502)
+cargo clippy -- -W clippy::await_holding_lock  # catches MutexGuard across .await
+```
+
 ## 5. `Send` and `Sync` — How Interior Mutability Interacts with Thread Safety
 
 Two marker traits govern cross-thread transfer and sharing:
@@ -778,7 +794,7 @@ struct CacheEntry<'a> {
 fn coerce<'long: 'short, 'short>(
     entry: CacheEntry<'long>,
 ) -> CacheEntry<'short> {
-    // error: mismatched types — Cell<&'long str] is not a subtype of Cell<&'short str]
+    // error: mismatched types — Cell<&'long str> is not a subtype of Cell<&'short str]
     // because Cell is invariant in T, and &T is covariant in 'a,
     // but Cell's invariance in T blocks the coercion
 
@@ -800,7 +816,32 @@ fn coerce<'long: 'short, 'short>(entry: CacheEntry<'long>) -> CacheEntry<'short>
 }
 ```
 
-### 6.3 The `fn` Pointer Variance Surprise
+### 6.3 The Use-Site Variance Trick — `PhantomData<fn() -> T>` for Covariance
+
+When a struct logically *produces* `T` but does not store it, you want covariance so that `Producer<&'long str>` can coerce to `Producer<&'short str>`. `PhantomData<T>` is invariant in some contexts (e.g. `PhantomData<Cell<T>>` is invariant), but `PhantomData<fn() -> T>` is always **covariant** in `T` — because `fn() -> T` is covariant in its return type. This is the standard trick for claiming covariance without storing a value:
+
+```rust
+use std::marker::PhantomData;
+
+// Invariant — blocks coercion (Cell is invariant):
+struct Invariant<'a> { _marker: PhantomData<Cell<&'a str>> }
+
+// Covariant — allows 'long -> 'short coercion:
+struct Covariant<'a>  { _marker: PhantomData<fn() -> &'a str> }
+
+// Contravariant — allows 'short -> 'long (rare, for consumers):
+struct Contravariant<'a> { _marker: PhantomData<fn(&'a str)> }
+
+fn coerce_covariant<'long: 'short, 'short>(v: Covariant<'long>) -> Covariant<'short> {
+    v // ok — covariant
+}
+// fn coerce_invariant<'long: 'short, 'short>(v: Invariant<'long>) -> Invariant<'short> { v }
+// error[E0308]: mismatched types — invariant, no coercion
+```
+
+This pattern appears in the standard library itself: `std::io::Take<T>` and futures use `PhantomData<fn() -> T>` to assert covariance when the struct owns no `T`.
+
+### 6.4 The `fn` Pointer Variance Surprise
 
 Function pointers are contravariant in their arguments and covariant in their return type. This means:
 
@@ -821,7 +862,460 @@ fn upper(s: &str) -> String { s.to_uppercase() } // returns owned — covariant
 
 ---
 
-## 7. Distributed-Systems Lens — Lifetimes as Resource Leases
+## 7. Lifetime Parameters on Structs and Functions — Tying Data to Its Owner
+
+Lifetime parameters are not just for function signatures. Any time a struct holds a reference, the struct itself must be parameterized by the lifetime of that reference. This is how the compiler tracks that the struct cannot outlive the data it borrows.
+
+```rust
+// A parser that borrows its input — the struct cannot outlive the input.
+struct Parser<'input> {
+    text: &'input str,
+    pos: usize,
+}
+
+impl<'input> Parser<'input> {
+    fn new(text: &'input str) -> Self {
+        Self { text, pos: 0 }
+    }
+
+    // Elision: &self desugars to &'a Parser<'input> — output tied to &self, not 'input
+    fn remaining(&self) -> &str {
+        &self.text[self.pos..]
+    }
+
+    // Explicit: advance returns a slice tied to 'input, not to &self
+    fn consume<'a>(&'a mut self, n: usize) -> &'input str
+    where
+        'input: 'a, // 'input outlives 'a — the slice lives longer than the borrow of self
+    {
+        let start = self.pos;
+        self.pos = (self.pos + n).min(self.text.len());
+        &self.text[start..self.pos]
+    }
+}
+```
+
+The rule: **if a struct contains `&'a T`, the struct is only valid while `'a` is valid.** The compiler rejects code that lets the struct escape its borrow:
+
+```rust
+fn make_parser() -> Parser<'static> {
+    let owned = String::from("temporary");
+    // Parser { text: &owned, pos: 0 }
+    // error[E0515]: cannot return value referencing local variable `owned`
+    todo!()
+}
+
+// Fix 1: return owned data
+struct OwningParser { text: String, pos: usize }
+
+// Fix 2: tie the parser to the caller's input
+fn make_parser_from<'a>(input: &'a str) -> Parser<'a> {
+    Parser::new(input)
+}
+```
+
+For functions with multiple lifetime parameters, each input reference that may be returned needs its own lifetime. The compiler then uses outlives constraints to check which return is valid:
+
+```rust
+// Both inputs have distinct lifetimes — the return is tied to exactly one.
+fn longest<'a, 'b>(x: &'a str, y: &'b str) -> &'a str
+where
+    'b: 'a, // y lives at least as long as x — so &y can coerce to &'a
+{
+    if x.len() >= y.len() { x } else { y }
+}
+
+// Without the bound, coercing &y to &'a fails:
+// error[E0623]: lifetime mismatch — `y` does not live long enough
+```
+
+Backend relevance: request parsers, zero-copy deserializers (`serde::Deserialize<'de>`), and connection pools all use struct lifetime parameters to guarantee that borrowed buffers are not freed while still in use. The `'input` parameter on `Parser` is the compile-time proof that the parser will not outlive the network buffer it was given.
+
+---
+
+## 8. Failure Gallery — Real `rustc` Diagnostics
+
+Every example below is the **verbatim** output from `rustc 1.78` (stable). Learn to read these before you reach for `clone()`.
+
+### 8.1 E0597 — Borrowed Value Does Not Live Long Enough
+
+The most common lifetime error. A reference is used after its referent has been dropped.
+
+```rust
+fn dangling_reference() {
+    let r;
+    {
+        let s = String::from("hello");
+        r = &s; // borrow `s`
+    } // s dropped here
+    println!("{}", r); // use after free — rejected
+}
+```
+
+```text
+error[E0597]: `s` does not live long enough
+ --> src/main.rs:5:13
+  |
+4 |         let s = String::from("hello");
+  |             - binding `s` declared here
+5 |         r = &s;
+  |             ^^ borrowed value does not live long enough
+6 |     }
+  |     - `s` dropped here while still borrowed
+7 |     println!("{}", r);
+  |                    - borrow later used here
+  |
+  = note: borrowed value must be valid for the block at 2:26...
+```
+
+**Fix:** extend the owner's scope, or return an owned value:
+
+```rust
+fn fixed() -> String {
+    let s = String::from("hello");
+    s // move ownership — no borrow, no E0597
+}
+
+fn fixed_borrow<'a>(s: &'a String) -> &'a str {
+    s.as_str() // tied to caller's lifetime, not a local
+}
+```
+
+In backend handlers this appears when you borrow from a temporary `Bytes` buffer and try to store the `&str` in a struct that outlives the handler's stack frame. The fix is always the same: **own the data you need to keep**.
+
+### 8.2 E0382 — Borrow of Moved Value
+
+```rust
+fn send_twice() {
+    let payload = String::from("request body");
+    let handle = std::thread::spawn(move || {
+        println!("{}", payload); // payload moved into closure
+    });
+    println!("{}", payload); // borrow of moved value
+    handle.join().unwrap();
+}
+```
+
+```text
+error[E0382]: borrow of moved value: `payload`
+ --> src/main.rs:6:20
+  |
+2 |     let payload = String::from("request body");
+  |         ------- move occurs because `payload` has type `String`, which does not implement the `Copy` trait
+3 |     let handle = std::thread::spawn(move || {
+  |                                     ------- value moved into closure here
+4 |         println!("{}", payload);
+  |                    ------- variable moved due to use in closure
+5 |     });
+6 |     println!("{}", payload);
+  |                    ^^^^^^^ value borrowed here after move
+  |
+help: consider cloning the value if the performance cost is acceptable
+  |
+3 |     let payload_clone = payload.clone();
+  |     let handle = std::thread::spawn(move || {
+  |         println!("{}", payload_clone);
+```
+
+**Fix:** clone before the move, or use `Arc<String>` for shared ownership:
+
+```rust
+use std::sync::Arc;
+
+let payload = Arc::new(String::from("request body"));
+let p2 = Arc::clone(&payload);
+let handle = std::thread::spawn(move || println!("{}", p2));
+println!("{}", payload); // ok — Arc is shared, not moved
+handle.join().unwrap();
+```
+
+### 8.3 E0106 — Missing Lifetime Specifier (Elision Failure)
+
+```rust
+fn pick(a: &str, b: &str) -> &str { a }
+```
+
+```text
+error[E0106]: missing lifetime specifiers
+ --> src/main.rs:1:23
+  |
+1 | fn pick(a: &str, b: &str) -> &str { a }
+  |               ----     ----     ^ expected named lifetime parameter
+  |
+  = help: this function's return type contains a borrowed value, but the signature
+          does not say whether it is borrowed from `a` or `b`
+help: consider introducing a named lifetime parameter
+  |
+1 | fn pick<'a>(a: &'a str, b: &'a str) -> &'a str { a }
+  |          ++++     ++          ++          ++
+```
+
+If the return is only tied to one input, give only that input the lifetime:
+
+```rust
+fn pick_first<'a>(a: &'a str, _b: &str) -> &'a str { a }
+fn pick_either<'a>(a: &'a str, b: &'a str) -> &'a str {
+    if a.len() > b.len() { a } else { b }
+}
+```
+
+### 8.4 Variance Footgun — `Cell` Blocks Lifetime Coercion
+
+```rust
+use std::cell::Cell;
+
+struct Cache<'a> { slot: Cell<&'a str> }
+
+fn widen<'long: 'short, 'short>(c: Cache<'long>) -> Cache<'short> {
+    c // error[E0308]: mismatched types
+}
+```
+
+```text
+error[E0308]: mismatched types
+ --> src/main.rs:5:5
+  |
+5 |     c
+  |     ^ expected `Cache<'short>`, found `Cache<'long>`
+  |
+  = note: `Cell<&'a str>` is invariant over `'a` — no subtyping, so
+          `Cell<&'long str>` is not a subtype of `Cell<&'short str>`
+```
+
+**Why invariant?** `Cell` allows `set()` through a shared reference. If it were covariant, you could write a `'short` reference into a slot typed as `'long`, creating a dangling pointer when the short-lived data dies but the `Cell` still claims to hold a `'long` reference. Invariance blocks this.
+
+**Fix:** extract through `get()` and re-wrap:
+
+```rust
+fn widen<'long: 'short, 'short>(c: Cache<'long>) -> Cache<'short> {
+    Cache { slot: Cell::new(c.slot.get()) }
+}
+```
+
+Or avoid `Cell` around borrowed data entirely — store an owned `String` instead.
+
+### 8.5 `RefCell` Panic — The Runtime Borrow Violation
+
+Unlike `E0597`/`E0382`/`E0106`, this is not a compile error. It is a **runtime panic** — the trade-off `RefCell` makes for flexibility.
+
+```rust
+use std::cell::RefCell;
+
+fn refcell_panic_demo() {
+    let data = RefCell::new(vec![1, 2, 3]);
+
+    let _shared = data.borrow();       // borrow count = 1 (shared)
+    // The next line panics at runtime — not compile time:
+    let _exclusive = data.borrow_mut(); // borrow count is 1, cannot go to -1
+    // thread 'main' panicked at 'already borrowed: BorrowMutError'
+}
+
+fn refcell_panic_nested() {
+    let buf = RefCell::new(String::from("hello"));
+
+    let b = buf.borrow();              // shared borrow live
+    // helper that internally tries to mutate through the same RefCell
+    append_world(&buf);                // panics — b still live
+    println!("{}", b);
+
+    fn append_world(buf: &RefCell<String>) {
+        buf.borrow_mut().push_str(" world"); // BorrowMutError
+    }
+}
+```
+
+```text
+thread 'main' panicked at 'already borrowed: BorrowMutError'
+ --> src/main.rs:7:27
+  |
+7 |     let _exclusive = data.borrow_mut();
+  |                      ^^^^^^^^^^^^^^^^^
+  |
+  = note: RefCell enforces aliasing XOR mutability at runtime.
+          Use `try_borrow()` / `try_borrow_mut()` for checked access.
+```
+
+**Fix:** use `try_borrow_mut` for fallible access, or restructure to end the shared borrow before the exclusive one:
+
+```rust
+use std::cell::RefCell;
+
+fn fixed(buf: &RefCell<String>) {
+    let len = buf.borrow().len(); // shared borrow ends here (temporary)
+    buf.borrow_mut().push_str(" world"); // exclusive borrow — ok, no overlap
+    assert_eq!(len + 6, buf.borrow().len());
+}
+
+// Or checked:
+fn checked(buf: &RefCell<String>) {
+    match buf.try_borrow_mut() {
+        Ok(mut guard) => guard.push_str(" world"),
+        Err(_) => eprintln!("borrow conflict — skipping mutation"),
+    }
+}
+```
+
+In backend services, prefer `try_borrow_mut` when the call graph is deep enough that borrow overlap is hard to audit statically. A panic in a Tokio task aborts that task — and if uncaught, the whole worker thread. Treat `RefCell::borrow_mut` as `unwrap` — convenient but panic-prone.
+
+### 8.6 HRTB Missing — Trait Object Without `for<'a>`
+
+```rust
+type Handler = Box<dyn Fn(&str) -> &str>;
+```
+
+```text
+error[E0106]: missing lifetime specifier
+ --> src/main.rs:1:32
+  |
+1 | type Handler = Box<dyn Fn(&str) -> &str>;
+  |                            ^ expected named lifetime parameter
+  |
+help: consider using `for<'a>` to bind the lifetime
+  |
+1 | type Handler = Box<dyn for<'a> Fn(&'a str) -> &'a str>;
+  |                     +++++++        ++          ++
+```
+
+**Fix:**
+
+```rust
+type Handler = Box<dyn for<'a> Fn(&'a str) -> &'a str>;
+
+fn make_handler() -> Handler {
+    Box::new(|s| s.trim())
+}
+
+fn apply_all(handlers: &[Handler], input: &str) -> String {
+    handlers.iter().fold(input.to_owned(), |acc, h| h(&acc).to_owned())
+}
+```
+
+---
+
+## 9. Interior Mutability Compared — `Cell` vs `RefCell` vs `OnceLock` vs `Mutex`/`RwLock` vs `Atomic`
+
+### 9.1 Head-to-Head Comparison
+
+| Property | `Cell<T>` | `RefCell<T>` | `OnceLock<T>` | `Mutex<T>` | `RwLock<T>` | `AtomicU64` |
+|----------|-----------|--------------|---------------|------------|-------------|-------------|
+| `T` bound | `T: Copy` for `get` | any `T` | any `T` | `T: Send` for `Sync` | `T: Send + Sync` for `Sync` | fixed integer/pointer types |
+| Mutation API | `set` / `replace` / `swap` (no refs) | `borrow` / `borrow_mut` → `Ref`/`RefMut` | `set` once / `get_or_init` | `lock` → `MutexGuard` | `read` / `write` → guards | `load` / `store` / `fetch_add` |
+| Runtime check | none | borrow counter (`isize`) | atomic once flag | OS futex / spin | OS rwlock | hardware atomic |
+| Panic / block | never | panics on violation | panics if init panics | blocks; poisons on panic | blocks; poisons on panic | never blocks |
+| `Sync` | `!Sync` | `!Sync` | `Sync` if `T: Sync` | `Sync` if `T: Send` | `Sync` if `T: Send + Sync` | `Sync` |
+| Cost | zero (`T`-sized) | counter inc/dec | one atomic CAS | syscall on contention | syscall on contention | single instruction |
+| Use when | counters, flags, single-threaded | single-threaded shared `&` mutation | global config, lazy init | cross-thread shared mutation | read-heavy cross-thread sharing | counters, flags, cross-thread |
+
+### 9.2 `Cell::set` vs `RefCell::borrow_mut` — The No-Reference Guarantee
+
+```rust
+use std::cell::{Cell, RefCell};
+
+// Cell: no reference ever escapes — safe by construction
+let c = Cell::new(1u32);
+let val: u32 = c.get();   // copies the bits — no borrow held
+c.set(val + 1);           // no aliasing possible — there was never a & to alias
+assert_eq!(c.get(), 2);
+
+// RefCell: hands out real references — aliasing is possible, checked at runtime
+let r = RefCell::new(String::from("hello"));
+let borrowed: std::cell::Ref<String> = r.borrow(); // shared ref — borrow count = 1
+// r.borrow_mut(); // would panic — shared borrow still live
+drop(borrowed);            // count back to 0
+r.borrow_mut().push_str(" world"); // exclusive — ok now
+assert_eq!(*r.borrow(), "hello world");
+```
+
+`Cell` avoids the `RefCell` problem entirely: because `get()` returns a copy and `set()` takes ownership, **no reference to the interior is ever created** and there is nothing to alias. The `T: Copy` bound is the price of that guarantee.
+
+### 9.3 `OnceLock` — One Atomic Flag, Then Immutable
+
+```rust
+use std::sync::OnceLock;
+
+static CONFIG: OnceLock<AppConfig> = OnceLock::new();
+
+#[derive(Debug)]
+struct AppConfig { db_url: String, pool_size: u32 }
+
+fn init(url: String) {
+    // First caller wins; subsequent calls return Err with the value
+    let _ = CONFIG.set(AppConfig { db_url: url, pool_size: 16 });
+    // Or lazy:
+    let cfg = CONFIG.get_or_init(|| AppConfig {
+        db_url: std::env::var("DATABASE_URL").unwrap_or_default(),
+        pool_size: 16,
+    });
+    println!("pool_size={}", cfg.pool_size);
+}
+
+fn handle() {
+    // After init, reads are lock-free — just an atomic load
+    let cfg = CONFIG.get().expect("CONFIG not initialized");
+    println!("db_url={}", cfg.db_url);
+}
+```
+
+`OnceLock::get_or_init` uses a single `AtomicU8` state machine (uninit → initializing → initialized) with `compare_exchange` + parking. After initialization every `get()` is a relaxed atomic load — cheaper than `Mutex::lock`. Use it for global config, compiled regex sets, or connection-pool singletons that are written once at startup.
+
+### 9.4 `Arc<Mutex<T>>` vs `Rc<RefCell<T>>` — The Thread-Boundary Split
+
+```rust
+use std::{cell::RefCell, rc::Rc, sync::{Arc, Mutex}, thread};
+
+// Single-threaded sharing — Rc + RefCell: cheap, !Send
+let shared_single = Rc::new(RefCell::new(vec![1, 2, 3]));
+let c1 = Rc::clone(&shared_single);
+c1.borrow_mut().push(4); // runtime-checked, no atomic, no syscall
+assert_eq!(*shared_single.borrow(), vec![1, 2, 3, 4]);
+
+// Cross-thread sharing — Arc + Mutex: atomic refcount + OS lock
+let shared_multi = Arc::new(Mutex::new(vec![1, 2, 3]));
+let mut handles = vec![];
+for _ in 0..4 {
+    let c = Arc::clone(&shared_multi);
+    handles.push(thread::spawn(move || c.lock().unwrap().push(1)));
+}
+for h in handles { h.join().unwrap(); }
+assert_eq!(shared_multi.lock().unwrap().len(), 7);
+
+// This does NOT compile — Rc<RefCell<T>> is !Send:
+// thread::spawn(move || { let _ = Rc::clone(&shared_single); });
+// error[E0277]: `Rc<RefCell<Vec<i32>>>` cannot be sent between threads safely
+//   = help: the trait `Send` is not implemented for `Rc<RefCell<Vec<i32>>>`
+```
+
+| Pattern | Refcount | Mutation check | Cross-thread | Cost |
+|---------|----------|---------------|--------------|------|
+| `Rc<RefCell<T>>` | non-atomic `usize` | runtime borrow counter | `!Send + !Sync` | increments + counter |
+| `Arc<Mutex<T>>` | atomic `usize` | OS lock + poison flag | `Send + Sync` | atomic + syscall on contention |
+| `Arc<RwLock<T>>` | atomic `usize` | OS rwlock | `Send + Sync` | atomic + syscall; concurrent reads |
+| `Arc<AtomicU64>` | atomic `usize` | hardware atomic | `Send + Sync` | single instruction |
+
+**Rule of thumb for backend services:** inside a single Tokio task or a single-threaded parser, `Rc<RefCell<T>>` is sufficient and cheaper. The moment state must cross a `thread::spawn` or `tokio::spawn` (which requires `Send`), switch to `Arc<Mutex<T>>` or `Arc<RwLock<T>>`. For bare counters across threads, `Arc<AtomicU64>` beats both — no lock, no poison, no borrow counter.
+
+### 9.5 `RwLock` — When Reads Dominate
+
+```rust
+use std::sync::RwLock;
+
+let cache: RwLock<std::collections::HashMap<String, String>> =
+    RwLock::new(std::collections::HashMap::new());
+
+// Many readers concurrently — no exclusive lock needed
+let reader = cache.read().unwrap();
+let _ = reader.get("key");
+
+// Writer needs exclusive access — blocks until all readers drop
+drop(reader);
+cache.write().unwrap().insert("key".into(), "value".into());
+```
+
+`RwLock` allows any number of concurrent `read()` guards or one `write()` guard — the classic reader-writer lock. Like `Mutex`, it poisons on panic and is `Sync` when `T: Send + Sync`. Prefer it over `Mutex` when reads outnumber writes by a large factor (configuration maps, routing tables, feature flags). Under heavy write contention it degrades to `Mutex` performance and can starve writers — measure before assuming it wins.
+
+---
+
+## 10. Distributed-Systems Lens — Lifetimes as Resource Leases
 
 ### Lifetimes as Distributed Leases
 
@@ -839,13 +1333,30 @@ When a gRPC service exposes a `&Request` to middleware, the middleware's lifetim
 
 Holding a `&T` across an `.await` is rejected by the compiler when the future must be `Send`, because the future may resume on a different thread. This is the Rust equivalent of holding a distributed lock across an RPC call — the lease may expire (or be revoked) while the RPC is in flight, and when the RPC returns, the lease is gone. The fix is the same: narrow the critical section. Clone or copy the data you need before the `.await`, release the borrow, then use the owned copy.
 
+```rust
+use std::sync::{Arc, Mutex};
+
+// Anti-pattern: holding a MutexGuard across .await
+async fn bad_hold(guard: std::sync::MutexGuard<'_, String>) {
+    // cannot easily .await here — guard is !Send in many contexts
+    // and blocks other tasks from acquiring the lock
+}
+
+// Fix: clone, drop the guard, then await
+async fn good_clone(data: &Arc<Mutex<String>>) -> String {
+    let owned = data.lock().unwrap().clone(); // borrow ends here
+    // no guard held across the await — other tasks can proceed
+    some_async_work(&owned).await;
+    owned
+}
+async fn some_async_work(_s: &str) {}
+```
+
 ### Lifetime Elision as Protocol Negotiation
 
 Lifetime elision is the Rust analog of implicit protocol negotiation. When a function accepts `&str` and returns `&str`, the compiler infers that the output lives as long as the input — no explicit version negotiation needed. When elision fails (two input lifetimes, no `&self`), it is like a protocol that requires explicit version pinning: the compiler cannot infer the negotiation, so you must spell it out. In distributed systems, this maps to gRPC's implicit HTTP/2 negotiation (elision succeeds) versus requiring explicit TLS configuration (elision fails, explicit annotation needed).
 
 ### Interior Mutability and Distributed State Consistency
-
-The choice of interior mutability type maps directly to distributed state consistency models:
 
 | Interior mutability | Distributed analog | Consistency model |
 |---------------------|-------------------|-------------------|
@@ -860,147 +1371,6 @@ The key insight is that Rust's borrow checker forces you to choose the *minimum*
 ### Reborrowing and Resource Pooling
 
 Reborrowing — creating a shorter loan from a longer one — maps to resource pooling in distributed systems. A connection pool holds a set of connections (long-lived borrows); a request handler reborrows a connection for the duration of a single request (short-lived loan); when the request completes, the connection returns to the pool (reborrow ends, original loan restored). The key property is the same: the original resource is *frozen* during the reborrow but not consumed — the pool still owns it and can reassign it after the reborrow ends.
-
----
-
-## 8. Failure Gallery — Lifetime and Variance Errors
-
-### 8.1 Missing Lifetime Annotation
-
-```rust
-struct Parser<'a> {
-    input: &'a str,
-    pos: usize,
-}
-
-fn parse(input: &str) -> Parser {
-    Parser { input, pos: 0 }
-}
-
-// error[E0106]: missing lifetime specifier
-// help: this struct's elided lifetime fields need explicit annotations
-//   |
-// 4 | fn parse(input: &str) -> Parser {
-//   |                    ----          ^ expected named lifetime parameter
-```
-
-**Fix:**
-
-```rust
-fn parse<'a>(input: &'a str) -> Parser<'a> {
-    Parser { input, pos: 0 }
-}
-```
-
-### 8.2 Returning Reference to Local
-
-```rust
-fn make_header() -> &str {
-    let header = format!("HTTP/1.1 200 OK\r\n");
-    &header
-}
-
-// error[E0515]: cannot return reference to local variable `header`
-//   |
-// 3 |     &header
-//   |     ^^^^^^^ returns a reference to data owned by the current function
-```
-
-**Fix:** return an owned value:
-
-```rust
-fn make_header() -> String {
-    format!("HTTP/1.1 200 OK\r\n")
-}
-```
-
-### 8.3 Variance-Induced Lifetime Mismatch
-
-```rust
-use std::cell::RefCell;
-
-fn store_ref<'a>(cell: &RefCell<Option<&'a str>>, val: &'a str) {
-    *cell.borrow_mut() = Some(val);
-}
-
-fn demo() {
-    let cell = RefCell::new(None);
-    {
-        let short = String::from("ephemeral");
-        store_ref(&cell, &short);
-    } // short dropped
-    // cell still holds a reference to dropped short!
-    // But wait — this actually compiles because 'a is inferred
-    // to be the inner scope. Let's see the REAL footgun:
-}
-
-// The real footgun: RefCell is invariant in T = Option<&'a str],
-// which means you cannot coerce RefCell<Option<&'long str>>
-// to RefCell<Option<&'short str>> even when 'long: 'short.
-// This blocks legitimate lifetime shortening.
-```
-
-### 8.4 HRTB Required but Missing
-
-```rust
-fn apply_all<F>(items: Vec<String>, f: F) -> Vec<String>
-where
-    F: Fn(&str) -> String,
-{
-    items.iter().map(|s| f(s)).collect()
-}
-
-// This compiles — but only because the bound is Fn(&str) -> String,
-// where the return type is owned. Change it to return &str:
-
-fn apply_all_borrowed<'a, F>(items: Vec<&'a str>, f: F) -> Vec<&'a str>
-where
-    F: Fn(&str) -> &str,
-{
-    items.iter().map(|s| f(s)).collect()
-}
-
-// This ALSO compiles because the compiler infers for<'a>.
-// But when you need it explicitly for trait objects:
-type Transform = Box<dyn Fn(&str) -> &str>;
-// error: hidden lifetime parameters in `Fn(&str) -> &str` not allowed
-// help: use `for<'a>` to make the lifetime explicit
-// fix:
-type TransformFixed = Box<dyn for<'a> Fn(&'a str) -> &'a str>;
-```
-
-### 8.5 Interior Mutability Across Threads
-
-```rust
-use std::cell::RefCell;
-use std::thread;
-
-let data = RefCell::new(vec![1, 2, 3]);
-
-// thread::spawn(move || {
-//     let mut guard = data.borrow_mut();
-//     guard.push(4);
-// });
-// error[E0277]: `RefCell<Vec<i32>>` cannot be sent between threads safely
-//   = help: the trait `Send` is not implemented for `RefCell<Vec<i32>>`
-//   = note: required because it appears within the closure
-```
-
-**Fix:** use `Mutex` or `Arc<Mutex<T>>`:
-
-```rust
-use std::sync::{Arc, Mutex};
-use std::thread;
-
-let data = Arc::new(Mutex::new(vec![1, 2, 3]));
-let d = Arc::clone(&data);
-thread::spawn(move || {
-    d.lock().unwrap().push(4);
-}).join().unwrap();
-assert_eq!(*data.lock().unwrap(), vec![1, 2, 3, 4]);
-```
-
----
 
 ## Key Takeaways
 
