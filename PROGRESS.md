@@ -485,3 +485,9 @@ Batch 45 — 2026-08-21: Vol18 ch08 landed (batch 3b — 1 ch).
 
 Batch 46 — 2026-08-21: Vol20 ch01 resolved (competing writes — kept latest 6,050w short-prompt version).
 - Vol20 ch01 Rust Architecture (kept 6,050w / 7 mermaid — 45cf6f08's 8,301w overwritten by 80cb's leaner version; both >= 6k, using concise)
+
+Batch 47 — 2026-08-21: Vol18 ch10-ch12 + Vol19 ch07 landed (batch 4a — 4 ch).
+- Vol18 ch10 Profiling/Observability (JFR, async-profiler, JMC, heap dumps, continuous, 11,055w, 7 mermaid)
+- Vol18 ch11 Native Interop (JNI, Panama FFM, Native Image, 9,347w, 7 mermaid)
+- Vol18 ch12 Production JVM (container-aware, GC sizing, CDS/AppCDS, CRaC, 9,548w, 6 mermaid)
+- Vol19 ch07 React Internals (Fiber, reconciler, Hooks, Suspense, 9,207w, 8 mermaid — trimmed 12→8)
