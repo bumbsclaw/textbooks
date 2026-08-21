@@ -475,3 +475,7 @@ Batch 42 — 2026-08-21: Vol19 ch06 + Vol20 ch04 landed (batch 2c — 2 ch).
 Batch 43 — 2026-08-21: Vol20 ch01 (retry-5, finally landed) + Vol19 ch03 fix (batch 2a retry).
 - Vol20 ch01 Rust Architecture (rustup/Cargo, HIR→MIR→LLVM, monomorphization, 8,301w, 6 mermaid)
 - Vol19 ch03 Node.js Internals re-fixed (was 413w stub → 11,100w, 8 mermaid, trim of 1 diagram)
+
+Batch 44 — 2026-08-21: Vol18 ch07 + Vol20 ch03 expanded to gate (batch 3a interim).
+- Vol18 ch07 Kotlin Interop (properties/data class, null-safety, coroutines state machine, reified, 6,011w, 8 mermaid — was 5,305)
+- Vol20 ch03 Lifetimes/Variance/Interior Mutability (elision, HRTB, RefCell state, 6,320w, 8 mermaid — was 5,651)
