@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -293,22 +375,7 @@ path</em>, <em>which team's service introduced it</em>, and <em>what is the smal
 removes it</em>. Later chapters (especially Chapter 5) treat the SBOM fleet as a queryable
 graph database precisely because the graph structure is what makes it answer questions
 instead of just listing facts.</p>
-<p><pre><code>flowchart TD
-    DOC["SBOM document<br/>author · timestamp · tool · doc-id"]
-    DOC --> ROOT["Root component<br/>your-service:v3.2.0"]
-
-    ROOT -->|depends on| A["web-framework 4.1.0<br/>purl · CPE · Apache-2.0 · sha256"]
-    ROOT -->|depends on| B["json-lib 2.9.0<br/>purl · MIT · sha256"]
-
-    A -->|depends on| C["http-client 3.0.1<br/>purl · Apache-2.0"]
-    C -->|depends on| D["tls-lib 1.4.2<br/>purl · CPE · sha256"]
-    D -->|depends on| E["log4j-core 2.14.1<br/>purl · CPE · ← the CVE lives here"]
-
-    B -->|depends on| E
-
-    classDef vuln fill:#7f1d1d,stroke:#f87171,color:#fff;
-    class E vuln;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e82fab4e09aa.png" alt="diagram"></div></p>
 <p>Notice two things in that diagram. First, the vulnerable component (<code>log4j-core</code>) is
 reached by <em>two different paths</em> — through the framework and through the JSON library —
 which is exactly the situation that makes flat lists useless and graphs indispensable.
@@ -321,19 +388,7 @@ SBOMs depending on <strong>which lifecycle stage you observe it at</strong>, bec
 expose different information. CISA's community work formalized six types, and they are
 worth internalizing because "the SBOM was wrong" is very often really "you generated the
 wrong <em>type</em> for the question you were asking."</p>
-<p><pre><code>flowchart LR
-    D["Design SBOM<br/>intended components<br/>(planning / RFC)"]
-    S["Source SBOM<br/>declared deps<br/>(manifests + lockfiles)"]
-    B["Build SBOM<br/>what the build<br/>actually pulled in"]
-    A["Analyzed SBOM<br/>binary / image<br/>inspection post-build"]
-    DE["Deployed SBOM<br/>what is installed<br/>on the running host"]
-    R["Runtime SBOM<br/>what is actually<br/>loaded / executed"]
-
-    D --> S --> B --> A --> DE --> R
-
-    D -.->|"earlier = cheaper,<br/>more speculative"| D
-    R -.->|"later = truer to reality,<br/>harder to attribute to source"| R
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b95ea9ec2cac.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Design SBOM.</strong> Produced before the software exists, from an architecture or an RFC:
   "we intend to use these components." Speculative, but useful for procurement and
@@ -391,24 +446,7 @@ the difficulty of patching but by the difficulty of <em>finding</em>.</p>
 central inventory (Chapter 5), then "which systems contain <code>log4j-core</code> and at what
 version" is a <strong>query</strong>, not an investigation — and it returns in seconds because the work
 of enumerating components was done <em>once, at build time</em>, and stored.</p>
-<p><pre><code>flowchart TB
-    CVE["New CVE drops<br/>e.g. Log4Shell (CVE-2021-44228)"]
-
-    subgraph without["WITHOUT an SBOM inventory"]
-        W1["Email every team:<br/>'do you use log4j?'"] --> W2["Each team greps repos,<br/>unpacks JARs, guesses"]
-        W2 --> W3["Chase vendors for<br/>their components"]
-        W3 --> W4["Reconcile partial,<br/>inconsistent answers"]
-        W4 --> W5["Impact known:<br/>days to weeks · gaps remain"]
-    end
-
-    subgraph with["WITH a per-artifact SBOM inventory"]
-        S1["Query the inventory:<br/>component = log4j-core"] --> S2["Return every service,<br/>version, and build that<br/>contains it — with graph paths"]
-        S2 --> S3["Impact known:<br/>minutes · complete + auditable"]
-    end
-
-    CVE --> W1
-    CVE --> S1
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7abee18697f.png" alt="diagram"></div></p>
 <p>This is the killer use case, and it is worth being precise about <em>why</em> it works: the
 inventory and the vulnerability data change on <strong>different clocks</strong>. You build your SBOM
 when your dependencies change (occasionally). The world discovers new vulnerabilities
@@ -493,16 +531,7 @@ regulation it triggered. What follows is the landscape as it stands, with dates 
 precisely where they are firm and hedged where they are not. <strong>Get the dates right</strong> — this
 is a domain where a wrong year undermines everything, and where regulations are still
 phasing in as this is written (mid-2026).</p>
-<p><pre><code>flowchart LR
-    SW["Dec 2020<br/>SolarWinds disclosed"] --> EO["May 2021<br/>US EO 14028"]
-    EO --> NTIA["Jul 2021<br/>NTIA Minimum<br/>Elements for an SBOM"]
-    NTIA --> M22["Sep 2022<br/>OMB M-22-18<br/>(self-attestation)"]
-    M22 --> FDA["Dec 2022 / 2023<br/>FDA §524B +<br/>premarket guidance"]
-    FDA --> M23["Jun 2023<br/>OMB M-23-16<br/>(extends M-22-18)"]
-    M23 --> CISATYPES["2023<br/>CISA 'Types of SBOM'"]
-    CISATYPES --> CRA["Dec 2024<br/>EU CRA in force<br/>(obligations to ~2027)"]
-    CRA --> REFRESH["2025<br/>CISA minimum-elements<br/>refresh (draft)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_36b094216700.png" alt="diagram"></div></p>
 <h3 id="united-states-the-executive-order-lineage">United States: the executive-order lineage</h3>
 <p>The proximate cause was <strong>SolarWinds</strong> — the compromise of the Orion build pipeline,
 disclosed in December 2020 (Book 1, Chapter 3), which pushed a trojanized update to
@@ -672,23 +701,7 @@ document you maintain.</p>
 <p>The second thing is that those per-build SBOMs are only valuable if they flow into a
 <strong>central, queryable inventory</strong> — a fleet-wide store you can ask questions of. This is
 the architecture that turns the Log4Shell capability from aspiration into reality:</p>
-<p><pre><code>flowchart TB
-    subgraph CI["CI/CD — per artifact, per build"]
-        B1["build svc-A v3.2 → SBOM"]
-        B2["build svc-B v1.9 → SBOM"]
-        B3["build svc-C v7.0 → SBOM"]
-    end
-
-    B1 --> STORE[("Central SBOM inventory<br/>graph-queryable · versioned")]
-    B2 --> STORE
-    B3 --> STORE
-
-    DEPLOY["Deploy tracking:<br/>which build runs where"] --> STORE
-
-    STORE --> Q1["'Where is log4j-core<br/>across everything we run?'"]
-    STORE --> Q2["'Which shipped versions<br/>carry GPL code?'"]
-    STORE --> Q3["Feed SCA / VEX / policy<br/>(Book 2 Ch 6, Ch 6 here)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_766e68a8a914.png" alt="diagram"></div></p>
 <p>Three engineering realities fall out of this picture, each of which later chapters develop:</p>
 <ul>
 <li><strong>Generation must be automated and in-pipeline, not a manual step.</strong> At fleet scale
@@ -768,6 +781,10 @@ substrate.</p>
   (outbound, compliance and trust) and <strong>what you run</strong> (inbound, your own vulnerability
   management) — from the same substrate.</li>
 </ul>
+<h3 id="sbom-answers-inventory-to-vulnerability-to-response">SBOM answers: inventory to vulnerability to response</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9b649b6bca31.png" alt="diagram"></div></p>
+<h3 id="sbom-lifecycle-produce-to-distribute-to-consume">SBOM lifecycle: produce to distribute to consume</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8e67952c2771.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>Executive Order 14028</strong>, "Improving the Nation's Cybersecurity," The White House, 12
@@ -862,13 +879,7 @@ genuine fork in the road: <strong>2.3 is what production tooling emits and what 
 consume today; 3.0 is where the standard is going but is still early in adoption.</strong> A
 practitioner needs both in their head, so this chapter covers both, with the weight on 2.3
 because that is what you will actually handle in 2026.</p>
-<p><pre><code>flowchart LR
-    A["2010<br/>LF working group<br/>license compliance"] --> B["2011-2020<br/>SPDX 1.x - 2.1<br/>grows into full SBOM"]
-    B --> C["2020<br/>SPDX 2.2"]
-    C --> D["2021<br/>SPDX 2.2.1<br/>= ISO/IEC 5962:2021"]
-    D --> E["2022<br/>SPDX 2.3<br/>widely deployed line"]
-    E --> F["2024<br/>SPDX 3.0<br/>redesign: core + profiles"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7bc22a13c69c.png" alt="diagram"></div></p>
 <h2 id="the-spdx-2223-object-model">The SPDX 2.2/2.3 object model</h2>
 <p>An SPDX 2.x document is a single logical object with a fixed top-level shape. Whatever the
 serialization — tag-value, JSON, YAML, RDF — the same conceptual pieces are present. There are
@@ -884,22 +895,7 @@ seven kinds of thing in a 2.x document:</p>
    License List (the <code>LicenseRef-</code> entries).</li>
 <li><strong>Annotations</strong> — free-form review comments attached to any element.</li>
 </ol>
-<p><pre><code>flowchart TD
-    DOC["SPDX Document<br/>Creation Information<br/>spdxVersion - dataLicense - SPDXID<br/>documentNamespace - creators - created"]
-
-    DOC -->|DESCRIBES| PKGROOT["Package (root)<br/>SPDXRef-Package-app"]
-    DOC --> PKGS["Packages[]<br/>each: SPDXID, name, versionInfo,<br/>supplier, downloadLocation,<br/>licenseConcluded / licenseDeclared,<br/>checksums, externalRefs"]
-    DOC --> FILES["Files[]<br/>SPDXID, fileName,<br/>checksums, licenseInfoInFile"]
-    DOC --> SNIP["Snippets[]<br/>byte/line ranges<br/>within a File"]
-    DOC --> OLI["Other Licensing Info[]<br/>LicenseRef- definitions"]
-    DOC --> ANN["Annotations[]<br/>review comments"]
-
-    PKGS -->|CONTAINS| FILES
-    FILES --> SNIP
-    PKGS -.->|DEPENDS_ON| PKGS
-
-    REL["Relationships[]<br/>the graph edges"] --- DOC
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cd7030a22e76.png" alt="diagram"></div></p>
 <h3 id="document-creation-information">Document Creation Information</h3>
 <p>Every SPDX document opens with a header identifying the document, not its contents. These
 fields are mandatory and a validator will reject a document missing them. In tag-value form
@@ -1063,37 +1059,14 @@ element can participate in many relationships — a diamond dependency where one
 reached by two paths is represented naturally, with two <code>DEPENDS_ON</code> edges pointing at one
 package element. This is the structural advantage over formats that nest dependencies as a
 tree: SPDX represents a true DAG.</p>
-<p><pre><code>flowchart TD
-    DOC["SPDXRef-DOCUMENT"]
-    APP["SPDXRef-Package-app<br/>checkout-service 3.2.0"]
-    WEB["SPDXRef-Package-web<br/>web-framework 4.1.0"]
-    JSONLIB["SPDXRef-Package-json<br/>json-lib 2.9.0"]
-    TLS["SPDXRef-Package-tls<br/>tls-lib 1.4.2"]
-    LOG4J["SPDXRef-Package-log4j<br/>log4j-core 2.14.1"]
-
-    DOC -->|DESCRIBES| APP
-    APP -->|DEPENDS_ON| WEB
-    APP -->|DEPENDS_ON| JSONLIB
-    WEB -->|DEPENDS_ON| TLS
-    WEB -->|DEPENDS_ON| LOG4J
-    JSONLIB -->|DEPENDS_ON| LOG4J
-
-    classDef vuln fill:#7f1d1d,stroke:#f87171,color:#fff;
-    class LOG4J vuln;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e47bac0c41f6.png" alt="diagram"></div></p>
 <p>That diagram is a literal picture of a relationships array: one <code>DESCRIBES</code> edge and five
 <code>DEPENDS_ON</code> edges, with <code>log4j-core</code> reached by two paths — the exact situation that makes the
 graph indispensable and a flat list useless.</p>
 <h2 id="serializations">Serializations</h2>
 <p>SPDX 2.x defines the <em>same logical model</em> in several concrete file formats. All five are
 "real" SPDX; they differ only in encoding, and a conformant tool can round-trip between them.</p>
-<p><pre><code>flowchart LR
-    MODEL["SPDX 2.3<br/>logical model<br/>(Document / Packages /<br/>Files / Relationships)"]
-    MODEL --> TV[".spdx<br/>tag-value<br/>original, human-writable"]
-    MODEL --> JSON[".spdx.json<br/>JSON<br/>dominant in practice"]
-    MODEL --> YAML[".spdx.yaml<br/>YAML"]
-    MODEL --> RDF[".spdx.rdf / .rdf.xml<br/>RDF/XML<br/>original semantic-web form"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8fd5464f4cb7.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Tag-value (<code>.spdx</code>)</strong> is the original format: line-oriented <code>Tag: Value</code> pairs, grouped by
   element. It is the most human-readable and the form the SPDX spec uses in its examples. The
@@ -1288,16 +1261,7 @@ graph model, closer to RDF (which is no accident — 3.0 serializes as JSON-LD).
 <li><strong>Lite</strong> — a deliberately minimal profile for constrained producers (a heritage of the
   Japanese "SPDX Lite" work) who need a small mandatory field set.</li>
 </ul>
-<p><pre><code>flowchart TD
-    CORE["Core model<br/>Element - Relationship<br/>CreationInfo - Agent<br/>Bundle - SpdxDocument"]
-    CORE --> SW["Software profile<br/>Package - File - Snippet - Sbom"]
-    CORE --> SEC["Security profile<br/>Vulnerability - VexAffected<br/>CvssAssessment"]
-    CORE --> LIC["Licensing profile<br/>License expressions<br/>CustomLicense"]
-    CORE --> BLD["Build profile<br/>Build provenance"]
-    CORE --> AI["AI profile<br/>AIPackage / model metadata"]
-    CORE --> DS["Dataset profile<br/>training / eval datasets"]
-    CORE --> LITE["Lite profile<br/>minimal field set"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_389b8791b63c.png" alt="diagram"></div></p>
 <p>A document declares which profiles it conforms to, and a consumer can process just the profiles
 it understands — a security tool reads Core plus Security and ignores the Dataset classes it
 does not care about. This is the extensibility payoff: new domains become new profiles without
@@ -1508,6 +1472,10 @@ identifier-rich <em>source</em> for that internal model.</p>
   (the "what depends on X" traversal). The right architecture normalizes SPDX <em>and</em> CycloneDX
   into one internal model (Chapter 5), leaving format specifics at the ingestion edge.</li>
 </ul>
+<h3 id="spdx-23-document-structure">SPDX 2.3 document structure</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b4ed76ef6d3.png" alt="diagram"></div></p>
+<h3 id="spdx-30-profile-layering">SPDX 3.0 profile layering</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d4e89fe07e8d.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SPDX Specification 2.3</strong>, Linux Foundation / SPDX project — the authoritative reference for
@@ -1612,27 +1580,7 @@ parallel arrays (<code>components</code>, <code>services</code>, <code>dependenc
 <code>(elementA, relationshipType, elementB)</code> triple, CycloneDX uses <em>purpose-built</em> structures
 for each kind of relationship. That is the format's defining ergonomic choice, and we will
 return to it in the comparison.</p>
-<p><pre><code>flowchart TD
-  BOM["BOM root<br/>bomFormat, specVersion,<br/>serialNumber, version"]
-  META["metadata<br/>timestamp, tools, authors,<br/>component (subject),<br/>lifecycles, manufacturer, supplier"]
-  COMP["components[]<br/>type, name, version,<br/>bom-ref, purl, cpe,<br/>hashes, licenses, scope,<br/>evidence, nested components"]
-  SVC["services[]<br/>bom-ref, provider,<br/>endpoints, data flows,<br/>trust boundary"]
-  DEP["dependencies[]<br/>ref, dependsOn[], provides[]"]
-  VULN["vulnerabilities[]<br/>id, ratings, cwes,<br/>advisories, analysis (VEX),<br/>affects[]"]
-  COMPOS["compositions[]<br/>aggregate: complete /<br/>incomplete / unknown"]
-  FORM["formulation[]<br/>build workflows,<br/>tasks, provenance"]
-
-  BOM --> META
-  BOM --> COMP
-  BOM --> SVC
-  BOM --> DEP
-  BOM --> VULN
-  BOM --> COMPOS
-  BOM --> FORM
-  DEP -. "ref / dependsOn<br/>point at bom-ref" .-> COMP
-  DEP -. "and at services" .-> SVC
-  VULN -. "affects[].ref<br/>points at bom-ref" .-> COMP
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1a2898199f5c.png" alt="diagram"></div></p>
 <h3 id="the-header-and-metadata">The header and <code>metadata</code></h3>
 <p>Four fields identify the document itself:</p>
 <ul>
@@ -1803,13 +1751,7 @@ expressive</em>: SPDX 2.x defines dozens of relationship types (<code>DYNAMIC_LI
 <code>dependsOn</code> and <code>provides</code> and expects you to encode nuance elsewhere (in <code>scope</code>, in
 <code>pedigree</code>, in <code>properties</code>). That is a real trade: CycloneDX optimizes for the graph you
 query most (runtime dependency) at the cost of the long tail of relationship semantics.</p>
-<p><pre><code>flowchart LR
-  APP["checkout-service@2.4.0<br/>(metadata.component)"]
-  OKHTTP["okhttp@4.12.0<br/>bom-ref"]
-  OKIO["okio@3.9.0<br/>bom-ref"]
-  APP -->|dependsOn| OKHTTP
-  OKHTTP -->|dependsOn| OKIO
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a5ee5dd3af89.png" alt="diagram"></div></p>
 <h3 id="serializations">Serializations</h3>
 <p>CycloneDX defines three wire formats from a single logical model:</p>
 <ul>
@@ -1851,15 +1793,7 @@ lived in a separate profile or an external document. Each vulnerability entry ca
 <p>Because the vulnerability is bound to the component graph by <code>bom-ref</code> in the <em>same</em>
 document, a scanner's output and the inventory it scanned travel together. That is the
 whole appeal of the model for a scan-and-triage pipeline.</p>
-<p><pre><code>flowchart TD
-  subgraph BOM["One CycloneDX document"]
-    C["components[]<br/>okhttp, okio, log4j-core…"]
-    V["vulnerabilities[]<br/>CVE-2021-44228"]
-    A["analysis (VEX)<br/>state: not_affected<br/>justification: code_not_reachable"]
-  end
-  V -->|"affects[].ref → bom-ref"| C
-  V --> A
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c33881c1768f.png" alt="diagram"></div></p>
 <h3 id="cyclonedx-vex-and-the-analysis-block">CycloneDX VEX and the <code>analysis</code> block</h3>
 <p>The <strong><code>analysis</code></strong> object inside a vulnerability entry is CycloneDX's inline <strong>VEX</strong>
 (Vulnerability Exploitability eXchange). It answers the question a bare CVE match cannot:
@@ -1933,16 +1867,7 @@ The same schema — same header, same <code>bom-ref</code> linking, same <code>d
 enumerate <em>anything</em> whose composition and provenance you want to track. This is the
 <strong>xBOM</strong> vision, and the specification's breadth of component types and top-level sections
 exists to serve it.</p>
-<p><pre><code>flowchart TD
-  ROOT["CycloneDX schema<br/>(one model)"]
-  ROOT --> SBOM["SBOM<br/>software components"]
-  ROOT --> VEX["VEX / VDR<br/>vulnerabilities + analysis"]
-  ROOT --> SAAS["SaaSBOM<br/>services, endpoints, data flows"]
-  ROOT --> ML["ML-BOM<br/>models, datasets, model cards"]
-  ROOT --> CBOM["CBOM<br/>cryptographic assets & algorithms"]
-  ROOT --> HBOM["HBOM<br/>hardware / device components"]
-  ROOT --> OBOM["OBOM / MBOM<br/>operations / manufacturing"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_25e3c610258d.png" alt="diagram"></div></p>
 <p>The members:</p>
 <ul>
 <li><strong>SBOM</strong> — the software inventory (everything above).</li>
@@ -1983,8 +1908,8 @@ is the CycloneDX feature with no real SPDX analogue. A service entry carries:</p
   runs it.</li>
 <li><strong><code>endpoints</code></strong> — the URLs/URIs the service exposes or that you call.</li>
 <li><strong><code>authenticated</code></strong> — whether calls to it are authenticated.</li>
-<li><strong><code>x-trust-boundary</code></strong> — whether calling the service crosses a trust boundary (leaves your
-  security domain).</li>
+<li><strong><code>x-trust-boundary</code></strong> (<code>trust boundary</code> in prose) — whether calling the service crosses a trust boundary (leaves your
+  security domain). Use <code>x-trust-boundary</code> in code/JSON and \"trust boundary\" in prose.</li>
 <li><strong><code>trustZone</code></strong> — a label for the zone the service sits in.</li>
 <li><strong><code>data</code></strong> — the <strong>data flows</strong>: an array of classified flows, each with a <code>flow</code>
   direction (<code>inbound</code>, <code>outbound</code>, <code>bi-directional</code>, <code>unknown</code>), a <code>classification</code> (e.g.
@@ -2049,17 +1974,7 @@ document.</p>
 <p>Because services are <code>bom-ref</code>-addressable, they participate in the same <code>dependencies</code>
 graph as software components — the subject <code>dependsOn</code> both a library and a service. This
 is the diagram:</p>
-<p><pre><code>flowchart LR
-  APP["checkout-service"]
-  PAY["payments-api<br/>trust: third-party-pci<br/>PCI · outbound"]
-  UP["user-profile<br/>trust: internal<br/>PII · bi-directional"]
-  APP -->|"outbound, crosses boundary"| PAY
-  APP <-->|"internal"| UP
-  classDef ext fill:#f8d7da,stroke:#b02a37,color:#000;
-  classDef int fill:#d1e7dd,stroke:#146c43,color:#000;
-  class PAY ext;
-  class UP int;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4862780b7ec2.png" alt="diagram"></div></p>
 <h3 id="compositions-formulation-evidence-and-annotations"><code>compositions</code>, <code>formulation</code>, <code>evidence</code>, and annotations</h3>
 <p>Four more sections carry provenance and completeness signal — the things that separate an
 SBOM you can <em>trust</em> from one you merely <em>have</em>.</p>
@@ -2354,6 +2269,10 @@ whole of Chapter 7.</p>
   <code>cyclonedx-cli</code>, and typed libraries; validate against the schema — and remember that
   schema-valid is not the same as complete or accurate.</strong></li>
 </ul>
+<h3 id="cyclonedx-bom-structure">CycloneDX BOM structure</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6d9c364f2b8e.png" alt="diagram"></div></p>
+<h3 id="cyclonedx-vs-spdx-when-to-use-which">CycloneDX vs SPDX: when to use which</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6123c5ad3967.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>ECMA-424</strong>, "CycloneDX Bill of Materials Specification," 1st edition, Ecma
@@ -2425,31 +2344,7 @@ binary or image after the fact), and at <strong>runtime</strong> (observing what
 of these observes the software at a different moment, and — this is the whole point —
 <strong>each moment exposes different information and hides different information.</strong> No tool,
 however good, can report on data that is not visible at the point where it runs.</p>
-<p><pre><code>flowchart LR
-    subgraph SRC["SOURCE / MANIFEST"]
-        S1["sees: declared deps,<br/>lockfile-resolved versions,<br/>dev vs prod split"]
-        S2["blind to: OS packages,<br/>vendored/static C,<br/>base image, runtime downloads"]
-    end
-    subgraph BLD["BUILD"]
-        B1["sees: the REAL resolved<br/>graph, generated code,<br/>native + build-only deps"]
-        B2["blind to: things added<br/>after the build<br/>(base image extras, sidecars)"]
-    end
-    subgraph BIN["BINARY / ARTIFACT"]
-        N1["sees: everything present<br/>in the image — OS pkgs,<br/>embedded manifests, Go buildinfo"]
-        N2["blind to: stripped static<br/>libs, un-fingerprintable<br/>vendored source, intent"]
-    end
-    subgraph RUN["RUNTIME"]
-        R1["sees: what is actually<br/>LOADED and executed"]
-        R2["blind to: code paths not<br/>exercised in the window,<br/>anything not yet run"]
-    end
-
-    SRC -->|"build"| BLD -->|"package"| BIN -->|"deploy + run"| RUN
-
-    classDef sees fill:#14532d,stroke:#4ade80,color:#fff;
-    classDef blind fill:#7f1d1d,stroke:#f87171,color:#fff;
-    class S1,B1,N1,R1 sees;
-    class S2,B2,N2,R2 blind;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f856111c450b.png" alt="diagram"></div></p>
 <p>Read that diagram as a ledger of trade-offs, not a ranking. There is no single "best"
 generation point; there is a <em>different</em> completeness profile at each, and the profiles are
 partly complementary. The source point knows your <em>intent</em> — which dependency you chose,
@@ -2733,20 +2628,7 @@ manifest parse. The <code>actions</code> ecosystem also offers ready-made steps 
 SBOM generation to a workflow in a few lines. The takeaway is architectural: GitHub's graph
 is a source-point view <em>unless</em> you feed it build-point data through submission, at which
 point it inherits build-point accuracy.</p>
-<p><pre><code>flowchart TD
-    START["Need an SBOM. Where do I generate?"]
-    START --> Q1{"Do I control the build?"}
-    Q1 -->|No — third-party<br/>artifact / image| BIN["Artifact scan:<br/>Syft / Trivy on the image"]
-    Q1 -->|Yes| Q2{"Is the build hermetic /<br/>plugin available?"}
-    Q2 -->|Yes| BUILD["Build-time:<br/>language plugin / Bazel aspect /<br/>go version -m — highest fidelity"]
-    Q2 -->|No, but I have a lockfile| SRC["Source-point:<br/>cdxgen / cyclonedx-* from LOCKFILE"]
-    Q2 -->|No lockfile| FIX["Fix that first:<br/>commit a lockfile, then source-point"]
-    BUILD --> COMBINE
-    SRC --> COMBINE
-    BIN --> COMBINE
-    COMBINE["Also scan the final IMAGE (Syft/Trivy)<br/>to catch base-image + OS packages"]
-    COMBINE --> DONE["Merge: build/source SBOM (intent)<br/>+ image SBOM (coverage)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ea32d52152fa.png" alt="diagram"></div></p>
 <h2 id="accuracy-completeness-and-the-hard-cases">Accuracy, completeness, and the hard cases</h2>
 <p>This is the spine of the chapter, and it requires bluntness. SBOM generation is not a solved
 problem; it is a collection of good-enough heuristics with well-known failure modes. A
@@ -2757,23 +2639,7 @@ disagree — different component counts, different versions, different identifie
 different <em>components</em>. This is not a bug in either tool; it is inherent, and understanding
 why inoculates you against the naive expectation that an SBOM is a deterministic property of
 an artifact.</p>
-<p><pre><code>flowchart TB
-    IMG["Same image:<br/>payments/api:v4.7.1"]
-    IMG --> T1["Tool A (Syft)"]
-    IMG --> T2["Tool B (Trivy)"]
-
-    T1 --> A1["Cataloger set A:<br/>includes a binary cataloger<br/>for component X"]
-    T2 --> B1["Analyzer set B:<br/>no analyzer for X →<br/>X missing"]
-
-    A1 --> A2["purl for lib Y:<br/>pkg:golang/...@v1.4.0"]
-    B1 --> B2["Y identified from a<br/>different source →<br/>pkg:generic/...@1.4"]
-
-    A2 --> A3["Counts dev deps<br/>from lockfile"]
-    B2 --> B3["Filters dev deps →<br/>fewer components"]
-
-    A3 --> R["Two valid but<br/>DIFFERENT SBOMs"]
-    B3 --> R
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_595a6e1cda96.png" alt="diagram"></div></p>
 <p>The disagreements come from four independent sources. First, <strong>different cataloger
 coverage</strong>: if tool A has an analyzer for a package type and tool B does not, A finds
 components B misses. Second, <strong>different identification</strong>: two tools may find the same
@@ -2894,13 +2760,7 @@ it describes, so that <strong>every deployed version has a corresponding SBOM</s
 cannot answer "where is component X across everything we run" (Chapter 1's killer use case)
 if some fraction of your running versions never produced an SBOM at all.</p>
 <p>The canonical per-artifact pipeline is a short, fixed sequence:</p>
-<p><pre><code>flowchart LR
-    BUILD["Build artifact<br/>(image / binary)"] --> GEN["Generate SBOM<br/>(build-plugin + Syft on image)"]
-    GEN --> SIGN["Sign SBOM<br/>(cosign attest)"]
-    SIGN --> ATTACH["Attach to artifact<br/>(OCI referrer / attestation)"]
-    ATTACH --> PUSH["Push to central<br/>SBOM store (Ch 5)"]
-    PUSH --> QUERY["Fleet query, SCA,<br/>VEX (Ch 6), policy"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_014354c61b47.png" alt="diagram"></div></p>
 <p>Concretely, in a GitHub Actions workflow this is a handful of steps bolted onto the build
 that produces the image:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># After the image is built and pushed as ${IMAGE}@${DIGEST}</span>
@@ -3035,6 +2895,12 @@ precondition for everything Chapter 5 does with the resulting store.</p>
   4, Chapter 10) delivers high-fidelity build-time SBOMs to every tenant for free</strong> — the
   most accurate technique, implemented once and amortized across the whole estate.</li>
 </ul>
+<h3 id="sbom-generation-where-in-the-pipeline">SBOM generation: where in the pipeline</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fba52d81de04.png" alt="diagram"></div></p>
+<h3 id="generator-comparison-matrix">Generator comparison matrix</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd942fefc655.png" alt="diagram"></div></p>
+<h3 id="sbom-generation-failure-modes">SBOM generation failure modes</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_08b5d86bc779.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>Anchore Syft</strong> — project documentation and cataloger source (<code>github.com/anchore/syft</code>),
@@ -3228,20 +3094,7 @@ with its own manifest, whose <code>subject</code> is the image digest and whose 
 identifies it (e.g. <code>application/vnd.cyclonedx+json</code> or an in-toto predicate type). The
 signature over that SBOM is <em>itself</em> another referrer pointing at the SBOM (or at the image).
 The result is a small graph hanging off the immutable image digest:</p>
-<p><pre><code>flowchart TD
-    IMG["Image manifest<br/>sha256:9b2a… (the artifact)"]
-    SBOM["SBOM attestation manifest<br/>artifactType: in-toto SPDX/CycloneDX<br/>subject → sha256:9b2a…"]
-    PROV["Provenance attestation<br/>(SLSA, Book 5 Ch 6)<br/>subject → sha256:9b2a…"]
-    SIG1["Signature<br/>subject → SBOM manifest"]
-    SIG2["Signature<br/>subject → provenance"]
-
-    SBOM -->|"subject (by digest)"| IMG
-    PROV -->|"subject (by digest)"| IMG
-    SIG1 -->|"subject"| SBOM
-    SIG2 -->|"subject"| PROV
-
-    QUERY["Referrers API:<br/>GET /v2/app/referrers/sha256:9b2a…"] -.->|"returns SBOM, PROV, signatures"| IMG
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4c7faaabc4de.png" alt="diagram"></div></p>
 <p>The tooling is mature enough to use in anger, with caveats:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Generate an SBOM for the exact image we built, addressed by digest.</span>
 <span class="nv">DIGEST</span><span class="o">=</span><span class="k">$(</span>cosign<span class="w"> </span>triangulate<span class="w"> </span>--type<span class="w"> </span>digest<span class="w"> </span>registry.example.com/payments/api:1.4.2<span class="k">)</span>
@@ -3467,35 +3320,7 @@ the answer surface. That decoupling is the architectural win we make explicit be
 those artifacts belong to, which <strong>versions of those services are actually deployed</strong>, and in which
 <strong>environments</strong> — because "an image in the registry contains it" is not the same as "it is running
 in production right now." This is the fleet-wide impact graph, and it is GUAC's core use case:</p>
-<p><pre><code>flowchart TD
-    C["Component<br/>log4j-core (vuln range)"]
-    A1["artifact<br/>payments/api@sha256:9b2a…"]
-    A2["artifact<br/>search/indexer@sha256:71cd…"]
-    A3["artifact<br/>legacy/report@sha256:0af3…"]
-    S1["service: payments-api"]
-    S2["service: search-indexer"]
-    S3["service: report-gen"]
-    E1["prod / us-east<br/>12 pods LIVE"]
-    E2["prod / eu-west<br/>8 pods LIVE"]
-    E3["staging only<br/>not in prod"]
-    E4["not deployed<br/>(registry only)"]
-
-    C -->|"reverse index"| A1
-    C --> A2
-    C --> A3
-    A1 -->|"digest → service+version"| S1
-    A2 --> S2
-    A3 --> S3
-    S1 -->|"deploy system:<br/>what's running where"| E1
-    S1 --> E2
-    S2 --> E3
-    S3 --> E4
-
-    classDef live fill:#c0392b,color:#fff;
-    classDef cold fill:#7f8c8d,color:#fff;
-    class E1,E2 live;
-    class E3,E4 cold;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_935654edfb5d.png" alt="diagram"></div></p>
 <p>The graph tells the incident commander what a list cannot: <code>payments-api</code> is <strong>live in two prod
 regions</strong> (page now, that is the real exposure), <code>search-indexer</code> is only in staging (fix in the
 normal cycle), and <code>report-gen</code>'s affected image was built but never deployed (inventory hygiene,
@@ -3516,27 +3341,7 @@ different clocks</strong>: your (mostly static) SBOM inventory, and the (constan
 you <strong>re-run the match against the stored inventory</strong>. New CVE at 03:00 → a correlation job wakes,
 resolves the advisory's affected purls/ranges, hits the reverse index, and within minutes every
 affected artifact — and, via the deploy join, every live service — is flagged.</p>
-<p><pre><code>flowchart LR
-    subgraph ONCE["Once, at build time"]
-        GEN["Generate SBOM<br/>(Ch 4, max information)"] --> STORE["Normalized inventory<br/>components ⋈ artifacts"]
-    end
-    subgraph FEEDS["Continuously"]
-        OSV["OSV / GHSA / NVD<br/>new advisories"]
-        VEX["VEX statements<br/>(Ch 6)"]
-    end
-    subgraph LOOP["Re-match loop (no re-scan of artifacts)"]
-        MATCH["Correlation job:<br/>resolve advisory → purls/ranges<br/>→ reverse index"]
-        SUPP["Apply VEX:<br/>suppress not-affected"]
-        ALERT["Alert / ticket / dashboard<br/>+ deploy join → live services"]
-    end
-
-    STORE --> MATCH
-    OSV --> MATCH
-    MATCH --> SUPP
-    VEX --> SUPP
-    SUPP --> ALERT
-    ALERT -.->|"new build → new SBOM"| GEN
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b6d49ff7098.png" alt="diagram"></div></p>
 <p>This is precisely what Dependency-Track does internally and what <code>trivy sbom</code> /
 <code>osv-scanner --sbom</code> do for a single document — evaluate a <em>stored SBOM</em> against current feeds
 rather than re-scanning bits. At fleet scale you run it as a batch/stream job over the whole
@@ -3568,46 +3373,7 @@ programs.</p>
 <p>Assemble the pieces into a platform. The pipeline is: <strong>generate → sign → attach → ingest → normalize
 &amp; dedup → correlate → serve</strong>, with the deploy system feeding runtime truth and a set of consumers on
 the query side.</p>
-<p><pre><code>flowchart TB
-    subgraph CI["CI / build (Ch 4)"]
-        BUILD["Build artifact"] --> GEN["Generate SBOM<br/>(Syft/Trivy/cdxgen)"]
-        GEN --> SIGN["Sign as attestation<br/>cosign attest (Book 5)"]
-    end
-    subgraph REG["OCI registry (Book 6)"]
-        ATTACH["Attach: SBOM + provenance<br/>as referrers of image digest"]
-    end
-    subgraph PLAT["SBOM platform (tier-1 internal infra)"]
-        INGEST["Ingest: watch registry / receive push<br/>verify signature, pin digest"]
-        NORM["Normalize SPDX+CycloneDX → canonical model<br/>dedup components, key by purl"]
-        STORE[("Normalized store<br/>relational + object store<br/>(+ optional graph)")]
-        CORR["Correlation jobs<br/>⋈ OSV/GHSA/NVD, apply VEX<br/>continuous re-match"]
-        API["Query / alert / report API"]
-    end
-    subgraph TRUTH["Runtime truth"]
-        DEPLOY["Deploy / orchestration / catalog<br/>digest → service, version, env"]
-    end
-    subgraph CONS["Consumers"]
-        SEC["Security / vuln mgmt"]
-        IR["Incident response (Book 8 Ch 6)"]
-        COMP["Compliance / customer SBOM delivery"]
-        DASH["Engineering dashboards"]
-        PROC["Procurement / vendor risk"]
-    end
-
-    SIGN --> ATTACH
-    ATTACH --> INGEST
-    INGEST --> NORM --> STORE
-    STORE --> CORR --> API
-    DEPLOY --> CORR
-    DEPLOY --> API
-    OSV2["OSV / GHSA / NVD"] --> CORR
-    VEX2["VEX (Ch 6)"] --> CORR
-    API --> SEC
-    API --> IR
-    API --> COMP
-    API --> DASH
-    API --> PROC
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aad8d7bdbc47.png" alt="diagram"></div></p>
 <p>Read it as a data platform, because that is what it is. Ingestion is a pipeline with a verification
 step (never ingest an SBOM whose signature you didn't check — an unsigned SBOM is an unauthenticated
 claim about what's in your fleet, and an attacker who can write to your inventory can hide their
@@ -3722,6 +3488,10 @@ key; get both right and the platform self-heals under the messy reality of a rea
   latency/scale choice between relational and graph. This is a distributed-systems build; engineer it
   like one.</li>
 </ul>
+<h3 id="fleet-wide-sbom-aggregation-architecture">Fleet-wide SBOM aggregation architecture</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4ff53c13d86f.png" alt="diagram"></div></p>
+<h3 id="sbom-distribution-how-consumers-get-it">SBOM distribution: how consumers get it</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dcd4cdde3d0d.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>OCI Image Specification 1.1</strong> and the <strong>OCI Distribution Specification</strong> — the <code>subject</code> field,
@@ -3948,23 +3718,7 @@ trust someone else's VEX.</p>
 <p>The status-and-justification logic is a decision tree, and drawing it makes the semantics
 concrete. This is exactly the reasoning a triage engineer performs — and, increasingly,
 the reasoning a tool automates.</p>
-<p><pre><code>flowchart TD
-    START["Scanner flags: product P contains CVE-Z"] --> Q0{"Is a fixed<br/>version shipped<br/>in P?"}
-    Q0 -->|Yes| FIXED["Status: FIXED"]
-    Q0 -->|No| Q1{"Is the vulnerable<br/>component present<br/>in P at all?"}
-    Q1 -->|No| J1["NOT_AFFECTED<br/>component_not_present"]
-    Q1 -->|Yes| Q2{"Is the vulnerable<br/>code present<br/>in the shipped build?"}
-    Q2 -->|No| J2["NOT_AFFECTED<br/>vulnerable_code_not_present"]
-    Q2 -->|Yes| Q3{"Is the vulnerable<br/>code reachable from<br/>any entrypoint?"}
-    Q3 -->|No| J3["NOT_AFFECTED<br/>vulnerable_code_not_in_execute_path"]
-    Q3 -->|Yes| Q4{"Can an adversary<br/>control the input<br/>that triggers it?"}
-    Q4 -->|No| J4["NOT_AFFECTED<br/>vulnerable_code_cannot_<br/>be_controlled_by_adversary"]
-    Q4 -->|Yes| Q5{"Does an inline<br/>mitigation prevent<br/>exploitation?"}
-    Q5 -->|Yes| J5["NOT_AFFECTED<br/>inline_mitigations_already_exist"]
-    Q5 -->|No| Q6{"Is a fix<br/>available yet?"}
-    Q6 -->|Not yet| INV["Status: UNDER_INVESTIGATION<br/>or AFFECTED with<br/>mitigation guidance"]
-    Q6 -->|Yes, not applied| AFF["Status: AFFECTED<br/>action: upgrade to fixed version"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_913ee7ecd486.png" alt="diagram"></div></p>
 <p>The tree is worth internalizing because it is the same shape regardless of format: only
 the field names change. A well-run VEX program is, operationally, a system for walking this
 tree once per (product, CVE) pair and recording the leaf you land on.</p>
@@ -4255,20 +4009,7 @@ is the durable design, because your upstream vendors will send whatever they sen
 drowning in findings (the consumer), with enough integrity that the consumer can act on it
 automatically. The flow has three legs: produce, distribute (as a signed attestation), and
 consume (as a suppression filter).</p>
-<p><pre><code>flowchart LR
-    subgraph Producer["Producer (software vendor / internal team)"]
-        BUILD["Build produces<br/>artifact + SBOM"] --> TRIAGE["Triage: reachability tools<br/>+ human security review"]
-        TRIAGE --> GENVEX["Generate VEX<br/>status + justification"]
-        GENVEX --> SIGN["Sign VEX<br/>cosign / vexctl attest"]
-    end
-    SIGN --> DIST["Distribute:<br/>OCI referrers, VEX feed,<br/>attestation store"]
-    subgraph Consumer["Consumer (downstream / customer / other team)"]
-        SCAN["SBOM x vuln feed<br/>= raw findings"] --> INGEST["Ingest + verify<br/>VEX signatures"]
-        DIST --> INGEST
-        INGEST --> FILTER["Apply VEX:<br/>suppress NOT_AFFECTED/FIXED"]
-        FILTER --> RESULT["De-noised,<br/>prioritized findings"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_92d6c1ff6245.png" alt="diagram"></div></p>
 <h3 id="vex-as-a-signed-attestation">VEX as a signed attestation</h3>
 <p>A <code>NOT_AFFECTED</code> claim is a <em>security assertion</em>, and an unauthenticated security assertion
 is worthless — anyone can write a JSON file that says "not affected." So VEX belongs in the
@@ -4363,21 +4104,7 @@ the fleet is the difference between a tractable program and an impossible one.</
 <strong>SBOM inventory (Chapter 5) × vulnerability feed (Book 2, Chapter 5) × VEX = a
 prioritized, de-noised finding list.</strong> The correlation is a series of joins that
 progressively strips noise:</p>
-<p><pre><code>flowchart TD
-    SBOM["SBOM inventory<br/>(central store, Ch 5)<br/>~thousands of components"]
-    FEED["Vulnerability feeds<br/>(OSV / GHSA / NVD, Bk2 Ch5)"]
-    SBOM --> MATCH["Match: component purl x CVE<br/>= RAW FINDINGS"]
-    FEED --> MATCH
-    MATCH --> N1["380 findings<br/>(mostly noise)"]
-    N1 --> VEXAUTO["Apply auto-generated VEX<br/>(reachability: govulncheck etc.)"]
-    VEXAUTO --> N2["~90 findings<br/>unreachable ones suppressed"]
-    N2 --> VEXHUMAN["Apply human-triage VEX<br/>(central VEX store)"]
-    VEXHUMAN --> N3["~25 findings<br/>prior decisions reused"]
-    N3 --> VEXVENDOR["Apply upstream vendor VEX<br/>(verified signatures)"]
-    VEXVENDOR --> N4["~12 findings<br/>vendor-cleared suppressed"]
-    N4 --> PRIOR["Prioritize by EPSS / KEV /<br/>severity (Bk2 Ch7)"]
-    PRIOR --> ACT["~4 actionable findings<br/>ACTUAL WORK"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3ccfff364377.png" alt="diagram"></div></p>
 <p>The numbers are illustrative, but the <em>shape</em> is real and repeatedly observed: raw findings
 in the hundreds, actionable findings in the low single digits or low tens, with VEX doing
 the heavy lifting of the reduction and exploit-prediction signals (EPSS, CISA KEV; Book 2,
@@ -4511,6 +4238,12 @@ non-stale decision that someone — a tool or a person — made exactly once.</p
   ingesting upstream vendors' VEX cuts third-party noise the same way. Cost scales with
   <em>distinct</em> (component, CVE) pairs, not services × CVEs.</li>
 </ul>
+<h3 id="vex-lifecycle-from-cve-to-consumer-decision">VEX lifecycle: from CVE to consumer decision</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c3d1dc82a592.png" alt="diagram"></div></p>
+<h3 id="vex-status-decision-tree">VEX status decision tree</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bd558b22bd13.png" alt="diagram"></div></p>
+<h3 id="vex-sbom-correlation-to-cut-scanner-noise">VEX + SBOM correlation to cut scanner noise</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_966fde780d02.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>CISA SBOM/VEX working group</strong> — "Vulnerability-Exploitability eXchange (VEX) — Use
@@ -4591,23 +4324,7 @@ describes. A file with every component present can carry version strings that no
 vulnerability database will ever match. An SBOM can be flawless the day it is generated and
 a lie six hours later when the base image is rebuilt. "Quality" is shorthand for at least
 seven distinct properties, and you must be able to name which one you mean.</p>
-<p><pre><code>flowchart TD
-    Q["SBOM QUALITY<br/>(not one number)"]
-    Q --> C["COMPLETENESS<br/>are all real components present?<br/>the hardest to measure"]
-    Q --> A["ACCURACY<br/>are the listed components and<br/>versions actually correct?"]
-    Q --> I["IDENTIFIERS<br/>valid purls / CPEs that<br/>downstream matching can use"]
-    Q --> F["REQUIRED FIELDS<br/>NTIA minimum elements,<br/>supplier, author, timestamp"]
-    Q --> G["GRAPH FIDELITY<br/>real dependency relationships,<br/>not a flat bag of components"]
-    Q --> R["FRESHNESS<br/>does it describe THIS artifact,<br/>this digest, right now?"]
-    Q --> P["PROVENANCE<br/>do you trust who or what<br/>generated it, and is it signed?"]
-
-    classDef hard fill:#7f1d1d,stroke:#f87171,color:#fff;
-    classDef med fill:#78350f,stroke:#fbbf24,color:#fff;
-    classDef ok fill:#14532d,stroke:#4ade80,color:#fff;
-    class C hard;
-    class A,I,G med;
-    class F,R,P ok;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e74e7e380ae5.png" alt="diagram"></div></p>
 <p><strong>Completeness</strong> asks whether every component actually present in the artifact appears in
 the document. It is first because it is both the most important and, as the rest of this
 chapter labors, the one property you fundamentally cannot verify without an oracle you do
@@ -4851,29 +4568,7 @@ closure, with exact versions and intent) and an <em>image/binary</em> SBOM (from
 artifact — high fidelity on OS packages and whatever is physically present). Then diff them.
 The two are <em>supposed</em> to differ in structured ways, and the structure of the difference is
 diagnostic.</p>
-<p><pre><code>flowchart TD
-    subgraph SRC["SOURCE / BUILD SBOM"]
-        SA["app deps from lockfiles<br/>exact versions, intent,<br/>full transitive closure"]
-    end
-    subgraph BIN["IMAGE / BINARY SBOM"]
-        BA["everything physically present:<br/>OS packages, base layer,<br/>embedded manifests"]
-    end
-
-    SRC --> DIFF{"DIFF the<br/>component sets"}
-    BIN --> DIFF
-
-    DIFF --> ONLYS["ONLY in source:<br/>build-time / dev deps not shipped,<br/>or a base image that stripped them<br/>→ expected, or a packaging bug"]
-    DIFF --> BOTH["IN BOTH:<br/>corroborated — highest confidence"]
-    DIFF --> ONLYB["ONLY in binary:<br/>OS + base-layer packages<br/>→ expected (source can't see them)"]
-    DIFF --> GAP["NEITHER captured it:<br/>static libs, vendored C, shaded JARs<br/>→ the DANGEROUS blind spot,<br/>invisible to BOTH vantages"]
-
-    classDef good fill:#14532d,stroke:#4ade80,color:#fff;
-    classDef info fill:#1e3a5f,stroke:#60a5fa,color:#fff;
-    classDef bad fill:#7f1d1d,stroke:#f87171,color:#fff;
-    class BOTH good;
-    class ONLYS,ONLYB info;
-    class GAP bad;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_933021663113.png" alt="diagram"></div></p>
 <p>Read the four quadrants. Components <strong>in both</strong> are corroborated from independent vantages —
 your highest-confidence rows. Components <strong>only in the source SBOM</strong> are usually build-time or
 dev dependencies that never made it into the runtime image (expected, and a way to <em>shrink</em>
@@ -5014,28 +4709,7 @@ complete, accurate, correctly identified, fresh, signed — still cannot tell yo
 quality defects; they are category boundaries. An SBOM is an inventory of components. It is not
 a security assessment, and treating it as one is the overclaim that discredits the whole
 practice when it inevitably fails to deliver.</p>
-<p><pre><code>flowchart LR
-    subgraph CAN["WHAT AN SBOM TELLS YOU"]
-        C1["what components are present"]
-        C2["at what versions"]
-        C3["in what dependency relationships"]
-        C4["→ which KNOWN components map to<br/>which KNOWN vulnerabilities"]
-    end
-    subgraph CANNOT["WHAT IT DOES NOT TELL YOU"]
-        X1["whether you are EXPLOITABLE<br/>(needs reachability + VEX)"]
-        X2["whether a component is MALICIOUS<br/>(a bad package is still a listed component)"]
-        X3["whether you have FIRST-PARTY bugs<br/>(your own code isn't a component)"]
-        X4["whether the BUILD was honest<br/>(needs provenance)"]
-        X5["anything about ZERO-DAYS /<br/>unknown vulnerabilities"]
-    end
-
-    CAN -.->|"inventory ≠ assessment"| CANNOT
-
-    classDef can fill:#14532d,stroke:#4ade80,color:#fff;
-    classDef cannot fill:#7f1d1d,stroke:#f87171,color:#fff;
-    class C1,C2,C3,C4 can;
-    class X1,X2,X3,X4,X5 cannot;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e82a8da4e610.png" alt="diagram"></div></p>
 <p>Walk each boundary, because each maps to a <em>different mechanism</em> that does the job the SBOM
 cannot.</p>
 <p><strong>An SBOM does not tell you whether you are exploitable.</strong> "Component X is present and X has
@@ -5189,23 +4863,7 @@ the query you will run, not by a universal score.</p>
 <p>Make the quality bar an executable gate on the paved road, not a review guideline. The gate
 generates, validates, scores, and either passes the SBOM forward to storage (Chapter 5) or
 fails the build.</p>
-<p><pre><code>flowchart TD
-    A["Build artifact<br/>(keyed to digest)"] --> B["Generate SBOM<br/>(build-time, Ch 4)"]
-    B --> C{"Schema valid?<br/>cyclonedx-cli / pyspdxtools"}
-    C -->|no| FAIL["FAIL BUILD<br/>broken SBOM = broken<br/>downstream ingestion"]
-    C -->|yes| D{"NTIA elements present?<br/>ntia-conformance-checker"}
-    D -->|no| FAIL
-    D -->|yes| E{"Quality score ≥ threshold?<br/>sbomqs"}
-    E -->|below| FAIL
-    E -->|meets| F["Enrich identifiers<br/>(purls / CPEs / supplier)"]
-    F --> G["Sign / attest<br/>cosign attest (Books 4–5)"]
-    G --> H["Push to SBOM store<br/>keyed to digest (Ch 5)"]
-
-    classDef fail fill:#7f1d1d,stroke:#f87171,color:#fff;
-    classDef ok fill:#14532d,stroke:#4ade80,color:#fff;
-    class FAIL fail;
-    class H ok;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aa7ffd67da8a.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># The gate, as a CI step</span>
 syft<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$IMAGE</span><span class="s2">&quot;</span><span class="w"> </span>-o<span class="w"> </span>cyclonedx-json<span class="w"> </span>&gt;<span class="w"> </span>sbom.cdx.json
 
@@ -5324,6 +4982,10 @@ on, never the finished building.</p>
   Report the score distribution and the known structural gaps; never let a coverage number
   masquerade as completeness.</li>
 </ul>
+<h3 id="sbom-quality-dimensions">SBOM quality dimensions</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1bea4380b01f.png" alt="diagram"></div></p>
+<h3 id="what-sboms-cannot-tell-you">What SBOMs cannot tell you</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_810ecf17fcd5.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>NTIA</strong>, "The Minimum Elements for a Software Bill of Materials (SBOM)," 12 July 2021 — the
@@ -5401,28 +5063,7 @@ stable content.</p>
 <p>A running service has none of that crispness. Ask "what is in the <code>checkout</code> service" and you have
 to decide what <em>in</em> means, because at least seven distinct things run when a <code>checkout</code> request is
 served, and they belong to different owners with different lifecycles:</p>
-<p><pre><code>flowchart TD
-    subgraph RUN["What actually runs when 'checkout' serves a request"]
-        APP["Your application code<br/>(first-party)"]
-        LANG["Language dependencies<br/>(npm / pip / Go modules / Maven)"]
-        OS["OS packages in the container<br/>(apk / dpkg / rpm)"]
-        BASE["Base image<br/>(distro or distroless — most components live here)"]
-        SIDE["Injected sidecars / agents<br/>(service mesh proxy, log shipper, APM agent)"]
-        PLAT["Runtime platform<br/>(kernel, container runtime, node OS, CNI)"]
-    end
-    APP --> LANG --> OS --> BASE
-    SIDE -. "injected at deploy, not in your Dockerfile" .-> RUN
-    PLAT -. "the cluster you don't build" .-> RUN
-    EXT["External services it CALLS<br/>(Auth0, Stripe, RDS, Kafka, LaunchDarkly, Datadog)"]
-    RUN ==> EXT
-
-    classDef yours fill:#14532d,stroke:#4ade80,color:#fff;
-    classDef shared fill:#78350f,stroke:#fbbf24,color:#fff;
-    classDef theirs fill:#7f1d1d,stroke:#f87171,color:#fff;
-    class APP,LANG yours;
-    class OS,BASE,SIDE shared;
-    class PLAT,EXT theirs;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_68eaf4f65a97.png" alt="diagram"></div></p>
 <p>Three of these layers are things you authored or chose (app, language deps, and the OS/base image
 you selected). Two arrive at deploy time without appearing in your Dockerfile at all — a service
 mesh sidecar injected by a mutating admission webhook, an APM or log-shipping agent added by the
@@ -5501,22 +5142,7 @@ application contributes a single dependency; a Node or Python base adds a langua
 standard toolchain. Empirically, for a typical microservice the base layers account for the large
 majority of SBOM entries, and your application layer contributes a comparatively small tail. (Book
 6, Chapter 3 quantifies this and the distroless response.)</p>
-<p><pre><code>flowchart BT
-    subgraph IMG["Final image (one digest) — its SBOM is the UNION of all layers"]
-        L0["Base image layers<br/>OS + language runtime<br/>~200+ OS packages (apk/dpkg/rpm)"]
-        L1["Dependency layer<br/>npm / pip / Maven install<br/>your language deps"]
-        L2["App layer<br/>COPY your compiled code / bundle<br/>first-party"]
-    end
-    L0 --> L1 --> L2
-    BASE_SBOM["Base-image SBOM<br/>(generated ONCE by the base-image team,<br/>inherited by every child)"] -. describes .-> L0
-    APP_SBOM["Per-build delta<br/>(what YOUR build added)"] -. describes .-> L1
-    APP_SBOM -. describes .-> L2
-
-    classDef base fill:#1e3a5f,stroke:#60a5fa,color:#fff;
-    classDef app fill:#14532d,stroke:#4ade80,color:#fff;
-    class L0 base;
-    class L1,L2 app;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b31a412f7225.png" alt="diagram"></div></p>
 <p>This has a direct operational implication for how you generate and store SBOMs. There are two
 strategies, and mature organizations run both:</p>
 <ul>
@@ -5646,26 +5272,7 @@ Functions, you supply your handler code and its bundled dependencies, and the pr
 (microVM, sandbox) that you do not build, cannot inspect, and whose exact contents change without
 your involvement. The bill of materials of a running Lambda is genuinely split across an ownership
 boundary, and no tool you run can cross it.</p>
-<p><pre><code>flowchart TD
-    subgraph YOURS["YOUR responsibility — you CAN SBOM this"]
-        CODE["Function handler code<br/>(first-party)"]
-        DEPS["Bundled dependencies<br/>(node_modules / site-packages / vendored)"]
-        LAYERS["Lambda layers you attach<br/>(shared deps, extensions)"]
-    end
-    subgraph PROV["PROVIDER responsibility — OPAQUE, rely on attestations"]
-        RT["Managed language runtime<br/>(e.g. Amazon Linux + nodejs/python runtime)"]
-        OS["Base OS / system libraries"]
-        EXEC["Execution environment<br/>(Firecracker microVM, sandbox, orchestration)"]
-    end
-    CODE --> DEPS --> LAYERS
-    LAYERS ==>|"deployed onto"| RT
-    RT --> OS --> EXEC
-
-    classDef yours fill:#14532d,stroke:#4ade80,color:#fff;
-    classDef theirs fill:#7f1d1d,stroke:#f87171,color:#fff;
-    class CODE,DEPS,LAYERS yours;
-    class RT,OS,EXEC theirs;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_19bab00987b2.png" alt="diagram"></div></p>
 <h3 id="what-you-can-sbom-and-how">What you can SBOM, and how</h3>
 <p>Your side of the line is tractable and you should treat it exactly like any other language-dependency
 SBOM (Chapter 4). The deployment package is a zip (or an OCI image, discussed below); its contents
@@ -5874,34 +5481,7 @@ machine-readable, queryable way.</p>
 someone's head; it is data. And when Auth0 has an incident, the query "which services have an edge to
 provider Okta/Auth0, and what data classification crosses that edge" returns an answer — the topology
 question the opening section promised the component SBOM could not answer.</p>
-<p><pre><code>flowchart LR
-    CO["checkout (svc)"]
-    ORD["orders (internal svc)"]
-    subgraph EXT["External / third-party (trust boundary crossed)"]
-        STRIPE["Stripe API<br/>PCI cardholder outbound"]
-        AUTH0["Auth0 / Okta<br/>signing keys inbound"]
-        LD["LaunchDarkly<br/>flags inbound"]
-        DD["Datadog<br/>telemetry outbound"]
-    end
-    subgraph MANAGED["Managed infra (your data, vendor-operated)"]
-        RDS["RDS Postgres<br/>PII at rest"]
-        KAFKA["Managed Kafka<br/>order events"]
-    end
-    CO -->|"bi-dir, PII-order"| ORD
-    CO -->|"outbound, cardholder"| STRIPE
-    CO -->|"inbound, signing keys"| AUTH0
-    CO -->|"inbound, flags"| LD
-    CO -->|"outbound, telemetry"| DD
-    CO -->|"read/write, PII"| RDS
-    ORD -->|"produce, order events"| KAFKA
-
-    classDef svc fill:#14532d,stroke:#4ade80,color:#fff;
-    classDef ext fill:#7f1d1d,stroke:#f87171,color:#fff;
-    classDef mgd fill:#78350f,stroke:#fbbf24,color:#fff;
-    class CO,ORD svc;
-    class STRIPE,AUTH0,LD,DD ext;
-    class RDS,KAFKA mgd;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_89420161c89a.png" alt="diagram"></div></p>
 <h3 id="the-service-dependency-graph-as-an-org-asset">The service-dependency graph as an org asset</h3>
 <p>The per-service SaaSBOM is useful; the <strong>union of all of them across the fleet</strong> is a strategic
 asset. Combine every service's <code>services</code> array and you have the organization's complete
@@ -5948,34 +5528,7 @@ at build time and the deploy system tells you it is live. This is what answers L
 service org</strong>: not "which images in the registry contain <code>log4j-core</code>" (which over-reports, including
 long-dead images) but "which <em>running</em> Pods, in which clusters and namespaces, contain it" — the
 question that scopes the actual incident.</p>
-<p><pre><code>flowchart TD
-    subgraph BUILD["Build time — Chapter 4/5"]
-        CI["CI builds image → digest"]
-        GEN["syft/Trivy → SBOM"]
-        ATT["cosign attest → attach via OCI referrers"]
-        STORE["SBOM store / Dependency-Track / GUAC<br/>keyed by digest"]
-        CI --> GEN --> ATT --> STORE
-    end
-    subgraph RUNTIME["Runtime truth — the orchestrator"]
-        K8S["Kubernetes API<br/>running Pods → imageID@sha256"]
-        EBPF["eBPF / runtime agent<br/>what is actually LOADED in-process"]
-    end
-    subgraph QUERY["Fleet inventory query"]
-        JOIN["JOIN running digests ⋈ stored SBOMs"]
-        ANS["'Log4Shell': which RUNNING pods,<br/>which clusters, contain the CVE"]
-        JOIN --> ANS
-    end
-    STORE --> JOIN
-    K8S --> JOIN
-    EBPF -. refines .-> JOIN
-
-    classDef b fill:#1e3a5f,stroke:#60a5fa,color:#fff;
-    classDef r fill:#14532d,stroke:#4ade80,color:#fff;
-    classDef q fill:#78350f,stroke:#fbbf24,color:#fff;
-    class CI,GEN,ATT,STORE b;
-    class K8S,EBPF r;
-    class JOIN,ANS q;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bbf3e8eb7f46.png" alt="diagram"></div></p>
 <h3 id="where-even-the-deploy-join-is-not-enough-ebpf-and-what-is-loaded">Where even the deploy join is not enough: eBPF and what is loaded</h3>
 <p>The Kubernetes join tells you which <em>images</em> run, which is the right granularity for the vast
 majority of vuln response. It does not tell you which components inside an image are actually
@@ -5996,39 +5549,7 @@ operationally heavier.</p>
 <p>Assemble the three pieces and you have the actual SBOM target for a distributed-backend organization
 — which is emphatically <strong>not</strong> "an SBOM for our product," because there is no product. There is a
 fleet of service-version-images, a graph of what they call, and a live map of what runs where:</p>
-<p><pre><code>flowchart TD
-    subgraph P1["1 — Per-service, per-version COMPONENT SBOMs (build time)"]
-        C1["checkout@sha256:… → CycloneDX SBOM"]
-        C2["orders@sha256:… → CycloneDX SBOM"]
-        C3["base images → inherited SBOMs"]
-        C4["sidecars / agents → their own SBOMs"]
-    end
-    subgraph P2["2 — Service-dependency graph (SaaSBOM)"]
-        S1["each service's CycloneDX 'services' array"]
-        S2["internal edges + external SaaS edges<br/>+ data flows + trust boundaries"]
-        S1 --> S2
-    end
-    subgraph P3["3 — Runtime deployment inventory (orchestrator)"]
-        R1["K8s: running digests per cluster/namespace"]
-        R2["eBPF: loaded components (refinement)"]
-    end
-    HUB["CENTRAL SBOM PLATFORM (Ch 5)<br/>digest-keyed store + service graph + deploy join<br/>= the complete service-fleet BoM"]
-    P1 --> HUB
-    P2 --> HUB
-    P3 --> HUB
-    HUB --> Q1["'Log4Shell': which running pods are affected?"]
-    HUB --> Q2["'Auth0 breached': which services + data exposed?"]
-    HUB --> Q3["'base X has a CVE': which running images inherit it?"]
-
-    classDef a fill:#14532d,stroke:#4ade80,color:#fff;
-    classDef b fill:#7f1d1d,stroke:#f87171,color:#fff;
-    classDef c fill:#78350f,stroke:#fbbf24,color:#fff;
-    classDef h fill:#1e3a5f,stroke:#60a5fa,color:#fff;
-    class C1,C2,C3,C4 a;
-    class S1,S2 b;
-    class R1,R2 c;
-    class HUB h;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_09857d253859.png" alt="diagram"></div></p>
 <p>The three feeds are complementary and each answers a class of question the others cannot:</p>
 <ul>
 <li><strong>Component SBOMs (build time)</strong> answer "what code runs inside our services" — the vuln-response
@@ -6094,6 +5615,10 @@ organization that runs services — but crystallize it into the load-bearing cla
   runtime deployment inventory, centralized and digest-keyed. That composite — not any single-artifact
   SBOM — is a distributed-backend organization's real SBOM target.</li>
 </ul>
+<h3 id="sbom-for-a-deployed-service-not-just-the-image">SBOM for a deployed service: not just the image</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_200032943722.png" alt="diagram"></div></p>
+<h3 id="continuous-sbom-for-long-lived-services">Continuous SBOM for long-lived services</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bc44fb21ffd6.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>OCI Image Specification 1.1</strong> and the <strong>Referrers API</strong> (<code>/v2/&lt;name&gt;/referrers/&lt;digest&gt;</code>,
@@ -6206,30 +5731,7 @@ directions. That gives three distinct flows, and conflating them is the second-m
 program design error (the first being generating without consuming). Each flow has a different
 producer, a different consumer, a different quality bar, and a different access-control posture,
 and a mature program handles all three off one shared generation-and-storage substrate.</p>
-<p><pre><code>flowchart LR
-    subgraph OUT["OUTSIDE YOUR ORG"]
-        VENDOR["Vendors and OSS<br/>upstream software"]
-        CUST["Customers, regulators,<br/>auditors"]
-    end
-    subgraph ORG["YOUR ORG"]
-        STORE[("Central SBOM store<br/>+ correlation engine")]
-        FLEET["Your build platform<br/>every service, every image"]
-        IR["Security, IR,<br/>vuln management"]
-        COMP["Compliance,<br/>procurement"]
-    end
-
-    VENDOR -->|"INBOUND<br/>supplier SBOMs for<br/>YOUR risk mgmt"| STORE
-    FLEET -->|"INTERNAL<br/>fleet SBOMs for<br/>YOUR vuln mgmt"| STORE
-    STORE -->|"OUTBOUND<br/>SBOMs + VEX for<br/>THEIR risk mgmt"| CUST
-    STORE --> IR
-    STORE --> COMP
-    COMP -.->|"intake + evaluate"| VENDOR
-
-    classDef store fill:#1e3a5f,stroke:#60a5fa,color:#fff;
-    classDef ext fill:#3f3f46,stroke:#a1a1aa,color:#fff;
-    class STORE store;
-    class VENDOR,CUST ext;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3ebd94e637b3.png" alt="diagram"></div></p>
 <p><strong>Internal flow — the fleet.</strong> This is the flow that pays for the program. Every service you
 build produces an SBOM at build time on the paved road (Chapter 4), the SBOMs land in the central
 store (Chapter 5), and they are correlated against vulnerability feeds and VEX (Chapter 6). The
@@ -6274,23 +5776,7 @@ store is the point of convergence.</p>
 <p>Chapters 4 through 7 each owned one stage of a pipeline. Operationalizing means running the whole
 pipeline as one system with the seams welded shut — every stage automatic, every handoff on the
 paved road, every artifact keyed to an immutable digest so it can be found again.</p>
-<p><pre><code>flowchart LR
-    G["GENERATE<br/>syft at build time<br/>paved-road CI"] --> Q["QUALITY GATE<br/>sbomqs score<br/>fail below threshold"]
-    Q --> S["SIGN + ATTEST<br/>cosign, provenance<br/>Book 5"]
-    S --> A["ATTACH<br/>OCI referrers<br/>keyed to digest"]
-    A --> I["INGEST<br/>normalize, dedup<br/>central store"]
-    I --> C["CORRELATE<br/>vulns + VEX<br/>runtime truth"]
-    C --> QY["QUERY + ALERT<br/>fleet inventory<br/>dashboards"]
-    QY --> ACT["ACT<br/>patch, update-bot,<br/>incident response"]
-    ACT -.->|"verify fix<br/>rebuild"| G
-
-    classDef gen fill:#14532d,stroke:#4ade80,color:#fff;
-    classDef mid fill:#1e3a5f,stroke:#60a5fa,color:#fff;
-    classDef act fill:#7c2d12,stroke:#fb923c,color:#fff;
-    class G,Q gen;
-    class S,A,I,C mid;
-    class QY,ACT act;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e3eb159c915.png" alt="diagram"></div></p>
 <p>Three properties make this a <em>pipeline</em> rather than a set of tools someone runs by hand.</p>
 <ul>
 <li><strong>Build-time generation, not scan-time.</strong> The SBOM is produced by the build that produced the
@@ -6502,17 +5988,7 @@ a revolt, and gets rolled back, poisoning the well for the real rollout. Sequenc
 each stage warn-then-enforce, exactly as Book 1, Chapter 10 prescribes for any fleet-wide control.
 The sequence is not arbitrary; each stage is worthless without the one before and unusable without
 becoming the substrate for the one after.</p>
-<p><pre><code>flowchart TD
-    L1["STAGE 1 — VISIBILITY<br/>generate + store<br/>Ch 4 + Ch 5<br/>outcome: you can answer 'where is X'"]
-    L2["STAGE 2 — VULN MGMT<br/>correlate with vuln feeds<br/>Ch 6<br/>outcome: 'are we affected by CVE-Y'"]
-    L3["STAGE 3 — DE-NOISE<br/>add VEX + reachability<br/>Ch 6 + Book 2 Ch 7<br/>outcome: signal you can act on"]
-    L4["STAGE 4 — ENFORCE + DELIVER<br/>quality gate + admission + outbound<br/>Ch 7 + Book 6 + compliance<br/>outcome: complete inventory, external delivery"]
-
-    L1 --> L2 --> L3 --> L4
-
-    classDef s fill:#1e293b,stroke:#94a3b8,color:#fff;
-    class L1,L2,L3,L4 s;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2a6a926f1b1f.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Stage 1 — visibility.</strong> Turn on generation and storage in warn mode. No build fails; SBOMs
   are produced and ingested. The single deliverable is that you can query the store and get an
@@ -6549,22 +6025,7 @@ disclosed December 2021, a trivially exploitable unauthenticated RCE in the near
 for organizations without an SBOM platform, was days-to-weeks of manual archaeology: every team
 grepping its own build files, no central answer, no way to know when you were done. The whole
 point of the program is to turn that scramble into a query.</p>
-<p><pre><code>flowchart TD
-    CVE["1. NEW CRITICAL CVE<br/>CVE-2021-44228 log4j-core<br/>affects 2.0-beta9 .. 2.14.1"]
-    Q["2. QUERY FLEET INVENTORY<br/>pkg:maven/org.apache.logging.log4j/log4j-core<br/>across every SBOM, keyed to running digests"]
-    ID["3. IDENTIFY BLAST RADIUS<br/>which services, which versions,<br/>which environments (prod vs dev)"]
-    PRI["4. PRIORITIZE<br/>reachability + VEX + internet-facing<br/>real exposure, not raw hit count"]
-    FIX["5. REMEDIATE<br/>update-bot PRs bump to 2.17.1<br/>Book 2 Ch 9, rebuild via paved road"]
-    VER["6. VERIFY<br/>re-query inventory on new digests<br/>hit count -> 0, prove closure"]
-
-    CVE --> Q --> ID --> PRI --> FIX --> VER
-    VER -.->|"residual: un-upgradable services"| MIT["7. MITIGATE + VEX<br/>WAF rule, config flag;<br/>record VEX not_affected/mitigated"]
-
-    classDef hot fill:#7f1d1d,stroke:#f87171,color:#fff;
-    classDef cool fill:#14532d,stroke:#4ade80,color:#fff;
-    class CVE,ID hot;
-    class VER,MIT cool;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb15739bf2f3.png" alt="diagram"></div></p>
 <p>Walk the runbook with the platform:</p>
 <ol>
 <li>
@@ -6809,23 +6270,7 @@ the work of assembling the parts so the capability emerges.</p>
 that build it, and — critically — each level is <em>worth reaching and stopping at</em> if that is your
 budget, but only in order. Skipping a rung produces a program with expensive stage-4 outbound
 delivery sitting on a stage-1 inventory nobody can query.</p>
-<p><pre><code>flowchart TD
-    L1["LEVEL 1 — GENERATE<br/>SBOMs produced at build time<br/>Ch 4<br/>capability: documents exist"]
-    L2["LEVEL 2 — STORE + QUERY<br/>central normalized store<br/>Ch 5<br/>capability: 'where is component X'"]
-    L3["LEVEL 3 — CORRELATE + VEX<br/>vuln feeds + VEX + reachability<br/>Ch 6, Book 2 Ch 7<br/>capability: prioritized 'are we affected'"]
-    L4["LEVEL 4 — ENFORCE + DELIVER + MEASURE<br/>quality gate, admission, three flows, metrics<br/>Ch 7, Book 6, Book 8 Ch 8<br/>capability: complete, governed, provable program"]
-
-    L1 --> L2 --> L3 --> L4
-
-    classDef l1 fill:#3f3f46,stroke:#a1a1aa,color:#fff;
-    classDef l2 fill:#1e3a5f,stroke:#60a5fa,color:#fff;
-    classDef l3 fill:#134e4a,stroke:#2dd4bf,color:#fff;
-    classDef l4 fill:#14532d,stroke:#4ade80,color:#fff;
-    class L1 l1;
-    class L2 l2;
-    class L3 l3;
-    class L4 l4;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1f4c502ceecd.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -6943,6 +6388,10 @@ dependency. The documents are the substrate. The capability is the product.</p>
   registry, the build platform, and the admission controller. Build it, staff it, and drill it like
   any other core dependency.</li>
 </ul>
+<h3 id="sbom-operational-pipeline">SBOM operational pipeline</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1a0895aeb436.png" alt="diagram"></div></p>
+<h3 id="maturity-model-for-sbom-adoption">Maturity model for SBOM adoption</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_44f81af914f2.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>CISA</strong>, "Software Bill of Materials (SBOM)" resource hub and the SBOM community working-group
