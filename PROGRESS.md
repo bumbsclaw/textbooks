@@ -378,9 +378,9 @@ until then their paths are as listed above).
 - [x] 16.01 CPython Architecture: Source to Execution — `ch01-cpython-architecture.md`
 - [x] 16.02 Objects, Reference Counting, and the PyObject System — `ch02-objects-refcount.md`
 - [x] 16.03 Bytecode, the ceval Loop, and Adaptive Specialization (PEP 659) — `ch03-bytecode-ceval.md`
-- [ ] 16.04 Memory Management: pymalloc, GC, Arenas, and Immortal Objects — `ch04-memory-management.md`
-- [ ] 16.05 The GIL: Mechanics, Evolution, Per-Interpreter GIL and Free-Threaded Python — `ch05-gil.md`
-- [ ] 16.06 The Type System: Classes, MRO, Descriptors, Slots, and the Attribute Protocol — `ch06-type-system.md`
+- [x] 16.04 Memory Management: pymalloc, GC, Arenas, and Immortal Objects — `ch04-memory-management.md`
+- [x] 16.05 The GIL: Mechanics, Evolution, Per-Interpreter GIL and Free-Threaded Python — `ch05-gil.md`
+- [x] 16.06 The Type System: Classes, MRO, Descriptors, Slots, and the Attribute Protocol — `ch06-type-system.md`
 - [ ] 16.07 Functions, Closures, Generators, Coroutines, and async/await — `ch07-functions-closures-generators.md`
 - [ ] 16.08 Exceptions, Context Managers, and the Unwinding Machinery — `ch08-exceptions-context-managers.md`
 - [ ] 16.09 The Import System: importlib, Finders, Loaders, and Namespace Packages — `ch09-import-system.md`
@@ -393,9 +393,9 @@ until then their paths are as listed above).
 - [x] 17.01 The Go Toolchain: Modules, Build, Linker, and the Static Binary Model — `ch01-toolchain.md`
 - [x] 17.02 Types, Memory Layout, and Generics Internals — `ch02-types-generics.md`
 - [x] 17.03 Functions, Methods, Defer, Panic/Recover, and the ABI — `ch03-functions-abi.md`
-- [ ] 17.04 Goroutines, the Scheduler (G-M-P), and the Netpoller — `ch04-scheduler-netpoller.md`
-- [ ] 17.05 Memory Allocator, Stacks, and the Concurrent Tri-Color GC — `ch05-allocator-gc.md`
-- [ ] 17.06 The Go Memory Model, Atomics, and Synchronization Primitives — `ch06-memory-model.md`
+- [x] 17.04 Goroutines, the Scheduler (G-M-P), and the Netpoller — `ch04-scheduler-netpoller.md`
+- [x] 17.05 Memory Allocator, Stacks, and the Concurrent Tri-Color GC — `ch05-allocator-gc.md`
+- [x] 17.06 The Go Memory Model, Atomics, and Synchronization Primitives — `ch06-memory-model.md`
 - [ ] 17.07 Interfaces, Reflection, and `unsafe` — `ch07-interfaces-reflection.md`
 - [ ] 17.08 Channels, Select, Timers, and Context Internals — `ch08-channels-select.md`
 - [ ] 17.09 Compiler Pipeline: SSA, Escape Analysis, and Optimizations — `ch09-compiler-ssa.md`
