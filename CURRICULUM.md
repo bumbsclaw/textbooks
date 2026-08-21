@@ -38,6 +38,7 @@ is a prerequisite for SRE (Vol 11). Chapters note these explicitly.
 - **Part III — Security:** Vol 9 (Security/Auth/Crypto) + Companion Series (supply-chain depth)
 - **Part IV — Systems:** Vol 7 (System Design), Vol 8 (APIs), Vol 10 (Messaging), Vol 12 (Cloud/Infra), Vol 11 (Reliability/SRE)
 - **Part V — Fundamentals:** Vol 13 (Runtimes), Vol 14 (Algorithms), Vol 15 (SWE Practice)
+- **Part VI — Language Internals:** Vol 16 (Python/CPython), Vol 17 (Go)
 
 ## Volumes — At a Glance
 
@@ -60,8 +61,10 @@ is a prerequisite for SRE (Vol 11). Chapters note these explicitly.
 | 13 | Language Runtimes for Backend | 9 | JVM, Go, Rust, Python/Node/Wasm, GC, JIT, profiling, runtime selection |
 | 14 | Data Structures and Algorithms for Backend | 8 | Complexity, hashing, probabilistic structures, consistent hashing, external algorithms |
 | 15 | Software Engineering Practice | 10 | Testing (3 ch), design docs, DDD, patterns, refactoring, code review, teams |
+| 16 | Python and CPython Internals | 12 | Source→bytecode, ceval, objects, GIL/free-threading, types, GC/pymalloc, import, C API, JIT |
+| 17 | Golang and Go Internals | 12 | Toolchain, types/generics, ABI/defer, scheduler/GC, memory model, interfaces, channels, SSA, tooling, cgo |
 
-**Main library total:** ~142 chapters (Vols 1–15 + 8-ch Essentials). Companion adds 75 ch for reference.
+**Main library total:** ~166 chapters (Vols 1–17 + 8-ch Essentials). Companion adds 75 ch for reference. Vols 16–17 are post-Vol-13 deep dives.
 
 ---
 
@@ -311,3 +314,37 @@ The Companion is the specialist reference. Vol 9 ch 11 and Vol 12 ch 4 cross-ref
 8. Code Review and Engineering Culture
 9. Debugging and Incident-Driven Learning
 10. Building High-Performing Engineering Teams and Processes
+
+## Volume 16 — Python and CPython Internals
+
+1. CPython Architecture: Source to Execution
+2. Objects, Reference Counting, and the PyObject System
+3. Bytecode, the ceval Loop, and Adaptive Specialization (PEP 659)
+4. Memory Management: pymalloc, GC, Arenas, and Immortal Objects
+5. The GIL: Mechanics, Evolution, Per-Interpreter GIL and Free-Threaded Python (PEP 684 / PEP 703)
+6. The Type System: Classes, MRO, Descriptors, Slots, and the Attribute Protocol
+7. Functions, Closures, Generators, Coroutines, and async/await
+8. Exceptions, Context Managers, and the Unwinding Machinery
+9. The Import System: importlib, Finders, Loaders, and Namespace Packages
+10. C Extensions, the C API, HPy, and Embedding CPython
+11. Performance: Profiling, the Copy-and-Patch JIT (PEP 744), Cython, and Alternative Runtimes
+12. Packaging, Distribution, and Production Deployment at Scale
+
+> **Dependency note:** Vol 13 ch06 is the prerequisite service-level view of Python/Node. Vol 16 is the internals deep dive. Vol 1 ch08–09 (data layout, floats) and Vol 2 ch04 (allocators) are useful background.
+
+## Volume 17 — Golang and Go Internals
+
+1. The Go Toolchain: Modules, Build, Linker, and the Static Binary Model
+2. Types, Memory Layout, and Generics Internals
+3. Functions, Methods, Defer, Panic/Recover, and the ABI
+4. Goroutines, the Scheduler (G-M-P), and the Netpoller
+5. Memory Allocator, Stacks, and the Concurrent Tri-Color GC
+6. The Go Memory Model, Atomics, and Synchronization Primitives
+7. Interfaces, Reflection, and `unsafe`
+8. Channels, Select, Timers, and Context Internals
+9. Compiler Pipeline: SSA, Escape Analysis, and Optimizations
+10. Tooling Deep Dive: Race Detector, pprof, execution trace, and vet
+11. cgo, Assembly, and Foreign-Function Interoperability
+12. Production Go: Cross-Compilation, Workspaces, Telemetry, and Deployment at Scale
+
+> **Dependency note:** Vol 13 ch02 is the prerequisite service-level view of the Go runtime. Vol 17 is the internals deep dive (toolchain → SSA → runtime → tooling). Vol 4 (Concurrency) and Vol 1 ch02 (CPU pipelining) are useful background for the scheduler and compiler chapters.

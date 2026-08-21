@@ -12,7 +12,7 @@ algorithms, and software-engineering practice — plus a deep eight-book treatme
 Mermaid diagrams (rendered natively by GitHub), real code and config, and a
 distributed-systems lens.
 
-The full program is laid out in **[`CURRICULUM.md`](CURRICULUM.md)**: 16 volumes.
+The full program is laid out in **[`CURRICULUM.md`](CURRICULUM.md)**: 18 volumes (15 core + 2 language-internals + companion).
 
 ## Volumes
 
@@ -34,6 +34,8 @@ The full program is laid out in **[`CURRICULUM.md`](CURRICULUM.md)**: 16 volumes
 | 13 | Language Runtimes for Backend | see [`CURRICULUM.md`](CURRICULUM.md) |
 | 14 | Data Structures and Algorithms for Backend | see [`CURRICULUM.md`](CURRICULUM.md) |
 | 15 | Software Engineering Practice | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 16 | Python and CPython Internals | see [`CURRICULUM.md`](CURRICULUM.md) |
+| 17 | Golang and Go Internals | see [`CURRICULUM.md`](CURRICULUM.md) |
 
 ## Volume 0 — Software Supply Chain Security (the books)
 

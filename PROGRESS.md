@@ -372,3 +372,33 @@ until then their paths are as listed above).
 - 2026-08-20: Vol15 ch04-ch06 done (design docs/RFCs decision matrix+RFC lifecycle+full RFC+ADR templates+DACI/consent/lazy-consensus+async-first review+case study; DDD ubiquitous language+entities/value objects/aggregates+bounded contexts/context map 7 relationships+ACL translator+domain events outbox+strangler-fig decomposition+when-not-to-use; patterns/anti-patterns catalog hexagonal/clean ports-and-adapters+layered vs vertical slice+gateway/BFF/sidecar+idempotency+resilience composition order+outbox/saga/CQRS+strategy/decorator/observer+distributed-monolith/shared-DB/god-service/chatty/golden-hammer — 3 Mermaid ch04, 6 Mermaid ch05, 6 Mermaid ch06, real RFC/DDD/pattern templates each). Next: 15.07-15.10 (remaining 4).
 - 2026-08-20: Vol15 ch07-ch09 done (refactoring catalog+branch-by-abstraction/expand-contract/strangler fig/flag-guarded cutover+schema/event/API expand-contract+hotspot×churn debt register+cost-of-delay+fitness functions+case study god-service strangling; code review authoring/PR template+layered reading+tiered checklists+automation gates/CODEOWNERS/SLAs+conventional comments+anti-patterns+DORA/psychological safety/paved road+rituals; debugging hypothesis log+trace/metrics/logs/profiles+eBPF/bpftrace/pprof+prod-safe flag/shadow+timeline/postmortem taxonomy+runbooks+knowledge base — 6 Mermaid ch07, 3 Mermaid ch08, 5 Mermaid ch09, ~5.5-8.2kw each, real templates each). Next: 15.10 (remaining 1).
 - 2026-08-20: *** VOLUME 15 (Software Engineering Practice) COMPLETE — 10 chapters. *** *** MAIN LIBRARY COMPLETE — Volumes 1–15 (~142 ch) + Companion Series (75 ch supply-chain) — all chapters written. *** Vol15 ch10 done (high-performing teams: DORA four keys + SPACE five dimensions + DevEx/anti-Goodhart, Team Topologies 4 team types + 3 interaction modes, structured hiring scorecard/bar-raiser/bias audit, 30/60/90 onboarding with devcontainer+buddy, dual-track ladder IC2-6/M1-3 + SBI + calibration, async-first distributed operating model with decision logs/timezone rituals — 6 Mermaid, ~7.1kw, real scorecard/onboarding/charter/1:1 templates).
+
+## Volume 16 — Python and CPython Internals (`vol-16-python-cpython-internals/`)
+
+- [ ] 16.01 CPython Architecture: Source to Execution — `ch01-cpython-architecture.md`
+- [ ] 16.02 Objects, Reference Counting, and the PyObject System — `ch02-objects-refcount.md`
+- [ ] 16.03 Bytecode, the ceval Loop, and Adaptive Specialization (PEP 659) — `ch03-bytecode-ceval.md`
+- [ ] 16.04 Memory Management: pymalloc, GC, Arenas, and Immortal Objects — `ch04-memory-management.md`
+- [ ] 16.05 The GIL: Mechanics, Evolution, Per-Interpreter GIL and Free-Threaded Python — `ch05-gil.md`
+- [ ] 16.06 The Type System: Classes, MRO, Descriptors, Slots, and the Attribute Protocol — `ch06-type-system.md`
+- [ ] 16.07 Functions, Closures, Generators, Coroutines, and async/await — `ch07-functions-closures-generators.md`
+- [ ] 16.08 Exceptions, Context Managers, and the Unwinding Machinery — `ch08-exceptions-context-managers.md`
+- [ ] 16.09 The Import System: importlib, Finders, Loaders, and Namespace Packages — `ch09-import-system.md`
+- [ ] 16.10 C Extensions, the C API, HPy, and Embedding CPython — `ch10-c-extensions.md`
+- [ ] 16.11 Performance: Profiling, the Copy-and-Patch JIT (PEP 744), Cython, and Alternative Runtimes — `ch11-performance.md`
+- [ ] 16.12 Packaging, Distribution, and Production Deployment at Scale — `ch12-packaging-deployment.md`
+
+## Volume 17 — Golang and Go Internals (`vol-17-go-internals/`)
+
+- [ ] 17.01 The Go Toolchain: Modules, Build, Linker, and the Static Binary Model — `ch01-toolchain.md`
+- [ ] 17.02 Types, Memory Layout, and Generics Internals — `ch02-types-generics.md`
+- [ ] 17.03 Functions, Methods, Defer, Panic/Recover, and the ABI — `ch03-functions-abi.md`
+- [ ] 17.04 Goroutines, the Scheduler (G-M-P), and the Netpoller — `ch04-scheduler-netpoller.md`
+- [ ] 17.05 Memory Allocator, Stacks, and the Concurrent Tri-Color GC — `ch05-allocator-gc.md`
+- [ ] 17.06 The Go Memory Model, Atomics, and Synchronization Primitives — `ch06-memory-model.md`
+- [ ] 17.07 Interfaces, Reflection, and `unsafe` — `ch07-interfaces-reflection.md`
+- [ ] 17.08 Channels, Select, Timers, and Context Internals — `ch08-channels-select.md`
+- [ ] 17.09 Compiler Pipeline: SSA, Escape Analysis, and Optimizations — `ch09-compiler-ssa.md`
+- [ ] 17.10 Tooling Deep Dive: Race Detector, pprof, execution trace, and vet — `ch10-tooling.md`
+- [ ] 17.11 cgo, Assembly, and Foreign-Function Interoperability — `ch11-cgo-assembly.md`
+- [ ] 17.12 Production Go: Cross-Compilation, Workspaces, Telemetry, and Deployment at Scale — `ch12-production.md`
