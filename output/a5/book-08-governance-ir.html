@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -243,17 +325,7 @@ built under specific practices — and increasingly, to carry ongoing obligation
 handling, reporting, updates) for its lifetime. "Prove your software is built securely" is
 becoming a precondition of market access. The rest of this chapter is about who is demanding
 that proof, in what form, and by when.</p>
-<p><pre><code>timeline
-    title Supply chain security — from incident to obligation
-    2020 : SolarWinds SUNBURST disclosed (Dec) : Codecov compromise
-    2021 : EO 14028 (May) : NTIA SBOM Minimum Elements (Jul) : Log4Shell (Dec)
-    2022 : NIST SP 800-218 SSDF v1.1 (Feb) : OMB M-22-18 (Sep) : FDA sec 524B enacted (Dec)
-    2023 : OMB M-23-16 (Jun) : FDA RTA authority in force (Oct)
-    2024 : CISA attestation form (~Mar) : SP 800-218A GenAI draft/final : EU CRA in force (~Dec)
-    2025 : DORA applies (Jan) : CRA implementation guidance
-    2026 : CRA reporting obligations begin (~Sep, hedged) : enforcement direction of travel
-    2027 : CRA main obligations apply (~Dec, hedged)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da159e5b5bb8.png" alt="diagram"></div></p>
 <h2 id="the-us-thread-executive-order-14028-and-its-progeny">The US thread: Executive Order 14028 and its progeny</h2>
 <h3 id="eo-14028-as-the-root">EO 14028 as the root</h3>
 <p>On 12 May 2021, roughly five months after SolarWinds became public, the White House issued
@@ -340,17 +412,7 @@ government, an officer of your company signs a statement that you follow SSDF pr
 must be prepared to produce the evidence — SBOMs, provenance, secure-build documentation — that
 backs that signature.</strong> The signature is cheap; the ability to back it truthfully is the entire
 program this book describes.</p>
-<p><pre><code>flowchart TD
-    EO["EO 14028 (May 2021)<br/>directs NIST / CISA / OMB"]
-    EO --> SSDF["NIST SSDF<br/>SP 800-218 v1.1 (Feb 2022)<br/>secure-dev practices"]
-    EO --> SBOM["NTIA SBOM Minimum<br/>Elements (Jul 2021)"]
-    EO --> CSCRM["NIST SP 800-161r1<br/>C-SCRM (acquirer side)"]
-    SSDF --> M2218["OMB M-22-18 (Sep 2022)<br/>agencies must collect<br/>SSDF self-attestation"]
-    M2218 --> M2316["OMB M-23-16 (Jun 2023)<br/>updates scope & timing"]
-    M2316 --> FORM["CISA common attestation<br/>form (~Mar 2024)<br/>producer signs conformance"]
-    SBOM -.supporting evidence.-> FORM
-    FORM --> SELL["Condition of selling<br/>software to US gov"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ee27bf671379.png" alt="diagram"></div></p>
 <h3 id="the-direction-of-travel">The direction of travel</h3>
 <p>Everything above is settled as of early 2026. What is <em>not</em> settled is where it goes. Several
 vectors are worth watching, all hedged as evolving:</p>
@@ -517,16 +579,7 @@ timeline is staged, and the regulation is specific about it:</p>
   somewhat differently). Treat the exact final-report deadline as the detail most worth
   double-checking against the current text and implementing acts.</li>
 </ul>
-<p><pre><code>sequenceDiagram
-    participant M as Manufacturer
-    participant P as ENISA / CSIRT platform
-    Note over M: Becomes aware of actively<br/>exploited vuln or severe incident
-    M->>P: Early warning — within 24h
-    Note over M,P: Clock is tight and non-negotiable
-    M->>P: Notification — within 72h<br/>(details, mitigations if known)
-    Note over M: Develops & ships corrective measure
-    M->>P: Final report — ~14 days after<br/>fix available (hedge exact window)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_033a977ea300.png" alt="diagram"></div></p>
 <p>The reason this obligation reshapes engineering, not just legal, is the <strong>24-hour clock</strong>. To
 notify within 24 hours that an <em>actively exploited</em> vulnerability affects your product, you must
 first <em>know</em> — quickly and across your whole portfolio — that a given vulnerability is present
@@ -557,20 +610,7 @@ As of early 2026 the precise contours of the steward obligations were still bein
 implementing guidance; treat the <em>shape</em> (commercial → full manufacturer; steward → light
 obligations; non-commercial OSS → largely out) as settled and the fine detail as still settling.</p>
 <h3 id="us-vs-eu-two-models-of-the-same-demand">US vs EU: two models of the same demand</h3>
-<p><pre><code>flowchart LR
-    subgraph US["US — procurement leverage"]
-        U1["Instrument: Executive Order<br/>+ OMB memos"]
-        U2["Binds: sellers to federal gov"]
-        U3["Mechanism: SELF-attestation<br/>to SSDF"]
-        U4["Failure: lost sales; False<br/>Claims Act exposure"]
-    end
-    subgraph EU["EU — market-access law"]
-        E1["Instrument: Regulation<br/>(directly binding)"]
-        E2["Binds: anyone placing PDEs<br/>on the EU market"]
-        E3["Mechanism: conformity +<br/>CE marking + reporting"]
-        E4["Failure: withdrawal from<br/>market; turnover-scaled fines"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_797a7ef40db1.png" alt="diagram"></div></p>
 <p>The two regimes demand overlapping technical work — secure builds, SBOMs, vulnerability
 handling — but they are structurally different animals. The US regime is <em>narrow in who it binds</em>
 (sellers to government) but operates through <em>self</em>-declaration. The EU regime is <em>broad in who
@@ -636,13 +676,7 @@ stripped of its legal packaging, reduces to a small set of <em>technical</em> de
 those demands is something the earlier books already build. Compliance is not a parallel
 universe of activity; it is the <strong>documented, attested output</strong> of doing the engineering well.</p>
 <p>The chain runs <strong>regulation → framework → technical control → evidence</strong>:</p>
-<p><pre><code>flowchart LR
-    R["Regulation<br/>EO 14028 / CRA / FDA / DORA"] --> F["Framework<br/>SSDF / SLSA / S2C2F"]
-    F --> C["Technical control<br/>Books 2–7"]
-    C --> E["Evidence<br/>SBOM / provenance /<br/>attestation / VEX"]
-    E --> A["Attestation &<br/>conformity artifacts"]
-    A -.satisfies.-> R
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1d8aa32c7d7a.png" alt="diagram"></div></p>
 <p>Read left to right, a regulation's abstract obligation ("develop securely," "handle
 vulnerabilities") is named precisely by a framework (SSDF task PS.1, SLSA Build L3), implemented
 by a technical control in one of the earlier books, and <em>emits evidence</em> as a byproduct — an
@@ -741,22 +775,7 @@ fleet scale:</p>
   Chapters 5–6). An organization with a fleet-wide inventory answers it before the clock starts;
   one without spends the 24 hours <em>discovering its own exposure</em> and misses the deadline.</li>
 </ul>
-<p><pre><code>flowchart TD
-    subgraph Platform["Paved-road platform (Books 3-6)"]
-        B["Every build"] --> S["Auto SBOM (Book 3)"]
-        B --> P["Signed provenance (Book 5)"]
-        B --> A["Signed attestations (Book 5)"]
-    end
-    S --> REPO["Central evidence repository<br/>SBOM + provenance + attestation stores"]
-    P --> REPO
-    A --> REPO
-    REPO --> US["US SSDF self-attestation"]
-    REPO --> CRA["EU CRA conformity + SBOM"]
-    REPO --> SECT["FDA / DORA / sectoral"]
-    VULN["Vuln feed / KEV"] --> Q["Query inventory (Book 8 Ch 5-6)"]
-    REPO --> Q
-    Q --> RPT["24h / 72h CRA reporting"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_be0cbae11d7e.png" alt="diagram"></div></p>
 <p>The organizing insight is that <strong>compliance is an organizational program built on fleet
 technical capabilities, not a per-product scramble</strong> — which is why it is the subject of <em>this
 book</em>, Book 8, and why the technical capability it stands on is spread across Books 3 through 6.
@@ -770,6 +789,10 @@ regulations did not create the need for fleet-wide SBOMs, provenance, and vulner
 response; they made <em>visible and legally consequential</em> a capability that a well-run
 distributed-systems organization should have built anyway. The rest of Book 8 is how you run
 that program.</p>
+<h3 id="us-thread-eo-14028-to-attestation">US thread: EO 14028 to attestation</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_58eb110ae9d8.png" alt="diagram"></div></p>
+<h3 id="two-models-of-market-pressure">Two models of market pressure</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4a7755923e3a.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Regulation followed catastrophe.</strong> SolarWinds (disclosed December 2020) and the 2020–2021
@@ -802,6 +825,22 @@ that program.</p>
   (Books 3–6) produce automatically. The central SBOM/provenance/attestation store <em>is</em> the
   compliance evidence repository, and it is what makes the CRA's 24-hour clock survivable.</li>
 </ul>
+<div class="highlight"><pre><span></span><code>Regulatory horizon as of early 2026 (verify current dates — CRA/DORA timelines evolve):
+  2021-05-12  EO 14028 issued → SSDF, SBOM, attestation chain begins
+  2022-02-18  NIST SP 800-218 (SSDF v1.1) published
+  2022-09-14  OMB M-22-18 (self-attestation deadline)
+  2024-09-10  EU CRA 2024/2847 enters into force
+  2025-01-17  DORA (2022/2554) applies
+  2026 ~Sep   CRA reporting obligations begin (hedged — check eur-lex.europa.eu)
+  2027        CRA full obligations expected
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># Map a CRA essential requirement to the control that satisfies it (example — check current CRA Annex I)</span>
+<span class="c1"># Requirement: &quot;products shall be placed on the market without known exploitable vulnerabilities&quot;</span>
+<span class="c1"># Control: SCA at the internal-proxy chokepoint + KEV-driven patch SLA (Book 2 Ch 6–7; Book 6 Ch 4)</span>
+osv-scanner<span class="w"> </span>--sbom<span class="o">=</span>sbom.cyclonedx.json<span class="w"> </span>--format<span class="o">=</span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s1">&#39;[.results[].packages[] | select(.packageCommit.existingVulnerabilities)] | length&#39;</span>
+</code></pre></div>
+
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>Executive Order 14028</strong>, "Improving the Nation's Cybersecurity," The White House, 12 May
@@ -830,8 +869,20 @@ that program.</p>
   Regulation No. 155</strong> (UNECE, cybersecurity management systems).</li>
 <li><strong>US Department of Justice</strong>, Civil Cyber-Fraud Initiative — background on False Claims Act
   exposure for false cybersecurity attestations.</li>
-<li>For the frameworks the regulations lean on: <strong>SLSA v1.0</strong> (<code>slsa.dev</code>), <strong>S2C2F</strong> (OpenSSF),
-  and Book 1, Chapter 7 — Risk Frameworks and Maturity Models: SLSA, SSDF, S2C2F.</li>
+<li>
+<p>For the frameworks the regulations lean on: <strong>SLSA v1.0</strong> (<code>slsa.dev</code>), <strong>S2C2F</strong> (OpenSSF),
+  and Book 1, Chapter 7 — Risk Frameworks and Maturity Models: SLSA, SSDF, S2C2F.</p>
+</li>
+<li>
+<p><strong>EO 14028</strong> — https://www.whitehouse.gov/briefing-room/presidential-actions/2021/05/12/executive-order-on-improving-the-nations-cybersecurity/</p>
+</li>
+<li><strong>NIST SSDF SP 800-218 v1.1 and SP 800-218A</strong> — https://csrc.nist.gov/pubs/sp/800/218/final and https://csrc.nist.gov/pubs/sp/800/218/a/final</li>
+<li><strong>NIST SP 800-161 Rev. 1 (C-SCRM)</strong> — https://csrc.nist.gov/pubs/sp/800/161/r1/final</li>
+<li><strong>OMB M-22-18 / M-23-16 and CISA attestation form</strong> — https://www.whitehouse.gov/wp-content/uploads/2022/09/M-22-18.pdf and https://www.cisa.gov/secure-software-development-attestation-form</li>
+<li><strong>NTIA SBOM Minimum Elements</strong> — https://www.ntia.gov/page/software-bill-materials</li>
+<li><strong>EU Cyber Resilience Act and DORA</strong> — https://eur-lex.europa.eu/eli/reg/2024/2847/oj and https://eur-lex.europa.eu/eli/reg/2022/2554/oj</li>
+<li><strong>FDA premarket cybersecurity guidance</strong> — https://www.fda.gov/media/119933/download</li>
+<li><strong>SLSA and S2C2F</strong> — https://slsa.dev/spec/v1.0/ and https://github.com/ossf/s2c2f</li>
 </ul></div><div id="ch02-adopting-slsa-s2c2f"><h1 id="chapter-2-adopting-slsa-and-s2c2f-roadmaps-that-work">Chapter 2 — Adopting SLSA and S2C2F: Roadmaps That Work</h1>
 <p><em>What this chapter covers.</em> Book 1, Chapter 7 gave you the map: SLSA, SSDF, and S2C2F as three
 composable frameworks on two axes. It was, in its own words, the map and not the expedition. This
@@ -916,22 +967,7 @@ This is the most expensive failure because it <em>looks</em> like progress (ther
 dashboard, a vendor) while delivering close to zero security value, since a control that does not sit
 in an enforced path is decoration. A tool is not a control until something downstream <em>depends</em> on
 its output to make a decision.</p>
-<p><pre><code>flowchart TB
-    subgraph FAIL["Six ways adoption dies"]
-        F1["Big-bang mandate<br/>property lives in infra<br/>the mandate never builds"]
-        F2["Cargo-cult<br/>artifact without property;<br/>nothing rejects on its absence"]
-        F3["Enforce before enable<br/>gate blocks what the<br/>fleet cannot yet produce"]
-        F4["Boil the ocean<br/>effort too thin to cross<br/>any pay-back threshold"]
-        F5["Project not program<br/>declared done, then<br/>decays under entropy"]
-        F6["Tools without integration<br/>output nothing downstream<br/>depends on = decoration"]
-    end
-    F1 --> FIX["The antidote:<br/>incremental, prioritized,<br/>platform-inherited,<br/>warn-then-enforce,<br/>measured by coverage,<br/>owned as a program"]
-    F2 --> FIX
-    F3 --> FIX
-    F4 --> FIX
-    F5 --> FIX
-    F6 --> FIX
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2cc34fdbb2bb.png" alt="diagram"></div></p>
 <p>Every recommendation that follows is, in effect, the negative image of this list. Advance
 incrementally by risk; make the platform inherit the level so teams do not each climb; warn before
 you enforce; integrate every tool into a path that depends on it; measure coverage against the tail;
@@ -1020,19 +1056,7 @@ recurring discipline — that check goes into <strong>audit mode first</strong>:
 <em>logs</em> pass/fail without blocking, for weeks, while you watch the fail rate fall as pipelines are
 brought into compliance. Only when the audit log shows the critical set is clean do you flip the gate
 to <strong>enforce</strong>. Audit-then-enforce is how you get verification without the Friday-afternoon outage.</p>
-<p><pre><code>flowchart LR
-    L0["L0<br/>laptop / ad-hoc<br/>no provenance"]
-    L1["L1<br/>provenance generated<br/>(may be unsigned)"]
-    L2["L2<br/>hosted platform<br/>signs provenance"]
-    L3["L3<br/>isolated runs,<br/>signing key unreachable"]
-    VER["VERIFY<br/>policy gate at deploy<br/>audit then enforce"]
-
-    L0 -->|"add generation step<br/><b>effort: low</b><br/>enabler: B4 Ch3"| L1
-    L1 -->|"hosted CI + OIDC + Sigstore<br/><b>effort: low-med (free-ish)</b><br/>enabler: B5 Ch3-4, B4 Ch3"| L2
-    L2 -->|"ephemeral runners, isolate signer<br/><b>effort: high (platform)</b><br/>enabler: B4 Ch8, B4 Ch10"| L3
-    L3 -->|"gate deploys on policy<br/><b>effort: med</b><br/>enabler: B5 Ch8/10, B6 Ch5-6"| VER
-    L2 -.->|"verify what you have,<br/>even at L2"| VER
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7fbaa9790792.png" alt="diagram"></div></p>
 <h3 id="the-route-in-one-table">The route in one table</h3>
 <table>
 <thead>
@@ -1099,36 +1123,7 @@ chokepoint is a suggestion; Ingest <em>with</em> it is the foundation the rest i
 <h3 id="mapping-the-eight-practices-onto-controls-you-already-build">Mapping the eight practices onto controls you already build</h3>
 <p>The practical adoption move is to stop thinking of S2C2F as eight new things to invent and start
 seeing it as eight <em>labels</em> on controls Books 2 and 3 already teach you to build. Here is the mapping.</p>
-<p><pre><code>flowchart LR
-    subgraph S2C2F["S2C2F practice areas"]
-        ING["Ingest"]
-        SCAN["Scan"]
-        INV["Inventory"]
-        UPD["Update"]
-        ENF["Enforce"]
-        AUD["Audit"]
-        REB["Rebuild"]
-        FIX["Fix + Upstream"]
-    end
-    subgraph CTRL["Book 2/3 controls"]
-        C1["Internal proxy / mirror<br/>Book 2 Ch 8"]
-        C2["SCA + malware scanning<br/>Book 2 Ch 5-6"]
-        C3["SBOM inventory<br/>Book 3"]
-        C4["Dependabot/Renovate<br/>Book 2 Ch 9"]
-        C5["Ingestion policy gate<br/>Book 2 Ch 10"]
-        C6["Provenance / chain-of-custody<br/>Book 5, Book 3 Ch 9"]
-        C7["Rebuild from source<br/>Book 4 Ch 2, Ch 10"]
-        C8["Patch + contribute upstream<br/>Book 2 Ch 9-10"]
-    end
-    ING --> C1
-    SCAN --> C2
-    INV --> C3
-    UPD --> C4
-    ENF --> C5
-    AUD --> C6
-    REB --> C7
-    FIX --> C8
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_930f53e8c33e.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -1235,19 +1230,7 @@ verification SLSA provides; its "Produce Well-Secured Software" (PW.4, "reuse we
 components") calls for exactly the consumption controls S2C2F provides. One is the syllabus; the
 other two are graded modules within it — and SSDF is the one a US federal self-attestation is written
 against (Book 8, Chapter 1).</p>
-<p><pre><code>flowchart TB
-    subgraph SSDF["SSDF — the org-process substrate (whole SDLC)"]
-        direction LR
-        subgraph PROD["Production track"]
-            SLSA["SLSA Build track<br/>generate → sign → verify → harden<br/>your build platform"]
-        end
-        subgraph CONS["Consumption track"]
-            S2["S2C2F<br/>ingest → scan → inventory → update<br/>→ enforce → audit → rebuild → fix<br/>your internal registry"]
-        end
-    end
-    SLSA -.->|"meet at the verifier:<br/>verify provenance of what you<br/>build AND what you ingest"| S2
-    SSDF -.->|"the level your federal<br/>attestation is written against<br/>(Book 8 Ch 1)"| PROD
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_61858dece8ce.png" alt="diagram"></div></p>
 <p>The value of running them as one program is that production and consumption maturity <em>advance
 together</em> against a single roadmap, funded once, owned by one team, measured on one dashboard —
 rather than three initiatives competing for the same platform engineers. The next section is that
@@ -1259,16 +1242,7 @@ program-building of Book 1, Chapter 10, the secure-build-platform of Book 4, Cha
 reference architecture of Book 6, Chapter 10. Treat the phases as <em>capability thresholds</em>, not
 calendar quarters — an org crosses them at its own pace, and a phase is "done" for a given tier of
 services, not for the whole fleet at once.</p>
-<p><pre><code>flowchart LR
-    P1["Phase 1 — Foundation / Visibility<br/>internal proxy, scan, SBOM,<br/>provenance generation, inventory<br/><b>S2C2F L1-2 · SLSA L1</b>"]
-    P2["Phase 2 — Integrity<br/>signed L2 provenance, update<br/>automation, policy in AUDIT mode<br/><b>S2C2F L2-3 · SLSA L2</b>"]
-    P3["Phase 3 — Verification / Enforcement<br/>verify at admission (ENFORCE),<br/>L3 builds, ingestion enforcement,<br/>reachability + VEX<br/><b>S2C2F L3 · SLSA L3</b>"]
-    P4["Phase 4 — Maturity<br/>rebuild from source, fix+upstream,<br/>continuous compliance,<br/>full attestation-gated deploy<br/><b>S2C2F L4</b>"]
-    P1 --> P2 --> P3 --> P4
-    P1 -.->|"visibility funds<br/>the next phase"| P2
-    P2 -.->|"audit data closes<br/>the gap before enforce"| P3
-    P3 -.->|"critical set enforced,<br/>then deepen"| P4
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_47966adfc293.png" alt="diagram"></div></p>
 <h3 id="phase-1-foundation-and-visibility">Phase 1 — Foundation and visibility</h3>
 <p><strong>Goal:</strong> see what you have and establish the plumbing. You cannot secure or measure what you cannot
 see, and every later phase reuses this phase's pipes.</p>
@@ -1401,17 +1375,7 @@ that cannot migrate, third-party black boxes. Handle them with an explicit, trac
 process</strong>: a documented reason, an owner, an expiry, and a risk acceptance — so the exceptions are
 <em>visible and finite</em>, not a silent hole. An exception you can see and count is manageable; the ones
 that kill you are the ones nobody tracks.</p>
-<p><pre><code>flowchart TB
-    PLAT["Advance the PLATFORM once<br/>build platform to L3 (B4 Ch10),<br/>internal registry enforced (B2 Ch8),<br/>admission gate live (B6 Ch6)"]
-    PLAT -->|"paved road = default path"| T1["Team A<br/>inherits current level"]
-    PLAT --> T2["Team B<br/>inherits current level"]
-    PLAT --> T3["Team C<br/>inherits current level"]
-    PLAT --> TN["...400 teams<br/>inherit current level"]
-    T1 -.->|"leaving the road<br/>= tracked exception"| EXC["Exception register<br/>owner · reason · expiry ·<br/>risk acceptance"]
-    T2 -.-> EXC
-    TN -.-> EXC
-    VER["Verifier's own logs<br/>measure real coverage,<br/>not self-declaration"] --- PLAT
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_362a06c694f5.png" alt="diagram"></div></p>
 <h3 id="level-is-necessary-structure-not-sufficient-security">Level is necessary structure, not sufficient security</h3>
 <p>Close the loop on the tension Book 1, Chapter 7 opened. A framework level is necessary — it is the
 shared vocabulary, the ratchet, the checkable proposition — but it is <em>not</em> the same thing as being
@@ -1454,6 +1418,10 @@ the technical books spend seven volumes building — a hardened build platform (
 internal registry (S2C2F), a verifying admission layer (the meeting point). Adoption, in the end, is
 not climbing a framework. It is <em>wiring those capabilities into an inherited, enforced, measured
 program</em> — and then holding the floor.</p>
+<h3 id="slsa-build-level-progression">SLSA build level progression</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10e2fea7aedf.png" alt="diagram"></div></p>
+<h3 id="s2c2f-capability-maturity-heatmap">S2C2F capability maturity heatmap</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc944646af97.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>
@@ -1512,6 +1480,38 @@ program</em> — and then holding the floor.</p>
   repo.</p>
 </li>
 </ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Paved-road provenance generation — reusable workflow that gives every caller SLSA Build L3 (as of early 2026)</span>
+<span class="c1"># .github/workflows/build-and-provenance.yml (shared, isolated per SLSA requirements)</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build-and-provenance</span>
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">workflow_call</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">inputs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">package-name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> required</span><span class="p">:</span><span class="w"> </span><span class="nv">true</span><span class="p p-Indicator">,</span><span class="nt"> type</span><span class="p">:</span><span class="w"> </span><span class="nv">string</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">permissions</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span>
+<span class="w">      </span><span class="nt">id-token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span><span class="w">   </span><span class="c1"># OIDC for keyless signing via Fulcio</span>
+<span class="w">      </span><span class="nt">attestations</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">base64-subjects</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${{</span><span class="nv"> </span><span class="s">needs.hash.outputs.digests</span><span class="nv"> </span><span class="s">}}&quot;</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># Policy to verify the paved-road provenance at the deploy gate (OPA/Conftest, as of early 2026)</span>
+<span class="k">package</span><span class="w"> </span><span class="n">admission</span><span class="p">.</span><span class="n">provenance</span>
+<span class="n">deny</span><span class="p">[</span><span class="n">msg</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">not</span><span class="w"> </span><span class="nb">input</span><span class="p">.</span><span class="n">predicate</span><span class="p">.</span><span class="n">buildDefinition</span><span class="p">.</span><span class="n">buildType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;https://slsa.dev/gha/generic/v1&quot;</span>
+<span class="w">  </span><span class="n">msg</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s2">&quot;provenance must be from the isolated paved-road builder&quot;</span>
+<span class="p">}</span>
+<span class="n">deny</span><span class="p">[</span><span class="n">msg</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nb">input</span><span class="p">.</span><span class="n">predicate</span><span class="p">.</span><span class="n">builder</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s2">&quot;https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.0.0&quot;</span>
+<span class="w">  </span><span class="n">msg</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="n">sprintf</span><span class="p">(</span><span class="s2">&quot;unexpected builder %v&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="nb">input</span><span class="p">.</span><span class="n">predicate</span><span class="p">.</span><span class="n">builder</span><span class="p">.</span><span class="n">id</span><span class="p">])</span>
+<span class="p">}</span>
+</code></pre></div>
+
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SLSA v1.0</strong> — the specification at <code>slsa.dev</code>, especially the <em>Build track levels</em>,
@@ -1534,12 +1534,22 @@ program</em> — and then holding the floor.</p>
 <li><strong>OpenSSF Scorecard</strong> and the <strong>SLSA "getting started" / "verifying artifacts" guides</strong> — practical
   starting points for measuring per-repo posture and wiring verification, useful inputs to the
   coverage metrics of Book 8, Chapter 8.</li>
-<li>Cross-references within this series: Book 1, Chapter 7 (the frameworks as maps) and Chapter 10
+<li>
+<p>Cross-references within this series: Book 1, Chapter 7 (the frameworks as maps) and Chapter 10
   (building a program); Book 2, Chapters 6, 8, 9, 10 (SCA, internal registries, update automation,
   evaluation); Book 3 (SBOMs and inventory); Book 4, Chapters 3, 8, 10 (SLSA provenance, ephemeral
   builds, secure build platform); Book 5, Chapters 4, 8, 10 (keyless signing, verification, gates);
   Book 6, Chapters 5, 6, 10 (image signing, admission policy, reference architecture); Book 7 (source
-  security); Book 8, Chapters 1 and 8 (regulation, metrics).</li>
+  security); Book 8, Chapters 1 and 8 (regulation, metrics).</p>
+</li>
+<li>
+<p><strong>SLSA v1.0 specification</strong> — https://slsa.dev/spec/v1.0/ (Build track L0–L3; v1.0 drops L4)</p>
+</li>
+<li><strong>slsa-github-generator and actions/attest-build-provenance</strong> — https://github.com/slsa-framework/slsa-github-generator and https://github.com/actions/attest-build-provenance</li>
+<li><strong>S2C2F specification</strong> — https://github.com/ossf/s2c2f</li>
+<li><strong>NIST SSDF SP 800-218 v1.1</strong> — https://csrc.nist.gov/pubs/sp/800/218/final</li>
+<li><strong>slsa-verifier and cosign verify-attestation</strong> — https://github.com/slsa-framework/slsa-verifier and https://docs.sigstore.dev/cosign/verify-attestation/</li>
+<li><strong>OpenSSF Scorecard</strong> — https://scorecard.dev/ and https://github.com/ossf/scorecard</li>
 </ul></div><div id="ch03-vendor-risk"><h1 id="chapter-3-vendor-and-third-party-software-risk">Chapter 3 — Vendor and Third-Party Software Risk</h1>
 <p><em>What this chapter covers.</em> The previous seven books built a program for software you can see
 into: the open-source dependencies you pull (Book 2), the artifacts you build (Book 4), the
@@ -1618,26 +1628,7 @@ a different compromise mechanism and a different control set:</p>
   hardest surface to inspect and the one with the least tooling; largely out of scope for the
   software controls in this book, but it belongs on the map so it is not silently assumed away.</li>
 </ul>
-<p><pre><code>flowchart LR
-  subgraph TP["Third-party surface"]
-    COTS["Commercial software\n(agents, appliances)\ne.g. Orion"]
-    SAAS["SaaS / APIs in runtime\n(JS CDN, payments, auth)\ne.g. polyfill.io"]
-    MGD["Managed services\n(DBaaS, CI SaaS, serverless)\ne.g. Codecov"]
-    CTR["Contractors /\noutsourced dev"]
-    HW["Hardware / firmware"]
-  end
-  subgraph N["Nth parties (unseen)"]
-    V2["Your vendor's vendors"]
-    V3["...their vendors"]
-  end
-  N --> TP
-  COTS --> ENV["Your environment\n(runtime, data, credentials, fleet)"]
-  SAAS --> ENV
-  MGD --> ENV
-  CTR --> ENV
-  HW --> ENV
-  ENV --> BR["Compromise of a vendor\n= compromise of you\n(inherited breach)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9615f627cec0.png" alt="diagram"></div></p>
 <h3 id="the-nth-party-problem">The Nth-party problem</h3>
 <p>The surface above is only the first ring. Every vendor on it has its own vendors, and their
 compromise can reach you transitively without ever touching a name on your procurement list. Your
@@ -1768,24 +1759,7 @@ types that matter:</p>
   Applicability, a pen-test summary) replaces the vendor's self-grade with an independent one —
   imperfect, scope-limited, but not self-issued.</li>
 </ul>
-<p><pre><code>flowchart TB
-  subgraph Q["Questionnaire model"]
-    Q1["Vendor fills spreadsheet\n(self-reported)"]
-    Q2["Point-in-time snapshot"]
-    Q3["Unfalsifiable 'yes'"]
-    Q1 --> QA["Filed compliance artifact\n(low assurance)"]
-    Q2 --> QA
-    Q3 --> QA
-  end
-  subgraph E["Evidence model"]
-    E1["SBOM\n(scan / diff / query)"]
-    E2["Signed provenance + attestation\n(cosign verify)"]
-    E3["3rd-party audit / pen-test\n(independent, scoped)"]
-    E1 --> EA["Re-verifiable assurance\n(check it yourself, again later)"]
-    E2 --> EA
-    E3 --> EA
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5e5541314c6.png" alt="diagram"></div></p>
 <p>The shift does not mean questionnaires disappear; they remain a useful triage instrument for the
 long tail of Tier 3 vendors where evidence collection is not worth the cost. It means that for
 Tier 1 vendors — the ones whose compromise is existential — you should weight verifiable evidence
@@ -2013,16 +1987,7 @@ function, not a point-in-time gate.</p>
   on trigger events (their breach, their acquisition, a new integration that raises their tier),
   not on a uniform annual clock that treats the root-privileged backup agent like the status widget.</li>
 </ul>
-<p><pre><code>flowchart LR
-  A["Assess + tier\n(evidence, not questionnaire)"] --> B["Require\n(SBOM, SLAs, attestation,\nincident-notify in contract)"]
-  B --> C["Ingest safely\n(verify · scan/SBOM · least-priv ·\ncontrol update channel)"]
-  C --> D["Monitor continuously\n(breach news · vendor CVEs ·\negress · ratings)"]
-  D --> E{"Vendor incident?"}
-  E -->|no| D
-  E -->|yes| F["Respond\n(query inventory → contain →\nrotate → hunt)"]
-  F --> A
-  D -->|tier change / re-assess| A
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_20835b02429e.png" alt="diagram"></div></p>
 <h3 id="vendor-incident-response-the-solarwinds-moment-applied">Vendor incident response: the SolarWinds moment applied</h3>
 <p>Eventually a vendor you depend on will be compromised, and the quality of your entire vendor
 program is measured in the hours after the headline. Vendor incident response is a specialization
@@ -2054,20 +2019,7 @@ SBOMs you ingested. The incident itself is mostly a series of queries against th
 <li><strong>Hunt.</strong> Using the indicators and your logs, hunt for evidence of actual (not just potential)
    compromise across the exposed set — the detection and forensics work of Book 8, Chapters 5 and 6.</li>
 </ol>
-<p><pre><code>sequenceDiagram
-  participant Vendor as Vendor / public
-  participant IR as Your IR
-  participant Inv as Fleet + vendor inventory
-  participant Fleet as Affected systems
-  Vendor->>IR: Compromise disclosed (product, versions, IOCs)
-  IR->>Inv: "Where is this vendor's software / access?"
-  Inv-->>IR: Instances, versions, privilege, grants (fast if pre-built)
-  IR->>IR: Assess blast radius (bounded by least-priv)
-  IR->>Fleet: Isolate; block C2 egress; disable grants
-  IR->>Fleet: Rotate reachable credentials/secrets/tokens
-  IR->>Fleet: Hunt for actual compromise (IOCs, logs)
-  IR-->>Vendor: Escalate; demand remediation timeline
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b2f33337494e.png" alt="diagram"></div></p>
 <p>The point that generalizes: <strong>vendor IR is fleet IR.</strong> It runs on the same inventory, the same
 detection, the same containment playbooks as any other supply chain incident — because a vendor
 compromise <em>is</em> a supply chain incident, entering through a different edge. Everything that makes it
@@ -2111,6 +2063,12 @@ directly:</p>
 supply chain already owns most of what it needs to manage its vendors' — it must only point the
 inventory outward, require the evidence inbound, and remember that the trusted, signed update from
 the vendor in good standing is exactly the shape the last three catastrophes took.</p>
+<h3 id="vendor-assessment-scoring-flow">Vendor assessment scoring flow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ebb2a7825ee1.png" alt="diagram"></div></p>
+<h3 id="continuous-vendor-monitoring-loop">Continuous vendor monitoring loop</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_67207cf9788b.png" alt="diagram"></div></p>
+<h3 id="sbom-driven-vendor-decision-tree">SBOM-driven vendor decision tree</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7779d8012476.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>A vendor is a trust relationship, and a trust relationship is a liability.</strong> Commercial
@@ -2143,6 +2101,19 @@ the vendor in good standing is exactly the shape the last three catastrophes too
   before the incident is what turns a vendor-compromise headline into an hour-scale "where is this
   in our fleet?" answer instead of a week-scale scramble. Vendor IR is fleet IR.</li>
 </ul>
+<div class="highlight"><pre><span></span><code>Vendor tiering rubric (example — adapt to your risk appetite; as of early 2026)
+  Tier 1 (critical): direct prod dependency or handles regulated data → SBOM + provenance + continuous monitoring + annual re-assessment
+  Tier 2 (important): indirect dependency or privileged SaaS integration → SBOM on request + point-in-time attestation
+  Tier 3 (low): tooling with no data/prod access → questionnaire triage
+Signal: a Tier 1 vendor unwilling or unable to provide an SBOM/provenance is itself a risk finding.
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># Ingest and diff a vendor SBOM across releases to detect new transitive exposure (as of early 2026)</span>
+osv-scanner<span class="w"> </span>--sbom<span class="o">=</span>vendor-acme-sbom-v1.4.1.cyclonedx.json<span class="w"> </span>--format<span class="o">=</span>json<span class="w"> </span>&gt;<span class="w"> </span>/tmp/vendor-scan-<span class="k">$(</span>date<span class="w"> </span>+%F<span class="k">)</span>.json
+jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.results[].packages[].package.name&#39;</span><span class="w"> </span>/tmp/vendor-scan-*.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u<span class="w"> </span><span class="p">|</span><span class="w"> </span>comm<span class="w"> </span>-13<span class="w"> </span>/tmp/known-good.txt<span class="w"> </span>-
+<span class="c1"># Anything in the new release not in the known-good list is a net-new dependency to vet</span>
+</code></pre></div>
+
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>NIST SP 800-161r1</strong>, <em>Cybersecurity Supply Chain Risk Management Practices for Systems and
@@ -2169,13 +2140,24 @@ the vendor in good standing is exactly the shape the last three catastrophes too
   inventory (Book 3, Chapters 2, 3, 5, and 9).</li>
 <li><strong>OpenSSF S2C2F</strong> (Book 8, Chapter 2) — the consumption-side framework; vendor ingestion is the
   commercial-software analogue of its OSS-ingestion practices.</li>
-<li>Cross-references within this series: Book 1, Chapters 3 and 5 (SolarWinds, Codecov, Log4Shell);
+<li>
+<p>Cross-references within this series: Book 1, Chapters 3 and 5 (SolarWinds, Codecov, Log4Shell);
   Book 2 (dependencies, SCA, vulnerability feeds); Book 3, Chapters 5, 7, 9 (inventory at scale,
   SBOM quality, operationalizing SBOM ingestion); Book 4, Chapter 9 (build/runtime observability);
   Book 5, Chapter 8 (provenance verification); Book 6, Chapters 4 and 9 (image scanning,
   serverless/managed services); Book 7, Chapter 6 (account takeover, third-party access); Book 8,
   Chapters 1, 5, and 6 (regulation, detecting compromise, incident response).
-```</li>
+```</p>
+</li>
+<li>
+<p><strong>NIST SP 800-161r1 (C-SCRM)</strong> — https://csrc.nist.gov/pubs/sp/800/161/r1/final</p>
+</li>
+<li><strong>ISO/IEC 27036 and 27001</strong> — https://www.iso.org/standard/75234.html and https://www.iso.org/standard/27001</li>
+<li><strong>AICPA SOC 2</strong> — https://www.aicpa-cima.com/topic/audit-assurance/audit-and-assurance-greater-than-soc-2</li>
+<li><strong>CISA attestation form and OMB M-22-18/M-23-16</strong> — https://www.cisa.gov/secure-software-development-attestation-form and https://www.whitehouse.gov/wp-content/uploads/2022/09/M-22-18.pdf</li>
+<li><strong>EU CRA (2024/2847)</strong> — https://eur-lex.europa.eu/eli/reg/2024/2847/oj</li>
+<li><strong>NTIA SBOM and CycloneDX/SPDX</strong> — https://www.ntia.gov/page/software-bill-materials , https://cyclonedx.org/specification/overview/ , https://spdx.dev/learn/overview/</li>
+<li><strong>OpenSSF S2C2F</strong> — https://github.com/ossf/s2c2f and https://slsa.dev/spec/v1.0/</li>
 </ul></div><div id="ch04-policy-as-code"><h1 id="chapter-4-policy-as-code-and-continuous-compliance">Chapter 4 — Policy as Code and Continuous Compliance</h1>
 <p><em>What this chapter covers.</em> Every technical book in this suite ends the same way: a control that
 only counts if something <em>enforces</em> it. Book 2, Chapter 10 built dependency intake policy;
@@ -2279,14 +2261,7 @@ different data shapes, latency budgets, and operators, and the ecosystem has pro
 engines that fit different niches. What matters is understanding each one's <em>model</em> well enough to
 place it correctly. The unifying abstraction underneath all of them is simple, and worth stating
 before the specifics.</p>
-<p><pre><code>flowchart LR
-  R["Resource / request<br/>(image, K8s object,<br/>Terraform plan, PR)"] --> E
-  D["External data<br/>(allowlists, Scorecard<br/>scores, CVE feeds)"] --> E
-  P["Policy rules<br/>(version-controlled)"] --> E
-  E{"Policy engine<br/>evaluate"} --> A["allow"]
-  E --> W["warn / audit"]
-  E --> X["deny + explanation"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9fa3faad284f.png" alt="diagram"></div></p>
 <p>Every engine below is a specialization of this picture: it takes the thing being decided (a
 resource or request), optionally some external data (an allowlist, a set of Scorecard thresholds, a
 vulnerability feed), and a set of declarative rules, and produces a decision — allow, warn, or deny
@@ -2529,33 +2504,7 @@ gates require.</p>
 transition</em> in that lifecycle as a gate that evaluates the artifacts and attestations flowing
 through. The individual gates were built book by book; seen together they are a defense in depth
 where each stage's policy assumes the previous stage enforced its own.</p>
-<p><pre><code>flowchart LR
-  subgraph Intake["Dependency intake"]
-    G1["Policy gate:<br/>allowed deps, licenses,<br/>Scorecard thresholds"]
-  end
-  subgraph Source["Source / repo"]
-    G2["Policy gate:<br/>branch protection,<br/>signed commits, rulesets"]
-  end
-  subgraph Build["CI / build"]
-    G3["Policy gate:<br/>required steps, no secrets,<br/>SLSA provenance emitted"]
-  end
-  subgraph Registry["Registry ingest"]
-    G4["Policy gate:<br/>scan clean, signed,<br/>SBOM present"]
-  end
-  subgraph IaC["Infrastructure as code"]
-    G5["Policy gate:<br/>Conftest / Sentinel<br/>on plan"]
-  end
-  subgraph Admit["Admission / deploy"]
-    G6["Policy gate:<br/>signature + provenance<br/>+ attestation verify"]
-  end
-  subgraph Run["Runtime"]
-    G7["Continuous eval:<br/>drift, new CVEs,<br/>Config rules"]
-  end
-  G1 --> G2 --> G3 --> G4 --> G5 --> G6 --> G7
-  ATT[("Attestations,<br/>SBOMs, signatures")] -.evaluated by.-> G4
-  ATT -.-> G6
-  ATT -.-> G7
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_19cf2b12418a.png" alt="diagram"></div></p>
 <p>Walk the gates:</p>
 <p><strong>Dependency intake (Book 2, Chapter 10).</strong> The first gate. Before a dependency enters the build,
 policy decides whether it is allowed: is it on the allowlist or off the denylist, is its license
@@ -2653,13 +2602,7 @@ cluster; they treat it as a codebase with a repository, review, tests, CI, versi
 rollout, and observability. The ones that fail write a policy directly in production, break every
 deploy in the fleet at once, roll it back in a panic, and never trust automated policy again. The
 lifecycle:</p>
-<p><pre><code>flowchart LR
-  A["Author<br/>(policy repo)"] --> R["Review<br/>(PR, Book 7 Ch 3)"]
-  R --> T["Test<br/>(opa test / conftest test /<br/>kyverno test in CI)"]
-  T --> D["Deploy<br/>(GitOps to gates,<br/>audit mode first)"]
-  D --> M["Monitor<br/>(decisions, violations,<br/>would-be-denies)"]
-  M --> A
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_86353a6d0b17.png" alt="diagram"></div></p>
 <p><strong>Author in a repo.</strong> Policy lives in version control — its own repository or a well-defined
 directory — not typed into a cluster. Every rule is a file. This is the precondition for everything
 else: review, testing, history, distribution.</p>
@@ -2782,11 +2725,11 @@ conclude "I must be violating a security policy and should investigate." They co
 is broken," and they file a ticket, or find the escape hatch, or pressure someone into an exception —
 all of which erode the policy. The <code>deny</code> messages in the Rego and Kyverno examples above are not
 decoration; they are the mechanism by which the policy <em>teaches</em> the developer what to do:</p>
-<div class="highlight"><pre><span></span><code><span class="n">Error</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="nl">server</span><span class="p">:</span><span class="w"> </span><span class="n">admission</span><span class="w"> </span><span class="n">webhook</span><span class="w"> </span><span class="n">denied</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="nl">request</span><span class="p">:</span>
-<span class="w">  </span><span class="nc">image</span><span class="w"> </span><span class="ss">&quot;registry.internal.example.com/app:latest&quot;</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">signed</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">an</span>
-<span class="w">  </span><span class="n">approved</span><span class="w"> </span><span class="k">release</span><span class="w"> </span><span class="k">identity</span><span class="p">.</span><span class="w"> </span><span class="nf">Sign</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="k">release</span><span class="w"> </span><span class="n">workflow</span><span class="w"> </span><span class="p">(</span><span class="n">see</span>
-<span class="w">  </span><span class="k">go</span><span class="o">/</span><span class="n">signing</span><span class="p">)</span><span class="w"> </span><span class="ow">or</span><span class="p">,</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="n">approved</span><span class="w"> </span><span class="k">exception</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="k">at</span>
-<span class="w">  </span><span class="k">go</span><span class="o">/</span><span class="n">policy</span><span class="o">-</span><span class="k">exception</span><span class="p">.</span><span class="w"> </span><span class="nl">Policy</span><span class="p">:</span><span class="w"> </span><span class="n">require</span><span class="o">-</span><span class="nc">image</span><span class="o">-</span><span class="n">signatures</span><span class="w"> </span><span class="p">(</span><span class="n">v4</span><span class="p">).</span>
+<div class="highlight"><pre><span></span><code>Error from server: admission webhook denied the request:
+  image &quot;registry.internal.example.com/app:latest&quot; is not signed by an
+  approved release identity. Sign it in your release workflow (see
+  go/signing) or, if this is an approved exception, request one at
+  go/policy-exception. Policy: require-image-signatures (v4).
 </code></pre></div>
 
 <p>Good policy explanations say three things: <strong>what</strong> rule failed, <strong>why</strong> (in the developer's terms,
@@ -2811,19 +2754,7 @@ and every running resource, then the compliance state is not something you <em>r
 the admission decisions your policy engine already made and logged. "Do all repos have branch
 protection?" is Allstar's continuously-reconciled state. The audit stops being a scramble and becomes
 a <em>query</em>.</p>
-<p><pre><code>flowchart TB
-  subgraph PIT["Point-in-time audit"]
-    direction TB
-    Q1["Annual scramble"] --> Q2["Collect screenshots,<br/>export configs"] --> Q3["Binder: state on<br/>the day sampled"] --> Q4["Stale by day+1"]
-  end
-  subgraph CC["Continuous compliance"]
-    direction TB
-    R1["Requirements<br/>(SSDF, CRA, SLSA,<br/>internal)"] --> R2["Mapped to<br/>enforced policies"]
-    R2 --> R3["Continuous evaluation<br/>at every gate + runtime"]
-    R3 --> R4["Always-current evidence:<br/>decisions + attestations<br/>+ SBOMs, queryable"]
-    R4 --> R3
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5584f7da4753.png" alt="diagram"></div></p>
 <h3 id="compliance-as-code-and-the-mapping">Compliance-as-code and the mapping</h3>
 <p>The mechanism that makes this work is the <strong>mapping</strong> introduced in Chapter 1: regulation →
 framework → technical control → evidence. Compliance-as-code is that mapping made <em>machine-readable</em>
@@ -2933,6 +2864,12 @@ desired security posture the way a control plane maintains desired replica count
 governance as documents that describe a posture nobody continuously verifies. That is the difference
 between a program that says it requires X and a program in which X is structurally true, and it is the
 connective tissue that makes the enforcement of Books 2 through 7 add up to a governed whole.</p>
+<h3 id="policy-engine-architecture-kubernetes-example">Policy engine architecture (Kubernetes example)</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6bc5d9c1e074.png" alt="diagram"></div></p>
+<h3 id="policy-lifecycle-author-to-enforce">Policy lifecycle: author to enforce</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c345d0a45d19.png" alt="diagram"></div></p>
+<h3 id="exception-and-waiver-flow">Exception and waiver flow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_91fba6ed1c62.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Prose policy enforces nothing.</strong> A document has no enforcement surface; it fails on scale, drift,
@@ -3076,45 +3013,7 @@ backdoor was <em>injected</em> at source/build and would have <em>activated</em>
 injected at build and beaconed at runtime. Codecov was injected at distribution and exfiltrated at
 build-time (in the victim's CI). A detection program that watches only one stage is a program that
 watches for the last attack, not the next one. Here is the map.</p>
-<p><pre><code>flowchart LR
-  subgraph SRC["Source / Repo"]
-    S1["Anomalous commits"]
-    S2["Maintainer / access changes"]
-    S3["Protection changes"]
-  end
-  subgraph DEP["Dependencies"]
-    D1["New / unexpected deps"]
-    D2["Malicious-package indicators"]
-    D3["Typosquat / confusion"]
-  end
-  subgraph BLD["Build / CI"]
-    B1["Unexpected process / file access"]
-    B2["Unexpected network egress"]
-    B3["Provenance / reproducibility mismatch"]
-  end
-  subgraph ART["Artifact"]
-    A1["Signature / provenance failure"]
-    A2["Hash mismatch"]
-    A3["SBOM anomaly"]
-  end
-  subgraph REG["Registry / Distribution"]
-    R1["Unexpected push / tag change"]
-    R2["Pull from unexpected source"]
-  end
-  subgraph RUN["Runtime"]
-    U1["C2 beaconing"]
-    U2["Unexpected egress"]
-    U3["Anomalous syscall / process"]
-  end
-  SRC --> CORR["Correlation / detection platform"]
-  DEP --> CORR
-  BLD --> CORR
-  ART --> CORR
-  REG --> CORR
-  RUN --> CORR
-  CORR --> ALERT["Alert / triage"]
-  ALERT --> IR["Incident response (Book 8, Ch 6)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_32f7e7d2573f.png" alt="diagram"></div></p>
 <h3 id="source-and-repository-signals">Source and repository signals</h3>
 <p>The source is where a trusted-maintainer or account-takeover attack begins, and the signals are
 about <em>deviation from normal committer behavior</em>, because the commit itself is authorized (Book 7,
@@ -3285,16 +3184,7 @@ bottom, <em>a connection to a host that had no business being contacted.</em> Eg
 behavioral signal for supply chain detection precisely because exfiltration and C2 are network
 events, and the known-good network surface is far smaller than the space of possible bad
 destinations.</p>
-<p><pre><code>flowchart TD
-  START["Build step or running workload opens outbound connection"] --> Q{"Destination on egress allowlist?"}
-  Q -->|"Yes"| OK["Permit; no signal"]
-  Q -->|"No"| FLAG["Anomaly: unexpected egress"]
-  FLAG --> C1{"New / DGA-style domain?"}
-  C1 -->|"Yes"| C2SIG["Likely C2 beacon (SUNBURST pattern)"]
-  C1 -->|"No"| EXFIL["Possible exfiltration (Codecov / SolarWinds staging)"]
-  C2SIG --> ALERT["High-severity alert to correlation platform"]
-  EXFIL --> ALERT
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6e74538c5a37.png" alt="diagram"></div></p>
 <p>Alongside egress: <strong>UEBA for source and access</strong> (Book 7, Chapter 6) baselines committer and
 credential behavior and flags the anomalous commit or the impossible-travel login. <strong>Build behavioral
 baselining</strong> (Book 4, Chapter 9) learns the normal process tree, file-access set, and duration of a
@@ -3333,14 +3223,7 @@ whose reproducible rebuild diverges, <em>followed by</em> the deployed workload 
 four weak signals; it is one strong detection with a narrative. This is the whole argument for a
 central platform: aggregate signals from every lifecycle stage across every pipeline and service, and
 correlate across stages and time.</p>
-<p><pre><code>flowchart LR
-  W1["Weak: odd-hour commit to build script"] --> CE["Correlation engine"]
-  W2["Weak: build contacts new host"] --> CE
-  W3["Weak: reproducible rebuild diverges"] --> CE
-  W4["Weak: workload beacons to new domain"] --> CE
-  CE --> STRONG["Strong: correlated chain across stages = compromise"]
-  STRONG --> IR["Incident response (Book 8, Ch 6)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_95caa41a84d7.png" alt="diagram"></div></p>
 <p>Architecturally, this is <strong>Book 4, Chapter 9's build observability, extended across the entire supply
 chain and treated as fleet infrastructure.</strong> Each stage emits structured telemetry — source audit
 logs, dependency-resolution events, build process/network/file traces, artifact-verification results,
@@ -3380,14 +3263,7 @@ hunting for that silent failure is finding out the way SolarWinds' victims did: 
 what caught it, and what <em>should</em> have? For the three canonical cases, the answers converge on a
 small, specific set of controls — and that convergence is the most important practical result in this
 chapter.</p>
-<p><pre><code>flowchart TD
-  SW["SolarWinds / SUNBURST"] -->|"Actually: FireEye found own breach, ~9 mo"| SWa["Should: build egress monitoring + provenance/reproducibility"]
-  CC["Codecov Bash Uploader"] -->|"Actually: customer hash mismatch, ~2 mo"| CCa["Should: automated integrity / SRI on fetched scripts"]
-  XZ["xz-utils backdoor"] -->|"Actually: 500ms latency, luck"| XZa["Should: reproducible build from VCS + build-from-source diff"]
-  SWa --> LESSON["Common core: integrity verification + egress/behavioral monitoring + reproducibility"]
-  CCa --> LESSON
-  XZa --> LESSON
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2bfa4676ac6f.png" alt="diagram"></div></p>
 <p><strong>SolarWinds</strong> was caught late and by accident (Mandiant's own-breach investigation). What should
 have caught it: <strong>build-time egress monitoring</strong> would have seen the SUNSPOT-orchestrated build
 staging and, at runtime, SUNBURST's beacon to <code>avsvmcloud[.]com</code> was a textbook C2 signal that egress
@@ -3480,6 +3356,12 @@ detection is the trigger, and the same inventory-and-telemetry substrate that de
 scopes and drives the response. Detection is the detective-control layer of the entire program — the
 half that Books 2 through 7 do not cover, and the half that history says decides whether a compromise
 lasts a day or nine months.</p>
+<h3 id="detection-pyramid-for-supply-chain-compromise">Detection pyramid for supply chain compromise</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_96016c1a5f20.png" alt="diagram"></div></p>
+<h3 id="compromise-indicator-taxonomy">Compromise indicator taxonomy</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ae8be599edf4.png" alt="diagram"></div></p>
+<h3 id="triage-workflow-for-suspected-compromise">Triage workflow for suspected compromise</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d7fb6504cfc0.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>
@@ -3526,6 +3408,25 @@ lasts a day or nine months.</p>
   Ch 2). None is exotic; all were available. Operate them continuously, fleet-wide.</strong></p>
 </li>
 </ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Hunt for SolarWinds-style beaconing in DNS/egress logs (illustrative, as of early 2026)</span>
+<span class="c1"># Flag long DGA-like subdomains under the SUNBURST pattern — tune for your DNS data source</span>
+jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.dns.question.name&#39;</span><span class="w"> </span>/var/log/dns.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;^[a-z0-9]{12,}\.[a-z0-9.-]+\.appsync-api\.&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u<span class="w"> </span>&gt;<span class="w"> </span>/tmp/dga-candidates.txt
+<span class="c1"># Cross-reference with allowlisted beacon domains; alert on net-new</span>
+
+<span class="c1"># Detect anomalous Codecov-Bash-Uploader style exfiltration (unexpected egress from CI)</span>
+<span class="c1"># Baseline: CI jobs should only egress to registry + artifact store; anything to an unknown host is suspect</span>
+tshark<span class="w"> </span>-r<span class="w"> </span>/var/log/ci-egress.pcap<span class="w"> </span>-Y<span class="w"> </span><span class="s1">&#39;dns.qry.name and not dns.qry.name contains &quot;registry.internal&quot;&#39;</span><span class="w"> </span>-T<span class="w"> </span>fields<span class="w"> </span>-e<span class="w"> </span>dns.qry.name<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># Compare a rebuild from VCS against the registry artifact (reproducibility as tamper detection)</span>
+<span class="c1"># Mismatch means the registry artifact is not what VCS says it should be — investigate as compromise</span>
+docker<span class="w"> </span>build<span class="w"> </span>--no-cache<span class="w"> </span>-t<span class="w"> </span>rebuild:check<span class="w"> </span>.
+skopeo<span class="w"> </span>copy<span class="w"> </span>docker-daemon:rebuild:check<span class="w"> </span>oci:/tmp/rebuild-oci
+cosign<span class="w"> </span>verify-blob<span class="w"> </span>--certificate-identity-regexp<span class="w"> </span><span class="s1">&#39;.*&#39;</span><span class="w"> </span>--certificate-oidc-issuer<span class="w"> </span>https://token.actions.githubusercontent.com<span class="w"> </span>--bundle<span class="w"> </span>provenance.json<span class="w"> </span>/tmp/rebuild-oci
+</code></pre></div>
+
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>FireEye/Mandiant, "Highly Evasive Attacker Leverages SolarWinds Supply Chain" (SUNBURST
@@ -3552,12 +3453,24 @@ lasts a day or nine months.</p>
   dependency stage. (Book 2, Chapters 3–4.)</li>
 <li><strong>MITRE ATT&amp;CK (Supply Chain Compromise, T1195) and CISA/threat-intel supply-chain advisories</strong> —
   IOC and TTP sources for signature-based sweeps and threat hunting. (Book 8, Chapter 7.)</li>
-<li>Cross-references within this series: Book 1, Chapters 3 and 5 (SolarWinds, Codecov, xz mechanisms);
+<li>
+<p>Cross-references within this series: Book 1, Chapters 3 and 5 (SolarWinds, Codecov, xz mechanisms);
   Book 2, Chapters 3–4 (dependency and malicious-package detection); Book 3, Chapter 5 (SBOM
   inventory for "am I affected?"); Book 4, Chapters 2, 3, 8, 9 (reproducibility, provenance, egress,
   build observability); Book 5, Chapters 5 and 8 (transparency logs, verification); Book 6, Chapters 2
   and 5–6 (registry, admission); Book 7, Chapters 5, 6, 8 (source hiding spots, ATO/UEBA, protection);
-  Book 8, Chapters 6 and 7 (incident response, threat intelligence).</li>
+  Book 8, Chapters 6 and 7 (incident response, threat intelligence).</p>
+</li>
+<li>
+<p><strong>Mandiant SUNBURST disclosure (Dec 2020)</strong> — https://www.mandiant.com/resources/blog/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor</p>
+</li>
+<li><strong>Codecov Bash Uploader post-mortem (Apr 2021)</strong> — https://about.codecov.io/security-update/</li>
+<li><strong>Andres Freund xz-utils disclosure (CVE-2024-3094, 29 Mar 2024)</strong> — https://www.openwall.com/lists/oss-security/2024/03/29/4</li>
+<li><strong>Reproducible Builds and Diverse Double-Compiling</strong> — https://reproducible-builds.org/ and https://dwheeler.com/trusting-trust/wheeler-dcc-paper.pdf</li>
+<li><strong>Sigstore Rekor</strong> — https://docs.sigstore.dev/logging/overview/ and https://github.com/sigstore/rekor</li>
+<li><strong>Falco and Tetragon</strong> — https://falco.org/docs/ and https://tetragon.io/docs/</li>
+<li><strong>OSV and OSV-Scanner</strong> — https://osv.dev/ and https://google.github.io/osv-scanner/</li>
+<li><strong>MITRE ATT&amp;CK T1195 and CISA advisories</strong> — https://attack.mitre.org/techniques/T1195/ and https://www.cisa.gov/topics/cybersecurity-best-practices/supply-chain-security</li>
 </ul></div><div id="ch06-incident-response"><h1 id="chapter-6-incident-response-for-supply-chain-events">Chapter 6 — Incident Response for Supply Chain Events</h1>
 <p><em>What this chapter covers.</em> Chapter 5 built detection: the telemetry-and-correlation layer that turns a
 trust-abusing compromise into an alert. This chapter is what happens after the alert fires — when you
@@ -3641,21 +3554,7 @@ a victim too), <em>plus</em> an obligation you do not have as a consumer: notify
 downstream who trusted your artifact. That means coordinated disclosure, possibly regulatory reporting
 (the EU CRA's 24-hour clock — Book 8, Chapter 1), remediating the build so a clean artifact can be
 produced, and the slow work of rebuilding customer trust in your distribution channel.</p>
-<p><pre><code>flowchart TB
-  subgraph A["Mode A — Consumer response (you were hit)"]
-    A1["A trusted dep / vendor / tool<br/>you consume was compromised"]
-    A2["Scope: where is it across<br/>everything we build and run?"]
-    A3["Contain, eradicate, rotate<br/>what it could have touched"]
-    A1 --> A2 --> A3
-  end
-  subgraph B["Mode B — Producer response (your artifact is the bad link)"]
-    B1["Your build was subverted;<br/>you shipped a trojanized artifact"]
-    B2["Everything in Mode A<br/>(your build is compromised too)"]
-    B3["PLUS: notify downstream,<br/>remediate build, regulatory report,<br/>rebuild channel trust"]
-    B1 --> B2 --> B3
-  end
-  A3 -.->|"if your shipped<br/>artifact is affected"| B1
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6566073bd7b0.png" alt="diagram"></div></p>
 <p>The two modes are not mutually exclusive. SolarWinds-the-company was simultaneously a mode-B producer
 (it shipped SUNBURST to 18,000 customers) and a mode-A consumer (its own build system had been
 compromised by SUNSPOT — Book 1, Chapter 3). If a compromised internal library propagates into an
@@ -3674,16 +3573,7 @@ isomorphic:</p>
 <p>I use the PICERL decomposition below because the six stages let me attach a distinct supply-chain action
 to each. The mapping to NIST is exact: PICERL's Identification is NIST's Detection and Analysis, and
 PICERL's Containment/Eradication/Recovery are NIST's combined third phase.</p>
-<p><pre><code>flowchart LR
-  P["Preparation<br/>—<br/>SBOM inventory,<br/>runbooks,<br/>rebuild + rotate<br/>capability"]
-  I["Identification<br/>/ Scoping<br/>—<br/>WHERE is the<br/>component across<br/>the fleet?"]
-  C["Containment<br/>—<br/>block at registry,<br/>revoke keys,<br/>cut C2 egress"]
-  E["Eradication<br/>—<br/>patch, rebuild<br/>from clean source,<br/>rotate secrets"]
-  R["Recovery<br/>—<br/>redeploy verified<br/>artifacts, hunt<br/>persistence"]
-  L["Lessons<br/>Learned<br/>—<br/>close inventory /<br/>detection gaps,<br/>share intel"]
-  P --> I --> C --> E --> R --> L
-  L -.->|"feeds back into"| P
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_15cdbbf00545.png" alt="diagram"></div></p>
 <p>The single most important thing about this lifecycle for supply chain events is that its outcome is
 decided in the <em>first</em> box. The difference between an organization that resolved Log4Shell in hours and
 one that spent weeks was not skill at containment or eradication — it was whether, at the moment the CVE
@@ -3752,19 +3642,7 @@ in the normal cycle). For a targeted implant like SUNBURST, the equivalent quest
 activation</em>: 18,000 organizations had the trojanized DLL, but the second-stage payload was only ever
 delivered to on the order of 100 of them. Scoping must distinguish "has the artifact" from "was actually
 exploited," because they drive completely different response urgency and cost.</p>
-<p><pre><code>flowchart TB
-  CVE["Advisory / CVE / detection:<br/>component X, versions A-B affected"]
-  CVE --> Q1
-  subgraph SCOPE["Scoping via inventory"]
-    Q1["Query fleet SBOM store<br/>(Book 3 Ch 5)"]
-    Q1 --> ART["Set of ARTIFACTS<br/>embedding X (incl. transitive)"]
-    ART --> DEP["Join to deploy state:<br/>live SERVICES + environments"]
-    DEP --> REACH["Reachability / exposure<br/>(Book 2 Ch 7)"]
-  end
-  REACH --> P0["P0: internet-facing<br/>+ reachable path<br/>→ contain now"]
-  REACH --> P1["P1: reachable but<br/>not exposed<br/>→ expedited patch"]
-  REACH --> P2["P2: present, not<br/>reachable<br/>→ normal cycle"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_21de602e67c1.png" alt="diagram"></div></p>
 <p>Concretely, the scoping query against a modern SBOM inventory is a database question. If SBOMs are
 stored in a queryable index (a component graph keyed by purl), scoping Log4Shell is:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># &quot;Where is log4j-core in the affected range across every built artifact?&quot;</span>
@@ -4075,21 +3953,7 @@ golden base once, and the platform rebuilds and re-attests every downstream imag
 "rebuild everything" instruction becomes a platform operation with a completion metric rather than a
 survey. The rebuild-everything problem is, again, a preparation problem — the capability that makes
 peacetime base-image updates painless is the same capability that makes wartime mass-rebuild possible.</p>
-<p><pre><code>flowchart TB
-  BAD["Compromised deep component:<br/>base image / build tool /<br/>core internal library"]
-  BAD --> Q["Scope: SBOM inventory →<br/>every artifact that consumed it"]
-  Q --> CLEAN["Establish CLEAN build env<br/>(if build itself was the vector)"]
-  CLEAN --> RB
-  subgraph RB["Rebuild-and-rotate at scale"]
-    direction TB
-    R1["Patch golden base /<br/>remove bad component"]
-    R1 --> R2["Auto-rebuild all downstream<br/>artifacts (paved-road platform)"]
-    R2 --> R3["Rotate every secret exposed<br/>to affected build/runtime envs<br/>(central secrets / workload id)"]
-    R3 --> R4["Verify provenance + signatures<br/>on each rebuild (Book 5 Ch 8)"]
-  end
-  R4 --> DEP["Staged redeploy on<br/>verified artifacts"]
-  DEP --> HOLD["Hold registry + policy block<br/>so bad version cannot return"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f46aaf057ca6.png" alt="diagram"></div></p>
 <h3 id="producer-notification-disclosure-and-regulatory-reporting">Producer notification, disclosure, and regulatory reporting</h3>
 <p>If <em>your</em> artifact is the compromised link (mode B), you inherit obligations a consumer does not have.
 Coordinated disclosure to your downstream (Book 8, Chapter 7): tell them accurately and promptly what
@@ -4149,6 +4013,12 @@ everything" is bounded. The organizations that respond in hours are not the ones
 they are the ones whose peacetime platform can be pointed at an incident question and answer it. IR is
 the load test for the entire supply chain security program, graded on work done months before the pager
 went off.</p>
+<h3 id="ir-phases-tailored-to-supply-chain">IR phases tailored to supply chain</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3c9c63905cdb.png" alt="diagram"></div></p>
+<h3 id="containment-decision-tree">Containment decision tree</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ff82b29084a8.png" alt="diagram"></div></p>
+<h3 id="evidence-preservation-flow">Evidence preservation flow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a245fde29d68.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Supply chain IR is structurally different from ordinary IR.</strong> The threat is a <em>trusted</em> artifact you
@@ -4220,14 +4090,26 @@ went off.</p>
 <li><strong>CISA and FIRST coordinated-vulnerability-disclosure guidance</strong> — the framework for the producer-side
   notification obligation when your artifact is the compromised link. (Disclosure and information sharing,
   Book 8, Chapter 7.)</li>
-<li>Cross-references within this series: Book 1, Chapters 3–5 (SolarWinds, event-stream, Log4Shell/Codecov
+<li>
+<p>Cross-references within this series: Book 1, Chapters 3–5 (SolarWinds, event-stream, Log4Shell/Codecov
   mechanisms); Book 2, Chapters 7–9 (reachability, internal registries/audit logs, update automation);
   Book 3, Chapter 5 (SBOM inventory at scale — the scoping engine); Book 4, Chapters 3, 6, 7, 10
   (provenance, secrets/rotation, pipeline controls, build platform); Book 5, Chapters 5, 8, 9
   (transparency logs, provenance verification, key management); Book 6, Chapters 2–3 (registries, golden
   base + auto-rebuild); Book 7, Chapter 4 (secrets in source); Book 8, Chapters 1, 3, 4, 5, 7, 8
   (regulatory reporting, vendor risk, policy-as-code, detection, threat intel, metrics); Book 11,
-  Chapters 6 and 9 (blameless postmortems, safe deployment).</li>
+  Chapters 6 and 9 (blameless postmortems, safe deployment).</p>
+</li>
+<li>
+<p><strong>NIST SP 800-61 Rev. 2 and Rev. 3 (2025)</strong> — https://csrc.nist.gov/pubs/sp/800/61/r2/final and https://csrc.nist.gov/pubs/sp/800/61/r3/final</p>
+</li>
+<li><strong>SANS PICERL model</strong> — https://www.sans.org/white-papers/incident-handlers-handbook/</li>
+<li><strong>Mandiant SUNBURST / Microsoft Solorigate analyses</strong> — https://www.mandiant.com/resources/blog/evasive-attacker-leverages-solarwinds-supply-chain-compromises-with-sunburst-backdoor and https://www.microsoft.com/en-us/security/blog/2020/12/18/analyzing-solorigate-the-compromised-dll-file-that-started-a-sophisticated-cyberattack-and-how-microsoft-defender-helps-protect/</li>
+<li><strong>Codecov post-mortem</strong> — https://about.codecov.io/security-update/</li>
+<li><strong>Apache Log4j advisories (CVE-2021-44228 et al.)</strong> — https://logging.apache.org/log4j/2.x/security.html</li>
+<li><strong>event-stream / flatmap-stream write-ups (2018)</strong> — https://blog.npmjs.org/post/180565383195/details-about-the-event-stream-incident</li>
+<li><strong>Sigstore Rekor</strong> — https://docs.sigstore.dev/logging/overview/</li>
+<li><strong>EU CRA incident-reporting obligations</strong> — https://eur-lex.europa.eu/eli/reg/2024/2847/oj</li>
 </ul></div><div id="ch07-threat-intelligence"><h1 id="chapter-7-threat-intelligence-and-information-sharing">Chapter 7 — Threat Intelligence and Information Sharing</h1>
 <p><em>What this chapter covers.</em> Chapter 5 built detection — the telemetry and correlation that notices a
 compromise inside your own fleet. Chapter 6 built the response that follows. But detection that starts
@@ -4246,7 +4128,8 @@ was one build compromise and roughly 18,000 downstream victims. <code>event-stre
 and every project that transitively depended on it. When the unit of attack is "everyone who trusts the
 same upstream," the unit of defense has to be collective too. The organization that finds the malicious
 package and reports it to the registry protects everyone who has not yet pulled it. That is not altruism;
-it is the only defense that scales to the actual shape of the threat.</p>
+it is the only defense that scales to the actual shape of the threat.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Explain why threat intelligence is disproportionately valuable for supply chain defense specifically —
@@ -4295,16 +4178,7 @@ sense: the value of the network of defenders scales super-linearly with particip
 participant both consumes early warning and produces it. The tragedy-of-the-commons failure mode (Book 1,
 Chapter 8) — everyone consumes, nobody contributes — is the thing that degrades it, and much of the second
 half of this chapter is about why contributing is self-interested.</p>
-<p><pre><code>flowchart LR
-  A["Attacker compromises<br/>one upstream<br/>(package / vendor / build)"] --> B["Malicious artifact<br/>distributed via<br/>trusted channels"]
-  B --> V1["Victim 1<br/>(detects, reports)"]
-  B --> V2["Victim 2"]
-  B --> V3["Victim 3 ... N"]
-  V1 -->|"detection shared"| SHARE["Intel ecosystem<br/>(feeds / registries /<br/>ISACs / advisories)"]
-  SHARE -->|"early warning"| V2
-  SHARE -->|"early warning"| V3
-  SHARE -->|"early warning"| OUT["Not-yet-hit orgs<br/>(block before pull)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_40a6ccf909ce.png" alt="diagram"></div></p>
 <p>The rest of this chapter treats intelligence as a two-way pipe wired into the machinery of Books 2 through
 7, not as a report you read.</p>
 <h2 id="sources-of-supply-chain-threat-intelligence">Sources of supply-chain threat intelligence</h2>
@@ -4582,22 +4456,7 @@ never — and defenders stay exposed while the vulnerability quietly rots, or ge
 and exploited. CVD manages that tension with an <strong>embargo</strong>: a private window, conventionally on the order
 of 90 days (with variation), during which the vendor develops and ships a fix before public disclosure,
 after which details are released so defenders can verify remediation and detect exploitation.</p>
-<p><pre><code>sequenceDiagram
-    participant R as Reporter / researcher
-    participant C as Coordinator (CERT/CC)
-    participant V as Vendor(s) / maintainer(s)
-    participant D as Downstream consumers
-    participant P as Public
-    R->>V: Private report (or via coordinator)
-    R->>C: Engage coordinator if multi-party
-    C->>V: Notify all affected vendors
-    Note over R,V: Embargo window (fix development)
-    V->>V: Develop, test fix
-    C->>D: Pre-notify major downstreams under TLP
-    V->>P: Release patched version + advisory
-    R->>P: Publish write-up (post-embargo)
-    P->>D: Verify, patch, hunt for exploitation
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e31e86d901db.png" alt="diagram"></div></p>
 <p>The supply-chain twist is that supply-chain vulnerabilities are almost always <strong>multi-party</strong> — a flaw in a
 widely-used library affects thousands of downstream products, each of which must ship its own patched
 build. Single-vendor CVD is a two-party negotiation; supply-chain CVD is a coordination problem across an
@@ -4631,23 +4490,7 @@ the distributed-systems lens sharpens — is that <strong>at fleet scale, intell
 directly into enforcement.</strong> A human reading an advisory and manually chasing exposure across hundreds of
 services is not a program; it is a bottleneck that guarantees the intel arrives too late. The goal is a set
 of standing integrations where a feed update <em>mechanically</em> produces a control action.</p>
-<p><pre><code>flowchart TD
-  subgraph FEEDS["Intel feeds"]
-    MP["Malicious-package feed<br/>(OSV malicious / Socket / GH)"]
-    KEV["CISA KEV / EPSS"]
-    IOC["Campaign IOCs<br/>(threat reports / STIX-TAXII)"]
-    VEXf["Vendor VEX"]
-  end
-  MP --> BLK["Registry proxy / mirror:<br/>block name@version<br/>fleet-wide (Book 2 Ch 8)"]
-  MP --> INV["Inventory / SBOM query:<br/>who already pulled it?<br/>(Book 3 Ch 5)"]
-  KEV --> PRI["Prioritization engine:<br/>rank remediation SLA<br/>(Book 2 Ch 7)"]
-  KEV --> ADM["Admission control:<br/>refuse affected artifacts<br/>(Book 6)"]
-  IOC --> HUNT["Detection platform:<br/>hunt for implants / C2<br/>(Ch 5)"]
-  VEXf --> SUP["Suppress non-applicable<br/>findings at scale (Book 3 Ch 6)"]
-  INV --> IR["Incident response<br/>if already pulled (Ch 6)"]
-  ADM --> ENF["Enforced fleet-wide"]
-  BLK --> ENF
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_771b593b7ae1.png" alt="diagram"></div></p>
 <h3 id="block-the-known-bad-package-everywhere-now">Block the known-bad package everywhere, now</h3>
 <p>The single most important supply-chain intelligence capability is this: <strong>the moment a package version is
 known-malicious, block it across the entire fleet and identify everyone who already pulled it.</strong> It is the
@@ -4721,26 +4564,7 @@ same upstream, <em>a healthier upstream is a smaller attack surface for you spec
 package you get pulled from a registry is one you (and your dependency graph) can never pull again. Every
 vulnerability you responsibly disclose and get fixed upstream is one removed from the software you were
 going to ship anyway. Contribution is a control on your own supply chain, applied at the source.</p>
-<p><pre><code>flowchart LR
-  subgraph YOU["Your org"]
-    DET["Detections / IOCs (Ch 5)"]
-    FIND["Found malicious package"]
-    VULN["Found upstream vuln"]
-    ANAL["VEX analysis (Book 3 Ch 6)"]
-    FIX["Fix / patch (Book 8 Ch 2 S2C2F)"]
-  end
-  FIND -->|"report"| REG["Registry security team<br/>-> package pulled"]
-  VULN -->|"CVD"| MNT["Maintainer / vendor / CERT<br/>-> fix shipped"]
-  DET -->|"share (TLP)"| ISAC["ISAC / community / STIX-TAXII"]
-  ANAL -->|"publish"| DOWN["Downstream consumers<br/>-> false positives suppressed"]
-  FIX -->|"upstream"| OSS["OSS project<br/>-> everyone benefits"]
-  REG --> ECO["Healthier ecosystem"]
-  MNT --> ECO
-  ISAC --> ECO
-  DOWN --> ECO
-  OSS --> ECO
-  ECO -->|"fewer attacks reach you"| YOU
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0372d41cfe47.png" alt="diagram"></div></p>
 <p>The concrete contribution channels, each mapping to something you already do internally:</p>
 <ul>
 <li><strong>Report malicious packages</strong> to the registry security teams (npm, PyPI, and peers) and to the OpenSSF
@@ -4797,6 +4621,12 @@ VEX, and fixes back so the ecosystem's mean-time-to-detect drops for everyone, i
 shared-fate ecosystem, that second direction is not a cost center bolted onto the security program. It is
 the same automated inventory-provenance-verify-monitor machinery pointed <em>outward</em>, and it is a rational
 fleet-defense investment: the upstream you help harden is the upstream that attacks you next.</p>
+<h3 id="threat-intel-lifecycle-for-supply-chain">Threat intel lifecycle for supply chain</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b14398ff2bf.png" alt="diagram"></div></p>
+<h3 id="indicator-enrichment-pipeline">Indicator enrichment pipeline</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_77756678f549.png" alt="diagram"></div></p>
+<h3 id="trust-groups-for-intel-sharing">Trust groups for intel sharing</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3b3773348919.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>
@@ -4869,12 +4699,25 @@ fleet-defense investment: the upstream you help harden is the upstream that atta
   national-hub advisories and the clearinghouse role during major events (Log4Shell, xz).</li>
 <li><strong>CISA/NTIA VEX documentation</strong> and the <strong>CycloneDX / CSAF VEX</strong> profiles — VEX as a sharing format for
   downstream exploitability determinations. (Book 3, Chapter 6.)</li>
-<li>Cross-references within this series: Book 1, Chapters 1, 2, 5, 6, 8 (campaign structure, ATT&amp;CK, xz/
+<li>
+<p>Cross-references within this series: Book 1, Chapters 1, 2, 5, 6, 8 (campaign structure, ATT&amp;CK, xz/
   Log4Shell, threat modeling, tragedy of the commons); Book 2, Chapters 3–5, 7–8 (malicious-package
   detection, OSV/GHSA, KEV/EPSS prioritization, registry chokepoint); Book 3, Chapters 5–6 (SBOM inventory,
   VEX); Book 4 (build integrity for T1195.002); Book 5, Chapter 5 (Rekor transparency-log monitoring); Book
   8, Chapters 1–3, 5–6 (regulatory/CRA disclosure duties, S2C2F Fix+Upstream, vendor IR, detection,
-  incident response).</li>
+  incident response).</p>
+</li>
+<li>
+<p><strong>CISA KEV catalog and BOD 22-01</strong> — https://www.cisa.gov/known-exploited-vulnerabilities-catalog and https://www.cisa.gov/news-events/directives/bod-22-01-reducing-significant-risk-known-exploited-vulnerabilities</p>
+</li>
+<li><strong>FIRST EPSS and TLP 2.0, CVSS</strong> — https://www.first.org/epss/ and https://www.first.org/tlp/ and https://www.first.org/cvss/</li>
+<li><strong>OpenSSF Malicious Packages and Package Analysis</strong> — https://github.com/ossf/malicious-packages and https://github.com/ossf/package-analysis</li>
+<li><strong>OSV and GitHub Advisory Database</strong> — https://osv.dev/ and https://github.com/advisories</li>
+<li><strong>OASIS STIX 2.1 and TAXII 2.1</strong> — https://oasis-open.github.io/cti-documentation/stix/intro.html and https://oasis-open.github.io/cti-documentation/taxii/intro.html</li>
+<li><strong>CERT/CC CVD and VINCE</strong> — https://vuls.cert.org/confluence/display/CVD/ and https://kb.cert.org/vince/</li>
+<li><strong>MITRE ATT&amp;CK T1195</strong> — https://attack.mitre.org/techniques/T1195/</li>
+<li><strong>CISA supply-chain advisories</strong> — https://www.cisa.gov/topics/cybersecurity-best-practices/supply-chain-security</li>
+<li><strong>CISA/NTIA VEX and CycloneDX/CSAF VEX</strong> — https://www.cisa.gov/sbom and https://cyclonedx.org/capabilities/vex/</li>
 </ul></div><div id="ch08-metrics-reporting"><h1 id="chapter-8-metrics-audits-and-executive-reporting">Chapter 8 — Metrics, Audits, and Executive Reporting</h1>
 <p><em>What this chapter covers.</em> This is the last chapter of Book 8 and the last chapter of the whole
 volume, and it has two jobs. The first is the chapter's stated subject: how you <em>measure</em> a
@@ -4951,30 +4794,7 @@ security program has three distinct audiences, and each needs different metrics 
 framing of the same metric. The same underlying fact — say, "62% of container images run on
 pinned digests" — is an action item to one audience, a risk statement to another, and a piece of
 compliance evidence to the third.</p>
-<p><pre><code>flowchart TB
-    subgraph SRC["Program dimensions — the measurement substrate"]
-        D2["Book 2 · Dependencies<br/>proxy %, freshness, MTTR-patch"]
-        D3["Book 3 · SBOM<br/>coverage %, quality, inventory time"]
-        D4["Book 4 · Build/CI<br/>secure-platform %, provenance %, SLSA dist"]
-        D5["Book 5 · Signing<br/>signed %, attested %, verified-deploy %"]
-        D6["Book 6 · Cloud-native<br/>signed/scanned %, digest-pinned %, admission cov"]
-        D7["Book 7 · Source<br/>branch-protect %, MFA %, drift incidents"]
-        D8a["Book 8 · Detection/IR<br/>MTTD, MTTR, coverage"]
-        D8b["Book 8 · Compliance<br/>SLSA/S2C2F/SSDF state"]
-    end
-    ROLL["Automated rollup<br/>coverage + trend + risk weighting"]
-    D2 --> ROLL
-    D3 --> ROLL
-    D4 --> ROLL
-    D5 --> ROLL
-    D6 --> ROLL
-    D7 --> ROLL
-    D8a --> ROLL
-    D8b --> ROLL
-    ROLL --> ENG["Engineers / Platform<br/><b>Operational</b><br/>what to fix, per service"]
-    ROLL --> LEAD["Leadership<br/><b>Risk / Investment</b><br/>exposure, trend, ROI"]
-    ROLL --> AUD["Auditors / Regulators<br/><b>Compliance evidence</b><br/>proof of enforcement"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b7a347ea1dc4.png" alt="diagram"></div></p>
 <p><strong>Engineers and platform teams</strong> need <em>operational</em> metrics: specific, disaggregated, actionable.
 The right granularity is per-service, per-repository, per-pipeline, because the engineer's question
 is "what do <em>I</em> need to fix?" A dashboard row that says <code>payments-api: image not signed, base image
@@ -5278,24 +5098,7 @@ sprint. The discipline is to <em>balance</em> both: leading indicators to steer,
 validate that the steering worked. A program heavy on leading indicators with no lagging validation
 is measuring activity and hoping; a program with only lagging indicators is flying blind between
 crashes.</p>
-<p><pre><code>flowchart LR
-    subgraph LEAD["Leading — predictive, controllable"]
-        L1["Coverage %<br/>on the paved road"]
-        L2["Control adoption<br/>signed, pinned, protected"]
-        L3["Staleness /<br/>freshness"]
-    end
-    META["<b>Coverage / Adoption</b><br/>the meta-metric<br/>% of fleet inheriting each control"]
-    subgraph LAG["Lagging — outcomes, validating"]
-        G1["Incidents"]
-        G2["MTTD / MTTR"]
-        G3["Drift events"]
-    end
-    L1 --> META
-    L2 --> META
-    L3 --> META
-    META -->|"predicts"| LAG
-    LAG -->|"validates"| META
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9aa0fc58b6a1.png" alt="diagram"></div></p>
 <p><strong>Coverage as the meta-metric.</strong> For a platform-based program — which is the whole suite's thesis —
 the single most important measurement is <em>coverage of the paved road</em>: what fraction of the fleet
 inherits each control by being on the platform (Book 1, Chapter 10; Book 4, Chapter 10). This
@@ -5492,24 +5295,7 @@ Controls Assessment Language) is the machine-readable substrate for this: it exp
 catalogs, the profile of controls you claim, the mapping to your components, and the assessment
 results, so that "compliance" is a data structure you can generate and diff rather than a binder you
 assemble (Chapter 4).</p>
-<p><pre><code>flowchart LR
-    subgraph EVID["Evidence corpus — produced as a byproduct"]
-        E1["SBOMs<br/>Book 3"]
-        E2["Provenance<br/>Book 4"]
-        E3["Signatures / attestations<br/>Book 5"]
-        E4["Policy decisions / admission logs<br/>Book 8 Ch 4"]
-        E5["Detection / IR records<br/>Book 8 Ch 5-6"]
-    end
-    STORE["Queryable evidence store<br/>+ OSCAL control mapping"]
-    E1 --> STORE
-    E2 --> STORE
-    E3 --> STORE
-    E4 --> STORE
-    E5 --> STORE
-    STORE --> INT["Internal audit<br/>SLSA / S2C2F / SSDF gaps"]
-    STORE --> EXT["External audit<br/>SOC 2 · ISO 27001"]
-    STORE --> REG["Regulatory attestation<br/>CISA SSDF form · EU CRA"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e881980bcdf2.png" alt="diagram"></div></p>
 <p>The crucial insight is the arrow's direction: <strong>the evidence corpus is a byproduct of doing the
 security work, not a separate workstream.</strong> The SBOMs exist because Book 3 built the pipeline. The
 provenance exists because Book 4 hardened the build. The attestations exist because Book 5 signed the
@@ -5566,17 +5352,7 @@ a risk weighting, plus a drill-down for the audiences that need it. The design p
   measure per repository (Book 2, Chapter 10), and framework maturity (SLSA/S2C2F level distribution,
   Book 8, Chapter 2) benchmarks you against a published standard rather than a vibe.</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph DASH["Supply-chain security scorecard — executive view"]
-        direction TB
-        H1["<b>Risk exposure</b><br/>82% verified prod traffic ▲<br/>(was 55%) risk-weighted"]
-        H2["<b>Response capability</b><br/>Inventory: minutes ▲<br/>Fleet patch MTTR: 4d ▲ (was 18d)"]
-        H3["<b>Compliance posture</b><br/>SSDF attestation: ready ●<br/>CRA: on track ◐"]
-        H4["<b>Coverage / paved road</b><br/>88% of fleet ▲<br/>tail: 40 legacy services"]
-    end
-    DASH --> STORY["The story:<br/>progress + honest gaps + the ask"]
-    STORY --> ASK["Investment ask:<br/>migrate the 40-service tail<br/>= highest risk-reduction per dollar"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2f69eaaee571.png" alt="diagram"></div></p>
 <p><strong>Cadence and story.</strong> Report on a regular cadence — a monthly or quarterly executive readout, backed
 by an always-live dashboard for those who want to look between readouts. And <em>tell a story</em>, in three
 beats: <strong>progress</strong> (the trends moving the right way, credibly attributed to specific investments),
@@ -5643,16 +5419,7 @@ and build the inventory-driven response that turns "are we affected?" into a que
 <p><strong>Six: govern and measure.</strong> And this book — the ability to know the program works, find its gaps,
 justify its cost, and satisfy the auditor and the regulator. Governance and measurement are how the
 program sees itself.</p>
-<p><pre><code>flowchart LR
-    A["<b>1. Attack surface</b><br/>supply chain = attack surface;<br/>one link → all downstream<br/>(Book 1)"]
-    B["<b>2. Verify, don't trust</b><br/>produce evidence · verify at boundaries<br/>(Books 3-5-6)"]
-    C["<b>3. Centralize</b><br/>controls inherited via paved road<br/>(Books 2-7)"]
-    D["<b>4. Enforce</b><br/>policy-as-code, fleet-wide<br/>(Book 6, Book 8 Ch 4)"]
-    E["<b>5. Detect / respond</b><br/>assume breach; inventory-driven IR<br/>(Book 8 Ch 5-6)"]
-    F["<b>6. Govern / measure</b><br/>prove it works · find gaps · report<br/>(Book 8)"]
-    A --> B --> C --> D --> E --> F
-    F -->|"metrics find gaps →<br/>drive investment →<br/>close the loop"| A
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_60ec4aa45a07.png" alt="diagram"></div></p>
 <p>Metrics and reporting are the arrow that closes the loop. Measurement takes the outcomes of detection
 and response, the coverage of enforcement, the adoption of the platform, and the state of compliance,
 and feeds them back to the top: <em>here is where the attack surface is still exposed, here is where
@@ -5703,6 +5470,10 @@ exists.</p>
   running infrastructure that reports the present. Governance as a continuously-running control system
   over the fleet — that is the distributed-systems framing of this entire book.</li>
 </ul>
+<h3 id="metrics-hierarchy-leading-vs-lagging">Metrics hierarchy (leading vs lagging)</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7ddbc449e744.png" alt="diagram"></div></p>
+<h3 id="from-raw-signals-to-executive-dashboard">From raw signals to executive dashboard</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2b469e20fe5f.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Measure to manage, improve, and justify.</strong> An unmeasured program is invisible to its operators,
@@ -5744,6 +5515,28 @@ exists.</p>
   an engineered control system that drives its own error down. The mature end state is a fleet that can
   <em>prove</em> — not assert — that it is secure, and know when it isn't.</li>
 </ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Query the metadata store: &quot;which workloads are affected by CVE-2026-xxxx?&quot; (as of early 2026)</span>
+<span class="c1"># Assumes GUAC / Dependency-Track or equivalent SBOM inventory (Book 3 Ch 5)</span>
+guac<span class="w"> </span>query<span class="w"> </span>--vuln<span class="w"> </span>CVE-2026-12345<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.packages[] | &quot;\(.name) @ \(.version) — deployed in \(.deployments[])&quot;&#39;</span>
+
+<span class="c1"># Coverage of the paved road — the meta-metric (Book 1 Ch 10; Book 4 Ch 10)</span>
+<span class="c1"># Fraction of prod services whose last build has verified SLSA L3 provenance + signed SBOM</span>
+psql<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$METADATA_DB</span><span class="s2">&quot;</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">  SELECT</span>
+<span class="s2">    COUNT(*) FILTER (WHERE slsa_level &gt;= 3 AND sbom_present) * 100.0 / COUNT(*) AS paved_road_pct,</span>
+<span class="s2">    COUNT(*) FILTER (WHERE slsa_level &lt; 3) AS tail</span>
+<span class="s2">  FROM prod_services</span>
+<span class="s2">  WHERE last_build_at &gt; NOW() - INTERVAL &#39;30 days&#39;;</span>
+<span class="s2">&quot;</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>Example executive readout slide structure (as of early 2026):
+  Progress:  SLSA L3 provenance 88% → 94% (+6pp); signed images 91% → 97%
+  Gaps:      18 services (6%) still on legacy builder; 3 base images &gt;90d stale
+  Risk:      2 reachable criticals (KEV) in the tail — patch SLA: 7d
+  Next:      Retire legacy builder by 2026-10-01; expand VEX coverage to Tier 1 vendors
+</code></pre></div>
+
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>NIST SP 800-55, <em>Measurement Guide for Information Security</em></strong> — https://csrc.nist.gov/pubs/sp/800/55/v1/final —

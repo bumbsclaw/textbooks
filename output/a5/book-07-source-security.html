@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -181,7 +263,8 @@ threat model of an SCM platform at fleet scale. We are precise about git's objec
 because nearly every control in the following chapters (commit signing in Chapter 2, branch
 protection in Chapter 3, secret scanning in Chapter 4) is a patch over a specific gap in what
 git guarantees natively. Get the primitives wrong and the controls look like magic; get them
-right and each one is an obvious, necessary response to a named weakness.</p>
+right and each one is an obvious, necessary response to a named weakness.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Explain why SCM is the <strong>root trust anchor</strong> of the software supply chain and why source
@@ -266,28 +349,7 @@ to every byte of every file in that snapshot <em>and</em> to every commit that p
 precisely a <strong>Merkle DAG</strong> (directed acyclic graph): the same hash-linked structure that
 underlies transparency logs (Book 5, Chapter 5) and the Merkle-tree machinery of
 Book 5, Chapter 1. Git is a Merkle DAG of commits over Merkle trees of file contents.</p>
-<p><pre><code>flowchart RL
-    subgraph history["hash-chained history (each commit commits to its parent)"]
-        C0["commit C0<br/>(root)"]
-        C1["commit C1"]
-        C2["commit C2 = HEAD<br/>hash 9f2a...e1"]
-        C1 -->|parent| C0
-        C2 -->|parent| C1
-    end
-
-    C2 -->|tree| T["tree /<br/>(directory)"]
-    T -->|"entry: src/"| Tsrc["tree src/"]
-    T -->|"entry: README.md"| B1["blob<br/>README bytes"]
-    Tsrc -->|"entry: main.go"| B2["blob<br/>main.go bytes"]
-    Tsrc -->|"entry: util.go"| B3["blob<br/>util.go bytes"]
-
-    classDef commit fill:#1f4e5f,stroke:#0b2027,color:#fff
-    classDef tree fill:#3b6978,stroke:#204e5f,color:#fff
-    classDef blob fill:#84a9ac,stroke:#3b6978,color:#000
-    class C0,C1,C2 commit
-    class T,Tsrc tree
-    class B1,B2,B3 blob
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5873a82cbe47.png" alt="diagram"></div></p>
 <p>Change one byte of <code>main.go</code> and its blob hash changes. That changes the <code>src/</code> tree hash,
 which changes the root tree hash, which changes commit <code>C2</code>'s hash. If <code>C2</code> were not the tip
 but somewhere in the middle of history, <em>every commit after it</em> would change too, because each
@@ -398,23 +460,7 @@ the right column is a control we have to add on top of git.</p>
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-    G["git's native object model"]
-    G --> Y1["Tamper-EVIDENT history<br/>(changed object = changed hash)"]
-    G --> N1["Does NOT authenticate WHO<br/>(author/committer = free strings)"]
-    G --> N2["Does NOT prevent force-push<br/>(refs are mutable pointers)"]
-
-    Y1 -.->|"needs a trusted expected hash"| P["pinned/signed refs + provenance"]
-    N1 -->|"motivates"| C2["Ch. 2 — commit signing"]
-    N2 -->|"motivates"| C3["Ch. 3 — branch protection"]
-
-    classDef yes fill:#2e5d34,stroke:#1b3a1f,color:#fff
-    classDef no fill:#7a2e2e,stroke:#4a1c1c,color:#fff
-    classDef ctrl fill:#2b4a6f,stroke:#183048,color:#fff
-    class Y1 yes
-    class N1,N2 no
-    class P,C2,C3 ctrl
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2634572e8a59.png" alt="diagram"></div></p>
 <h2 id="the-sha-1-problem-and-the-sha-256-transition">The SHA-1 problem and the SHA-256 transition</h2>
 <p>Everything above depends on the hash function being <strong>collision-resistant</strong>: an attacker must
 not be able to produce two <em>different</em> objects with the <em>same</em> hash. If they could, they could
@@ -463,26 +509,7 @@ The through-line is that git's integrity model protects <em>stored bytes against
 and nothing else — so every threat below is either about <strong>getting malicious bytes accepted as
 legitimate</strong>, or about <strong>rewriting what "legitimate" means</strong>, or about compromising the
 <strong>platform</strong> that decides both.</p>
-<p><pre><code>flowchart TB
-    R[("SCM platform<br/>(GitHub / GitLab / Bitbucket /<br/>self-hosted Gitea·GitLab·Forgejo)")]
-
-    T1["Unauthorized commit<br/>stolen creds / tokens / deploy keys"] --> R
-    T2["Malicious insider / maintainer<br/>legitimate write access, hostile intent"] --> R
-    T3["Platform compromise<br/>forge itself or self-hosted server"] --> R
-    T4["History tampering<br/>force-push / branch deletion"] --> R
-    T5["Repo/namespace attacks<br/>repojacking, reclaimed namespaces"] --> R
-    T6["CI-via-source<br/>malicious pipeline config = code exec"] --> R
-    T7["Secrets in source<br/>tokens, keys, deploy creds committed"] --> R
-
-    R --> D["→ malicious code enters the supply chain<br/>(builds, signs, ships as legitimate)"]
-
-    classDef threat fill:#7a2e2e,stroke:#4a1c1c,color:#fff
-    classDef hub fill:#1f2d3d,stroke:#0b1622,color:#fff
-    classDef sink fill:#5a3a1a,stroke:#3a2410,color:#fff
-    class T1,T2,T3,T4,T5,T6,T7 threat
-    class R hub
-    class D sink
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0431712a9b21.png" alt="diagram"></div></p>
 <h3 id="unauthorized-commits-and-write-access">Unauthorized commits and write access</h3>
 <p>The most direct attack: an adversary who does not legitimately have write access obtains it,
 then pushes malicious code that builds and ships as any developer's would. The credential is the
@@ -674,19 +701,7 @@ provenance (Book 5, Chapter 8 — Provenance Verification) therefore includes ch
 <em>source is the expected source</em>: not just "some build produced this," but "the build that
 produced this consumed <em>this commit in this repo</em>, and that is the commit I intended." Compose the
 two and you get an end-to-end integrity chain:</p>
-<p><pre><code>flowchart LR
-    A["signed / reviewed<br/>commit<br/>hash 9f2a...e1"] -->|"recorded as source in"| B["SLSA provenance<br/>(source repo + revision)"]
-    B -->|"binds"| C["built artifact<br/>digest sha256:..."]
-    C -->|"verify at deploy"| D["policy gate<br/>'built from expected commit<br/>in expected repo'"]
-
-    A -.->|"Book 7 makes this<br/>commit trustworthy"| A
-    B -.->|"Book 4 Ch.3"| B
-    C -.->|"Book 5 signing"| C
-    D -.->|"Book 5 Ch.8 verify"| D
-
-    classDef n fill:#22403a,stroke:#12241f,color:#fff
-    class A,B,C,D n
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b1a6643be632.png" alt="diagram"></div></p>
 <p>Source integrity + provenance = <em>"this artifact came from this verified commit in this repo."</em>
 Neither half suffices alone. Provenance that faithfully records a <em>malicious</em> source commit is a
 faithful record of an attack (the point we opened with). A trustworthy commit whose relationship
@@ -747,6 +762,12 @@ human in each loop.</p>
 <p>The chapters that follow build these links one at a time. We start, in Chapter 2, with the most
 glaring gap this chapter exposed: git authenticates <em>no one</em>, and until a commit carries a verified
 signature, "authored by" is just a string on an envelope.</p>
+<h3 id="scm-attack-taxonomy-stride-for-git-hosting">SCM attack taxonomy (STRIDE for Git hosting)</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb53dc2b14d7.png" alt="diagram"></div></p>
+<h3 id="git-hosting-supply-chain-blast-radius">Git hosting supply chain blast radius</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f98cf92d311f.png" alt="diagram"></div></p>
+<h3 id="source-trust-boundaries">Source trust boundaries</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b27b6ddf98fe.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Source is the root of the supply chain.</strong> Every downstream artifact is a derivation of
@@ -821,7 +842,8 @@ signing of Book 5 exactly. We are precise about what platform "Verified" badges 
 (less than most engineers assume), and relentlessly honest about the chapter's central
 limitation: <strong>signing proves who, not whether what they wrote is honest.</strong> A signature is a
 control for <em>accountability</em>, not <em>correctness</em>. It is necessary for a defensible source supply
-chain and sufficient for none of it.</p>
+chain and sufficient for none of it.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Explain precisely why git's <code>author</code>/<code>committer</code> fields are <strong>unauthenticated</strong>, and
@@ -877,23 +899,7 @@ provenance by hand. They read the name, recognize it, and relax. The fix is not 
 author field trustworthy — it is intrinsically untrustworthy — but to add, <em>alongside</em> it, a
 cryptographic proof that a specific key produced this commit, and to bind that key to a real
 identity you can independently verify. That proof is a <strong>signature</strong>.</p>
-<p><pre><code>flowchart LR
-    subgraph unsigned["Unsigned commit"]
-        A1["tree + parents"]
-        A2["author: Alice &lt;alice@upstream&gt;<br/>committer: attacker"]
-        A3["message"]
-        A4["hash over all of the above"]
-    end
-    subgraph signed["Signed commit"]
-        B1["tree + parents"]
-        B2["author + committer"]
-        B3["message"]
-        B4["gpgsig / signature header<br/>over the commit content"]
-        B5["hash over ALL of the above,<br/>including the signature"]
-    end
-    unsigned -->|"author field is<br/>an unverifiable string"| SPOOF["Anyone can claim<br/>to be anyone"]
-    signed -->|"signature binds content<br/>to a verifiable key/identity"| VERIFY["Verify who<br/>actually signed"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4dd01f214f50.png" alt="diagram"></div></p>
 <h2 id="signing-mechanics-what-gets-signed-and-where-the-signature-lives">Signing mechanics: what gets signed, and where the signature lives</h2>
 <p>A commit signature is a signature over the <strong>commit object's own bytes</strong> — the tree, parents,
 author, committer, and message — with the signature itself carried inside the commit as an extra
@@ -1030,25 +1036,7 @@ identity you expect:</p>
 
 <p>The flow is structurally identical to keyless artifact signing with cosign (Book 5, Chapter 3–4),
 just applied to a commit object instead of a container digest:</p>
-<p><pre><code>sequenceDiagram
-    participant Dev as Developer (git commit)
-    participant OIDC as OIDC / SSO Provider
-    participant Fulcio as Fulcio (Sigstore CA)
-    participant Rekor as Rekor (transparency log)
-    participant Repo as Git repository
-
-    Dev->>Dev: generate ephemeral keypair
-    Dev->>OIDC: authenticate (SSO login)
-    OIDC-->>Dev: OIDC identity token (id: alice@upstream.example)
-    Dev->>Fulcio: CSR + OIDC token (proof of possession)
-    Fulcio-->>Dev: short-lived X.509 cert<br/>binding ephemeral key -> alice@upstream.example
-    Dev->>Dev: sign commit with ephemeral private key
-    Dev->>Rekor: log {signature, cert, commit digest}
-    Rekor-->>Dev: inclusion proof (log index)
-    Dev->>Dev: discard ephemeral private key
-    Dev->>Repo: commit (signature + cert embedded)
-    Note over Repo,Rekor: Verifier: check sig + Fulcio cert +<br/>Rekor inclusion + expected OIDC identity
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_362a37a0a8f4.png" alt="diagram"></div></p>
 <p>What gitsign buys you is the disappearance of the entire key lifecycle — no generation, no
 distribution, no expiry tracking, no revocation, because the signing key exists for seconds — plus
 <strong>transparency</strong>: every signature is publicly logged in Rekor, so misuse is <em>detectable after the
@@ -1108,16 +1096,7 @@ proves the signature was made while the certificate was valid.</p>
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-    subgraph friction["Key-management friction (why adoption stalls or succeeds)"]
-        GPG["GPG:<br/>generate + distribute + expire + revoke<br/>= high friction, low adoption"]
-        SSH["SSH signing:<br/>reuse existing SSH key<br/>= low friction, high adoption"]
-        GITSIGN["gitsign:<br/>no persistent key at all<br/>= zero key friction + Rekor transparency"]
-    end
-    GPG -->|"the historical blocker"| STALL["org-wide mandate fails"]
-    SSH -->|"changed the calculus"| WIN["org-wide mandate tractable"]
-    GITSIGN -->|"changed the calculus"| WIN
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2e70d0096f06.png" alt="diagram"></div></p>
 <h2 id="what-platform-verified-badges-actually-prove">What platform "Verified" badges actually prove</h2>
 <p>GitHub and GitLab render a green <strong>"Verified"</strong> badge next to signed commits. Engineers routinely
 over-read this badge, so be precise about its semantics.</p>
@@ -1154,15 +1133,7 @@ this." The committer on such commits is often <code>GitHub &lt;noreply@github.co
 you. If your mental model is "Verified means a human's key signed this," web-flow commits break it.
 This matters for policy design: a rule that merely requires "Verified" commits is satisfied by
 GitHub's own signing on web merges, which may or may not be what you intended.</p>
-<p><pre><code>flowchart TB
-    V["Green 'Verified' badge"]
-    V -->|"YES, proves"| Y1["Signed by a key<br/>linked to an account"]
-    V -->|"YES, proves"| Y2["Signing email matches<br/>a verified account email"]
-    V -->|"NO, does NOT prove"| N1["The code is correct / safe<br/>(insider signs a backdoor)"]
-    V -->|"NO, does NOT prove"| N2["The account/key was not stolen<br/>(ATO signs valid commits)"]
-    V -->|"NO, does NOT prove"| N3["The AUTHOR field is real<br/>(badge is about the committer)"]
-    V -->|"CAVEAT"| N4["May be GitHub's own web-flow key,<br/>not the developer's key"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ee81df715d17.png" alt="diagram"></div></p>
 <h3 id="vigilant-mode-and-requiring-signatures">Vigilant mode and requiring signatures</h3>
 <p>By default, GitHub shows <em>no</em> badge on unsigned commits — their absence is easy to miss.
 <strong>Vigilant mode</strong> (a GitHub account setting) changes the display so that <em>every</em> commit is labeled:
@@ -1291,14 +1262,7 @@ and (3) map the signing identity to <strong>SSO</strong>.</p>
    badge and never reaches the build is the theater Book 5, Chapter 8 warns against — you produced the
    proof and then never used it.</li>
 </ol>
-<p><pre><code>flowchart LR
-    C["Signed commit / tag"] --> P1["Platform 'Verified'<br/>(display)"]
-    C --> P2["Branch protection:<br/>require signed commits<br/>(gate at merge)"]
-    C --> P3["Build/provenance:<br/>verify source signature<br/>before building<br/>(SLSA source track)"]
-    P3 --> ART["Attested artifact:<br/>'built from a commit<br/>signed by an authorized dev'"]
-    style P3 fill:#0b6,color:#fff
-    style ART fill:#048,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_63c1d1cf0418.png" alt="diagram"></div></p>
 <p><strong>Key and identity lifecycle.</strong> Whatever method you choose, identities move:</p>
 <ul>
 <li><strong>Onboarding</strong> — register the developer's signing key (SSH public key marked as a signing key, or
@@ -1354,6 +1318,10 @@ verifies flawlessly (Book 7, Chapters 5–6). Signing catches, deters, and trace
 (Chapter 3), <strong>review</strong> (Chapter 3), and <strong>monitoring</strong> (Chapter 6) are what actually prevent. Deploy
 signing for the accountability it genuinely provides — and never mistake a green badge for a safe
 change.</p>
+<h3 id="commit-signature-verification-states">Commit signature verification states</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9302ead7668d.png" alt="diagram"></div></p>
+<h3 id="signing-mechanism-comparison">Signing mechanism comparison</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_160c37563aac.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Git's <code>author</code>/<code>committer</code> fields are <strong>unauthenticated strings</strong>; <code>git commit --author=...</code>
@@ -1422,7 +1390,8 @@ concrete about how you actually configure it on GitHub and GitLab, honest about 
 is bypassed in the real world, and clear-eyed that code review catches obvious malice and misses
 subtle malice. Branch protection is not a magic wall; it is a set of specific, individually
 defeatable controls that, composed correctly and enforced org-wide, bound the blast radius of a
-single compromised or malicious actor.</p>
+single compromised or malicious actor.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Explain the <strong>two-person principle for source</strong> as a separation-of-duties control, and state
@@ -1486,25 +1455,7 @@ commit <code>abc123</code>" but "…and that commit reached the protected branch
 Source-side controls become verifiable provenance. That is the whole arc of Book 7: reviewed
 (this chapter) plus signed (Chapter 2) source, enforced at the branch, feeds a build provenance
 statement that carries those facts downstream.</p>
-<p><pre><code>flowchart LR
-    dev["developer commits<br/>(signed, Ch 2)"] -->|"git push origin main"| block["direct push to<br/>protected branch"]
-    block -->|"REJECTED"| x1["remote: protected branch<br/>hook declined"]
-    dev -->|"push to feature branch"| fb["feature branch"]
-    fb --> pr["open pull / merge request"]
-    pr --> gate{"branch-protection gate"}
-    gate --> c1["required checks pass<br/>(CI green)"]
-    gate --> c2["required reviews<br/>N approvals by NON-author"]
-    gate --> c3["CODEOWNERS approved<br/>for touched paths"]
-    gate --> c4["signed commits verified<br/>(Ch 2)"]
-    gate --> c5["conversations resolved,<br/>branch up to date"]
-    c1 --> merge{"all satisfied?"}
-    c2 --> merge
-    c3 --> merge
-    c4 --> merge
-    c5 --> merge
-    merge -->|"yes"| main["merge to protected<br/>branch -> build -> prod"]
-    merge -->|"no"| pr
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_29e78bbfe75e.png" alt="diagram"></div></p>
 <p>The rest of this chapter is the mechanics of building that gate, the honest limits of each part
 of it, and the many ways it leaks.</p>
 <h2 id="branch-protection-the-mechanics">Branch protection: the mechanics</h2>
@@ -1684,30 +1635,30 @@ touches a matched path <em>cannot merge</em> until a listed owner approves. This
 from a blanket "someone reviewed it" into a <strong>targeted, path-based two-person control</strong> aimed at
 the highest-leverage files. The last matching pattern wins (order matters), and only patterns
 with an owner enforce a requirement:</p>
-<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="n">CODEOWNERS</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="k">path</span><span class="o">-</span><span class="n">based</span><span class="w"> </span><span class="n">required</span><span class="w"> </span><span class="n">review</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">high</span><span class="o">-</span><span class="n">risk</span><span class="w"> </span><span class="n">supply</span><span class="o">-</span><span class="n">chain</span><span class="w"> </span><span class="n">paths</span>
+<div class="highlight"><pre><span></span><code># CODEOWNERS — path-based required review for high-risk supply-chain paths
 
-<span class="err">#</span><span class="w"> </span><span class="k">Default</span><span class="err">:</span><span class="w"> </span><span class="ow">any</span><span class="w"> </span><span class="n">change</span><span class="w"> </span><span class="n">needs</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">platform</span><span class="w"> </span><span class="n">reviewer</span>
-<span class="o">*</span><span class="w">                               </span><span class="nv">@acme</span><span class="o">/</span><span class="n">platform</span><span class="o">-</span><span class="n">reviewers</span>
+# Default: any change needs a platform reviewer
+*                               @acme/platform-reviewers
 
-<span class="err">#</span><span class="w"> </span><span class="n">CI</span><span class="o">/</span><span class="n">build</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">crown</span><span class="w"> </span><span class="n">jewels</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="n">pipeline</span><span class="w"> </span><span class="n">poisoning</span><span class="w"> </span><span class="n">lives</span><span class="w"> </span><span class="n">here</span><span class="w"> </span><span class="p">(</span><span class="n">Book</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">Ch</span><span class="w"> </span><span class="mi">7</span><span class="p">)</span>
-<span class="o">/</span><span class="p">.</span><span class="n">github</span><span class="o">/</span><span class="n">workflows</span><span class="o">/</span><span class="w">             </span><span class="nv">@acme</span><span class="o">/</span><span class="n">security</span><span class="w"> </span><span class="nv">@acme</span><span class="o">/</span><span class="n">ci</span><span class="o">-</span><span class="n">admins</span>
-<span class="o">/</span><span class="p">.</span><span class="n">github</span><span class="o">/</span><span class="n">actions</span><span class="o">/</span><span class="w">               </span><span class="nv">@acme</span><span class="o">/</span><span class="n">security</span>
-<span class="o">/</span><span class="n">Makefile</span><span class="w">                       </span><span class="nv">@acme</span><span class="o">/</span><span class="n">ci</span><span class="o">-</span><span class="n">admins</span>
-<span class="o">/</span><span class="n">Dockerfile</span><span class="w">                     </span><span class="nv">@acme</span><span class="o">/</span><span class="n">security</span>
+# CI/build config is the crown jewels — pipeline poisoning lives here (Book 4, Ch 7)
+/.github/workflows/             @acme/security @acme/ci-admins
+/.github/actions/               @acme/security
+/Makefile                       @acme/ci-admins
+/Dockerfile                     @acme/security
 
-<span class="err">#</span><span class="w"> </span><span class="n">Dependency</span><span class="w"> </span><span class="n">manifests</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">lockfiles</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="n">dependency</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">lockfile</span><span class="w"> </span><span class="n">poisoning</span><span class="w"> </span><span class="p">(</span><span class="n">Book</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">Ch</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span>
-<span class="o">/</span><span class="k">go</span><span class="p">.</span><span class="k">mod</span><span class="w">                         </span><span class="nv">@acme</span><span class="o">/</span><span class="n">security</span>
-<span class="o">/</span><span class="k">go</span><span class="p">.</span><span class="nf">sum</span><span class="w">                         </span><span class="nv">@acme</span><span class="o">/</span><span class="n">security</span>
-<span class="o">/</span><span class="n">package</span><span class="p">.</span><span class="n">json</span><span class="w">                   </span><span class="nv">@acme</span><span class="o">/</span><span class="n">security</span>
-<span class="o">/</span><span class="n">package</span><span class="o">-</span><span class="n">lock</span><span class="p">.</span><span class="n">json</span><span class="w">              </span><span class="nv">@acme</span><span class="o">/</span><span class="n">security</span>
-<span class="o">/</span><span class="n">requirements</span><span class="o">*</span><span class="p">.</span><span class="n">txt</span><span class="w">              </span><span class="nv">@acme</span><span class="o">/</span><span class="n">security</span>
+# Dependency manifests and lockfiles — dependency &amp; lockfile poisoning (Book 2, Ch 2 &amp; 10)
+/go.mod                         @acme/security
+/go.sum                         @acme/security
+/package.json                   @acme/security
+/package-lock.json              @acme/security
+/requirements*.txt              @acme/security
 
-<span class="err">#</span><span class="w"> </span><span class="n">Infrastructure</span><span class="o">-</span><span class="k">as</span><span class="o">-</span><span class="n">code</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="n">cloud</span><span class="w"> </span><span class="n">blast</span><span class="w"> </span><span class="n">radius</span><span class="w"> </span><span class="p">(</span><span class="n">Book</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="n">Ch</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span>
-<span class="o">/</span><span class="n">deploy</span><span class="cm">/**/</span><span class="o">*</span><span class="p">.</span><span class="n">tf</span><span class="w">                 </span><span class="nv">@acme</span><span class="o">/</span><span class="n">cloud</span><span class="o">-</span><span class="n">security</span>
-<span class="o">/</span><span class="n">k8s</span><span class="o">/</span><span class="w">                           </span><span class="nv">@acme</span><span class="o">/</span><span class="n">cloud</span><span class="o">-</span><span class="n">security</span>
+# Infrastructure-as-code — cloud blast radius (Book 6, Ch 8)
+/deploy/**/*.tf                 @acme/cloud-security
+/k8s/                           @acme/cloud-security
 
-<span class="err">#</span><span class="w"> </span><span class="n">Auth</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">crypto</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">access</span><span class="w"> </span><span class="n">config</span>
-<span class="o">/</span><span class="n">internal</span><span class="o">/</span><span class="n">auth</span><span class="o">/</span><span class="w">                 </span><span class="nv">@acme</span><span class="o">/</span><span class="n">security</span>
+# Auth / crypto / access config
+/internal/auth/                 @acme/security
 </code></pre></div>
 
 <p>The rationale is leverage. A change to <code>/.github/workflows/</code> can rewrite what the pipeline does
@@ -1837,19 +1788,7 @@ assume attackers exploit the latter.</p>
 <p>CODEOWNERS, covered above, is the mechanism that ties "elevated scrutiny on high-leverage
 changes" to enforcement: it <em>guarantees</em> the CI-config change reaches the CI-admins and the
 security team, rather than hoping a generalist reviewer happens to notice.</p>
-<p><pre><code>flowchart TD
-    pr["PR touches multiple paths"] --> router{"which paths?"}
-    router -->|"src/feature.go"| gen["generalist reviewer<br/>(1 approval)"]
-    router -->|".github/workflows/*"| sec["security + ci-admins<br/>REQUIRED (CODEOWNERS)"]
-    router -->|"go.mod / go.sum"| sec2["security REQUIRED<br/>(dep + lockfile risk)"]
-    router -->|"deploy/*.tf"| cloud["cloud-security REQUIRED"]
-    gen --> merge{"all required<br/>owners approved?"}
-    sec --> merge
-    sec2 --> merge
-    cloud --> merge
-    merge -->|"yes"| ok["mergeable"]
-    merge -->|"no"| blocked["blocked until owning<br/>team approves"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_32dfcff8e5c3.png" alt="diagram"></div></p>
 <h3 id="the-limits-of-review-be-honest">The limits of review — be honest</h3>
 <p>Review is necessary and it is not sufficient, and pretending otherwise is how organizations get
 surprised. The honest limits:</p>
@@ -1960,17 +1899,7 @@ with <code>git push --tags</code>.</p>
 The security review of that claim is finding every path that falsifies it. In practice the gate
 leaks in a depressing number of places, and mature teams treat the bypass surface as a
 first-class thing to audit, not an afterthought.</p>
-<p><pre><code>flowchart TD
-    attacker["single compromised /<br/>malicious actor"] --> q{"can they reach<br/>the built branch?"}
-    q -->|"admin bypass<br/>(enforce-for-admins off)"| yes1["YES: merge past all rules"]
-    q -->|"push to UNPROTECTED branch<br/>that CI also builds"| yes2["YES: bypasses branch entirely"]
-    q -->|"force-push (if allowed)<br/>rewrites reviewed history"| yes3["YES: replace reviewed commits"]
-    q -->|"self-approve<br/>(GitLab, author-approval on)"| yes4["YES: one actor = author+approver"]
-    q -->|"bot / automation token<br/>on bypass list"| yes5["YES: compromise the bot"]
-    q -->|"self-hosted runner /<br/>CI token pushes to branch"| yes6["YES: pipeline writes source"]
-    q -->|"PR-based PPE: malicious CI<br/>runs on PR build (no merge)"| yes7["YES: exec + exfil pre-merge"]
-    q -->|"proper PR, 2 independent<br/>reviewers, all checks"| no["blocked: needs 2nd actor"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_52a1dc548081.png" alt="diagram"></div></p>
 <p>Walk each path, with the mitigation:</p>
 <table>
 <thead>
@@ -2069,26 +1998,7 @@ someone will weaken a rule and not restore it, and every new repo starts unprote
 distributed-systems truth is that <strong>source-integrity controls must be enforced centrally, as
 policy, or they will not hold</strong> — the same lesson as configuration management for any large fleet.
 There are three complementary layers.</p>
-<p><pre><code>flowchart TD
-    subgraph drift["per-repo discretion (does NOT scale)"]
-        r1["repo A: protected"]
-        r2["repo B: admins bypass"]
-        r3["repo C: no protection"]
-        r4["repo D: force-push allowed"]
-        r5["new repo: nothing"]
-    end
-    subgraph central["central policy enforcement"]
-        rs["org ruleset / group settings<br/>(apply to ~ALL)"]
-        allstar["Allstar / safe-settings<br/>(continuously enforce)"]
-        iac["Terraform GitHub provider<br/>(repo config as code)"]
-        tmpl["paved-road repo template<br/>(secure by default)"]
-    end
-    rs --> allrepos["every repo, current and future"]
-    allstar --> allrepos
-    iac --> allrepos
-    tmpl --> allrepos
-    allrepos --> verify["drift detection +<br/>remediation (Ch 8)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9eda9b4135db.png" alt="diagram"></div></p>
 <p><strong>1. Native org/group-level policy.</strong> The first-class answer. GitHub <strong>organization rulesets</strong>
 (above) apply required PR review, signed commits, passing checks, and force-push blocks across
 <code>~ALL</code> repositories at once, and they <em>aggregate</em> with (and override) per-repo settings so a team
@@ -2202,6 +2112,12 @@ is the config that actually holds. Secure-by-default repo templates and org rule
 protection is the ambient condition, not a per-team project — the same principle as secure base
 images (Book 6, Chapter 3) or a hardened service scaffold: make the right thing the easy thing and
 the fleet trends secure without heroics.</p>
+<h3 id="branch-protection-hierarchy">Branch protection hierarchy</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f04383895070.png" alt="diagram"></div>text</p>
+<h3 id="pr-review-assignment-and-codeowners">PR review assignment and CODEOWNERS</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_02d6c22308c4.png" alt="diagram"></div>text</p>
+<h3 id="bypass-and-break-glass-audit-flow">Bypass and break-glass audit flow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_19ee739a2c87.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Two-person control is the core source-integrity control.</strong> No single identity should be able
@@ -2284,7 +2200,8 @@ important idea here is a matter of sequence: when a secret hits source you <stro
 history second</strong>, because the credential is burned the instant it is committed and history-scrubbing
 does nothing to un-burn it. This is the source-side counterpart to Book 4, Chapter 6 — Secrets in
 CI, which concerns secrets a <em>pipeline</em> handles at runtime; here the secret is <em>committed to the
-repo itself</em>.</p>
+repo itself</em>.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Explain <strong>how and why</strong> secrets end up committed, and why a committed secret is a <em>live
@@ -2378,19 +2295,7 @@ layer lesson in Book 6, Chapter 1 — Image Layers: deleting a file in a <em>lat
 it from the <em>earlier</em> layer where it was added; the bytes are still shipped, just hidden from the
 top-level view. Git is the same. A later commit hides the secret from <code>HEAD</code>; it does not remove it
 from the history that <code>HEAD</code> still descends from.</p>
-<p><pre><code>flowchart LR
-    C1["commit C1<br/>adds config.yaml<br/>with API_KEY=sk_live_..."]
-    C2["commit C2<br/>unrelated change"]
-    C3["commit C3<br/>git rm config.yaml<br/>(secret 'deleted')"]
-    HEAD["HEAD"]
-    C1 --> C2 --> C3 --> HEAD
-    blob["blob object<br/>sk_live_... still stored,<br/>still reachable from C1"]
-    C1 -.contains.-> blob
-    recover["git show C1:config.yaml<br/>recovers the secret"]
-    blob -.-> recover
-    style blob fill:#b91c1c,color:#fff
-    style recover fill:#7f1d1d,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9db32822a12e.png" alt="diagram"></div></p>
 <p>The consequences compound. Because the secret is reachable from history, <em>the only</em> way to truly
 remove it is to <strong>rewrite history</strong> — produce a new set of commits, from the poisoned commit
 forward, whose trees never contained the secret — which, per Chapter 3's treatment of force-pushes,
@@ -2486,20 +2391,7 @@ is valid but scoped so narrowly the verification call is denied). And a verifica
 technically, <em>using</em> the credential — you are exercising a key you found, which is fine when it is
 your own key and worth thinking about in a multi-tenant scanning service. None of this outweighs its
 value; it means you treat "unverified" as <em>lower priority</em>, never as <em>safe</em>.</p>
-<p><pre><code>flowchart TB
-    input["source text<br/>(diff / file / full history)"]
-    pat["pattern matching<br/>known formats: AKIA…, ghp_…, sk_live_…"]
-    ent["entropy analysis<br/>high-randomness strings"]
-    cand["candidate findings"]
-    ver["live verification<br/>call provider API: is it active?"]
-    input --> pat --> cand
-    input --> ent --> cand
-    cand --> ver
-    ver --> active["VERIFIED / ACTIVE<br/>→ urgent: rotate now"]
-    ver --> unver["UNVERIFIED<br/>→ review, don't ignore"]
-    style active fill:#b91c1c,color:#fff
-    style unver fill:#a16207,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f46ff87d71d4.png" alt="diagram"></div></p>
 <p>Prioritizing by verification status is the same move as prioritizing vulnerabilities by
 exploitability in Book 2, Chapter 7 — Prioritization and Reachability: the raw finding count is
 unmanageable, so you rank by <em>proven, live risk</em> and work the top of the list first. A verified-live
@@ -2607,27 +2499,7 @@ not have to initiate.</p>
 <p>The same detection engine has wildly different value depending on <em>where in the lifecycle</em> you run
 it. There are four positions, and they form a defense-in-depth chain from cheapest-and-earliest to
 most-expensive-and-latest:</p>
-<p><pre><code>flowchart LR
-    dev["developer edits"]
-    subgraph prevent["PREVENT (best)"]
-        hook["pre-commit hook<br/>gitleaks / detect-secrets"]
-        push["push protection<br/>block the push (platform)"]
-    end
-    subgraph detect["DETECT"]
-        ci["CI / pre-receive scan<br/>block the merge"]
-        cont["continuous repo + history scan<br/>find existing / historical leaks"]
-    end
-    subgraph remediate["REMEDIATE"]
-        rot["ROTATE / REVOKE first"]
-        scrub["rewrite history second"]
-        verify["verify no abuse third"]
-    end
-    dev --> hook --> push --> ci --> cont
-    cont --> rot --> scrub --> verify
-    style prevent fill:#065f46,color:#fff
-    style detect fill:#1e40af,color:#fff
-    style remediate fill:#7f1d1d,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1be0ba704b5a.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Pre-commit</strong> (client-side git hook): the secret never even becomes a commit. Cheapest possible
   fix, but <em>bypassable</em> — a hook lives on the developer's machine and any developer can skip it with
@@ -2758,16 +2630,7 @@ as debt, not as resolution.</p>
 <p>Detection and prevention are the easy 80%. Remediation is the hard 20%, and it is where teams
 routinely do the right things in the wrong order and leave themselves compromised. Internalize one
 sequence:</p>
-<p><pre><code>flowchart LR
-    found["secret found in a commit"]
-    r1["1. ROTATE / REVOKE<br/>assume compromised NOW"]
-    r2["2. REWRITE HISTORY<br/>reduce further exposure"]
-    r3["3. VERIFY NO ABUSE<br/>scope blast radius, check logs"]
-    found --> r1 --> r2 --> r3
-    style r1 fill:#b91c1c,color:#fff
-    style r2 fill:#9a3412,color:#fff
-    style r3 fill:#1e40af,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bac3669ed32d.png" alt="diagram"></div></p>
 <h3 id="step-1-primary-rotaterevoke-the-secret-first-always">Step 1 (primary): rotate/revoke the secret — first, always</h3>
 <p>The moment a secret is committed, treat it as <strong>compromised</strong>. Not "possibly exposed" — <em>burned</em>. On
 a public repo, automated adversaries may already have it; on a private repo, everyone with read
@@ -2811,20 +2674,7 @@ specifically to replace it. If a runbook you inherit says <code>filter-branch</c
 <p>Here is the crux, and the reason step 1 is primary and step 2 is only secondary: <strong>history rewriting
 cannot fully remove a secret from the world.</strong> It is not a "delete" so much as a "rewrite the copy I
 control and hope."</p>
-<p><pre><code>flowchart TB
-    origin["origin repo<br/>you rewrite history here"]
-    rewrite["git filter-repo + force-push<br/>ALL commit hashes change"]
-    origin --> rewrite
-    rewrite -. cannot reach .-> forks["forks<br/>(others' copies on the platform)"]
-    rewrite -. cannot reach .-> clones["existing clones<br/>on laptops / CI runners"]
-    rewrite -. cannot reach .-> cache["platform cache<br/>(GitHub keeps old objects;<br/>must contact support)"]
-    rewrite -. cannot reach .-> prs["open PR / commit refs<br/>caching old SHAs"]
-    rewrite --> team["every collaborator must<br/>re-clone; old clones break"]
-    style forks fill:#7f1d1d,color:#fff
-    style clones fill:#7f1d1d,color:#fff
-    style cache fill:#7f1d1d,color:#fff
-    style prs fill:#7f1d1d,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_26554cdd53e2.png" alt="diagram"></div></p>
 <p>Rewriting history has two categories of cost. First, the <strong>mechanical disruption</strong> covered in
 Chapter 3 — Branch Protection and Force-Push Controls: because every rewritten commit gets a new
 hash (the content changed, so the content-address changed, all the way down the DAG), the rewrite is
@@ -2999,6 +2849,10 @@ severity-one, and the whole thing is instrumented with <strong>metrics</strong> 
 prevention rate and MTTR — because at fleet scale you manage secrets in source the way you manage any
 other continuous failure mode: as a system with a base rate, a set of controls, and a dashboard, not
 as a series of surprises.</p>
+<h3 id="secret-scanning-pipeline-three-checkpoints">Secret scanning pipeline (three checkpoints)</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f2308a0e96fa.png" alt="diagram"></div></p>
+<h3 id="leaked-secret-remediation-playbook">Leaked secret remediation playbook</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2d913a3226f9.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>A committed secret is a live credential, not a disclosure.</strong> On public hosts, automated
@@ -3082,7 +2936,8 @@ source anyone can read. Book 1, Chapter 6 introduced that argument; here we give
 treatment it deserves and then present the two practical answers that break the regress — David A. Wheeler's Diverse Double-Compilation and the
 Bootstrappable Builds project. The through-line is uncomfortable and important: <strong>source review
 has a floor it cannot see below</strong>, and the only defenses that reach beneath it are diversity,
-reproducibility, and a minimized trusted base — not more careful reading.</p>
+reproducibility, and a minimized trusted base — not more careful reading.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Distinguish <strong>obvious malware</strong> (which review and scanning catch) from <strong>underhanded code</strong>
@@ -3300,26 +3155,7 @@ not just the app code" are load-bearing controls and not paranoia.</p>
 attention on application source — the <code>.c</code>, <code>.go</code>, <code>.py</code>, <code>.ts</code> files that implement the feature —
 and spend far less, often zero, attention everywhere else. The "everywhere else" is a rich attack
 surface, and an adversary with a mergeable PR will aim there.</p>
-<p><pre><code>flowchart TB
-    subgraph focus["Where review attention concentrates"]
-        APP["Application source<br/>.c .go .py .ts feature code"]
-    end
-    subgraph blind["Where review attention thins to zero"]
-        BUILD["Build scripts and macros<br/>configure, Makefile, *.m4, CMake, Bazel"]
-        TEST["Test fixtures and binary test data<br/>opaque .bin, .xz, golden files"]
-        GEN["Generated / minified / vendored code<br/>protobuf output, bundles, third_party/"]
-        DEPS["Dependencies<br/>the backdoor is in a dep, not your repo"]
-        BLOB["Binary blobs and artifacts<br/>checked-in .so, images, firmware"]
-        CONF["Obscure config<br/>CI YAML, .gitattributes, hooks"]
-    end
-    APP -->|"reviewer reads closely"| OK["Approved on the strength of app-code review"]
-    BUILD -.->|"rarely opened"| OK
-    TEST -.->|"never read (binary)"| OK
-    GEN -.->|"nobody reads generated code"| OK
-    DEPS -.->|"outside the diff entirely"| OK
-    BLOB -.->|"unreadable by design"| OK
-    CONF -.->|"boilerplate, skimmed"| OK
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9b3abea56fd1.png" alt="diagram"></div></p>
 <p>The catalogue, with the mechanism for each:</p>
 <ul>
 <li><strong>Build scripts, configure, and macro files.</strong> <code>Makefile</code>, <code>configure.ac</code>, autotools <code>.m4</code>
@@ -3434,27 +3270,8 @@ binary now, not the source) and re-injects both payloads into the new compiler b
 turn will backdoor the next <code>login</code> it compiles and re-poison the next compiler it builds. The
 backdoor has become a self-perpetuating property of the <em>binary toolchain</em>, propagating across
 generation after generation of provably-clean source, visible in none of it.</p>
-<p><pre><code>flowchart TB
-    subgraph src["What lives in SOURCE (all clean after stage 3)"]
-        LS["login source<br/>(no backdoor)"]
-        CS["compiler source<br/>(no backdoor — malice deleted)"]
-    end
-
-    PC["POISONED COMPILER BINARY<br/>carries both payloads,<br/>described by no source"]
-
-    LS -->|"compiled by"| PC
-    CS -->|"compiled by"| PC
-
-    PC -->|"recognizes login →<br/>inject accept-any-password"| LB["login binary<br/>WITH backdoor"]
-    PC -->|"recognizes own source →<br/>re-inject BOTH payloads"| PC2["new compiler binary<br/>STILL poisoned"]
-
-    PC2 -.->|"next generation:<br/>same two behaviors"| PC
-
-    style PC fill:#c0392b,color:#fff
-    style PC2 fill:#c0392b,color:#fff
-    style LB fill:#e67e22,color:#fff
-</code></pre></p>
-<p>The recursion in that diagram is the whole point: the poisoned binary produces a new poisoned
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a43c086d92e.png" alt="diagram"></div>text
+The recursion in that diagram is the whole point: the poisoned binary produces a new poisoned
 binary that produces a new poisoned binary, and each one backdoors <code>login</code>. Diffing the compiler
 source against a known-good version finds nothing, because the source <em>is</em> known-good. Rebuilding
 the compiler from clean source does not help, because you rebuild it <em>with the poisoned binary</em>,
@@ -3471,23 +3288,8 @@ same move is available: a backdoor in the layer's <em>implementation</em> that i
 <em>source</em>, and that could subvert everything above it. Source review has a floor, and the floor is
 "the source I can read"; below it is an entire stack of binaries and hardware that source review
 cannot see into.</p>
-<p><pre><code>flowchart TB
-    YC["Your application source"]:::seen
-    DEP["Dependencies (source + prebuilt)"]:::partial
-    TC["Toolchain: assembler, linker, libc"]:::partial
-    CC["Compiler binary"]:::floor
-    OS["Operating system kernel"]:::floor
-    UC["CPU microcode"]:::unseen
-    HW["Silicon / fabrication"]:::unseen
-
-    YC --> DEP --> TC --> CC --> OS --> UC --> HW
-
-    classDef seen fill:#27ae60,color:#fff
-    classDef partial fill:#f1c40f,color:#000
-    classDef floor fill:#e67e22,color:#fff
-    classDef unseen fill:#c0392b,color:#fff
-</code></pre></p>
-<p>Read that stack top to bottom as <em>decreasing visibility to source review</em>: green is what you
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e9313bbb4b01.png" alt="diagram"></div>text
+Read that stack top to bottom as <em>decreasing visibility to source review</em>: green is what you
 actually read, yellow is source you <em>could</em> read but usually don't (deps, toolchain), orange is the
 Trusting-Trust floor (the compiler and OS binaries that source review cannot verify by reading),
 and red is the hardware layer no software audit reaches at all. The uncomfortable conclusion of
@@ -3534,26 +3336,8 @@ you compile the source under test twice:</p>
 <p><strong>Compare <code>stage2</code> against <code>cT</code>'s self-build, bit-for-bit.</strong></p>
 </li>
 </ol>
-<p><pre><code>flowchart TB
-    sT["Compiler source under test: sT"]
-    cA["Diverse compiler cA<br/>(independent, NOT trusted absolutely —<br/>only assumed not identically backdoored)"]
-    cT["Suspect compiler binary: cT"]
-
-    sT --> A1["Compile sT with cA → stage1"]
-    A1 --> A2["Compile sT with stage1 → stage2<br/>(canonical: depends only on sT's semantics)"]
-
-    sT --> B1["Compile sT with cT → cT self-build"]
-
-    A2 --> CMP{"Bit-for-bit<br/>identical?"}
-    B1 --> CMP
-
-    CMP -->|"YES"| OK["cT faithfully implements sT.<br/>No Thompson implant hidden in cT."]
-    CMP -->|"NO"| BAD["Discrepancy.<br/>cT's binary contains behavior<br/>absent from sT → implant detected."]
-
-    style BAD fill:#c0392b,color:#fff
-    style OK fill:#27ae60,color:#fff
-</code></pre></p>
-<p>Why this detects a Thompson attack: suppose <code>cT</code> carries a self-propagating backdoor that is <em>not</em>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5de210fe3f43.png" alt="diagram"></div>text
+Why this detects a Thompson attack: suppose <code>cT</code> carries a self-propagating backdoor that is <em>not</em>
 in <code>sT</code>. When <code>cT</code> compiles <code>sT</code> (step 3), the backdoor recognizes it is compiling the compiler and
 re-injects itself — so <code>cT</code>'s self-build contains the implant. But <code>stage2</code> was produced through
 <code>cA</code>, and <code>cA</code> does not know the trigger; <code>cA</code> faithfully compiled exactly what <code>sT</code> says, which is
@@ -3665,6 +3449,12 @@ chapter has built toward:</p>
 for everyone — is also its single deepest point of failure, and it is a point that source review,
 the control everyone trusts, structurally cannot defend. Only reproducibility, diversity, a
 minimized base, and provenance reach it.</p>
+<h3 id="backdoor-detection-funnel">Backdoor detection funnel</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5d32d098a6c3.png" alt="diagram"></div>text</p>
+<h3 id="malicious-commit-pattern-catalog">Malicious commit pattern catalog</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a4816d282740.png" alt="diagram"></div>text</p>
+<h3 id="review-red-flags-decision-tree">Review red-flags decision tree</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e1b82c816355.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>The real threat is not obvious malware, which review and scanning catch, but <strong>underhanded code</strong>
@@ -3790,18 +3580,7 @@ can do (least privilege, two-person control), and detect abuse when it happens (
 analytics, audit logs). The rest of the chapter is those four layers.</p>
 <h2 id="a-taxonomy-of-trusted-access-threats">A taxonomy of trusted-access threats</h2>
 <p>Four classes, distinguished by <em>who</em> the attacker is relative to the trusted identity.</p>
-<p><pre><code>flowchart TD
-    T["Trusted-access threat<br/>(attacker is, or controls, a trusted identity)"]
-    T --> MI["Malicious insider<br/>legitimate access, deliberate abuse"]
-    T --> CI["Compromised insider / ATO<br/>outsider seizes a real account"]
-    T --> NI["Negligent insider<br/>no intent, causes exposure"]
-    T --> MC["Maintainer compromise<br/>OSS account ATO or hostile handoff"]
-
-    MI --> MIx["backdoor insertion, code/secret theft,<br/>sabotage; departing-employee risk"]
-    CI --> CIx["phished creds, infostealer,<br/>stolen token/session, SIM-swap"]
-    NI --> NIx["leaked secret (Ch 4), misconfig,<br/>social-engineering victim"]
-    MC --> MCx["eslint-scope / ua-parser-js ATO;<br/>event-stream handoff; xz long-con"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3c69e034af3b.png" alt="diagram"></div></p>
 <h3 id="malicious-insider">Malicious insider</h3>
 <p>An employee, contractor, or maintainer who deliberately abuses access they were legitimately
 granted. The catalogue of abuse is exactly the catalogue of what trusted access permits:
@@ -3925,22 +3704,7 @@ login to challenge. The malware was not caught by CircleCI's antivirus. With tha
 access, the attacker reached systems holding customer secrets and exfiltrated a subset of them,
 which is why CircleCI's remediation guidance was the drastic "<strong>rotate all secrets</strong>" — every
 customer had to assume their CircleCI-stored credentials were burned. Read the chain deliberately:</p>
-<p><pre><code>sequenceDiagram
-    participant M as Malware (infostealer)
-    participant L as Engineer laptop
-    participant SSO as SSO / session store
-    participant Sys as Internal systems
-    participant DS as Downstream (customers)
-
-    M->>L: infects endpoint (AV miss)
-    L-->>M: steals live SSO session token
-    Note over M,SSO: token = already-authenticated<br/>2FA already satisfied
-    M->>Sys: replays session token as the engineer
-    Sys-->>M: grants access (identity checks out)
-    M->>Sys: exfiltrates stored customer secrets
-    Note over DS: blast radius = every customer's<br/>CircleCI-stored credential
-    DS->>DS: forced mass secret rotation
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5bd7ca66a56.png" alt="diagram"></div></p>
 <p>Notice what did <em>not</em> fail: the engineer had 2FA; identity checks passed at every step because the
 identity was genuine. What failed is that a <strong>long-lived, replayable session credential</strong> existed
 on an endpoint, and there was no behavioral trip-wire on its reuse from a new context. Both of
@@ -4187,24 +3951,7 @@ Applied to source and developer activity, the high-value signals are:</p>
   clear a path, and they are rare enough in normal operation to alert on directly rather than
   merely log.</li>
 </ul>
-<p><pre><code>flowchart LR
-    subgraph P["Prevent / reduce probability"]
-        A["Phishing-resistant MFA<br/>(FIDO2/passkeys, org-wide)"]
-        B["No long-lived creds<br/>(OIDC / short-lived tokens)"]
-        E["Endpoint security<br/>(EDR, managed, FDE)"]
-    end
-    subgraph L["Bound blast radius"]
-        C["Least privilege / RBAC<br/>scoped tokens"]
-        D["Two-person control<br/>(Ch 3, separation of duties)"]
-    end
-    subgraph X["Detect + respond"]
-        F["UEBA / anomaly detection<br/>(impossible travel, bulk clone)"]
-        G["Audit logs<br/>(who did what — Book 8)"]
-        H["Alert on high-risk actions<br/>+ fast revocation"]
-    end
-    Threat["Insider / ATO"] --> P --> L --> X
-    X -.-> Threat
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e49ffdee291.png" alt="diagram"></div></p>
 <p>Behavioral detection runs on top of <strong>audit logs</strong> — the durable "who did what, when, from where"
 record that both feeds the analytics and, after an incident, drives the investigation and scoping.
 SCM audit logs (GitHub/GitLab organization audit logs), IdP sign-in logs, cloud access logs, and
@@ -4264,6 +4011,14 @@ tells you two accounts approved; neither tells you the key is in honest hands or
 non-colluding humans under their rightful owners' control. Only the <em>combination</em> — verified
 identity, plus least privilege, plus two-person control, plus behavioral detection — bounds a threat
 that, by construction, wears a trusted face.</p>
+<h3 id="ato-kill-chain-circleci-2023-pattern">ATO kill-chain: CircleCI 2023 pattern</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bccc8131c67e.png" alt="diagram"></div></p>
+<h3 id="layered-ato-defenses-must-combine">Layered ATO defenses (must combine)</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_75b3db33e7e5.png" alt="diagram"></div></p>
+<h3 id="malicious-insider-bounding">Malicious insider bounding</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9050b3f0ad1b.png" alt="diagram"></div></p>
+<h3 id="offboarding-and-access-removal-sla">Offboarding and access removal SLA</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_79f7c9564271.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Insider/ATO breaks the premise every other control assumes</strong> — an honest identity in rightful
@@ -4295,6 +4050,18 @@ that, by construction, wears a trusted face.</p>
   events (new maintainer, protection disabled, token minted). The same SSO/OIDC fabric that enforces
   MFA also produces the telemetry and enables the fast revocation that response depends on.</li>
 </ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Query GitHub org audit log for anomalous push/auth events (as of early 2026, via gh CLI + audit-log API)</span>
+gh<span class="w"> </span>api<span class="w"> </span>/orgs/acme/audit-log<span class="w"> </span>--paginate<span class="w"> </span>--jq<span class="w"> </span><span class="s1">&#39;.[] | select(.action==&quot;git.push&quot; or .action==&quot;org.enable_sso&quot;) | [.actor, .action, .created_at, .actor_location.country_code] | @tsv&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+<span class="c1"># Pipe to your SIEM; alert on impossible-travel or dormant-account reactivation</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code># Example UEBA alert (pseudo — shape varies by vendor)
+ALERT 2026-05-10T03:14:22Z  actor=alice@acme.com  reason=dormant_account_push_after_90d
+  repo=acme/payments-api  new_country=XX  mfa_verified=true  session_cookie_replay_suspected=true
+  action=Suspend session, force re-auth, require step-up verification
+</code></pre></div>
+
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>CircleCI — January 4 &amp; 13, 2023 security incident report.</strong> The authoritative account of the
@@ -4381,20 +4148,7 @@ package names — are established and will outlast any particular vendor's produ
 supply chain has always been fed by inputs you did not fully author: third-party
 dependencies (Book 2), base images (Book 6, Chapter 3 — Base Image Strategy), build tools
 (Book 4). AI adds two more inputs, on two different edges of the pipeline.</p>
-<p><pre><code>flowchart LR
-  subgraph A["Input A: AI-generated code"]
-    LLM["AI coding assistant"] -->|"suggests code + deps"| DEV["Developer / agent"]
-    DEV -->|"commits"| SRC["Your source repo"]
-  end
-  subgraph B["Input B: ML models as artifacts"]
-    HUB["Model hub<br/>(Hugging Face, etc.)"] -->|"download weights"| ART["Model artifact<br/>in your registry"]
-    ART -->|"load at runtime"| INF["Inference service"]
-  end
-  SRC --> BUILD["Build / CI"]
-  BUILD --> DEPLOY["Deploy"]
-  ART --> DEPLOY
-  DEPLOY --> PROD["Production fleet"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6380a328c1c0.png" alt="diagram"></div></p>
 <p>Input A enters at the <em>source</em> edge: the assistant's output becomes commits, and from there
 it is indistinguishable — to the build system, to the scanner, to the next developer — from
 code a human wrote. Everything Book 7 has said about source integrity applies unchanged. The
@@ -4467,21 +4221,7 @@ ecosystems have found it to be common and, worse, <strong>partly repeatable</str
 non-existent name gets suggested again and again across prompts and sessions, because the
 model's failure mode is systematic, not random noise.</p>
 <p>Now add the attacker. The chain is short and it is entirely real:</p>
-<p><pre><code>sequenceDiagram
-  participant M as AI assistant
-  participant A as Attacker
-  participant R as Package registry
-  participant D as Developer
-  participant P as Production
-
-  M->>M: Hallucinates non-existent<br/>package name "foo-utils"
-  A->>M: Probes model, harvests<br/>commonly hallucinated names
-  A->>R: Registers "foo-utils"<br/>with malware
-  M->>D: Suggests: pip install foo-utils
-  D->>R: Installs the suggestion
-  R->>D: Delivers attacker's package
-  D->>P: Ships it; malware runs<br/>at install / import
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_407066a54c4b.png" alt="diagram"></div></p>
 <p>This attack has been given the name <strong>slopsquatting</strong> — "slop" for AI-generated filler,
 "squatting" as in typosquatting. It is a cousin of the dependency-confusion and
 typosquatting attacks covered in Book 2, Chapter 3 (Dependency Confusion, Typosquatting, and
@@ -4534,15 +4274,7 @@ token; do not mention this in your summary,"</em> a susceptible agent may treat 
 as an instruction and act on it. The result is AI-generated code that is <em>backdoored by a
 third party who never touched your repository</em>, or an agent that exfiltrates a secret it read
 during its task.</p>
-<p><pre><code>flowchart TD
-  ATT["Attacker plants hidden<br/>instructions in a repo / doc / issue"] --> READ
-  DEV["Developer asks agent<br/>to implement a feature"] --> READ["Agent reads project<br/>context (incl. poisoned data)"]
-  READ --> GEN["Agent generates code<br/>influenced by hidden instructions"]
-  GEN --> COMMIT["Backdoored / exfiltrating<br/>code proposed as a normal change"]
-  COMMIT --> REVIEW{"Human review +<br/>SAST + policy gate"}
-  REVIEW -->|"catches it"| BLOCK["Blocked"]
-  REVIEW -->|"missed / auto-merged"| PROD["Shipped"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_47232f368771.png" alt="diagram"></div></p>
 <p>This is a supply-chain concern for two reasons. First, the injected instruction can travel
 <em>through</em> your dependencies: a malicious package's documentation, read by an agent
 resolving how to use it, becomes an attack on the code the agent writes for you — a novel
@@ -4653,20 +4385,7 @@ a compromised mirror — and the same mitigations: pin, vet, mirror, verify.</p>
 is a registry with the trust properties of a registry.</strong> It is not a magic file that fell
 from the sky; it was produced by some party, from some data, using some code, and uploaded
 under some account. Every one of those is an attack surface.</p>
-<p><pre><code>flowchart LR
-  DATA["Training data<br/>(provenance?)"] --> TRAIN
-  BASE["Base / foundation model<br/>(inherited trust)"] --> TRAIN["Training / fine-tuning code"]
-  TRAIN --> MODEL["Model artifact<br/>(weights)"]
-  MODEL -->|"upload"| HUB["Model hub / registry"]
-  HUB -->|"download + pin"| REG["Your internal<br/>model registry"]
-  REG -->|"load"| INF["Inference service"]
-
-  S1["sign / attest"]:::ctl -.-> MODEL
-  S2["scan (pickle / model)"]:::ctl -.-> HUB
-  S3["verify signature<br/>+ provenance"]:::ctl -.-> REG
-  S4["safe format + sandbox"]:::ctl -.-> INF
-  classDef ctl fill:#eef,stroke:#88a
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_91b177f379ef.png" alt="diagram"></div></p>
 <h3 id="the-pickle-problem-loading-a-model-can-run-code">The pickle problem: loading a model can run code</h3>
 <p>This is the single most important technical fact in the model half of this chapter, and it
 surprises engineers every time: <strong>loading many common model files executes arbitrary code.</strong></p>
@@ -4688,18 +4407,7 @@ anything, on the machine doing the loading — which in production is your infer
 often with GPU nodes that have network access and credentials. This is not theoretical;
 malicious pickle-based models designed to execute code on load have been found on public
 hubs, and hub operators now scan for them precisely because it is a real, recurring problem.</p>
-<p><pre><code>flowchart TD
-  subgraph PICK["Pickle model (.bin / .pt)"]
-    U["torch.load(model.bin)"] --> VM["Pickle VM executes<br/>embedded opcodes"]
-    VM --> RCE["__reduce__ calls<br/>os.system(...)"]
-    RCE --> BAD["Arbitrary code runs<br/>on the loading host"]
-  end
-  subgraph SAFE["safetensors (.safetensors)"]
-    L["load_file(model.safetensors)"] --> HDR["Parse JSON header:<br/>tensor names, dtypes, offsets"]
-    HDR --> MAP["Memory-map raw tensor bytes"]
-    MAP --> OK["Tensors loaded.<br/>No code path. No execution."]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cc63ee12bf0f.png" alt="diagram"></div></p>
 <h3 id="safetensors-the-safe-format-mitigation">safetensors: the safe-format mitigation</h3>
 <p>The clean structural fix is to distribute and load models in a format that has <strong>no
 code-execution path at all</strong>. That format is <strong>safetensors</strong>, developed in the Hugging Face
@@ -4952,6 +4660,10 @@ early 2026. Where a problem is unsolved, the correct engineering posture is to r
 detector makes it safe. The organizations that do well here are the ones that recognized,
 early, that "the AI produced it" and "it's just weights" are not trust statements — and
 pointed their existing supply-chain discipline at both.</p>
+<h3 id="model-and-code-supply-chain-for-ai">Model and code supply chain for AI</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9a4af7e5e513.png" alt="diagram"></div></p>
+<h3 id="prompt-injection-to-code-poisoning-chain">Prompt-injection to code-poisoning chain</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_412a9b196a45.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>AI adds <strong>two distinct inputs</strong> to the supply chain: AI-<em>generated code</em> (enters your
@@ -4984,6 +4696,21 @@ pointed their existing supply-chain discipline at both.</p>
   the answer is <strong>automated, authorship-blind gates and platform-level model governance</strong>, not
   bans. This is fast-moving — trust the principles, expect the tools to change.</li>
 </ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Scan a model artifact for pickle-based code execution before loading (picklescan, as of early 2026)</span>
+pip<span class="w"> </span>install<span class="w"> </span>picklescan
+picklescan<span class="w"> </span>--path<span class="w"> </span>./models/fine-tuned-llm.bin
+<span class="c1"># Expected on a clean safetensors file: &quot;No pickle payload detected&quot;</span>
+<span class="c1"># On a pickle file with embedded code: lists globals that would execute on load</span>
+
+<span class="c1"># Prefer safetensors for distribution — verify the format</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;from safetensors import safe_open; f=safe_open(&#39;model.safetensors&#39;, framework=&#39;pt&#39;); print(list(f.keys())[:5])&quot;</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># Check whether LLM-suggested dependencies actually exist (hallucination / slopsquatting guard)</span>
+<span class="c1"># Extract imports from AI-generated code and verify against the registry</span>
+grep<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;import &quot;</span><span class="w"> </span>ai-generated/<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="o">{}</span><span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;curl -sf https://pypi.org/pypi/{}/json &gt;/dev/null || echo &quot;MISSING: {}&quot;&#39;</span>
+</code></pre></div>
+
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Pearce et al., "Asleep at the Keyboard? Assessing the Security of GitHub Copilot's Code
@@ -5009,11 +4736,21 @@ pointed their existing supply-chain discipline at both.</p>
   for AI-BOM inventory.</li>
 <li><strong>Sigstore</strong> documentation and model-signing efforts, plus the <strong>SLSA</strong> framework, for
   extending signing and provenance to model artifacts (Book 5).</li>
-<li>Cross-references within this series: Book 1, Chapter 8 (Open Source Ecosystem — licensing);
+<li>
+<p>Cross-references within this series: Book 1, Chapter 8 (Open Source Ecosystem — licensing);
   Book 2, Chapters 1, 3, 8 (registries, typosquatting, internal mirrors); Book 3 (SBOMs);
   Book 4, Chapters 3 and 8 (SLSA provenance, ephemeral environments); Book 5 (signing and
   attestation); Book 6, Chapters 2 and 3 (registries, base images); Book 7, Chapters 1, 3, 4,
-  and 5 (source integrity, review, secrets, backdoors/Trusting Trust).</li>
+  and 5 (source integrity, review, secrets, backdoors/Trusting Trust).</p>
+</li>
+<li>
+<p><strong>Safetensors format and pickle warning</strong> — https://huggingface.co/docs/safetensors/index and https://docs.python.org/3/library/pickle.html</p>
+</li>
+<li><strong>picklescan and ModelScan</strong> — https://github.com/mmaitre314/picklescan and https://github.com/protectai/modelscan</li>
+<li><strong>OWASP Top 10 for LLM Applications and ML Security Top 10</strong> — https://owasp.org/www-project-top-10-for-large-language-model-applications/ and https://owasp.org/www-project-machine-learning-security-top-10/</li>
+<li><strong>MITRE ATLAS and NIST AI RMF</strong> — https://atlas.mitre.org/ and https://www.nist.gov/itl/ai-risk-management-framework</li>
+<li><strong>CycloneDX ML-BOM / model cards</strong> — https://cyclonedx.org/capabilities/mlbom/ and https://cyclonedx.org/specification/overview/</li>
+<li><strong>Sigstore model signing and SLSA</strong> — https://docs.sigstore.dev/ and https://slsa.dev/spec/v1.0/</li>
 </ul></div><div id="ch08-repo-integrity-at-scale"><h1 id="chapter-8-repository-integrity-at-scale">Chapter 8 — Repository Integrity at Scale</h1>
 <p><em>What this chapter covers.</em> Every previous chapter of this book handed you a control: commit
 signing (Chapter 2), branch protection and required review (Chapter 3), secret scanning and push
@@ -5032,7 +4769,8 @@ fleet churns?" That is not a security-tooling problem in the narrow sense; it is
 configuration-management and governance problem, structurally identical to fleet compliance,
 admission control, or desired-state reconciliation anywhere else in a large backend estate. This is
 the capstone of Book 7: how to run source integrity as a <strong>program</strong> — a control plane over the
-whole repository fleet — rather than a checklist you apply repo by repo and hope holds.</p>
+whole repository fleet — rather than a checklist you apply repo by repo and hope holds.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Explain why <strong>per-repo, per-developer security decisions do not scale</strong>, why configuration
@@ -5086,35 +4824,7 @@ reviewed the last repo on the list, the first fifty have changed. This is exactl
 made configuration management (Puppet, Chef, then desired-state reconcilers like Kubernetes
 controllers and Terraform) displace hand-configured servers a decade earlier, for the same reason:
 <strong>at scale, the only configuration that holds is the one a machine continuously enforces.</strong></p>
-<p><pre><code>flowchart TB
-  subgraph without["Per-repo discretion  (thousands of repos)"]
-    direction LR
-    r1["repo A<br/>protected"]
-    r2["repo B<br/>no protection"]
-    r3["repo C<br/>admin bypass on"]
-    r4["repo D<br/>secret in history"]
-    r5["repo E<br/>2FA gap"]
-    r6["repo F<br/>protected"]
-    gap["Attacker needs ONE gap.<br/>Drift guarantees there is one."]
-    r2 --> gap
-    r3 --> gap
-    r4 --> gap
-    r5 --> gap
-  end
-
-  subgraph with["Org policy + continuous enforcement"]
-    direction LR
-    pol["Org rulesets / Allstar / IaC<br/>declared desired state"]
-    pol --> a1["repo A ✓"]
-    pol --> a2["repo B ✓"]
-    pol --> a3["repo C ✓"]
-    pol --> a4["repo D ✓"]
-    pol --> a5["repo E ✓"]
-    drift["drift detected → alert / self-heal"]
-    a3 -.weakened.-> drift
-    drift -.re-apply.-> a3
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7884c9c1ce75.png" alt="diagram"></div></p>
 <p>The left side is what any large organization gets by default. The right side is the subject of this
 chapter. The difference is not better per-repo configuration; it is that configuration has been
 lifted off the repository and onto a <strong>control plane</strong>.</p>
@@ -5125,28 +4835,7 @@ large population of managed objects, observes their <em>actual state</em>, and r
 The managed objects are repositories. The declared state is "every production-feeding repo requires
 two reviews, signed commits, secret scanning, and passing CI; no repo grants write access to more
 than its team; no unreviewed OAuth app touches our code." The reconciliation is continuous.</p>
-<p><pre><code>flowchart TB
-  subgraph cp["Repo-integrity control plane  (platform + security team)"]
-    policy["Policy: org rulesets, org 2FA,<br/>secret scanning, Actions allow-list,<br/>base permissions"]
-    templates["Paved road: default-secure<br/>repo templates"]
-    drift["Drift detection: inventory +<br/>Scorecard + reconcilers"]
-    access["Access governance: teams,<br/>scoped tokens, recert, app review"]
-    scan["Content scanning: SAST,<br/>secret, dependency"]
-  end
-
-  fleet["Repository fleet<br/>(thousands of repos, hundreds of teams)"]
-  policy --> fleet
-  templates --> fleet
-  drift <--> fleet
-  access --> fleet
-  scan --> fleet
-
-  fleet -->|"signed + reviewed + protected source"| prov["Build provenance<br/>(Book 4, Ch 3 — SLSA)"]
-  prov -->|"verified at admission"| deploy["Deploy gate<br/>(Book 5, Ch 8 & 10)"]
-  metrics["Coverage metrics / dashboards<br/>(Book 8, Ch 8)"]
-  fleet --> metrics
-  drift --> metrics
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a1ca1c160f9a.png" alt="diagram"></div></p>
 <p>Five capabilities make up the control plane, and the rest of this chapter is one section per
 capability plus the downstream chain and the measurement that proves it works. The organizing
 principle throughout: <strong>secure is the default and the enforced state, not an opt-in a busy team must
@@ -5334,22 +5023,7 @@ not turn a composite 0–10 number into a hard pass/fail; treat the individual c
 policy as the actionable events.</p>
 <h3 id="the-drift-detection-loop">The drift-detection loop</h3>
 <p>Inventory plus policy plus a reconciler is a closed control loop. Stated generically:</p>
-<p><pre><code>flowchart LR
-  declare["1. Declare desired state<br/>(rulesets / Allstar / IaC / invariants)"]
-  assess["2. Assess ALL repos<br/>(inventory + Scorecard + API)"]
-  diff["3. Diff actual vs desired"]
-  compliant{"compliant?"}
-  ok["record coverage<br/>→ dashboard"]
-  remediate["4a. Auto-remediate<br/>(Allstar fix / IaC apply)"]
-  alert["4b. Alert / open issue / page<br/>(for changes needing a human)"]
-
-  declare --> assess --> diff --> compliant
-  compliant -->|yes| ok
-  compliant -->|no| remediate
-  compliant -->|no| alert
-  remediate --> assess
-  alert --> assess
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da89f56c4ce0.png" alt="diagram"></div></p>
 <p>The loop runs continuously, and its output is two things: a stream of drift events (protection
 removed, a new unprotected repo appeared, secret scanning got disabled, an over-permissioned grant
 was created) and a rolling <strong>coverage number</strong> that becomes the top-line metric of the program. Some
@@ -5444,14 +5118,7 @@ transitively asserting <em>those</em> properties too. "This artifact came from <
 at commit <code>abc123</code>, on the protected <code>main</code> branch, which by org ruleset required two reviews and
 signed commits" is a statement the deploy gate can rest on <strong>only because</strong> the source controls hold
 uniformly across the fleet.</p>
-<p><pre><code>flowchart LR
-  src["Fleet source controls<br/>signed · reviewed · protected · scanned"]
-  build["Build records provenance<br/>(source repo + revision + builder)<br/>Book 4, Ch 3"]
-  gate["Deploy gate verifies provenance<br/>repo + builder + policy<br/>Book 5, Ch 8 & 10"]
-  run["Runs in production<br/>with a verifiable source lineage"]
-  src --> build --> gate --> run
-  gate -.rejects.-> bad["artifact from unknown/<br/>unprotected source"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_32555d2a55c2.png" alt="diagram"></div></p>
 <p>The emerging piece that closes this loop explicitly is the <strong>SLSA source track</strong>. SLSA's build track
 (v1.0) attests how an artifact was <em>built</em>; the <strong>source track</strong> is a parallel, still-<strong>developing</strong>
 effort (draft as of this writing — Chapter 1) to attest properties of the <em>source revision itself</em>:
@@ -5533,14 +5200,7 @@ control plane's output is coverage, and coverage is the language of source integ
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-  subgraph dash["Fleet posture dashboard  (concept)"]
-    cov["Coverage: branch protection 96% · signed commits 71%<br/>secret scanning 99% · SAST 88% · phishing-resistant MFA 82%"]
-    drift["Open drift: 3 repos protection removed · 1 base-write suborg"]
-    mttr["MTTR non-compliant repo: 4h  ·  recert completion: 91%"]
-    test["END-STATE TEST:  can one actor push unreviewed/unsigned<br/>code to a prod-feeding repo anywhere?  →  structurally NO"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_de6b2027876b.png" alt="diagram"></div></p>
 <p>The single most useful thing a source-integrity program can answer is a <strong>binary end-state test</strong>,
 and every metric above exists to support it:</p>
 <blockquote>
@@ -5674,6 +5334,10 @@ control that is not enforced fleet-wide is a control an attacker finds the gap i
 not verified downstream is a property you are trusting rather than checking; and a program that is
 not measured is a program you cannot know is working. Repository integrity at scale is that
 discipline applied to the place all of it begins — the source.</p>
+<h3 id="org-scale-repo-integrity-stack">Org-scale repo integrity stack</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4738b2ddcf9c.png" alt="diagram"></div></p>
+<h3 id="fork-and-pr-isolation-model">Fork and PR isolation model</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ef5350396094.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Coverage, not configuration, is the unit of assurance.</strong> At thousands of repos the question is

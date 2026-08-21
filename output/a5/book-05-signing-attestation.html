@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -358,22 +440,7 @@ corresponding public key, and this holds even though the public key is known to 
 asymmetry — sign with private, verify with public — is what makes signatures <em>broadcast
 authentication</em>: you can hand your public key to the entire world, and any of them can verify
 your signatures, but none of them can forge one.</p>
-<p><pre><code>flowchart LR
-  subgraph Signer["Signer (holds private key)"]
-    A["Artifact bytes"] -->|"H()"| D["Digest (sha256)"]
-    D -->|"Sign with PRIVATE key"| S["Signature"]
-  end
-  A -->|"distributed"| A2["Artifact bytes"]
-  S -->|"distributed"| S2["Signature"]
-  PUB["Public key\n(published)"] --> V
-  subgraph Verifier["Verifier (holds public key)"]
-    A2 -->|"H()"| D2["Digest'"]
-    D2 --> V{"Verify(pub, digest', sig)"}
-    S2 --> V
-    V -->|valid| OK["Origin + integrity confirmed"]
-    V -->|invalid| NO["Reject"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b70f9034a5a.png" alt="diagram"></div></p>
 <h3 id="what-a-signature-proves-and-what-it-does-not">What a signature proves — and what it does not</h3>
 <p>A valid signature under a public key you trust establishes three things:</p>
 <ul>
@@ -568,14 +635,7 @@ store, a container base image's <code>ca-certificates</code>, a private corporat
 <strong>intermediate</strong> CAs, which issue the <strong>leaf</strong> (end-entity) certificates that actually bind
 service identities. Each certificate is signed by the one above it, forming a chain from leaf to
 root.</p>
-<p><pre><code>flowchart TD
-  ROOT["Root CA\n(self-signed)\nin trust store"] -->|signs| INT["Intermediate CA\nBasicConstraints CA:TRUE"]
-  INT -->|signs| LEAF["Leaf certificate\nSubject: build.example.com\nEKU: codeSigning"]
-  LEAF --> KEY["Public key\n+ identity binding"]
-  TS["Trust store\n(roots the verifier trusts)"] -.anchors.-> ROOT
-  style ROOT fill:#1f6feb,color:#fff
-  style TS fill:#2ea043,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0bad5ccd81e.png" alt="diagram"></div></p>
 <p><strong>Chain validation</strong>, which every TLS client and signature verifier performs, walks from the
 leaf up to a trusted root and checks, at each link: (1) the signature on this certificate
 verifies under the issuer's public key; (2) the current time is within the certificate's
@@ -672,18 +732,7 @@ concatenation of its two children; the <strong>root</strong> hash therefore depe
 leaf and the root changes. (In RFC 6962's construction, leaves are hashed with a <code>0x00</code> prefix
 and internal nodes with a <code>0x01</code> prefix — <em>domain separation</em> that prevents an attacker from
 passing off an internal node as a leaf, a second-preimage defense worth knowing exists.)</p>
-<p><pre><code>flowchart TD
-  ROOT["Root = H(H12 ‖ H34)"]
-  ROOT --> H12["H12 = H(H1 ‖ H2)"]
-  ROOT --> H34["H34 = H(H3 ‖ H4)  ⟵ proof"]
-  H12 --> L1["H1 = H(d1)"]
-  H12 --> L2["H2 = H(d2)  ⟵ proof"]
-  H34 --> L3["H3 = H(d3)  TARGET"]
-  H34 --> L4["H4 = H(d4)"]
-  style L3 fill:#2ea043,color:#fff
-  style L2 fill:#1f6feb,color:#fff
-  style H34 fill:#1f6feb,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_56c08a626a72.png" alt="diagram"></div></p>
 <p>An <strong>inclusion proof</strong> (audit proof) demonstrates that a specific item is a leaf under a known
 root, <em>without</em> revealing the other items, using only the sibling hashes along the path from the
 leaf to the root — about <strong>log₂(n)</strong> hashes for <code>n</code> leaves. In the diagram, to prove <code>d3</code> is in
@@ -716,21 +765,10 @@ attestations (Chapter 6) and SLSA provenance (Book 4, Chapter 3) travel in.</p>
 <li><code>signatures</code> — a list, each with a <code>sig</code> value and an optional <code>keyid</code>. A list because a
   payload may carry multiple signatures (multi-sig, below).</li>
 </ul>
-<p><pre><code>flowchart TD
-  subgraph ENV["DSSE Envelope (JSON)"]
-    P["payload  (base64 statement)"]
-    T["payloadType  (e.g. application/vnd.in-toto+json)"]
-    SIGS["signatures: [ { sig, keyid }, ... ]"]
-  end
-  P --> PAE
-  T --> PAE
-  PAE["PAE(payloadType, payload)\n= 'DSSEv1' SP len(type) SP type SP len(payload) SP payload"]
-  PAE -->|"Sign(PAE)"| SIG["signature"]
-  SIG --> SIGS
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bc6d6ce8dcfc.png" alt="diagram"></div></p>
 <p>The subtle and important part is <strong>PAE — Pre-Authentication Encoding</strong>. The signature is <em>not</em>
 computed over the raw payload bytes. It is computed over:</p>
-<div class="highlight"><pre><span></span><code><span class="n">PAE</span><span class="p">(</span><span class="n">payloadType</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;DSSEv1&quot;</span><span class="w"> </span><span class="n">SP</span><span class="w"> </span><span class="n">LEN</span><span class="p">(</span><span class="n">payloadType</span><span class="p">)</span><span class="w"> </span><span class="n">SP</span><span class="w"> </span><span class="n">payloadType</span><span class="w"> </span><span class="n">SP</span><span class="w"> </span><span class="n">LEN</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span><span class="w"> </span><span class="n">SP</span><span class="w"> </span><span class="n">payload</span>
+<div class="highlight"><pre><span></span><code>PAE(payloadType, payload) = &quot;DSSEv1&quot; SP LEN(payloadType) SP payloadType SP LEN(payload) SP payload
 </code></pre></div>
 
 <p>where <code>SP</code> is an ASCII space and <code>LEN(x)</code> is the byte length of <code>x</code> in ASCII decimal. Why bother?
@@ -851,6 +889,12 @@ live for minutes; a ten-minute certificate matches a ten-minute build far better
 two-year key matches a fleet of ephemeral runners. The arc of the rest of this book is, in large
 part, the story of trading long-lived keys for short-lived, verifiable, logged identity — and
 every primitive in this chapter is a piece of how that trade is made sound.</p>
+<h3 id="hash-agility-migration-plan">Hash agility migration plan</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_609abf5335a8.png" alt="diagram"></div></p>
+<h3 id="signature-vs-mac-when-to-use-which">Signature vs MAC: when to use which</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4332127d2fe8.png" alt="diagram"></div></p>
+<h3 id="revocation-vs-short-lived-certs">Revocation vs short-lived certs</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ca2651a5a9dc.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Hashes give you three separable properties</strong> — preimage, second-preimage, and collision
@@ -896,9 +940,19 @@ every primitive in this chapter is a piece of how that trade is made sound.</p>
   (Migration to Post-Quantum Cryptography).</li>
 <li><strong>Bernstein &amp; Lange</strong>, "SafeCurves," and the libsodium/NaCl documentation — for the "don't
   roll your own, prefer misuse-resistant primitives" discipline in practice.</li>
-<li>Book 5, Chapter 5 — Transparency Logs (Merkle trees applied to Rekor and CT); Chapters 3–4 —
+<li>
+<p>Book 5, Chapter 5 — Transparency Logs (Merkle trees applied to Rekor and CT); Chapters 3–4 —
   Sigstore and keyless signing (short-lived certs, Fulcio); Book 4, Chapter 3 — SLSA provenance
-  (DSSE in production).</li>
+  (DSSE in production).</p>
+</li>
+<li>
+<p><strong>NIST FIPS 180-4 / FIPS 202</strong> — hash standards: https://csrc.nist.gov/pubs/fips/180-4/final and https://csrc.nist.gov/pubs/fips/202/final</p>
+</li>
+<li><strong>RFC 8032 (EdDSA), RFC 8017 (PKCS#1), RFC 5280 (X.509), RFC 6962 (CT)</strong> — https://datatracker.ietf.org/doc/rfc8032/ , https://datatracker.ietf.org/doc/rfc8017/ , https://datatracker.ietf.org/doc/rfc5280/ , https://datatracker.ietf.org/doc/rfc6962/</li>
+<li><strong>DSSE and TUF specifications</strong> — https://github.com/secure-systems-lab/dsse and https://theupdateframework.io/specification/</li>
+<li><strong>NIST PQC (FIPS 203/204/205) and SP 1800-38</strong> — https://csrc.nist.gov/projects/post-quantum-cryptography and https://csrc.nist.gov/pubs/sp/1800/38/final</li>
+<li><strong>Sigstore / Rekor / Fulcio (for forward refs)</strong> — https://docs.sigstore.dev/ , https://github.com/sigstore/rekor , https://github.com/sigstore/fulcio</li>
+<li><strong>SLSA provenance and in-toto</strong> — https://slsa.dev/spec/v1.0/ and https://github.com/in-toto/attestation</li>
 </ul></div><div id="ch02-classic-code-signing"><h1 id="chapter-2-classic-code-signing-and-its-failure-modes">Chapter 2 — Classic Code Signing and Its Failure Modes</h1>
 <p><em>What this chapter covers.</em> Before Sigstore, before transparency logs, before anyone said
 the words "keyless signing," the industry spent roughly three decades building code-signing
@@ -912,7 +966,8 @@ short-lived certificates (Chapter 3), Rekor's append-only transparency log (Chap
 in-toto's attestations (Chapter 6), TUF's key hierarchy (Chapter 7) — is a direct,
 traceable response to a specific way classic signing broke. If you understand the failure
 modes concretely, the modern machinery stops looking like ceremony and starts looking like
-scar tissue. So we will be specific: real incidents, real mechanisms, real root causes.</p>
+scar tissue. So we will be specific: real incidents, real mechanisms, real root causes.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Describe the <strong>classic code-signing trust model</strong> precisely — publisher key plus CA
@@ -951,20 +1006,7 @@ three-party arrangement, inherited more or less directly from the X.509 web PKI 
   the signature and walks the certificate chain up to a <strong>trust anchor</strong> (a root certificate)
   it already trusts, typically shipped in the OS or a program-managed root store.</li>
 </ul>
-<p><pre><code>flowchart LR
-  CA["Certificate Authority<br/>vets identity, issues cert"]
-  Pub["Publisher<br/>holds private key"]
-  Art["Signed artifact<br/>hash + signature + cert chain"]
-  Con["Consumer<br/>OS loader / package mgr"]
-  Root["Trust anchor<br/>root cert in OS store"]
-
-  CA -->|"issues code-signing cert"| Pub
-  Pub -->|"sign(hash, privkey)"| Art
-  Art -->|"delivered"| Con
-  Con -->|"verify signature"| Art
-  Con -->|"chain-build to root"| Root
-  Root -.->|"anchors trust"| CA
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_de105f461d4f.png" alt="diagram"></div></p>
 <p>The system delivers exactly two properties, and it is worth stating them with pedantic
 precision because almost every failure in this chapter comes from someone assuming a third:</p>
 <ol>
@@ -1233,18 +1275,7 @@ a build server, occasionally an HSM), and for its entire lifetime it is a single
 catastrophic failure. This is the observation that drives Fulcio's design (Chapter 3): issue
 a certificate that lives for <em>ten minutes</em>, so there is essentially no long-lived key to
 steal.</p>
-<p><pre><code>sequenceDiagram
-  participant Att as Attacker
-  participant Vic as Victim publisher
-  participant Con as Consumer / OS loader
-  Att->>Vic: breach network, exfiltrate signing key + cert
-  Note over Att: attacker now holds a valid signer identity
-  Att->>Att: sign malware with stolen key
-  Att->>Con: distribute signed malware
-  Con->>Con: verify signature -> chains to trusted root -> VALID
-  Con->>Con: load / execute (e.g. kernel driver)
-  Note over Con: owned. signature did its job on the wrong bits.
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_653b3a619feb.png" alt="diagram"></div></p>
 <h3 id="failure-mode-2-signed-but-malicious-the-central-lesson">Failure mode 2: signed-but-malicious (the central lesson)</h3>
 <p>Key theft at least involves a stolen key. The deeper problem needs no theft at all: <strong>a
 legitimate publisher, using its own genuine key, signs malware — because the publisher's
@@ -1267,17 +1298,7 @@ build produced a trojanized 3CXDesktopApp — itself the downstream result of an
 software-supply-chain compromise (a poisoned dependency, X_TRADER) — and the malicious build
 was <strong>signed with 3CX's legitimate certificate</strong>. Three incidents, years apart, identical
 lesson.</p>
-<p><pre><code>flowchart LR
-  Src["Clean source"] --> Build["Build pipeline<br/>COMPROMISED"]
-  Mal["Injected backdoor"] --> Build
-  Build --> Art["Trojaned artifact"]
-  Art --> Sign["Sign with publisher's<br/>OWN valid key"]
-  Sign --> Dist["Official update channel"]
-  Dist --> Con["Consumer verifies signature"]
-  Con -->|"VALID: really is the publisher"| Own["Executes backdoor"]
-  style Build fill:#c0392b,color:#fff
-  style Own fill:#c0392b,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4fb19eccab0c.png" alt="diagram"></div></p>
 <p>State the lesson as bluntly as possible, because it is the thesis of the entire book:</p>
 <blockquote>
 <p><strong>Classic code signing verifies the signer, not the software's integrity relative to its
@@ -1508,30 +1529,19 @@ why organizations move to <strong>keyless / workload-identity signing</strong> (
   they live in an HSM/KMS under hardware custody and tight access policy (Chapter 9), not in
   a CI secret store — the distro model, applied internally.</li>
 </ul>
-<p><pre><code>flowchart TB
-  subgraph Classic["Classic signing at fleet scale"]
-    K1["team A key<br/>on build server"]
-    K2["team B key<br/>on build server"]
-    K3["team C key<br/>on laptop"]
-    Kn["... hundreds more ..."]
-    K1 -->|"stealable"| Risk["long-lived keys<br/>= huge theft surface<br/>+ no audit log"]
-    K2 --> Risk
-    K3 --> Risk
-    Kn --> Risk
-  end
-  subgraph Modern["Keyless / workload-identity signing"]
-    OIDC["CI OIDC identity<br/>per job"] --> Fulcio["Fulcio: mint 10-min cert"]
-    Fulcio --> SignM["sign artifact"]
-    SignM --> Rekor["Rekor: log the signature"]
-    Rekor --> Audit["fleet-wide audit trail<br/>+ nothing durable to steal"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3c10fb52739d.png" alt="diagram"></div></p>
 <p>The through-line: classic signing's model of "durable secret, held by the publisher, verified
 against a root" was designed for a world of a few publishers shipping a few products on
 release cycles measured in months. It does not survive contact with a continuous-delivery
 fleet of thousands of artifacts and hundreds of pipelines. The rest of Book 5 is what
 survives contact — and each piece of it is a named answer to a named failure from this
 chapter.</p>
+<h3 id="long-lived-key-compromise-timeline">Long-lived key compromise timeline</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_496a2b858bd3.png" alt="diagram"></div></p>
+<h3 id="classic-verification-and-where-it-fails">Classic verification and where it fails</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1174d2c3e31b.png" alt="diagram"></div></p>
+<h3 id="hardware-protection-maturity-model">Hardware protection maturity model</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_064e3833d367.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>The classic model provides exactly two things: integrity and signer authenticity.</strong> It
@@ -1584,10 +1594,20 @@ chapter.</p>
 <li>Stevens et al., "The first collision for full SHA-1" (SHAttered, 2017).</li>
 <li>Certificate Transparency (RFC 9162) — the transparency model this book applies to code
   signing (see Book 5, Chapter 5).</li>
-<li>Forward references in this suite: Book 5, Chapter 3 — Sigstore Architecture; Chapter 4 —
+<li>
+<p>Forward references in this suite: Book 5, Chapter 3 — Sigstore Architecture; Chapter 4 —
   Keyless Signing and Workload Identity; Chapter 5 — Transparency Logs; Chapter 6 — in-toto;
   Chapter 7 — TUF; Chapter 9 — Key Management and PKI for the Enterprise; Book 4, Chapter 2 —
-  Hermetic and Reproducible Builds; Chapter 3 — SLSA Provenance; Chapter 6 — Secrets in CI/CD.</li>
+  Hermetic and Reproducible Builds; Chapter 3 — SLSA Provenance; Chapter 6 — Secrets in CI/CD.</p>
+</li>
+<li>
+<p><strong>Microsoft Authenticode and Trusted Root Program</strong> — https://learn.microsoft.com/en-us/windows/win32/seccrypto/authenticode-portable-executable-format and https://learn.microsoft.com/en-us/security/trusted-root/program-requirements</p>
+</li>
+<li><strong>Apple code signing and notarization</strong> — https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution and https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html</li>
+<li><strong>Android APK Signature Schemes</strong> — https://source.android.com/docs/security/features/apksigning and https://developer.android.com/studio/publish/app-signing</li>
+<li><strong>Debian SecureApt / RPM signing</strong> — https://wiki.debian.org/SecureApt and https://rpm.org/user_doc/signatures.html</li>
+<li><strong>Certificate Transparency (RFC 9162)</strong> — https://datatracker.ietf.org/doc/rfc9162/ and https://certificate.transparency.dev/</li>
+<li><strong>Sigstore (forward ref) and SLSA</strong> — https://docs.sigstore.dev/ and https://slsa.dev/spec/v1.0/</li>
 </ul></div><div id="ch03-sigstore-architecture"><h1 id="chapter-3-sigstore-architecture-cosign-fulcio-rekor">Chapter 3 — Sigstore Architecture: Cosign, Fulcio, Rekor</h1>
 <p><em>What this chapter covers.</em> Chapter 2 dissected classic code signing and found it broken in
 predictable ways: the trust anchor is a <strong>long-lived private key</strong>, and that key is a single
@@ -1678,29 +1698,7 @@ consequences of running private Sigstore; for now, hold the fact that every arch
 component below is <strong>self-hostable</strong>, and the public instance is one deployment of it, not the
 system itself.</p>
 <h2 id="the-components">The components</h2>
-<p><pre><code>flowchart TB
-  subgraph client["Signer / Verifier host"]
-    COSIGN["Cosign CLI<br/>sign · verify · attest"]
-  end
-  IDP["OIDC Identity Provider<br/>(Google, GitHub Actions,<br/>corporate IdP, ...)"]
-  FULCIO["Fulcio<br/>short-lived X.509 CA<br/>(~10 min certs)"]
-  CTLOG["CT Log<br/>(certificate transparency<br/>for Fulcio-issued certs)"]
-  REKOR["Rekor<br/>transparency log<br/>(Merkle tree of signing events)"]
-  TSA["Timestamp Authority<br/>(RFC 3161, optional)"]
-  REG["OCI Registry<br/>(image + .sig / .att<br/>as OCI artifacts)"]
-  TUF["TUF trust root<br/>(Fulcio/Rekor/CT/TSA<br/>public keys, rotated)"]
-
-  COSIGN -->|"1. authenticate"| IDP
-  IDP -->|"2. ID token"| COSIGN
-  COSIGN -->|"3. token + ephemeral pubkey"| FULCIO
-  FULCIO -->|"4. logs pre-cert"| CTLOG
-  FULCIO -->|"5. signed cert (SCT embedded)"| COSIGN
-  COSIGN -->|"6. signature + cert"| REKOR
-  REKOR -->|"7. inclusion proof + SET"| COSIGN
-  COSIGN -->|"8. push sig/cert as OCI artifact"| REG
-  TUF -.->|"root of trust for all keys"| COSIGN
-  TSA -.->|"optional signed timestamp"| COSIGN
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_75665af32b5e.png" alt="diagram"></div></p>
 <p>Read the numbers as the signing path; the dashed edges are the trust infrastructure that makes
 the numbered steps verifiable. We now take each box apart.</p>
 <h3 id="cosign-the-client">Cosign — the client</h3>
@@ -1866,18 +1864,7 @@ by a certificate that expired 525,000 minutes ago?</p>
 requires proof that the signature was made <strong>while the certificate was valid</strong> — and Rekor
 provides exactly that proof, in the form of the <strong><code>integratedTime</code></strong> carried inside the
 Rekor-signed <strong>SET</strong>.</p>
-<p><pre><code>flowchart LR
-  subgraph win["Certificate validity window (~10 min)"]
-    direction LR
-    NB["NotBefore<br/>t0"]
-    SIGN["Signature created<br/>at t0+30s"]
-    LOG["Rekor entry<br/>integratedTime = t0+45s<br/>(inside window)"]
-    NA["NotAfter<br/>t0 + 10 min"]
-    NB --> SIGN --> LOG --> NA
-  end
-  LOG ==>|"SET signed by Rekor's key<br/>attests this time"| PROOF["Durable proof:<br/>'signed while cert valid'"]
-  PROOF ==>|"checked years later"| VERIFY["Verifier (any time later):<br/>NotBefore &le; integratedTime &le; NotAfter<br/>&rArr; signature is trustworthy"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bd66e6f3d144.png" alt="diagram"></div></p>
 <p>The logic the verifier runs is:</p>
 <ol>
 <li>The signing <strong>certificate</strong> carries a validity window: <code>NotBefore</code> (t0) to <code>NotAfter</code> (t0 + ~10
@@ -1906,31 +1893,7 @@ for what that identity signed.")</p>
 <h2 id="the-end-to-end-keyless-flow">The end-to-end keyless flow</h2>
 <p>We can now assemble the components into the two flows an engineer actually cares about.</p>
 <h3 id="signing">Signing</h3>
-<p><pre><code>sequenceDiagram
-  autonumber
-  participant Dev as Developer / CI job
-  participant Cosign
-  participant IdP as OIDC Provider
-  participant Fulcio
-  participant CT as CT Log
-  participant Rekor
-  participant Reg as OCI Registry
-
-  Dev->>Cosign: cosign sign IMAGE@sha256:...
-  Cosign->>Cosign: generate ephemeral key pair
-  Cosign->>IdP: authenticate (browser flow, or ambient CI token)
-  IdP-->>Cosign: OIDC ID token (identity + issuer)
-  Cosign->>Fulcio: ID token + ephemeral public key
-  Fulcio->>IdP: validate token signature + claims
-  Fulcio->>CT: submit pre-certificate
-  CT-->>Fulcio: SCT
-  Fulcio-->>Cosign: short-lived cert (identity in SAN, SCT embedded)
-  Cosign->>Cosign: sign artifact digest with ephemeral private key
-  Cosign->>Rekor: upload {digest, signature, cert}
-  Rekor-->>Cosign: inclusion proof + Signed Entry Timestamp
-  Cosign->>Reg: push signature + cert (+ Rekor bundle) as OCI artifact
-  Cosign->>Cosign: discard ephemeral private key
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fa46255e866a.png" alt="diagram"></div></p>
 <p>Step by step:</p>
 <ol>
 <li>The developer or CI job runs <code>cosign sign</code> on an image <em>digest</em>.</li>
@@ -1956,24 +1919,7 @@ for what that identity signed.")</p>
    Rekor.</li>
 </ol>
 <h3 id="verifying">Verifying</h3>
-<p><pre><code>sequenceDiagram
-  autonumber
-  participant V as Verifier (cosign verify / admission)
-  participant Reg as OCI Registry
-  participant TUF as TUF trust root
-  participant Rekor
-
-  V->>TUF: load trusted keys (Fulcio root, Rekor key, CT key)
-  V->>Reg: fetch signature + cert (+ bundle) for IMAGE@sha256:...
-  Reg-->>V: signature, Fulcio cert, Rekor bundle
-  V->>V: verify signature over the artifact digest with cert's public key
-  V->>V: verify cert chains to Fulcio root; check embedded SCT
-  V->>V: extract identity (SAN) + issuer (OID) from cert
-  V->>V: match identity + issuer against POLICY (expected signer)
-  V->>Rekor: (or from bundle) verify inclusion proof + SET
-  V->>V: check NotBefore <= integratedTime <= NotAfter
-  V-->>V: PASS only if every check holds
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_17b40ca8a8c3.png" alt="diagram"></div></p>
 <p>Step by step:</p>
 <ol>
 <li>The verifier loads Sigstore's <strong>trusted keys</strong> from the <strong>TUF</strong> root (Fulcio root CA, Rekor's
@@ -2145,6 +2091,12 @@ build</strong>. Provenance and SBOMs are just data until something signs them wi
 and logs them so a deploy gate can trust them later. Sigstore is that something. It is the
 cryptographic transport that carries every other attestation in this suite from the platform that
 produces it to the gate that enforces it (Chapter 10; Book 6).</p>
+<h3 id="tuf-secured-trust-root-distribution">TUF-secured trust root distribution</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8bf1549228b8.png" alt="diagram"></div></p>
+<h3 id="signature-storage-tag-vs-referrers-api">Signature storage: tag vs referrers API</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_97bd2020f422.png" alt="diagram"></div></p>
+<h3 id="failure-mode-coverage-matrix">Failure-mode coverage matrix</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d8201e59d8d2.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Sigstore</strong> (OpenSSF / Linux Foundation, launched ~2021) makes signing free and easy. Its
@@ -2228,7 +2180,8 @@ vendor-neutral workload-identity standard — the full treatment it deserves, be
 primitive that will show up again as the runtime service identity in zero-trust networking. Finally
 we return to verification, where the entire security value lives or dies on one thing: <strong>getting the
 identity-matching policy right</strong>, tight enough that "any workflow in the org" cannot masquerade as
-"the release workflow."</p>
+"the release workflow."
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Explain precisely what <strong>"keyless"</strong> does and does not mean: no long-lived user-managed key, an
@@ -2274,18 +2227,7 @@ of the same structural fact: <strong>a durable secret is a durable liability.</s
 build server, an HSM, a developer laptop, a CI secret store — for the entire time it is valid, and
 that entire time is a window of theft.</p>
 <p>Keyless signing closes the window by making it a few seconds wide and leaving nothing behind.</p>
-<p><pre><code>flowchart LR
-  subgraph classic["Classic signing (Chapter 2)"]
-    K1["Long-lived private key<br/>valid 1-3 years"]
-    K1 -->|"lives on disk / HSM / CI secret"| STEAL["Stealable for the<br/>entire validity window"]
-    K1 -->|"IS the identity"| SILENT["Stolen key signs<br/>silently, as you"]
-  end
-  subgraph keyless["Keyless signing (this chapter)"]
-    E1["Ephemeral private key<br/>valid seconds"]
-    E1 -->|"exists in memory only,<br/>then discarded"| NOTHING["Nothing durable to steal"]
-    E1 -->|"identity comes from<br/>OIDC token, not the key"| IDENT["Identity is the anchor;<br/>key is disposable"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_00353578b105.png" alt="diagram"></div></p>
 <p>The trade is not "no keys" but <strong>"key you keep" for "identity you prove."</strong> The durable thing you now
 protect is not a secret file — it is an <strong>account with an identity provider</strong> and the integrity of a
 public log. That is a different, and for automated systems a far better, thing to defend, because
@@ -2383,30 +2325,7 @@ and to <strong>assert those facts in a signed, short-lived token</strong> minted
 delivered only to it. The job proves its identity not by holding a secret but by holding a token the
 platform made about it, on the fly, that expires in minutes. There is nothing durable to steal
 because the credential <em>is created per-run and dies with the run</em>.</p>
-<p><pre><code>sequenceDiagram
-  autonumber
-  participant Job as "CI job (no human, no stored key)"
-  participant Plat as "CI platform OIDC IdP"
-  participant Cosign
-  participant Fulcio
-  participant Rekor
-  participant Reg as "OCI registry"
-
-  Job->>Plat: request ID token (audience = sigstore)
-  Plat->>Plat: assemble claims from job context<br/>(repo, ref, workflow, sha, runner...)
-  Plat-->>Job: signed, short-lived ID token (JWT)
-  Job->>Cosign: cosign sign IMAGE@sha256:...
-  Cosign->>Cosign: generate ephemeral keypair
-  Cosign->>Fulcio: ID token + ephemeral public key
-  Fulcio->>Plat: fetch issuer JWKS, verify JWT signature
-  Fulcio->>Fulcio: map job_workflow_ref -> SAN identity
-  Fulcio-->>Cosign: ~10-min cert (workload identity in SAN)
-  Cosign->>Cosign: sign digest with ephemeral private key
-  Cosign->>Rekor: upload {digest, signature, cert}
-  Rekor-->>Cosign: inclusion proof + SET
-  Cosign->>Reg: push signature + cert as OCI artifact
-  Cosign->>Cosign: discard ephemeral private key
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2c2118dd6fe4.png" alt="diagram"></div></p>
 <p>The signer, at the end of this, is provably and specifically <strong>the workload</strong> — not "someone with a
 key", not "the acme org", but <em>that exact build context</em>. Let us see how each platform produces that
 token.</p>
@@ -2532,24 +2451,7 @@ the org that calls that shared workflow signs under the same, verifiable identit
 can require <em>that</em> identity and be certain the signing was done by the trusted shared workflow, not
 by arbitrary code in some tenant repo. This is the mechanism that turns "we have a golden signing
 pipeline" from an aspiration into an enforceable fact.</p>
-<p><pre><code>flowchart TB
-  subgraph gh["GitHub Actions runtime"]
-    JOB["Running job<br/>id-token: write granted"]
-    EP["Token endpoint<br/>ACTIONS_ID_TOKEN_REQUEST_URL"]
-    JOB -->|"request (audience=sigstore)"| EP
-    EP -->|"signed JWT"| TOK
-  end
-  subgraph tok["OIDC ID token (JWT) claims"]
-    TOK["iss = token.actions.githubusercontent.com<br/>sub = repo:acme/api:ref:refs/heads/main<br/>repository, repository_owner<br/>ref, sha, workflow<br/>job_workflow_ref = acme/ci/.../sign.yml@v2<br/>runner_environment"]
-  end
-  subgraph fulcio["Fulcio identity mapping"]
-    MAP["issuer OID (57264.1.8) = iss<br/>SAN (URI) = job_workflow_ref<br/>+ claims -> 57264.1.x extensions<br/>(repo, ref, sha, runner...)"]
-  end
-  subgraph cert["Short-lived certificate"]
-    CID["SAN: https://github.com/acme/ci/<br/>.github/workflows/sign.yml@v2<br/>Issuer ext: token.actions...<br/>bound to ephemeral public key"]
-  end
-  TOK --> MAP --> CID
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0e822815f3c9.png" alt="diagram"></div></p>
 <p>The Fulcio certificate that comes out embeds the issuer in the OID extension <code>1.3.6.1.4.1.57264.1.8</code>
 and maps a whole family of claims into further extensions in the same arc — the source repository URI
 and digest, the ref, the runner environment, the build trigger, and the run invocation URI. So the
@@ -2658,8 +2560,8 @@ yourself across a heterogeneous fleet, and — the architectural punchline of th
 the same identity a service uses at runtime for mTLS in a zero-trust network</strong> (Book 9, Chapter 10),
 so build-time signing identity and runtime service identity can be <em>one thing</em>.</p>
 <p><strong>The SPIFFE ID.</strong> A workload's identity is a URI:</p>
-<div class="highlight"><pre><span></span><code><span class="n">spiffe</span><span class="p">:</span><span class="o">//</span><span class="n">acme</span><span class="o">.</span><span class="n">example</span><span class="o">/</span><span class="n">ns</span><span class="o">/</span><span class="n">prod</span><span class="o">/</span><span class="n">sa</span><span class="o">/</span><span class="n">payments</span><span class="o">-</span><span class="n">api</span>
-<span class="w">        </span><span class="err">└──</span><span class="w"> </span><span class="n">trust</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="err">──┘└───</span><span class="w"> </span><span class="n">workload</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="err">───┘</span>
+<div class="highlight"><pre><span></span><code>spiffe://acme.example/ns/prod/sa/payments-api
+        └── trust domain ──┘└─── workload path ───┘
 </code></pre></div>
 
 <p>The <strong>trust domain</strong> (<code>acme.example</code>) is an administrative root — one organization or environment —
@@ -2687,25 +2589,7 @@ Document)</strong>, which comes in two forms, mirroring Sigstore's X.509-and-JWT
 </ul>
 <p>The security rests on <strong>two-stage attestation</strong>, and this answers the question the CI platforms
 answered implicitly ("how does the issuer <em>know</em> the workload is what it claims?"):</p>
-<p><pre><code>sequenceDiagram
-  autonumber
-  participant Node as "Node / SPIRE Agent"
-  participant Server as "SPIRE Server (trust domain CA)"
-  participant WL as "Workload (process)"
-
-  Note over Node,Server: Stage 1 - NODE attestation
-  Node->>Server: node attestation evidence<br/>(AWS/GCP instance identity doc,<br/>k8s PSAT, x509 TPM, join token...)
-  Server->>Server: verify evidence, derive node selectors
-  Server-->>Node: agent X.509-SVID (this node's identity)
-
-  Note over WL,Node: Stage 2 - WORKLOAD attestation
-  WL->>Node: connect to Workload API (UDS), ask for SVID
-  Node->>Node: interrogate caller via kernel:<br/>PID -> uid/gid, k8s ns/SA/pod labels,<br/>container image, docker labels
-  Node->>Server: report workload selectors
-  Server->>Server: match selectors to registration entry<br/>-> SPIFFE ID
-  Server-->>Node: mint X.509-SVID / JWT-SVID for that SPIFFE ID
-  Node-->>WL: deliver SVID (auto-rotated)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a7a2b182137e.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Node attestation</strong> proves <em>which node</em> an agent runs on, without a pre-shared node secret. The
   agent presents platform evidence the server can independently verify: an <strong>AWS/GCP/Azure instance
@@ -2729,12 +2613,12 @@ problem Sigstore solves with TUF, solved here per trust domain.</p>
 <h3 id="the-trust-chain-assembled">The trust chain, assembled</h3>
 <p>Whether the platform is GitHub, GitLab, a cloud, or SPIRE, the chain a keyless workload signature
 rides is the same:</p>
-<div class="highlight"><pre><span></span><code><span class="n">workload</span><span class="w">  </span><span class="err">──►</span><span class="w">  </span><span class="n">short</span><span class="o">-</span><span class="n">lived</span><span class="w"> </span><span class="n">OIDC</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">SVID</span><span class="w">   </span><span class="p">(</span><span class="n">signed</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">platform</span><span class="w"> </span><span class="n">IdP</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">trust</span><span class="o">-</span><span class="n">domain</span><span class="w"> </span><span class="n">CA</span><span class="p">,</span>
-<span class="w">                </span><span class="n">asserting</span><span class="w"> </span><span class="s2">&quot;this is workload W&quot;</span><span class="p">)</span><span class="w">           </span><span class="n">minted</span><span class="w"> </span><span class="n">per</span><span class="o">-</span><span class="n">run</span><span class="p">,</span><span class="w"> </span><span class="n">expires</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">minutes</span><span class="p">)</span>
-<span class="w">          </span><span class="err">──►</span><span class="w">  </span><span class="n">Fulcio</span><span class="w"> </span><span class="n">verifies</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">token</span><span class="w"> </span><span class="n">against</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">issuer</span><span class="s1">&#39;s published keys,</span>
-<span class="w">                </span><span class="n">maps</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">identity</span><span class="w"> </span><span class="n">claim</span><span class="w"> </span><span class="n">into</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">certificate</span><span class="w"> </span><span class="n">SAN</span>
-<span class="w">          </span><span class="err">──►</span><span class="w">  </span><span class="n">short</span><span class="o">-</span><span class="n">lived</span><span class="w"> </span><span class="n">certificate</span><span class="w"> </span><span class="n">binds</span><span class="w"> </span><span class="n">workload</span><span class="w"> </span><span class="n">identity</span><span class="w">  </span><span class="err">►</span><span class="w">  </span><span class="n">ephemeral</span><span class="w"> </span><span class="n">public</span><span class="w"> </span><span class="n">key</span>
-<span class="w">          </span><span class="err">──►</span><span class="w">  </span><span class="n">signature</span><span class="w"> </span><span class="n">over</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">artifact</span><span class="w"> </span><span class="n">digest</span><span class="p">,</span><span class="w"> </span><span class="n">logged</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">Rekor</span>
+<div class="highlight"><pre><span></span><code>workload  ──►  short-lived OIDC token / SVID   (signed by the platform IdP / trust-domain CA,
+                asserting &quot;this is workload W&quot;)           minted per-run, expires in minutes)
+          ──►  Fulcio verifies the token against the issuer&#39;s published keys,
+                maps the identity claim into the certificate SAN
+          ──►  short-lived certificate binds workload identity  ►  ephemeral public key
+          ──►  signature over the artifact digest, logged in Rekor
 </code></pre></div>
 
 <p>At no point is there a durable secret. The signer, provably, is <strong>the workload</strong> — specific, named,
@@ -2774,17 +2658,7 @@ cosign<span class="w"> </span>verify<span class="w"> </span><span class="se">\</
 </code></pre></div>
 
 <p>The verify-by-identity flow, end to end:</p>
-<p><pre><code>flowchart TB
-  START["cosign verify / admission controller"] --> FETCH["Fetch signature + cert<br/>(+ Rekor bundle) from registry"]
-  FETCH --> SIG{"Signature valid over<br/>artifact digest,<br/>cert chains to Fulcio root,<br/>SCT + Rekor proof ok?"}
-  SIG -- no --> FAIL["REJECT (fail closed)"]
-  SIG -- yes --> EXT["Extract identity (SAN)<br/>+ issuer (OID) from cert"]
-  EXT --> POLID{"SAN matches<br/>--certificate-identity[-regexp]?"}
-  POLID -- no --> FAIL
-  POLID -- yes --> POLISS{"issuer matches<br/>--certificate-oidc-issuer?"}
-  POLISS -- no --> FAIL
-  POLISS -- yes --> PASS["ACCEPT"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_521c43f7ac01.png" alt="diagram"></div></p>
 <p>The cryptographic checks (signature valid, chains to Fulcio, logged in Rekor, <code>integratedTime</code> inside
 the cert window — Chapter 3's verify-after-expiry) are necessary but <strong>not sufficient</strong>. They prove
 "a real Sigstore signature by <em>some</em> identity." The <strong>identity/issuer match</strong> is what turns that into
@@ -2906,6 +2780,10 @@ controller, the deploy gate, the peer in an mTLS handshake, the cloud IAM endpoi
 the same question in its own dialect: <em>"is this the identity my policy allows?"</em> Get that policy tight
 (the footgun section) and the fleet has a single, coherent, keyless identity story from <code>git push</code> to
 production traffic. Get it loose and you have spent a lot of cryptography to check almost nothing.</p>
+<h3 id="workload-identity-federation-oidc">Workload identity federation (OIDC)</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4dc54a45eabb.png" alt="diagram"></div></p>
+<h3 id="keyless-vs-keyed-decision-tree">Keyless vs keyed decision tree</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_19a7c0366cbd.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>"Keyless" is a misnomer.</strong> There <em>is</em> an ephemeral keypair per signing — generated in memory,
@@ -2995,7 +2873,8 @@ because everything else is an application of that spine. Then we study the prove
 (<strong>Certificate Transparency</strong> and the Web PKI), the Sigstore application (<strong>Rekor</strong>), the two
 other major deployments (<strong>Go's checksum database</strong> and <strong>binary transparency</strong>), and finally the
 honest weaknesses: transparency has no value without <strong>monitoring</strong>, and a log means nothing if
-different people can be shown different versions of it — the <strong>split-view</strong> problem.</p>
+different people can be shown different versions of it — the <strong>split-view</strong> problem.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>State precisely what a transparency log guarantees — <strong>append-only</strong>, <strong>tamper-evident</strong>,
@@ -3102,21 +2981,7 @@ present. Write <code>a_i = HASH(0x00 || d_i)</code> for the leaf hashes, and bui
 <li>Level 2: <code>c0123 = HASH(0x01 || b01 || b23)</code>, <code>c4567 = HASH(0x01 || b45 || b67)</code></li>
 <li>Root: <code>r = HASH(0x01 || c0123 || c4567)</code></li>
 </ul>
-<p><pre><code>flowchart TD
-  R["root = H(c0123 ‖ c4567)"]
-  R --> C0123["c0123 = H(b01 ‖ b23)"]
-  R --> C4567["c4567 = H(b45 ‖ b67)  ◀ proof #3"]
-  C0123 --> B01["b01 = H(a0 ‖ a1)  ◀ proof #2"]
-  C0123 --> B23["b23 = H(a2 ‖ a3)"]
-  C4567 --> B45["b45 = H(a4 ‖ a5)"]
-  C4567 --> B67["b67 = H(a6 ‖ a7)"]
-  B23 --> A2["a2 = H(0x00 ‖ d2)  ◀ proof #1"]
-  B23 --> A3["a3 = H(0x00 ‖ d3)  TARGET"]
-  style A3 fill:#2ea043,color:#fff
-  style A2 fill:#1f6feb,color:#fff
-  style B01 fill:#1f6feb,color:#fff
-  style C4567 fill:#1f6feb,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2d4ff7c34215.png" alt="diagram"></div></p>
 <p>The proof for <code>d3</code> is exactly <strong>three</strong> hashes — the siblings encountered climbing from <code>a3</code> to
 the root:</p>
 <ol>
@@ -3159,27 +3024,7 @@ complete left subtree <code>c0123</code> (over <code>d0…d3</code>) and a right
 <p>At size 8 the tree is the perfect tree from before, with <code>R8 = r = HASH(0x01 || c0123 || c4567)</code>
 and <code>c4567 = HASH(0x01 || b45 || b67)</code>. The RFC 6962 consistency proof from 6 to 8 is the three
 nodes <strong><code>[b45, b67, c0123]</code></strong>.</p>
-<p><pre><code>flowchart TD
-  subgraph new["Tree at size 8 (new)"]
-    R8["R8 = H(c0123 ‖ c4567)"]
-    R8 --> C0123n["c0123  (unchanged prefix)"]
-    R8 --> C4567n["c4567 = H(b45 ‖ b67)"]
-    C4567n --> B45n["b45  (was the old right edge)"]
-    C4567n --> B67n["b67  (newly appended: d6,d7)"]
-  end
-  subgraph old["Tree at size 6 (old)"]
-    R6["R6 = H(c0123 ‖ b45)"]
-    R6 --> C0123o["c0123"]
-    R6 --> B45o["b45"]
-  end
-  C0123n -. same hash .-> C0123o
-  B45n -. same hash .-> B45o
-  style C0123n fill:#1f6feb,color:#fff
-  style B45n fill:#1f6feb,color:#fff
-  style B67n fill:#2ea043,color:#fff
-  style C0123o fill:#1f6feb,color:#fff
-  style B45o fill:#1f6feb,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f0dd630e111.png" alt="diagram"></div></p>
 <p>The verifier does two reconstructions from the proof nodes:</p>
 <ul>
 <li><strong>Old root:</strong> <code>HASH(0x01 || c0123 || b45)</code> and checks it equals the trusted <code>R6</code>. This proves
@@ -3321,20 +3166,7 @@ not logged is not trusted.</p>
   <strong>appear</strong> in the tree within the MMD (inclusion proofs check out). Lightweight auditing is
   built into browsers; standalone auditors and the log operators' peers do the heavier checking.</li>
 </ul>
-<p><pre><code>flowchart LR
-  CA["CA issues cert /\nsubmits precert"] -->|"submit"| L1["CT Log A"]
-  CA -->|"submit"| L2["CT Log B"]
-  L1 -->|"SCT (promise)"| CA
-  L2 -->|"SCT (promise)"| CA
-  CA -->|"cert + embedded SCTs"| SRV["TLS server"]
-  SRV -->|"TLS handshake:\ncert + SCTs"| BR["Browser"]
-  BR -->|"require valid SCTs\nfrom N logs"| BR
-  L1 --> MON["Monitor:\nwatches for\nyour-domain certs"]
-  L2 --> MON
-  L1 --> AUD["Auditor:\nconsistency +\nSCT-inclusion checks"]
-  L2 --> AUD
-  MON -->|"alert: unexpected\ncert for your domain"| OWN["Domain owner"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8c5dc773490a.png" alt="diagram"></div></p>
 <p>The <strong>monitor and auditor roles are both essential, and they answer different questions</strong>. The
 auditor asks "is the log honest and append-only?" The monitor asks "did anything <em>bad for me</em> get
 logged?" A log that is perfectly append-only but that <strong>nobody monitors</strong> provides transparency
@@ -3391,26 +3223,7 @@ things that matter:</p>
 <p>Here is where Rekor earns its place in the architecture. Fulcio certificates live for <strong>about ten
 minutes</strong> (Chapter 3). A naïve verifier checking a certificate that expired months ago would
 reject the signature — the certificate is long dead. Rekor's timestamp resolves the paradox.</p>
-<p><pre><code>sequenceDiagram
-    autonumber
-    participant CI as Signer (CI job)
-    participant F as Fulcio (CA)
-    participant R as Rekor (log)
-    participant V as Verifier (later)
-    Note over CI,F: t0  short-lived cert issued, valid t0 .. t0+10min
-    CI->>F: OIDC identity token
-    F-->>CI: cert binding identity->ephemeral key (exp t0+10m)
-    CI->>CI: sign artifact digest at time t0+2m
-    CI->>R: submit {digest, signature, cert}
-    R-->>CI: inclusion proof + SET (integratedTime = t0+2m)
-    Note over CI: key discarded; cert will expire at t0+10m
-    Note over V: weeks later, cert long expired
-    V->>R: fetch entry + inclusion proof + SET
-    V->>V: verify SET signature (trusted Rekor key)
-    V->>V: check integratedTime (t0+2m) falls INSIDE cert validity
-    V->>V: verify signature + cert chain to Fulcio root
-    Note over V: signature trusted: it was made while the cert was valid
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_97d30c11dba8.png" alt="diagram"></div></p>
 <p>The reasoning: the verifier trusts Rekor's SET as a <strong>timestamping authority</strong>. The SET says the
 entry — including the certificate and signature — existed in the log at <code>integratedTime = t0+2m</code>.
 That time falls <strong>inside</strong> the certificate's validity window (<code>t0 .. t0+10m</code>). Therefore the
@@ -3661,6 +3474,12 @@ particularly elegant one, which is why it rewards a backend engineer's attention
   it — <strong>self-host</strong> (Chapter 9). The log is not a nice-to-have side service; when verification
   depends on it, it is production infrastructure.</li>
 </ul>
+<h3 id="rekor-shard-and-monitor-architecture">Rekor shard and monitor architecture</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7de20c424ff9.png" alt="diagram"></div></p>
+<h3 id="consistency-proof-verification">Consistency proof verification</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e80e72fd7306.png" alt="diagram"></div></p>
+<h3 id="log-backed-verification-end-to-end">Log-backed verification end-to-end</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9f6b8da87d2b.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Transparency logs convert silent abuse into detectable abuse.</strong> They do not stop a stolen key
@@ -3745,7 +3564,8 @@ is the universal container that SLSA provenance, SBOMs, VEX, test results, and v
 all ride inside — and then the original, still-conceptually-important <strong>layout / link</strong> model that
 verifies an entire pipeline against a signed policy. We tie attestations to DSSE (Chapter 1) and
 Rekor (Chapter 5), show how <code>cosign</code> produces and verifies them, and end at the policy gate that
-turns a pile of signed metadata into an admit/deny decision.</p>
+turns a pile of signed metadata into an admit/deny decision.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Explain <strong>why signing the final artifact is insufficient</strong> and what in-toto adds: attestation of
@@ -3804,17 +3624,7 @@ guarantees for bytes and binaries"). It is a <strong>Cloud Native Computing Foun
 (it entered the CNCF in 2019) and has become the substrate for the broader attestation ecosystem:
 SLSA provenance (Book 4, Chapter 3) is <em>defined as</em> an in-toto attestation, and Sigstore's
 <code>cosign attest</code> speaks the in-toto Statement format natively.</p>
-<p><pre><code>flowchart LR
-  subgraph pipeline["Supply chain steps (each attested by its performer)"]
-    C["clone"] --> T["test"] --> B["build"] --> P["package"]
-  end
-  P --> IMG["final image + signature"]
-  IMG -. "signature answers only: WHO signed this blob" .-> Q1["? built from the right commit"]
-  IMG -. "cannot answer" .-> Q2["? tests actually passed"]
-  IMG -. "cannot answer" .-> Q3["? no step inserted or swapped"]
-  classDef q fill:#fdd,stroke:#900;
-  class Q1,Q2,Q3 q;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7de8fed50ad7.png" alt="diagram"></div></p>
 <h2 id="the-in-toto-attestation-framework">The in-toto Attestation Framework</h2>
 <p>Modern in-toto splits into two related but distinct things. The <strong>layout/link</strong> model (covered later)
 verifies a full pipeline against a signed policy — it is the original 2019 design. The <strong>Attestation
@@ -3870,16 +3680,7 @@ framework, one parser, one verification pipeline, arbitrarily many claim types.<
 <p>A Statement is just JSON; on its own it is unsigned and unauthenticated. in-toto attestations are
 <strong>always</strong> wrapped and signed, and the signing envelope is <strong>DSSE</strong> — the Dead Simple Signing
 Envelope from Chapter 1. The full stack, from innermost claim to outermost log record:</p>
-<p><pre><code>flowchart TB
-  PRED["predicate<br/>(the claim: provenance / SBOM / VSA / test / custom)"]
-  STMT["in-toto Statement<br/>_type + subject + predicateType + predicate"]
-  DSSE["DSSE envelope<br/>payloadType = application/vnd.in-toto+json<br/>payload = base64(Statement)<br/>signatures = [ { keyid, sig } ... ]"]
-  REKOR["Rekor transparency log entry (optional)<br/>tamper-evident, publicly auditable"]
-  OCI["stored in OCI registry next to the image<br/>(or in Archivista, or alongside the artifact)"]
-  PRED --> STMT --> DSSE
-  DSSE --> REKOR
-  DSSE --> OCI
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_66b9f6f74dd8.png" alt="diagram"></div></p>
 <ul>
 <li><strong>DSSE</strong> wraps the Statement. Its <code>payloadType</code> is the constant
   <code>application/vnd.in-toto+json</code>, its <code>payload</code> is the base64-encoded Statement, and <code>signatures</code> is
@@ -3906,17 +3707,7 @@ is the single most common error in this area. They are a container and one of it
 <h3 id="one-framework-many-predicate-types">One framework, many predicate types</h3>
 <p>The predicate ecosystem is where the generality pays off. A handful of standardized predicate types
 cover most of the secure-supply-chain metadata you will emit, and custom types cover the rest:</p>
-<p><pre><code>flowchart TB
-  STMT["in-toto Statement<br/>(same container for all)"]
-  STMT --> PROV["slsa.dev/provenance/v1<br/>build provenance"]
-  STMT --> VSA["slsa.dev/verification_summary/v1<br/>VSA — 'a verifier checked this'"]
-  STMT --> SPDX["spdx.dev/Document<br/>SPDX SBOM"]
-  STMT --> CDX["cyclonedx SBOM"]
-  STMT --> VEX["OpenVEX / vuln<br/>exploitability, scan results"]
-  STMT --> TEST["in-toto test result"]
-  STMT --> LINK["in-toto.io/Link/v1<br/>(legacy link metadata)"]
-  STMT --> CUSTOM["your-org/custom/v1<br/>anything"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_65af8f16f6ee.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -4125,10 +3916,10 @@ asserts that an artifact <strong>flows</strong> correctly from one step to anoth
 </code></pre></div>
 
 <p>Read a concrete example. The <code>build</code> step's materials must be exactly the <code>clone</code> step's products:</p>
-<div class="highlight"><pre><span></span><code><span class="gh">#</span> In the layout, for the &quot;build&quot; step:
+<div class="highlight"><pre><span></span><code># In the layout, for the &quot;build&quot; step:
 expected_materials:
-  <span class="k">-</span> [&quot;MATCH&quot;, &quot;src/*&quot;, &quot;WITH&quot;, &quot;PRODUCTS&quot;, &quot;FROM&quot;, &quot;clone&quot;]
-  <span class="k">-</span> [&quot;DISALLOW&quot;, &quot;*&quot;]
+  - [&quot;MATCH&quot;, &quot;src/*&quot;, &quot;WITH&quot;, &quot;PRODUCTS&quot;, &quot;FROM&quot;, &quot;clone&quot;]
+  - [&quot;DISALLOW&quot;, &quot;*&quot;]
 </code></pre></div>
 
 <p>This says: every file under <code>src/*</code> that the build step consumed must, by digest, equal a file the
@@ -4137,26 +3928,7 @@ between clone and build (a SUNSPOT-style substitution), the digests diverge, the
 verification rejects the chain. The trailing <code>DISALLOW *</code> forbids any <em>unexpected</em> input from
 sneaking in. Chaining <code>MATCH</code> rules across every adjacent pair of steps encodes the full artifact flow:
 clone→test→build→package, each link pinned by hash to its predecessor.</p>
-<p><pre><code>flowchart LR
-  subgraph L["Layout (signed by project owner)"]
-    LS["steps: clone, test, build, package<br/>+ functionary keys + thresholds<br/>+ artifact rules (MATCH ...)"]
-  end
-  subgraph links["Link metadata (one per step, signed by functionary)"]
-    L1["clone.link<br/>products: src/* @ H1"]
-    L2["test.link<br/>materials: src/* @ H1"]
-    L3["build.link<br/>materials: src/* @ H1<br/>products: bin @ H2"]
-    L4["package.link<br/>materials: bin @ H2<br/>products: image @ H3"]
-  end
-  L1 -->|"MATCH src/* WITH PRODUCTS FROM clone"| L3
-  L3 -->|"MATCH bin WITH PRODUCTS FROM build"| L4
-  LS --> V{"Verifier"}
-  L1 --> V
-  L2 --> V
-  L3 --> V
-  L4 --> V
-  V -->|"all steps present, authorized,<br/>thresholds met, artifacts flow"| PASS["PASS"]
-  V -->|"missing / unauthorized step,<br/>or digest mismatch"| FAIL["FAIL"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7c2fa42f2ad.png" alt="diagram"></div></p>
 <h3 id="verification-checking-the-chain-against-the-layout">Verification: checking the chain against the layout</h3>
 <p>The verifier's algorithm, given the owner's public key, the layout, and the collected link metadata:</p>
 <ol>
@@ -4213,21 +3985,7 @@ they trust</em> exist for this artifact, with <code>verificationResult: PASSED</
 <code>verifiedLevels</code>? They trust the summary rather than re-deriving it. This is exactly the kind of
 tiered trust that scales: verify deeply in one place, propagate a cheap signed assertion everywhere
 else.</p>
-<p><pre><code>flowchart LR
-  subgraph central["Central verifier (deep check, once)"]
-    A1["provenance"] --> V["verify: identity + Rekor + policy"]
-    A2["SBOM"] --> V
-    A3["vuln scan"] --> V
-    A4["test results"] --> V
-    V --> VSA["VSA<br/>verificationResult: PASSED<br/>verifiedLevels: SLSA_BUILD_LEVEL_3"]
-  end
-  VSA --> C1["cluster A admission"]
-  VSA --> C2["cluster B admission"]
-  VSA --> C3["partner org"]
-  C1 -->|"trust the summary"| OK1["admit"]
-  C2 -->|"trust the summary"| OK2["admit"]
-  C3 -->|"trust the summary"| OK3["consume"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3f9e61e5974f.png" alt="diagram"></div></p>
 <h2 id="tooling">Tooling</h2>
 <p>The attestation ecosystem has several reference and production implementations; you will mix them
 depending on where you sit in the pipeline.</p>
@@ -4263,21 +4021,7 @@ metadata and start being enforcement. It previews Chapters 8 and 10 and Book 6, 
 Build-Level-3 provenance from our build platform's identity, (2) an SBOM, (3) a passing vulnerability
 scan no older than 24 hours, and (4) all of the above logged in Rekor.</em> An admission controller
 evaluates that at deploy time against the attestations attached to the image:</p>
-<p><pre><code>flowchart LR
-  subgraph reg["OCI registry"]
-    IMG["image @ sha256:..."]
-    AP["provenance attestation"]
-    AS["SBOM attestation"]
-    AV["vuln-scan attestation"]
-  end
-  DEP["deploy request"] --> GATE{"admission policy verify"}
-  IMG --> GATE
-  AP --> GATE
-  AS --> GATE
-  AV --> GATE
-  GATE -->|"provenance L3 from our builder<br/>+ SBOM present<br/>+ scan passing and fresh<br/>+ Rekor-logged<br/>+ signed by expected identity"| ADMIT["ADMIT"]
-  GATE -->|"any check fails"| DENY["DENY"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b199ce701c70.png" alt="diagram"></div></p>
 <p>The controller does not care <em>how</em> the attestations were produced — Witness, cosign, a bespoke signer —
 only that they are the right <em>types</em>, from the right <em>identities</em>, logged in the right <em>place</em>, and
 that their <em>content</em> satisfies policy. That uniformity is the entire reason the in-toto container is
@@ -4323,6 +4067,10 @@ step whose products are hash-pinned to its neighbors" — a dramatically harder 
 make "attested" mean "benign." Provenance and policy tell you <em>how</em> something was built and by <em>whom</em>;
 whether that <em>how</em> is trustworthy is the subject of build-integrity levels (SLSA, Book 4) and of the
 policies you write at the gate.</p>
+<h3 id="in-toto-layout-verification-flow">In-toto layout verification flow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_00a25873efbe.png" alt="diagram"></div></p>
+<h3 id="provenance-types-slsa-vs-in-toto-statement">Provenance types: SLSA vs in-toto statement</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3a33fb47ccd1.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Signing the final artifact proves who signed a blob; it says nothing about the process.</strong>
@@ -4664,26 +4412,7 @@ the offline targets key, which timestamp compromise does not grant.</p>
 </tbody>
 </table>
 <h3 id="the-picture">The picture</h3>
-<p><pre><code>flowchart TB
-  subgraph offline["OFFLINE keys — kept in HSM / air-gapped / safe"]
-    ROOT["root.json<br/>authorizes keys + thresholds<br/>for all four roles"]
-    TARGETS["targets.json<br/>target paths + hashes + lengths<br/>+ delegations"]
-    DELEG["delegated targets<br/>django/*, numpy/*, ...<br/>per-maintainer offline keys"]
-  end
-  subgraph online["ONLINE keys — connected signing service"]
-    SNAP["snapshot.json<br/>version of every<br/>targets metadata file"]
-    TS["timestamp.json<br/>points at current snapshot<br/>short expiry"]
-  end
-
-  ROOT -->|"authorizes keys for"| TARGETS
-  ROOT -->|"authorizes keys for"| SNAP
-  ROOT -->|"authorizes keys for"| TS
-  ROOT -->|"authorizes keys for"| ROOT
-  TARGETS -->|"delegates paths to"| DELEG
-  SNAP -->|"commits versions of"| TARGETS
-  SNAP -->|"commits versions of"| DELEG
-  TS -->|"commits version+hash of"| SNAP
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_92e5ee19f681.png" alt="diagram"></div></p>
 <p>Read the arrows as trust flow. Root authorizes the keys for every role (including itself, for
 rotation). Targets delegates sub-namespaces to delegated targets roles. Snapshot commits <em>which
 version</em> of every targets file is current. Timestamp commits which version of snapshot is current.
@@ -4708,17 +4437,7 @@ but not arbitrary code execution. To get (1), they must reach the <strong>offlin
 offline delegated key, whose damage is confined to that delegation's path scope). And for the
 absolute worst case — re-delegating everything — they must reach a <strong>threshold</strong> of the <strong>offline</strong>
 root keys held by multiple people.</p>
-<p><pre><code>flowchart TB
-  A["Attacker steals ONLINE keys<br/>(timestamp + snapshot)"] --> B{"Can they forge<br/>a NEW malicious target?"}
-  B -->|"NO — needs offline targets key"| C["Limited: freeze / rollback<br/>among already-signed content"]
-  C --> D["DETECTABLE: expired timestamp<br/>or lowered version number"]
-
-  E["Attacker also steals the<br/>OFFLINE targets key"] --> F{"Enough to serve<br/>arbitrary malware?"}
-  F -->|"Only within delegation scope,<br/>and only if online keys also held"| G["Bounded blast radius<br/>(e.g. one project's paths)"]
-
-  H["Attacker reaches THRESHOLD of<br/>OFFLINE root keys (m of n, many holders)"] --> I["Worst case:<br/>re-delegate every role"]
-  I --> J["Requires compromising multiple<br/>people's hardware keys at once"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2b5a1c375b66.png" alt="diagram"></div></p>
 <p>This is a strict improvement over flat single-key signing on two axes. First, <strong>the easy-to-steal
 keys are the low-power keys</strong>: online exposure is inversely correlated with the damage a stolen key
 does. Second, <strong>the high-power keys require multi-party, offline, threshold compromise</strong>: there is
@@ -4730,30 +4449,7 @@ you need m of them, from m different holders' hardware, before the anchor moves.
 <p>A TUF client does not just "download and check a signature." It runs a fixed, ordered algorithm
 over the metadata, and the <strong>order is part of the security argument</strong>. The client begins with a
 locally trusted <code>root.json</code> (shipped with the client, pinned) and proceeds:</p>
-<p><pre><code>sequenceDiagram
-  participant C as Client (trusted root pinned)
-  participant R as Repository / CDN
-  Note over C: 1. Update ROOT (authority)
-  C->>R: fetch N+1.root.json, N+2.root.json, ...
-  R-->>C: newer root metadata (if any)
-  Note over C: verify each with OLD threshold AND NEW threshold;<br/>walk the chain to latest; check expiry
-  Note over C: 2. Update TIMESTAMP (freshness)
-  C->>R: fetch timestamp.json
-  R-->>C: timestamp metadata
-  Note over C: verify sig vs root-authorized timestamp keys;<br/>reject if version < trusted; reject if expired
-  Note over C: 3. Update SNAPSHOT (consistency)
-  C->>R: fetch snapshot.json (version from timestamp)
-  R-->>C: snapshot metadata
-  Note over C: verify length+hash vs timestamp;<br/>verify sig; reject any targets version rollback; check expiry
-  Note over C: 4. Update TARGETS (content metadata)
-  C->>R: fetch targets.json (version from snapshot)
-  R-->>C: targets metadata
-  Note over C: verify length+hash vs snapshot; verify sig; check expiry;<br/>follow delegations to locate the target
-  Note over C: 5. DOWNLOAD + VERIFY the target
-  C->>R: fetch target file
-  R-->>C: file bytes
-  Note over C: verify length + hashes vs targets metadata;<br/>stop at declared length (endless-data defense)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_424cb80ccecc.png" alt="diagram"></div></p>
 <p>Step by step, and why the order is what it is:</p>
 <ol>
 <li><strong>Update root first (authority before anything).</strong> The client repeatedly fetches the next
@@ -4884,20 +4580,7 @@ validity metadata. The root role was established in a <strong>public root-signin
 threshold of community keyholders across multiple organizations, using <strong>go-tuf</strong> and the
 <code>sigstore/root-signing</code> repository. Cosign ships a pinned copy of this TUF root and refreshes it
 through the normal TUF update workflow (<code>cosign initialize</code> fetches the latest trust root).</p>
-<p><pre><code>flowchart TB
-  subgraph tuf["Sigstore TUF repository (public, threshold-signed)"]
-    SROOT["root.json<br/>community keyholders, m-of-n, offline"]
-    STARGETS["targets = TRUST MATERIALS<br/>Fulcio root CA key, Rekor key,<br/>CT log key, TSA key (+ validity)"]
-  end
-  COSIGN["cosign / sigstore client<br/>ships pinned root, runs cosign initialize"]
-  FULCIO["Fulcio<br/>(issues signing certs)"]
-  REKOR["Rekor<br/>(transparency log)"]
-
-  SROOT -->|"authorizes"| STARGETS
-  STARGETS -->|"delivers verified keys via TUF workflow"| COSIGN
-  COSIGN -->|"trusts cert chain to"| FULCIO
-  COSIGN -->|"verifies inclusion against"| REKOR
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f485e1674ee5.png" alt="diagram"></div></p>
 <p>The layering is worth stating plainly because it is easy to get tangled. Sigstore is a root of
 trust for <em>artifact signatures</em> (Chapter 3). But Sigstore's own trust anchors — the keys that make
 Fulcio and Rekor trustworthy — need their own secure distribution and rotation, and <em>that</em> is what
@@ -4961,6 +4644,12 @@ infrastructure a senior backend engineer owns.</p>
   safe — and TUF is the framework that takes the next step: <em>safe even when the thing doing the
   signing is partly owned.</em></li>
 </ul>
+<h3 id="tuf-role-hierarchy-and-thresholds">TUF role hierarchy and thresholds</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6db76abe8ff7.png" alt="diagram"></div></p>
+<h3 id="tuf-client-update-workflow">TUF client update workflow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a2fee95061aa.png" alt="diagram"></div></p>
+<h3 id="tuf-vs-transparency-log-complementary-guarantees">TUF vs transparency log: complementary guarantees</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1476cfbd43a6.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>TUF secures <strong>software update/distribution systems</strong>, not just individual artifacts. Its goal is
@@ -4992,6 +4681,27 @@ infrastructure a senior backend engineer owns.</p>
   root</strong>, which distributes and rotates the Fulcio/Rekor/CT/TSA keys your cosign verifications
   depend on. TUF is the <strong>root of trust for Sigstore's root of trust</strong>.</li>
 </ul>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;signed&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;expires&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-10-01T00:00:00Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;targets&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;releases/app-v1.4.2.tar.gz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;hashes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;sha256&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;length&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1842115</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;signatures&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">&quot;keyid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a1b2c3d4...&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;sig&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3045022100...&quot;</span><span class="w"> </span><span class="p">}]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>tuf-client<span class="w"> </span>refresh<span class="w"> </span>--metadata-url<span class="w"> </span>https://tuf-repo-cdn.sigstore.dev/<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--targets-url<span class="w"> </span>https://tuf-repo-cdn.sigstore.dev/targets/
+<span class="c1"># Verifies root → timestamp → snapshot → targets chain; exits non-zero on rollback, freeze, or threshold failure</span>
+</code></pre></div>
+
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>The Update Framework specification</strong> — the authoritative definition of the four roles, metadata
@@ -5035,7 +4745,8 @@ inevitable operational failure: what to do when the verifier itself cannot decid
 <p>The single most important idea here is deceptively simple and constantly botched: <strong>verifying that
 something is validly signed is nearly useless; you must verify that it was signed by the <em>expected</em>
 identity, and that the signed thing is <em>this</em> artifact.</strong> Most of this chapter is spent making that
-distinction concrete and enforceable.</p>
+distinction concrete and enforceable.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Articulate the <strong>"produce AND verify"</strong> principle and name the six properties verification
@@ -5122,23 +4833,7 @@ attestations and comparing it against policy. That is the work.</p>
 <p>Verification is not one check; it is an ordered gate of them. Each layer answers a different
 question, and skipping any one leaves a specific, exploitable hole. Run them in this order — cheap
 cryptographic checks first, then identity, then content — and deny on the first failure.</p>
-<p><pre><code>flowchart TD
-    A["Artifact + attestations<br/>referenced BY DIGEST"] --> B{"1. Signature<br/>cryptographically valid?"}
-    B -->|no| DENY["DENY"]
-    B -->|yes| C{"2. Signer identity ==<br/>EXPECTED identity?<br/>(issuer + subject)"}
-    C -->|no| DENY
-    C -->|yes| D{"3. Subject digest ==<br/>THIS artifact's digest?"}
-    D -->|no| DENY
-    D -->|yes| E{"4. Provenance content<br/>meets policy?<br/>(source, builder, params)"}
-    E -->|no| DENY
-    E -->|yes| F{"5. Rekor inclusion proof<br/>valid + timestamped?"}
-    F -->|no| DENY
-    F -->|yes| G{"6. ALL required<br/>attestations present?<br/>(prov + SBOM + scan + tests)"}
-    G -->|no| DENY
-    G -->|yes| H{"7. Fresh /<br/>not revoked?"}
-    H -->|no| DENY
-    H -->|yes| ADMIT["ADMIT — cross trust boundary"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6d1e54e99550.png" alt="diagram"></div></p>
 <h3 id="1-signature-validity">1. Signature validity</h3>
 <p>The cheapest and most fundamental check: does the signature verify against the public key or
 certificate? For keyed signing this is a raw signature verification (Chapter 1); for keyless
@@ -5164,17 +4859,7 @@ five minutes ago with their own throwaway identity. The signature is real. The i
 <li>For <strong>keyed / KMS</strong> signing: the signature must verify against the <em>specific</em> public key you
   trust, and that key's identity in your KMS must be the expected one.</li>
 </ul>
-<p><pre><code>flowchart LR
-    subgraph bad["Identity-BLIND verification (WRONG)"]
-        A1["cosign verify img"] --> A2{"Valid signature<br/>by anyone?"}
-        A2 -->|yes| A3["ADMIT ✗<br/>attacker's throwaway<br/>identity accepted"]
-    end
-    subgraph good["Identity-PINNED verification (RIGHT)"]
-        B1["cosign verify img<br/>--certificate-identity=...<br/>--certificate-oidc-issuer=..."] --> B2{"Signed by the<br/>EXPECTED workflow<br/>at the EXPECTED issuer?"}
-        B2 -->|no| B3["DENY ✓"]
-        B2 -->|yes| B4["ADMIT ✓"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c150278d549.png" alt="diagram"></div></p>
 <p>This is the load-bearing layer. Everything else is defense in depth around it. If you take one
 operational lesson from this chapter: <strong>pin the identity.</strong></p>
 <h3 id="3-subject-digest-match">3. Subject / digest match</h3>
@@ -5251,13 +4936,13 @@ cosign<span class="w"> </span>verify<span class="w"> </span>--key<span class="w"
 </code></pre></div>
 
 <p>A successful run prints the verified DSSE/signature payloads (trimmed):</p>
-<div class="highlight"><pre><span></span><code><span class="n">Verification</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">registry</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">app</span><span class="nv">@sha256</span><span class="err">:</span><span class="mi">3</span><span class="n">f7a</span><span class="p">...</span><span class="n">c19d</span><span class="w"> </span><span class="c1">--</span>
-<span class="n">The</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="n">checks</span><span class="w"> </span><span class="n">were</span><span class="w"> </span><span class="n">performed</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="k">each</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">these</span><span class="w"> </span><span class="nl">signatures</span><span class="p">:</span>
-<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">cosign</span><span class="w"> </span><span class="n">claims</span><span class="w"> </span><span class="n">were</span><span class="w"> </span><span class="n">validated</span>
-<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Existence</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">claims</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">transparency</span><span class="w"> </span><span class="nf">log</span><span class="w"> </span><span class="n">was</span><span class="w"> </span><span class="n">verified</span><span class="w"> </span><span class="n">offline</span>
-<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">code</span><span class="o">-</span><span class="n">signing</span><span class="w"> </span><span class="n">certificate</span><span class="w"> </span><span class="n">was</span><span class="w"> </span><span class="n">verified</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">trusted</span><span class="w"> </span><span class="n">certificate</span><span class="w"> </span><span class="n">authority</span><span class="w"> </span><span class="n">certificates</span>
-<span class="n">Certificate</span><span class="w"> </span><span class="nl">subject</span><span class="p">:</span><span class="w"> </span><span class="nl">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">myorg</span><span class="o">/</span><span class="n">myrepo</span><span class="o">/</span><span class="p">.</span><span class="n">github</span><span class="o">/</span><span class="n">workflows</span><span class="o">/</span><span class="k">release</span><span class="p">.</span><span class="n">yml</span><span class="nv">@refs</span><span class="o">/</span><span class="n">heads</span><span class="o">/</span><span class="n">main</span>
-<span class="n">Certificate</span><span class="w"> </span><span class="n">issuer</span><span class="w"> </span><span class="nl">URL</span><span class="p">:</span><span class="w"> </span><span class="nl">https</span><span class="p">:</span><span class="o">//</span><span class="n">token</span><span class="p">.</span><span class="n">actions</span><span class="p">.</span><span class="n">githubusercontent</span><span class="p">.</span><span class="n">com</span>
+<div class="highlight"><pre><span></span><code>Verification for registry.example.com/app@sha256:3f7a...c19d --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - Existence of the claims in the transparency log was verified offline
+  - The code-signing certificate was verified using trusted certificate authority certificates
+Certificate subject: https://github.com/myorg/myrepo/.github/workflows/release.yml@refs/heads/main
+Certificate issuer URL: https://token.actions.githubusercontent.com
 </code></pre></div>
 
 <h3 id="cosign-verify-attestation-checking-the-content-of-attestations">cosign verify-attestation — checking the <em>content</em> of attestations</h3>
@@ -5410,16 +5095,7 @@ that a final artifact is signed.</p>
 "untrusted/external" to "trusted/will-run." Each gate defends a <strong>trust boundary</strong> — the point
 where an artifact crosses from a lower-trust zone to a higher-trust one. The rule of thumb:
 <strong>verify at every boundary crossing, and treat admission as the non-negotiable backstop.</strong></p>
-<p><pre><code>flowchart LR
-    ext["External deps<br/>(untrusted)"] -->|"verify provenance<br/>before use (aspirational)"| ci["CI build"]
-    ci -->|"cosign verify /<br/>slsa-verifier on ingest"| reg["Internal registry<br/>(Book 2, Ch 8)"]
-    reg -->|"verify before promote"| cd["CD pipeline"]
-    cd -->|"verify by digest<br/>before deploy"| adm["Admission controller<br/>(Book 6, Ch 5-6)"]
-    adm -->|"ENFORCE: identity +<br/>provenance + attestations"| run["Pod runs"]
-    adm -.->|"deny"| reject["Rejected"]
-    style adm fill:#c0392b,color:#fff
-    style run fill:#27ae60,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc51a0e83878.png" alt="diagram"></div></p>
 <ul>
 <li><strong>At pull / in CI</strong> — verify the provenance of <em>dependencies</em> before consuming them (e.g.,
   <code>slsa-verifier</code> on a downloaded release, <code>cosign verify</code> on a base image). This is the most
@@ -5493,15 +5169,7 @@ choice with no good universal answer: <strong>fail-open</strong> (admit despite 
 <strong>fail-closed</strong> (deny). This is the security-versus-availability tension in its rawest form, and
 pretending it doesn't exist is how you get either a self-inflicted outage or a gate that quietly
 stops gating.</p>
-<p><pre><code>flowchart TD
-    A["Verification cannot<br/>complete (log down,<br/>webhook timeout, root<br/>unreachable)"] --> B{"Workload<br/>sensitivity?"}
-    B -->|"High: prod, PCI,<br/>internet-facing"| C["FAIL CLOSED<br/>deny admission"]
-    B -->|"Low: dev, sandbox,<br/>batch"| D["FAIL OPEN<br/>admit + alert"]
-    C --> E["Availability risk:<br/>verifier is now on the<br/>critical path — must be<br/>tier-1, HA, monitored"]
-    D --> F["Security risk:<br/>unverified code can run<br/>during the outage window"]
-    E --> G["Mitigate: cache trust<br/>roots, staged rollout,<br/>break-glass with audit"]
-    F --> G
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_590df7204eb3.png" alt="diagram"></div></p>
 <p>The reasoning framework:</p>
 <ul>
 <li><strong>Match the mode to the blast radius.</strong> For high-sensitivity workloads — production, regulated
@@ -5560,6 +5228,12 @@ rather than re-deriving the fact.</p>
 automated, identity-pinned, digest-anchored, enforced at admission, failing closed for anything that
 matters — is the half that actually stops attacks. Everything in Chapters 1–6 is potential energy.
 The gate in this chapter is where it converts to work.</p>
+<h3 id="verification-layers-pyramid">Verification layers pyramid</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e1ca839bb6e.png" alt="diagram"></div></p>
+<h3 id="dsse-envelope-anatomy-and-verification">DSSE envelope anatomy and verification</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8b7da8d6bf3c.png" alt="diagram"></div></p>
+<h3 id="admission-time-verification-with-policy-engine">Admission-time verification with policy engine</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a824d282799b.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Produce AND verify.</strong> Signatures, provenance, and SBOMs that nothing checks are security
@@ -5634,7 +5308,8 @@ audits and adversaries. This chapter is the practical, operational treatment of 
 how to store keys so they are hard to steal, how to build and run internal PKI, how to move the
 whole fleet onto short-lived certificates so revocation stops mattering, how to run the key
 lifecycle as a disciplined operation rather than a folder of <code>.pem</code> files, and how to stand up a
-self-hosted Sigstore that meets the same tier-1 availability bar as the rest of your platform.</p>
+self-hosted Sigstore that meets the same tier-1 availability bar as the rest of your platform.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Place any key-storage option on the <strong>extraction-cost / assurance spectrum</strong> — software file →
@@ -5690,17 +5365,7 @@ all keys the same.</p>
 to an attacker of extracting the key material</strong>. Think of storage options as a spectrum from
 "trivially copyable file" to "non-exportable hardware," and read the whole spectrum as a campaign
 to raise that extraction cost until it exceeds the value of the key.</p>
-<p><pre><code>flowchart LR
-  F["Software key<br/>(.pem on disk)<br/>extraction: copy a file"]
-  E["Passphrase-encrypted<br/>key file<br/>extraction: file + guess/keylog"]
-  K["Cloud KMS<br/>(sign via API)<br/>extraction: breach the KMS boundary"]
-  H["HSM / CloudHSM<br/>(non-exportable)<br/>extraction: defeat FIPS hardware"]
-  F -->|"raise extraction cost"| E -->|"cannot exfiltrate the key,<br/>only its use"| K -->|"key never exists<br/>outside hardware"| H
-  classDef bad fill:#fdd,stroke:#900
-  classDef ok fill:#dfd,stroke:#090
-  class F,E bad
-  class K,H ok
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_36631d38c64b.png" alt="diagram"></div></p>
 <h3 id="software-keys-the-worst-option">Software keys — the worst option</h3>
 <p>A private key in a file is a private key one <code>cat</code>, one misconfigured S3 bucket, one leaked CI log,
 or one <code>docker history</code> away from being someone else's. Book 4, Chapter 6 (secrets in CI) is a
@@ -5884,22 +5549,7 @@ separates the key that <em>anchors</em> trust from the keys that <em>do</em> the
 7), where the offline <strong>root</strong> role delegates to online <strong>targets/snapshot/timestamp</strong> roles so
 that the keys touched by automation every few minutes are never the keys that anchor trust. Same
 threat model, same solution: keep the anchor cold, delegate the hot path.</p>
-<p><pre><code>flowchart TD
-  subgraph offline["OFFLINE — HSM, ceremony only"]
-    ROOT["Root CA<br/>key in HSM, powered on rarely<br/>validity ~10-20 yr<br/>signs ONLY intermediates"]
-  end
-  subgraph online["ONLINE — KMS/HSM, automated issuance"]
-    INT1["Issuing CA: mTLS/SPIFFE<br/>short-lived leaf certs"]
-    INT2["Issuing CA: internal Fulcio<br/>keyless signing certs"]
-    INT3["Issuing CA: code signing"]
-  end
-  ROOT -->|"signs (ceremony)"| INT1
-  ROOT -->|"signs (ceremony)"| INT2
-  ROOT -->|"signs (ceremony)"| INT3
-  INT1 -->|"issues, TTL ~hours"| L1["service mTLS certs"]
-  INT2 -->|"issues, TTL ~10 min"| L2["workload signing certs"]
-  INT3 -->|"issues"| L3["signed internal artifacts"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_933b61341749.png" alt="diagram"></div></p>
 <p>Compromise of an intermediate is <em>recoverable</em> (revoke at the root, rotate); compromise of the
 root is <em>catastrophic</em> (re-establish trust everywhere) — which is precisely why the root does
 almost nothing and lives offline.</p>
@@ -6024,16 +5674,7 @@ The human never touches a <code>.pem</code>, and there is no expiry to forget.</
 <p>Storage and PKI are two facets of a single discipline: managing a key across its whole life. Every
 key — signing, root, mTLS, TUF — moves through the same stages, and the operational quality of your
 program is how deliberately you handle each one.</p>
-<p><pre><code>flowchart LR
-  G["Generate<br/>secure RNG, in HSM/KMS"] --> D["Distribute / issue<br/>never copy private keys"]
-  D --> U["Use<br/>sign via API"]
-  U --> R["Rotate<br/>scheduled + on-compromise"]
-  R --> X["Revoke / expire<br/>prefer short-lived"]
-  X --> Z["Destroy<br/>zeroize / delete key version"]
-  U -.->|"every use"| A["Audit log<br/>who signed what, when"]
-  R -.-> A
-  X -.-> A
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b8ffa85f4826.png" alt="diagram"></div></p>
 <p><strong>Generation.</strong> Keys must come from a cryptographically secure RNG, and the strongest form is
 <strong>generation inside the HSM/KMS</strong> so the private material never exists outside the hardware
 boundary — no "generate on a laptop and import" step, which briefly creates the exportable file you
@@ -6124,20 +5765,7 @@ distribution model from the lifecycle section, elevated to a platform.</p>
 The build's <em>workload identity</em> — its OIDC token — is presented to Fulcio, which issues a
 ~10-minute certificate, the build signs with an ephemeral key, and the signature plus certificate
 go to Rekor. There is no key custody problem because there is no durable key.</p>
-<p><pre><code>flowchart TD
-  subgraph central["Centralized signing service (KMS-backed)"]
-    T1["Team pipeline"] -->|"authN + request"| SS["Signing service<br/>(policy: who signs what)"]
-    SS -->|"kms:Sign (IAM-gated)"| KMS["KMS / HSM<br/>keys held here"]
-    SS -->|"signature"| T1
-    SS -.->|"every sign"| AUD["Central audit log"]
-  end
-  subgraph keyless["Keyless workload-identity signing"]
-    T2["Build (workload identity)"] -->|"OIDC token + pubkey"| FUL["Fulcio<br/>(issues ~10-min cert)"]
-    FUL -->|"cert"| T2
-    T2 -->|"sign w/ ephemeral key"| REK["Rekor<br/>(transparency log)"]
-    REK -.->|"public record"| AUD2["Fleet-wide signing audit"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb057ff139f6.png" alt="diagram"></div></p>
 <p>Compare them directly:</p>
 <table>
 <thead>
@@ -6202,19 +5830,7 @@ good instance:</p>
   to internal identities rather than public providers.</li>
 </ul>
 <p>A self-hosted Sigstore is a set of cooperating services, each of which you now operate:</p>
-<p><pre><code>flowchart TD
-  IDP["Corporate OIDC IdP<br/>(Okta / Entra / CI tokens)"] -->|"identity token"| FUL["Private Fulcio (CA)<br/>signing key in KMS/HSM<br/>chains to internal root"]
-  FUL -->|"logs issuance (SCT)"| CT["Private CT log"]
-  BUILD["Build / workload"] -->|"OIDC + pubkey"| FUL
-  FUL -->|"~10-min cert"| BUILD
-  BUILD -->|"signature + cert"| REK["Private Rekor<br/>Trillian + DB backend"]
-  BUILD -->|"timestamp req"| TSA["Timestamp Authority<br/>(RFC 3161)"]
-  TUF["Internal TUF root<br/>(ceremony, threshold)"] -->|"distributes trusted keys of"| FUL
-  TUF --> REK
-  TUF --> CT
-  TUF --> TSA
-  REK -->|"Merkle root / checkpoint"| KMS2["Rekor signing key<br/>(KMS/HSM)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_549b82782232.png" alt="diagram"></div></p>
 <p>The components, and what operating each entails:</p>
 <ul>
 <li><strong>Fulcio</strong> (the CA) — backed by your KMS/HSM signing key and chaining to your internal root
@@ -6271,6 +5887,10 @@ protecting <em>a</em> key and becomes about a fleet-wide policy for <em>all</em>
   signed what and when, which is the substrate for <strong>misuse detection</strong> (Book 8). At scale, the
   audit stream is as valuable as the access control.</li>
 </ul>
+<h3 id="key-hierarchy-from-root-to-workload">Key hierarchy from root to workload</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_591110e5ca27.png" alt="diagram"></div></p>
+<h3 id="key-rotation-lifecycle">Key rotation lifecycle</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5b7f86a3aa58.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Keyless does not abolish keys; it relocates them.</strong> Someone runs Fulcio's CA, the TUF root, and
@@ -6355,7 +5975,8 @@ by itself. The value is realized at exactly one place: the <strong>deployment ga
 reads all that metadata, compares it to a <strong>policy</strong>, and refuses to run anything that fails. This
 chapter is about designing that gate — where it lives, what it checks, how you roll it out across a
 fleet without breaking every deploy on day one, and how you make "only verified artifacts run in
-production" a structural property of your platform rather than an aspiration on a slide.</p>
+production" a structural property of your platform rather than an aspiration on a slide.
+<em>All tool versions, spec references, and defaults verified as of early 2026.</em></p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
 <li>Explain why the deployment gate is <em>the</em> enforcement point of supply chain security, and why
@@ -6426,21 +6047,7 @@ they <em>can</em> be bypassed, and you make the platform itself refuse to run an
 CI is fully compromised and pushes a malicious image with a valid-looking but wrong-identity
 signature, admission — running in the cluster, evaluating against central policy, checking the
 <em>expected</em> signer identity — still says no.</p>
-<p><pre><code>flowchart LR
-  build["Build platform<br/>(Book 4)"] --> reg["Registry"]
-  reg -->|"push"| g1{"Ingest gate<br/>(bypassable)"}
-  g1 --> cd["CD: Argo/Flux/Spinnaker"]
-  cd --> g2{"CD gate<br/>(bypassable if<br/>pipeline compromised)"}
-  g2 --> api["Kube API server"]
-  human["kubectl apply"] --> api
-  operator["Operators / Jobs"] --> api
-  api --> g3{"Admission gate<br/>NON-BYPASSABLE backstop"}
-  g3 -->|"deny"| stop["Rejected: no Pod created"]
-  g3 -->|"admit"| kubelet["kubelet pulls + runs"]
-  style g3 fill:#b30000,color:#ffffff
-  style g1 fill:#e0a030
-  style g2 fill:#e0a030
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_506e09496aaa.png" alt="diagram"></div></p>
 <p>Notice the shape: the two upstream gates have side entrances (direct <code>kubectl</code>, operators, Jobs) that
 route <em>around</em> them straight to the API server. Only admission sits astride every path. That is the
 whole argument for centering your enforcement there. Books 6 (Chapters 5–6 on admission control and
@@ -6735,15 +6342,7 @@ first and you get a free, complete inventory of exactly which images, namespaces
 fail, <em>before</em> you break anyone. Then you drive the would-deny count to zero (fix the pipelines,
 onboard the stragglers, write the exceptions) and only then flip to enforce — and even then, flip it
 per-namespace or per-tier, not everywhere at once.</p>
-<p><pre><code>stateDiagram-v2
-  [*] --> Audit: deploy policy, log-only
-  Audit --> Audit: measure would-deny;<br/>fix pipelines / onboard teams
-  Audit --> EnforceCanary: would-deny ~ 0 for a tier
-  EnforceCanary --> Audit: canary breaks -> roll back
-  EnforceCanary --> EnforceFleet: canary clean N days
-  EnforceFleet --> EnforceFleet: steady state;<br/>monitor deny events
-  EnforceFleet --> [*]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e47047cb7f1f.png" alt="diagram"></div></p>
 <p>The state you must resist is jumping straight to <code>EnforceFleet</code>. The would-deny signal from audit is
 the cheapest risk assessment you will ever get; spend it.</p>
 <h3 id="break-glass-and-time-boxed-exceptions">Break-glass and time-boxed exceptions</h3>
@@ -6770,16 +6369,7 @@ private instances), the registry it fetches attestations from, the policy servic
 <em>cannot decide</em>, does it admit or deny? This is the availability-vs-security decision, and Chapter 8
 framed it: the honest default for a security control is <strong>fail-closed</strong> — if you cannot prove the
 artifact meets policy, do not run it.</p>
-<p><pre><code>flowchart TD
-  req["Pod create request"] --> ev{"Gate can<br/>evaluate policy?"}
-  ev -->|"yes, compliant"| admit["ADMIT (pinned digest)"]
-  ev -->|"yes, non-compliant"| deny["DENY"]
-  ev -->|"no: verifier/log/<br/>registry down"| fp{"Fail policy?"}
-  fp -->|"prod tier<br/>failurePolicy: Fail"| deny
-  fp -->|"dev tier<br/>failurePolicy: Ignore"| admitOpen["ADMIT unverified<br/>(alert loudly)"]
-  style deny fill:#b30000,color:#ffffff
-  style admitOpen fill:#e0a030
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7695abdd04c7.png" alt="diagram"></div></p>
 <p>But fail-closed has a brutal corollary: <strong>if the gate is down, no deploy anywhere succeeds.</strong> A
 crashing admission webhook with <code>failurePolicy: Fail</code> can wedge your entire platform — you cannot even
 deploy the fix to the gate. So fail-closed is only <em>safe</em> if the gate infrastructure is highly
@@ -6799,16 +6389,7 @@ attestation from <em>your</em> build platform — you did not build it. Requirin
 blocking half your workloads or granting so many exceptions that the policy is meaningless. The
 answer is <strong>tiered policy: required checks as a function of environment × criticality × artifact
 source.</strong></p>
-<p><pre><code>flowchart TD
-  start["Image at gate"] --> src{"Source?"}
-  src -->|"first-party<br/>(we built it)"| env{"Environment /<br/>criticality?"}
-  src -->|"third-party<br/>(vendor/upstream)"| tp["Signature (if any)<br/>+ vuln-scan attestation<br/>+ from approved registry<br/>(cannot require our provenance)"]
-  env -->|"prod tier-0"| strict["Keyless identity + SLSA L3<br/>provenance from approved repo<br/>+ SBOM + scan(no reachable KEV)<br/>+ Rekor + digest pin"]
-  env -->|"prod tier-1/internal"| mid["Keyless identity + provenance<br/>+ SBOM + scan (warn on vulns)"]
-  env -->|"dev / staging"| relaxed["Signature present<br/>+ digest pin<br/>(audit provenance)"]
-  style strict fill:#1b5e20,color:#ffffff
-  style tp fill:#e0a030
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_29298afa57a6.png" alt="diagram"></div></p>
 <p>The tiers, concretely:</p>
 <ul>
 <li><strong>First-party, prod tier-0:</strong> the full worked policy — identity, SLSA L3 provenance from an approved
@@ -6859,29 +6440,7 @@ structural "no" is the deliverable of this entire book.</p>
 <h2 id="capstone-bringing-books-35-together">Capstone: bringing Books 3–5 together</h2>
 <p>Step back and look at the whole machine. The three books you have worked through describe two halves
 of one loop, closed by the gate.</p>
-<p><pre><code>flowchart LR
-  subgraph produce["PRODUCE — paved-road build platform (Book 4)"]
-    src["Approved source repo<br/>(protected main)"] --> builder["Hosted isolated builder<br/>SLSA L3"]
-    builder --> img["Image @ sha256"]
-    builder --> prov["SLSA provenance<br/>(Book 4 Ch3)"]
-    builder --> sbom["SBOM (Book 3)"]
-    builder --> scan["Scan/VEX attestation<br/>(Book 2, Book 3 Ch6)"]
-    img --> sign["Keyless sign +<br/>attest (Book 5 Ch3-4,6)"]
-    prov --> sign
-    sbom --> sign
-    scan --> sign
-  end
-  sign --> store["Registry (OCI) +<br/>Rekor transparency log<br/>(Book 5 Ch5)"]
-  store --> gate
-
-  subgraph verify["VERIFY — deployment gate (this chapter)"]
-    gate{"Admission gate<br/>vs central policy<br/>(Book 8 Ch4)"}
-  end
-  gate -->|"deny"| rej["Rejected"]
-  gate -->|"admit by digest"| run["Runs in prod"]
-  run -.->|"deny events"| ir["Detection / IR (Book 8)"]
-  style gate fill:#1b5e20,color:#ffffff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0b5f010a08ab.png" alt="diagram"></div></p>
 <p>Trace one artifact through it. A commit lands on a protected <code>main</code> in an approved repo (Book 7 on
 source security). The <strong>paved-road build platform</strong> (Book 4, Chapter 10) builds it in an isolated,
 hosted builder — SLSA Build L3 — and emits, alongside the image, a <strong>SLSA provenance</strong> attestation
@@ -6930,6 +6489,10 @@ problem.</p>
   high-signal, low-noise security telemetry source (Book 8): a deploy blocked for a wrong signer
   identity is an attempted intrusion or a serious misconfiguration, and either way IR wants to know.</li>
 </ul>
+<h3 id="deployment-gate-stack-defense-in-depth">Deployment gate stack (defense in depth)</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5005f623b4ca.png" alt="diagram"></div></p>
+<h3 id="break-glass-procedure">Break-glass procedure</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2d4b91f5ffb2.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>The gate is the enforcement point.</strong> All of Books 3–5's signing, provenance, and attestation
