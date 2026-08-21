@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -373,27 +455,7 @@ teleported the request several tiers down the latency hierarchy and back.</p>
 <p>The following diagram renders the same hierarchy as a log-scale ladder. Each rung is
 roughly an order of magnitude below the one above it; the vertical distance is the whole
 game.</p>
-<p><pre><code>flowchart TB
-    subgraph OnChip["On-CPU (sub-nanosecond to ~10 ns)"]
-        REG["Register / 1 cycle -- ~0.3 ns"]
-        L1["L1 cache -- ~1 ns"]
-        L2["L2 cache -- ~4 ns"]
-        L3["L3 cache -- ~15 ns"]
-    end
-    subgraph Memory["Local memory (~100 ns)"]
-        DRAM["Main memory DRAM -- ~100 ns"]
-    end
-    subgraph Storage["Local storage (microseconds to milliseconds)"]
-        SSD["NVMe SSD random read -- ~10-100 us"]
-        HDD["Disk seek HDD -- ~5-10 ms"]
-    end
-    subgraph Network["Network (milliseconds to hundreds of ms)"]
-        DC["Intra-datacenter RTT -- ~0.5 ms"]
-        REGION["Same-continent RTT -- ~10-50 ms"]
-        GLOBAL["Cross-continent RTT -- ~150 ms"]
-    end
-    REG --> L1 --> L2 --> L3 --> DRAM --> SSD --> DC --> REGION --> HDD --> GLOBAL
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_662f7cf98ae1.png" alt="diagram"></div></p>
 <p>Two caveats keep this honest. First, the numbers <em>move</em>: L3 sizes and latencies vary across
 microarchitectures, NVMe has compressed the storage tier by orders of magnitude relative to
 the HDDs the original table assumed, and datacenter networks have gotten faster. Always
@@ -404,19 +466,7 @@ latency and throughput is a theme we return to below.</p>
 <h2 id="the-abstraction-stack-and-where-it-leaks">The abstraction stack, and where it leaks</h2>
 <p>You write in Go, Java, Python, Rust, or C++. Beneath that source is a tower of
 abstractions, each of which exists to let you <em>not</em> think about the layer below it:</p>
-<p><pre><code>flowchart TB
-    SRC["Your source code -- Go / Java / Python / Rust"]
-    RT["Language runtime -- GC, JIT, scheduler, allocator"]
-    OS["Operating system -- syscalls, scheduler, virtual memory, page cache"]
-    ISA["Instruction set architecture -- x86-64 / ARM64 contract"]
-    UARCH["Microarchitecture -- pipeline, caches, branch predictor, prefetchers, TLB"]
-    CIRC["Circuits -- transistors, wires, clock, DRAM cells"]
-    SRC --> RT --> OS --> ISA --> UARCH --> CIRC
-    SRC -. "GC pause leaks" .-> RT
-    RT -. "page fault, syscall cost leaks" .-> OS
-    OS -. "cache miss, TLB miss, branch mispredict leak" .-> UARCH
-    UARCH -. "you cannot see these in the source" .-> CIRC
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e8337ed5b477.png" alt="diagram"></div></p>
 <p>Each arrow downward is an abstraction doing its job: your source doesn't name registers, the
 runtime hides the allocator, the OS hides physical memory behind virtual addresses, the ISA
 hides the pipeline behind a clean sequential-execution contract, the microarchitecture hides
@@ -503,22 +553,7 @@ and your effective bandwidth for the field you care about collapses.</p>
 other fields in separate arrays. Now the position loop touches only position data; every byte
 in every cache line is useful; the prefetcher streams perfectly; and if you later want to
 vectorize the loop with SIMD, the data is already in the shape the vector units want.</p>
-<p><pre><code>flowchart TB
-    subgraph AoS["Array of Structs -- hot loop reads only x"]
-        direction LR
-        A1["x0 | y0 | z0 | ...meta0"]
-        A2["x1 | y1 | z1 | ...meta1"]
-        A3["x2 | y2 | z2 | ...meta2"]
-        A1 --> A2 --> A3
-    end
-    subgraph SoA["Struct of Arrays -- hot loop reads only x"]
-        direction LR
-        X["x0 | x1 | x2 | x3 | x4 | x5"]
-        Y["y0 | y1 | y2 | y3 | y4 | y5"]
-        Z["z0 | z1 | z2 | z3 | z4 | z5"]
-    end
-    AoS -. "each cache line wastes bandwidth on y,z,meta" .-> SoA
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7e23eb803b38.png" alt="diagram"></div></p>
 <p>Neither layout is universally correct — if your access pattern reads <em>all</em> fields of one
 record at a time, AoS is better because it keeps that record's fields on one line. The point
 is that the <em>right</em> layout is the one that matches your <em>access pattern</em> to the cache line,
@@ -548,15 +583,7 @@ intensity). Where your workload's intensity falls determines which roof you hit.
 <p>You don't need the formal plot to use the idea. The practical version is a triage question:
 <strong>for this workload, which resource saturates first — the arithmetic units, the memory
 system, or I/O?</strong> Every workload is dominated by one of three regimes:</p>
-<p><pre><code>flowchart LR
-    W["Workload"] --> Q{"What saturates first?"}
-    Q -->|"ALUs / FPUs busy, data fits in cache"| C["Compute-bound"]
-    Q -->|"stalled on DRAM, low arithmetic intensity"| M["Memory-bound"]
-    Q -->|"stalled on disk / network"| I["I/O-bound"]
-    C --> CF["Fix: better algorithm, SIMD, more cores, fewer ops"]
-    M --> MF["Fix: locality, layout, cache blocking, prefetch, compression"]
-    I --> IF["Fix: batching, async, caching, sequential access, fewer round trips"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_01ffc5cf4431.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Compute-bound.</strong> The arithmetic units are the bottleneck; the working set fits in cache
   so memory isn't the limit. Cryptographic hashing, compression, media transcoding, and dense
@@ -581,6 +608,7 @@ was idle anyway. Before you optimize, you must know which roof you are under, an
 reliable way to know is to measure: a profiler and the CPU's performance counters (cache-miss
 rate, stalled cycles, IPC) will tell you whether you are starved for compute, for memory
 bandwidth, or for data from another machine.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dd594481954d.png" alt="diagram"></div></p>
 <h2 id="why-it-matters-more-at-scale-not-less">Why it matters more at scale, not less</h2>
 <p>A reasonable objection at this point: modern hardware is fast and cheap, most services are
 I/O-bound on the network anyway, and premature micro-optimization is a genuine sin. All true.
@@ -635,6 +663,7 @@ runtime effects</em>:</p>
 the tail. You cannot debug a p999 problem with a model of the machine that stops at the source
 code. The tail lives in the microarchitecture, and reasoning about it <em>requires</em> the mechanical
 model this volume builds.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d152239abb71.png" alt="diagram"></div></p>
 <h2 id="the-distributed-systems-lens-the-network-is-just-another-tier">The distributed-systems lens: the network is just another tier</h2>
 <p>The unifying insight for a distributed-systems engineer is that <strong>the latency hierarchy does
 not stop at the edge of the machine — the network is simply its slowest tiers, and the same
@@ -674,6 +703,7 @@ for peak?" you are, whether you say so or not, modeling hardware: how many reque
 sustains before its memory system saturates or its tail latency crosses the SLO. Get the
 mechanical model wrong and you over-provision (burning money) or under-provision (missing the
 SLO under load). Good capacity planning is applied mechanical sympathy plus queueing theory.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_77ee165a5635.png" alt="diagram"></div></p>
 <h2 id="the-engineers-mental-model">The engineer's mental model</h2>
 <p>Pulling the chapter together, here is the working model to carry into the rest of the volume
 and into your day job:</p>
@@ -954,12 +984,7 @@ next begins: five cycles per instruction, one instruction at a time. Pipelining 
 Once instruction <em>i</em> leaves Fetch and enters Decode, instruction <em>i+1</em> enters Fetch. In steady
 state, all five stages are busy on five different instructions at once, and the pipeline retires
 one instruction per cycle.</p>
-<p><pre><code>flowchart LR
-    IF["IF<br/>Fetch"] --> ID["ID<br/>Decode"]
-    ID --> EX["EX<br/>Execute"]
-    EX --> MEM["MEM<br/>Memory"]
-    MEM --> WB["WB<br/>Writeback"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_848e78bc4fb3.png" alt="diagram"></div></p>
 <p>The crucial insight is that pipelining does <strong>not</strong> reduce the <em>latency</em> of any single instruction
 — that instruction still takes five stages, and in a deeper pipeline it takes more. What pipelining
 buys is <em>throughput</em>: the rate at which instructions complete. This is the assembly-line analogy,
@@ -1094,24 +1119,7 @@ pass. Then — and this is what preserves correctness — results are committed 
 is what the whole OoO apparatus exists to perform.</p>
 <p>Walk through the pieces. The conceptual lineage is Tomasulo's algorithm (IBM System/360 Model 91, 1967);
 you do not need the full algorithm, but you must get the pieces right.</p>
-<p><pre><code>flowchart TB
-    FE["Fetch + branch predict<br/>(feeds uops in program order)"] --> DEC["Decode<br/>(x86: to micro-ops)"]
-    DEC --> REN["Rename<br/>(arch reg → physical reg)"]
-    REN --> ALLOC["Allocate ROB entry<br/>+ scheduler slot"]
-    ALLOC --> SCHED["Scheduler / reservation stations<br/>(wait for operands)"]
-    SCHED -->|operands ready| P0["Port 0: ALU/branch"]
-    SCHED --> P1["Port 1: ALU/mul"]
-    SCHED --> P2["Port 2: load"]
-    SCHED --> P3["Port 3: store-data"]
-    SCHED --> P4["Port 4: store-addr/AGU"]
-    P0 --> WBK["Writeback to physical regs<br/>+ wake dependents"]
-    P1 --> WBK
-    P2 --> WBK
-    P3 --> WBK
-    P4 --> WBK
-    WBK --> ROB["Reorder buffer (ROB)"]
-    ROB -->|oldest first, in order| RET["Retire / commit<br/>(update arch state)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a7cd152fe1dd.png" alt="diagram"></div></p>
 <p><strong>Front end — fetch, decode, in program order.</strong> Instructions enter in program order. On x86 they are
 decoded into one or more fixed-format internal operations called <strong>micro-ops</strong> (uops); on ARM/RISC-V the
 instructions are already close to uop-like but still get cracked into internal ops. The front end also
@@ -1164,6 +1172,7 @@ arrives, the load completes, wakes its dependents, and — because retirement is
 still commits as though nothing had been reordered. The stall that would have frozen an in-order core for a
 hundred cycles is, on the OoO core, largely <em>hidden</em> behind useful work. This is the mechanism by which the
 memory hierarchy of Chapter 3 becomes tolerable at all.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_65779f3dea46.png" alt="diagram"></div></p>
 <h2 id="branch-prediction-and-speculation">Branch prediction and speculation</h2>
 <p>Return to the control hazard. A conditional branch's direction is not known until it executes, but the front
 end must keep fetching every cycle or the whole superscalar machine starves. Waiting for each branch would
@@ -1171,15 +1180,7 @@ cost the pipeline-depth penalty on <em>every branch</em>, and branches are rough
 typical code — the machine would spend most of its life fetching bubbles. The solution is to <strong>guess</strong>: the
 core predicts the direction (taken/not-taken) and the target of each branch and speculatively fetches and
 executes down the predicted path, before it knows whether the guess was right.</p>
-<p><pre><code>flowchart TB
-    B["Branch fetched"] --> PRED["Predictor:<br/>direction + target"]
-    PRED --> SPEC["Speculatively fetch and execute<br/>down predicted path"]
-    SPEC --> RES["Branch resolves in execute"]
-    RES --> CHK{"Prediction correct?"}
-    CHK -->|Yes| COMMIT["Speculative uops retire normally<br/>(work was real)"]
-    CHK -->|No| FLUSH["Flush wrong-path uops from ROB<br/>+ redirect fetch to correct target"]
-    FLUSH --> REFILL["Refill pipeline from correct path<br/>(~15-20 cycle penalty)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_531cb5ba82a0.png" alt="diagram"></div></p>
 <p>Speculatively executed instructions run through the OoO engine like any others, writing physical registers
 and sitting in the ROB — but they <strong>cannot retire</strong> until the branch they depend on resolves. If the
 prediction was correct, that speculative work was real work; those uops retire in order and nothing was
@@ -1247,6 +1248,7 @@ barriers) cost real performance and reshaped how kernels and hypervisors defend 
 backend engineer the operational takeaway is concrete: the mitigations are not free, they landed as measurable
 throughput regressions across fleets, and on shared hardware the boundary between your workload and a
 co-tenant's is enforced in part by microarchitectural controls you do not see.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_055ca2ab9a5a.png" alt="diagram"></div></p>
 <h2 id="memory-and-the-cpu-hiding-latency">Memory and the CPU: hiding latency</h2>
 <p>The OoO engine's greatest single service is hiding memory latency. Chapter 3 details the hierarchy; the
 number that matters here is the gap: an L1 hit is a few cycles, a last-level-cache miss to DRAM is on the
@@ -1305,14 +1307,7 @@ Hyper-Threading — exploits those idle resources by running <em>two</em> (somet
 core at once. Each thread has its own architectural state (registers, program counter), but they <strong>share</strong> the
 physical execution resources: the ports, the schedulers, the caches, the TLBs, and — critically — they compete
 for slots in the ROB and physical register file.</p>
-<p><pre><code>flowchart TB
-    subgraph CORE["One physical core"]
-        T0["Thread 0<br/>arch state"] --> FES["Shared front end<br/>fetch / decode / rename"]
-        T1["Thread 1<br/>arch state"] --> FES
-        FES --> SSCHED["Shared scheduler + ports"]
-        SSCHED --> EU["Shared execution units<br/>+ L1/L2 cache"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d1aaebb43a4e.png" alt="diagram"></div></p>
 <p>SMT <strong>helps</strong> when a single thread cannot keep the ports busy — which is most of the time for
 latency-bound, memory-stalling backend workloads. While thread 0 waits on a cache miss, thread 1's
 independent instructions fill the idle ports; the core's aggregate throughput rises. Typical real-world
@@ -1333,6 +1328,7 @@ SMT entirely for untrusted multi-tenancy, and cloud schedulers use <strong>core 
 so that only sibling threads from the <em>same</em> trust domain share a core. For a backend engineer this is not
 abstract — it is why some security-sensitive fleets run with Hyper-Threading off, eating the throughput loss
 to close the side channel.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7b50d74bb2e8.png" alt="diagram"></div></p>
 <h2 id="distributed-systems-lens-ipc-is-a-line-item">Distributed-systems lens: IPC is a line item</h2>
 <p>Everything above is single-core mechanics, but you operate fleets, and at fleet scale these mechanics become
 economics and SLOs.</p>
@@ -1510,21 +1506,7 @@ technology at an acceptable price. So the industry did the only thing it could: 
 <strong>hierarchy</strong> — a small amount of very fast memory close to the core, backed by progressively
 larger and slower tiers — and bet that programs access memory in a way that lets small fast tiers
 capture most of the traffic. That bet is called <em>locality</em>, and it almost always pays.</p>
-<p><pre><code>flowchart TB
-    subgraph CORE["On the core"]
-      REG["Registers<br/>~1 KB<br/>0 cycles latency"]
-      L1["L1 I+D cache<br/>~32-64 KB each<br/>~4 cycles (~1 ns)"]
-      L2["L2 cache<br/>~256 KB - 2 MB<br/>~12-15 cycles (~4 ns)"]
-    end
-    subgraph SOCKET["Shared on the socket"]
-      L3["L3 / LLC (shared)<br/>~a few - tens of MB<br/>~40 cycles (~15 ns)"]
-    end
-    subgraph OFFDIE["Off the die"]
-      DRAM["Main memory (DRAM)<br/>GBs - TBs<br/>~100 ns (hundreds of cycles)"]
-      SSD["Local NVMe SSD (Ch 5)<br/>TBs<br/>~10-100 us"]
-    end
-    REG --> L1 --> L2 --> L3 --> DRAM --> SSD
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_db5cd634cf59.png" alt="diagram"></div></p>
 <p>Notice the shape: as you move away from the core, capacity grows by roughly 10-100x per step and
 latency grows by a similar factor. Each tier is a cache for the tier below it. The core's job — and
 the compiler's, and yours — is to arrange that the overwhelming majority of accesses are satisfied
@@ -1626,16 +1608,7 @@ mainstream CPU, <strong>64 bytes</strong> — and it is the smallest unit the ca
 the entire aligned 64-byte line containing that address (here, <code>0x...40</code> through <code>0x...7F</code>) from
 wherever it currently lives, and installs the whole line in L1. The consequences ripple through
 everything:</p>
-<p><pre><code>flowchart LR
-    subgraph LINE["One 64-byte cache line (fetched atomically)"]
-      direction LR
-      B0["byte 0<br/>(you asked<br/>for this)"]
-      B1["bytes 1-7"]
-      B2["bytes 8-63<br/>(came along<br/>for free)"]
-    end
-    REQ["Load of 1 byte"] --> LINE
-    LINE --> NOTE["Next 63 bytes now<br/>in L1 at ~4-cycle cost.<br/>Adjacent data is<br/>effectively free."]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_44d590662d51.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Accessing one byte costs you 64.</strong> Bandwidth and cache capacity are consumed in 64-byte units. A
   struct with one hot 4-byte field still drags its 60 neighboring bytes into cache.</li>
@@ -1683,28 +1656,7 @@ It cannot afford to search all of itself on every access. The solution is to sli
 three fields and use them to look up a small number of candidate slots.</p>
 <p>Take a physical address and a cache with 64-byte lines. The low bits index <em>within</em> a line; the
 middle bits select a <em>set</em>; the high bits are the <em>tag</em> that confirms identity:</p>
-<p><pre><code>flowchart TB
-    ADDR["Physical address (e.g. 48 bits)"]
-    ADDR --> SPLIT
-    subgraph SPLIT["Address split for a set-associative cache"]
-      direction LR
-      TAG["TAG<br/>(high bits)<br/>identity check"]
-      IDX["INDEX<br/>(middle bits)<br/>selects the set"]
-      OFF["OFFSET<br/>(low 6 bits)<br/>byte within 64B line"]
-    end
-    IDX --> SET
-    subgraph SET["Selected set (an N-way set = N lines)"]
-      direction LR
-      W0["way 0<br/>tag+data"]
-      W1["way 1<br/>tag+data"]
-      W2["way 2<br/>tag+data"]
-      W3["way 3<br/>tag+data"]
-    end
-    TAG --> CMP["Compare TAG against<br/>all N ways in parallel"]
-    SET --> CMP
-    CMP --> HIT["Match -> HIT: use OFFSET<br/>to pick bytes"]
-    CMP --> MISS["No match -> MISS:<br/>fetch line, evict a way"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0481c85b3877.png" alt="diagram"></div></p>
 <p>The math is concrete. With <strong>64-byte lines</strong>, the low <strong>6 bits</strong> are the offset (2^6 = 64). If the
 cache has <strong>S sets</strong>, the next <strong>log2(S)</strong> bits are the index. Everything above is the tag. Worked
 example: a 32 KB, 8-way set-associative L1d with 64-byte lines has 32768 / 64 = 512 lines total,
@@ -1761,6 +1713,7 @@ for the tier — the fix is to make it smaller or process it in cache-sized chun
 stride (e.g., iterating a large 2D array by a power-of-two column stride can map every access to the
 same set) — the fix is to change the layout or padding so accesses spread across sets. <strong>Compulsory</strong>
 misses are the cost of touching data for the first time; prefetching is how the hardware hides them.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a73f24b94ae1.png" alt="diagram"></div></p>
 <h2 id="cache-operations-hits-evictions-and-writes">Cache operations: hits, evictions, and writes</h2>
 <p>On every memory access the cache does a lookup as above. A <strong>hit</strong> returns data at that tier's
 latency. A <strong>miss</strong> must fetch the line from a lower tier and install it — and if the target set is
@@ -1772,15 +1725,7 @@ get most of LRU's benefit with a few bits of state per set. You cannot control t
 it is <em>recency-biased</em> tells you the mental model: recently touched lines survive; lines you stopped
 touching get evicted — which is exactly why temporal locality (reuse soon) pays.</p>
 <p><strong>Write policies.</strong> What happens on a <em>store</em> is governed by two orthogonal decisions:</p>
-<p><pre><code>flowchart TB
-    W["Store (write) to address"] --> HITQ{"Line already in cache?"}
-    HITQ -->|Hit| WP{"Write policy?"}
-    HITQ -->|Miss| WA{"Write-allocate?"}
-    WP -->|Write-through| WT["Update cache AND<br/>write to next level now"]
-    WP -->|Write-back| WB["Update cache only,<br/>mark line DIRTY;<br/>flush on eviction"]
-    WA -->|Write-allocate| ALLOC["Fetch line into cache,<br/>then treat as hit"]
-    WA -->|No-write-allocate| BYPASS["Write straight to next<br/>level, do not cache"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0222ea0c0cb9.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -1880,6 +1825,7 @@ in-memory stores expose huge-page / <code>MADV_HUGEPAGE</code> options and why L
 The mechanics of paging, page tables, and huge pages belong to Volume 2 (Virtual Memory); the point
 here is architectural: <strong>the TLB is a cache with the same hit/miss/reach economics as the data caches,
 it sits on every access, and huge pages are to the TLB what good locality is to the data cache.</strong></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8751c6fcd27a.png" alt="diagram"></div></p>
 <h2 id="measuring-what-actually-happens">Measuring what actually happens</h2>
 <p>None of this is guesswork you have to do in your head. The CPU exposes <strong>hardware performance counters</strong>
 that report exactly how the hierarchy is behaving, and on Linux <code>perf</code> reads them. A first pass:</p>
@@ -1928,19 +1874,7 @@ streams it, and each 64-byte line delivers several elements. A linked list of th
 separately-allocated nodes scattered across the heap, each holding a pointer to the next. Iterating it
 is pointer chasing: unpredictable <em>and</em> dependent, so every node is an exposed, serialized DRAM miss —
 and part of each fetched line is wasted on the <code>next</code> pointer itself.</p>
-<p><pre><code>flowchart TB
-    subgraph ARR["Array traversal: sequential, prefetchable"]
-      direction LR
-      A0["line 0<br/>elems 0-7"] --> A1["line 1<br/>elems 8-15"] --> A2["line 2<br/>elems 16-23"] --> A3["..."]
-    end
-    subgraph LL["Linked list traversal: scattered, dependent misses"]
-      N0["node @ 0x1000"] -->|next| N1["node @ 0x9F40"]
-      N1 -->|next| N2["node @ 0x2C80"]
-      N2 -->|next| N3["node @ 0xE110"]
-    end
-    ARR --> AN["Prefetcher runs ahead;<br/>~1 miss per several elements"]
-    LL --> LN["Prefetcher blind;<br/>~1 exposed DRAM miss per node"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_69800852bac1.png" alt="diagram"></div></p>
 <p>The lesson generalizes to any pointer-heavy structure: trees of individually heap-allocated nodes,
 hash maps with per-entry allocations, graphs of objects. When traversal performance matters, prefer
 <strong>contiguous, index-based</strong> layouts: array-backed structures, flat arrays with integer indices instead
@@ -2012,15 +1946,7 @@ latency, so keep data close to where it is used, and organize tiers so the fast/
 of the traffic.</strong> That principle does not care whether the "tier" is an SRAM cache or a datacenter in
 another region. The memory hierarchy is the innermost few rungs of a ladder that extends all the way out
 to cross-region replication, and the same reasoning governs every rung.</p>
-<p><pre><code>flowchart TB
-    R["Registers  ~0.3 ns"] --> L1["L1  ~1 ns"] --> L2["L2  ~4 ns"] --> L3["L3  ~15 ns"]
-    L3 --> DRAM["Local DRAM  ~100 ns"]
-    DRAM --> RDRAM["Remote-socket DRAM (NUMA)  ~150-200 ns"]
-    RDRAM --> SSD["Local NVMe SSD  ~10-100 us"]
-    SSD --> RCACHE["Remote in-memory cache (Redis, same DC)  ~0.5-2 ms"]
-    RCACHE --> RDB["Remote database (same region)  ~1-10 ms"]
-    RDB --> XREGION["Cross-region round trip  ~30-150 ms"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a82d0b76659d.png" alt="diagram"></div></p>
 <p>Look at the latency scale: each rung is ~10-1000x slower than the one above, exactly like the on-die
 hierarchy — just extended by twelve orders of magnitude from registers to cross-region. A backend
 architecture <em>is</em> a memory hierarchy design problem wearing different words:</p>
@@ -2171,17 +2097,7 @@ so <em>neither</em> other caches <em>nor</em> memory reflect the write.</p>
 independent copies, and an uncoordinated write makes the others stale. Left unmanaged, a
 multiprocessor would present not shared memory but N disagreeing memories, and no shared-memory
 program — no lock, no queue, no <code>volatile</code> flag — could work.</p>
-<p><pre><code>flowchart LR
-    subgraph C0["Core 0"]
-      L10["L1: x = 1  (just wrote)"]
-    end
-    subgraph C1["Core 1"]
-      L11["L1: x = 0  (STALE)"]
-    end
-    DRAM["DRAM: x = 0  (never updated yet)"]
-    L10 -.->|"write not propagated"| L11
-    L10 -.->|"write-back deferred"| DRAM
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9185d4638503.png" alt="diagram"></div></p>
 <p>A memory system is <strong>coherent</strong> if it upholds two invariants:</p>
 <ol>
 <li><strong>Write propagation.</strong> A write to a location by one core eventually becomes visible to every
@@ -2225,20 +2141,7 @@ crucially, across <strong>sockets</strong>. On a multi-socket server the inter-s
 Infinity Fabric) carry directory-based coherence traffic, and the non-uniform cost of that traffic
 is exactly the NUMA effect Chapter 6 develops: touching a line owned by another socket's cache means
 a cross-socket coherence round trip.</p>
-<p><pre><code>flowchart TB
-    subgraph SNOOP["Snooping: broadcast, everyone listens"]
-      B["Interconnect (ring/mesh)"]
-      SA["Core A"] --- B
-      SB["Core B"] --- B
-      SC["Core C"] --- B
-      SD["Core D"] --- B
-    end
-    subgraph DIR["Directory: point-to-point, targeted"]
-      DHome["Directory / home node<br/>knows: line L held by A, C (Shared)"]
-      DA["Core A"] -->|"request L"| DHome
-      DHome -->|"invalidate L"| DC["Core C"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bbd3ab51841f.png" alt="diagram"></div></p>
 <p>The two families are not mutually exclusive. Large systems are hierarchical: snooping (or a snoop
 filter) within a socket, directories between sockets. The mental model to keep is that coherence is
 a <em>messaging protocol between caches</em> whose cost is the messages it must send — a framing that is the
@@ -2307,20 +2210,7 @@ bus transaction to invalidate copies that do not even exist. E makes the unconte
 <p>The state machine is driven by two kinds of events: <strong>local</strong> events (this core's loads and stores)
 and <strong>remote</strong> events (coherence messages observed from other cores — another core's read, another
 core's read-for-ownership/write). The essential transitions:</p>
-<p><pre><code>stateDiagram-v2
-    [*] --> I
-    I --> E : local read, no other sharers
-    I --> S : local read, other sharers exist
-    I --> M : local write (Read-For-Ownership, invalidate others)
-    E --> M : local write (silent, no bus traffic)
-    E --> S : remote read observed
-    E --> I : remote write / RFO observed
-    S --> M : local write (send invalidate to all sharers)
-    S --> I : remote write / RFO observed
-    S --> S : remote read observed (stay shared)
-    M --> S : remote read observed (write back / forward data)
-    M --> I : remote write / RFO observed (write back / forward, invalidate)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7246ab31d6c6.png" alt="diagram"></div></p>
 <p>Read the machine event by event.</p>
 <p><strong>Local read of an Invalid line (a read miss).</strong> If no other cache holds the line, the data comes
 from memory (or L3) and the line goes to <strong>E</strong>. If other caches <em>do</em> hold it, the reader lands in
@@ -2350,25 +2240,7 @@ that order because it only ever reads the line by acquiring a coherent copy from
 <h3 id="a-concrete-scenario-two-readers-one-writer">A concrete scenario: two readers, one writer</h3>
 <p>Trace the canonical sequence — two cores read a line, then one writes it — through MESI, because
 this is the pattern under every shared flag, every reference count, every spinlock.</p>
-<p><pre><code>sequenceDiagram
-    participant A as Core A cache
-    participant B as Core B cache
-    participant M as Memory / L3
-    Note over A,M: Line L initially only in memory
-    A->>M: read L (miss)
-    M-->>A: data
-    Note over A: A holds L in E (exclusive, clean)
-    B->>A: read L (miss, snoops A's E copy)
-    A-->>B: data (A demotes E to S)
-    Note over A,B: Both hold L in S (shared)
-    A->>B: RFO L (A wants to write)
-    Note over B: B invalidates its copy (S to I)
-    Note over A: A gains M, performs store
-    Note over A,B: A holds L in M; B holds nothing
-    B->>A: read L (miss, snoops A's M copy)
-    A-->>B: fresh data (A writes back/forwards, M to S)
-    Note over A,B: Both hold L in S again, both see the new value
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_44b2d692f8e9.png" alt="diagram"></div></p>
 <p>Step by step: A reads L, finds no other holder, caches it in <strong>E</strong>. B reads L, snoops A's copy, A
 demotes to <strong>S</strong>, both hold L in <strong>S</strong>. A writes L: because L is Shared, A issues an <strong>RFO</strong>, B
 invalidates (<strong>S → I</strong>), A transitions to <strong>M</strong> and stores. When B next reads L it misses, snoops
@@ -2406,6 +2278,7 @@ multicore the freshest copy of a contended line usually lives in <em>another cor
 memory. You will not program to F or O, but knowing they exist explains why "the data was in another
 core's cache" is a distinct, often cheaper cost than "the data was in DRAM." For the rest of the
 chapter, MESI is the model; MESIF/MOESI are the production refinements.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fcc492095332.png" alt="diagram"></div></p>
 <h2 id="the-cost-of-coherence">The cost of coherence</h2>
 <p>Coherence is correct and automatic, but not free, and its cost concentrates precisely where multiple
 cores touch the same cache lines — which is where concurrent backend code lives. Two phenomena
@@ -2434,15 +2307,7 @@ the atomic unit), so even though the threads never touch the same datum, every w
 invalidates the <em>whole line</em> in the other's cache, including the byte the other cares about. The
 hardware cannot tell the writes are logically independent; it sees two cores writing the same line
 and ping-pongs it between them exactly as if they were truly sharing.</p>
-<p><pre><code>flowchart TB
-    subgraph LINE["One 64-byte cache line"]
-      A["counter_a (bytes 0-7)<br/>owned by Thread A"]
-      B["counter_b (bytes 8-15)<br/>owned by Thread B"]
-    end
-    TA["Thread A on Core 0<br/>writes counter_a"] -->|"RFO: invalidates whole line in Core 1"| LINE
-    TB["Thread B on Core 1<br/>writes counter_b"] -->|"RFO: invalidates whole line in Core 0"| LINE
-    LINE -.->|"line ping-pongs every write<br/>though A and B share no data"| LINE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ad4e4aa2deb6.png" alt="diagram"></div></p>
 <p>Make it concrete. Two threads, each hammering its own counter:</p>
 <div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">counters</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">a</span><span class="p">;</span><span class="w">   </span><span class="c1">// updated only by thread A</span>
@@ -2587,6 +2452,7 @@ coherence never promised anything about the <em>cross-location</em> ordering of 
 <code>y</code>'s read. That is a <em>consistency</em> question, answered by the memory model. Coherence is necessary
 but not sufficient: a machine can be perfectly coherent and still reorder operations across
 locations in ways that break naive concurrent code. The rest of the chapter is about that reordering.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_163336bafa02.png" alt="diagram"></div></p>
 <h2 id="memory-consistency-models">Memory consistency models</h2>
 <p>A <strong>memory consistency model</strong> is the contract between the hardware and software specifying which
 reorderings of memory operations (to different locations) the hardware is allowed to perform — that
@@ -2623,18 +2489,7 @@ happened before its store to <code>x</code> became visible</strong> — a <stron
 mechanism behind <code>r1==0 &amp;&amp; r2==0</code>: each core's store is stuck in its buffer while its load reads the
 other's stale value. The store buffer is not a bug but a universal optimization, and its consequence
 — loads can appear to overtake earlier stores — is the defining relaxation of x86's memory model.</p>
-<p><pre><code>sequenceDiagram
-    participant C0 as Core 0
-    participant SB0 as Core 0 store buffer
-    participant Mem as Coherent cache/memory
-    participant C1 as Core 1
-    C0->>SB0: store x = 1 (buffered, NOT yet visible)
-    C0->>Mem: load y  (executes now)
-    Mem-->>C0: y = 0  (Core 1's store also still buffered)
-    Note over SB0: x=1 drains to cache LATER
-    Note over C0,C1: Both loads read stale 0 -> store/load reordered
-    Note over C0: mfence here would drain SB0 before the load, forbidding the reorder
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c00bdf7c1ba3.png" alt="diagram"></div></p>
 <h3 id="x86-tso-versus-armpower-strong-versus-weak">x86-TSO versus ARM/POWER: strong versus weak</h3>
 <p>Real architectures sit on a spectrum from SC (strongest, unimplemented) to very weak. Two points on
 that spectrum matter for backend work.</p>
@@ -2953,18 +2808,7 @@ on the order of <strong>tens of microseconds</strong>; a random HDD read is <str
 to an HDD seek (~10 ms) is roughly <strong>seven orders of magnitude</strong> — the difference between one second
 and four months. It is why data systems are, at bottom, the art of not going to storage — and of going
 there cheaply when forced to.</p>
-<p><pre><code>flowchart TB
-    subgraph VOLATILE["Volatile (forgets on power loss)"]
-      DRAM["DRAM (Ch 3)<br/>~100 ns<br/>tens of GB/s per channel<br/>capacity: GBs-TBs"]
-    end
-    subgraph PERSIST["Non-volatile (survives power loss)"]
-      PMEM["Persistent memory / Optane<br/>~100s of ns (hedge; discontinued)<br/>byte-addressable"]
-      NVME["NVMe SSD (PCIe)<br/>~10-100 us<br/>GB/s, ~100Ks-1M+ IOPS"]
-      SATA["SATA/SAS SSD<br/>~50-150 us<br/>~550 MB/s (bus-capped)"]
-      HDD["HDD (spinning disk)<br/>~5-15 ms random<br/>~100-260 MB/s sequential<br/>~75-200 random IOPS"]
-    end
-    DRAM --> PMEM --> NVME --> SATA --> HDD
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb6e44e9ecce.png" alt="diagram"></div></p>
 <p>The table below gives order-correct figures. As in Chapter 3, treat every number as an
 approximation whose <strong>order of magnitude is the durable fact</strong>; exact values depend on the specific
 part, generation, and workload. What matters is the <em>shape</em>: each row down is roughly an order of
@@ -3050,12 +2894,7 @@ or write a specific sector, the drive must do two mechanical things in sequence:
    revolution takes ~8.3 ms, so average rotational latency is <strong>~4.2 ms</strong>. At 15,000 RPM it is
    ~2 ms. This is why RPM is on the spec sheet: it directly sets the rotational-latency floor.</li>
 </ol>
-<p><pre><code>flowchart LR
-    REQ["Read request<br/>for a random sector"] --> SEEK["Seek<br/>move arm to track<br/>~4-10 ms"]
-    SEEK --> ROT["Rotational latency<br/>wait for sector<br/>~2-4 ms avg"]
-    ROT --> XFER["Transfer<br/>read the data<br/>fast once positioned"]
-    XFER --> DONE["Data returned<br/>total ~5-15 ms"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2dfbe31d14f3.png" alt="diagram"></div></p>
 <p>Add seek and rotation and a single <strong>random</strong> access costs on the order of <strong>5-15 ms</strong> before a
 single useful byte moves. Invert that and you get the brutal headline number: a 7,200-RPM drive
 services only <strong>~75-150 random IOPS</strong>. That is not a typo and it has not meaningfully improved in
@@ -3096,6 +2935,7 @@ technique is, at root, a strategy to turn random I/O into sequential I/O:</p>
 because of prefetching; storage multiplies the stakes: <strong>sequential beats random at every tier, and
 the slower the tier, the more extreme the penalty.</strong> Design access patterns for the slowest tier your
 data touches.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b47da04e8cf3.png" alt="diagram"></div></p>
 <h2 id="ssds-nand-flash-and-the-erase-before-write-problem">SSDs: NAND flash and the erase-before-write problem</h2>
 <p>A solid-state drive has no moving parts. It stores bits as trapped electric charge in <strong>NAND flash</strong>
 cells, and it reads them electronically. That alone removes seek and rotational latency and is why
@@ -3204,21 +3044,7 @@ The <strong>TRIM</strong> command (SATA) / <strong>Deallocate</strong> (NVMe) le
 garbage." This lets GC treat those pages as stale immediately instead of dutifully copying dead data
 during collection, which improves both performance and endurance. A filesystem that does not issue
 TRIM slowly degrades an SSD's write performance.</p>
-<p><pre><code>flowchart TB
-    subgraph HOST["Host view"]
-      LBA["Logical block addresses<br/>(overwritable device)"]
-    end
-    subgraph CTRL["SSD controller"]
-      FTL["FTL: LBA to physical map<br/>wear leveling, GC, TRIM"]
-    end
-    subgraph NAND["NAND flash"]
-      direction TB
-      B1["Block (erase unit, ~MBs)<br/>Page (read/write unit, ~4-16 KB)<br/>Page ... Page"]
-      RULE["Rule: program empty pages;<br/>ERASE whole block before reuse;<br/>no in-place overwrite"]
-    end
-    LBA --> FTL --> B1
-    B1 -.governed by.-> RULE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_33b705b81e5c.png" alt="diagram"></div></p>
 <h3 id="write-amplification-endurance-and-the-p99-tail">Write amplification, endurance, and the p99 tail</h3>
 <p>Two consequences of the FTL matter enormously to a backend engineer.</p>
 <p><strong>Write amplification.</strong> Because of out-of-place writes and GC's copy-valid-pages step, the NAND
@@ -3269,6 +3095,7 @@ lesson and reinforces another part:</p>
   Volume 5 dissects. The point for now: <strong>the medium's write physics is a first-class input to that
   decision.</strong></li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_88c9438a4c4c.png" alt="diagram"></div></p>
 <h2 id="nvme-the-interface-catches-up-to-the-media">NVMe: the interface catches up to the media</h2>
 <p>For years the SSD's real bottleneck was not the flash — it was the <em>cable</em>. Early SSDs shipped on the
 <strong>SATA</strong> interface with the <strong>AHCI</strong> protocol, both designed in the era of spinning disks. That
@@ -3296,21 +3123,7 @@ defining moves are the mirror image of AHCI's two limits:</p>
   flash's internal parallelism and lets a single NVMe SSD sustain hundreds of thousands to over a
   million IOPS.</li>
 </ul>
-<p><pre><code>flowchart LR
-    subgraph SATA["SATA / AHCI (built for disks)"]
-      C1["Core"] --> Q1["1 queue, depth 32"]
-      C2["Core"] --> Q1
-      Q1 --> D1["SATA SSD<br/>~550 MB/s cap"]
-    end
-    subgraph NVME["NVMe / PCIe (built for flash)"]
-      N1["Core"] --> NQ1["Queue pair 1<br/>(deep)"]
-      N2["Core"] --> NQ2["Queue pair 2<br/>(deep)"]
-      N3["Core"] --> NQ3["Queue pair N<br/>(deep)"]
-      NQ1 --> ND["NVMe SSD<br/>GB/s, 100Ks-1M+ IOPS"]
-      NQ2 --> ND
-      NQ3 --> ND
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_289175459207.png" alt="diagram"></div></p>
 <p>The latency picture follows. An NVMe SSD read is on the order of <strong>~10-100 µs</strong> end to end — the NAND
 itself contributes ~10-20 µs; the rest is the driver, queueing, and PCIe. That is still ~100x slower
 than DRAM, but ~100x <em>faster</em> than an HDD seek, and low enough that the <em>software</em> overhead (system
@@ -3331,6 +3144,7 @@ independently; a failed compute node does not take its data with it; utilization
 hardware substrate under a lot of modern cloud block storage and "compute-storage separation"
 database architectures, and it is a direct line to the distributed-systems discussion below and to
 Volume 12's treatment of cloud infrastructure.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5d1784629f8.png" alt="diagram"></div></p>
 <h2 id="persistent-memory-the-tier-that-almost-was">Persistent memory: the tier that almost was</h2>
 <p>For a few years it looked as though the wall between "memory" and "storage" might come down. <strong>Intel
 Optane</strong> persistent memory (built on <strong>3D XPoint</strong> technology, co-developed with Micron) shipped as
@@ -3387,13 +3201,7 @@ distributed database, a message queue, a consensus log all promise "once I ackno
 will survive a crash." That promise is only as good as the weakest link in the physical path the write
 takes — and that path has more volatile stages than most engineers realize. Consider <code>write()</code>
 appending a record to a file:</p>
-<p><pre><code>flowchart TB
-    APP["Application<br/>write(fd, buf, n)"] --> PC["OS page cache (in DRAM)<br/>VOLATILE<br/>write() returns here!"]
-    PC -->|"fsync / fdatasync<br/>flush + cache-flush cmd"| DC["Drive write cache (DRAM on device)<br/>VOLATILE unless PLP"]
-    DC -->|"FUA / flush honored to media"| MEDIA["Non-volatile media<br/>(NAND / platter)<br/>DURABLE HERE"]
-    DC -.->|"power loss w/o PLP"| LOST["Data lost"]
-    PC -.->|"crash before fsync"| LOST2["Data lost"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_26fd61f9c711.png" alt="diagram"></div></p>
 <p>Walk the stages:</p>
 <p><strong>Stage 1 — the page cache (volatile).</strong> By default, <code>write()</code> copies your bytes into the kernel's
 <strong>page cache</strong> in DRAM and returns <em>immediately</em>, reporting success. Nothing has touched the disk; the
@@ -3715,26 +3523,7 @@ request must travel <em>across a link between the sockets</em>, be serviced by s
 data must travel back. That extra hop is real distance and real latency. Memory is no longer uniform:
 it is <strong>NUMA — Non-Uniform Memory Access</strong>. The performance of a memory access now depends on <em>which
 node</em> holds the data relative to <em>which core</em> is asking.</p>
-<p><pre><code>flowchart TB
-    subgraph UMA["UMA: shared bus (does not scale)"]
-      C0["CPU 0"] --> BUS["Shared front-side bus"]
-      C1["CPU 1"] --> BUS
-      C2["CPU 2"] --> BUS
-      C3["CPU 3"] --> BUS
-      BUS --> MC["Single memory controller"]
-      MC --> MEM["All DRAM (one flat pool)"]
-    end
-    subgraph NUMA["NUMA: memory controller per socket (scales)"]
-      direction LR
-      subgraph N0["Node 0 (socket 0)"]
-        S0["Cores + caches"] --> IMC0["IMC 0"] --> D0["Local DIMMs"]
-      end
-      subgraph N1["Node 1 (socket 1)"]
-        S1["Cores + caches"] --> IMC1["IMC 1"] --> D1["Local DIMMs"]
-      end
-      IMC0 <-->|"inter-socket link<br/>(UPI / Infinity Fabric)"| IMC1
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10dae142ce7d.png" alt="diagram"></div></p>
 <p>The trade is deliberate and, on balance, overwhelmingly worth it: you accept that <em>some</em> accesses are
 slower (remote) in exchange for far higher <em>aggregate</em> bandwidth and the ability to scale past what any
 single controller could feed. NUMA is not a defect to be engineered away; it is the price of a memory
@@ -3805,15 +3594,7 @@ in topologies larger than two sockets, not all "remote" is equal: on a four-sock
 some socket pairs are directly linked and others are reached via an intermediate socket, a <strong>two-hop</strong>
 remote access is slower than a one-hop remote access. Non-uniformity has <em>gradations</em>, which is why the
 topology exposes a distance <em>matrix</em>, not a single local/remote bit.</p>
-<p><pre><code>flowchart LR
-    subgraph LAT["Access latency by locality"]
-      direction TB
-      L1["L1 cache<br/>~1 ns"] --> L3["L3 (LLC)<br/>~15 ns"]
-      L3 --> LOC["Local DRAM<br/>~100 ns"]
-      LOC --> REM1["Remote DRAM, 1 hop<br/>~150-200 ns (1.5-2x)"]
-      REM1 --> REM2["Remote DRAM, 2 hops<br/>higher still"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_245a8a01fee4.png" alt="diagram"></div></p>
 <h3 id="numa-distance-and-topology">NUMA distance and topology</h3>
 <p>Firmware describes the topology to the OS through an ACPI table — the <strong>SLIT (System Locality
 Information Table)</strong> — which encodes a <strong>distance matrix</strong> between nodes. By convention the distance
@@ -3860,28 +3641,7 @@ first-generation EPYC (Naples) was even more explicitly NUMA: four dies each wit
 controller meant <strong>four NUMA nodes in a single socket</strong> by default. The lesson is blunt: <strong>you can have
 NUMA effects on a one-socket machine.</strong> "It's a single-socket box, so NUMA doesn't apply" is a mistake
 on modern high-core-count parts — check <code>numactl --hardware</code>, do not assume.</p>
-<p><pre><code>flowchart TB
-    subgraph PKG["One AMD EPYC socket (NPS4 example)"]
-      direction LR
-      subgraph Q0["Node 0"]
-        CCD0["CCD"] --- CCD1["CCD"]
-      end
-      subgraph Q1["Node 1"]
-        CCD2["CCD"] --- CCD3["CCD"]
-      end
-      subgraph Q2["Node 2"]
-        CCD4["CCD"] --- CCD5["CCD"]
-      end
-      subgraph Q3["Node 3"]
-        CCD6["CCD"] --- CCD7["CCD"]
-      end
-      IOD["Central I/O die: memory controllers + Infinity Fabric"]
-      Q0 --- IOD
-      Q1 --- IOD
-      Q2 --- IOD
-      Q3 --- IOD
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5faa4ebd40fb.png" alt="diagram"></div></p>
 <h3 id="coherence-across-sockets-the-directory-scales-snooping-does-not">Coherence across sockets: the directory scales, snooping does not</h3>
 <p>Chapter 4 established cache coherence (MESI and its cousins) as the protocol that keeps per-core caches
 consistent. On a single socket, small core counts can maintain coherence by <strong>snooping</strong> — broadcasting
@@ -3900,6 +3660,7 @@ the NUMA-scale version of false sharing (Chapter 8), and every bounce is an inte
 This is why <em>cross-node shared mutable state is the cardinal NUMA sin</em>: it converts what should be local
 cache activity into interconnect congestion, and it does so invisibly — the code looks like an ordinary
 memory write.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_174609f98498.png" alt="diagram"></div></p>
 <h2 id="why-it-matters-for-backend-performance">Why it matters for backend performance</h2>
 <p>Now make it concrete for the services you actually run. Consider a large in-memory workload — a
 database buffer pool, a Redis-like cache, a JVM with a big heap, a search index — on a two-socket box.
@@ -3949,19 +3710,7 @@ buffer to worker threads across both nodes. First-touch already placed <em>every
 single most important NUMA idiom in practice — is <strong>first-touch initialization</strong>: have each worker
 thread initialize (first-write) the memory <em>it</em> will subsequently use, from the CPU it will run on, so
 each page is placed on that worker's local node.</p>
-<p><pre><code>flowchart TB
-    subgraph BAD["Startup-thread init (all pages land on node 0)"]
-      T0["Startup thread on node 0<br/>memset(whole buffer)"] --> P0["All pages -> node 0 DIMMs"]
-      W0["Worker on node 0"] -->|local| P0
-      W1["Worker on node 1"] -->|"REMOTE (slow)"| P0
-    end
-    subgraph GOOD["Parallel first-touch (pages follow the toucher)"]
-      A0["Worker on node 0<br/>writes its slice first"] --> Q0["Its pages -> node 0"]
-      A1["Worker on node 1<br/>writes its slice first"] --> Q1["Its pages -> node 1"]
-      A0 -->|local| Q0
-      A1 -->|local| Q1
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_18a92c217cf3.png" alt="diagram"></div></p>
 <p>This is why HPC and database codebases parallelize their array initialization loops with the <em>same</em>
 thread/data decomposition they use for the compute loop: it is not to speed up the initialization, it
 is to place each page on the node that will own it. First-touch is a good default precisely because, if
@@ -4092,6 +3841,7 @@ service shows <code>numa_hit</code> dominating. High <code>numa_miss</code>/<cod
 spillover across nodes — you are getting remote placement not by choice but because the target node was
 full. <code>numastat -p &lt;pid&gt;</code> on a suffering service that shows its memory split roughly 50/50 across nodes,
 when it <em>should</em> be partitioned, is the smoking gun for the "scattered allocation" pathology above.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_067e1528e824.png" alt="diagram"></div></p>
 <h2 id="designing-for-numa-treat-each-node-like-a-mini-machine">Designing for NUMA: treat each node like a mini-machine</h2>
 <p>The techniques converge on one mental model: <strong>treat each NUMA node as a small, self-contained machine
 — its own cores, its own memory — and design so that work stays inside its node.</strong> This is the same
@@ -4194,17 +3944,7 @@ protocol</strong> (cache coherence) whose messages traverse the network. Substit
 "datacenter network" for "interconnect," and "RPC" for "remote access," and you have described a
 distributed system in every particular. The constants are nanoseconds instead of milliseconds; the
 structure is identical.</p>
-<p><pre><code>flowchart LR
-    subgraph NUMA_SIDE["Inside the box (NUMA)"]
-      direction TB
-      NN0["NUMA node 0<br/>cores + local DRAM"] <-->|"interconnect<br/>(UPI / IF)"| NN1["NUMA node 1<br/>cores + local DRAM"]
-    end
-    subgraph DIST_SIDE["Across the datacenter"]
-      direction TB
-      SRV0["Server / shard 0<br/>compute + local data"] <-->|"network<br/>(RPC)"| SRV1["Server / shard 1<br/>compute + local data"]
-    end
-    NUMA_SIDE -.->|"same principles"| DIST_SIDE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8e54908431d1.png" alt="diagram"></div></p>
 <p>Because the structure is identical, the <em>design principles</em> transfer without modification — and a backend
 engineer who already reasons about distributed data locality <em>already owns the NUMA mental model</em>:</p>
 <ul>
@@ -4235,13 +3975,7 @@ engineer who already reasons about distributed data locality <em>already owns th
 </ul>
 <p>The deepest observation is that <strong>the hierarchy is fractal.</strong> Locality governs every level, with the same
 structure and the same rules, differing only in the numerical constants:</p>
-<p><pre><code>flowchart TB
-    CORE["Core + private L1/L2<br/>~1-4 ns"] --> NODE["NUMA node<br/>local DRAM ~100 ns"]
-    NODE --> SERVER["Server<br/>remote node ~150-200 ns"]
-    SERVER --> RACK["Rack<br/>same-rack RPC ~0.1-0.5 ms"]
-    RACK --> DC["Datacenter / AZ<br/>~0.5-2 ms"]
-    DC --> REGION["Region / cross-region<br/>~10-150 ms"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f9a2de01829.png" alt="diagram"></div></p>
 <p>At every rung there is a <em>near</em> tier that is fast and cheap and a <em>far</em> tier reached across some network
 that is slower and shared, and at every rung the winning move is the same: <strong>keep the working set and the
 coordination local; cross the boundary rarely, in useful-sized chunks; and treat the link between tiers
@@ -4378,25 +4112,11 @@ and in exchange it eliminates most per-element overhead: one instruction fetch, 
 check amortized over 8, 16, or thousands of elements. When a workload fits, data parallelism is the most
 <em>energy- and silicon-efficient</em> parallelism there is, which is exactly why the industry has poured a
 decade of transistor budget into wider vectors and bigger GPUs.</p>
-<p><pre><code>flowchart LR
-    subgraph SISD["SISD — scalar (one element per instruction)"]
-      direction TB
-      i1["add"] --> e1["a0 + b0 = c0"]
-      i2["add"] --> e2["a1 + b1 = c1"]
-      i3["add"] --> e3["a2 + b2 = c2"]
-      i4["add"] --> e4["a3 + b3 = c3"]
-    end
-    subgraph SIMD["SIMD — vector (N elements per instruction)"]
-      direction TB
-      v1["vadd (one instruction)"] --> L0["lane0: a0 + b0 = c0"]
-      v1 --> L1["lane1: a1 + b1 = c1"]
-      v1 --> L2["lane2: a2 + b2 = c2"]
-      v1 --> L3["lane3: a3 + b3 = c3"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5d0a4a4a671c.png" alt="diagram"></div></p>
 <p>SISD does four adds to add four pairs; SIMD does one <code>vadd</code> that produces four results in the same
 latency a scalar add takes. Widen the vector and the ratio grows. That is the entire idea. Everything
 else is the engineering required to keep the lanes full and the constraints satisfied.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_369194ff6858.png" alt="diagram"></div></p>
 <h2 id="cpu-simd-vector-registers-lanes-and-the-isa-ladder">CPU SIMD: vector registers, lanes, and the ISA ladder</h2>
 <p>A SIMD instruction operates on a <strong>vector register</strong> — a wide register partitioned into equal-width
 <strong>lanes</strong>, each holding one element. The register width is fixed by the ISA; the element width is chosen
@@ -4427,15 +4147,7 @@ while keeping the last:</p>
   dot-product for inference), BF16, and more — and different CPUs implement different subsets, which makes
   "does this machine have AVX-512" a genuinely fiddly question at deployment time.</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph W["x86 vector-width evolution (int32 lanes shown)"]
-      direction TB
-      SSE["SSE / SSE2 — 128-bit XMM<br/>4 x int32"]
-      AVX["AVX / AVX2 — 256-bit YMM<br/>8 x int32 (+ FMA, gather)"]
-      A512["AVX-512 — 512-bit ZMM<br/>16 x int32 (+ 32 regs, k-mask predication)"]
-      SSE --> AVX --> A512
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_950076a8ea0b.png" alt="diagram"></div></p>
 <p>The <strong>mask registers</strong> deserve emphasis because they attack SIMD's core weakness. Ordinary SIMD demands
 <em>uniform</em> operation: every lane does the same thing. Real code has conditionals — "add only where the
 value is positive." Without masks you must compute both branches for all lanes and blend the results.
@@ -4533,6 +4245,7 @@ and, on wide branches, giving up and staying scalar. Data-dependent early exit, 
 effects, and anything that can throw all defeat vectorization.</p>
 <p>These four are not incidental — they <em>define</em> what "data-parallel" means. A workload that satisfies them is
 SIMD-friendly; one that cannot is not, no matter how much compute it burns.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cd2db6b40400.png" alt="diagram"></div></p>
 <h2 id="how-you-actually-get-simd">How you actually get SIMD</h2>
 <p>Owning an AVX-512 CPU does not make your code use it. There are four routes, in ascending order of effort
 and control.</p>
@@ -4691,23 +4404,7 @@ must execute <em>both</em> paths with the inactive lanes masked off — serializ
 wasting the masked lanes. Divergent, branchy code on a GPU is exactly as pathological as divergent control
 flow in CPU SIMD, and for the identical reason. GPUs love code where every thread in a warp does the same
 thing to adjacent data.</p>
-<p><pre><code>flowchart TB
-    subgraph HOST["Host (CPU)"]
-      CPU["CPU cores + system DRAM"]
-    end
-    subgraph DEV["Device (GPU)"]
-      direction TB
-      subgraph SMS["Streaming multiprocessors (many)"]
-        SM0["SM 0: warps of 32 threads<br/>registers + shared memory (fast, on-chip)"]
-        SM1["SM 1: warps of 32 threads<br/>registers + shared memory"]
-        SMn["... dozens of SMs ..."]
-      end
-      L2["L2 cache"]
-      GMEM["Global memory (HBM / GDDR, high bandwidth)"]
-      SMS --> L2 --> GMEM
-    end
-    CPU <-->|"PCIe / NVLink<br/>(data transfer bottleneck)"| GMEM
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_718da3823758.png" alt="diagram"></div></p>
 <h3 id="the-memory-hierarchy-and-latency-hiding">The memory hierarchy and latency hiding</h3>
 <p>A GPU's memory hierarchy mirrors the CPU's tiers (Chapter 3) but with different proportions:</p>
 <ul>
@@ -4776,17 +4473,7 @@ is irrelevant when there is no bulk to throughput), <em>low arithmetic intensity
 the benefit), <em>pointer-chasing or irregular</em> (no coalescing, no parallelism), or simply <em>small</em> (not enough
 work to amortize any of the fixed costs). Most of a typical request/response backend — parse, branch, call
 services, serialize — is exactly this shape, which is why the CPU still runs the world.</p>
-<p><pre><code>flowchart TD
-    W["Workload"] --> Q1{"Massively data-parallel<br/>and uniform?"}
-    Q1 -->|No: branchy / sequential| CPU["CPU (scalar / light SIMD)"]
-    Q1 -->|Yes| Q2{"High arithmetic intensity?<br/>(compute-bound, data reuse)"}
-    Q2 -->|No: memory / transfer-bound| Q3{"Fits in a CPU core's<br/>SIMD reach?"}
-    Q3 -->|Yes| SIMD["CPU SIMD (vectorize in place)"]
-    Q3 -->|No, but huge| SIMD2["CPU SIMD across cores;<br/>GPU only if resident + bandwidth-bound"]
-    Q2 -->|Yes| Q4{"Enough batch to fill the GPU<br/>and amortize PCIe transfer?"}
-    Q4 -->|No: tiny / latency-critical| CPU
-    Q4 -->|Yes| GPU["GPU / accelerator"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a4749aa96967.png" alt="diagram"></div></p>
 <h3 id="cuda-rocm-and-the-software-reality">CUDA, ROCm, and the software reality</h3>
 <p>The dominant GPU programming stack is <strong>CUDA</strong> (NVIDIA), a C++-based model plus a deep library ecosystem —
 cuBLAS, cuDNN, and the frameworks (PyTorch, TensorFlow, JAX) that sit on top and are what most backend
@@ -4796,6 +4483,7 @@ write a kernel: you will call a framework that dispatches optimized kernels for 
 <em>systems</em> problem — feeding the GPU, batching, memory management, and keeping the expensive device busy. The
 kernel-level details above matter not because you will write them but because they explain <em>why</em> your GPU
 service behaves the way it does when a batch is too small or a transfer too frequent.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a7e99dba66f8.png" alt="diagram"></div></p>
 <h2 id="gpus-for-backend-engineering">GPUs for backend engineering</h2>
 <p>For most backend teams, the GPU arrives as a <strong>serving tier</strong>, not a library call. The dominant use is
 <strong>ML inference</strong> — serving a model (an LLM, a ranking model, an embedding model, a vision model) behind an
@@ -4859,20 +4547,7 @@ career has been about.</p>
 service decomposition add machines to handle more load — the horizontal axis. SIMD and GPUs make each
 machine do more per unit time — the vertical, per-node throughput axis. They are independent and
 multiplicative, and the systems that define the state of the art in bulk data processing <strong>combine both</strong>.</p>
-<p><pre><code>flowchart LR
-    subgraph ACROSS["Across nodes — distribution (MIMD)"]
-      N1["Node 1"]:::n
-      N2["Node 2"]:::n
-      N3["Node 3"]:::n
-    end
-    subgraph WITHIN["Within a node — data parallelism"]
-      direction TB
-      S["SIMD vector lanes<br/>(per core)"]
-      G["GPU / accelerator<br/>(thousands of lanes)"]
-    end
-    N1 -.-> WITHIN
-    classDef n fill:#eee,stroke:#333,color:#111;
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_90ad84770a9d.png" alt="diagram"></div></p>
 <p><strong>Distributed columnar OLAP</strong> is the canonical union. A ClickHouse or distributed-DuckDB or Spark
 deployment <strong>shards</strong> data across nodes (the distributed axis — partition, scatter the scan, gather-merge
 the aggregates) <em>and</em> runs <strong>vectorized SIMD execution</strong> on each node's local columns (the data-parallel
@@ -5100,18 +4775,7 @@ model. The professional stance is: form a hypothesis about the bottleneck <em>cl
 performance counter that is diagnostic of that class, apply the matching fix, and re-measure. The
 rest of this chapter is organized as a catalog of classes — each with its code shape, its
 mechanism, its counter, and its fix — followed by the workflow that ties them together.</p>
-<p><pre><code>flowchart TD
-    A["Slow code, correct big-O"] --> B{"perf stat: what is high?"}
-    B -->|"cache-misses,<br/>LLC-load-misses,<br/>low IPC, high stalls"| C["Poor locality /<br/>bandwidth"]
-    B -->|"branch-misses high"| D["Branch misprediction"]
-    B -->|"HITM in perf c2c,<br/>low IPC on shared struct"| E["False sharing /<br/>atomic contention"]
-    C --> C1{"Working set vs cache?"}
-    C1 -->|"fits, but strided/random"| C2["Contiguous layout,<br/>SoA, prefetch-friendly stride"]
-    C1 -->|"exceeds cache"| C3["Blocking/tiling,<br/>reduce data movement"]
-    C1 -->|"bandwidth saturated<br/>(roofline)"| C4["Compress, compute<br/>per byte, fewer threads"]
-    D --> D1["Branchless / cmov,<br/>sort/partition for<br/>predictability, SIMD"]
-    E --> E1["Cache-line padding<br/>alignas(64), per-core<br/>state, lock-free, batch"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b7156b806f1b.png" alt="diagram"></div></p>
 <h2 id="cache-unfriendly-access-patterns">Cache-unfriendly access patterns</h2>
 <p>Chapter 3 established the cache's operating assumptions: it moves memory in 64-byte lines, it
 rewards <strong>temporal</strong> locality (reuse the same data soon) and <strong>spatial</strong> locality (use nearby data
@@ -5207,23 +4871,7 @@ of the hot loop, not around the conceptual "object."</p>
 the few frequently-accessed fields together and dense, and push the rarely-touched fields (the
 <code>customer</code> blob, audit metadata) into a separate structure reached by index. The hot loop then
 streams the hot fields with near-perfect line utilization.</p>
-<p><pre><code>flowchart TB
-    subgraph AoS["Array of Structs — one line per element"]
-      direction LR
-      L1a["id price qty flags cust…"]
-      L2a["id price qty flags cust…"]
-      L3a["id price qty flags cust…"]
-    end
-    subgraph SoA["Struct of Arrays — 8 hot values per line"]
-      direction LR
-      P["price price price price price price price price"]
-      P2["price price price price price price price price"]
-    end
-    note1["Sum price: AoS wastes 56/64 bytes per line"]
-    note2["Sum price: SoA uses 64/64 bytes, prefetch streams"]
-    AoS --- note1
-    SoA --- note2
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_509cc6820ff1.png" alt="diagram"></div></p>
 <h3 id="large-strides-and-working-sets-that-exceed-cache">Large strides and working sets that exceed cache</h3>
 <p>Two more locality traps. First, <strong>strided access</strong> that steps across lines defeats the prefetcher
 and wastes each line. The textbook case is iterating a 2D array in the wrong order:</p>
@@ -5310,19 +4958,7 @@ buckets, worker-pool state structs, and any <code>struct</code> whose fields are
 and the workload scales with cores as intended. The recovery is frequently an order of magnitude on
 the contended microbenchmark. The cost is 64 bytes per counter of otherwise-wasted memory — a trade
 almost always worth making for genuinely hot, thread-private data.</p>
-<p><pre><code>flowchart TB
-    subgraph Bad["False sharing: two counters, one line"]
-      direction LR
-      C0b["Core 0 writes counters[0]"] -->|"invalidate"| LINE["Line: [c0][c1][c2]…"]
-      C1b["Core 1 writes counters[1]"] -->|"invalidate"| LINE
-      LINE -.->|"ping-pong every write"| LINE
-    end
-    subgraph Good["Padded: one counter per line"]
-      direction LR
-      C0g["Core 0"] --> LA["Line A: c0 + pad"]
-      C1g["Core 1"] --> LB["Line B: c1 + pad"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_127ab3e769f7.png" alt="diagram"></div></p>
 <p>Languages give you first-class mechanisms for this. C++17 exposes
 <code>std::hardware_destructive_interference_size</code> (the padding size to <em>avoid</em> false sharing) and
 <code>std::hardware_constructive_interference_size</code> (to deliberately co-locate). Java has
@@ -5336,6 +4972,7 @@ effective granularity), so on those parts padding to 128 bytes can be safer for 
 measure. Second, false sharing is a <em>write</em> problem: read-only shared data on one line is fine, since
 multiple caches can hold a line in Shared state simultaneously. It is concurrent <em>writes</em> to distinct
 variables on one line that trigger the ping-pong.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2575491da44e.png" alt="diagram"></div></p>
 <h2 id="branch-misprediction-when-the-pipeline-guesses-wrong">Branch misprediction: when the pipeline guesses wrong</h2>
 <p>Chapter 2's core is deeply pipelined and speculative: to keep the pipeline full it <em>predicts</em> the
 direction of each conditional branch and executes speculatively down the predicted path. Modern
@@ -5367,14 +5004,7 @@ true for the entire tail — two long, perfectly predictable runs with a single 
 predictor is right essentially always, the pipeline never flushes, and the loop runs at full speed.
 The visible several-fold speedup is <em>entirely</em> the elimination of branch mispredictions; <code>perf stat</code>
 confirms it as a collapse in <code>branch-misses</code> between the two runs.</p>
-<p><pre><code>flowchart LR
-    subgraph U["Unsorted: branch ~ coin flip"]
-      U1["… 200 30 170 12 240 …"] --> U2["predict? ~50% wrong"] --> U3["flush pipeline<br/>~15-20 cycles each miss"]
-    end
-    subgraph S["Sorted: two predictable runs"]
-      S1["0…127 then 128…255"] --> S2["predict taken/not-taken<br/>right ~always"] --> S3["no flushes,<br/>full IPC"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_01f93f89c7f2.png" alt="diagram"></div></p>
 <p>There are three fixes, and <em>sorting the data is rarely the real one</em> — you sorted here only to make
 the branch predictable, which is a strange thing to pay O(n log n) for. The direct fix is to remove
 the unpredictable branch from the hot loop entirely:</p>
@@ -5399,6 +5029,7 @@ predictable. So branchless transformations pay off only for genuinely unpredicta
 genuinely hot loops. Everywhere else, leave the branch — it is cheaper, and it is more readable. As
 always: measure <code>branch-misses</code>, confirm the branch is both hot and unpredictable, and only then
 reach for branchless or SIMD.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_28c1e959a6da.png" alt="diagram"></div></p>
 <h2 id="memory-bandwidth-saturation">Memory-bandwidth saturation</h2>
 <p>The locality section optimized for <em>latency</em> — avoiding misses. But a class of workloads is not
 latency-bound at all; it is <strong>bandwidth-bound</strong>. It streams so much data through the cores that the
@@ -5434,6 +5065,7 @@ reflex — add vCPUs — buys nothing, because the bottleneck is the memory subs
 Recognizing bandwidth saturation (flat throughput vs. thread count, high <code>LLC-load-misses</code> streaming
 to DRAM, and — where available — memory-controller bandwidth counters near their ceiling) prevents
 the expensive mistake of scaling a machine that has no headroom left to give.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5b5c5575e8a9.png" alt="diagram"></div></p>
 <h2 id="atomic-and-lock-contention">Atomic and lock contention</h2>
 <p>Chapter 4 showed that an atomic read-modify-write (a CAS or <code>fetch_add</code>) must acquire the cache line
 in exclusive (Modified) state and enforce ordering. When many cores hammer the <em>same</em> atomic — a
@@ -5907,17 +5539,7 @@ a 1, the standard does not store it, buying one extra bit of precision for free.
 stored <em>biased</em> (offset by a constant) rather than in two's complement, so that the bit patterns of
 floats sort in the same order as signed integers of the same width — a trick that lets hardware
 compare magnitudes with integer comparisons.</p>
-<p><pre><code>flowchart LR
-    subgraph f32["float32 — 32 bits"]
-      direction LR
-      A["S<br/>1"] --- B["Exponent<br/>8 (bias 127)"] --- C["Significand<br/>23"]
-    end
-    subgraph f64["float64 — 64 bits"]
-      direction LR
-      D["S<br/>1"] --- E["Exponent<br/>11 (bias 1023)"] --- F["Significand<br/>52"]
-    end
-    f32 --> f64
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b3bed33e8685.png" alt="diagram"></div></p>
 <p>The two workhorse formats:</p>
 <ul>
 <li><strong>float32 (single precision):</strong> 1 sign, 8 exponent (bias 127), 23 significand bits. With the
@@ -5934,24 +5556,7 @@ tolerate — sometimes benefit from — dramatically reduced precision. The resu
 formats, each a different answer to the question "given very few bits, spend them on range or on
 precision?" (See Volume 7 on ML systems for how these interact with training stability and
 mixed-precision schemes.)</p>
-<p><pre><code>flowchart TB
-    subgraph fp16["float16 — 1 / 5 / 10 (bias 15)"]
-      direction LR
-      a["S"] --- b["Exp 5"] --- c["Mantissa 10"]
-    end
-    subgraph bf16["bfloat16 — 1 / 8 / 7 (bias 127)"]
-      direction LR
-      d["S"] --- e["Exp 8"] --- f["Mantissa 7"]
-    end
-    subgraph fp8e4["FP8 E4M3 — 1 / 4 / 3"]
-      direction LR
-      g["S"] --- h["Exp 4"] --- i["M 3"]
-    end
-    subgraph fp8e5["FP8 E5M2 — 1 / 5 / 2"]
-      direction LR
-      j["S"] --- k["Exp 5"] --- l["M 2"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9a2f5943b251.png" alt="diagram"></div></p>
 <p>The key contrast is <strong>float16 vs bfloat16</strong>, both 16 bits:</p>
 <ul>
 <li><strong>float16</strong> (IEEE half) spends 5 bits on exponent and 10 on mantissa — more precision, but a narrow
@@ -6099,6 +5704,7 @@ canonical <em>detection</em> idiom exploits the reflexivity failure: <code>x != 
 <code>NaN</code> (which is what <code>isnan()</code> does under the hood). The canonical <em>defense</em> is to reject or sanitize
 NaN and infinity at ingestion — a validated numeric input at an API boundary should exclude them
 unless they are genuinely meaningful.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3b05c44f2155.png" alt="diagram"></div></p>
 <h2 id="the-fundamental-problem-floating-point-is-approximate">The fundamental problem: floating point is approximate</h2>
 <p>Here is the fact that every backend engineer must internalize: <strong>most decimal fractions cannot be
 represented exactly in binary floating point.</strong> A binary float can exactly represent only numbers of
@@ -6119,17 +5725,7 @@ doubles:</p>
 whose nearest representable double is <em>not</em> the nearest representable double to <code>0.3</code>, and the tiny
 representation errors fail to cancel. The result is off by one unit in the last place — about
 <code>5.5×10^−17</code> — which prints as the notorious <code>…04</code> tail.</p>
-<p><pre><code>flowchart TD
-    A["Decimal 0.1"] -->|"round to nearest double"| A2["0.1000000000000000055…"]
-    B["Decimal 0.2"] -->|"round to nearest double"| B2["0.2000000000000000111…"]
-    A2 --> S["stored 0.1 + stored 0.2"]
-    B2 --> S
-    S --> S2["0.3000000000000000444…"]
-    C["Decimal 0.3"] -->|"round to nearest double"| C2["0.2999999999999999889…"]
-    S2 --> Q{"equal?"}
-    C2 --> Q
-    Q -->|"different bit patterns"| R["0.1 + 0.2 != 0.3  →  false"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5da6b27c40ba.png" alt="diagram"></div></p>
 <p>Two consequences follow, and they are the root of most floating-point bugs:</p>
 <ul>
 <li><strong>Rounding error is inherent and it accumulates.</strong> Every operation whose true result is not exactly
@@ -6242,17 +5838,7 @@ diagram here. Floating-point addition is <strong>commutative</strong> (<code>a +
 <code>(a + b) + c</code> can differ from <code>a + (b + c)</code> because the two orderings round at different intermediate
 values. Concretely, adding a large and a small number can round the small one away entirely, so the
 order in which you fold values determines whether small contributions survive.</p>
-<p><pre><code>flowchart TB
-    D["Column values across 3 shards:<br/>1e20, 1.0, -1e20, 3.0"]
-    D --> P1["Shard order A:<br/>(1e20 + 1.0) + (-1e20) + 3.0"]
-    D --> P2["Shard order B:<br/>1.0 + 3.0 + (1e20 + -1e20)"]
-    P1 --> R1["1e20 + 1.0 rounds to 1e20<br/>→ 1e20 - 1e20 = 0<br/>→ 0 + 3.0 = 3.0"]
-    P2 --> R2["1.0 + 3.0 = 4.0<br/>→ 1e20 - 1e20 = 0<br/>→ 4.0 + 0 = 4.0"]
-    R1 --> T1["Total = 3.0"]
-    R2 --> T2["Total = 4.0"]
-    T1 --> X["Same data, different shard/thread order → different total"]
-    T2 --> X
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9969ddf7f83c.png" alt="diagram"></div></p>
 <p>When the same aggregation runs across shards, threads, or nodes, and the runtime is free to combine
 partial sums in whatever order they complete, the <em>final total depends on scheduling</em> — which is
 non-deterministic. This is not a rounding curiosity; it means two replicas computing the "same" sum can
@@ -6272,17 +5858,7 @@ JavaScript client (or many other JSON libraries that decode numbers to doubles),
 is silently rounded to the nearest representable double — a <em>different integer</em>. The ID
 <code>9007199254740993</code> comes back as <code>9007199254740992</code>. Two distinct records now share an ID; a lookup
 misses; an idempotency key collides; a permission check matches the wrong row.</p>
-<p><pre><code>sequenceDiagram
-    participant DB as "Service (int64)"
-    participant API as "JSON body"
-    participant JS as "JS / JSON parser (float64)"
-    DB->>API: id = 9007199254740993
-    Note over API: {"id": 9007199254740993}  (JSON number)
-    API->>JS: parse number as double
-    Note over JS: nearest double to 9007199254740993<br/>is 9007199254740992
-    JS-->>DB: id = 9007199254740992  (WRONG)
-    Note over DB,JS: distinct records now collide on ID
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d8b5c9a72b58.png" alt="diagram"></div></p>
 <p>The corruption is silent — no error, no exception, just a wrong number — and it is intermittent,
 because IDs below 2^53 round-trip fine, so it hides until your ID space grows or a Snowflake timestamp
 crosses the threshold. The fix is unambiguous and belongs to the API-design discipline of Volume 8:
@@ -6341,6 +5917,7 @@ explicit scale, never <code>FLOAT</code> or <code>DOUBLE</code>. IEEE 754 also d
 (decimal64, decimal128) used in some financial and database engines (IBM's hardware, PostgreSQL's
 <code>numeric</code> semantics), which give decimal exactness in a floating format — but the everyday rule stands:
 if a value is money, it is an integer of minor units or a decimal type, fleet-wide, at every layer.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b93913401533.png" alt="diagram"></div></p>
 <h2 id="determinism-and-reproducibility-across-a-fleet">Determinism and reproducibility across a fleet</h2>
 <p>The final hazard is the most subtle and the most distributed: the <em>same</em> floating-point program, given
 the <em>same</em> inputs, can produce <em>different bits</em> on different machines, compilers, or optimization
@@ -6371,18 +5948,7 @@ intermediate precision:</p>
   non-portable and non-reproducible — and it can silently break code that relied on <code>NaN</code> propagation
   or on strict rounding. Enabling it is a deliberate trade, not a free optimization.</li>
 </ul>
-<p><pre><code>flowchart TD
-    S["Same source, same inputs"] --> N1["Node A: AVX-512, FMA on, -O3"]
-    S --> N2["Node B: AVX2, no FMA, -O2"]
-    S --> N3["Node C: -ffast-math, denormals flushed"]
-    N1 --> R1["result bits R1"]
-    N2 --> R2["result bits R2"]
-    N3 --> R3["result bits R3"]
-    R1 --> D{"R1 == R2 == R3 ?"}
-    R2 --> D
-    R3 --> D
-    D -->|"no — differ in low bits"| B["Cache mismatch / replica divergence /<br/>non-reproducible ML run"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ecd28eee2b4b.png" alt="diagram"></div></p>
 <p>Why a backend engineer must care: the moment a computed floating-point value is <em>compared across
 nodes</em> or <em>cached and reused</em>, bit-level non-determinism becomes a consistency bug. Concretely:</p>
 <ul>
@@ -6583,20 +6149,7 @@ ring 0 at a fixed kernel entry point of the kernel's choosing — never at an ad
 controls. The kernel validates the request and does the work on the process's behalf. This is the
 system-call boundary, and it is the subject of Volume 2, Chapter 5 — but the <em>enforcement</em> is pure
 hardware: the ring bit and the trap.</p>
-<p><pre><code>flowchart TB
-    subgraph host["Bare metal / inside one VM"]
-        R3["Ring 3 — user mode<br/>your service, libc<br/>privileged instrs TRAP"]
-        R0["Ring 0 — kernel mode<br/>OS: schedulers, drivers,<br/>page tables, syscalls"]
-        R3 -->|"SYSCALL / trap"| R0
-        R0 -->|"IRET / SYSRET"| R3
-    end
-    subgraph virt["With hardware-assisted virtualization"]
-        NONROOT["VMX non-root<br/>guest ring 3 AND guest ring 0<br/>guest kernel thinks it owns ring 0"]
-        ROOT["VMX root<br/>hypervisor / VMM (ring 0)<br/>owns the real machine"]
-        NONROOT -->|"VM exit (privileged/sensitive op)"| ROOT
-        ROOT -->|"VMRESUME (VM entry)"| NONROOT
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_73388f4bf754.png" alt="diagram"></div></p>
 <p>The key insight for virtualization is that this two-ring model is <em>not enough</em> to run a whole
 guest operating system safely. A guest kernel expects to run in ring 0 and issue privileged
 instructions. If you demote it to ring 3, its privileged instructions trap — which is exactly what
@@ -6708,6 +6261,7 @@ operations don't trap; for interrupts, by using posted interrupts and APIC virtu
 delivering an interrupt to a guest doesn't require a round trip through the host. When you read that
 a workload "virtualizes with under 5% overhead," what that number really measures is how successfully
 the design kept the guest out of root mode.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f085bbf4a1a5.png" alt="diagram"></div></p>
 <h2 id="memory-virtualization-eptnpt-vs-shadow-page-tables">Memory virtualization: EPT/NPT vs. shadow page tables</h2>
 <p>A guest OS runs its own MMU logic: it builds page tables mapping <strong>guest-virtual</strong> addresses (GVA)
 to what it believes are <strong>guest-physical</strong> addresses (GPA). But GPA is a fiction — it must be
@@ -6728,11 +6282,7 @@ GPA→HPA. The guest can edit its own page tables and reload its own <code>CR3</
 because the hypervisor no longer cares — the second-level table is where isolation is enforced, and
 the guest never touches it. This is exactly virtual memory applied twice, and it is what makes memory
 virtualization cheap enough to be the default.</p>
-<p><pre><code>flowchart LR
-    GVA["Guest-virtual<br/>address (GVA)"] -->|"guest page tables<br/>(owned by guest OS)"| GPA["Guest-physical<br/>address (GPA)"]
-    GPA -->|"EPT / NPT<br/>(owned by hypervisor)"| HPA["Host-physical<br/>address (HPA)"]
-    GVA -. "final translation cached in TLB<br/>tagged by VPID/ASID" .-> HPA
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_593cac4882ec.png" alt="diagram"></div></p>
 <p>The cost is a <strong>longer page walk</strong>. A native 4-level page walk is up to four memory references. With
 nested paging, <em>each</em> of those guest-level references must itself be translated through the EPT,
 turning a 4-level walk into as many as 4×4 ≈ up to 24 memory accesses on a full TLB miss — the "2D
@@ -6744,6 +6294,7 @@ levels. To avoid flushing the TLB on every VM entry/exit, the translations are t
 workloads — those with huge, sparse working sets (Chapter 3) — see more virtualization overhead than
 cache-resident ones, and why <strong>huge pages</strong> in the guest matter even more under virtualization: they
 shrink both levels of the walk at once.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_87980bebb7ff.png" alt="diagram"></div></p>
 <h2 id="device-and-dma-isolation-the-iommu-vt-d-and-sr-iov">Device and DMA isolation: the IOMMU, VT-d, and SR-IOV</h2>
 <p>CPU and memory virtualization are only two-thirds of the machine. Devices do <strong>DMA</strong> — they read and
 write host memory directly, bypassing the CPU and therefore bypassing the MMU. A device handed to a
@@ -6799,25 +6350,13 @@ AWS's Nitro system, for instance, is a purpose-built lightweight KVM-based hyper
 networking, storage, and security to dedicated Nitro <em>cards</em> (hardware), leaving almost the entire
 host CPU for the guest — an architectural move to drive the virtualization tax toward zero by pushing
 the device model off the main CPU entirely.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3c0e3d9c24bb.png" alt="diagram"></div></p>
 <h2 id="the-isolation-spectrum-vms-microvms-gvisor-containers">The isolation spectrum: VMs, microVMs, gVisor, containers</h2>
 <p>Here is the synthesis, and the single most consequential architecture decision a platform team makes.
 You are running many tenants' workloads on shared hosts, and you must choose <em>how strongly to isolate
 them</em>. There is no free lunch: <strong>isolation strength, runtime overhead, and density trade off against
 one another</strong>, and the four dominant options sit at different points on that triangle.</p>
-<p><pre><code>flowchart TD
-    subgraph strong["Stronger isolation, lower density, more overhead"]
-        VM["Full VM<br/>own guest kernel<br/>HW-virtualized (VT-x+EPT+IOMMU)<br/>escape = hypervisor bug"]
-    end
-    subgraph mid["Middle ground"]
-        UVM["microVM (Firecracker / Kata)<br/>own guest kernel, minimal device model<br/>VM boundary, ~container speed"]
-        GV["gVisor (runsc)<br/>user-space kernel (Sentry)<br/>intercepts syscalls, small host surface"]
-    end
-    subgraph weak["Weaker isolation, higher density, least overhead"]
-        CT["Container<br/>namespaces + cgroups<br/>SHARED host kernel<br/>escape = one kernel vuln"]
-    end
-    VM --> UVM --> GV --> CT
-    NOTE["untrusted / multi-tenant<br/>→ move UP this list"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cc416362748b.png" alt="diagram"></div></p>
 <p><strong>Full VMs</strong> sit at the strong-isolation corner. Each guest has its <strong>own kernel</strong>, and the boundary
 between guest and host is the hardware-virtualization boundary itself: VT-x/AMD-V, EPT, and the
 IOMMU. To escape, an attacker must break the <em>hypervisor</em> or the virtual device model — a small,
@@ -7046,18 +6585,7 @@ the speculative access leaves a <strong>microarchitectural footprint</strong>, t
 and (3) the attacker <em>times</em> memory accesses afterward to infer which line was touched, reconstructing
 the secret one bit at a time. The architectural boundary held — the value was never legally read — but
 it leaked through timing anyway.</p>
-<p><pre><code>sequenceDiagram
-    participant A as Attacker (own boundary)
-    participant CPU as Core (speculation + shared cache)
-    participant S as Victim secret (across boundary)
-    A->>CPU: Train predictor / trigger speculative path
-    CPU->>S: Speculatively read secret byte (never committed)
-    CPU->>CPU: Use secret to index a cache line (footprint left)
-    Note over CPU: Speculation squashed — architecturally "nothing happened"
-    A->>CPU: Probe cache lines, measure access latency
-    CPU-->>A: Fast line reveals secret value (timing leak)
-    Note over A,S: Architectural boundary held; microarch. state leaked across it
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_612d91d0d434.png" alt="diagram"></div></p>
 <p>The landmark instances, accurately:</p>
 <ul>
 <li><strong>Meltdown</strong> (CVE-2017-5754, 2018) exploited that some CPUs (chiefly Intel, some ARM) would let an

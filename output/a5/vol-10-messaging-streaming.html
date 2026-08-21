@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -211,18 +293,7 @@ hr {
 <blockquote>
 <p><strong>When not to use messaging.</strong> If the caller needs the answer before it can proceed ("what is this user's current balance?"), a synchronous request — REST, gRPC, or a read from a replicated store — is simpler and faster. Messaging shines when the producer can proceed without waiting: "an order was placed," "resize this image," "reindex this document." The heuristic: if you can name the event in the past tense and the producer does not need the result, a message is likely the right shape.</p>
 </blockquote>
-<p><pre><code>flowchart LR
-    subgraph Sync["Synchronous RPC — coupled"]
-        A1[Service A] -- "request / response\nboth must be live" --> B1[Service B]
-        B1 -- "success or failure\nimmediate backpressure" --> A1
-    end
-    subgraph Async["Asynchronous messaging — decoupled"]
-        A2[Service A] -- "produce\nfire and proceed" --> Broker[(Broker\nbuffer + route)]
-        Broker -- "deliver\nwhen ready" --> B2[Service B]
-        Broker -- "deliver\nwhen ready" --> C2[Service C]
-    end
-    style Broker fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6046b73e9dce.png" alt="diagram"></div></p>
 <p><em>Figure 1-1: Synchronous coupling versus asynchronous decoupling. The broker turns a temporal rendezvous into a durable handoff, at the cost of an extra hop and eventual delivery.</em></p>
 <hr />
 <h2 id="the-three-models-at-a-glance">The three models at a glance</h2>
@@ -282,35 +353,7 @@ hr {
 </tbody>
 </table>
 <p>The mental model: a <strong>queue</strong> is a mailbox — mail is removed when collected. A <strong>log</strong> is a commit history — entries are never removed by reading, only by retention, and you read by moving a cursor. <strong>Pub/sub</strong> is a mailing list — one post reaches every subscriber's copy.</p>
-<p><pre><code>flowchart TB
-    subgraph Queue["Queue — competing consumers"]
-        P1[Producer] --> Q[(Queue)]
-        Q --> C1[Consumer A]
-        Q --> C2[Consumer B]
-        Q --> C3[Consumer C]
-        note1>"Each message → exactly one consumer<br/>Destructive consume, ack removes it"
-    end
-    subgraph Log["Log — partitioned, replayable"]
-        P2[Producer] --> L1[Partition 0<br/>offset 0 1 2 3 ...]
-        P2 --> L2[Partition 1<br/>offset 0 1 2 3 ...]
-        L1 --> G1A[Group A / Consumer 1]
-        L2 --> G1B[Group A / Consumer 2]
-        L1 -.-> G2A[Group B / Consumer 1<br/>independent offset]
-        L2 -.-> G2A
-        note2>"Append-only, retained, replayable<br/>Order within partition only"
-    end
-    subgraph PubSub["Pub/Sub — fan-out"]
-        P3[Publisher] --> T[(Topic)]
-        T --> S1[Subscription 1<br/>→ Consumer A]
-        T --> S2[Subscription 2<br/>→ Consumer B]
-        T --> S3[Subscription 3<br/>→ Consumer C]
-        note3>"Each message → every subscription<br/>Per-subscription ack"
-    end
-    style Q fill:#fff3e0
-    style L1 fill:#e8f5e9
-    style L2 fill:#e8f5e9
-    style T fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dcdf0c023fa8.png" alt="diagram"></div></p>
 <p><em>Figure 1-2: The three consumption topologies. Queue drains to one winner; log fans out by partition to groups that track their own offsets; pub/sub replicates to every subscription.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> This chapter classifies the <em>broker data model</em> — what happens to a message after it is written and who can read it. Delivery guarantees (at-most/at-least/effectively-once, redelivery, deduplication, and transactional consumption) are a separate concern, covered in Chapter 2. Exactly-once processing theory (the end-to-end argument, idempotency keys, and the atomic check-and-record pattern) is developed formally in Vol 6, Chapter 9 — Idempotency, Deduplication, and Exactly-Once; Chapter 2 here focuses on what the <em>broker</em> can and cannot promise.</p>
@@ -327,16 +370,7 @@ hr {
 <li><strong>Negative-acknowledge or timeout</strong> — consumer signals failure (<code>nack</code>/<code>reject</code>) or crashes before acking; the visibility timeout expires; the broker makes the message visible again for redelivery, often with a redelivery count.</li>
 <li><strong>Dead-letter</strong> — after N failed deliveries, the broker routes the message to a dead-letter queue (DLQ) for inspection. See Chapter 8 for DLQ design.</li>
 </ol>
-<p><pre><code>stateDiagram-v2
-    [*] --> Enqueued: producer send
-    Enqueued --> Invisible: broker delivers\nto consumer
-    Invisible --> Acked: consumer ack\n→ deleted
-    Invisible --> Visible: nack / reject\nor visibility timeout
-    Visible --> Invisible: redelivered\nto next consumer
-    Visible --> DeadLetter: max deliveries\nexceeded → DLQ
-    Acked --> [*]
-    DeadLetter --> [*]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9f82ce5cead1.png" alt="diagram"></div></p>
 <p><em>Figure 1-3: Queue message lifecycle. The invisible state is the at-least-once window — a crash between delivery and ack causes redelivery.</em></p>
 <h3 id="ordering-and-scaling-limits">Ordering and scaling limits</h3>
 <p>A single queue with a single consumer gives total FIFO order — trivially, because there is only one reader. The moment you add competing consumers, global ordering is lost: message 2 may be acked before message 1 if consumer B is faster than consumer A. Systems that promise FIFO queues (SQS FIFO, RabbitMQ quorum queues with single active consumer) do so by constraining concurrency — one active consumer per queue or per message group — and paying the throughput price.</p>
@@ -417,23 +451,7 @@ hr {
 <li><strong>Compaction</strong> — for each key, keep only the latest value. Turns the log into a durable, replayable key-value snapshot (Kafka compacted topics, used for changelog and configuration topics).</li>
 </ul>
 <p>Replay is the superpower that justifies the complexity. New consumer? Start from offset 0. Bug in yesterday's deploy that corrupted downstream state? Seek back to yesterday's offset and reprocess. Schema migration? Re-read the log through the new code. No queue can do this without an out-of-band store.</p>
-<p><pre><code>flowchart LR
-    Prod[Producer\nkey=user-42] --> Part0[Partition 0\n0: {k:A,v:1}\n1: {k:B,v:1}\n2: {k:A,v:2} ← latest A]
-    Prod --> Part1[Partition 1\n0: {k:C,v:1}\n1: {k:D,v:1}]
-
-    Part0 --> SegA[Segment 00000000.log\n+ index + timeindex]
-    Part1 --> SegB[Segment 00000000.log]
-
-    SegA --> RetTime[Retention:\n7 days / 10 GB]
-    SegA --> RetCompact[Compaction:\nkeep latest per key\nA:1 → A:2 tombstones A:1]
-
-    G1[Consumer Group: serving\nreads tail, offset 3] -.-> Part0
-    G2[Consumer Group: backfill\nreads from offset 0] -.-> Part0
-    G2 -.-> Part1
-
-    style Part0 fill:#e8f5e9
-    style Part1 fill:#e8f5e9
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bf1cd28a243a.png" alt="diagram"></div></p>
 <p><em>Figure 1-4: Partitioned log anatomy — segments, retention, compaction, and independent consumer groups reading the same partitions at different offsets.</em></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Kafka 3.7 — producing to a partitioned log (confluent-kafka 2.4, Python 3.11)</span>
 <span class="c1"># pip install confluent-kafka==2.4.0</span>
@@ -510,26 +528,7 @@ hr {
 <li><strong>Content filtering</strong> — less common at the broker; usually done in a stream processor (see Ch 4).</li>
 </ul>
 <p>Filtering at the broker avoids delivering every message to every subscriber and then discarding — critical when fan-out is large.</p>
-<p><pre><code>flowchart LR
-    Pub[Publisher] --> Ex[(Topic / Exchange\norders.events)]
-
-    Ex --> S1[Subscription A\nfilter: order.created\n→ fulfillment service]
-    Ex --> S2[Subscription B\nfilter: order.*\n→ analytics pipeline]
-    Ex --> S3[Subscription C\nno filter\n→ audit log]
-
-    S1 --> Q1[(Queue / backlog\nper subscription)]
-    S2 --> Q2[(Queue / backlog\nper subscription)]
-    S3 --> Q3[(Queue / backlog\nper subscription)]
-
-    Q1 --> C1[Consumer A]
-    Q2 --> C2[Consumer B]
-    Q3 --> C3[Consumer C]
-
-    style Ex fill:#e3f2fd
-    style Q1 fill:#fff3e0
-    style Q2 fill:#fff3e0
-    style Q3 fill:#fff3e0
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_00d31002b426.png" alt="diagram"></div></p>
 <p><em>Figure 1-5: Pub/sub fan-out. The topic is the rendezvous; each subscription has its own backlog and ack state, so a slow subscriber does not block others.</em></p>
 <p>The per-subscription queue is the key insight: pub/sub is internally <strong>one queue per subscription</strong> sharing a topic. That is why a slow subscriber does not affect a fast one — their backlogs are independent. It is also why cost scales with subscriptions: each subscription stores a copy (or a reference + separate ack state) of every matching message.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Google Cloud Pub/Sub — publisher and pull subscriber (google-cloud-pubsub 2.21, Python 3.11)</span>
@@ -664,6 +663,10 @@ hr {
 <li><strong>Ignoring the visibility/ack deadline.</strong> In any at-least-once queue, a handler that exceeds the visibility timeout causes duplicate delivery while the first attempt is still running. The result is two concurrent executions of a non-idempotent handler. Size your timeout above p99 handler latency or use heartbeat extensions (SQS <code>ChangeMessageVisibility</code>, RabbitMQ consumer ack timeout).</li>
 </ul>
 <hr />
+<h4 id="queue-vs-pubsub-decision">Queue vs PubSub Decision</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_20a25d9eab51.png" alt="diagram"></div></p>
+<h4 id="message-lifecycle">Message Lifecycle</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ce2d00e613d1.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Messaging exists to decouple services in time, space, and failure mode. It trades latency and ordering simplicity for durability and independence.</li>
@@ -713,35 +716,9 @@ hr {
 <li>If the producer <strong>does retry</strong>, a message already written in case (2) will be written again — <strong>at-least-once</strong>, with duplicates.</li>
 </ul>
 <p>There is no third option at the transport layer. Exactly-once delivery — "every message is delivered once and only once, regardless of failures" — would require the producer to solve the indistinguishability. It cannot. What systems label "exactly once" is therefore always <strong>effectively once</strong>: at-least-once delivery plus deduplication and idempotent handling that make duplicates invisible to the application.</p>
-<p><pre><code>sequenceDiagram
-    participant Prod as Producer
-    participant Net as Network
-    participant Broker as Broker
-    Prod->>Net: send(msg, seq=7)
-    Net->>Broker: delivered — written to log
-    Broker->>Net: ack(seq=7)
-    Note over Net: ack LOST
-    Prod->>Prod: timeout — did seq=7 commit?
-    Note over Prod: Cannot tell (1) from (2).<br/>Retry → duplicate.<br/>Don't retry → possible loss.
-    Prod->>Net: retry send(msg, seq=7)
-    Net->>Broker: delivered again
-    Broker->>Broker: must deduplicate<br/>or consumer sees duplicate
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9cff310e7bd7.png" alt="diagram"></div></p>
 <p><em>Figure 2-1: The producer's ambiguity. After a timeout, retrying risks duplication and not retrying risks loss. The broker's deduplication window and the consumer's dedup table exist to contain this.</em></p>
-<p><pre><code>stateDiagram-v2
-    [*] --> Sent: producer sends
-    Sent --> Acked: ack received — done
-    Sent --> Uncertain: timeout — no ack
-    Uncertain --> Retried: retry (at-least-once path)
-    Uncertain --> Dropped: give up (at-most-once path)
-    Retried --> Acked: ack on retry
-    Retried --> Uncertain: timeout again — retry loop
-    Retried --> Duplicated: broker already had it<br/>now has two copies<br/>unless deduped
-    Dropped --> Lost: message never delivered
-    Acked --> [*]
-    Lost --> [*]
-    Duplicated --> [*]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aff7b932a16b.png" alt="diagram"></div></p>
 <p><em>Figure 2-2: Delivery state machine. The uncertain state is unavoidable; the outgoing edge chosen there defines the semantic.</em></p>
 <hr />
 <h2 id="the-three-semantics-precisely">The three semantics, precisely</h2>
@@ -1015,17 +992,7 @@ hr {
 </code></pre></div>
 
 <p>The transactional variant folds the offset commit into the same database transaction when the broker supports it (Kafka <code>send_offsets_to_transaction</code>), or commits the offset to the <em>same database</em> as the effect (storing <code>__consumer_offsets</code> in Postgres rather than in Kafka) — the outbox pattern of Chapter 6 is this idea generalized.</p>
-<p><pre><code>flowchart LR
-    Msg[Message\nid=msg-abc] --> Check{INSERT dedup\nON CONFLICT?}
-    Check -- "inserted = 1\n(first time)" --> Effect[Apply side effect\nINSERT orders ...]
-    Effect --> CommitOffset[Commit offset / ack]
-    Check -- "inserted = 0\n(duplicate)" --> Skip[Skip side effect]
-    Skip --> CommitOffset
-    CommitOffset --> Done[Done — effect applied once]
-    style Check fill:#fff3e0
-    style Effect fill:#e8f5e9
-    style Skip fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_019851b9a068.png" alt="diagram"></div></p>
 <p><em>Figure 2-3: Consumer-side dedup — the INSERT is the atomic gate. Duplicate deliveries take the skip branch; the effect is applied exactly once.</em></p>
 <h3 id="end-to-end-effectively-once-requires-both-sides">End-to-end effectively-once requires both sides</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Producer</span><span class="w">                          </span><span class="n">Broker</span><span class="w">                          </span><span class="n">Consumer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Sink</span>
@@ -1116,6 +1083,12 @@ hr {
 <li><strong>DLQ depth</strong> — the poison-message rate. See Chapter 8.</li>
 </ul>
 <hr />
+<h4 id="delivery-semantic-choice">Delivery Semantic Choice</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_09972f823e70.png" alt="diagram"></div></p>
+<h4 id="kafka-transactional-produce">Kafka Transactional Produce</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_47d30be81dc4.png" alt="diagram"></div></p>
+<h4 id="dedup-table-pattern">Dedup Table Pattern</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_112fb40f125b.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Exactly-once delivery is impossible over a lossy network; the achievable property is exactly-once <em>effect</em> via at-least-once delivery plus deduplication and idempotent handling.</li>
@@ -1172,23 +1145,7 @@ hr {
 <li><strong>Time index</strong> — <code>timestamp → offset</code> for <code>offsetsForTimes</code> and retention by timestamp.</li>
 <li><strong>Leader epoch checkpoint</strong> — <code>leaderEpoch → startOffset</code> for truncation after failover (see ISR section).</li>
 </ul>
-<p><pre><code>flowchart TB
-    Topic[Topic: orders<br/>partitions=6, RF=3]
-    Topic --> P0[Partition 0<br/>leader: broker-1]
-    Topic --> P1[Partition 1<br/>leader: broker-2]
-    Topic --> PN[Partition 5<br/>leader: broker-3]
-
-    P0 --> Seg0A[Segment baseOffset 0<br/>00000.log + .index + .timeindex<br/>closed, 1 GiB]
-    P0 --> Seg0B[Segment baseOffset 12345<br/>active — appends here]
-    P0 --> F0A[Follower: broker-2<br/>replica]
-    P0 --> F0B[Follower: broker-3<br/>replica]
-
-    P0 -.-> ISR0["ISR: {1,2,3}<br/>HWM: 12340<br/>LEO: 12348"]
-
-    style P0 fill:#e8f5e9
-    style Seg0B fill:#fff3e0
-    style ISR0 fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8151038fe0a3.png" alt="diagram"></div></p>
 <p><em>Figure 3-1: Topic → partitions → segments. Each partition has one leader that serves all reads and writes; followers replicate the log; the ISR tracks in-sync replicas and the HWM marks committed data.</em></p>
 <hr />
 <h2 id="replication-isr-high-watermark-and-the-durability-contract">Replication: ISR, high watermark, and the durability contract</h2>
@@ -1218,21 +1175,7 @@ hr {
 
 <p>With <code>acks=all</code>, a produce is acked only after the HWM advances past the new records — i.e., after every ISR replica has them. This is the durability guarantee; the producer blocks (or times out at <code>delivery.timeout.ms</code>) until it holds.</p>
 <h3 id="acks-and-mininsyncreplicas-the-durabilityavailability-dial"><code>acks</code> and <code>min.insync.replicas</code>: the durability/availability dial</h3>
-<p><pre><code>flowchart LR
-    Prod[Producer] --> Acks{"acks = ?"}
-    Acks -- "0" --> NoAck["No ack — fire and forget<br/>At-most-once, lowest latency,<br/>loss on any failure"]
-    Acks -- "1" --> LeaderAck["Leader ack only<br/>Ack after leader write,<br/>loss if leader dies before replication"]
-    Acks -- "all / -1" --> ISRack["ISR ack — wait for HWM<br/>Ack after all ISR replicas ack<br/>Durable if ISR >= min.insync.replicas"]
-
-    ISRack --> MinISR{"ISR size >=<br/>min.insync.replicas?"}
-    MinISR -- "yes" --> Durable["Durable — ack, HWM advances"]
-    MinISR -- "no" --> NotEnough["NotEnoughReplicas<br/>produce fails — availability over durability"]
-
-    style NoAck fill:#ffebee
-    style LeaderAck fill:#fff3e0
-    style Durable fill:#e8f5e9
-    style NotEnough fill:#fce4ec
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_95034140fc77.png" alt="diagram"></div></p>
 <p><em>Figure 3-2: The acks/min.insync.replicas dial. acks=all with min.insync.replicas=2 on RF=3 survives one replica loss durably; a second loss makes the partition unavailable for writes rather than risking data loss.</em></p>
 <table>
 <thead>
@@ -1288,24 +1231,7 @@ hr {
 <p><strong>Unclean leader election</strong> — promoting a replica outside the ISR — is disabled by default (<code>unclean.leader.election.enable=false</code>) because it can lose committed data (the out-of-sync replica may be missing records up to the HWM). Enable it only for availability-at-all-costs topics where loss is preferable to unavailability, and monitor <code>UnderReplicatedPartitions</code>.</p>
 <hr />
 <h2 id="the-write-path-producer">The write path: producer</h2>
-<p><pre><code>sequenceDiagram
-    participant App as Application
-    participant Prod as Producer<br/>(librdkafka)
-    participant Leader as Partition Leader<br/>(broker-1)
-    participant Follower as Follower<br/>(broker-2)
-    participant ISR as ISR / HWM
-
-    App->>Prod: produce(topic, key, value)
-    Prod->>Prod: partition = hash(key) % N<br/>batch by partition + linger.ms
-    Prod->>Prod: compress (lz4/zstd), assign sequence<br/>PID + seq per partition
-    Prod->>Leader: ProduceRequest (batch, acks=all)
-    Leader->>Leader: append to active segment<br/>assign offsets, CRC
-    Leader->>Follower: Fetch (replication)
-    Follower->>Leader: FetchResponse (ack LEO)
-    Leader->>ISR: advance HWM when ISR acks
-    Leader->>Prod: ProduceResponse (offsets, error=None)
-    Prod->>App: delivery callback (acked)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d97bb4e251ea.png" alt="diagram"></div></p>
 <p><em>Figure 3-3: The produce path. Batching and compression happen client-side; durability is the HWM advance after ISR replication.</em></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Kafka 3.7 — producer for each semantic (confluent-kafka 2.4, Python 3.11)</span>
 <span class="c1"># pip install confluent-kafka==2.4.0</span>
@@ -1364,35 +1290,7 @@ hr {
 </ul>
 <h3 id="consumer-groups-and-partition-assignment">Consumer groups and partition assignment</h3>
 <p>A <strong>consumer group</strong> (<code>group.id</code>) is a set of consumers cooperating to consume a topic. Each partition is assigned to <strong>exactly one</strong> consumer in the group; a consumer may own multiple partitions. Two consumers in the same group never share a partition — that is how ordering per partition is preserved (one reader, one order). Different groups read independently at their own offsets.</p>
-<p><pre><code>flowchart LR
-    T[Topic orders<br/>6 partitions]
-
-    T --> P0[P0]
-    T --> P1[P1]
-    T --> P2[P2]
-    T --> P3[P3]
-    T --> P4[P4]
-    T --> P5[P5]
-
-    P0 --> C1A[Group A: consumer-1<br/>P0 P1]
-    P1 --> C1A
-    P2 --> C2A[Group A: consumer-2<br/>P2 P3]
-    P3 --> C2A
-    P4 --> C3A[Group A: consumer-3<br/>P4 P5]
-    P5 --> C3A
-
-    P0 -.-> C1B[Group B: consumer-1<br/>all 6 partitions<br/>backfill from offset 0]
-    P1 -.-> C1B
-    P2 -.-> C1B
-    P3 -.-> C1B
-    P4 -.-> C1B
-    P5 -.-> C1B
-
-    style C1A fill:#e8f5e9
-    style C2A fill:#e8f5e9
-    style C3A fill:#e8f5e9
-    style C1B fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_81bb472e59be.png" alt="diagram"></div></p>
 <p><em>Figure 3-4: Consumer groups. Group A scales by adding consumers up to partition count; Group B reads the same partitions independently at a different offset.</em></p>
 <p>Assignment strategies (Kafka 3.7, <code>partition.assignment.strategy</code>):</p>
 <table>
@@ -1475,21 +1373,7 @@ hr {
     <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># leaves group cleanly — no rebalance timeout</span>
 </code></pre></div>
 
-<p><pre><code>sequenceDiagram
-    participant C1 as Consumer 1
-    participant Coord as Group Coordinator<br/>(broker)
-    participant C2 as Consumer 2 (new)
-
-    C1->>Coord: JoinGroup (cooperative-sticky)
-    Coord->>C1: Assignment: P0 P1 P2
-    Note over C1: steady state — owns P0-2
-
-    C2->>Coord: JoinGroup
-    Coord->>C1: Revoke: P2 (only P2 moves)
-    Coord->>C2: Assign: P2
-    Note over C1: continues fetching P0 P1<br/>no pause on unmoved partitions
-    Note over C2: fetches P2 from committed offset
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d73da7b5baea.png" alt="diagram"></div></p>
 <p><em>Figure 3-5: Cooperative rebalance. Only the migrating partition pauses; the rest of the group continues fetching — no stop-the-world.</em></p>
 <hr />
 <h2 id="the-control-plane-kraft">The control plane: KRaft</h2>
@@ -1553,7 +1437,7 @@ hr {
 <h3 id="rack-awareness-and-tiered-storage">Rack awareness and tiered storage</h3>
 <ul>
 <li><strong>Rack awareness</strong> (<code>broker.rack=us-east-1a</code>) — the controller places replicas across racks/AZs so a rack loss does not take all replicas. The replica selector also prefers fetching from the closest replica (KIP-392, <code>client.rack</code>).</li>
-<li><strong>Tiered storage</strong> (KIP-405, early access in 3.7, <code>remote.log.storage</code>) — closed segments are offloaded to S3/GCS; the broker retains only the active working set. Consumers reading far behind fetch from remote storage via the broker. This decouples retention (now bounded by object-store cost, not broker disk) from broker sizing.</li>
+<li><strong>Tiered storage</strong> (KIP-405, early access in 3.7 — GA semantics in 3.8+, <code>remote.log.storage</code>) — closed segments are offloaded to S3/GCS; the broker retains only the active working set. Consumers reading far behind fetch from remote storage via the broker. This decouples retention (now bounded by object-store cost, not broker disk) from broker sizing.</li>
 </ul>
 <h3 id="monitoring-that-matters">Monitoring that matters</h3>
 <table>
@@ -1624,6 +1508,10 @@ kafka-consumer-groups.sh<span class="w"> </span>--bootstrap-server<span class="w
 <li><strong>Compression</strong> — <code>lz4</code> or <code>zstd</code> for JSON/text payloads; measure — binary payloads (Protobuf, Avro) compress less.</li>
 </ul>
 <hr />
+<h4 id="partition-assignment">Partition Assignment</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35c4ba7f9f4c.png" alt="diagram"></div></p>
+<h4 id="end-to-end-kafka-flow">End-to-End Kafka Flow</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_29434027f1e2.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Kafka is a partitioned, replicated log — sequential segment files, offset/index/timeindex, page cache + <code>sendfile</code> for speed. Partitions scale throughput; replication scales durability.</li>
@@ -1704,25 +1592,7 @@ kafka-consumer-groups.sh<span class="w"> </span>--bootstrap-server<span class="w
 </tbody>
 </table>
 <p>Micro-batch (Spark Structured Streaming in micro-batch mode) splits the difference: it runs tiny batch jobs on short intervals (100ms–1s). It simplifies reasoning for teams that think in batch, but it trades latency floor and per-event state semantics for scheduler simplicity. True streaming (Flink event-at-a-time, Kafka Streams per-record) processes each event through the operator graph as it arrives.</p>
-<p><pre><code>flowchart LR
-    subgraph Batch[Batch — finite, terminate]
-        B1[(Input dataset<br/>bounded)]
-        B2[Job<br/>map + reduce]
-        B3[(Output<br/>single result)]
-        B1 --> B2 --> B3
-    end
-    subgraph Stream[Stream — infinite, continuous]
-        S1[(Event log<br/>unbounded)]
-        S2["Processor<br/>stateful operators"]
-        S3[(State<br/>checkpointed)]
-        S4[(Sink / changelog<br/>continuous updates)]
-        S1 --> S2 <--> S3
-        S2 --> S4
-        S4 -.->|replay on failure| S2
-    end
-    style S3 fill:#e8f5e9
-    style S2 fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_13af5add0198.png" alt="diagram"></div></p>
 <p><em>Figure 4-1: Batch terminates; streaming holds state and emits continuously. Failure recovery for streaming is state restore plus log replay, not full recomputation.</em></p>
 <hr />
 <h2 id="time-the-hard-part">Time: the hard part</h2>
@@ -1769,22 +1639,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 </code></pre></div>
 
 <p>In Flink, watermarks are generated at the source and propagated operator-to-operator. In Kafka Streams, the equivalent is <code>grace period</code> on windowed aggregations (how long after window end to accept late events).</p>
-<p><pre><code>sequenceDiagram
-    participant P as Producer
-    participant K as Kafka (event log)
-    participant F as Flink Source
-    participant W as Window Operator
-    P->>K: order {event_time=12:00:03}
-    P->>K: order {event_time=12:00:07}
-    P->>K: order {event_time=12:00:02} 
-    Note over P,K: out-of-order — mobile delay
-    K->>F: consume in log order
-    F->>F: watermarkStrategy<br/>maxOutOfOrderness=5s
-    F->>W: watermark W(12:00:04)
-    Note over W: closes window [12:00:00, 12:00:05)<br/>late event 12:00:02 → side output / dropped
-    F->>W: watermark W(12:00:08)
-    Note over W: closes [12:00:05, 12:00:10)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_733c84561a52.png" alt="diagram"></div></p>
 <p><em>Figure 4-2: Event-time processing with watermarks. The watermark advances based on observed event times minus bounded out-of-orderness; late events are handled explicitly.</em></p>
 <h3 id="windows">Windows</h3>
 <p>A <strong>window</strong> slices an infinite stream into finite buckets that can be aggregated. The type determines the slicing rule.</p>
@@ -1824,23 +1679,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 </tr>
 </tbody>
 </table>
-<p><pre><code>gantt
-    title Windows over event time — key = user_42
-    dateFormat X
-    axisFormat %S s
-    section Tumbling 10s
-    window [0,10) :0, 10
-    window [10,20) :10, 20
-    window [20,30) :20, 30
-    section Sliding 10s / every 5s
-    w1 [0,10) :0, 10
-    w2 [5,15) :5, 15
-    w3 [10,20) :10, 20
-    section Session gap=8s
-    session 1 (events at 1,4,9) :0, 12
-    gap :12, 20
-    session 2 (events at 22,24) :20, 30
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e3007f3e2343.png" alt="diagram"></div></p>
 <p><em>Figure 4-3: Tumbling windows partition time cleanly; sliding windows overlap for rolling aggregates; session windows merge events separated by less than the gap timeout.</em></p>
 <p>Late-data handling is explicit: allow lateness with a side output (Flink <code>allowedLateness</code> + <code>sideOutputLateData</code>), or drop after grace (Kafka Streams <code>grace(Duration)</code>). There is no implicit "correct" choice — dropping loses data, allowing lateness emits retractions/updates. Your sink must handle both.</p>
 <hr />
@@ -1858,29 +1697,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 <li>On failure, the job restores every operator to the last completed checkpoint and rewinds sources to the checkpointed offsets.</li>
 </ol>
 <p>Because barriers flow with data, the snapshot is <em>consistent</em> — it reflects a cut across the graph where no in-flight event is counted twice or lost — without stopping processing (aside from brief alignment stalls).</p>
-<p><pre><code>flowchart TB
-    JM[JobManager<br/>CheckpointCoordinator]
-    S1[Source 1<br/>Kafka partition 0]
-    S2[Source 2<br/>Kafka partition 1]
-    M[Map operator]
-    K[Keyed Window<br/>state = RocksDB]
-    SK[Sink<br/>Kafka producer]
-
-    JM -- "barrier(checkpointId=42)" --> S1
-    JM -- "barrier(checkpointId=42)" --> S2
-    S1 -- "data + barrier 42" --> M
-    S2 -- "data + barrier 42" --> M
-    M -- "barrier alignment<br/>then snapshot" --> K
-    K -- "snapshot state to S3<br/>ack" --> JM
-    K -- "data + barrier 42" --> SK
-
-    K -.-> ST[(RocksDB<br/>incremental checkpoint<br/>s3://flink-checkpoints/job-abc/chk-42)]
-    S1 -.-> OFF1["offset: p0=12340"]
-    S2 -.-> OFF2["offset: p1=88210"]
-
-    style JM fill:#fff3e0
-    style ST fill:#e8f5e9
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a654f18cf9de.png" alt="diagram"></div></p>
 <p><em>Figure 4-4: Flink barrier protocol. Barriers flow with data; each operator snapshots state and offsets. The completed checkpoint is the consistent restore point.</em></p>
 <p>An <strong>exactly-once sink</strong> (Kafka) participates in the checkpoint via Flink's <strong>two-phase commit sink</strong> (<code>KafkaSink</code> with <code>DeliveryGuarantee.EXACTLY_ONCE</code>): the sink pre-commits the Kafka transaction on checkpoint, and the JobManager commits it only after the checkpoint completes. If the checkpoint fails, the transaction aborts. This extends exactly-once from Flink state to the external sink.</p>
 <p>A <strong>savepoint</strong> is a manually triggered checkpoint that includes additional metadata for job upgrades (topology changes, rescaling). Use savepoints for deploys; checkpoints for automatic recovery.</p>
@@ -2167,30 +1984,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 <li><strong>Grace period</strong> (<code>grace(10s)</code>) is the Kafka Streams equivalent of Flink's <code>allowedLateness</code>. After <code>window_end + grace</code>, the window is closed and purged. Late events beyond grace are dropped (or routed via a branch + side topic if you explicitly handle them).</li>
 <li><strong>Partition count is the parallelism ceiling.</strong> A topic with 6 partitions can run at most 6 stream threads doing useful work (one task per partition). Over-provision partitions up front or plan a partition-split migration.</li>
 </ul>
-<p><pre><code>flowchart TB
-    Orders[(orders topic<br/>6 partitions)]
-    T1[StreamThread-1<br/>tasks 0,1]
-    T2[StreamThread-2<br/>tasks 2,3]
-    T3[StreamThread-3<br/>tasks 4,5]
-    S0[(State store<br/>RocksDB task 0)]
-    S1[(State store<br/>RocksDB task 1)]
-    CL[(Changelog topic<br/>compacted, RF=3)]
-    Out[(merchant_revenue_1m<br/>output topic)]
-
-    Orders --> T1
-    Orders --> T2
-    Orders --> T3
-    T1 <--> S0
-    T1 <--> S1
-    S0 <-.->|replicate| CL
-    S1 <-.->|replicate| CL
-    T1 -->|transactional produce<br/>EOS v2| Out
-    T2 -->|transactional produce| Out
-    T3 -->|transactional produce| Out
-
-    style S0 fill:#e8f5e9
-    style CL fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3f4e524e021b.png" alt="diagram"></div></p>
 <p><em>Figure 4-5: Kafka Streams deployment. Each task owns partitions and a RocksDB state store backed by a changelog topic. EOS v2 makes consume + state update + produce atomic per task.</em></p>
 <hr />
 <h2 id="distributed-systems-lens-ordering-exactly-once-and-failure">Distributed-systems lens: ordering, exactly-once, and failure</h2>
@@ -2250,6 +2044,10 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 <p>Use <strong>Kafka Streams</strong> when: data is already in Kafka and stays in Kafka (Kafka-in/Kafka-out), state is moderate, the team prefers a library over a cluster, and operational simplicity outweighs Flink's richer operator set. The ceiling is partition count and RocksDB-on-local-disk.</p>
 <p>Many organizations run both: Kafka Streams for lightweight per-service transformations colocated with the service, Flink for the central streaming platform that powers large windowed analytics, joins, and ML feature pipelines.</p>
 <hr />
+<h4 id="windowing-types">Windowing Types</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b24e321dc5ce.png" alt="diagram"></div></p>
+<h4 id="exactly-once-stream-processing">Exactly-Once Stream Processing</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_baad0fcf2d12.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Streaming processes unbounded data continuously, holding keyed state and emitting incremental results — failure recovery is state restore plus log replay, not batch recomputation.</li>
@@ -2346,23 +2144,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 </tbody>
 </table>
 <p>Event sourcing is not "store JSON blobs instead of rows." It is a persistence <em>discipline</em> with a precise store contract and modeling constraints that must be understood before adopting it.</p>
-<p><pre><code>flowchart TB
-    subgraph StateOriented["State-oriented"]
-        Cmd1[Command] --> Svc1[Service]
-        Svc1 --> DB1[(Row: orders<br/>UPDATE in place)]
-        DB1 --> Read1[Read current row]
-    end
-    subgraph EventSourced["Event-sourced"]
-        Cmd2[Command] --> Agg[Aggregate<br/>load events → decide]
-        Agg --> Store[(Event store<br/>append-only stream)]
-        Store --> Fold["Fold: apply 0..N<br/>→ current state"]
-        Store --> Proj[Projector<br/>→ read models]
-        Proj --> Read2[(Read DB<br/>query-optimized)]
-        Fold -.->|same store| Agg
-    end
-    style Store fill:#e8f5e9
-    style Proj fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_520c446447d1.png" alt="diagram"></div></p>
 <p><em>Figure 5-1: State-oriented persistence overwrites; event sourcing appends and derives state. The read model in CQRS is a separate projection, not the aggregate's own state.</em></p>
 <hr />
 <h2 id="the-event-store-contract">The event store contract</h2>
@@ -2383,24 +2165,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 <ul>
 <li><strong>Idempotent append</strong> — an idempotency key (typically <code>eventId</code>) makes retries safe: re-appending the same <code>eventId</code> returns success without duplicating. Without this, the producer ambiguity from Ch 2 / Vol 6 Ch 9 reappears inside the store.</li>
 </ul>
-<p><pre><code>sequenceDiagram
-    participant C as Command handler
-    participant A as Aggregate
-    participant S as Event store<br/>(Postgres / EventStoreDB)
-    C->>S: load stream orders-ord_9f3a<br/>events 0..N
-    S-->>C: [OrderPlaced, PaymentAuthorized]
-    C->>A: handle(ShipOrder) with state=fold(0..N)
-    Note over A: enforce invariants:<br/>must be authorized<br/>not already shipped
-    A-->>C: event OrderShipped {shipment_id}
-    C->>S: append orders-ord_9f3a<br/>expectedVersion=N<br/>eventId=evt_abc, type=OrderShipped
-    alt expectedVersion matches
-        S-->>C: ack revision N+1
-        C->>C: publish to projections
-    else WrongExpectedVersion
-        S-->>C: 409 Conflict
-        C->>C: reload + retry or reject
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1bf77165f4c8.png" alt="diagram"></div></p>
 <p><em>Figure 5-2: The event-store append path. The aggregate is pure decision logic; the store's expected-version check is the concurrency gate.</em></p>
 <hr />
 <h2 id="aggregates-the-consistency-boundary">Aggregates: the consistency boundary</h2>
@@ -2748,25 +2513,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 <li><strong>Scavenging</strong> — deleted/tombstoned streams still occupy index space until scavenged. Schedule scavenges in low-traffic windows.</li>
 <li><strong>Clustering</strong> — 3-node cluster with Raft-like leader election; writes go to leader, reads can go to followers with <code>NodePreference</code>. Monitor <code>esdb WorthExpectedVersion</code> conflicts and subscription lag.</li>
 </ul>
-<p><pre><code>flowchart TB
-    Cmd[Command] --> Handler[Command handler]
-    Handler --> Load["Load stream<br/>orders-ord_9f3a 0..N"]
-    Load --> Agg[Aggregate<br/>fold + decide]
-    Agg -- "emit event" --> Append["Append<br/>expectedRevision=N"]
-    Append --> ES[(Event store<br/>Postgres / EventStoreDB)]
-    ES --> Sub[Subscription<br/>global order]
-    Sub --> Proj[Projector<br/>idempotent apply]
-    Proj --> RM[(Read model<br/>orders_summary)]
-    Proj --> CP[(Checkpoint<br/>last_global_position)]
-    RM --> Query[Query API<br/>GET /orders?user=...]
-
-    ES -.->|replay 0..N| Replay[Rebuild /<br/>new projector]
-    Replay -.-> RM2[(New read model)]
-
-    style ES fill:#e8f5e9
-    style Proj fill:#e3f2fd
-    style RM fill:#fff3e0
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bfbfe5b0f911.png" alt="diagram"></div></p>
 <p><em>Figure 5-3: CQRS + event sourcing topology. The write path is per-aggregate OCC; the read path is a lagging, replayable projection with a checkpoint. New read models are built by replaying, not by migrating the write model.</em></p>
 <hr />
 <h2 id="schema-evolution-events-live-forever">Schema evolution: events live forever</h2>
@@ -2907,18 +2654,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 </tbody>
 </table>
 <p>The essential property: the event log is durable and replayable, so any derived state can be rebuilt. This is why the log — not any read model — is the system of record.</p>
-<p><pre><code>stateDiagram-v2
-    [*] --> Empty: stream does not exist
-    Empty --> Placed: PlaceOrder → OrderPlaced
-    Placed --> Authorized: AuthorizePayment → PaymentAuthorized
-    Authorized --> Reserved: ReserveInventory → InventoryReserved
-    Reserved --> Shipped: ShipOrder → OrderShipped
-    Placed --> Cancelled: CancelOrder → OrderCancelled
-    Authorized --> Cancelled: CancelOrder → OrderCancelled
-    Shipped --> [*]
-    Cancelled --> [*]
-    Note right of Authorized: Aggregate enforces:<br/>placed before authorized<br/>authorized before shipped<br/>no ship after cancel
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1d33a7069302.png" alt="diagram"></div></p>
 <p><em>Figure 5-4: Aggregate state machine — the set of valid event sequences. The aggregate rejects commands that would emit an invalid transition; the projector never needs to enforce these invariants again.</em></p>
 <hr />
 <h2 id="when-not-to-use-event-sourcing-and-cqrs">When not to use event sourcing and CQRS</h2>
@@ -2938,6 +2674,12 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 </ul>
 <p>Otherwise, keep a normalized write table, add an <code>audit_log</code> table or CDC (Ch 6), and use CQRS only where a specific query just says it needs it.</p>
 <hr />
+<h4 id="aggregate-lifecycle">Aggregate Lifecycle</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b71c72b5a976.png" alt="diagram"></div></p>
+<h4 id="cqrs-flow">CQRS Flow</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da007c92ecc7.png" alt="diagram"></div></p>
+<h4 id="projection-rebuild">Projection Rebuild</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2e57e521c350.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Event sourcing stores the ordered sequence of domain events as the source of truth; current state is a pure left-fold over that sequence — giving complete audit history, temporal queries, and replay for free.</li>
@@ -2989,28 +2731,8 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 </code></pre></div>
 
 <p>There are two orderings, and both fail:</p>
-<p><pre><code>sequenceDiagram
-    participant S as Service
-    participant DB as Postgres
-    participant K as Kafka
-    Note over S: Case A: commit then publish
-    S->>DB: BEGIN; INSERT orders ...; COMMIT
-    DB-->>S: ack — row durable
-    Note over S: CRASH — publish never happens
-    Note over K: Event never published.<br/>Downstream never learns<br/>order exists. Silent divergence.
-    S->>K: send(OrderPlaced) — never reached
-</code></pre></p>
-<p><pre><code>sequenceDiagram
-    participant S as Service
-    participant DB as Postgres
-    participant K as Kafka
-    Note over S: Case B: publish then commit
-    S->>K: send(OrderPlaced)
-    K-->>S: ack — event durable
-    S->>DB: BEGIN; INSERT orders ...; COMMIT
-    Note over S: CRASH — commit never happens<br/>or COMMIT fails (constraint, deadlock)
-    Note over K: Event published for an order<br/>that does not exist.<br/>Downstream acts on a ghost.
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f5559d965a0b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_29392cafa629.png" alt="diagram"></div></p>
 <p>More precisely, there are four failure modes and each is observable as a different incident:</p>
 <table>
 <thead>
@@ -3074,22 +2796,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 </code></pre></div>
 
 <p>The database is the single source of truth for "what must be published." The broker is a derived, eventually consistent copy. If the relay is down, events accumulate in the outbox — no divergence, just lag.</p>
-<p><pre><code>flowchart TB
-    Client[Client request] --> Svc[Service]
-    Svc --> TX["Postgres transaction<br/>BEGIN"]
-    TX --> B1["INSERT orders<br/>business write"]
-    TX --> B2["INSERT outbox<br/>event envelope"]
-    B2 --> Commit{COMMIT}
-    B1 --> Commit
-    Commit -->|atomic — both or neither| OK[Transaction committed]
-    OK --> Relay[Relay process<br/>poll or CDC]
-    Relay --> Kafka[(Kafka topic<br/>orders)]
-    Kafka --> Consumer[Downstream consumer<br/>idempotent]
-
-    style TX fill:#e8f5e9
-    style B2 fill:#fff3e0
-    style Relay fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f2ddbf3e7ccb.png" alt="diagram"></div></p>
 <p><em>Figure 6-1: The transactional outbox invariant. Business state and the intent to publish are committed atomically; the relay makes that intent durable in the broker. The only observable delay is relay lag, not divergence.</em></p>
 <hr />
 <h2 id="implementing-the-outbox-on-postgres-16">Implementing the outbox on Postgres 16</h2>
@@ -3389,20 +3096,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 <li>The resulting Kafka record is produced transactionally by the connector's internal producer. The connector commits its WAL offset only after the Kafka produce succeeds — so <strong>WAL position and Kafka publish are atomically paired</strong> at the connector's offset granularity.</li>
 <li>After routing, the connector can be configured to emit a tombstone or the application can <code>DELETE FROM outbox</code> — either way, the row does not remain to be re-polled.</li>
 </ol>
-<p><pre><code>sequenceDiagram
-    participant App as Service
-    participant PG as Postgres WAL
-    participant Deb as Debezium<br/>connector
-    participant K as Kafka
-    App->>PG: COMMIT { INSERT orders + INSERT outbox }
-    Note over PG: WAL entry durable,<br/>publication decodes it
-    PG->>Deb: pgoutput: outbox INSERT<br/>id=evt_abc, aggregate_id=ord_9f3a<br/>payload={...}
-    Deb->>Deb: EventRouter SMT:<br/>topic=orders, key=ord_9f3a<br/>headers=traceparent
-    Deb->>K: produce orders {key=ord_9f3a, value=payload}
-    K-->>Deb: ack
-    Deb->>Deb: commit offset<br/>(slot LSN advances)
-    Note over PG: WAL segment for that LSN<br/>now eligible for recycling
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_21bbc44c50b8.png" alt="diagram"></div></p>
 <p><em>Figure 6-2: CDC relay. The WAL is the source of truth; Debezium decodes committed outbox inserts and routes them to Kafka. No publish-before-commit is possible because only committed WAL entries are decoded.</em></p>
 <p>Pros and cons:</p>
 <table>
@@ -3532,28 +3226,7 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 <li><strong>Commit offset only after the <code>inbox + business</code> transaction commits.</strong> If you auto-commit offsets before the transaction, a crash loses the event without processing it — at-most-once.</li>
 <li><strong>Do not commit offset when dedup short-circuits.</strong> Or rather, do commit — but as a separate step after recognizing the duplicate. The event is already processed; advancing the offset is correct and prevents endless redelivery.</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph OutboxSide[Producer — outbox]
-        TX1["tx: INSERT orders + INSERT outbox<br/>atomic"]
-        Relay[Relay<br/>poll or CDC]
-        K[(Kafka orders<br/>key=aggregate_id)]
-        TX1 --> Relay --> K
-    end
-    subgraph InboxSide[Consumer — inbox]
-        Poll[Consumer poll<br/>read_committed]
-        Dedup{"inbox contains<br/>event_id?"}
-        Business["tx: INSERT business + INSERT inbox<br/>atomic"]
-        Commit[Commit Kafka offset]
-        Poll --> Dedup
-        Dedup -- no --> Business --> Commit
-        Dedup -- yes --> Commit
-    end
-    K --> Poll
-
-    style TX1 fill:#e8f5e9
-    style Business fill:#e8f5e9
-    style Dedup fill:#fff3e0
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_94c1c7b658ab.png" alt="diagram"></div></p>
 <p><em>Figure 6-3: End-to-end effectively-once pipeline. The outbox makes publish at-least-once with no ghosts; the inbox makes consume idempotent; offset commit after the transaction prevents loss.</em></p>
 <h3 id="when-you-can-skip-the-inbox">When you can skip the inbox</h3>
 <ul>
@@ -3668,6 +3341,10 @@ watermark:    ---- W(3s) ---- W(6s) ---- W(10s) ---
 <li><strong>Outbox table as an audit log forever</strong> — unbounded growth without deletion/archival after publish exhausts table bloat and vacuum. Retain 7–30 days, then archive or delete.</li>
 </ul>
 <hr />
+<h4 id="transactional-outbox-sequence">Transactional Outbox Sequence</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d3e8ab749524.png" alt="diagram"></div></p>
+<h4 id="polling-vs-cdc-outbox">Polling vs CDC Outbox</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3e1ad22bf1d7.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>The dual-write problem is fundamental: a database commit and a broker publish have no shared atomicity — <code>commit-then-publish</code> creates ghost writes, <code>publish-then-commit</code> creates ghost events, and retries cannot fix it.</li>
@@ -3719,17 +3396,7 @@ Unstable:  λ = 1200/s, μ = 1000/s  →  L grows at 200/s, W grows without boun
 
 <p>In production the rates are not constant. A downstream database slows from 2 ms to 80 ms p99 during a compaction, μ drops by 40×, and a pipeline that was stable at 60% utilization is suddenly unstable at 2400% overload. Without backpressure, the only observable before OOM is <em>increasing queue depth</em> — which every system already has but few alert on.</p>
 <h3 id="where-messages-accumulate">Where messages accumulate</h3>
-<p><pre><code>flowchart LR
-    P[Producers<br/>λ variable] --> B1[Broker buffer<br/>Kafka log / RabbitMQ queue]
-    B1 --> C[Consumer process<br/>prefetch / fetch buffer]
-    C --> B2[App buffer<br/>channel / queue / reactor buffer]
-    B2 --> D[Downstream<br/>DB / HTTP / external API<br/>μ variable]
-
-    style B1 fill:#fff3e0
-    style B2 fill:#fff3e0
-    style C fill:#e3f2fd
-    style D fill:#e8f5e9
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_609ec6266310.png" alt="diagram"></div></p>
 <p>Buffers exist at four layers: broker (log segments, queue pages), consumer client (fetch/prefetch buffer), application (in-memory channels, Reactor buffers), and downstream (DB connection pool queue, HTTP client queue). Backpressure must be <em>propagated</em> across all four — a consumer that applies backpressure to the broker but buffers unboundedly in application memory has only moved the OOM one hop downstream.</p>
 <hr />
 <h2 id="the-five-backpressure-strategies">The five backpressure strategies</h2>
@@ -3788,20 +3455,7 @@ Unstable:  λ = 1200/s, μ = 1000/s  →  L grows at 200/s, W grows without boun
 </tbody>
 </table>
 <p>No pipeline uses one strategy everywhere. The correct design is layered: throttle the broker fetch when downstream is slow, shed at the gateway when the service is saturated, and drop only for explicitly loss-tolerant streams. An <em>unbounded</em> buffer is not a sixth strategy — it is the absence of a strategy.</p>
-<p><pre><code>flowchart TB
-    Saturated{Downstream<br/>saturated?}
-    Saturated -->|No| Pass[Forward message<br/>L and W bounded]
-    Saturated -->|Yes| Choice{Strategy}
-    Choice -->|Durable<br/>producer can wait| Throttle[Throttle / Block<br/>pause fetch, slow producer]
-    Choice -->|Caller can retry| Shed[Load shed<br/>429 / NAK / Busy]
-    Choice -->|Loss-tolerant<br/>telemetry| Drop[Drop<br/>newest or oldest]
-    Choice -->|None set<br/>unbounded buffer| OOM([OOM / disk full<br/>uncontrolled failure])
-
-    style Throttle fill:#e8f5e9
-    style Shed fill:#fff3e0
-    style Drop fill:#f3e5f5
-    style OOM fill:#ffcdd2
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_40853e3a87fc.png" alt="diagram"></div></p>
 <h3 id="choosing-by-durability-and-loss-tolerance">Choosing by durability and loss tolerance</h3>
 <ul>
 <li><strong>Orders, payments, inventory events (durable, loss-intolerant)</strong>: throttle + shed at the edge. Never drop. Buffer bounded (e.g., 10k in-memory + broker log), then throttle (pause Kafka partition), then shed (return <code>429</code>/<code>503</code> to caller who retries with backoff).</li>
@@ -3841,31 +3495,7 @@ Unstable:  λ = 1200/s, μ = 1000/s  →  L grows at 200/s, W grows without boun
 </tbody>
 </table>
 <p>Push without a credit or prefetch limit is the most common source of consumer OOM. Every production consumer must use one of pull or credit-based consumption.</p>
-<p><pre><code>sequenceDiagram
-    participant P as Producer / Broker
-    participant C as Consumer
-
-    Note over P,C: Push without flow control — failure mode
-    P->>C: message 1
-    P->>C: message 2
-    P->>C: message 3 ... burst of 10k
-    Note over C: buffer grows unbounded<br/>GC pressure → pause → more buffering → OOM
-
-    Note over P,C: Pull — consumer controls rate
-    C->>P: poll(maxRecords=500)
-    P-->>C: 500 messages
-    Note over C: process 500, commit offsets
-    C->>P: poll(maxRecords=500)
-    P-->>C: 500 messages
-
-    Note over P,C: Credit-based — window of 1000
-    C->>P: credit(1000)
-    P->>C: messages 1..600 (in-flight 600)
-    P->>C: messages 601..1000 (in-flight 1000 — window exhausted)
-    Note over P: stalls — no credit
-    C->>P: credit(500) — consumed 500, grant more
-    P->>C: messages 1001..1500
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d2926b20c8d3.png" alt="diagram"></div></p>
 <hr />
 <h2 id="kafka-flow-control">Kafka flow control</h2>
 <p>Kafka is a <strong>pull</strong> system: consumers fetch from the log at their own pace. That is the primary backpressure mechanism — a slow consumer simply calls <code>poll()</code> less often, and the log retains messages on disk. But three tuning points determine whether that pull is well-behaved.</p>
@@ -4238,24 +3868,7 @@ kafka-configs.sh<span class="w"> </span>--bootstrap-server<span class="w"> </spa
 <hr />
 <h2 id="end-to-end-propagation">End-to-end propagation</h2>
 <p>Backpressure that stops at one hop is not backpressure — it is a buffer. The full path must propagate:</p>
-<p><pre><code>flowchart TB
-    Client[Client / Producer] --> GW[API Gateway<br/>shed: 429 + Retry-After]
-    GW --> Svc[Service<br/>bounded queue 1000<br/>shed when full]
-    Svc --> Broker[(Kafka / RabbitMQ<br/>pause fetch / prefetch limit<br/>quota throttle)]
-    Broker --> Consumer[Consumer<br/>pause partitions<br/>semaphore 50]
-    Consumer --> DB[(Postgres<br/>pool queue 20<br/>statement timeout 2s)]
-
-    DB -. backpressure .-> Consumer
-    Consumer -. pause .-> Broker
-    Broker -. throttle / 503 .-> Svc
-    Svc -. 503 / 429 .-> GW
-    GW -. 429 .-> Client
-
-    style GW fill:#fff3e0
-    style Broker fill:#e3f2fd
-    style Consumer fill:#e8f5e9
-    style DB fill:#f3e5f5
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_14b821fd4522.png" alt="diagram"></div></p>
 <p>The signals and thresholds at each hop:</p>
 <table>
 <thead>
@@ -4309,6 +3922,12 @@ kafka-configs.sh<span class="w"> </span>--bootstrap-server<span class="w"> </spa
 <li><strong>Quotas are multi-tenancy isolation.</strong> A single noisy producer or consumer can starve every other tenant on the same Kafka or RabbitMQ cluster. Per-client quotas turn a noisy-neighbour incident into local throttling rather than a cluster-wide outage.</li>
 <li><strong>The edge must shed.</strong> Internal backpressure (pause, throttle) protects durability but increases latency for every caller. At the edge (gateway, BFF), shedding with <code>429</code>/<code>503</code> + <code>Retry-After</code> bounds tail latency and gives callers a signal they can act on (backoff, hedge, degrade). A system that only throttles internally and never sheds at the edge will meet its durability SLO and miss its latency SLO on every overload.</li>
 </ul>
+<h4 id="backpressure-strategy-choice">Backpressure Strategy Choice</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_40911c466f05.png" alt="diagram"></div></p>
+<h4 id="reactive-streams-protocol">Reactive Streams Protocol</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8efc6f75460f.png" alt="diagram"></div></p>
+<h4 id="buffer-and-drop-policies">Buffer and Drop Policies</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c1c20dcb7ae1.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Little's Law (<code>L = λ·W</code>) and the stability condition (<code>λ &lt; μ</code>) govern every pipeline: a sustained <code>λ &gt; μ</code> makes queue depth and latency grow without bound — a buffer only delays the failure.</li>
@@ -4344,24 +3963,7 @@ kafka-configs.sh<span class="w"> </span>--bootstrap-server<span class="w"> </spa
 <hr />
 <h2 id="the-failure-path-nobody-drew">The failure path nobody drew</h2>
 <p>The happy-path diagram in every messaging intro shows <code>produce → broker → consume → ack</code>. The production diagram has a second path:</p>
-<p><pre><code>flowchart TB
-    P[Producer] --> B[(Broker<br/>topic / queue)]
-    B --> C[Consumer<br/>handler]
-    C -->|success| Ack[Ack / commit offset<br/>message done]
-    C -->|transient failure<br/>503, timeout, deadlock| R[Retry<br/>backoff + jitter]
-    C -->|poison<br/>bad payload, bug, schema| D{Classify}
-    R -->|retryable<br/>attempts left| C
-    R -->|exhausted| DLQ[(Dead-letter<br/>queue / topic)]
-    D -->|retryable| R
-    D -->|non-retryable| DLQ
-    DLQ --> Op[Operator<br/>inspect, fix, replay]
-    Op -->|replay| B
-
-    style R fill:#fff3e0
-    style DLQ fill:#ffcdd2
-    style Op fill:#e3f2fd
-    style Ack fill:#e8f5e9
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a5620a9079ad.png" alt="diagram"></div></p>
 <p>Without explicit wiring for <code>R</code> and <code>DLQ</code>, the consumer has only two options — both wrong:</p>
 <table>
 <thead>
@@ -4490,22 +4092,7 @@ kafka-configs.sh<span class="w"> </span>--bootstrap-server<span class="w"> </spa
 <hr />
 <h2 id="why-poison-stalls-ordered-logs">Why poison stalls ordered logs</h2>
 <p>In Kafka, offsets are sequential per partition. A consumer that cannot process offset 104 cannot <code>commit</code> 104, and the committed offset stays at 103 — even though offsets 105–10000 may be processable. Lag (<code>end - committed</code>) grows monotonically and <em>no other consumer can help</em> because the partition is owned by one consumer at a time. A single poison message can make lag look like the consumer is down when it is actually livelocked on one offset.</p>
-<p><pre><code>sequenceDiagram
-    participant Log as Partition log<br/>offsets 103..110
-    participant C as Consumer
-    participant DLQ as DLQ topic
-
-    Note over Log: committed = 103
-    Log->>C: poll — offsets 104..108
-    Note over C: offset 104 — poison<br/>deserialization throws
-    C->>C: retry 1..3 with backoff — all fail
-    C->>DLQ: publish to DLQ topic<br/>with failure headers
-    C->>Log: commit 104 — skip poison
-    Log->>C: poll — offsets 105..110
-    Note over C: offsets 105..110 process normally<br/>ordering of 104 lost — DLQ is the record
-
-    Note over Log: Without DLQ: consumer loops on 104 forever<br/>lag grows, no progress, rebalance on<br/>max.poll.interval.ms exceeded
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b12012857cd8.png" alt="diagram"></div></p>
 <p>RabbitMQ has the same shape with different mechanics: a poison message that is <code>basic.nack(requeue=true)</code> is redelivered immediately to the same consumer, which fails again — a tight loop that starves the queue. <code>requeue=false</code> with a DLX moves it aside; without a DLX it is dropped.</p>
 <hr />
 <h2 id="retry-design">Retry design</h2>
@@ -4931,26 +4518,7 @@ kcat<span class="w"> </span>-b<span class="w"> </span>kafka.prod:9092<span class
 
 <hr />
 <h2 id="putting-it-together-the-failure-discipline">Putting it together — the failure discipline</h2>
-<p><pre><code>flowchart TB
-    C[Consumer handler] --> Classify{Classify<br/>retryable vs poison}
-    Classify -->|Poison<br/>serialization, schema, 4xx| DLQ1[DLQ<br/>with failure headers<br/>+ original bytes]
-    Classify -->|Transient<br/>503, timeout, deadlock| Retry{Attempts left?}
-    Retry -->|Yes| Backoff[Backoff + jitter<br/>cap 30s<br/>non-blocking retry topic]
-    Backoff --> C2[Retry on<br/>retry topic / queue]
-    C2 -->|success| Ack[Ack / commit]
-    C2 -->|fail| Retry
-    Retry -->|Exhausted| DLQ2[DLQ<br/>with attempt history]
-    DLQ1 & DLQ2 --> Alert[Alert / ticket<br/>DLQ depth > 0]
-    Alert --> Fix[Fix cause<br/>deploy]
-    Fix --> Replay[Replay<br/>idempotent consumer<br/>throttled]
-    Replay --> Verify[Verify downstream<br/>no duplicates]
-
-    style DLQ1 fill:#ffcdd2
-    style DLQ2 fill:#ffcdd2
-    style Backoff fill:#fff3e0
-    style Alert fill:#ffecb3
-    style Replay fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7956d7ae6911.png" alt="diagram"></div></p>
 <p>Rules that survive production:</p>
 <ol>
 <li><strong>Never ack on failure.</strong> Every failure either retries (bounded, with backoff) or goes to DLQ. Silent ack is silent loss.</li>
@@ -4968,6 +4536,12 @@ kcat<span class="w"> </span>-b<span class="w"> </span>kafka.prod:9092<span class
 <li><strong>Exactly-once effect requires idempotent replay.</strong> A DLQ message replayed after a fix is <em>at-least-once</em> — the main pipeline may have already processed later messages that assumed the poison was skipped. The consumer must be idempotent (Vol 6, Ch 9 inbox pattern) or replay will double-apply.</li>
 <li><strong>DLQ is a queue like any other.</strong> It needs retention, replication (quorum / ISR), monitoring, and capacity planning. A DLQ that fills disk or is never consumed reintroduces the same failure it was meant to solve.</li>
 </ul>
+<h4 id="dead-letter-routing">Dead Letter Routing</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f5e83cf43be0.png" alt="diagram"></div></p>
+<h4 id="retry-with-dlq-sequence">Retry with DLQ Sequence</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cdb7b19e2c9b.png" alt="diagram"></div></p>
+<h4 id="poison-pill-handling">Poison Pill Handling</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c93fbbb0a52a.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Two bad defaults — ack-on-failure (silent loss) and retry-forever (partition stall) — are replaced by bounded retries with backoff + DLQ.</li>

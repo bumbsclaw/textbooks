@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -287,25 +369,7 @@ loop at L3. Hold onto this — it is the through-line of the whole volume.</p>
 <p>When your application hands a buffer of HTTP bytes to the kernel via <code>write()</code> on a socket,
 that buffer descends the stack. Each layer wraps it. By the time it reaches the wire it is a
 nested set of headers around your original payload, like envelopes inside envelopes.</p>
-<p><pre><code>flowchart TB
-    subgraph TX["Sender: encapsulation (top to bottom)"]
-        A["L7 App data: HTTP request bytes"]
-        B["L4 TCP: prepend TCP header (ports, seq, ack, flags, window) → segment"]
-        C["L3 IP: prepend IP header (src IP, dst IP, TTL, protocol) → packet"]
-        D["L2 Ethernet: prepend frame header (src MAC, dst MAC, EtherType) + FCS trailer → frame"]
-        E["L1 Physical: encode frame as symbols → bits on the wire"]
-        A --> B --> C --> D --> E
-    end
-    E -->|"medium"| F
-    subgraph RX["Receiver: decapsulation (bottom to top)"]
-        F["L1: recover bits → frame"]
-        G["L2: check FCS, strip Ethernet header → packet"]
-        H["L3: check dst IP, strip IP header → segment"]
-        I["L4: demux by port, reassemble stream, strip TCP header → app data"]
-        J["L7: HTTP request delivered to server process"]
-        F --> G --> H --> I --> J
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f1d624c35de7.png" alt="diagram"></div></p>
 <p>Walk the headers concretely for an HTTP-over-TCP-over-IPv4-over-Ethernet request. Your payload
 starts as, say, 800 bytes of <code>GET /v1/orders HTTP/1.1\r\nHost: api.example.com\r\n...</code>.</p>
 <ul>
@@ -341,37 +405,13 @@ bandwidth and why techniques like TCP segmentation offload and jumbo frames exis
 <code>tcpdump</code>, you are reading these nested headers directly; learning to read them top-down is the
 single most useful network-debugging skill, and Chapter 12 (Debugging and Observing Networks)
 builds it systematically.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0c4f815d7a77.png" alt="diagram"></div></p>
 <h2 id="a-concrete-request-calling-httpsapiexamplecomv1orders">A concrete request: calling <code>https://api.example.com/v1/orders</code></h2>
 <p>Now the main event. Your service, running in a pod on a Linux host, executes an HTTPS GET. We
 will follow it from the first system call to the last, noting where each step gets its own
 chapter. Assume the client has never contacted this host before, so nothing is cached — the
 cold path is the instructive one.</p>
-<p><pre><code>sequenceDiagram
-    participant App as Client app
-    participant Res as Stub resolver
-    participant DNS as DNS server
-    participant OS as Client kernel
-    participant GW as Default gateway (router)
-    participant Srv as api.example.com
-
-    App->>Res: getaddrinfo("api.example.com")
-    Res->>DNS: A / AAAA query (UDP 53)
-    DNS-->>Res: 203.0.113.10
-    Res-->>App: 203.0.113.10
-    Note over OS,GW: Not on local subnet → send to gateway. ARP to find gateway MAC.
-    App->>OS: connect() to 203.0.113.10:443
-    OS->>GW: TCP SYN
-    GW->>Srv: (routed hop by hop)
-    Srv-->>OS: SYN-ACK
-    OS->>Srv: ACK  (handshake complete)
-    OS->>Srv: TLS ClientHello
-    Srv-->>OS: ServerHello, cert, Finished
-    OS->>Srv: Finished (TLS established)
-    App->>Srv: HTTP GET /v1/orders (encrypted)
-    Srv-->>App: HTTP 200 + body (encrypted)
-    App->>Srv: FIN
-    Srv-->>App: FIN-ACK
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_82975acf6ed6.png" alt="diagram"></div></p>
 <h3 id="step-1-dns-resolution-name-to-address">Step 1 — DNS resolution: name to address</h3>
 <p><code>https://api.example.com/...</code> names a <em>host</em>, but IP can only route to <em>addresses</em>. The client
 calls <code>getaddrinfo()</code>, which consults the stub resolver (configured via <code>/etc/resolv.conf</code>,
@@ -527,22 +567,12 @@ timer; it is a hop counter, and it exists to guarantee that a packet caught in a
 eventually dies rather than circulating forever. It is also the mechanism <code>traceroute</code> exploits:
 by sending packets with TTL 1, 2, 3, … it provokes each successive router on the path to
 announce itself via the ICMP error, revealing the route hop by hop.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8ee6b298811c.png" alt="diagram"></div></p>
 <h2 id="how-a-packet-moves-hop-by-hop-switches-vs-routers">How a packet moves hop by hop: switches vs. routers</h2>
 <p>Now we can assemble the L2/L3 picture into the actual per-hop behavior — the single most
 important mechanism in this chapter. A frame's journey alternates between two operations:
 switching (within a link/LAN) and routing (between networks).</p>
-<p><pre><code>flowchart LR
-    H1["Host A<br/>IP 10.0.0.5<br/>MAC aa:aa"]
-    SW["Switch<br/>(L2: MAC learning,<br/>no header rewrite)"]
-    R["Router / gateway<br/>IP 10.0.0.1<br/>MAC 52:54:...<br/>(L3: decrement TTL,<br/>rewrite L2 MACs)"]
-    NET(("Internet<br/>many router hops"))
-    H2["Host B<br/>IP 203.0.113.10<br/>MAC bb:bb"]
-
-    H1 -->|"dst MAC = router, dst IP = B"| SW
-    SW -->|"forward by MAC, frame unchanged"| R
-    R -->|"new dst MAC = next hop, dst IP = B, TTL−1"| NET
-    NET -->|"final router: dst MAC = B"| H2
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1ccc5b93a380.png" alt="diagram"></div></p>
 <p>Trace it precisely. Host A wants to reach Host B on a different network. A builds a frame with:</p>
 <ul>
 <li><strong>L3 (unchanged end to end):</strong> source IP = A (<code>10.0.0.5</code>), destination IP = B (<code>203.0.113.10</code>).</li>
@@ -644,6 +674,7 @@ large responses hang, and it looks like an application bug until you notice it c
 payload size. The mitigations are to never blanket-drop ICMP "too big" messages, and TCP's
 "MSS clamping" (and RFC 4821 Packetization Layer PMTUD, which probes with data segments instead
 of relying on ICMP). This is a recurring theme in Chapter 12 (Debugging and Observing Networks).</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_494d9cc53969.png" alt="diagram"></div></p>
 <h2 id="layer-4-ports-tcp-vs-udp">Layer 4: ports, TCP vs. UDP</h2>
 <p>The transport layer adds two things the network layer lacks: <strong>multiplexing</strong> (via ports) and,
 optionally, <strong>reliable ordered delivery</strong>. IP delivers a packet to a <em>host</em>; it has no notion of
@@ -705,13 +736,7 @@ of bandwidth changes that. This is why a 1 GB transfer between continents can be
 <h3 id="the-four-components-of-delay">The four components of delay</h3>
 <p>The end-to-end latency of one packet across one hop decomposes into four additive components.
 Understanding which one dominates tells you what to fix.</p>
-<p><pre><code>flowchart LR
-    A["Processing delay<br/>router inspects header,<br/>routing lookup<br/>(microseconds)"]
-    B["Queuing delay<br/>packet waits in buffer<br/>behind others<br/>(0 to milliseconds+,<br/>load-dependent)"]
-    C["Serialization delay<br/>push all bits onto wire<br/>= packet size / bandwidth<br/>(bandwidth-dependent)"]
-    D["Propagation delay<br/>bits travel the distance<br/>= distance / signal speed<br/>(distance-dependent)"]
-    A --> B --> C --> D
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_87982a29bb23.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Processing delay</strong> — time for a node to examine a packet's headers, verify the checksum, and
   make a forwarding decision (the longest-prefix lookup). On modern hardware this is
@@ -1068,17 +1093,7 @@ to <code>/26</code>. Each <code>/26</code> has <code>2^6 = 64</code> addresses, 
 </table>
 <p>The following diagram shows how one prefix length nests inside another — the mental model for
 all subnetting is a binary tree where each additional prefix bit splits a block in half.</p>
-<p><pre><code>flowchart TD
-    A["10.0.0.0/24 &mdash; 256 addrs"]
-    A --> B["10.0.0.0/25 &mdash; 128"]
-    A --> C["10.0.0.128/25 &mdash; 128"]
-    B --> D["10.0.0.0/26 &mdash; 64"]
-    B --> E["10.0.0.64/26 &mdash; 64"]
-    C --> F["10.0.0.128/26 &mdash; 64"]
-    C --> G["10.0.0.192/26 &mdash; 64"]
-    D --> H["10.0.0.0/27 &mdash; 32"]
-    D --> I["10.0.0.32/27 &mdash; 32"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0df4b93a1f5a.png" alt="diagram"></div></p>
 <p><strong>Variable-length subnet masking (VLSM)</strong> drops the requirement that all subnets be equal.
 Suppose from <code>10.0.0.0/24</code> you need one subnet for ~100 hosts, one for ~50, and two for
 point-to-point links. Size each to the smallest prefix that fits, largest first, to avoid
@@ -1175,15 +1190,7 @@ default<span class="w"> </span>via<span class="w"> </span><span class="m">10</sp
 LPM picks the <code>/24</code>, next hop <code>10.0.0.9</code>. A packet to <code>93.184.216.34</code> matches only <code>default</code>,
 so it goes to <code>10.0.0.1</code>. A packet to <code>10.0.0.37</code> matches the connected <code>/24</code> — the host talks
 to itself over loopback, but that is the socket layer's doing, not this table's.</p>
-<p><pre><code>flowchart TD
-    P["Packet dst = 10.0.5.20"] --> M{"Find all prefixes<br/>containing dst"}
-    M --> R1["0.0.0.0/0 &rarr; via 10.0.0.1 (len 0)"]
-    M --> R2["10.0.5.0/24 &rarr; via 10.0.0.9 (len 24)"]
-    R1 --> C{"Longest prefix wins"}
-    R2 --> C
-    C --> W["Choose /24: next hop 10.0.0.9 on eth0"]
-    W --> ARP["Resolve 10.0.0.9 via ARP,<br/>send frame to its MAC"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_63221165f802.png" alt="diagram"></div></p>
 <p>Note the final step: the next hop is an <em>IP</em> address, but the frame is sent to a <em>MAC</em>
 address. The host uses ARP (Chapter 1) to resolve the next hop's IP to its link-layer address,
 then sends the L2 frame there while the IP destination in the header stays the final
@@ -1208,6 +1215,7 @@ automatically. Two families matter conceptually:</p>
 <li><strong>Exterior Gateway Protocol</strong>: <strong>BGP</strong>, which glues autonomous systems together and is
   important enough to get its own section.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_89d160d5b362.png" alt="diagram"></div></p>
 <h2 id="bgp-the-internets-glue-and-its-fragility">BGP: the Internet's glue and its fragility</h2>
 <p>The Internet is not one network; it is on the order of a hundred thousand allocated <strong>autonomous
 systems (ASes)</strong> — of which some seventy to eighty thousand are actively visible in the global
@@ -1312,12 +1320,7 @@ forwards it, and records the mapping. The reply, addressed to <code>203.0.113.5:
 against that record, rewritten back to <code>10.0.0.37:51000</code>, and delivered inside. The four-tuple
 (and the protocol) is the key; the rewritten source port is what makes the reply
 unambiguously routable back to one internal flow.</p>
-<p><pre><code>flowchart LR
-    H1["Host A 10.0.0.37:51000"] --> N
-    H2["Host B 10.0.0.38:51000"] --> N
-    N["NAT / PAT<br/>public 203.0.113.5"] --> I["Internet<br/>93.184.216.34:443"]
-    N -.conntrack table.-> T["10.0.0.37:51000 &harr; 203.0.113.5:62000<br/>10.0.0.38:51000 &harr; 203.0.113.5:62001"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_db462aca0c19.png" alt="diagram"></div></p>
 <p>Note that both internal hosts happened to pick source port 51000; PAT disambiguates them by
 assigning <em>different</em> public ports (62000 vs 62001), which is the whole trick.</p>
 <p><strong>This mapping is state.</strong> NAT is fundamentally a stateful operation, and on Linux that state
@@ -1392,6 +1395,7 @@ channel, and so on.</p>
 hard, and one of the strongest arguments for IPv6, whose abundance removes the address-scarcity
 justification for NAT entirely (though NAT's accidental firewall property keeps some operators
 attached to it even on v6, via NPTv6 — a practice most engineers consider misguided).</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e1412430bfc.png" alt="diagram"></div></p>
 <h2 id="the-cloud-realization-a-vpc-is-ip-networking">The cloud realization: a VPC is IP networking</h2>
 <p>Everything above is not background for cloud networking — it <em>is</em> cloud networking, wearing
 different names. A cloud <strong>Virtual Private Cloud (VPC)</strong> is a private IP network you define by
@@ -1434,23 +1438,7 @@ choosing a CIDR block. AWS, GCP, and Azure differ in detail but the primitives m
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TD
-    subgraph VPC["VPC 10.42.0.0/16"]
-      subgraph AZa["AZ-a"]
-        PUB["Public subnet 10.42.0.0/24"]
-        PRIV["Private subnet 10.42.10.0/24"]
-      end
-      NGW["NAT Gateway (in public subnet)"]
-      RTPUB["Route table (public):<br/>0.0.0.0/0 &rarr; IGW"]
-      RTPRIV["Route table (private):<br/>0.0.0.0/0 &rarr; NAT GW"]
-    end
-    IGW["Internet Gateway"]
-    NET["Internet"]
-    PUB --- RTPUB
-    PRIV --- RTPRIV
-    RTPUB --> IGW --> NET
-    RTPRIV --> NGW --> RTPUB
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_779dbd323784.png" alt="diagram"></div></p>
 <p>The design that falls out of the model: a <strong>public subnet</strong> is one whose route table sends
 <code>0.0.0.0/0</code> to the Internet Gateway; instances there can have public IPs and be reached from
 outside. A <strong>private subnet</strong> sends its default route to a <strong>NAT Gateway</strong> (which itself lives
@@ -1484,6 +1472,7 @@ in private subnets; only load balancers and bastions face the Internet.</p>
 <p>This is the cloud realization; Volume 12 (Cloud Infrastructure) develops VPC design, Transit
 Gateways, PrivateLink, and multi-region topologies in depth. Here the point is only that there
 is nothing new under the hood — it is subnets, route tables, LPM, and NAT.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb0763d9926d.png" alt="diagram"></div></p>
 <h2 id="container-networking-the-same-primitives-one-host-down">Container networking: the same primitives, one host down</h2>
 <p>Container networking is IP networking compressed into a single host's kernel, and it reuses
 every primitive above. Volume 2, Chapters 9 (Namespaces and cgroups) and 10 (The Linux Network
@@ -1499,18 +1488,7 @@ host <strong>masquerades</strong> the container's private source address behind 
 same <code>iptables ... MASQUERADE</code> rule from the NAT section. That is why, by default, a container
 can reach the Internet but is not reachable from it without explicit port publishing (<code>-p</code>),
 which installs a DNAT rule. Container networking <em>is</em> subnets + routing + NAT on one box.</p>
-<p><pre><code>flowchart TD
-    subgraph NS1["netns: container A"]
-      A["eth0 172.17.0.2/16"]
-    end
-    subgraph NS2["netns: container B"]
-      B["eth0 172.17.0.3/16"]
-    end
-    A ---|veth pair| BR
-    B ---|veth pair| BR
-    BR["bridge docker0 172.17.0.1/16"]
-    BR -->|"default route + MASQUERADE"| HOST["host eth0 &rarr; real network"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1bf7c29a59fa.png" alt="diagram"></div></p>
 <p>Multi-host container networking — where a pod on node 1 must reach a pod on node 2 with a
 routable, flat address space — is solved by <strong>overlays</strong> or by making the pod network natively
 routable. An overlay (VXLAN, Geneve) encapsulates each inter-node pod packet inside a UDP
@@ -1687,21 +1665,7 @@ but 1001–2000 is lost, the receiver keeps ACKing 1001 — it cannot cumulative
 ACKs make the protocol robust — a single later ACK covers all earlier data, so lost ACKs are
 usually harmless — but they are also why plain TCP retransmission is coarse, which is what
 SACK later fixes.</p>
-<p><pre><code>sequenceDiagram
-    participant S as Sender
-    participant R as Receiver
-    Note over S,R: Bytes 1001..2000 are lost in flight
-    S->>R: seq=1, len=1000  (bytes 1..1000)
-    R->>S: ack=1001
-    S->>R: seq=1001, len=1000  (LOST)
-    S->>R: seq=2001, len=1000  (bytes 2001..3000)
-    R->>S: ack=1001  (dup ACK, gap at 1001)
-    S->>R: seq=3001, len=1000  (bytes 3001..4000)
-    R->>S: ack=1001  (dup ACK)
-    Note over S: 3 dup ACKs -> fast retransmit
-    S->>R: seq=1001, len=1000  (retransmit)
-    R->>S: ack=4001  (cumulative, all caught up)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ecea3bf7ba3b.png" alt="diagram"></div></p>
 <h2 id="connection-setup-the-three-way-handshake">Connection setup: the three-way handshake</h2>
 <p>A TCP connection is established with a three-segment exchange whose purpose is to synchronize
 the two independent sequence spaces (one per direction) and to confirm both ends are willing
@@ -1734,6 +1698,7 @@ encodes the necessary state into the ISN <code>y</code> itself (a hash of the fo
 slowly-changing secret), so it can reconstruct state when the final ACK arrives without having
 held a backlog slot. Linux enables this under pressure via <code>net.ipv4.tcp_syncookies=1</code>. The
 cost is that a few options cannot be preserved, so it is a degradation, not a free lunch.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d8c9b27c8282.png" alt="diagram"></div></p>
 <h2 id="connection-teardown-the-four-way-close">Connection teardown: the four-way close</h2>
 <p>TCP connections are full-duplex and each direction is closed independently, which is why
 teardown takes four segments rather than three. Closing is really two half-closes.</p>
@@ -1753,45 +1718,12 @@ send, collapsing four segments into three in practice. A connection can also be 
 abruptly with a <strong>RST</strong> (reset), which discards any buffered data and skips the orderly
 teardown entirely; you see RSTs when an application crashes, when data arrives for a socket
 with no listener, or when <code>SO_LINGER</code> is set to zero.</p>
-<p><pre><code>sequenceDiagram
-    participant A as Active closer
-    participant B as Passive closer
-    Note over A,B: ESTABLISHED
-    A->>B: FIN (seq=u)
-    Note over A: FIN_WAIT_1
-    B->>A: ACK (ack=u+1)
-    Note over B: CLOSE_WAIT
-    Note over A: FIN_WAIT_2
-    Note over B: app finishes, calls close()
-    B->>A: FIN (seq=v)
-    Note over B: LAST_ACK
-    A->>B: ACK (ack=v+1)
-    Note over A: TIME_WAIT (2*MSL)
-    Note over B: CLOSED
-    Note over A: CLOSED after timer
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7e355742c3b.png" alt="diagram"></div></p>
 <h2 id="the-state-machine">The state machine</h2>
 <p>The eleven states and their transitions are the canonical mental model. The active opener
 (client) walks down the left; the passive opener (server) down the right; both meet at
 <code>ESTABLISHED</code> and diverge again at close depending on who closes first.</p>
-<p><pre><code>stateDiagram-v2
-    [*] --> CLOSED
-    CLOSED --> LISTEN: passive open
-    CLOSED --> SYN_SENT: active open, send SYN
-    LISTEN --> SYN_RECEIVED: recv SYN, send SYN-ACK
-    SYN_SENT --> SYN_RECEIVED: recv SYN, send SYN-ACK
-    SYN_SENT --> ESTABLISHED: recv SYN-ACK, send ACK
-    SYN_RECEIVED --> ESTABLISHED: recv ACK
-    ESTABLISHED --> FIN_WAIT_1: close, send FIN
-    ESTABLISHED --> CLOSE_WAIT: recv FIN, send ACK
-    FIN_WAIT_1 --> FIN_WAIT_2: recv ACK of FIN
-    FIN_WAIT_1 --> CLOSING: recv FIN, send ACK
-    FIN_WAIT_2 --> TIME_WAIT: recv FIN, send ACK
-    CLOSING --> TIME_WAIT: recv ACK of FIN
-    CLOSE_WAIT --> LAST_ACK: close, send FIN
-    LAST_ACK --> CLOSED: recv ACK of FIN
-    TIME_WAIT --> CLOSED: 2*MSL timer expires
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4320ffacdeab.png" alt="diagram"></div></p>
 <p>A few transitions repay study. <code>SYN_SENT → SYN_RECEIVED</code> is the <em>simultaneous open</em> case,
 where two peers SYN each other at once; rare but real in peer-to-peer designs. <code>CLOSING</code>
 handles <em>simultaneous close</em>, where both send FIN before either's arrives. <code>CLOSE_WAIT</code> is the
@@ -1919,13 +1851,7 @@ upward gently, back off sharply on congestion, repeat. AIMD is not arbitrary —
 (1989) showed it is the control law that converges to a fair and efficient allocation when
 many flows share a bottleneck, which additive-increase/additive-decrease and other combinations
 do not.</p>
-<p><pre><code>flowchart LR
-    A["Slow start: cwnd doubles per RTT"] -->|"cwnd reaches ssthresh"| B["Congestion avoidance: +1 MSS per RTT"]
-    B -->|"3 dup ACKs"| C["Fast retransmit + fast recovery: cwnd = cwnd/2"]
-    C --> B
-    B -->|"RTO timeout"| D["cwnd = 1 MSS, ssthresh = cwnd/2"]
-    D --> A
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aeaecf1774a7.png" alt="diagram"></div></p>
 <p>Plotted against time, <code>cwnd</code> traces a sawtooth: a slow linear climb during congestion
 avoidance, interrupted by a multiplicative halving on each loss event, then another climb from
 the reduced window — a probe-and-back-off cycle that repeats for the life of the connection.</p>
@@ -2071,6 +1997,7 @@ BBR's pacing) — but it is a policy decision, not a default you set blindly.</p
 </tr>
 </tbody>
 </table>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0ede6959da7.png" alt="diagram"></div></p>
 <h2 id="rtt-estimation-and-the-retransmission-timeout">RTT estimation and the retransmission timeout</h2>
 <p>The retransmission timeout (RTO) is how long the sender waits for an ACK before assuming loss
 and retransmitting. Set it too short and you retransmit segments that were merely delayed,
@@ -2094,6 +2021,7 @@ probed with geometrically decreasing frequency rather than hammered. Once an una
 (non-retransmitted) segment is ACKed, normal RTT sampling resumes. Modern stacks that negotiate
 <strong>TCP timestamps</strong> (RFC 7323) sidestep the ambiguity entirely — the echoed timestamp identifies
 which transmission an ACK corresponds to — allowing RTT samples even from retransmissions.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e37a67a7deb0.png" alt="diagram"></div></p>
 <h2 id="the-small-packet-pathologies-nagle-delayed-ack-and-their-bug">The small-packet pathologies: Nagle, delayed ACK, and their bug</h2>
 <p>Two independent optimizations, each sensible alone, combine into one of the most notorious
 latency bugs in networking.</p>
@@ -2158,14 +2086,7 @@ connection — every one of the multiplexed requests B, C, D is blocked behind A
 even though their bytes have arrived, because TCP cannot see the streams; it sees one byte
 stream and one gap in it. HTTP/2 solved application-layer HOL blocking (the HTTP/1.1 problem of
 one slow response blocking the pipeline) only to expose it at the transport layer.</p>
-<p><pre><code>flowchart TB
-    subgraph net["One TCP byte stream (HTTP/2 multiplexing)"]
-      direction LR
-      a1["A: seg1 OK"] --> a2["A: seg2 LOST"] --> b1["B: seg1 arrived"] --> c1["C: seg1 arrived"]
-    end
-    net --> block["TCP holds B and C in the reassembly buffer:<br/>cannot deliver past the gap at A-seg2"]
-    block --> app["Application sees A, B, C all stalled<br/>until A-seg2 is retransmitted (1 RTT)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3b86ac341887.png" alt="diagram"></div></p>
 <p>This is precisely why <strong>QUIC</strong> (Chapter 4) abandons TCP and runs its own reliable, ordered
 delivery <em>per stream</em> over UDP: a lost packet for stream A blocks only stream A; streams B and
 C are delivered independently because QUIC understands stream boundaries that TCP structurally
@@ -2371,24 +2292,7 @@ application that does not need in-order reliable byte-stream semantics should no
 UDP is the substrate you reach for when you intend to supply your own delivery semantics,
 tuned to the workload, at the application layer — including, as we will see, a complete
 reliable transport when that is what you actually want.</p>
-<p><pre><code>flowchart TB
-    subgraph TCP["TCP — the kernel does the work"]
-        T1["Connection-oriented: 3-way handshake before data"]
-        T2["Reliable: sequence numbers, ACKs, retransmission"]
-        T3["Ordered: byte stream delivered in send order"]
-        T4["Flow control: receiver window"]
-        T5["Congestion control: slow start, CUBIC/BBR"]
-        T6["20+ byte header, per-connection state"]
-    end
-    subgraph UDP["UDP — the app does the work"]
-        U1["Connectionless: first datagram is the traffic"]
-        U2["Unreliable: no ACK, lost datagram is gone"]
-        U3["Unordered: datagrams may arrive out of order or duplicated"]
-        U4["No flow control: sender can overrun receiver"]
-        U5["No congestion control: app must self-limit"]
-        U6["8 byte header, no per-flow state in the transport"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_af309515a953.png" alt="diagram"></div></p>
 <h3 id="when-udp-is-the-right-answer">When UDP is the right answer</h3>
 <p>Four workload families choose UDP, and the reasons differ enough to be worth separating.</p>
 <p><strong>Request/response where the request is a single small datagram and the application handles
@@ -2463,6 +2367,7 @@ protocols should design so that an unverified peer cannot elicit a large respons
 the last of these into the specification, as we will see — a server must not send more than
 three times the bytes it has received from an as-yet-unvalidated client address. Keep this
 mechanism in mind; it is a recurring theme in why QUIC's handshake is shaped the way it is.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_37d9552c2529.png" alt="diagram"></div></p>
 <h2 id="why-quic-exists-tcp-became-inevolvable">Why QUIC exists: TCP became inevolvable</h2>
 <p>Chapter 3 established TCP as a mature, well-tuned reliable transport. So why build a new one?
 Not because TCP's algorithms are bad — QUIC reuses most of them — but because TCP as a
@@ -2509,25 +2414,7 @@ space on top of UDP, standardized by the IETF as <strong>RFC 9000</strong> (the 
 (TLS integration), <strong>RFC 9002</strong> (loss detection and congestion control), and <strong>RFC 8999</strong>
 (version-independent properties), all published in <strong>May 2021</strong>, after Google deployed and
 iterated its precursor "gQUIC" in Chrome and on its own servers through the mid-2010s.</p>
-<p><pre><code>flowchart TB
-    subgraph classic["Classic HTTPS stack"]
-        A1["HTTP/2"]
-        A2["TLS 1.3  (in the app)"]
-        A3["TCP  (kernel)"]
-        A4["IP"]
-        A1 --> A2 --> A3 --> A4
-    end
-    subgraph quicstack["HTTP/3 stack"]
-        B1["HTTP/3"]
-        B2["QUIC transport  (user space): streams, reliability, congestion control"]
-        B3["TLS 1.3 handshake integrated into QUIC (RFC 9001)"]
-        B4["UDP"]
-        B5["IP"]
-        B1 --> B2
-        B2 -. "keys, handshake" .- B3
-        B2 --> B4 --> B5
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a98f5cec9af8.png" alt="diagram"></div></p>
 <h2 id="inside-quic">Inside QUIC</h2>
 <p>QUIC's cleverness is not any single feature but the way integration lets features reinforce
 each other. We take them one at a time and then show how they compose.</p>
@@ -2562,22 +2449,7 @@ guarantees come from the handshake the 0-RTT data is trying to skip. So 0-RTT is
 and RFC 8446 for TLS generally) require that applications gate what they permit in 0-RTT.
 Servers also enforce anti-replay defenses, but the durable rule for the application engineer is:
 <strong>never carry a non-idempotent request in 0-RTT.</strong></p>
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant S as Server
-    Note over C,S: TCP + TLS 1.3 (two stacked handshakes)
-    C->>S: TCP SYN
-    S->>C: TCP SYN-ACK
-    C->>S: TCP ACK  (1 RTT gone)
-    C->>S: TLS ClientHello
-    S->>C: TLS ServerHello, cert, Finished
-    C->>S: TLS Finished  (2 RTTs gone)
-    C->>S: HTTP request  (data at last)
-    Note over C,S: QUIC (one integrated handshake)
-    C->>S: Initial: ClientHello (+ 0-RTT data if resuming)
-    S->>C: Initial + Handshake: ServerHello, cert, Finished
-    C->>S: HTTP request  (1 RTT, or 0 RTT on resumption)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_42435581f518.png" alt="diagram"></div></p>
 <h3 id="streams-reliability-without-cross-stream-head-of-line-blocking">Streams: reliability without cross-stream head-of-line blocking</h3>
 <p>This is the feature HTTP/3 was built to get. A QUIC connection carries many independent
 <strong>streams</strong>, each an ordered, reliable byte sequence, identified by a stream ID. Streams are
@@ -2598,21 +2470,7 @@ HOL blocking existed because TCP imposed one order on all streams; HTTP/3 over Q
 it because QUIC imposes order only within each stream. Under loss — mobile networks, congested
 paths, long fat pipes — the difference is large and grows with the loss rate and the number of
 concurrent streams.</p>
-<p><pre><code>flowchart TB
-    subgraph h2["HTTP/2 over TCP — one lost segment stalls everyone"]
-        direction LR
-        L1["Stream 1 bytes"] --> B[("TCP reassembly: strict single order")]
-        L2["Stream 2 bytes"] --> B
-        L3["Stream 3 (LOST segment)"] -. blocks .-> B
-        B --> BO["App receives: NOTHING until stream 3 retransmit arrives"]
-    end
-    subgraph h3["HTTP/3 over QUIC — loss is contained to its stream"]
-        direction LR
-        Q1["Stream 1 bytes"] --> D1["Deliver stream 1 now"]
-        Q2["Stream 2 bytes"] --> D2["Deliver stream 2 now"]
-        Q3["Stream 3 (LOST)"] -. only stream 3 waits .-> D3["Retransmit stream 3 only"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e11e8e2b51e5.png" alt="diagram"></div></p>
 <p>QUIC also has flow control at two levels — <strong>per-stream</strong> limits (how much data may be
 outstanding on one stream) and a <strong>connection-level</strong> limit (aggregate across all streams) —
 advertised and raised with MAX_STREAM_DATA and MAX_DATA frames, plus MAX_STREAMS to bound how
@@ -2688,6 +2546,7 @@ network learns to depend on is a field the protocol chose to expose and can reas
 governing principle is stated in RFC 9000's companion documents as protecting the "wire image":
 minimize what is observable so that only what is intended to be extensible remains extensible,
 and ossification has nothing to grip.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_05905e28cb69.png" alt="diagram"></div></p>
 <h2 id="quic-versus-tcptls-an-honest-comparison">QUIC versus TCP+TLS: an honest comparison</h2>
 <p>QUIC is not free lunch, and a senior engineer should be able to argue both sides.</p>
 <table>
@@ -2773,6 +2632,7 @@ tunnel other traffic — and it is increasingly a substrate people reach for whe
 "TCP but evolvable and encrypted." The DATAGRAM extension is a nice closing of the circle: QUIC, itself
 built on UDP to escape TCP, hands the application back an <em>unreliable</em> datagram service — UDP
 semantics — but now inside an authenticated, congestion-controlled, migratable connection.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ab5d6ca2ee77.png" alt="diagram"></div></p>
 <h2 id="the-distributed-systems-lens">The distributed-systems lens</h2>
 <p>Zoom out from the packet to the fleet, and QUIC's design choices line up with the structural
 concerns of large-scale backend systems in ways that are worth naming explicitly.</p>
@@ -2947,28 +2807,7 @@ root through a series of labels: the root (the empty label after the final dot),
 domain <code>com</code>, the second-level domain <code>example</code>, and so on down to the leaf <code>api</code>. Each label
 is at most 63 octets; the whole name is at most 255 octets. Case is preserved but comparisons
 are case-insensitive for ASCII.</p>
-<p><pre><code>graph TD
-    ROOT["Root zone (.)"]
-    COM["com (TLD)"]
-    ORG["org (TLD)"]
-    UK["uk (ccTLD)"]
-    EXAMPLE["example.com (your zone)"]
-    IANA["iana.org"]
-    COUK["co.uk"]
-    WWW["www.example.com (A record)"]
-    EU["eu.example.com (delegated sub-zone)"]
-    API["api.eu.example.com"]
-
-    ROOT -->|"NS delegation"| COM
-    ROOT -->|"NS delegation"| ORG
-    ROOT -->|"NS delegation"| UK
-    COM -->|"NS delegation"| EXAMPLE
-    ORG --> IANA
-    UK --> COUK
-    EXAMPLE --> WWW
-    EXAMPLE -->|"NS delegation"| EU
-    EU --> API
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_67ab392bcb08.png" alt="diagram"></div></p>
 <p>The unit of administrative control is the <strong>zone</strong>, not the domain. A zone is a contiguous
 portion of the tree under single authority, bounded below by delegations to child zones. The
 <code>example.com</code> zone contains <code>www.example.com</code> and <code>mail.example.com</code> directly, but if you
@@ -3000,24 +2839,7 @@ a series of <strong>iterative queries</strong> against the authoritative hierarc
 authoritative server it asks does <em>not</em> do the work on its behalf; it returns either the answer
 or a referral — "I don't have that, but here are the name servers for the next level down, go
 ask them." The recursive resolver follows the referrals itself, starting at the root.</p>
-<p><pre><code>sequenceDiagram
-    participant App as "App / stub resolver"
-    participant R as "Recursive resolver (8.8.8.8)"
-    participant Root as "Root server"
-    participant TLD as "com TLD server"
-    participant Auth as "example.com auth server"
-
-    App->>R: "Recursive query: www.example.com A?"
-    Note over R: "Cache miss"
-    R->>Root: "Iterative: www.example.com A?"
-    Root-->>R: "Referral: ask com NS (glue + addrs)"
-    R->>TLD: "Iterative: www.example.com A?"
-    TLD-->>R: "Referral: ask ns1.example.com (glue)"
-    R->>Auth: "Iterative: www.example.com A?"
-    Auth-->>R: "Authoritative answer: 93.184.216.34, TTL 300"
-    R-->>App: "Answer: 93.184.216.34 (cached for 300s)"
-    Note over R: "Caches answer + NS records along the way"
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_495c8d2682ff.png" alt="diagram"></div></p>
 <p>Two subtleties matter for real systems. First, the recursive resolver rarely starts from the
 root in practice, because it caches aggressively at every level. Having resolved anything under
 <code>.com</code> recently, it has the <code>.com</code> NS records cached and skips the root. Having resolved
@@ -3038,6 +2860,7 @@ machines. Each is an anycast constellation of hundreds of instances worldwide, a
 the same IP, so a resolver's query to <code>198.41.0.4</code> is routed by BGP (Chapter 2) to the
 topologically nearest instance. We return to anycast at the end of the chapter; for now, note
 that the root is a distributed system in exactly the sense this book cares about.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c4bae8c391e6.png" alt="diagram"></div></p>
 <h2 id="record-types-the-vocabulary-of-the-database">Record types: the vocabulary of the database</h2>
 <p>The value side of the DNS database is a resource record, and choosing the right type — and
 understanding a few sharp edges — is bread-and-butter backend work.</p>
@@ -3170,6 +2993,7 @@ cached forever — see the failover section); and misbehaving stub resolvers and
 routinely ignore TTLs entirely. So while you <em>set</em> the TTL as your intent, you must design
 failover assuming a meaningful population of clients will hold a stale answer well past it. TTL
 is a floor on convergence time, never a ceiling.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c6ee213eff46.png" alt="diagram"></div></p>
 <h2 id="the-wire-udp-tcp-edns0-and-the-512-byte-ghost">The wire: UDP, TCP, EDNS0, and the 512-byte ghost</h2>
 <p>DNS runs on port 53, and its transport history explains a surprising amount of production
 behavior. The default transport is <strong>UDP</strong> (Chapter 4): a query is one datagram, the answer is
@@ -3247,22 +3071,7 @@ to <code>.com</code>'s key; and the root's own key (the "trust anchor") is distr
 into validating resolvers. A validating resolver can thus build an unbroken <strong>chain of trust</strong> from
 the root down to any signed record, verifying at each step that the parent vouches for the child's
 key and that the key signed the data.</p>
-<p><pre><code>graph TD
-    ROOT["Root zone — trust anchor (KSK baked into resolvers)"]
-    ROOTDS["Root signs DS for com"]
-    COM["com zone DNSKEY"]
-    COMDS["com signs DS for example.com"]
-    EX["example.com DNSKEY"]
-    RRSIG["example.com signs RRSIG over A record"]
-    DATA["www.example.com A = 93.184.216.34 (validated)"]
-
-    ROOT --> ROOTDS
-    ROOTDS -->|"hash matches"| COM
-    COM --> COMDS
-    COMDS -->|"hash matches"| EX
-    EX --> RRSIG
-    RRSIG -->|"signature valid"| DATA
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f75d6581bfdb.png" alt="diagram"></div></p>
 <p>Two things about DNSSEC deserve engineering honesty. First, <strong>adoption is partial and slow.</strong> A
 large share of zones remain unsigned, and — worse — many recursive resolvers do not <em>validate</em> even
 when zones are signed, so an end user often gets no protection even for a signed domain unless
@@ -3296,6 +3105,7 @@ internal target while believing it is talking to the original external host — 
 of a name's meaning is the whole exploit. Defenses are DNS-aware: forbid resolving internal/RFC
 1918/link-local addresses in outbound-fetch code, pin the resolved IP for the life of a request,
 and validate <code>Host</code> against an allowlist rather than trusting the name to keep meaning one thing.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fabd055b7d69.png" alt="diagram"></div></p>
 <h2 id="operational-dns-service-discovery-at-fleet-scale">Operational DNS: service discovery at fleet scale</h2>
 <p>Now the part that consumes most of a backend engineer's actual DNS time. In a modern fleet, DNS is
 not just how the outside world finds your website; it is the <strong>service discovery</strong> substrate that
@@ -3319,21 +3129,7 @@ than a random one — do discovery: they resolve the headless service and get th
 peers with their ports via SRV. Here DNS is doing genuine service discovery, membership and all,
 and the low TTLs CoreDNS sets (a few seconds by default) are what make membership changes visible
 quickly.</p>
-<p><pre><code>graph LR
-    POD["Client pod"]
-    RESOLV["/etc/resolv.conf: nameserver = kube-dns ClusterIP, ndots:5, search checkout.svc.cluster.local svc.cluster.local cluster.local"]
-    CORE["CoreDNS pods (Deployment)"]
-    API["kube-apiserver (Services + EndpointSlices)"]
-    SVC["ClusterIP Service payments"]
-    EP["Pod endpoints via kube-proxy / eBPF"]
-
-    POD --> RESOLV
-    RESOLV -->|"query payments.checkout.svc.cluster.local"| CORE
-    CORE -->|"watches"| API
-    CORE -->|"A = ClusterIP"| POD
-    POD -->|"connect to ClusterIP"| SVC
-    SVC -->|"load-balanced"| EP
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ff457ecf4a98.png" alt="diagram"></div></p>
 <p>Now the trap that has burned nearly every Kubernetes shop: <strong><code>ndots</code> and the search-domain
 latency tax.</strong> A pod's <code>/etc/resolv.conf</code> typically contains a <code>search</code> list of several suffixes
 (<code>checkout.svc.cluster.local</code>, <code>svc.cluster.local</code>, <code>cluster.local</code>, plus the node's) and the
@@ -3407,23 +3203,7 @@ and others let you:</p>
 <li><strong>Latency-based routing</strong>: return the region with the lowest measured network latency to the
   resolver, which is not the same as geographically nearest.</li>
 </ul>
-<p><pre><code>graph TD
-    C1["Client in Frankfurt"]
-    C2["Client in Virginia"]
-    MDNS["Managed authoritative DNS (Route 53 / Cloud DNS): geo + latency routing + health checks"]
-    HC["Health checkers probe each region"]
-    EU["eu-central-1 endpoint"]
-    US["us-east-1 endpoint"]
-    STANDBY["Failover standby"]
-
-    C1 -->|"api.example.com A?"| MDNS
-    C2 -->|"api.example.com A?"| MDNS
-    HC -.->|"healthy?"| EU
-    HC -.->|"healthy?"| US
-    MDNS -->|"geo: EU -> Frankfurt IP"| EU
-    MDNS -->|"geo: US -> Virginia IP"| US
-    MDNS -->|"if region unhealthy"| STANDBY
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3f739973d412.png" alt="diagram"></div></p>
 <p>A subtlety that undermines geo/latency routing: the authoritative server sees the <strong>recursive
 resolver's</strong> IP, not the end user's. A user in Paris using a resolver in London (or, worse, a big
 public resolver whose anycast node is elsewhere) gets routed as if they were where the resolver is.
@@ -3640,15 +3420,7 @@ versions 2.0 and 3.0, then renamed and published as TLS 1.0 in 1999. SSL 2.0/3.0
 long disabled; "SSL certificate" and "SSL termination" are just vernacular for TLS. TLS 1.0 and 1.1
 were formally deprecated in 2021 (RFC 8996). The live versions are TLS 1.2 (RFC 5246, 2008) and TLS
 1.3 (RFC 8446, 2018), and the gap between them is the subject of the next several sections.</p>
-<p><pre><code>flowchart TB
-  App["Application data (HTTP, gRPC, DB protocol)"]
-  TLS["TLS record layer: AEAD-encrypted records"]
-  TCP["TCP: reliable, in-order byte stream (Ch 3)"]
-  IP["IP: routing, addressing (Ch 2)"]
-  App --> TLS --> TCP --> IP
-  App -. "HTTP/3 path" .-> QUIC["QUIC: TLS 1.3 handshake embedded, QUIC packet protection (Ch 4)"]
-  QUIC --> UDP["UDP (Ch 4)"] --> IP
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b54d4fc23251.png" alt="diagram"></div></p>
 <h2 id="the-tls-13-handshake-in-depth">The TLS 1.3 handshake in depth</h2>
 <p>The handshake is the main event. It must accomplish four things before a single byte of application
 data flows: agree on a version and cipher, perform an authenticated key exchange so both sides share
@@ -3694,23 +3466,7 @@ CertificateVerify signature, and the server's Finished. If all pass it sends its
 preceded, in mutual TLS, by its own Certificate and CertificateVerify. That single client flight
 completes the handshake, and the client can begin sending application data <em>immediately after</em> its
 Finished, in the same flight, so useful data leaves after one round trip.</p>
-<p><pre><code>sequenceDiagram
-  participant C as Client
-  participant S as Server
-  Note over C,S: 1-RTT full handshake (TLS 1.3, RFC 8446)
-  C->>S: ClientHello + key_share + supported_versions + SNI + ALPN
-  Note over S: pick suite and group, gen ephemeral key, derive handshake keys
-  S->>C: ServerHello + key_share
-  Note over C,S: both derive handshake traffic keys here
-  S->>C: "{EncryptedExtensions}"
-  S->>C: "{Certificate + CertificateVerify}"
-  S->>C: "{Finished}"
-  Note over C: verify chain, hostname, signature, Finished
-  C->>S: "{Certificate + CertificateVerify}  (mTLS only)"
-  C->>S: "{Finished}"
-  C->>S: "{Application data}"
-  Note over C,S: braces = encrypted under handshake or application keys
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b5820b2af795.png" alt="diagram"></div></p>
 <h3 id="ephemeral-ecdhe-and-forward-secrecy">Ephemeral ECDHE and forward secrecy</h3>
 <p>The reason the shared secret is safe against a future key compromise is that the Diffie-Hellman
 keys are <em>ephemeral</em>: generated fresh for this handshake and destroyed when it ends. Both sides
@@ -3742,6 +3498,7 @@ by the running transcript hash to the exact messages exchanged, and each traffic
 ratcheted forward with <code>key_update</code>, compromise of one key does not trivially yield the others. The
 takeaway: TLS 1.3 has <em>one</em> clean derivation tree with clear separation between handshake-protecting
 and data-protecting keys, replacing TLS 1.2's ad-hoc PRF and blurrier key separation.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c14f0c5dd029.png" alt="diagram"></div></p>
 <h2 id="what-tls-13-removed-and-why-it-is-safer">What TLS 1.3 removed, and why it is safer</h2>
 <p>The most important design decision in TLS 1.3 was subtractive. A decade of attacks against TLS 1.2 —
 BEAST, CRIME, Lucky 13, POODLE, FREAK, Logjam, ROBOT, Sweet32 — nearly all exploited a <em>legacy option
@@ -3871,21 +3628,7 @@ and services authenticate and authorize on that ID over mTLS. A service mesh (Ch
 automates the pattern via sidecar proxies so application code never touches a certificate. The point
 is architectural: <strong>mTLS is the layer at which "which service is this?" gets a cryptographic, not a
 network, answer.</strong></p>
-<p><pre><code>sequenceDiagram
-  participant A as "Service A (client)"
-  participant B as "Service B (server)"
-  Note over A,B: mutual TLS: both present certs from a shared CA / SPIFFE trust domain
-  A->>B: ClientHello + key_share
-  B->>A: ServerHello + key_share
-  B->>A: "{CertificateRequest}"
-  B->>A: "{Certificate: B leaf + intermediates}"
-  B->>A: "{CertificateVerify + Finished}"
-  Note over A: validate B chain + B SPIFFE ID, check authz policy
-  A->>B: "{Certificate: A leaf + intermediates}"
-  A->>B: "{CertificateVerify + Finished}"
-  Note over B: validate A chain + A SPIFFE ID, check authz policy
-  A->>B: "{Application data: authenticated both ways}"
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_91387379d737.png" alt="diagram"></div></p>
 <h2 id="certificates-and-the-web-pki">Certificates and the Web PKI</h2>
 <p>The handshake proved the server holds a private key. The Web PKI is the answer to the far harder
 question: <em>why should the client believe the public key in that certificate belongs to the
@@ -3935,18 +3678,7 @@ signs your <strong>leaf</strong> (end-entity) certificate. So a real chain is le
 and intermediates travel in the handshake's Certificate message, the root must already be in the
 client's trust store. This two-tier structure exists precisely so a compromised intermediate can be
 revoked and replaced without touching the root that anchors billions of clients.</p>
-<p><pre><code>flowchart TD
-  Root["Root CA — self-signed, in OS/browser trust store, offline HSM key"]
-  Int["Intermediate CA — signed by Root, online issuance key"]
-  Leaf["Leaf cert — CN/SAN api.example.com, CA:FALSE"]
-  Root -->|signs| Int
-  Int -->|signs| Leaf
-  Store["Client trust store: set of trusted Root public keys"]
-  Store -. "anchors trust in" .-> Root
-  Handshake["Server sends: Leaf + Intermediate (NOT Root)"]
-  Leaf -.-> Handshake
-  Int -.-> Handshake
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_23555795d596.png" alt="diagram"></div></p>
 <h3 id="how-a-client-validates-a-certificate">How a client validates a certificate</h3>
 <p>When the client receives the server's Certificate message, it runs a validation algorithm that is
 worth committing to memory because misconfigurations map directly onto its steps:</p>
@@ -3971,6 +3703,7 @@ worth committing to memory because misconfigurations map directly onto its steps
 <p>Only if all six pass is the CertificateVerify signature checked against the now-trusted public key. The
 intuition: the PKI establishes that <em>this public key is authorized for this hostname</em>, and
 CertificateVerify establishes that <em>the peer holds the matching private key right now</em>. You need both.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_622ad54162fa.png" alt="diagram"></div></p>
 <h2 id="sni-and-encrypted-client-hello">SNI and Encrypted Client Hello</h2>
 <p>Because one IP address routinely serves thousands of TLS virtual hosts (any CDN, any shared hosting,
 any Kubernetes ingress), the server must know <em>which</em> certificate to present before it can send one —
@@ -3988,6 +3721,7 @@ inner hello and routes to the true backend. The observer sees only the cover nam
 Cloudflare and supported by recent Firefox and Chrome, but it depends on encrypted DNS (DoH/DoT,
 Chapter 5) to fetch the key without leaking the name there instead, and remains an evolving standard
 (<code>draft-ietf-tls-esni</code>) rather than a finished RFC — promising and partially deployed, not universal.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_41c986c4f68c.png" alt="diagram"></div></p>
 <h2 id="revocation-the-genuinely-hard-problem">Revocation: the genuinely hard problem</h2>
 <p>Certificates have expiry dates, but sometimes a certificate must be killed <em>before</em> it expires — a
 private key was leaked, a server was decommissioned, a CA discovers it mis-issued. Revocation is
@@ -4070,20 +3804,7 @@ short-lived certificates operationally viable.</p>
 <li><strong>Renew.</strong> Long before expiry the client repeats the flow automatically. With Let's Encrypt's 90-day
    certificates, renewal is a cron job, not a calendar reminder — which is the whole point.</li>
 </ol>
-<p><pre><code>sequenceDiagram
-  participant Cl as "ACME client (cert-manager / Certbot)"
-  participant CA as "ACME CA (Let's Encrypt)"
-  participant DNS as "DNS / web server for api.example.com"
-  Cl->>CA: newOrder for api.example.com, *.example.com
-  CA->>Cl: challenges (HTTP-01 and/or DNS-01) + tokens
-  Cl->>DNS: publish TXT _acme-challenge  (DNS-01) or token file (HTTP-01)
-  Cl->>CA: challenge ready, please validate
-  CA->>DNS: fetch token from multiple vantage points
-  CA->>Cl: challenges valid
-  Cl->>CA: finalize with CSR (public key)
-  CA->>Cl: issued certificate: leaf + intermediate chain
-  Note over Cl: install cert; schedule auto-renew well before 90-day expiry
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a629a78be6df.png" alt="diagram"></div></p>
 <h3 id="cert-manager-in-kubernetes">cert-manager in Kubernetes</h3>
 <p>In Kubernetes the canonical ACME automation is <strong>cert-manager</strong>, which turns certificate lifecycle
 into declarative custom resources reconciled by a controller. You declare an <code>Issuer</code>/<code>ClusterIssuer</code>
@@ -4445,16 +4166,7 @@ sharding") to multiply the six-per-host budget became a standard, ugly optimizat
 concurrency story is fundamentally <em>you cannot multiplex on one connection, so you pay for
 several and hope six is enough.</em> Every subsequent HTTP version is, at its core, an attempt to
 get real multiplexing over a single connection.</p>
-<p><pre><code>flowchart LR
-    subgraph H1["HTTP/1.1 — six connections per host"]
-        C1["Client"]
-        C1 -->|"conn 1: req A → resp A"| S1["Server"]
-        C1 -->|"conn 2: req B → resp B"| S1
-        C1 -->|"conn 3: req C → resp C"| S1
-        C1 -.->|"conn 4-6 idle or reused"| S1
-        C1 -->|"req G waits: no free conn (HOL at L7)"| S1
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9aacd5670ca4.png" alt="diagram"></div></p>
 <h2 id="http2-real-multiplexing-over-one-connection">HTTP/2: real multiplexing over one connection</h2>
 <p><strong>HTTP/2 (2015, RFC 7540, now RFC 9113)</strong> grew out of Google's SPDY experiment and keeps
 HTTP/1.1's semantics exactly while replacing the wire format wholesale. Where HTTP/1.1 is text,
@@ -4479,15 +4191,7 @@ perfectly legal. This is the multiplexing: dozens of requests share one connecti
 interleaved, none blocking another <em>at the HTTP layer</em>. HTTP/1.1's L7 head-of-line blocking is
 gone — a slow response no longer stalls the ready ones, because their <code>DATA</code> frames simply
 interleave on the wire.</p>
-<p><pre><code>flowchart TB
-    subgraph conn["Single TCP connection"]
-        direction LR
-        F1["HEADERS<br/>stream 1"] --> F2["HEADERS<br/>stream 3"] --> F3["DATA<br/>stream 1"] --> F4["DATA<br/>stream 3"] --> F5["DATA<br/>stream 1"] --> F6["HEADERS<br/>stream 5"]
-    end
-    conn --> R1["Stream 1 reassembled: GET /a"]
-    conn --> R3["Stream 3 reassembled: GET /b"]
-    conn --> R5["Stream 5 reassembled: GET /c"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bfcf9192aad1.png" alt="diagram"></div></p>
 <p>Concurrency is bounded by <code>SETTINGS_MAX_CONCURRENT_STREAMS</code>, which each peer advertises;
 100 is a common default. This is what lets one HTTP/2 connection replace the browser's six
 HTTP/1.1 connections — and, in the backend world, lets a service mesh hold <em>one</em> long-lived
@@ -4542,6 +4246,7 @@ mechanism, but it saw essentially no adoption. Server push is effectively dead; 
 around it. The lesson — that speculative pushing
 without knowing the client's cache state loses more than it wins — echoes the server-push-style
 deprecations elsewhere in the stack.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0ed958d7fc32.png" alt="diagram"></div></p>
 <h2 id="the-wall-http2-cannot-climb-tcp-head-of-line-blocking">The wall HTTP/2 cannot climb: TCP head-of-line blocking</h2>
 <p>HTTP/2 eliminated head-of-line blocking <em>at the HTTP layer</em>. It could not eliminate it at the
 <em>transport</em> layer, and understanding exactly why is the single most important idea connecting
@@ -4566,20 +4271,7 @@ connection 2. HTTP/2 traded that isolation for multiplexing efficiency, and on l
 trade can lose. This is <strong>TCP-level head-of-line blocking</strong>, and no change to HTTP/2 can fix it,
 because the problem is not in HTTP/2 at all — it is in the transport's single-ordered-stream
 abstraction that HTTP/2 is obligated to sit on top of.</p>
-<p><pre><code>sequenceDiagram
-    participant N as Network
-    participant K as TCP receive buffer
-    participant A as HTTP/2 layer
-    Note over N,A: Segment carrying stream 3 data is LOST
-    N->>K: seg 1 (stream 1 DATA) ✓
-    N->>K: seg 2 (stream 3 DATA) ✗ lost
-    N->>K: seg 3 (stream 5 DATA) ✓ buffered
-    N->>K: seg 4 (stream 1 DATA) ✓ buffered
-    Note over K: In-order rule: cannot deliver seg 3,4<br/>until seg 2 arrives
-    K--xA: streams 1 and 5 STALLED (HOL)
-    N->>K: retransmit seg 2 ✓ (one RTT later)
-    K->>A: now deliver seg 2,3,4 in order
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0b4c37550d79.png" alt="diagram"></div></p>
 <p>This is the exact problem QUIC was built to solve, and it is why HTTP/3 exists.</p>
 <h2 id="http3-http-over-quic-with-per-stream-reliability">HTTP/3: HTTP over QUIC, with per-stream reliability</h2>
 <p><strong>HTTP/3 (2022, RFC 9114)</strong> is HTTP semantics carried over <strong>QUIC</strong> (Chapter 4) instead of
@@ -4595,20 +4287,7 @@ packets arrived, are delivered to the HTTP/3 layer immediately, because QUIC kno
 independent and there is no cross-stream in-order rule to violate. <strong>Per-stream reliability
 eliminates the transport-level head-of-line blocking</strong> that HTTP/2 could never escape. This is
 the single most important reason HTTP/3 exists, and everything else it offers is a bonus.</p>
-<p><pre><code>sequenceDiagram
-    participant N as Network
-    participant Q as QUIC (per-stream)
-    participant A as HTTP/3 layer
-    Note over N,A: Packet carrying stream 3 data is LOST
-    N->>Q: pkt (stream 1 data) ✓
-    N->>Q: pkt (stream 3 data) ✗ lost
-    N->>Q: pkt (stream 5 data) ✓
-    Q->>A: deliver stream 1 immediately
-    Q->>A: deliver stream 5 immediately
-    Note over Q,A: only stream 3 waits
-    N->>Q: retransmit stream 3 pkt ✓
-    Q->>A: deliver stream 3
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6503a0887011.png" alt="diagram"></div></p>
 <p>The other HTTP/3 improvements follow from QUIC's design, covered in depth in Chapter 4, so we
 summarize their HTTP relevance:</p>
 <ul>
@@ -4726,6 +4405,7 @@ user-space transport burns more CPU per byte than the kernel's TCP, which matter
 </tr>
 </tbody>
 </table>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f9d168aa8928.png" alt="diagram"></div></p>
 <h2 id="practical-backend-concern-connection-management-and-pooling">Practical backend concern: connection management and pooling</h2>
 <p>The version you speak changes your connection-management strategy completely, and getting it
 wrong wastes fleet resources or adds tail latency.</p>
@@ -4733,7 +4413,22 @@ wrong wastes fleet resources or adds tail latency.</p>
 a time, a client that wants concurrency must hold <em>many</em> connections open to each upstream. Every
 HTTP client library exposes this: Go's <code>http.Transport</code> has <code>MaxIdleConnsPerHost</code> (default 2,
 almost always too low for a busy service — raise it) and <code>MaxConnsPerHost</code>; a JVM connection pool
-has a max-per-route; a Python <code>requests</code> session backed by <code>urllib3</code> has <code>pool_maxsize</code>. The pool
+has a max-per-route; a Python <code>requests</code> session backed by <code>urllib3</code> has <code>pool_maxsize</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Go: tune the pool so the client — not a middlebox — reaps idle conns first.</span>
+<span class="c1">// IdleConnTimeout (client) &lt; server&#39;s ReadIdleTimeout avoids the close-vs-request race.</span>
+<span class="c1">// For HTTP/2, this single Transport multiplexes all streams over one TCP connection;</span>
+<span class="c1">// pair it with L7 or client-side balancing — see Ch. 9 — to avoid the single-connection</span>
+<span class="c1">// pinning trap discussed below (also Ch. 11 for retry/idempotency).</span>
+<span class="nx">tr</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Transport</span><span class="p">{</span>
+<span class="w">    </span><span class="nx">MaxIdleConnsPerHost</span><span class="p">:</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w">              </span><span class="c1">// default 2 is pool-too-small under load</span>
+<span class="w">    </span><span class="nx">IdleConnTimeout</span><span class="p">:</span><span class="w">     </span><span class="mi">60</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span><span class="w"> </span><span class="c1">// keep below server/middlebox idle timeout</span>
+<span class="w">    </span><span class="nx">MaxConnsPerHost</span><span class="p">:</span><span class="w">     </span><span class="mi">0</span><span class="p">,</span><span class="w">                </span><span class="c1">// 0 = no hard cap; bound via concurrency instead</span>
+<span class="w">    </span><span class="c1">// ForceAttemptHTTP2 is true by default; the same Transport negotiates h2 via ALPN.</span>
+<span class="p">}</span>
+<span class="nx">client</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">{</span><span class="nx">Transport</span><span class="p">:</span><span class="w"> </span><span class="nx">tr</span><span class="p">,</span><span class="w"> </span><span class="nx">Timeout</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">}</span>
+</code></pre></div>
+
+<p>The pool
 exists to amortize TCP and TLS handshakes and keep warm congestion windows. Three failure modes
 dominate. First, <strong>pool too small</strong>: requests queue waiting for a free connection, adding latency
 invisible in server-side metrics because the request has not left the client yet. Second, <strong>idle
@@ -4762,22 +4457,7 @@ hammered while others idle. Worse, a backend that just started (autoscaling up) 
 traffic because no <em>new connections</em> are being made — existing clients keep using their
 long-lived connections to the old backends. This is <strong>HTTP/2 connection pinning</strong>, and it is one
 of the most common production surprises when teams adopt gRPC.</p>
-<p><pre><code>flowchart TB
-    subgraph bad["L4 load balancer + HTTP/2: pinning"]
-        CA["Client A (1 H2 conn)"] --> LB4["L4 LB (per-connection)"]
-        CB["Client B (1 H2 conn)"] --> LB4
-        LB4 -->|"all A requests"| B1["Backend 1 (hot)"]
-        LB4 -->|"all B requests"| B1
-        LB4 -.->|"no new conns"| B2["Backend 2 (idle)"]
-        LB4 -.-> B3["Backend 3 (idle)"]
-    end
-    subgraph good["L7 load balancer + HTTP/2: per-request"]
-        CC["Client C (1 H2 conn)"] --> LB7["L7 LB (per-request/stream)"]
-        LB7 --> D1["Backend 1"]
-        LB7 --> D2["Backend 2"]
-        LB7 --> D3["Backend 3"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_99e74f11fb6a.png" alt="diagram"></div></p>
 <p>There are three standard fixes, and you will meet all of them (see Chapter 9 on load balancing).
 First and best: <strong>use an L7 (application-aware) load balancer</strong> — Envoy, an Ingress controller, a
 service-mesh sidecar — that terminates HTTP/2, sees individual <em>streams/requests</em>, and load-
@@ -5136,15 +4816,7 @@ basis of forward compatibility: an old binary can parse a message written by a n
 ignoring fields it does not understand, and (crucially) re-serialize them intact if it preserves
 unknown fields, which most implementations do.</p>
 <p>The diagram below shows the byte layout for one length-delimited and one varint field.</p>
-<p><pre><code>flowchart LR
-  subgraph msg["Serialized message bytes"]
-    direction LR
-    A["tag 0x08<br/>(field 1, varint)"] --> B["0x96 0x01<br/>value 150"]
-    B --> C["tag 0x12<br/>(field 2, LEN)"]
-    C --> D["0x06<br/>length = 6"]
-    D --> E["61 40 62 2e 63 6f<br/>&quot;a@b.co&quot;"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd5ca5876a10.png" alt="diagram"></div></p>
 <h4 id="compatibility-rules-the-discipline-that-lets-services-evolve">Compatibility rules: the discipline that lets services evolve</h4>
 <p>Because the wire identity is the field number and unknown fields are skippable, protobuf gives you
 a precise, enforceable set of rules for evolving a schema without breaking either older readers
@@ -5235,6 +4907,7 @@ pointer-based layout and larger encoded size for eliminating parse cost and allo
 odd one out: it is optimized for data-at-rest and streaming where a <strong>schema registry</strong> stores
 schemas out of band and readers resolve a writer's schema against their own — which is exactly what
 you want for Kafka topics (Volume 4/5 territory) and exactly the wrong shape for per-call RPC.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_92426bbe7c34.png" alt="diagram"></div></p>
 <h2 id="grpc-in-depth">gRPC in depth</h2>
 <p>gRPC is Google's open-source RPC framework: protobuf messages (by default) carried over HTTP/2,
 with a well-specified mapping of calls, metadata, status, deadlines, and streaming onto HTTP/2's
@@ -5268,45 +4941,12 @@ succeeded; the <em>gRPC</em> status rides in trailers (a trailing HEADERS frame)
 <code>grpc-message</code>. This trailer-based status is essential for streaming: the server can send a full
 stream of DATA frames and only at the very end, in trailers, report that the operation ultimately
 failed — something a single up-front status code could not express.</p>
-<p><pre><code>sequenceDiagram
-  participant App as Client app
-  participant Stub as Client stub
-  participant H2 as HTTP/2 conn
-  participant Srv as Server dispatch
-  participant Impl as Method impl
-  App->>Stub: GetUser(ctx, req)
-  Note over Stub: marshal req to protobuf<br/>prepend 5-byte length prefix
-  Stub->>H2: HEADERS (:path, deadline, metadata)
-  Stub->>H2: DATA (length-prefixed message)
-  H2->>Srv: new stream, headers + data
-  Note over Srv: unmarshal, check deadline
-  Srv->>Impl: GetUser(req)
-  Impl-->>Srv: resp
-  Srv->>H2: HEADERS (:status 200)
-  Srv->>H2: DATA (length-prefixed resp)
-  Srv->>H2: TRAILERS (grpc-status: 0)
-  H2-->>Stub: headers, data, trailers
-  Note over Stub: unmarshal resp,<br/>map grpc-status to error
-  Stub-->>App: resp, nil
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_467d8a126aac.png" alt="diagram"></div></p>
 <h3 id="the-four-call-types">The four call types</h3>
 <p>gRPC defines four call shapes, distinguished by whether the client and server sides are single
 messages or streams. All four ride on a single HTTP/2 stream; the difference is how many DATA
 frames flow each way.</p>
-<p><pre><code>flowchart TB
-  subgraph U["Unary"]
-    u1["client: 1 req"] --> u2["server: 1 resp"]
-  end
-  subgraph SS["Server streaming"]
-    s1["client: 1 req"] --> s2["server: N resp"]
-  end
-  subgraph CS["Client streaming"]
-    c1["client: N req"] --> c2["server: 1 resp"]
-  end
-  subgraph BD["Bidirectional streaming"]
-    b1["client: N req"] --> b2["server: M resp (interleaved)"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2728f72a7045.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Unary</strong> (<code>rpc GetUser(Req) returns (Resp)</code>) is the ordinary request/response and covers the vast
   majority of RPCs. Use it unless you have a concrete reason not to.</li>
@@ -5411,18 +5051,7 @@ service A calls B with a 300 ms deadline, and B must call C to answer, B passes 
 context to C. If 250 ms have already elapsed, C sees an effective ~50 ms remaining, not a fresh
 300. Each hop subtracts the time already spent, so the entire call tree shares one budget and the
 work is abandoned everywhere the instant the budget is blown.</p>
-<p><pre><code>sequenceDiagram
-  participant A as Service A
-  participant B as Service B
-  participant C as Service C
-  A->>B: RPC (grpc-timeout: 300m)  [t=0]
-  Note over B: 250ms elapsed handling
-  B->>C: RPC (grpc-timeout: 50m)   [t=250]
-  Note over C: work exceeds 50ms
-  C-->>B: DEADLINE_EXCEEDED
-  B-->>A: DEADLINE_EXCEEDED
-  Note over A,C: whole tree abandons work<br/>no orphaned in-flight requests
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2cbe04281a82.png" alt="diagram"></div></p>
 <p>Deadline propagation is a primary defense against <strong>cascading failure</strong> (Chapter 11). Without it, a
 slow leaf service causes callers to pile up waiting, each holding a goroutine/thread and a
 connection, until the caller itself exhausts resources and fails — the failure climbs the call
@@ -5511,22 +5140,7 @@ O(clients × backends) connections. The alternatives:</p>
   backends; the proxy terminates HTTP/2 and re-balances per stream. Simpler clients, an extra hop,
   and the proxy must itself be scaled and made HA.</li>
 </ul>
-<p><pre><code>flowchart TB
-  R["Name resolver<br/>(DNS / xDS / Consul)"] -->|address list| CH
-  subgraph CH["gRPC channel (client)"]
-    LB["LB policy<br/>round_robin"]
-    SC1["subchannel → backend 1"]
-    SC2["subchannel → backend 2"]
-    SC3["subchannel → backend 3"]
-    LB --> SC1
-    LB --> SC2
-    LB --> SC3
-  end
-  SC1 --> B1["backend 1"]
-  SC2 --> B2["backend 2"]
-  SC3 --> B3["backend 3 (new pod)"]
-  note["Per-RPC pick spreads load;<br/>new backend gets traffic at once"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f45c2dc8d21.png" alt="diagram"></div></p>
 <p>Chapter 9 treats load balancing in general; the gRPC-specific lesson is that <strong>gRPC needs L7 or
 subchannel-aware load balancing</strong> — you cannot just put a classic L4 balancer in front of it and
 expect even distribution.</p>
@@ -5568,6 +5182,7 @@ again, configured declaratively:</p>
 Fallacies: they acknowledge that the network is unreliable and slow, and give you bounded,
 load-aware, tail-tolerant ways to cope. Chapter 11 develops the reliability theory; gRPC is where a
 lot of it becomes concrete configuration.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_70743292d444.png" alt="diagram"></div></p>
 <h2 id="grpc-versus-restjson-and-the-browser-gap">gRPC versus REST/JSON, and the browser gap</h2>
 <p>The real question is rarely "is gRPC better than REST?" but "which surface is this?" The honest
 comparison:</p>
@@ -5648,6 +5263,7 @@ inferring the contract from the server's types; it is superb for a single TypeSc
 irrelevant to a polyglot fleet. The pattern across all of them is the same trade you now recognize:
 how much of gRPC's power (streaming, HTTP/2, strict schema) you are willing to give up for
 simplicity, browser reach, or single-language ergonomics.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f72c7ec01b9.png" alt="diagram"></div></p>
 <h2 id="distributed-systems-lens">Distributed-systems lens</h2>
 <p>At the scale this book assumes — hundreds of services, dozens of teams, many repositories, deploys
 all day — gRPC-over-HTTP/2-with-protobuf is the default internal RPC substrate for concrete,
@@ -5843,21 +5459,7 @@ so intermediate routers' ECMP hashing still spreads tunneled traffic. The price 
 IPIP costs 20 bytes of outer header, GRE 24 (20 + a 4-byte minimum GRE header), and GUE at least
 32 (20 + 8 UDP + 4 GUE), with more for optional GUE fields. You must lower the backend's advertised
 MSS accordingly or accept fragmentation and PMTUD pain (Chapter 2).</p>
-<p><pre><code>flowchart LR
-  subgraph L4["L4 balancer: decision per connection"]
-    C1["Client A<br/>TCP conn 1"] --> LB4["L4 LB<br/>hash 5-tuple + conntrack"]
-    LB4 -->|"all packets of conn 1"| B1["Backend 1"]
-    C2["Client B<br/>TCP conn 2"] --> LB4
-    LB4 -->|"all packets of conn 2"| B2["Backend 2"]
-    B1 -.->|"DSR: reply direct to client"| C1
-  end
-  subgraph L7["L7 proxy: decision per request"]
-    C3["Client C<br/>one TCP/TLS conn"] --> LB7["L7 proxy<br/>terminates TLS, parses HTTP"]
-    LB7 -->|"GET /cart to pool cart"| B3["cart-svc"]
-    LB7 -->|"POST /pay to pool pay"| B4["pay-svc"]
-    LB7 -->|"next GET /cart, same pool"| B5["cart-svc replica"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_40be03825dca.png" alt="diagram"></div></p>
 <h3 id="l4-in-practice-ipvs">L4 in practice: IPVS</h3>
 <p>Linux's in-kernel L4 balancer, IPVS, is what <code>kube-proxy</code> uses in IPVS mode and what most on-prem
 L4 tiers are built from. It exposes forwarding mode and scheduler as orthogonal knobs:</p>
@@ -5879,6 +5481,7 @@ sysctl<span class="w"> </span>-w<span class="w"> </span>net.ipv4.conf.all.arp_an
 
 <p>Get <code>arp_ignore</code>/<code>arp_announce</code> wrong and multiple hosts answer ARP for the VIP; the switch's MAC
 table flaps and traffic goes to a random member. This is the canonical DSR bring-up bug.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2cb9a1df2c28.png" alt="diagram"></div></p>
 <h2 id="l7-balancing-at-the-application-layer">L7: balancing at the application layer</h2>
 <p>An L7 balancer is a <strong>terminating proxy</strong>. It completes the TCP and TLS handshakes with the client
 (Chapter 6), parses the application protocol — HTTP/1.1, HTTP/2, HTTP/3, gRPC, sometimes Redis or
@@ -6020,27 +5623,7 @@ graceful <code>GOAWAY</code>, forcing clients to re-resolve and redistribute:</p
 wave. Envoy's equivalent is <code>max_connection_duration</code> on the HTTP connection manager; NGINX has
 <code>keepalive_time</code>.</p>
 <p><strong>The non-fix</strong>: "just add more replicas." Capacity does not redistribute a pinned connection.</p>
-<p><pre><code>flowchart TB
-  subgraph P["Problem: L4 in front of HTTP/2"]
-    GC1["gRPC client 1"] -->|"1 TCP conn, 5k streams/s"| L4B["L4 LB<br/>picks backend at SYN"]
-    GC2["gRPC client 2"] -->|"1 TCP conn"| L4B
-    L4B --> PB1["backend 1<br/>10k rps"]
-    L4B --> PB2["backend 2<br/>0 rps"]
-    L4B --> PB3["backend 3 - just scaled up<br/>0 rps"]
-  end
-  subgraph F1["Fix A: L7 proxy, per-stream choice"]
-    GC3["gRPC client"] -->|"1 conn"| E["Envoy / ALB<br/>terminates HTTP/2"]
-    E -->|"per RPC"| FB1["backend 1"]
-    E -->|"per RPC"| FB2["backend 2"]
-    E -->|"per RPC"| FB3["backend 3"]
-  end
-  subgraph F2["Fix B: client-side subchannels"]
-    GC4["gRPC client<br/>round_robin over subchannels"] --> SB1["backend 1"]
-    GC4 --> SB2["backend 2"]
-    GC4 --> SB3["backend 3"]
-    DISC["service discovery<br/>DNS / xDS"] -.->|"endpoint list"| GC4
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_02430630ffe9.png" alt="diagram"></div></p>
 <p>The same argument applies to any long-lived multiplexed transport: HTTP/3 over QUIC (Chapter 4),
 WebSocket fanout, database connection pools, and Kafka clients all pin at L4.</p>
 <h2 id="algorithms">Algorithms</h2>
@@ -6111,15 +5694,7 @@ asymptotics:</p>
 <li><strong>It degrades gracefully with stale data.</strong> Even if load estimates are seconds old, picking the
    better of two random candidates still avoids the worst backends most of the time.</li>
 </ol>
-<p><pre><code>flowchart LR
-  R["Incoming request"] --> S["Sample 2 endpoints<br/>uniformly at random"]
-  S --> A["Candidate A<br/>in-flight: 12<br/>EWMA latency: 8 ms<br/>cost = 8 x 13 = 104"]
-  S --> B["Candidate B<br/>in-flight: 3<br/>EWMA latency: 5 ms<br/>cost = 5 x 4 = 20"]
-  A --> C{"lower cost wins<br/>cost = EWMA x in-flight plus 1"}
-  B --> C
-  C -->|"send to B"| D["Backend B"]
-  N["Ignored this round:<br/>the other N-2 endpoints"] -.-> S
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1439bd55a15c.png" alt="diagram"></div></p>
 <h3 id="p2c-with-ewma-cost-peak-ewma">P2C with EWMA cost (peak-EWMA)</h3>
 <p>The refinement that makes P2C excellent rather than merely good is <em>what</em> you compare. Counting
 in-flight requests treats all requests as equal. Instead, maintain a per-endpoint
@@ -6233,6 +5808,7 @@ accepts a minimum of 100, and documents 120–200 as the useful range; it applie
 <code>MAGLEV</code> alike. Use it whenever your key space might be skewed — that is, almost always.
 (Kubernetes note: <code>kube-proxy</code> in IPVS mode can be configured with the <code>mh</code> scheduler, which is how
 you get consistent-hash behavior for ClusterIP Services without a userspace proxy.)</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3275b1b7ec41.png" alt="diagram"></div></p>
 <h2 id="health-checking">Health checking</h2>
 <p>The algorithm chooses among <em>healthy</em> endpoints. Deciding which endpoints are healthy is where
 load balancers cause outages.</p>
@@ -6343,19 +5919,7 @@ and crash-loops" pattern.</p>
 balancer has no slow-start support, approximate it with a readiness probe that does not pass until
 the process has self-warmed (pre-populate caches, run a few synthetic requests, force JIT
 compilation of hot paths).</p>
-<p><pre><code>stateDiagram-v2
-  [*] --> Starting
-  Starting --> Warming: readiness passes
-  Warming --> Serving: slow-start window elapsed
-  Serving --> Probation: outlier detection trips
-  Probation --> Serving: ejection time elapsed and probes pass
-  Probation --> Ejected: repeat offender so ejection time grows
-  Ejected --> Warming: active health check meets rise threshold
-  Serving --> Draining: SIGTERM or deregistration
-  Draining --> [*]: in-flight requests done or drain timeout
-  Serving --> PanicMode: healthy fraction below threshold
-  PanicMode --> Serving: health recovers
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb83ce39cfae.png" alt="diagram"></div></p>
 <h2 id="session-affinity">Session affinity</h2>
 <p>Affinity makes repeated requests from the same client reach the same backend. Three mechanisms,
 one recommendation.</p>
@@ -6480,22 +6044,7 @@ packets are classified, hashed, and encapsulated before the kernel allocates an 
 saving at multi-million-pps rates (Volume 2, Chapter 10; eBPF tooling in Volume 2, Chapter 11).
 Maglev instead used a userspace kernel-bypass forwarder sharing a packet pool with the NIC, with
 lock-free rings between its steering and processing threads.</p>
-<p><pre><code>flowchart TB
-  CL["Clients worldwide"] -->|"anycast VIP 203.0.113.10"| INET["Internet / BGP"]
-  INET -->|"nearest site wins"| S2["Site: Ashburn<br/>same VIP, same design"]
-  INET -->|"nearest site wins"| S1["Site: Frankfurt"]
-  S1 --> RTR["Site routers<br/>ECMP hash on 5-tuple"]
-  RTR --> M1["LB node 1<br/>XDP or bypass forwarder<br/>Maglev hash table"]
-  RTR --> M2["LB node 2<br/>same table, same result"]
-  RTR --> M3["LB node 3"]
-  M1 -->|"IPIP or GUE encap"| BE1["Backend / L7 proxy"]
-  M2 -->|"encap"| BE1
-  M2 -->|"encap"| BE2["Backend / L7 proxy"]
-  M3 -->|"encap"| BE3["Backend / L7 proxy"]
-  BE1 -.->|"DSR: response direct to client"| CL
-  BE2 -.->|"DSR"| CL
-  BE3 -.->|"DSR"| CL
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_638b975f48a6.png" alt="diagram"></div></p>
 <h3 id="client-side-load-balancing">Client-side load balancing</h3>
 <p>The final topology removes the middlebox: the client resolves the endpoint set from service
 discovery and picks an endpoint itself. gRPC does this natively (name resolver plus LB policy,
@@ -6699,25 +6248,7 @@ they are talking to the origin; they address <code>api.example.com</code> and th
 inversion is what makes the reverse proxy the natural place for every cross-cutting concern: it is
 on the path of every request, it is operated by the platform team, and it can be changed without
 touching application code.</p>
-<p><pre><code>flowchart LR
-    subgraph CN["Client network"]
-        C1["Laptop or pod"]
-        C2["Another workload"]
-        FP["Forward proxy<br/>egress allowlist, logging, cache"]
-    end
-    subgraph DC["Provider infrastructure"]
-        RP["Reverse proxy<br/>TLS termination, routing, WAF, LB"]
-        S1["Service A"]
-        S2["Service B"]
-    end
-    C1 -->|"explicit proxy config or CONNECT"| FP
-    C2 --> FP
-    FP -->|"allowlisted destinations only"| RP
-    RP --> S1
-    RP --> S2
-    classDef pxy fill:#e8f0fe,stroke:#3b6fd4,stroke-width:1px
-    class FP,RP pxy
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0e3e5ec12e58.png" alt="diagram"></div></p>
 <p>The symmetry is worth internalizing: a forward proxy hides many clients behind one identity and
 enforces <em>what may be reached</em>; a reverse proxy hides many servers behind one name and enforces
 <em>what may be served</em>. In a mesh, one sidecar is simultaneously both.</p>
@@ -7075,6 +6606,7 @@ clients implement xDS directly, giving client-side balancing with no proxy at al
 <p>One runtime note: Envoy runs a small number of worker threads, each an independent event loop over
 its own connection set, so it scales with cores — but its per-instance memory is dominated by the
 <em>size of its configuration</em>, which makes config scoping a first-order mesh optimization.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_67cee2862c45.png" alt="diagram"></div></p>
 <h2 id="api-gateways-a-reverse-proxy-with-product-concerns">API gateways: a reverse proxy with product concerns</h2>
 <p>An API gateway is a reverse proxy plus a set of concerns about the <em>API as a product</em> rather than
 about transport. The distinction is fuzzy — most gateways are Envoy or NGINX underneath — but the
@@ -7200,34 +6732,12 @@ authority: workloads request certificates over SDS on the same channel, and the 
 proxy handles key generation and rotation without ever writing a private key to disk. Linkerd's
 control plane is similar in intent (destination, identity, and policy controllers) while pushing a
 much smaller configuration surface to a much smaller proxy.</p>
-<p><pre><code>flowchart TB
-    subgraph CP["Control plane"]
-        ISTIOD["istiod<br/>xDS server plus CA"]
-        K8S["Kubernetes API<br/>Services, EndpointSlices, CRDs"]
-        K8S --> ISTIOD
-    end
-    subgraph PodA["Pod A"]
-        APPA["App A"]
-        SCA["Sidecar proxy A"]
-        APPA -->|"loopback, plaintext"| SCA
-    end
-    subgraph PodB["Pod B"]
-        SCB["Sidecar proxy B"]
-        APPB["App B"]
-        SCB -->|"loopback, plaintext"| APPB
-    end
-    ISTIOD -.->|"xDS config plus SDS certs"| SCA
-    ISTIOD -.->|"xDS config plus SDS certs"| SCB
-    SCA ==>|"mTLS, SPIFFE identities, L7 routing"| SCB
-    classDef cp fill:#fff3e0,stroke:#c77800
-    classDef dp fill:#e8f0fe,stroke:#3b6fd4
-    class ISTIOD,K8S cp
-    class SCA,SCB dp
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35206f64633a.png" alt="diagram"></div></p>
 <p>The dotted lines are the control path, the doubled line the data path, and the separation is the
 whole point: a control-plane outage stops <em>changes</em> from propagating but should not stop traffic,
 because each proxy keeps serving its last known-good configuration. Verify that property with a
 game day rather than assuming it.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b5795381c5ce.png" alt="diagram"></div></p>
 <h2 id="what-the-mesh-actually-gives-you">What the mesh actually gives you</h2>
 <h3 id="identity-and-mutual-tls">Identity and mutual TLS</h3>
 <p>This is the strongest single argument for a mesh. Each workload receives a short-lived X.509
@@ -7339,6 +6849,7 @@ free.</strong> A sidecar can generate and forward spans, but it cannot know that
 outbound request Y unless the application copies trace context headers (<code>traceparent</code>, or the B3
 family) from the request it handles onto the requests it makes. Without in-process propagation you
 get disconnected single-hop spans, not traces.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_73d4a883e918.png" alt="diagram"></div></p>
 <h2 id="the-costs-honestly">The costs, honestly</h2>
 <p><strong>Latency.</strong> Every meshed call traverses two extra proxies — the caller's sidecar and the
 callee's — each adding kernel crossings, a userspace parse and policy evaluation, and TLS work.
@@ -7413,21 +6924,7 @@ NAT. Encryption between nodes is transparent WireGuard or IPsec rather than per-
 which is a <em>different trust model</em>: it secures the node-to-node path rather than authenticating
 individual workloads end to end. Cilium's service mesh adds a per-node Envoy for L7, and its
 mutual authentication feature integrates SPIFFE/SPIRE identities.</p>
-<p><pre><code>flowchart LR
-    subgraph SIDE["Sidecar mesh"]
-        direction TB
-        SA["App A"] --> SPA["Envoy sidecar A"]
-        SPA ==>|"mTLS"| SPB["Envoy sidecar B"]
-        SPB --> SB["App B"]
-    end
-    subgraph AMB["Ambient or node-level mesh"]
-        direction TB
-        AA["App A"] --> ZA["ztunnel on node 1<br/>L4 plus mTLS"]
-        ZA ==>|"HBONE tunnel"| WP["Waypoint proxy<br/>L7, only if needed"]
-        WP ==> ZB["ztunnel on node 2"]
-        ZB --> AB["App B"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_22e73c6c104b.png" alt="diagram"></div></p>
 <p>The honest summary: sidecar-less designs move cost rather than deleting it, and they change the
 failure domain. A crashing sidecar affects one pod; a crashing node proxy affects every pod on that
 node, and a node proxy upgrade touches everything scheduled there. In exchange you get much lower
@@ -7469,38 +6966,7 @@ designates a PoP, usually near your origin, as a mid-tier cache that all edge Po
 so the origin sees at most one request per object per shield rather than one per PoP. It
 substantially cuts origin load and egress for cacheable workloads, at the cost of an extra hop on
 genuine misses.</p>
-<p><pre><code>sequenceDiagram
-    participant U as User
-    participant E as CDN edge PoP
-    participant SH as Origin shield PoP
-    participant GW as API gateway
-    participant SC as Sidecar of frontend
-    participant FE as Frontend service
-    participant BE as Backend service
-
-    U->>E: GET /product/42 over QUIC or TLS 1.3
-    Note over E: Compute cache key, lookup
-    alt Cache hit and fresh
-        E-->>U: 200 with Age and Cache-Status hit
-    else Miss or stale
-        E->>SH: Conditional GET with If-None-Match
-        alt Shield hit
-            SH-->>E: 200 or 304
-        else Shield miss
-            SH->>GW: GET over TLS to origin
-            GW->>GW: Validate JWT, rate limit, route
-            GW->>SC: Forward to mesh ingress
-            SC->>FE: Plaintext over loopback
-            FE->>BE: mTLS through sidecars, per-request LB
-            BE-->>FE: 200
-            FE-->>SC: 200 with Cache-Control
-            SC-->>GW: 200
-            GW-->>SH: 200
-            SH-->>E: 200 stored per TTL
-        end
-        E-->>U: 200 with Cache-Status miss
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_62aa0dc4348f.png" alt="diagram"></div></p>
 <h3 id="cache-keys-ttls-and-the-semantics-that-matter">Cache keys, TTLs, and the semantics that matter</h3>
 <p>The <strong>cache key</strong> determines what counts as "the same object". By default it is roughly scheme +
 host + path + query string, and every part of that is a hazard. Marketing query parameters
@@ -7897,6 +7363,7 @@ of them sees its p99 driven by the <em>slowest</em> of 20 draws — the "tail at
 hedging below. And steady-state numbers are wrong during cold start, when JIT warmup and empty caches
 inflate latency for tens of seconds, so either warm up before taking traffic (Chapter 9's slow start)
 or your timeouts fire in a wave on every rollout.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_29322eb25112.png" alt="diagram"></div></p>
 <h2 id="deadlines-beat-timeouts">Deadlines beat timeouts</h2>
 <p>A timeout is a per-hop duration. A <strong>deadline</strong> is a point in time that belongs to the whole
 operation, established once at the entry point and propagated to every hop. The difference sounds
@@ -7912,22 +7379,7 @@ a live request could use, so useful work falls, so more requests time out, so mo
 abandoned-but-running — the positive feedback that lets an overloaded system sit at 100 % CPU while
 completing almost nothing. It is <em>congestion collapse</em> (Chapter 3), transplanted into the application
 tier.</p>
-<p><pre><code>flowchart TB
-  subgraph naive["Per-hop timeouts - work continues after the caller has left"]
-    A1["A, timeout 1s"] --> B1["B, timeout 1s"]
-    B1 --> C1["C, timeout 1s"]
-    C1 --> D1["D, timeout 1s"]
-    A1 -.->|"gives up at t=1s"| X1["A returns error"]
-    D1 -.->|"still executing at t=3s"| W1["Wasted CPU, held locks,<br/>held connections"]
-  end
-
-  subgraph deadline["Deadline propagation - everyone stops together"]
-    A2["A sets deadline now plus 1s<br/>remaining 1000ms"] --> B2["B sees remaining 940ms"]
-    B2 --> C2["C sees remaining 870ms"]
-    C2 --> D2["D sees remaining 800ms"]
-    D2 -.->|"deadline reached"| X2["D cancels work,<br/>rolls back, returns<br/>DEADLINE_EXCEEDED"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ec6171dd11e4.png" alt="diagram"></div></p>
 <h3 id="the-mechanism">The mechanism</h3>
 <p>gRPC implements this natively, and it is the model to copy even if you speak HTTP. The client sets a
 deadline; the library encodes the <em>remaining</em> time into the <code>grpc-timeout</code> header — a value plus a
@@ -8106,13 +7558,7 @@ a <code>retry_delay</code>. If you emit such rejections, send the hint; if you c
 <h3 id="retry-amplification">Retry amplification</h3>
 <p>Now the arithmetic that ruins fleets. Consider a four-tier chain where each tier retries up to 3
 times (one initial attempt plus two retries).</p>
-<p><pre><code>flowchart LR
-  U["1 user request"] --> E["Edge / BFF<br/>up to 3 attempts"]
-  E -->|"3 requests"| A["Service A<br/>up to 3 attempts"]
-  A -->|"9 requests"| B["Service B<br/>up to 3 attempts"]
-  B -->|"27 requests"| L["Leaf datastore<br/>27x offered load"]
-  L -.->|"more load, more timeouts,<br/>more retries"| L
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9246aef4a6f7.png" alt="diagram"></div></p>
 <p>Three layers of 3 attempts is 27× amplification at the leaf; four layers is 81×. The crucial property
 is that <strong>amplification is near 1× when everything is healthy and near maximum exactly when things
 are failing</strong>, because retries only fire on failure. The leaf sees normal load right up until it
@@ -8252,6 +7698,7 @@ the status on exhaustion</strong> to something the caller treats as non-retryabl
 attempt count</strong> — Envoy can add <code>x-envoy-attempt-count</code>, and a server seeing an elevated count knows
 amplification is under way. Write it down as a fleet-wide contract, or retry behavior remains an
 emergent property of every layer's independent choices.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7efe654564d.png" alt="diagram"></div></p>
 <h2 id="backoff-and-jitter">Backoff and jitter</h2>
 <p>Retrying immediately is close to useless: whatever transient condition caused the failure — a GC
 pause, a leader election, a saturated queue — has not cleared in the microsecond it takes to loop.
@@ -8267,31 +7714,7 @@ herd</strong>. Exponential growth alone does not break the synchronization — i
 further apart, so the dependency alternates between spikes it cannot absorb and idle capacity it
 cannot use. Backoff without randomization changes <em>when</em> the herd arrives, not that it arrives
 together.</p>
-<p><pre><code>sequenceDiagram
-    autonumber
-    participant C1 as Client 1
-    participant C2 as Client 2
-    participant C3 as Client 3
-    participant S as Recovering service
-
-    Note over C1,S: No jitter — synchronized waves
-    C1->>S: retry at t+100ms
-    C2->>S: retry at t+100ms
-    C3->>S: retry at t+100ms
-    S-->>C1: overloaded, fail
-    S-->>C2: overloaded, fail
-    S-->>C3: overloaded, fail
-    Note over S: burst of 3 concurrent,<br/>then idle, then burst of 3
-
-    Note over C1,S: Full jitter — smeared arrivals
-    C1->>S: retry at t+17ms
-    S-->>C1: ok
-    C2->>S: retry at t+63ms
-    S-->>C2: ok
-    C3->>S: retry at t+141ms
-    S-->>C3: ok
-    Note over S: steady arrival rate,<br/>each attempt sees free capacity
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f5766f47f9e8.png" alt="diagram"></div></p>
 <h3 id="the-jitter-variants">The jitter variants</h3>
 <p>The reference treatment is Marc Brooker's AWS Architecture Blog post <em>Exponential Backoff And Jitter</em>
 (2015), which simulates several strategies against a contended resource. The variants as that post
@@ -8347,16 +7770,7 @@ dependency is clearly broken, stop calling it at all for a while. The purpose is
 <strong>callee</strong>, removing load is what permits recovery: a service pinned at 27× capacity by retries never
 gets the headroom to drain its queue, rebuild caches, and start succeeding.</p>
 <h3 id="the-state-machine">The state machine</h3>
-<p><pre><code>stateDiagram-v2
-    [*] --> Closed
-    Closed --> Closed: calls pass through, outcomes recorded
-    Closed --> Open: failure or slow-call rate over threshold, minimum volume met
-    Open --> Open: calls rejected immediately, no request sent
-    Open --> HalfOpen: wait duration elapsed
-    HalfOpen --> HalfOpen: bounded probes in flight, excess calls rejected
-    HalfOpen --> Closed: probes succeed above the success threshold
-    HalfOpen --> Open: a probe fails or is too slow
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_303a87e8e1d6.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Closed</strong> — normal. Calls pass through; outcomes feed a rolling window.</li>
 <li><strong>Open</strong> — tripped. Calls are rejected immediately with a local error and no network I/O at all.</li>
@@ -8409,6 +7823,7 @@ only hangs.</p>
 <p>Netflix's Hystrix popularized the pattern and has been in maintenance mode since roughly 2018, its
 README pointing users toward resilience4j; Envoy, Istio, and Linkerd provide mesh-layer equivalents.
 The pattern predates all of them — Michael Nygard's <em>Release It!</em> (2007) is canonical.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3e1ebcfaefab.png" alt="diagram"></div></p>
 <h2 id="hedged-requests-buying-tail-latency">Hedged requests: buying tail latency</h2>
 <p>Everything so far is about failure. Hedging addresses a different problem: <strong>the tail</strong>. In a service
 that fans out, the slowest component sets user-visible latency, and "slow" happens for reasons that
@@ -8419,21 +7834,7 @@ one request in a hundred is slow and you wait for 100 backends, roughly two-thir
 hit at least one slow backend. The technique: send to one replica; if nothing has arrived after
 roughly the p95 of expected latency, send the same request to a <em>different</em> replica; take whichever
 responds first and cancel the other.</p>
-<p><pre><code>sequenceDiagram
-    autonumber
-    participant C as Client
-    participant R1 as Replica A
-    participant R2 as Replica B
-
-    C->>R1: request at t=0
-    Note over R1: unlucky — stuck behind<br/>a compaction, will take 210ms
-    Note over C: p95 of healthy latency is 15ms<br/>hedge delay set to 15ms
-    C->>R2: hedge at t=15ms
-    R2-->>C: response at t=21ms
-    Note over C: return at t=21ms<br/>instead of t=210ms
-    C-)R1: cancel — RST_STREAM / context cancel
-    Note over C,R2: extra load is bounded by<br/>the fraction of calls exceeding p95,<br/>roughly 5 percent
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2424ea978670.png" alt="diagram"></div></p>
 <p>The cost accounting is what makes hedging attractive: hedge only after the p95 and, by construction,
 only about 5 % of requests are ever hedged — while p99 and p99.9 improve sharply, because the request
 is now slow only if <em>both</em> replicas are slow. Dean and Barroso report a benchmark reading 1,000 keys
@@ -8923,23 +8324,7 @@ interception. Bring the test as close to the real client as you can afford — a
 the same pod shares the pod's network namespace, resolver configuration, and sidecar interception,
 the highest-fidelity vantage point Kubernetes offers — and when you cannot, list the differences
 before you interpret the result.</p>
-<p><pre><code>flowchart TD
-  S["Symptom: errors or latency on a specific call"] --> R{"Can you reproduce from a controlled client?"}
-  R -->|"no, intermittent or fleet-wide"| TEL["Start from always-on telemetry: RED metrics per hop, traces, LB and mesh access logs"]
-  TEL --> LOC["Localize the failing hop, then reproduce there"]
-  LOC --> D
-  R -->|yes| D{"Does the name resolve, and to the address you expect?"}
-  D -->|"NXDOMAIN, SERVFAIL, timeout, or stale or wrong address"| DNS["DNS - Chapter 5: resolver path, TTL and cache, ndots, search domains, EDNS and TCP fallback"]
-  D -->|ok| C{"Does a TCP connect to that address and port succeed?"}
-  C -->|"connection refused"| REF["Nothing is listening: wrong port, process down, wrong address family, or an RST-generating middlebox"]
-  C -->|"timeout, no response"| NET["Silent drop: firewall or security group, routing or asymmetric return path, conntrack, SYN backlog - Chapters 1, 2, 3"]
-  C -->|ok| T{"Does the TLS handshake complete and verify?"}
-  T -->|no| TLS["TLS - Chapter 6: expiry, chain, SNI, ALPN, version and cipher, client cert, clock skew"]
-  T -->|ok| H{"Does the application respond, correctly and in time?"}
-  H -->|"5xx, RST, GOAWAY, or gRPC UNAVAILABLE"| APP["Application and proxy layer - Chapters 7, 8, 9, 10: backend health, timeouts, circuit breaking, protocol errors"]
-  H -->|"slow, not failing"| LAT["Attribute latency: curl timing split, then per-hop spans - Volume 11 Chapter 4"]
-  H -->|"works here but not in production"| DIFF["Enumerate the differences: source identity, policy, sidecar, protocol version, pooling, payload size"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_42adca5bc886.png" alt="diagram"></div></p>
 <h3 id="its-always-dns-why-the-joke-keeps-being-true">"It's always DNS" — why the joke keeps being true</h3>
 <p>DNS sits on the critical path of every call while being the layer with the most independent caches,
 the loosest failure semantics, and the least visibility. Three structural reasons keep it at the top
@@ -8984,19 +8369,7 @@ saturated middlebox.</p>
 <p>Keep the format string in a file (<code>-w "@$HOME/curl-format.txt"</code>) so it is readable and reusable.
 curl 7.70.0 and later also accept <code>-w '%{json}'</code>, which dumps every write-out variable as a JSON
 object — ideal when scripting a probe loop and feeding the results to <code>jq</code>.</p>
-<p><pre><code>flowchart LR
-  A["request start<br/>t = 0"] --> B["time_namelookup<br/>name resolved"]
-  B --> C["time_connect<br/>TCP handshake complete"]
-  C --> D["time_appconnect<br/>TLS handshake complete"]
-  D --> E["time_pretransfer<br/>about to send request"]
-  E --> F["time_starttransfer<br/>first response byte - TTFB"]
-  F --> G["time_total<br/>last byte received"]
-  B -.-> B1["large delta: resolver latency, ndots search fanout, UDP retry after 5 s timeout"]
-  C -.-> C1["large delta: RTT or path length, SYN loss and RTO of about 1 s, middlebox queueing"]
-  D -.-> D1["large delta: extra round trips, OCSP or CRL fetch by the client, signature and key-exchange CPU cost, CPU starvation"]
-  F -.-> F1["large delta: server think time, upstream dependency, proxy queueing, connection-pool wait at the peer"]
-  G -.-> G1["large delta with small TTFB: bandwidth, cwnd growth, receiver window, loss during transfer"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a34e465ff337.png" alt="diagram"></div></p>
 <p>Three more <code>curl</code> habits worth building.</p>
 <p><strong>Pin the address to separate DNS from everything else.</strong> <code>--resolve</code> overrides resolution for one
 host/port pair while leaving <code>Host:</code>, SNI, and certificate verification intact:</p>
@@ -9019,6 +8392,7 @@ resolve host, <code>7</code> failed to connect, <code>28</code> timed out, <code
 (this code absorbed the older <code>CURLE_SSL_CACERT</code> in curl 7.62.0), <code>92</code> an HTTP/2 stream error. <code>-v</code>
 gives the narrative and <code>--trace-time</code> timestamps every trace line, which is how you see <em>where</em> a
 stall sits without a capture; <code>--trace-ascii -</code> dumps the bytes.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4d5db403a9db.png" alt="diagram"></div></p>
 <h2 id="dns-ask-precisely-and-ask-what-the-application-asks">DNS: ask precisely, and ask what the application asks</h2>
 <p><code>dig</code> is the instrument, but use it deliberately.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># What does the resolver the application uses actually return, with TTL?</span>
@@ -9227,6 +8601,7 @@ cat<span class="w"> </span>/proc/1041/limits<span class="w"> </span><span class=
 ls<span class="w"> </span>/proc/1041/fd<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 </code></pre></div>
 
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cc9053a32af0.png" alt="diagram"></div></p>
 <h2 id="kernel-and-nic-counters-proving-drops-without-a-capture">Kernel and NIC counters: proving drops without a capture</h2>
 <p>Counters are the cheapest evidence in the toolkit and most engineers under-use them. <code>nstat</code> reads
 the same SNMP-style counters as <code>netstat -s</code> but prints <strong>deltas since its last invocation</strong>, which
@@ -9474,34 +8849,7 @@ cilium<span class="w"> </span>monitor<span class="w"> </span>--type<span class="
 <p>The value is not the tool but the property: a <code>policy-denied</code> verdict, recorded automatically,
 converts the most confusing symptom in Kubernetes — a connection that times out with no error
 anywhere — into a one-line answer.</p>
-<p><pre><code>flowchart TD
-  subgraph APP["Application and HTTP"]
-    A1["curl -v and -w timings"]
-    A2["Access logs: LB, proxy, mesh sidecar"]
-    A3["Distributed traces and spans"]
-  end
-  subgraph SEC["Names and TLS"]
-    B1["dig, resolvectl, getent hosts"]
-    B2["openssl s_client, SSLKEYLOGFILE decryption"]
-  end
-  subgraph SOCK["Sockets and TCP state"]
-    C1["ss -tanp, ss -ti, ss -m"]
-    C2["lsof, /proc/PID/fd and limits"]
-    C3["eBPF: tcplife, tcpconnlat, tcpretrans, tcpsynbl"]
-  end
-  subgraph KERN["Kernel network stack"]
-    D1["nstat and netstat -s counters"]
-    D2["conntrack -S, nf_conntrack_count"]
-    D3["/proc/net/softnet_stat, ip -s link"]
-    D4["tcpdump and tshark on the netns"]
-  end
-  subgraph DRIVER["NIC, driver, and path"]
-    E1["ethtool -S, -g, -c, -k"]
-    E2["ping, traceroute, mtr, path MTU probes"]
-    E3["Fabric and cloud VPC flow logs"]
-  end
-  APP --> SEC --> SOCK --> KERN --> DRIVER
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_357cad5bcbaa.png" alt="diagram"></div></p>
 <h2 id="a-field-guide-to-failure-signatures">A field guide to failure signatures</h2>
 <p>Most production network incidents are instances of a modest number of patterns; recognizing them by
 their <em>shape</em> is what makes senior engineers fast.</p>
@@ -9658,19 +9006,7 @@ balance at L7, so a proxy distributes individual streams; force rebalancing with
 connection age limits (gRPC's <code>MAX_CONNECTION_AGE</code> plus <code>MAX_CONNECTION_AGE_GRACE</code> sends <code>GOAWAY</code>
 and lets clients re-resolve); or use client-side, xDS-driven balancing so the client knows all
 endpoints.</p>
-<p><pre><code>flowchart LR
-  S1["Instant connection refused"] --> C1["Nothing listening: wrong port, bound to loopback or IPv6 only, process down, firewall set to reject"]
-  S2["Connect hangs, then fails at about 1s, 3s, or 7s"] --> C2["SYN or SYN-ACK dropped: policy, routing, conntrack exhaustion, asymmetric return path"]
-  S3["Small requests fine, large ones hang"] --> C3["PMTU blackhole: ICMP type 3 code 4 or ICMPv6 type 2 filtered"]
-  S4["Intermittent failures only above a load threshold"] --> C4["Accept-queue overflow, ephemeral port or conntrack exhaustion, NIC ring drops"]
-  S5["Works in browser, fails from the service"] --> C5["Incomplete certificate chain or missing SNI or ALPN mismatch"]
-  S6["Total simultaneous TLS failure at a round timestamp"] --> C6["Certificate or intermediate expiry, or clock skew"]
-  S7["Failover done but some clients still hit the old host"] --> C7["Cached DNS beyond TTL, or pooled connections never re-resolved"]
-  S8["p99 exceeds p50 by roughly one RTO"] --> C8["Tail loss and RTO-based retransmission"]
-  S9["A few replicas hot, most idle"] --> C9["HTTP/2 or gRPC connection pinning under L4 balancing"]
-  S10["Backend stays saturated after the trigger is gone"] --> C10["Retry storm and metastable failure"]
-  S11["External name lookups slow, internal ones fast"] --> C11["ndots search-domain amplification"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_88385b85cd50.png" alt="diagram"></div></p>
 <h2 id="distributed-systems-lens-debugging-a-fleet-you-cannot-log-into">Distributed-systems lens: debugging a fleet you cannot log into</h2>
 <p>Everything above assumes a shell on the machine where the problem is happening. At fleet scale that
 assumption fails three ways at once: the failure is a fraction of a percent, so by the time you
@@ -9738,22 +9074,7 @@ the trace ID) and log it on both sides. Then:</p>
 <li>Server logged it slow, client saw it fast → sampling or clock issues in your telemetry; fix the
   instrument before trusting it.</li>
 </ul>
-<p><pre><code>sequenceDiagram
-    participant C as Client app
-    participant CS as Client sidecar
-    participant LB as L4 or L7 load balancer
-    participant SS as Server sidecar
-    participant S as Server app
-    C->>CS: request with trace-id abc123
-    CS->>LB: forwarded, request-id preserved
-    LB->>SS: forwarded to endpoint 10.42.9.4
-    Note over SS,S: app accept queue full, final ACK dropped
-    SS --x S: connection never handed to the application
-    C->>C: client timeout after 2s, logs abc123 as failed
-    Note over SS: sidecar access log shows response flag UF or UT for abc123
-    Note over SS: nstat on the node shows TcpExtListenOverflows rising
-    Note over C,S: Signature - client failure with no server-side application record
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bcff4adbf2dc.png" alt="diagram"></div></p>
 <p><strong>Keep a capture capability you can trigger, but treat it as a scalpel.</strong> The mature setup is
 on-demand: a debug image (<code>netshoot</code> or an internal equivalent) in every namespace, a pre-approved
 procedure for capturing into a pod's network namespace, ring-buffered writes to a bounded location,

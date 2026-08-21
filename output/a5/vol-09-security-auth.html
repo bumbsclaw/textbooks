@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -234,19 +316,7 @@ crypto_secretbox_keygen<span class="o">(</span>key<span class="o">)</span><span 
 <span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TD
-    A["Hardware entropy<br/>RDRAND, interrupt jitter, boot seed"] --> B["Kernel CRNG<br/>ChaCha20 / BLAKE2s<br/>256-bit state"]
-    B --> C["getrandom 2 / /dev/urandom"]
-    C --> D["crypto/rand.Read<br/>libsodium randombytes_buf<br/>OpenSSL RAND_bytes"]
-    D --> E["Keys, nonces, salts, IVs"]
-    D --> F["Session tokens, CSRF tokens"]
-
-    G["math/rand<br/>Mersenne Twister"] -.-> H["NOT CSPRNG<br/>predictable, no backtracking resistance"]
-    H -.-> I["X Never for secrets"]
-
-    style H fill:#ffcccc
-    style I fill:#ffcccc
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_33869bb07163.png" alt="diagram"></div></p>
 <p><strong>Review checklist for RNG usage:</strong></p>
 <table>
 <thead>
@@ -351,17 +421,7 @@ SHA3-256<span class="o">(</span>stdin<span class="o">)=</span><span class="w"> <
 <span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>flowchart LR
-    A["Input m<br/>arbitrary length"] --> B["Hash H m<br/>SHA-256 / SHA-3 / BLAKE3"]
-    B --> C["Digest h<br/>fixed n bits"]
-
-    C --> D{"Attacker goal?"}
-    D -->|"Given h, find m<br/>Preimage"| E["~2^n work<br/>2^256 for SHA-256"]
-    D -->|"Given m1, find m2<br/>Second preimage"| F["~2^n work"]
-    D -->|"Find any m1,m2 pair<br/>Collision"| G["~2^{n/2} work<br/>2^128 for SHA-256<br/>birthday bound"]
-
-    style G fill:#fff3cd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_98b56c1891a3.png" alt="diagram"></div></p>
 <h3 id="where-hashes-go-wrong">Where hashes go wrong</h3>
 <p><strong>Length-extension attacks</strong> affect Merkle-Damgard hashes (SHA-256, SHA-512) but not SHA-3 or BLAKE3. Given <code>H(key || message)</code> an attacker can compute <code>H(key || message || extension)</code> without knowing <code>key</code>. This is why <code>HMAC-SHA256(key, message)</code> exists rather than <code>SHA256(key || message)</code>. If you must use SHA-256 in a MAC-like construction, use HMAC.</p>
 <p><strong>Do not use raw hashes for passwords.</strong> SHA-256("password123") is computed in nanoseconds on a GPU. Password storage requires a deliberately slow, salted KDF — see Chapter 2.</p>
@@ -577,25 +637,7 @@ MCowBQYDK2VwAyEA...
 -----END<span class="w"> </span>PUBLIC<span class="w"> </span>KEY-----
 </code></pre></div>
 
-<p><pre><code>sequenceDiagram
-    participant A as Alice
-    participant E as Insecure channel
-    participant B as Bob
-
-    Note over A,B: X25519 ECDH + HKDF + AEAD (hybrid encryption)
-    A->>A: Generate ephemeral keypair (a, aG)
-    B->>B: Generate ephemeral keypair (b, bG)
-    A->>E: Send aG
-    E->>B: Forward aG
-    B->>E: Send bG
-    E->>A: Forward bG
-    A->>A: shared = ECDH(a, bG)<br/>keys = HKDF(shared, salt, info)
-    B->>B: shared = ECDH(b, aG)<br/>keys = HKDF(shared, salt, info)
-    Note over A,B: Same keys — now use AES-GCM / ChaCha20-Poly1305
-    A->>E: AEAD(keys, plaintext, aad)
-    E->>B: ciphertext + tag
-    B->>B: AEAD-Open — fails if tampered
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_56f81574cd15.png" alt="diagram"></div></p>
 <h3 id="when-to-use-which">When to use which</h3>
 <table>
 <thead>
@@ -641,20 +683,7 @@ MCowBQYDK2VwAyEA...
 </ul>
 <p><strong>Hybrid encryption</strong> (asymmetric KEM + symmetric AEAD) is how you encrypt to a public key at scale: generate an ephemeral symmetric key, encrypt the payload with the AEAD, encrypt the symmetric key to the recipient's public key. Libraries like libsodium <code>crypto_box_seal</code> and Google Tink do this correctly — do not reimplement it.</p>
 <p><strong>Key separation:</strong> never use the same key for two purposes. Derive purpose-specific subkeys with HKDF and distinct <code>info</code> labels. A key used for both encryption and MAC, or for two different protocols, can create cross-protocol attacks.</p>
-<p><pre><code>flowchart TD
-    A["Plaintext + AAD"] --> B["AEAD Encrypt<br/>AES-GCM / ChaCha20-Poly1305"]
-    B --> C["Ciphertext + Tag"]
-    C --> D{"Adversary tampers?"}
-    D -->|"Yes"| E["AEAD-Open fails<br/>reject, do not process"]
-    D -->|"No"| F["Plaintext recovered<br/>AAD verified"]
-
-    G["Raw Enc only<br/>AES-CBC / CTR"] --> H["Malleable ciphertext<br/>bit flips -> predictable plaintext changes"]
-    H --> I["Padding oracle<br/>side channel leaks plaintext"]
-
-    style E fill:#d4edda
-    style H fill:#ffcccc
-    style I fill:#ffcccc
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4b4f151e8011.png" alt="diagram"></div></p>
 <h2 id="signatures-in-the-backend-supply-chain-tokens-and-logs">Signatures in the backend: supply chain, tokens, and logs</h2>
 <p>Signatures solve a different problem than encryption: they bind an identity to a statement so that anyone can verify it without being able to forge it. Three verification patterns dominate backend systems.</p>
 <p><strong>Artifact signing</strong> proves that a container image, binary, or SBOM was produced by a trusted builder. Sigstore (Cosign + Fulcio + Rekor) uses short-lived Ed25519/ECDSA keys bound to an OIDC identity, with the signature and certificate logged in a transparency log. Verification checks the signature, the certificate chain to Fulcio, and inclusion in Rekor. The key insight for this chapter is that the primitive — Ed25519 over SHA-512 — is only one link: the system also needs a trust anchor (Fulcio root), a distribution mechanism (OCI annotations or in-toto attestations), and a revocation story (short-lived certs, not CRLs). Companion Book 5, Chapters 3–5 covers this end-to-end; the primitive alone is insufficient.</p>
@@ -678,6 +707,12 @@ MCowBQYDK2VwAyEA...
 <p><strong>Rotation and versioning.</strong> Keys must rotate without downtime. Every encrypted value or token should carry a key identifier (<code>kid</code> in JWTs, key version in KMS ciphertext) so verifiers can select the correct key during the rotation window. Dual-read (try new key, fall back to old) during rotation is the standard technique — see Chapter 8 for full lifecycle.</p>
 <p><strong>Consistency of trust stores.</strong> Certificate roots, public keys, and revocation lists must be consistent across the fleet. A rolling deploy that updates a trust store on half the fleet before the other half creates a window where inter-service authentication fails in one direction. Treat trust-store updates like schema migrations: backward-compatible, dual-trust windows, then cleanup.</p>
 <p><strong>Forward secrecy at scale</strong> means session keys are ephemeral and short-lived. For long-lived connections (gRPC streams, WebSocket), re-key periodically. For stored data, forward secrecy is approximated by prompt re-encryption after KEK rotation.</p>
+<h4 id="crypto-primitive-selection">Crypto Primitive Selection</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2f69d061dc7a.png" alt="diagram"></div></p>
+<h4 id="envelope-encryption">Envelope Encryption</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f70f058528cb.png" alt="diagram"></div></p>
+<h4 id="key-hierarchy">Key Hierarchy</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_892c66f963b7.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Use vetted, version-pinned primitives: AES-GCM or ChaCha20-Poly1305 for AEAD (RFC 5116/8439), HMAC-SHA256 for MACs, HKDF (RFC 5869) for key derivation, X25519 (RFC 7748) for key exchange, Ed25519 (RFC 8032) for signatures. Do not invent constructions.</li>
@@ -836,23 +871,7 @@ $<span class="w"> </span><span class="nb">echo</span><span class="w"> </span>-n<
 <span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TD
-    A["Input m<br/>arbitrary bytes"] --> B{"Construction"}
-    B -->|"SHA-256 / SHA-512<br/>Merkle-Damgard"| C["Compression chain<br/>pad -> blocks -> final digest"]
-    B -->|"SHA3-256<br/>Sponge"| D["Absorb -> squeeze<br/>Keccak-f 1600"]
-    B -->|"BLAKE3<br/>Tree"| E["Chunk -> parent nodes<br/>parallel, SIMD"]
-
-    C --> F["Digest h<br/>n bits"]
-    D --> F
-    E --> F
-
-    C -.->|"Length extension<br/>H m || ext computable"| G["Use HMAC, not raw hash<br/>for keyed use"]
-    D -.-> H["No length extension"]
-    E -.-> H
-
-    style G fill:#ffcccc
-    style H fill:#d4edda
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c42055964282.png" alt="diagram"></div></p>
 <h2 id="message-authentication-codes">Message authentication codes</h2>
 <p>A MAC answers a different question than a hash. A hash says "this is what was hashed." A MAC says "someone holding key K vouches for this message." Without a MAC (or AEAD), an attacker who can modify bytes in transit or at rest can forge valid-looking data.</p>
 <h3 id="hmac-rfc-2104">HMAC (RFC 2104)</h3>
@@ -986,20 +1005,7 @@ $<span class="w"> </span>openssl<span class="w"> </span>kdf<span class="w"> </sp
 <li><strong>Argon2i</strong> — data-independent access, side-channel resistant but slightly weaker against TMTO.</li>
 <li><strong>Argon2id</strong> — hybrid: first pass Argon2i, rest Argon2d. <strong>Use Argon2id</strong> unless you have a specific reason not to.</li>
 </ul>
-<p><pre><code>flowchart LR
-    A["Input material"] --> B{"Entropy?"}
-    B -->|"High: ECDH secret,<br/>KMS key, session secret"| C["HKDF RFC 5869<br/>fast, no tuning needed<br/>salt + info for separation"]
-    B -->|"Low: human password<br/>20-40 bits"| D{"New system?"}
-    D -->|"Yes"| E["Argon2id RFC 9106<br/>memory-hard, tune m/t/p"]
-    D -->|"Legacy / FIPS"| F["PBKDF2 600k iters<br/>or scrypt<br/>migrate to Argon2id"]
-
-    C --> G["Uniform keys<br/>any length"]
-    E --> H["Password hash<br/>slow, memory-hard"]
-    F --> H
-
-    style E fill:#d4edda
-    style C fill:#d4edda
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a481ac809ba5.png" alt="diagram"></div></p>
 <h2 id="password-storage-done-correctly">Password storage done correctly</h2>
 <p>Password storage is not "hash the password." It is: salt, hash with a memory-hard function, store metadata for verification and upgrades, enforce verifier policy, and plan for breach.</p>
 <h3 id="nist-sp-800-63b-2023-update-what-changed">NIST SP 800-63B (2023 update) — what changed</h3>
@@ -1012,24 +1018,7 @@ $<span class="w"> </span>openssl<span class="w"> </span>kdf<span class="w"> </sp
 <li><strong>Verifiers must use a suitable KDF</strong> — specifically, a memory-hard function with appropriate cost. PBKDF2 is listed as acceptable, Argon2id and scrypt are preferred per the 2023 guidance and OWASP.</li>
 </ul>
 <h3 id="the-full-storage-scheme">The full storage scheme</h3>
-<p><pre><code>flowchart TD
-    A["User registers<br/>password: s3cret!"] --> B["Generate 16-byte salt<br/>crypto/rand"]
-    B --> C["Argon2id<br/>m=64 MiB, t=3, p=1<br/>per RFC 9106"]
-    C --> D["Hash || salt || params<br/>PHC string format<br/>$argon2id$v=19$m=65536,t=3,p=1$salt$hash"]
-    D --> E["Store in DB<br/>one row per user"]
-
-    F["User logs in<br/>password attempt"] --> G["Fetch PHC string<br/>parse salt + params"]
-    G --> H["Argon2id with same params<br/>same salt"]
-    H --> I{"hmac.Equal?"}
-    I -->|"Yes"| J["Authenticated<br/>optionally rehash if params stale"]
-    I -->|"No"| K["Reject<br/>constant-time, no oracle"]
-
-    L["Pepper 32 bytes<br/>stored in KMS/HSM<br/>not in DB"] -.-> C
-    L -.-> H
-
-    style J fill:#d4edda
-    style K fill:#fff3cd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2dfed8a4600a.png" alt="diagram"></div></p>
 <p><strong>Parameters (RFC 9106, Section 4):</strong></p>
 <ul>
 <li><strong>Memory <code>m</code>:</strong> 64 MiB (65536 KiB) is a reasonable floor for interactive login in 2024–2026. Increase with available RAM — the goal is to make each guess consume enough memory that GPU/ASIC parallelism is uneconomical.</li>
@@ -1166,23 +1155,7 @@ $<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </spa
 <span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TD
-    A["Login attempt"] --> B{"Hash prefix?"}
-    B -->|"$argon2id$ current params"| C["Verify Argon2id<br/>constant-time"]
-    B -->|"$argon2id$ stale params"| D["Verify Argon2id<br/>then rehash with new params<br/>UPDATE on success"]
-    B -->|"$pbkdf2$ or $2b$ bcrypt"| E["Verify legacy KDF<br/>constant-time"]
-    E -->|"Valid"| F["HashPassword with Argon2id<br/>UPDATE row<br/>user transparently upgraded"]
-    E -->|"Invalid"| G["Reject"]
-
-    C -->|"Valid"| H["Authenticated"]
-    C -->|"Invalid"| G
-    D --> H
-    F --> H
-
-    style F fill:#d4edda
-    style H fill:#d4edda
-    style G fill:#ffcccc
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a63714e5977a.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Distributed-systems note.</strong> Password-hash upgrades are eventually consistent by nature — each user's hash upgrades on their next login, so the database contains a mix of schemes for weeks or months. Queries must handle both formats. Do not run a batch job that rehashes without the plaintext — you cannot upgrade a hash without the password. The <code>VerifyAndUpgrade</code> pattern above is the standard technique used by large identity providers to roll forward KDF parameters without downtime.</p>
 </blockquote>
@@ -1218,6 +1191,12 @@ $<span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </spa
 <p><strong>Consistency of pepper and parameters.</strong> If the Argon2 pepper or cost parameters differ across replicas, a password hashed on one replica may fail verification on another. Distribute pepper via a strongly consistent store (Ch 8 — Vault, KMS) and roll parameter changes as versioned config with dual-read windows, exactly like key rotation in Ch 1.</p>
 <p><strong>Hash agility.</strong> Every stored hash should be self-describing (PHC format) so verifiers can select the correct algorithm and parameters. This is the same principle as key identifiers (<code>kid</code>) in JWTs (Ch 5) and envelope-encryption key versions (Ch 3, Ch 8). Without agility, a fleet-wide KDF upgrade requires synchronized deploys.</p>
 <p><strong>Deduplication and content addressing.</strong> Where hashes are used for deduplication (CAS, Merkle trees, container layer digests in Vol 12), collision resistance is load-bearing — a collision means two distinct objects map to one address, causing silent data loss. Use at least 256-bit output and consider BLAKE3 for large objects where parallel hashing matters. Where hashes are used for sharding or load balancing, uniformity matters more than collision resistance — but still use a cryptographic hash if the input is attacker-controlled, to prevent hash-flooding DoS (Vol 14, Ch 2).</p>
+<h4 id="password-hashing-flow">Password Hashing Flow</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a1cc3dc0a4ec.png" alt="diagram"></div></p>
+<h4 id="hash-algorithm-choice">Hash Algorithm Choice</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_776e6163bd91.png" alt="diagram"></div></p>
+<h4 id="weak-hash-migration">Weak Hash Migration</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4228ebcb4517.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Hash functions provide preimage (~2^n), second-preimage (~2^n), and collision (~2^(n/2)) resistance — collisions fail first, which is why MD5 and SHA-1 are broken and SHA-256/SHA-3-256/BLAKE3 are the current choices (FIPS 180-4, FIPS 202).</li>
@@ -1309,23 +1288,7 @@ plaintext = AEAD.Decrypt(key, nonce, ciphertext, tag, aad)  // or error
 <li><strong>Padding oracles (Vaudenay, 2002):</strong> CBC with PKCS#7 padding leaks plaintext byte-by-byte when the server returns distinct errors for "bad padding" vs "bad MAC." This class broke TLS 1.0's CBC ciphersuites (Lucky13), XML Encryption, and countless custom protocols.</li>
 </ul>
 <p>AEAD eliminates all three by authenticating the ciphertext. If you inherit a system using raw CBC/CTR, the migration is to wrap it in HMAC (encrypt-then-MAC with independent keys and constant-time verification) or — better — replace it with an AEAD.</p>
-<p><pre><code>flowchart TD
-    A["Plaintext + AAD<br/>e.g. payment record + tenant header"] --> B["AEAD Encrypt<br/>AES-GCM or ChaCha20-Poly1305<br/>key + fresh nonce"]
-    B --> C["Ciphertext + 16-byte Tag<br/>AAD stays in cleartext<br/>but is authenticated"]
-    C --> D["Store / transmit<br/>through untrusted infra"]
-    D --> E{"AEAD Decrypt<br/>key + nonce + aad + tag"}
-
-    E -->|"Tag valid,<br/>AAD matches"| F["Plaintext recovered<br/>integrity guaranteed"]
-    E -->|"Any bit tampered,<br/>wrong AAD, wrong key"| G["Error — reject<br/>no plaintext returned<br/>no oracle"]
-
-    H["Raw AES-CBC/CTR<br/>no tag"] --> I["Malleable ciphertext<br/>bit flips -> controlled<br/>plaintext changes"]
-    I --> J["Padding oracle<br/>plaintext leaks<br/>without the key"]
-
-    style F fill:#d4edda
-    style G fill:#fff3cd
-    style I fill:#ffcccc
-    style J fill:#ffcccc
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9d9804ad3b00.png" alt="diagram"></div></p>
 <h3 id="aes-gcm-and-chacha20-poly1305-in-go">AES-GCM and ChaCha20-Poly1305 in Go</h3>
 <div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
 
@@ -1503,30 +1466,7 @@ $<span class="w"> </span><span class="nb">echo</span><span class="w"> </span>-n<
 <li><strong>Envelope:</strong> <code>KEK_Encrypt(DEK) || AEAD_Encrypt(DEK, plaintext)</code>. Store the encrypted DEK alongside the ciphertext.</li>
 </ul>
 <p>Decryption fetches the KEK-encrypted DEK, calls KMS <code>Decrypt</code> to recover the DEK, then decrypts locally. Rotation re-encrypts only the DEKs under the new KEK — the bulk ciphertext is untouched until you choose to re-encrypt it.</p>
-<p><pre><code>sequenceDiagram
-    participant App as Service
-    participant KMS as KMS / HSM<br/>holds KEK
-    participant DB as Storage
-
-    Note over App,DB: Encryption (write path)
-    App->>App: Generate DEK = rand 32 bytes
-    App->>KMS: Encrypt DEK with KEK v3
-    KMS-->>App: encDEK = KEK_Enc KEKv3, DEK
-    App->>App: nonce, ct = AES-GCM DEK, plaintext, aad
-    App->>DB: Store encDEK || nonce || ct || kek_version=3
-
-    Note over App,DB: Decryption (read path)
-    App->>DB: Fetch encDEK || nonce || ct || kek_version
-    App->>KMS: Decrypt encDEK with KEK
-    KMS-->>App: DEK (in memory only)
-    App->>App: plaintext = AES-GCM-Open DEK, nonce, ct, aad
-
-    Note over App,KMS: Rotation — KEK v3 -> v4 (no bulk re-encrypt)
-    App->>KMS: ReEncrypt encDEK: KEKv3 -> KEKv4
-    KMS-->>App: encDEK' under KEKv4
-    App->>DB: Update encDEK', kek_version=4
-    Note over DB: Bulk ct unchanged until lazy re-encrypt
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7cd37b149ff9.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Envelope encryption with a KMS-like interface</span>
 <span class="kn">package</span><span class="w"> </span><span class="nx">envelope</span>
 
@@ -1661,24 +1601,7 @@ $<span class="w"> </span>gcloud<span class="w"> </span>kms<span class="w"> </spa
 <p>RSA PKCS#1 v1.5 has been broken since Bleichenbacher (1998) and remains exploitable via side-channels (ROBOT, 2017) against real TLS stacks. OAEP fixes the padding oracle but RSA remains large and slow. For new systems, ECIES over X25519 is smaller, faster, and has no padding oracle class.</p>
 <h3 id="hybrid-encryption-the-construction">Hybrid encryption — the construction</h3>
 <p>Asymmetric primitives can only encrypt short messages (key-size minus padding). The standard construction is hybrid: generate an ephemeral symmetric key, encrypt the payload with an AEAD, encrypt the symmetric key to the recipient's public key. This is what TLS 1.3 (RFC 8446), PGP, age, and libsodium all do internally.</p>
-<p><pre><code>sequenceDiagram
-    participant S as Sender<br/>(has recipient pubkey)
-    participant R as Recipient<br/>(holds privkey)
-
-    Note over S: Hybrid encrypt (X25519 + HKDF + AES-GCM)
-    S->>S: Generate ephemeral keypair (eph_priv, eph_pub)
-    S->>S: shared = X25519(eph_priv, recipient_pub)
-    S->>S: symKey = HKDF-SHA256(shared, salt, info=ecies-v1)
-    S->>S: nonce, ct = AES-GCM(symKey, plaintext, aad)
-    S->>R: Send eph_pub || nonce || ct
-
-    Note over R: Hybrid decrypt
-    R->>R: shared = X25519(recipient_priv, eph_pub)
-    R->>R: symKey = HKDF-SHA256(shared, salt, info=ecies-v1)
-    R->>R: plaintext = AES-GCM-Open(symKey, nonce, ct, aad)
-
-    Note over S,R: Eavesdropper sees eph_pub, nonce, ct —<br/>needs recipient_priv to derive shared
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c8413d3e7c45.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="p">(</span>
 <span class="w">    </span><span class="s">&quot;crypto/aes&quot;</span>
 <span class="w">    </span><span class="s">&quot;crypto/cipher&quot;</span>
@@ -1816,24 +1739,7 @@ $<span class="w"> </span>openssl<span class="w"> </span>pkeyutl<span class="w"> 
 <p><strong>Algorithm confusion.</strong> A decryptor that accepts both AES-GCM and ChaCha20-Poly1305 based on a header field controlled by the attacker can be tricked into interpreting a ChaCha ciphertext as AES-GCM, producing predictable plaintext differences before the tag check fails. In practice the tag check still fails, but the error path may leak timing. Prefer a single AEAD per key scope; if agility is required, bind the algorithm choice into the KDF's <code>info</code> parameter and into the AAD so the wrong algorithm fails closed.</p>
 <h2 id="key-lifecycle-at-fleet-scale">Key lifecycle at fleet scale</h2>
 <p>Encryption is not one key — it is a lifecycle. Every key moves through generation, distribution, use, rotation, and destruction, and each transition is a distributed-systems problem.</p>
-<p><pre><code>flowchart TD
-    A["Generate<br/>crypto/rand 32 bytes<br/>or KMS GenerateDataKey"] --> B["Wrap<br/>KMS Encrypt with KEK<br/>or X25519 hybrid to recipient"]
-    B --> C["Distribute<br/>encDEK alongside ciphertext<br/>or via control plane"]
-    C --> D["Use<br/>KMS Decrypt -> DEK in memory<br/>AEAD encrypt/decrypt<br/>cache DEK with TTL"]
-
-    D --> E{"Rotation trigger?<br/>schedule, compromise, policy"}
-    E -->|"No"| D
-    E -->|"Yes"| F["Generate new KEK version<br/>ReEncrypt encDEKs<br/>dual-read window"]
-    F --> G["Lazy re-encrypt bulk data<br/>on next write or scrubber"]
-    G --> D
-
-    D --> H["Destroy<br/>KMS ScheduleKeyDeletion<br/>or crypto_shred<br/>DEK zeroed from memory"]
-    F -.-> I["Old KEK retained<br/>until all encDEKs migrated<br/>then scheduled deletion"]
-
-    style A fill:#d4edda
-    style H fill:#fff3cd
-    style I fill:#fff3cd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5ffe4833feb0.png" alt="diagram"></div></p>
 <p><strong>Generation</strong> must use the OS CSPRNG (<code>crypto/rand</code>, <code>randombytes_buf</code>). Never derive DEKs from passwords, timestamps, or <code>math/rand</code>. For envelope encryption, generate DEKs locally — do not call KMS to generate every DEK if latency matters; the KMS call is for wrapping, not generation.</p>
 <p><strong>Distribution</strong> of encrypted DEKs is not secret — they are ciphertext. Store them alongside the data they protect (one envelope per row/file). Distribution of <em>KEKs</em> is via the KMS control plane, replicated across regions with the KMS's own consistency guarantees. Do not copy KEK material to application hosts.</p>
 <p><strong>Rotation</strong> has two layers: KEK rotation (re-wrap DEKs, cheap) and DEK rotation (re-encrypt bulk data, expensive). KEK rotation can be frequent (quarterly or on incident); DEK rotation is lazy. Both require a dual-read window where verifiers accept both old and new versions, keyed by <code>kek_version</code> or <code>kid</code> — the same pattern as Ch 2's hash agility and Ch 5's JWT key rotation.</p>
@@ -1888,6 +1794,12 @@ $<span class="w"> </span>openssl<span class="w"> </span>pkeyutl<span class="w"> 
 <p><strong>Blast radius.</strong> One KEK wrapping many DEKs means one KEK compromise exposes many items. Scope KEKs by service, environment, and sensitivity tier — <code>kek/payments/prod</code>, <code>kek/analytics/staging</code> — so compromise of one tier does not affect another. Within a tier, scope DEKs narrowly (per-row or per-file for sensitive data, per-partition for bulk data) to limit how much a single DEK compromise exposes.</p>
 <p><strong>Forward secrecy for stored data.</strong> Unlike transport encryption where ephemeral keys provide forward secrecy directly (EC-DHE in TLS 1.3), stored data has no session to make ephemeral. The closest approximation is prompt DEK rotation and re-encryption after KEK compromise, plus short DEK lifetimes for high-sensitivity data. For messaging (Vol 10), per-message DEKs with prompt deletion after delivery approximate forward secrecy more closely.</p>
 <p><strong>When not to encrypt at the application layer.</strong> If TLS (Vol 3, Ch 6) already protects data in transit and your storage layer provides at-rest encryption (EBS, GCS, database TDE), application-layer field encryption adds defense-in-depth but also complexity, key-management overhead, and query limitations (encrypted fields cannot be indexed or filtered without special constructions like deterministic or order-preserving encryption, both of which weaken security). Encrypt at the application layer when: the storage layer is untrusted or shared, the data must remain opaque to operators/DBAs, or regulatory scope requires it (e.g., PCI DSS cardholder data, HIPAA PHI). Otherwise, transport + storage-layer encryption may be sufficient — see Ch 4 for the decision framework.</p>
+<h4 id="aes-gcm-encrypt-and-decrypt">AES-GCM Encrypt and Decrypt</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35dbb76b05d8.png" alt="diagram"></div></p>
+<h4 id="kms-envelope-for-at-rest">KMS Envelope for At-Rest</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5475a455d41.png" alt="diagram"></div></p>
+<h4 id="encryption-scope-decision">Encryption Scope Decision</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_270b427949cf.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>AEAD (RFC 5116) is the only safe symmetric-encryption interface — it binds confidentiality and integrity with a 16-byte tag and fails closed on any tampering. Use AES-GCM where AES-NI is available and ChaCha20-Poly1305 (RFC 8439) elsewhere; both provide 128-bit security.</li>
@@ -1989,19 +1901,7 @@ Certificate:
 <li>The chain terminates at a trust anchor.</li>
 </ol>
 <p>Most verification failures at 02:00 UTC are item 6: the server sent an incomplete chain (leaf without intermediate), the client has no path to a trust anchor, and the error surfaces as <code>x509: certificate signed by unknown authority</code> (Go) or <code>ERR_CERT_AUTHORITY_INVALID</code> (Chrome). Servers must send the full chain minus the root — <code>leaf + intermediate</code> concatenated — not just the leaf. Clients must not need to fetch intermediates via AIA chasing in the hot path; if they do, the first connection before the fetch fails.</p>
-<p><pre><code>flowchart TD
-    A["Client Hello<br/>supported versions, cipher suites"] --> B["Server Hello + Certificate<br/>leaf + intermediate chain<br/>CertificateVerify (proves possession of leaf private key)<br/>Finished"]
-    B --> C{"Client path validation<br/>RFC 5280 section 6"}
-    C -->|Signature OK, validity OK, SAN matches, KU/EKU OK| D["Chain to trust anchor?<br/>SystemCertPool / Mozilla NSS"]
-    C -->|Any check fails| E["Handshake fails<br/>unknown authority / expired / SAN mismatch / revoked"]
-    D -->|Yes| F["Verify CertificateVerify signature<br/>with leaf SPKI<br/>RFC 8446 section 4.4.3"]
-    D -->|No| E
-    F --> G["Derive traffic secrets<br/>ECDHE + Finished verify<br/>Application data flows"]
-    E --> H["Alert: bad_certificate /<br/>certificate_expired / unknown_ca"]
-
-    style E fill:#ffcccc
-    style G fill:#d4edda
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_65aa9f5b4fcf.png" alt="diagram"></div></p>
 <h2 id="building-a-ca-hierarchy-with-openssl">Building a CA hierarchy with OpenSSL</h2>
 <p>Theory is not enough — you should build a chain once so the abstractions become concrete. What follows is a minimal, correct hierarchy. For production, replace file-based keys with an HSM (YubiHSM, AWS CloudHSM) and OpenSSL's <code>engine</code> or <code>provider</code> interface, but the certificate logic is identical.</p>
 <blockquote>
@@ -2342,25 +2242,7 @@ cat<span class="w"> </span>leaf/leaf.crt<span class="w"> </span>intermediate/int
 <blockquote>
 <p><strong>Version pins.</strong> ACME RFC 8555; Let's Encrypt current chain ISRG Root X1/X2; CA/Browser Forum baseline lifetime is shrinking — ~90 days (Let's Encrypt default) moving toward 47 days and eventually days/hours. Design for 30-day renewal windows regardless of current max lifetime.</p>
 </blockquote>
-<p><pre><code>sequenceDiagram
-    participant Agent as Cert Agent<br/>(certbot / cert-manager / lego)
-    participant ACME as ACME Server<br/>(Let's Encrypt / private CA)
-    participant Challenge as Challenge<br/>(HTTP-01 / DNS-01 / TLS-ALPN-01)
-
-    Agent->>ACME: NewOrder (identifiers: api.example.com)
-    ACME-->>Agent: Authorizations + challenges
-    Agent->>Challenge: Provision challenge token<br/>(HTTP file / DNS TXT / TLS-ALPN cert)
-    Challenge-->>Agent: Ready
-    Agent->>ACME: Notify ready for validation
-    ACME->>Challenge: Validate (HTTP GET / DNS TXT lookup)
-    Challenge-->>ACME: Token matches
-    ACME-->>Agent: Authorization valid
-    Agent->>ACME: Finalize (CSR with SANs)
-    ACME-->>Agent: Certificate (leaf + chain)
-    Agent->>Agent: Install to /etc/certs + reload service
-
-    Note over Agent,ACME: Renewal: repeat before NotAfter<br/>-- typically at 2/3 lifetime (60d for 90d certs)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c4e627a4451d.png" alt="diagram"></div></p>
 <p><strong>Challenge types:</strong></p>
 <table>
 <thead>
@@ -2464,24 +2346,7 @@ cat<span class="w"> </span>leaf/leaf.crt<span class="w"> </span>intermediate/int
 <p>For private PKI (internal mTLS), replace the ACME <code>ClusterIssuer</code> with a <code>CA</code> or <code>Vault</code> issuer pointing at your intermediate, or use SPIRE (Ch 10) for workload certificates with even shorter lifetimes (hours).</p>
 <h2 id="rotation-at-fleet-scale">Rotation at fleet scale</h2>
 <p>A certificate that is valid for 90 days and renewed every 60 days is healthy. A certificate that expires in 20 minutes and is renewed by an automation that pages at 03:00 is an incident waiting to happen. Rotation must be designed as a system, not a cron job.</p>
-<p><pre><code>flowchart TD
-    A["ACME / CA issues new cert<br/>NotBefore=now, NotAfter=+90d"] --> B["Controller writes Secret<br/>api-tls: tls.crt + tls.key + ca.crt"]
-    B --> C["Reloader detects Secret change<br/>stakater/Reloader, rollout restart, or inotify"]
-    C --> D["Hot reload path<br/>nginx reload, Go GetCertificate, Envoy SDS push"]
-    D --> E["Dual-cert window<br/>old cert still valid<br/>clients accept either chain"]
-    E --> F{"All replicas reloaded?<br/>readiness probes + rollout status"}
-    F -->|No| G["Progressing — old replicas serve old cert<br/>new replicas serve new cert<br/>both chains verify to same root"]
-    F -->|Yes| H["Old cert retained until NotAfter<br/>then garbage-collected"]
-
-    I["Expiry monitor<br/>Prometheus x509_exporter<br/>alert 30d / 14d / 7d / 24h"] -.-> J["On-call if automation stalls"]
-    B -.-> I
-    K["Emergency rotation<br/>key compromise"] -.-> A
-    K -.-> L["Revoke old serial<br/>OCSP + config-plane blocklist<br/>force rollout even before expiry"]
-
-    style H fill:#d4edda
-    style J fill:#fff3cd
-    style L fill:#ffcccc
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bbff068f5096.png" alt="diagram"></div></p>
 <h3 id="patterns-that-actually-work">Patterns that actually work</h3>
 <p><strong>1. Hot reload, not restart.</strong> Every TLS server in the fleet must reload certificates without dropping connections.</p>
 <table>
@@ -2556,18 +2421,7 @@ cat<span class="w"> </span>leaf/leaf.crt<span class="w"> </span>intermediate/int
 <p>Do not use the same CA for public-facing and internal certs. Scope and separation limit blast radius exactly as with KEK scoping (Ch 3).</p>
 <h2 id="mtls-in-one-section-bridge-to-ch-10">mTLS in one section (bridge to Ch 10)</h2>
 <p>Mutual TLS reuses the same PKI machinery but verifies certificates in both directions: the server presents a leaf verified against the client's trust store, and the client presents a leaf verified against the server's trust store.</p>
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant S as Server
-
-    C->>S: ClientHello
-    S->>C: ServerHello + Certificate (server leaf+chain) + CertificateRequest
-    C->>C: Validate server chain to client trust anchor
-    C->>S: Certificate (client leaf+chain) + CertificateVerify
-    S->>S: Validate client chain to server trust anchor
-    S->>C: Finished (both sides proven possession)
-    Note over C,S: Application data — both sides authenticated<br/>Authorization still required (see Ch 7)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a3da005d593f.png" alt="diagram"></div></p>
 <p>In Go, enabling mTLS is one field — <code>ClientAuth</code> — but the operational complexity is in trust-store distribution and client certificate provisioning:</p>
 <div class="highlight"><pre><span></span><code><span class="nx">pool</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">x509</span><span class="p">.</span><span class="nx">NewCertPool</span><span class="p">()</span>
 <span class="nx">pem</span><span class="p">,</span><span class="w"> </span><span class="nx">_</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">os</span><span class="p">.</span><span class="nx">ReadFile</span><span class="p">(</span><span class="s">&quot;/etc/certs/internal-root.crt&quot;</span><span class="p">)</span>
@@ -2597,6 +2451,12 @@ cat<span class="w"> </span>leaf/leaf.crt<span class="w"> </span>intermediate/int
 <li><strong>Config-plane propagation for trust anchors.</strong> Rotating a root or adding a new trust anchor requires pushing the new PEM to every verifier — every Go service's <code>SystemCertPool</code> augmentation, every Envoy <code>validation_context</code>, every nginx <code>ssl_trusted_certificate</code>, every Java truststore. Use your config plane (Kubernetes <code>ConfigMap</code> with reload, Envoy xDS, Vault Agent templates) and version the anchor bundle (<code>ca-bundle:v3</code>) so you can roll back.</li>
 <li><strong>Observability.</strong> Export <code>x509_cert_not_after</code>, <code>x509_cert_verify_success</code>, <code>ocsp_staple_expiry</code>, and <code>tls_handshake_errors</code> as metrics from every terminator. Alert on time-to-expiry, stapling staleness, and handshake error rate — a spike in <code>unknown_ca</code> after a deploy is the signal that a chain was broken by the change.</li>
 </ul>
+<h4 id="tls-13-handshake">TLS 1.3 Handshake</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5592dc18f7f2.png" alt="diagram"></div></p>
+<h4 id="certificate-lifecycle">Certificate Lifecycle</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7f235998dc6c.png" alt="diagram"></div></p>
+<h4 id="chain-of-trust">Chain of Trust</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_71eec7542cc1.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Every TLS certificate is an X.509 v3 binding of a public key to identities via SANs — not CN — with KU/EKU and Basic Constraints that restrict how it may be used. Clients validate SAN, validity window, chain signatures, and constraints before trusting a leaf; servers must send leaf + intermediate, not just leaf.</li>
@@ -2650,27 +2510,7 @@ cat<span class="w"> </span>leaf/leaf.crt<span class="w"> </span>intermediate/int
 <p>The artifact that bridges those two phases — cookie or token — and the server's method of verifying it are the design decisions this chapter covers.</p>
 <h2 id="server-side-sessions">Server-side sessions</h2>
 <p>A server-side session treats the cookie as an opaque handle. The browser stores <code>session_id=abc123</code>; the server stores the mapping <code>abc123 → {user_id, roles, issued_at, …}</code> in a durable store. The handle itself carries no meaning and requires a lookup on every request.</p>
-<p><pre><code>sequenceDiagram
-    participant B as Browser
-    participant E as Edge / App
-    participant S as Session Store<br/>(Redis / DB)
-
-    B->>E: POST /login {email, password}
-    E->>E: Verify password (Argon2id, Ch 2)
-    E->>S: Create session {id=random 256b, user_id, expires_at}
-    S-->>E: OK
-    E-->>B: 200 + Set-Cookie: session_id=abc123; HttpOnly; Secure; SameSite=Lax; Path=/; __Host-
-
-    B->>E: GET /api/profile Cookie: session_id=abc123
-    E->>S: GET session:abc123
-    S-->>E: {user_id: 4821, roles: [user]}
-    E->>E: Authorize (Ch 7) + serve
-    E-->>B: 200 {profile}
-
-    B->>E: POST /logout
-    E->>S: DEL session:abc123
-    E-->>B: 200 + Set-Cookie: session_id=; Max-Age=0
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_993e1c0edd01.png" alt="diagram"></div></p>
 <h3 id="generating-and-storing-the-handle">Generating and storing the handle</h3>
 <p>The session ID must be unpredictable — it is a bearer secret equivalent to a password for the life of the session.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Go — correct session ID generation (Go 1.22+)</span>
@@ -3126,25 +2966,7 @@ cat<span class="w"> </span>leaf/leaf.crt<span class="w"> </span>intermediate/int
 <p>Most production systems use <strong>both</strong>: a session cookie for the web app (where instant logout and CSRF discipline matter) and short-lived JWTs for the API layer (where stateless verification at the edge matters). They are not mutually exclusive.</p>
 <h2 id="refresh-tokens-and-the-token-lifecycle">Refresh tokens and the token lifecycle</h2>
 <p>A JWT that is stolen is valid until <code>exp</code>. The mitigation is to keep <code>exp</code> short (5–15 min) and use a <strong>refresh token</strong> — a longer-lived, opaque, revocable handle that can mint new access tokens — so compromise of an access token has a bounded window and refresh can be gated and monitored.</p>
-<p><pre><code>flowchart TD
-    A["Login<br/>password + MFA"] --> B["Issue<br/>access_token: JWT, 10m exp, kid=k1<br/>refresh_token: opaque 256b, 7d exp, stored hash in DB/Redis"]
-    B --> C["Client stores<br/>access_token in memory<br/>refresh_token in HttpOnly Secure cookie<br/>or secure storage (mobile)"]
-    C --> D["API calls<br/>Authorization: Bearer access_token<br/>verified via JWKS, no store lookup"]
-    D --> E{"access_token expired?<br/>401 exp claim"}
-    E -->|No| D
-    E -->|Yes| F["POST /auth/refresh<br/>Cookie: refresh_token=..."]
-    F --> G{"Refresh valid?<br/>exists, not revoked,<br/>not expired, fingerprint matches"}
-    G -->|Yes| H["Issue new access_token<br/>optionally rotate refresh_token<br/>update jti / version"]
-    G -->|No| I["401 — re-authenticate<br/>login required"]
-    H --> D
-
-    J["Logout / password change / compromise"] --> K["Revoke refresh_token<br/>DEL or mark revoked<br/>access_token expires naturally in minutes<br/>or push jti to blocklist for instant kill"]
-    K -.-> D
-
-    style I fill:#ffcccc
-    style H fill:#d4edda
-    style K fill:#fff3cd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d26b462d963d.png" alt="diagram"></div></p>
 <p>Refresh tokens <strong>must</strong> be:</p>
 <ul>
 <li><strong>Opaque and random</strong> — not JWTs. Generated with <code>secrets.token_urlsafe(32)</code> (256 bits), stored as a hash (SHA-256) in the database/Redis, looked up on refresh. Leaking the DB should not leak usable tokens.</li>
@@ -3236,6 +3058,14 @@ Client ─► LB ──┤
 <p><strong>Session hijacking via XSS.</strong> Any XSS that can run <code>fetch(document.cookie)</code> steals <code>HttpOnly</code>-less cookies and, if <code>Secure</code> is missing, can exfiltrate over HTTP. Defense is layered: <code>HttpOnly</code> + <code>Secure</code> + <code>__Host-</code> as above, plus Content Security Policy (Ch 9) to prevent the XSS in the first place, plus short TTLs so stolen sessions die quickly. Audit: no auth cookie may be readable from JS — verify with DevTools → Application → Cookies.</p>
 <p><strong>JWT replay after theft.</strong> Stolen <code>Authorization</code> header from a log file or a compromised edge. Defenses: short <code>exp</code>, DPoP/mTLS binding, do not log <code>Authorization</code> headers, encrypt tokens at rest on the client (mobile Keychain/Keystore, not <code>localStorage</code>), and prefer <code>HttpOnly</code> cookies for refresh tokens so JS cannot read them.</p>
 <p><strong>Key rotation without <code>kid</code>.</strong> New signing key deployed, old key deleted, every in-flight token fails verification and every user is logged out. Defense: publish both keys in JWKS with distinct <code>kid</code>s, issue new tokens with the new <code>kid</code>, keep the old key verifiable until every token signed with it has expired (max <code>exp</code> window), then remove it. This is the same dual-read pattern as Ch 3 and Ch 4. Monitor <code>kid</code> distribution in issued tokens to know when the old <code>kid</code> is safe to retire.</p>
+<h4 id="session-vs-jwt-decision">Session vs JWT Decision</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_512c058b8f82.png" alt="diagram"></div></p>
+<h4 id="login-and-session-creation">Login and Session Creation</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_810c6b90fbca.png" alt="diagram"></div></p>
+<h4 id="jwt-validation-via-jwks">JWT Validation via JWKS</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_04f66620b817.png" alt="diagram"></div></p>
+<h4 id="refresh-token-rotation">Refresh Token Rotation</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0674ef2a4206.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Server-side sessions (opaque handle + store lookup) and JWTs (self-contained signed object, RFC 7519) are not rivals — they are different trade-offs. Sessions give instant revocation at the cost of a store on the hot path; JWTs give stateless verification at the cost of delayed revocation bounded by <code>exp</code>. Most fleets use sessions for web (cookies) and short-lived JWTs for APIs.</li>
@@ -3374,34 +3204,7 @@ Client ─► LB ──┤
 <p>If your design includes <code>response_type=token</code> or <code>grant_type=password</code>, stop and redesign around authorization code + PKCE.</p>
 <h2 id="authorization-code-pkce-step-by-step">Authorization code + PKCE, step by step</h2>
 <p>PKCE (Proof Key for Code Exchange, RFC 7636, pronounced "pixy") closes the code-interception attack: even if an attacker intercepts the authorization code in the redirect, they cannot exchange it without the <code>code_verifier</code> that never left the legitimate client's memory.</p>
-<p><pre><code>sequenceDiagram
-    participant U as User (Browser)
-    participant C as Client<br/>(app.example.com)
-    participant AS as Authorization Server<br/>(auth.example.com)
-    participant RS as Resource Server<br/>(api.example.com)
-
-    Note over C: PKCE setup:<br/>verifier = random 43-128 chars (256b)<br/>challenge = BASE64URL(SHA256(verifier))<br/>method = S256
-    C->>U: Redirect 302 to AS<br/>/authorize?response_type=code<br/>&client_id=app123<br/>&redirect_uri=https://app.example.com/callback<br/>&scope=openid profile read:orders<br/>&state=csrf_random_256b<br/>&code_challenge=E9Melhoa2...<br/>&code_challenge_method=S256<br/>&nonce=n-0S6_WzA2Mj
-
-    U->>AS: GET /authorize (with session cookie)
-    AS->>U: Authenticate if needed (Ch 5)<br/>+ Consent: "app wants read:orders — Allow?"
-    U->>AS: Allow
-    AS->>AS: Create code: opaque 256b, TTL 60s<br/>bind to {client_id, redirect_uri, challenge, nonce, user_id}
-    AS->>U: Redirect 302 to Client<br/>https://app.example.com/callback?code=SplxlOBeZQ...&state=csrf_random_256b
-
-    U->>C: GET /callback?code=SplxlOBeZQ...&state=csrf_random_256b
-    C->>C: Verify state == stored state<br/>reject on mismatch (CSRF)
-    C->>AS: POST /token (back-channel, TLS client auth or none for public client)<br/>grant_type=authorization_code<br/>&code=SplxlOBeZQ...<br/>&redirect_uri=https://app.example.com/callback<br/>&code_verifier=dBjftJeZ4CVP...<br/>&client_id=app123 (+ client_secret if confidential)
-
-    AS->>AS: Validate:<br/>code exists + not expired + not replayed<br/>redirect_uri exact match<br/>SHA256(verifier) == challenge
-    AS->>C: 200 {access_token: JWT 10m, refresh_token: opaque 7d,<br/>id_token: JWT (if openid scope), token_type: Bearer, expires_in: 600}
-
-    C->>RS: GET /orders Authorization: Bearer <access_token>
-    RS->>RS: Validate JWT: signature via JWKS, exp, aud=api, scope contains read:orders
-    RS-->>C: 200 {orders: [...]}
-
-    Note over C,AS: Refresh (no user interaction):<br/>C->AS: POST /token grant_type=refresh_token&refresh_token=...<br/>AS->C: new access_token (+ optionally new refresh_token, old one invalidated)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f30ed1654f38.png" alt="diagram"></div></p>
 <h3 id="why-every-field-matters">Why every field matters</h3>
 <table>
 <thead>
@@ -3493,6 +3296,7 @@ Client ─► LB ──┤
 <span class="w">    </span><span class="s">&quot;fmt&quot;</span>
 <span class="w">    </span><span class="s">&quot;log&quot;</span>
 <span class="w">    </span><span class="s">&quot;net/http&quot;</span>
+<span class="w">    </span><span class="s">&quot;strings&quot;</span>
 <span class="w">    </span><span class="s">&quot;sync&quot;</span>
 <span class="w">    </span><span class="s">&quot;time&quot;</span>
 
@@ -3696,21 +3500,7 @@ Client ─► LB ──┤
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span>
 <span class="p">}</span>
 <span class="kd">func</span><span class="w"> </span><span class="nx">splitScope</span><span class="p">(</span><span class="nx">s</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">out</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">p</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">base64</span><span class="p">.</span><span class="nx">StdEncoding</span><span class="p">.</span><span class="nx">EncodeToString</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">_</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">p</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="c1">// Simple split on space — replace with strings.Fields in production</span>
-<span class="w">    </span><span class="nx">start</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39; &#39;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="nx">start</span><span class="w"> </span><span class="p">&lt;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nx">out</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">out</span><span class="p">,</span><span class="w"> </span><span class="nx">s</span><span class="p">[</span><span class="nx">start</span><span class="p">:</span><span class="nx">i</span><span class="p">])</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">            </span><span class="nx">start</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">out</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">strings</span><span class="p">.</span><span class="nx">Fields</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
 <span class="p">}</span>
 
 <span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -3873,19 +3663,7 @@ Client ─► LB ──┤
 </code></pre></div>
 
 <h3 id="oidc-discovery-as-a-distributed-contract">OIDC discovery as a distributed contract</h3>
-<p><pre><code>flowchart TD
-    A["Issuer URL<br/>https://auth.example.com"] --> B["/.well-known/openid-configuration<br/>RFC 8414 / OIDC Discovery<br/>Cache-Control: public, max-age=600"]
-    B --> C["authorization_endpoint<br/>token_endpoint<br/>userinfo_endpoint"]
-    B --> D["jwks_uri<br/>https://auth.example.com/.well-known/jwks.json<br/>Cache-Control: public, max-age=600"]
-    D --> E["Client: kid discovery<br/>fetch + cache JWKS<br/>refresh on kid miss"]
-    D --> F["RS: kid discovery<br/>fetch + cache JWKS<br/>refresh on kid miss"]
-    G["KMS/HSM signing key<br/>kid=k1 active, k2 next<br/>overlap window = max exp"] -.-> D
-    H["CDN / edge cache<br/>replicated, no AS single point"] -.-> B
-    H -.-> D
-
-    style G fill:#fff3cd
-    style H fill:#d4edda
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0ca4d64eac15.png" alt="diagram"></div></p>
 <p>Clients and RSs discover endpoints and keys from the issuer URL alone — no hardcoded key material. The discovery document and JWKS are CDN-cachable static JSON; <code>kid</code> rotation is additive and observed as a distribution histogram across issued tokens before the old <code>kid</code> is retired (see Ch 5). For private PKI, the same pattern serves <code>/.well-known/openid-configuration</code> from the internal AS with a private issuer URL.</p>
 <h2 id="token-design-for-the-fleet">Token design for the fleet</h2>
 <h3 id="jwt-access-tokens-rfc-9068-vs-opaque-tokens">JWT access tokens (RFC 9068) vs opaque tokens</h3>
@@ -3995,6 +3773,14 @@ Client ─► AS ───┤                                         ├─► 
 <p><strong>Refresh token replay / theft.</strong> A stolen refresh token is replayed to mint new access tokens indefinitely. Defenses layered: bind refresh tokens to a client fingerprint and <code>aud</code>, rotate on each use with a short grace window, detect replay outside the window and revoke the token family, keep refresh lifetime bounded (7–30 d), and require re-authentication for sensitive scopes. Monitor <code>token_refresh_rate</code> per client/user — a spike is the signal.</p>
 <p><strong>Confused deputy / audience confusion.</strong> A token issued for <code>aud: analytics</code> is accepted by <code>aud: payments</code> because the RS skips <code>aud</code> validation. Defense: every RS validates <code>aud</code> == itself and <code>scope</code> contains the required scope for the endpoint — fail closed on missing or mismatched <code>aud</code>/<code>scope</code>. Test with a token for one RS against another in CI.</p>
 <p><strong>Authorization code replay.</strong> The code is used twice — the legitimate client and an attacker both exchange it. Defense: single-use codes deleted on first read (the <code>delete(codes, codeStr)</code> in the AS above), with the first exchange winning; the second gets <code>invalid_grant</code>. Log and alert on replay attempts — they are near-certain attacks or bugs.</p>
+<h4 id="authorization-code-with-pkce">Authorization Code with PKCE</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c6725eb2029.png" alt="diagram"></div></p>
+<h4 id="client-credentials-flow">Client Credentials Flow</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_893a40557361.png" alt="diagram"></div></p>
+<h4 id="oidc-id-token-validation">OIDC ID Token Validation</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c24c8abf1f45.png" alt="diagram"></div></p>
+<h4 id="token-exchange-and-revocation">Token Exchange and Revocation</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3aa9215e6e21.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>OAuth 2.0 (RFC 6749/6750) delegates authority via scoped, revocable access tokens; OIDC (1.0) adds identity via ID tokens and Discovery. The access token is for the RS (<code>aud: api</code>, <code>scope</code>-checked), the ID token is for the client (<code>aud: client_id</code>, <code>nonce</code>-checked) — they are not interchangeable.</li>
@@ -4048,26 +3834,7 @@ Client ─► AS ───┤                                         ├─► 
 </code></pre></div>
 
 <p>In a fleet, <code>canRead</code> cannot be a local function. The data it needs — roles, attributes, relationships — lives in other services, changes concurrently, and must be evaluated with a bounded staleness guarantee. The enforcement point (PEP) and the decision point (PDP) separate.</p>
-<p><pre><code>sequenceDiagram
-    participant Client
-    participant PEP as PEP (API Gateway / Service)
-    participant PDP as PDP (AuthZ Service)
-    participant Store as Policy / Tuple Store
-
-    Client->>PEP: GET /documents/abc123<br/>Authorization: Bearer ...
-    PEP->>PEP: Authenticate (Ch 5/6)<br/>sub=user:4821 aud=api
-    PEP->>PDP: Check(principal=user:4821,<br/>action=read, resource=document:abc123)
-    PDP->>Store: Evaluate policy / tuples<br/>(+ cached snapshot / Zookie)
-    Store-->>PDP: Tuples, roles, attributes
-    PDP-->>PEP: allow | deny (+ reason, cache TTL)
-    alt allow
-        PEP->>PEP: Execute handler, filter fields
-        PEP-->>Client: 200 + document
-    else deny
-        PEP-->>Client: 403 Forbidden (no existence oracle)
-    end
-    Note over PEP,PDP: PEP never caches allow indefinitely<br/>Decision TTL is bounded (seconds)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cd4be0748b30.png" alt="diagram"></div></p>
 <p>Two security properties govern the PEP/PDP contract:</p>
 <ol>
 <li><strong>Fail-closed.</strong> Any error in the PDP (timeout, store unavailable) denies by default. Fail-open authorization is a bypass.</li>
@@ -4085,23 +3852,7 @@ Client ─► AS ───┤                                         ├─► 
 <li>A <strong>session</strong> activates a subset of a user's roles (relevant when role sets are large or mutually exclusive constraints exist).</li>
 </ul>
 <p>The payoff is administrative: when a permission changes, you update the role, not every user.</p>
-<p><pre><code>flowchart TD
-    U1["user:alice"] --> R1["role:editor"]
-    U1 --> R2["role:billing:viewer"]
-    U2["user:bob"] --> R1
-    U3["user:carol"] --> R3["role:org_admin"]
-
-    R1 --> P1["document:read"]
-    R1 --> P2["document:write"]
-    R2 --> P3["invoice:read"]
-    R3 --> P1
-    R3 --> P2
-    R3 --> P4["org:manage"]
-    R3 --> P5["member:invite"]
-
-    style R1 fill:#d4edda
-    style R3 fill:#fff3cd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2d96377ae228.png" alt="diagram"></div></p>
 <h3 id="implementing-rbac-in-a-service">Implementing RBAC in a service</h3>
 <p>The simplest correct implementation is a table plus middleware — no external PDP required — and is the right starting point for most teams.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">-- Postgres 16 — RBAC core tables</span>
@@ -4302,25 +4053,7 @@ Client ─► AS ───┤                                         ├─► 
 </code></pre></div>
 
 <p>Deployment for ABAC at scale:</p>
-<p><pre><code>flowchart LR
-    subgraph Control["Control Plane"]
-        Git["Policy Git Repo<br/>+ CI (opa test, cedar validate)"]
-        CI["Bundle Builder<br/>+ signing (Sigstore)"]
-        Registry["Bundle Registry<br/>S3 / OCI"]
-    end
-    subgraph Fleet["Fleet"]
-        Sidecar["OPA Sidecar<br/>per pod / per node"]
-        Envoy["Envoy ext_authz → OPA"]
-        App["App PDP library<br/>(Cedar embedded)"]
-    end
-    Git --> CI --> Registry --> Sidecar
-    Registry --> App
-    Sidecar --> Envoy
-    App --> App
-
-    style Git fill:#d4edda
-    style Registry fill:#d4edda
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cfe0677181b1.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Bundle distribution</strong> is the consistency problem. OPA polls bundles over HTTPS with ETag; Cedar libraries reload from S3. Use bundle signing and <code>bundle.activate</code> only after <code>opa test</code> passes in CI. Canary bundle rollout per region before fleet-wide.</li>
 <li><strong>Latency.</strong> OPA sidecar adds ~1–3 ms p50 per check on the same host (Unix socket preferred). For p99-sensitive paths, evaluate inline (Cedar embedded library, zero hop) or batch checks.</li>
@@ -4340,21 +4073,7 @@ Client ─► AS ───┤                                         ├─► 
 </code></pre></div>
 
 <p>Schema defines how relations compose — union, intersection, exclusion, and indirection through other relations:</p>
-<p><pre><code>graph TD
-    A["document:abc"]
-    A -->|"parent"| F["folder:marketing"]
-    F -->|"parent"| O["org:acme"]
-    F -->|"viewer"| T["team:design"]
-    T -->|"member"| U2["user:bob"]
-    A -->|"owner"| U1["user:alice"]
-    A -->|"viewer"| U3["user:carol (direct)"]
-
-    U1 -.->|"owner ⇒ viewer (inherited)"| A
-
-    style A fill:#d4edda
-    style F fill:#fff3cd
-    style T fill:#dff0ff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_faa5d65cf688.png" alt="diagram"></div></p>
 <p>Reading the graph: <code>user:bob</code> has <code>viewer</code> on <code>document:abc</code> not because of a direct tuple, but because <code>document:abc#parent@folder:marketing</code>, <code>folder:marketing#viewer@team:design</code>, and <code>team:design#member@user:bob</code> chain transitively. This transitivity is declared in schema, evaluated by the server.</p>
 <h3 id="spicedb-schema">SpiceDB schema</h3>
 <p>SpiceDB schemas (v1.35+ DSL, validated with <code>zed validate</code>) declare object types, relations, and permission composition:</p>
@@ -4456,26 +4175,7 @@ zed<span class="w"> </span>permission<span class="w"> </span>check<span class="w
 <p>This keeps the tuple store from needing background reapers for expiry — the condition is evaluated live, and revocation is a tuple delete.</p>
 <h3 id="consistency-zookies-and-at_least_as_fresh">Consistency: Zookies and <code>at_least_as_fresh</code></h3>
 <p>Zanzibar's central contribution is a consistency token — the <strong>Zookie</strong> (SpiceDB's <code>ZedToken</code>, an opaque string encoding a datastore revision). Every write returns a Zookie; every read accepts one as a freshness bound:</p>
-<p><pre><code>sequenceDiagram
-    participant App
-    participant SpiceDB
-    participant Store as Datastore (Postgres/CRDB/Spanner)
-
-    App->>SpiceDB: Write(document:abc#viewer@user:eve)
-    SpiceDB->>Store: INSERT tuple, bump revision
-    Store-->>SpiceDB: revision=1042
-    SpiceDB-->>App: WrittenAt=Zookie(1042)
-
-    App->>SpiceDB: Check(document:abc#view@user:eve<br/>at_least_as_fresh=Zookie(1042))
-    SpiceDB->>Store: Read at revision ≥ 1042 (strong read)
-    Store-->>SpiceDB: tuples @ 1042
-    SpiceDB-->>App: true (newly-written tuple is visible)
-
-    App->>SpiceDB: Check(document:abc#view@user:eve<br/>fully_consistent=true)
-    Note over App,SpiceDB: Alternative: always strong — higher latency
-    App->>SpiceDB: Check(..., at_least_as_fresh=Zookie(cached))
-    Note over App,SpiceDB: Cache Zookie from last write in session<br/>stale reads are bounded by caller's own writes
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bed318688177.png" alt="diagram"></div></p>
 <p>In practice:</p>
 <ul>
 <li><strong>After a write you control</strong> (share a document, revoke access), pass the returned Zookie as <code>at_least_as_fresh</code> on the next check. The user who just shared a doc sees it shared immediately — causal consistency without paying strong-read latency on every check.</li>
@@ -4520,37 +4220,7 @@ zed<span class="w"> </span>permission<span class="w"> </span>lookup-resources<sp
 </code></pre></div>
 
 <h3 id="distributed-zanzibar-at-scale">Distributed Zanzibar at scale</h3>
-<p><pre><code>flowchart TB
-    subgraph Edge["Edge / App Tier"]
-        App1["App Pod"]
-        App2["App Pod"]
-        Cache["Zookie Cache<br/>(per-session)"]
-    end
-    subgraph AuthZ["AuthZ Tier (stateless, HPA)"]
-        S1["SpiceDB Replica"]
-        S2["SpiceDB Replica"]
-        S3["SpiceDB Replica"]
-        Router["Consistency Router<br/>freshness → replica vs primary"]
-    end
-    subgraph Store["Datastore Tier"]
-        Primary["Postgres 16 / CRDB 24 / Spanner<br/>Primary (strong reads)"]
-        Replica["Read Replica(s)<br/>async replication"]
-        Index["Tuple Indexes<br/>(object, relation, subject)"]
-    end
-
-    App1 --> Router
-    App2 --> Router
-    Cache -.-> App1
-    Router --> S1 & S2 & S3
-    S1 --> Replica
-    S2 --> Replica
-    S3 --> Primary
-    Replica -.->|"replication lag<br/>monitor: replica_lag_ms"| Primary
-    Index -.-> Store
-
-    style Primary fill:#ffcccc
-    style Replica fill:#d4edda
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c290eb9a7a42.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Stateless serving tier.</strong> SpiceDB replicas are stateless — they dispatch graph traversal (Watch + dispatch) across the cluster. Scale with HPA on <code>spicedb_check_latency_p99</code>. The bottleneck is the datastore, not the dispatch tier.</li>
 <li><strong>Datastore choice.</strong> Postgres 16 (single-region, simpler), CockroachDB 24.x or Spanner (multi-region, strong reads without a single primary). SpiceDB's datastore interface abstracts this; choose by region requirements.</li>
@@ -4647,6 +4317,10 @@ zed<span class="w"> </span>permission<span class="w"> </span>lookup-resources<sp
 <li><strong>Bulkhead the PDP.</strong> The authz tier is a hard dependency — every request validates against it. Apply the same resilience patterns as any critical dependency (Vol 7, Ch 11; Vol 11, Ch 10): circuit breaker (fail-closed), bulkhead (isolate authz thread pool), timeout (<code>50 ms</code> budget for a check, <code>200 ms</code> for <code>LookupResources</code>), and a degraded mode only where explicitly approved (e.g., read-only cache for <code>view</code> but never for <code>delete</code>). A PDP outage must not become an authz bypass.</li>
 <li><strong>Observability.</strong> Emit <code>authz_check_total{result=allow|deny, permission, cached}</code>, <code>authz_check_latency_ms</code>, <code>spicedb_datastore_replica_lag_ms</code>, and <code>authz_policy_version</code>. Alert on <code>deny</code> rate spikes (misconfigured rollout), <code>p99</code> latency regression (missing index), and replica lag exceeding the decision TTL.</li>
 </ul>
+<h4 id="rbac-vs-abac-vs-rebac">RBAC vs ABAC vs ReBAC</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d33e331508be.png" alt="diagram"></div></p>
+<h4 id="opa-policy-evaluation">OPA Policy Evaluation</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_78170b30cd15.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Authorization answers <code>principal × action × resource × context → allow|deny</code>. Authentication (Ch 5–6) is a prerequisite, not a substitute — validating a token's <code>aud</code>/<code>exp</code>/<code>scope</code> is only the input to the decision.</li>
@@ -4751,30 +4425,7 @@ zed<span class="w"> </span>permission<span class="w"> </span>lookup-resources<sp
 <p>Rule of thumb: if the secret <em>can</em> be made dynamic and short-lived, it <em>should</em> be. Static secrets are technical debt that accrues breach risk with age.</p>
 <h2 id="envelope-encryption-how-secrets-rest-safely">Envelope encryption: how secrets rest safely</h2>
 <p>A secrets manager does not just "encrypt the database" — it uses <strong>envelope encryption</strong>, the same KEK/DEK hierarchy from Ch 3, now applied to the storage layer.</p>
-<p><pre><code>flowchart TB
-    subgraph KMS["KMS / HSM (Root of Trust)"]
-        KEK["KEK (never leaves KMS)<br/>e.g., AWS KMS CMK, GCP KMS, HSM"]
-    end
-    subgraph Vault["Vault Barrier"]
-        DEK["DEK (data encryption key)<br/>AES-256-GCM, rotated periodically"]
-        Barrier["Barrier-encrypted storage<br/>Raft / etcd / Consul"]
-    end
-    subgraph Payload["Secret Payload"]
-        S["Secret value<br/>db_password=..."]
-        Enc["AEAD ciphertext<br/>nonce + ciphertext + tag"]
-    end
-
-    KEK -- "wraps (Encrypt API)" --> DEK
-    DEK -- "AEAD encrypts" --> Enc
-    Enc --> Barrier
-    S --> Enc
-
-    KMS -.->|"auto-unseal<br/>on restart"| Vault
-
-    style KEK fill:#ffcccc
-    style DEK fill:#fff3cd
-    style Enc fill:#d4edda
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_baafad555293.png" alt="diagram"></div></p>
 <ul>
 <li>The <strong>KEK</strong> lives in a KMS/HSM and never leaves it. Vault calls <code>Encrypt</code>/<code>Decrypt</code> via the KMS API. Compromise of the Vault host does not expose the KEK.</li>
 <li>The <strong>DEK</strong> (Vault calls it the <em>barrier key</em>) encrypts the Raft storage. Rotating the DEK re-wraps storage without re-encrypting every secret — only the DEK wrapper changes.</li>
@@ -4795,34 +4446,7 @@ vault<span class="w"> </span>write<span class="w"> </span>transit/decrypt/app-de
 <p>This keeps DEKs out of application memory and makes rotation a Vault API call, not a re-encryption migration.</p>
 <h2 id="vault-as-the-control-plane">Vault as the control plane</h2>
 <p>HashiCorp Vault (1.15+; OpenBao is the open-source fork under the same API — either is fine) is the de facto control plane. Its architecture maps directly to the lifecycle above.</p>
-<p><pre><code>flowchart TB
-    subgraph Clients["Clients"]
-        App["App Workload<br/>(K8s Pod, VM, Lambda)"]
-        CI["CI Runner"]
-        Human["Operator<br/>(break-glass)"]
-    end
-    subgraph Vault["Vault Cluster (HA, Raft)"]
-        Auth["Auth Methods<br/>k8s / jwt / approle / aws / userpass"]
-        Policy["Policies (HCL)<br/>path-based ACL"]
-        Audit["Audit Devices<br/>file / syslog / socket"]
-        Engines["Secrets Engines<br/>kv-v2 / transit / pki / database / aws"]
-        Lease["Lease Manager<br/>TTL, renewal, revocation"]
-    end
-    subgraph Storage["Storage"]
-        Raft["Raft Integrated Storage<br/>(replicated, bolt)"]
-        KMS2["KMS Auto-Unseal"]
-    end
-
-    App --> Auth --> Policy --> Engines --> Lease --> Audit
-    CI --> Auth
-    Human --> Auth
-    Engines --> Raft
-    Vault -.-> KMS2
-
-    style Auth fill:#dff0ff
-    style Policy fill:#fff3cd
-    style Audit fill:#d4edda
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_22f3081da9d0.png" alt="diagram"></div></p>
 <h3 id="policies-version-pinned-hcl-vault-115">Policies (version-pinned: HCL, Vault 1.15+)</h3>
 <p>Policies are path-based ACLs. Every token's capabilities derive from exactly the policies attached to it — no policy, no access.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># vault/policy/app-payments.hcl — scoped to one service, one env</span>
@@ -5107,21 +4731,7 @@ vault<span class="w"> </span>write<span class="w"> </span>database/roles/payment
 <li><strong>Staggered.</strong> Rotate one shard/region/service at a time. A fleet-wide rotation that breaks one service should not break all of them simultaneously.</li>
 <li><strong>Lease-based where possible.</strong> Dynamic credentials (Vault database engine) rotate by construction — the lease <em>is</em> the rotation. Prefer leases over cron.</li>
 </ol>
-<p><pre><code>sequenceDiagram
-    participant Rotator as Rotation Controller
-    participant Vault
-    participant DB as Postgres
-    participant App as App Pods (rolling)
-
-    Rotator->>Vault: Generate new password (N+1)<br/>kv put / kv patch
-    Vault-->>Rotator: version N+1, Zookie/revision
-    Rotator->>DB: ALTER USER app WITH PASSWORD 'N+1'<br/>(both N and N+1 accepted during window)
-    Note over DB: Dual-password window (e.g., 10m)<br/>some extensions support this natively;<br/>otherwise keep two roles active
-    Rotator->>App: Rolling update — new pods read N+1<br/>old pods still on N, both valid
-    App-->>Rotator: All pods on N+1 (readiness probes)
-    Rotator->>Vault: Revoke / delete version N<br/>DB: drop old password
-    Note over Rotator,App: Staggered per shard/region
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_44b84189f833.png" alt="diagram"></div></p>
 <h3 id="concrete-rotation-patterns">Concrete rotation patterns</h3>
 <p><strong>Database — dynamic credentials (preferred, no rotation needed beyond lease):</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Go — Vault database dynamic creds with lease renewal</span>
@@ -5244,32 +4854,7 @@ gitleaks<span class="w"> </span>detect<span class="w"> </span>--source<span clas
 <p>When a leak is found, the runbook is the same every time: <strong>rotate, do not redact.</strong> Rewriting git history (<code>filter-repo</code>) without rotating leaves the secret valid in every clone, fork, and CI cache that already fetched it. Rotate first, then clean history to reduce future exposure.</p>
 <h2 id="vault-at-scale-ha-replication-and-the-availability-trade-off">Vault at scale: HA, replication, and the availability trade-off</h2>
 <p>Vault is a hard dependency — if Vault is down, no pod can mint a new database password, no sidecar can render a new secret, and no rotation can complete. Design for its availability explicitly.</p>
-<p><pre><code>flowchart TB
-    subgraph Primary["Primary Cluster (prod-us)"]
-        V1["Vault Active<br/>(Raft leader)"]
-        V2["Vault Standby"]
-        V3["Vault Standby"]
-        Raft1["Raft Storage<br/>(replicated)"]
-        KMS1["KMS Auto-Unseal<br/>(us KMS)"]
-        V1 --> Raft1
-        V2 --> Raft1
-        V3 --> Raft1
-        V1 -.-> KMS1
-    end
-    subgraph DR["DR / Secondary (prod-eu)"]
-        VS["Vault Secondary<br/>(replication follower)"]
-        Raft2["Raft Storage (replicated)"]
-        KMS2["KMS Auto-Unseal<br/>(eu KMS)"]
-        VS --> Raft2
-        VS -.-> KMS2
-    end
-    Primary -.->|"Vault Replication<br/>(performance + DR)"| DR
-    V1 --> App1["App Fleet"]
-    VS --> App2["EU Fleet<br/>(local reads)"]
-
-    style V1 fill:#d4edda
-    style VS fill:#fff3cd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b27025d09500.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Raft integrated storage</strong> (Vault 1.15+ default) — no external Consul/etcd. Three or five voters, <code>retry_join</code> for auto-clustering, <code>autopilot</code> for dead-server cleanup. Back up Raft snapshots to S3/GCS (<code>vault operator raft snapshot save</code>).</li>
 <li><strong>Performance replication</strong> — secondary clusters serve reads locally (KV, Transit) without forwarding to primary. Required for multi-region latency — a <code>5 ms</code> local read vs <code>80 ms</code> cross-region.</li>
@@ -5340,6 +4925,12 @@ gitleaks<span class="w"> </span>detect<span class="w"> </span>--source<span clas
 <li><strong>Region affinity for latency.</strong> A service in <code>eu-west-1</code> that fetches secrets from <code>us-east-1</code> Vault pays cross-region latency on every cold start and renewal. Performance replication or a regional Vault cluster is not optional for multi-region fleets.</li>
 <li><strong>Audit as a forensic requirement.</strong> Every read, write, and lease revocation must be auditable (Vault audit device → SIEM). In a breach, "which workloads read this secret, when, from which IP, with which token?" is the first question. If you cannot answer it, the blast radius is "everything that could have."</li>
 </ul>
+<h4 id="secrets-retrieval-with-sidecar">Secrets Retrieval with Sidecar</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3f27a8230b12.png" alt="diagram"></div></p>
+<h4 id="secret-rotation-lifecycle">Secret Rotation Lifecycle</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ce735321136e.png" alt="diagram"></div></p>
+<h4 id="transit-encryption">Transit Encryption</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5f66ee618da1.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>A secret's lifecycle is generate → store → distribute → use → rotate → revoke/audit. Optimizing only "store" (putting it in a vault) while leaving distribution as env vars and rotation as manual is the common failure mode.</li>
@@ -5455,26 +5046,7 @@ gitleaks<span class="w"> </span>detect<span class="w"> </span>--source<span clas
 <li><strong>API8 Security Misconfiguration</strong> — excessive CORS, missing rate limits (Vol 7, Ch 9), verbose GraphQL introspection.</li>
 </ul>
 <p>The Top 10 is a <em>prioritization</em> tool, not a checklist. Use it to allocate review and testing effort: every handler gets injection + access-control review; every outbound fetch gets SSRF review; every deserialization boundary gets a codec review.</p>
-<p><pre><code>flowchart TB
-    Attacker["Attacker-controlled input<br/>query param, body, header, URL"]
-
-    Attacker --> A03["A03 Injection<br/>SQL / NoSQL / LDAP / OS / template"]
-    Attacker --> A10["A10 SSRF<br/>fetch(URL) → metadata service"]
-    Attacker --> A08["A08 Deserialization<br/>pickle / yaml.load / Java readObject"]
-    Attacker --> A01["A01 / API1 BOLA<br/>GET /docs/{id} without authz"]
-    Attacker --> A03b["A03 XSS (stored/reflected)<br/>output without encoding"]
-
-    A03 --> DB[("Database / OS")]
-    A10 --> Meta[("169.254.169.254<br/>cloud metadata")]
-    A08 --> RCE["Remote Code Execution"]
-    A01 --> Leak["Data Leak"]
-    A03b --> Victim["Victim Browser"]
-
-    style A03 fill:#ffcccc
-    style A10 fill:#ffcccc
-    style A08 fill:#ffcccc
-    style RCE fill:#ffcccc
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b165e0cf29b5.png" alt="diagram"></div></p>
 <h2 id="injection-the-failure-to-separate-code-from-data">Injection: the failure to separate code from data</h2>
 <p>Every injection flaw has the same root cause: <strong>user input is concatenated into a string that is later parsed as code</strong> — SQL, shell, LDAP filter, XPath, template directive, or HTML. The fix is the same in every case: <strong>never build code by string interpolation; use a parameterized API that keeps code and data on separate channels.</strong></p>
 <p>Escaping and blocklisting are not fixes — they are filters that the next encoding bypasses. Parameterization is construction.</p>
@@ -5576,24 +5148,7 @@ gitleaks<span class="w"> </span>detect<span class="w"> </span>--source<span clas
 <li><strong>Internal services</strong> — <code>http://internal-payments.prod.svc.cluster.local/admin</code>, Redis, Elasticsearch, or any unauthenticated internal endpoint reachable from the fetching pod.</li>
 <li><strong>File scheme / gopher / dict</strong> — <code>file:///etc/passwd</code>, <code>gopher://</code> (if the HTTP client supports it) — depending on client library.</li>
 </ul>
-<p><pre><code>sequenceDiagram
-    participant A as Attacker
-    participant App as App Server<br/>(SSRF-vulnerable)
-    participant Meta as Cloud Metadata<br/>169.254.169.254
-    participant Internal as Internal Service<br/>(payments-admin)
-
-    A->>App: POST /fetch { url: "http://169.254.169.254/latest/meta-data/iam/security-credentials/" }
-    App->>Meta: GET /latest/meta-data/... (from inside VPC)
-    Meta-->>App: AKIA... + SecretAccessKey + Token
-    App-->>A: 200 + credentials (reflected or blind)
-
-    A->>App: POST /fetch { url: "http://payments-admin.prod.svc.cluster.local/debug/env" }
-    App->>Internal: GET /debug/env (no auth — trusted network)
-    Internal-->>App: env dump with DB passwords
-    App-->>A: 200 + secrets
-
-    Note over App,Meta: Fix: deny private/link-local ranges<br/>+ IMDSv2 (token) + egress allowlist
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5ea67671deec.png" alt="diagram"></div></p>
 <h3 id="why-naive-validation-fails">Why naive validation fails</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// ❌ BROKEN — blocklist of private IPs, checked before DNS — bypassed by:</span>
 <span class="c1">// - DNS rebinding: attacker domain resolves to 1.2.3.4 (allowed) then to 169.254.169.254 on fetch</span>
@@ -5940,31 +5495,7 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 </ul>
 <h2 id="verification-sast-dast-iast-and-fuzzing">Verification: SAST, DAST, IAST, and fuzzing</h2>
 <p>No single verification method catches all AppSec bugs. Layer them by phase and cost:</p>
-<p><pre><code>flowchart LR
-    subgraph PreCommit["Pre-commit / IDE"]
-        IDE["IDE plugin<br/>Semgrep / CodeQL query"]
-    end
-    subgraph CI["CI (required checks)"]
-        SAST["SAST<br/>Semgrep 1.60+<br/>CodeQL 2.17+<br/>SonarQub 10+"]
-        SCA["SCA<br/>osv-scanner<br/>grype / trivy"]
-        Secrets["Secrets<br/>gitleaks 8.18+<br/>trufflehog 3.70+"]
-    end
-    subgraph Staging["Staging / Preview"]
-        DAST["DAST<br/>OWASP ZAP 2.15+<br/>Nuclei"]
-        Fuzz["Fuzzing<br/>go test -fuzz<br/>libFuzzer / Jazzer"]
-        IAST["IAST<br/>Contrast / Seeker<br/>(optional)"]
-    end
-    subgraph Prod["Production"]
-        WAF["WAF / RASP<br/>(defense in depth)"]
-        Mon["Monitoring<br/>authz deny rate<br/>injection probe logs"]
-    end
-
-    PreCommit --> CI --> Staging --> Prod
-
-    style SAST fill:#d4edda
-    style DAST fill:#fff3cd
-    style Fuzz fill:#dff0ff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6cd882fa608a.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -6048,6 +5579,14 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 <li><strong>Centralized logging for AppSec signals.</strong> Injection probes (<code>' OR 1=1</code>, <code>{{7*7}}</code>, <code>169.254.169.254</code>), deserialization errors, and authz denials must flow to a SIEM (Vol 11, Ch 3) with alerts on rate spikes — a burst of <code>403</code> with <code>reason: BOLA</code> is an active enumeration, not background noise.</li>
 <li><strong>Dependency blast radius at scale.</strong> One vulnerable transitive dependency shared across 200 services is a fleet-wide incident. Centralize SCA results in a dependency inventory (OSV + SBOM per Companion Book 3), prioritize by reachability, and roll out patches via the same progressive delivery as feature flags (Vol 11, Ch 9) — canary, then fleet.</li>
 </ul>
+<h4 id="owasp-request-filtering">OWASP Request Filtering</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a198e4845414.png" alt="diagram"></div></p>
+<h4 id="input-validation-pipeline">Input Validation Pipeline</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6af6ed609536.png" alt="diagram"></div></p>
+<h4 id="waf-and-rasp-architecture">WAF and RASP Architecture</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e64c8649a479.png" alt="diagram"></div></p>
+<h4 id="threat-mitigation-decision">Threat Mitigation Decision</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b26cc0dc36da.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>OWASP Top 10 2021 (with API Top 10 2023 overlay) is the prioritization map: A01/BOLA (access control, Ch 7), A03 (injection), A10 (SSRF), and A08 (deserialization) are the handler-level risks this chapter owns. Every handler gets injection + authz review; every outbound fetch gets SSRF review; every deserialization boundary gets a codec review.</li>
@@ -6123,23 +5662,7 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-    subgraph PerimeterModel["Perimeter model — trust by location"]
-        C1["Caller (pod A)"] -->|"HTTP (plaintext<br/>or server-only TLS)<br/>no client cert"| S1["Callee (pod B)"]
-        N1["Network: VPC / mesh<br/>is the trust boundary"] -. trust .- S1
-        X1["Compromised pod C<br/>same VPC → calls B<br/>implicitly trusted"] -.-> S1
-        style N1 fill:#f96,stroke:#333,color:#fff
-        style X1 fill:#c55,stroke:#333,color:#fff
-    end
-
-    subgraph ZeroTrust["Zero-trust model — trust by identity"]
-        C2["Caller — SPIFFE ID<br/>spiffe://prod/ns/api/svc/frontend"] -->|"mTLS — client SVID + server SVID<br/>both sides verify SPIFFE ID"| S2["Callee — SPIFFE ID<br/>spiffe://prod/ns/api/svc/payments"]
-        P2["AuthorizationPolicy<br/>allow: frontend → payments /charge<br/>deny: all else"] -. enforce .- S2
-        X2["Compromised pod C<br/>spiffe://prod/ns/batch/svc/untrusted<br/>mTLS succeeds but<br/>authZ denies /charge"] -.->|"mTLS ok, authZ DENY"| S2
-        style P2 fill:#6a6,stroke:#333,color:#fff
-        style X2 fill:#fa6,stroke:#333,color:#fff
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a6ed6b809b13.png" alt="diagram"></div></p>
 <p>Two consequences matter for backend design:</p>
 <ul>
 <li><strong>Identity is not a secret.</strong> A SPIFFE ID (<code>spiffe://trust-domain/...</code>) is public — like a username, not a password. Possession of the <em>SVID</em> (the X.509 cert bound to the private key) proves the identity; knowledge of the ID alone does not. This is why SPIFFE replaces API keys — the private key never leaves the workload's <code>Workload API</code> socket.</li>
@@ -6354,29 +5877,7 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-    subgraph SPIREControl["SPIRE control plane"]
-        Server["SPIRE Server<br/>CA + Bundle + Registration API"]
-        DS["Datastore<br/>(SQLite / Postgres)"]
-        Server --- DS
-    end
-    subgraph Node["Kubernetes node"]
-        Agent["SPIRE Agent (DaemonSet)<br/>Node attestation → Server<br/>Workload attestation → Pod"]
-        Sock["Workload API socket<br/>/run/spire/sockets/agent.sock"]
-        Agent --- Sock
-        W1["Pod: frontend<br/>spiffe://prod/ns/api/svc/frontend<br/>fetches X509-SVID via UDS"]
-        W2["Pod: payments<br/>spiffe://prod/ns/api/svc/payments<br/>fetches X509-SVID via UDS"]
-        W1 --- Sock
-        W2 --- Sock
-    end
-    Agent <-- "mTLS (agent SVID)<br/>Fetch + rotation stream" --> Server
-
-    W1 -- "mTLS with X509-SVIDs<br/>both sides verify SPIFFE ID<br/>against bundle" --> W2
-
-    style Server fill:#69c,stroke:#333,color:#fff
-    style Agent fill:#6a6,stroke:#333,color:#fff
-    style Sock fill:#fa6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3086e501397a.png" alt="diagram"></div></p>
 <h3 id="node-attestation-vs-workload-attestation">Node attestation vs workload attestation</h3>
 <p>SPIRE verifies identity in two stages:</p>
 <ol>
@@ -6595,26 +6096,7 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 <span class="c1">// For JWT-SVID: JwtSource + JwtSvid.getToken()</span>
 </code></pre></div>
 
-<p><pre><code>sequenceDiagram
-    participant Pod as payments pod
-    participant Agent as SPIRE Agent (UDS)
-    participant Server as SPIRE Server
-
-    Pod->>Agent: WorkloadAPI FetchX509SVID (CSR with SPIFFE ID)
-    Agent->>Agent: Workload attestation —<br/>k8s selectors match entry?<br/>k8s:ns:payments, k8s:sa:payments-api
-
-    alt selectors match
-        Agent->>Server: Sign CSR (agent SVID mTLS)
-        Server->>Server: Issue X509-SVID (TTL 1h)<br/>sign with trust-domain CA
-        Server-->>Agent: X509-SVID + bundle
-        Agent-->>Pod: X509-SVID + bundle (stream)
-        Note over Pod,Agent: Pod hot-reloads tls.Config<br/>no restart; Agent re-issues before expiry
-    else selectors do not match
-        Agent-->>Pod: PermissionDenied — no entry
-    end
-
-    Pod->>Pod: Watch stream —<br/>new SVID arrives before old expires<br/>tls.Config updated atomically
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f1acdad3ebb0.png" alt="diagram"></div></p>
 <hr />
 <h2 id="enforcing-mesh-policy-and-raw-authz">Enforcing — mesh policy and raw authZ</h2>
 <p>Identity is only useful if the callee enforces it. Two layers: mesh-level policy (Istio/Envoy/Cilium/Linkerd) for fleet-wide enforcement without code changes, and application-level SPIFFE ID checks for defense in depth.</p>
@@ -6773,33 +6255,7 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 <span class="nt">Shipper</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nt">Frontend</span><span class="o">:</span><span class="w"> </span><span class="nt">reverse</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="nt">frontend</span><span class="w"> </span><span class="nt">verifies</span><span class="w"> </span><span class="nt">shipper</span><span class="s1">&#39;s SVID against B&#39;</span><span class="nt">s</span><span class="w"> </span><span class="nt">bundle</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TB
-    subgraph DomainA["Trust domain A — prod.example.com"]
-        CA_A["Root CA_A<br/>bundle_A<br/>(JWKS + X.509)"]
-        Agent_A["SPIRE Agent A"]
-        W_A["Workload A<br/>spiffe://prod.example.com/..."]
-    end
-    subgraph DomainB["Trust domain B — partner.example.net"]
-        CA_B["Root CA_B<br/>bundle_B"]
-        Agent_B["SPIRE Agent B"]
-        W_B["Workload B<br/>spiffe://partner.example.net/..."]
-    end
-    subgraph Federation["Federation — bundle exchange"]
-        BE["BundleEndpoint<br/>https://spire.prod.example.com/bundle<br/>+ JWKS at /.well-known/spiffe/bundle.json"]
-        BA["BundleEndpoint<br/>https://spire.partner.example.net/bundle"]
-    end
-
-    CA_A --- BE
-    CA_B --- BA
-    BE -. "poll + pin (mTLS or JWT)" .-> Agent_B
-    BA -. "poll + pin" .-> Agent_A
-
-    W_A -- "mTLS — present SVID_A<br/>verify with bundle_A" --> W_B
-    W_B -- "verify caller with bundle_A<br/>(federated bundle)" --> W_A
-
-    style BE fill:#fa6,stroke:#333,color:#fff
-    style BA fill:#fa6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4730f0d4cc26.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># SPIRE server — federation config (SPIRE 1.9+)</span>
 <span class="l l-Scalar l-Scalar-Plain">server {</span>
 <span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">trust_domain = &quot;prod.example.com&quot;</span>
@@ -6842,61 +6298,8 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 <li><strong>Log SPIFFE IDs, not IPs.</strong> <code>source_ip: 10.4.2.88</code> is ephemeral and NAT'd; <code>caller_spiffe_id: spiffe://prod/ns/api/svc/frontend</code> is stable, auditable, and joins with deployment metadata. Emit it in access logs, traces (<code>peer.service</code> in OpenTelemetry), and error reviews (Ch 7) — it is the <code>request_id</code> for identity.</li>
 <li><strong>Break-glass.</strong> Keep an audited break-glass identity (<code>spiffe://prod/ns/sre/sa/break-glass</code>) with a deliberately short TTL (5m) and an approval workflow (PAM/OIDC — Ch 6) that mints a one-time SVID via the SPIRE API. Every use is logged and alerted — unlike a shared SSH key or a subnet allowlist that has no per-use audit.</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph Rotation["Rotation — no restarts, no CRLs"]
-        Cert1["X509-SVID issued<br/>TTL 1h, NotAfter T+1h"]
-        Agent1["Agent stream<br/>push new SVID at T+40m"]
-        Source1["X509Source<br/>atomic swap<br/>tls.Config updated"]
-        Conn1["Existing mTLS conns<br/>stay open with old cert"]
-        Conn2["New handshakes<br/>use new cert"]
-        Cert1 --> Agent1 --> Source1
-        Source1 --> Conn1
-        Source1 --> Conn2
-    end
-
-    subgraph Revocation["Revocation — entry deletion + short TTL"]
-        Del["Delete entry or<br/>fail attestation"]
-        NoReissue["Agent stops re-issuing<br/>cert expires in ≤ TTL"]
-        Deny["Mesh AuthorizationPolicy<br/>DENY or drain<br/>immediate isolation"]
-        Del --> NoReissue
-        Del --> Deny
-    end
-
-    subgraph CARotation["CA rotation — bundle overlap"]
-        NewRoot["New root CA<br/>added to bundle<br/>both roots trusted"]
-        Distr["Distribute bundle<br/>to all agents + workloads"]
-        SignNew["New SVIDs signed<br/>with new CA"]
-        RemoveOld["Old root removed<br/>after overlap window"]
-        NewRoot --> Distr --> SignNew --> RemoveOld
-    end
-</code></pre></p>
-<p><pre><code>sequenceDiagram
-    participant Pod as Workload pod
-    participant Agent as SPIRE Agent
-    participant Server as SPIRE Server
-    participant Peer as Peer service (callee)
-
-    Note over Pod,Peer: Steady state — mTLS with SPIFFE IDs
-    Pod->>Peer: mTLS — present SVID (spiffe://prod/ns/api/svc/frontend)
-    Peer->>Peer: Verify against bundle — SPIFFE ID allowed?
-
-    Note over Pod,Server: Rotation — before expiry
-    Agent-->>Pod: Stream: new X509-SVID + updated bundle
-    Pod->>Pod: Atomic tls.Config swap
-    Pod->>Peer: Next handshake uses new SVID
-    Peer->>Peer: Bundle already has new root — verification passes
-
-    Note over Pod,Peer: Revocation — compromise of Pod's node
-    Server->>Agent: Registration entry deleted
-    Agent-->>Pod: No re-issue — last SVID expires in ≤ 1h
-    Peer->>Peer: AuthorizationPolicy DENY spiffe://prod/ns/compromised/*<br/>immediate isolation even within TTL
-
-    Note over Pod,Peer: CA rotation — new root distributed
-    Server-->>Agent: Bundle update: root_A_old + root_A_new
-    Agent-->>Pod: Bundle: both roots trusted (overlap)
-    Note over Pod,Peer: After overlap — old root removed
-    Agent-->>Pod: Bundle: root_A_new only
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_343e699a2645.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_22f813a07759.png" alt="diagram"></div></p>
 <hr />
 <h2 id="putting-it-together-zero-trust-in-a-kubernetes-fleet">Putting it together — zero trust in a Kubernetes fleet</h2>
 <p>A minimal end-to-end checklist for a cluster that means it:</p>
@@ -6910,6 +6313,10 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 <li><strong>Break-glass.</strong> Short-lived SVID mint via SPIRE API gated by OIDC + approval; every use audited; TTL 5m.</li>
 </ol>
 <hr />
+<h4 id="mtls-with-spiffe">mTLS with SPIFFE</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_af882f124808.png" alt="diagram"></div></p>
+<h4 id="zero-trust-policy-evaluation">Zero Trust Policy Evaluation</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_992f86596550.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Zero trust replaces network trust with workload identity + mutual authentication + identity-based authorization on every hop. The network is never a trust boundary — identity (SPIFFE ID) is.</li>
@@ -7014,61 +6421,7 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 <p>Trust boundaries are where threats live. Every flow that crosses a boundary is an attack surface. In a zero-trust architecture (Ch 10) <em>every service-to-service flow</em> is a trust boundary — which is the point.</p>
 <h3 id="worked-example-order-placement-flow">Worked example — order placement flow</h3>
 <p>We will carry one example through the chapter: a user places an order via the gateway; the <code>orders</code> service writes Postgres (via the outbox — Vol 10, Ch 6), publishes <code>OrderPlaced</code> to Kafka, and the <code>payments</code> service charges via an external PSP. An admin UI reads orders for support.</p>
-<p><pre><code>flowchart TB
-    U([User / Browser<br/>External entity])
-    P([Partner webhook<br/>External entity])
-    GW[Gateway / BFF<br/>Process]
-    Auth[Auth service<br/>OIDC IdP<br/>Process]
-    Orders[Orders service<br/>Process]
-    Payments[Payments service<br/>Process]
-    Admin[Admin UI<br/>Process]
-    DB[(Postgres<br/>orders + outbox<br/>Data store)]
-    Cache[(Redis<br/>session cache<br/>Data store)]
-    Kafka[(Kafka<br/>orders topic<br/>Data store)]
-    PSP([External PSP<br/>External entity])
-
-    U -->|1 HTTPS POST /v1/orders<br/>JWT bearer| GW
-    GW -->|2 Validate JWT<br/>OIDC userinfo| Auth
-    GW -->|3 gRPC CreateOrder<br/>mTLS + JWT| Orders
-    Orders -->|4 SQL INSERT<br/>orders + outbox| DB
-    Orders -->|5 Produce OrderPlaced<br/>mTLS + SASL| Kafka
-    Kafka -->|6 Consume OrderPlaced| Payments
-    Payments -->|7 HTTPS POST /charge<br/>API key + mTLS| PSP
-    P -->|8 Webhook POST /v1/psp/callback<br/>HMAC verify| GW
-    GW -->|9 gRPC PaymentCallback| Payments
-    Admin -->|10 HTTPS GET /v1/orders/{id}<br/>RBAC| GW
-    GW -->|11 gRPC GetOrder| Orders
-    Orders -->|12 SQL SELECT| DB
-    GW --- Cache
-    Orders --- Cache
-
-    subgraph Internet[Trust boundary — Internet]
-        U
-        P
-        PSP
-    end
-    subgraph VPC[Trust boundary — VPC / mesh]
-        GW
-        Orders
-        Payments
-        Admin
-        DB
-        Cache
-        Kafka
-    end
-    subgraph AuthN[Trust boundary — Authenticated]
-        Orders
-        Payments
-        DB
-        Kafka
-    end
-
-    style GW fill:#e3f2fd
-    style Orders fill:#fff3e0
-    style Payments fill:#fff3e0
-    style DB fill:#f3e5f5
-    style Kafka fill:#e8f5e9
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_923b08c07606.png" alt="diagram"></div></p>
 <p>Numbered flows 1–12 are the <em>attack surface</em>. Every flow is labeled with its protocol and auth — missing labels are findings.</p>
 <hr />
 <h2 id="stride-per-element">STRIDE-per-element</h2>
@@ -7391,40 +6744,7 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 <h2 id="attack-trees-and-kill-chains">Attack trees and kill chains</h2>
 <p>STRIDE enumerates <em>what</em> can go wrong per element; attack trees show <em>how</em> an attacker composes steps into a path to a goal. The root is the attacker's objective; children are sub-goals combined with <strong>AND</strong> (all required) or <strong>OR</strong> (any suffices).</p>
 <h3 id="worked-attack-tree-forge-a-payment-mark-order-as-paid-without-charging">Worked attack tree — forge a payment (mark order as paid without charging)</h3>
-<p><pre><code>flowchart TB
-    Goal([Goal: Mark order 1043 as paid<br/>without a real PSP charge])
-
-    Goal --> A1[OR — any path]
-
-    A1 --> T1[Forge PSP callback<br/>webhook spoofing]
-    A1 --> T2[Forge internal event<br/>Kafka spoofing]
-    A1 --> T3[Mutate DB directly<br/>SQL injection / stolen creds]
-    A1 --> T4[Abuse admin API<br/>authz bypass]
-
-    T1 --> T1a[AND]
-    T1a --> T1a1[Learn webhook URL<br/>OSINT / error leak]
-    T1a --> T1a2[Forge HMAC / bypass verify<br/>weak secret / missing check]
-    T1a --> T1a3[Replay captured callback<br/>no replay protection]
-
-    T2 --> T2a[AND]
-    T2a --> T2a1[Gain Kafka produce<br/>stolen SASL creds / overly broad ACL]
-    T2a --> T2a2[Produce fake OrderPaid<br/>valid schema]
-
-    T3 --> T3a[OR]
-    T3a --> T3a1[SQLi in CreateOrder<br/>Ch 9 — parameterized?]
-    T3a --> T3a2[Stolen DB creds<br/>Ch 8 — secret in env/git]
-    T3a --> T3a3[Compromised orders pod<br/>lateral movement — Ch 10]
-
-    T4 --> T4a[AND]
-    T4a --> T4a1[Obtain admin JWT<br/>session theft / weak password]
-    T4a --> T4a2[BOLA — refund any order<br/>missing ReBAC check Ch 7]
-
-    style Goal fill:#ffcdd2,stroke:#333
-    style T1a2 fill:#ffecb3
-    style T2a1 fill:#ffecb3
-    style T3a1 fill:#ffecb3
-    style T4a2 fill:#ffecb3
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_37a9145ad68c.png" alt="diagram"></div></p>
 <p>Reading the tree bottom-up, the mitigations that <em>cut the most branches</em> are the highest leverage:</p>
 <ul>
 <li><strong>HMAC verification + replay cache</strong> on the webhook (T1) — cuts the cheapest external path.</li>
@@ -7673,20 +6993,7 @@ semgrep<span class="w"> </span>ci<span class="w"> </span>--supply-chain<span cla
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-    subgraph Depth["Defense in depth — three layers, one invariant"]
-        L1[Layer 1 — Edge<br/>Gateway JWT validation<br/>rate limit, WAF, HSTS]
-        L2[Layer 2 — Service<br/>ReBAC per resource<br/>mTLS + AuthorizationPolicy<br/>input validation, parameterized SQL]
-        L3[Layer 3 — Data<br/>Row-level security<br/>Kafka ACLs<br/>Postgres GRANT per service<br/>audit log + anomaly detection]
-        L1 --> L2 --> L3
-        Note[Invariant: tenant isolation<br/>enforced at all three layers<br/>any single layer can fail<br/>without cross-tenant leak]
-        L3 -. enforces .-> Note
-    end
-    style L1 fill:#e3f2fd
-    style L2 fill:#fff3e0
-    style L3 fill:#f3e5f5
-    style Note fill:#e8f5e9
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1024eba36951.png" alt="diagram"></div></p>
 <hr />
 <h2 id="the-threat-model-as-a-living-document">The threat model as a living document</h2>
 <h3 id="template-one-page-per-service-or-flow">Template — one page per service or flow</h3>
@@ -7729,20 +7036,7 @@ DFD: ./threat-models/orders-dfd.mmd  —  STRIDE table: ./threat-models/orders-s
 </code></pre></div>
 
 <h3 id="where-the-model-lives-in-the-engineering-loop">Where the model lives in the engineering loop</h3>
-<p><pre><code>flowchart LR
-    RFC[RFC / Design doc<br/>DFD + STRIDE + mitigations<br/>required section] --> Review[Design review<br/>security + senior eng<br/>threats are review comments]
-    Review --> Backlog[Backlog<br/>security requirements<br/>as tickets with priority]
-    Backlog --> Code[Code + tests<br/>authz matrix, HMAC verify<br/>mTLS policy, SAST taint]
-    Code --> CI[CI gates<br/>SAST / SCA / secrets<br/>authz tests must pass]
-    CI --> Prod[Prod<br/>audit log + anomaly<br/>DLQ depth, authz deny rate]
-    Prod --> IR[Incident response<br/>new ATT&CK technique<br/>→ update model]
-    IR --> RFC
-
-    style RFC fill:#e3f2fd
-    style CI fill:#fff3e0
-    style Prod fill:#e8f5e9
-    style IR fill:#ffcdd2
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e598e17a7f71.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Design doc gate:</strong> No RFC merges without a threat-model section (DFD + top threats + mitigations) for any new service, external integration, or authz change. The reviewer checks the STRIDE table for empty cells, not for prose quality.</li>
 <li><strong>Code review:</strong> Security requirements from the model are <em>testable</em> — <code>HMAC verification exists and is tested with a forged callback</code>, <code>ReBAC check exists on every</code>GetOrder<code>path and is covered by 12 BOLA cases</code>. Review verifies the requirement and the test, not just the code.</li>
@@ -7793,6 +7087,12 @@ DFD: ./threat-models/orders-dfd.mmd  —  STRIDE table: ./threat-models/orders-s
 <li><strong>The DFD is the contract between teams.</strong> When the <code>orders</code> team adds a new Kafka topic that <code>analytics</code> consumes, the DFD change is the notification that <code>analytics</code> now has PII and needs ACLs, retention, and audit. Without the DFD as a shared artifact, the data flow is discovered during an incident.</li>
 <li><strong>Verification must be as distributed as the system.</strong> SAST/SCA/secrets gates run per repo, authz-matrix tests run per service, DAST crawls per environment, and audit-log anomaly detection runs centrally. The threat model maps each mitigation to <em>where</em> it is verified — a mitigation with no gate is a mitigation that will regress.</li>
 </ul>
+<h4 id="stride-per-component">STRIDE per Component</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_765f777bd0ab.png" alt="diagram"></div></p>
+<h4 id="threat-model-iteration">Threat Model Iteration</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a6c76dd869e5.png" alt="diagram"></div></p>
+<h4 id="attack-tree-example">Attack Tree Example</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0c46d21bc44.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Threat modeling is the design-time discipline that turns architecture (DFD + trust boundaries) into prioritized, testable security requirements — it precedes and directs controls, not the reverse. Its output is tickets and tests, not just diagrams.</li>

@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -244,21 +326,7 @@ hr {
 <p>The first version of any API is wrong. The question is how expensive being wrong will be. Contracts that reserve extension points — optional fields, <code>additionalProperties: false</code> only where intentional, enumerated strings that consumers treat as open, <code>repeated</code> rather than fixed-arity — make the second version cheap. Contracts that require coordinated upgrades for every additive change make it expensive.</p>
 <h3 id="6-operability-expose-what-operators-need">6. Operability — expose what operators need</h3>
 <p>Every contract should answer, before it is used in production: How is it authenticated? How is it rate-limited and what does <code>429</code> look like? What does pagination do under concurrent mutation? What is the timeout budget and is the operation retry-safe? An API whose happy-path example works but whose pagination is undefined under writes will cause correctness bugs at scale that no unit test catches.</p>
-<p><pre><code>flowchart TD
-    A[Principle] --> B{Review question}
-    B -->|Consistency| C[Same pattern on every resource?]
-    B -->|Predictability| D[Method + status obey HTTP semantics?]
-    B -->|Discoverability| E[Consumer succeeds from spec alone?]
-    B -->|Least surprise| F[Reuses platform headers/status?]
-    B -->|Evolvability| G[Additive change needs no coordination?]
-    B -->|Operability| H[Auth, rate limit, pagination, retry defined?]
-    C --> I[Merge or document the exception]
-    D --> I
-    E --> I
-    F --> I
-    G --> I
-    H --> I
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_30da8afacaf3.png" alt="diagram"></div></p>
 <p><em>Figure 1-1: Six principles as review gates. Each principle maps to one question a reviewer can answer from the contract alone, before reading any implementation.</em></p>
 <hr />
 <h2 id="contracts-and-schemas-choosing-the-description-language">Contracts and schemas: choosing the description language</h2>
@@ -308,19 +376,7 @@ hr {
 <hr />
 <h2 id="the-contract-lifecycle">The contract lifecycle</h2>
 <p>A contract is a living artifact with a lifecycle longer than any single deployment. Treating it as a file that is edited and forgotten is how breaking changes slip into production.</p>
-<p><pre><code>stateDiagram-v2
-    [*] --> Draft: propose in RFC / design doc
-    Draft --> Review: open PR with spec + examples
-    Review --> Approved: lint + breaking check + human approval
-    Approved --> Published: merge to main; version tag; registry publish
-    Published --> Evolving: additive change proposed
-    Evolving --> Review: same gate as initial
-    Published --> Deprecated: Sunset + Deprecation headers; migration guide
-    Deprecated --> Sunset: traffic < threshold; consumers notified
-    Sunset --> [*]: remove route / archive schema
-    Review --> Draft: requested changes
-    Approved --> Draft: design flaw found pre-publish
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_77cfa448124c.png" alt="diagram"></div></p>
 <p><em>Figure 1-2: Contract lifecycle. Every transition has a gate; the most important gates are automated (lint, breaking-change detection) because human review alone does not scale.</em></p>
 <p>Each stage has a concrete meaning:</p>
 <ul>
@@ -332,26 +388,7 @@ hr {
 <li><strong>Sunset.</strong> Traffic has dropped below an agreed threshold (often &lt;1% or zero for internal surfaces after a migration deadline). The route is removed; the schema is archived, not deleted, so historical data can still be decoded.</li>
 </ul>
 <p>The lifecycle matters for distributed systems because <strong>multiple versions are in production simultaneously</strong>. When you deprecate <code>GET /v1/orders</code>, the old and new versions will be served by different revisions of the same service — or by different services — for weeks or months. Your routing, documentation, and observability must all handle that.</p>
-<p><pre><code>sequenceDiagram
-    participant Author as API Author
-    participant PR as Pull Request
-    participant CI as CI Pipeline
-    participant Registry as Schema Registry
-    participant Consumer as Consumer Team
-    Author->>PR: push openapi.yaml + changelog
-    PR->>CI: trigger checks
-    CI->>CI: spectral lint (style + rules)
-    CI->>CI: oasdiff breaking (vs main)
-    CI->>CI: validate examples (ajv / schemavalidation)
-    alt breaking change without major bump
-        CI-->>PR: fail — require MAJOR + migration guide
-    else additive / non-breaking
-        CI-->>PR: pass
-        PR->>Registry: merge → publish v1.4.0
-        Registry-->>Consumer: notify (Slack / portal / SDK bump)
-        Consumer->>Consumer: update client at convenience
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da2792da1cb3.png" alt="diagram"></div></p>
 <p><em>Figure 1-3: Automated contract gate in CI. Breaking changes are rejected unless the version bump and migration guide match policy; additive changes flow through.</em></p>
 <hr />
 <h2 id="design-first-versus-code-first">Design-first versus code-first</h2>
@@ -620,6 +657,14 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <p><strong>Boundary note.</strong> Protocol-level mechanics — HTTP/2 framing, gRPC wire format, Protobuf varint encoding, TLS, and the network path a request traverses — are covered in Volume 3 (Networking), Chapter 8 (gRPC and RPC Framework Internals). This volume treats the <em>design</em> of those surfaces: resource modelling, schema layout, versioning, and evolution. Where this chapter mentions the wire, it does so only to explain why a design choice matters for compatibility or performance.</p>
 </blockquote>
 <hr />
+<h4 id="api-lifecycle-state-machine">API Lifecycle State Machine</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_18009383ee23.png" alt="diagram"></div></p>
+<h4 id="design-first-workflow">Design-First Workflow</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4259976a022e.png" alt="diagram"></div></p>
+<h4 id="api-maturity-model">API Maturity Model</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b48d31e9ea8e.png" alt="diagram"></div></p>
+<h4 id="consumer-driven-contract-flow">Consumer-Driven Contract Flow</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5543fba32491.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>The contract, not the implementation, is the unit of coupling. Invest design effort where the blast radius is largest.</li>
@@ -678,27 +723,7 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <h3 id="from-domain-to-resources">From domain to resources</h3>
 <p>A resource is not a database row, though it often maps to one. It is a <strong>concept with identity that a client wants to interact with over time</strong>. Start from the domain language and ask: "What nouns do product and support use when they talk about this area? What lifecycle do those nouns have?"</p>
 <p>For an e-commerce ordering domain, the nouns are <code>Order</code>, <code>OrderItem</code> (not independently addressable outside an order), <code>Payment</code>, <code>Shipment</code>, and <code>Customer</code>. That suggests:</p>
-<p><pre><code>flowchart TB
-    Customer --> Orders
-    Orders --> OrderItems
-    Orders --> Payments
-    Orders --> Shipments
-    Orders -.->|action| CancelOp
-    Orders -.->|action| RefundOp
-
-    subgraph Collections
-        Orders
-    end
-    subgraph SubResources["Sub-resources (scoped)"]
-        OrderItems
-        Payments
-        Shipments
-    end
-    subgraph Actions["Actions (RPC-style)"]
-        CancelOp["POST /orders/{id}:cancel"]
-        RefundOp["POST /orders/{id}:refund"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f07af3e848da.png" alt="diagram"></div></p>
 <p><em>Figure 2-1: Resource model for an Orders domain. Collections are top-level; line items and nested entities are sub-resources scoped to their parent; state transitions that do not map to CRUD become custom actions.</em></p>
 <h3 id="uri-design">URI design</h3>
 <p>URIs identify resources; they are not an encoding of query logic. Conventions that survive review:</p>
@@ -1039,20 +1064,7 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <hr />
 <h2 id="caching-and-conditional-requests">Caching and conditional requests</h2>
 <p>REST's cacheability constraint is not optional decoration — it is a scalability mechanism. A <code>GET /v1/orders/{id}</code> served with correct <code>Cache-Control</code> and <code>ETag</code> can be cached at three layers without any application change: browser, CDN, and service-mesh sidecar.</p>
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant CDN as CDN / Gateway
-    participant S as Origin
-    C->>CDN: GET /v1/orders/01H8X1 (no cache)
-    CDN->>S: GET /v1/orders/01H8X1
-    S-->>CDN: 200 + ETag: "33a64" + Cache-Control: private, max-age=10
-    CDN-->>C: 200 (cached for 10s)
-    Note over C,CDN: within 10s — served from cache, no origin hit
-    C->>CDN: GET /v1/orders/01H8X1 + If-None-Match: "33a64"
-    CDN->>S: GET + If-None-Match: "33a64"
-    S-->>CDN: 304 Not Modified (no body)
-    CDN-->>C: 304 (revalidate, use cached body)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a42b53d4bfcf.png" alt="diagram"></div></p>
 <p><em>Figure 2-2: Conditional GET with ETag. The 304 saves bandwidth and origin work; with stale-while-revalidate the CDN can serve stale while refreshing in the background.</em></p>
 <p>Headers that matter:</p>
 <ul>
@@ -1068,14 +1080,7 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <p><strong>Long-running operations.</strong> When <code>POST /v1/orders/{id}:cancel</code> triggers a workflow that takes minutes (refund, inventory restock), return <code>202 Accepted</code> with <code>Location: /v1/operations/abc123</code> and a <code>Retry-After</code>. The client polls <code>GET /v1/operations/abc123</code> (or subscribes via webhook/event) until <code>done: true</code>. Google's AIP-151 (<code>google.longrunning.Operation</code>) is a good template even outside Google.</p>
 <p><strong>Batch.</strong> <code>POST /v1/orders:batchGet { "ids": ["01H8X1...", "01H8X2..."] }</code> returning <code>{ "orders": [...], "not_found": [...] }</code> avoids N round-trips. Keep batch size bounded (e.g., max 100) and document partial-failure semantics — does one missing ID fail the whole batch, or return per-item status?</p>
 <p><strong>HATEOAS.</strong> Include <code>_links</code> where they carry state-machine information — e.g., an order with <code>status: "pending"</code> advertises <code>{"rel":"cancel","href":"/v1/orders/{id}:cancel","method":"POST"}</code> but not <code>refund</code> — and <code>Link</code> headers for pagination (<code>Link: &lt;...?page_token=...&gt;; rel="next"</code> per RFC 8288). Do not force clients to navigate solely via links; most REST consumers still construct URIs from an OpenAPI spec and treat links as hints.</p>
-<p><pre><code>flowchart LR
-    A[POST /orders] -->|201 Location: /orders/01H8X| B[GET /orders/01H8X]
-    B -->|pending| C{Links}
-    C -->|rel: cancel| D[POST /orders/01H8X:cancel]
-    C -->|rel: pay| E[POST /orders/01H8X:pay]
-    D -->|202 Operation| F[GET /operations/cancel-xyz]
-    F -->|done| G[GET /orders/01H8X — status: cancelled]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e317617dd8fa.png" alt="diagram"></div></p>
 <p><em>Figure 2-3: Resource lifecycle with hypermedia links and an asynchronous cancel operation. Links advertise valid transitions; the operation resource decouples the HTTP request from the workflow.</em></p>
 <hr />
 <h2 id="where-rest-fits-in-a-distributed-system">Where REST fits in a distributed system</h2>
@@ -1096,6 +1101,14 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <p><strong>Boundary note.</strong> Low-level HTTP evolution — HTTP/1.1 vs HTTP/2 vs HTTP/3 framing, connection coalescing, header compression (HPACK/QPACK), and TLS negotiation — is covered in Volume 3, Chapters 7 and 10. This chapter uses HTTP as a <em>semantic</em> layer (methods, status, headers, caching) and assumes the transport beneath is correctly configured.</p>
 </blockquote>
 <hr />
+<h4 id="rest-constraints-applied">REST Constraints Applied</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0210785b2122.png" alt="diagram"></div></p>
+<h4 id="resource-lifecycle">Resource Lifecycle</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b49fce8e99ff.png" alt="diagram"></div></p>
+<h4 id="http-caching-and-conditional-requests">HTTP Caching and Conditional Requests</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e886b43f65e9.png" alt="diagram"></div></p>
+<h4 id="richardson-maturity-model">Richardson Maturity Model</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e881c48c4cf8.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Model domains as resources with clear ownership; use sub-resources for scoped children and colon-actions for operations that are not CRUD.</li>
@@ -1206,8 +1219,8 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <h3 id="a-complete-schema-orders-service">A complete schema — Orders service</h3>
 <p>The schema below is a complete, <code>buf lint</code>-clean example covering the patterns you will use daily: service with unary and streaming RPCs, resource messages, enums with <code>UNSPECIFIED</code>, <code>oneof</code> for mutually exclusive payment methods, maps, well-known types, field presence, and deprecation. Versions pinned in comments.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// proto/acme/orders/v1/order.proto</span>
-<span class="c1">// Protobuf: 4.25.x / 5.x  (protoc 24.x or buf 1.32.2 bundled compiler)</span>
-<span class="c1">// Lint: buf 1.32.2 (buf lint), breaking: buf breaking against main</span>
+<span class="c1">// Protobuf: 4.25.x / 5.x  (protoc 24.x or buf 1.40.2 bundled compiler)</span>
+<span class="c1">// Lint: buf 1.40.2 (buf lint), breaking: buf breaking against main</span>
 <span class="c1">// gRPC: grpc-go 1.64.0, grpc-java 1.64.0, grpc-node 1.9.0</span>
 <span class="k">syntax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;proto3&quot;</span><span class="p">;</span>
 
@@ -1551,34 +1564,12 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 </table>
 <p>* Enum addition is safe only if every consumer handles the unknown value. This is why <code>STATUS_UNSPECIFIED = 0</code> exists and why server code must treat unknown enum integers as errors or defaults, not panics.</p>
 <h3 id="the-evolution-workflow">The evolution workflow</h3>
-<p><pre><code>flowchart TD
-    A[Propose change in proto PR] --> B{buf breaking vs main}
-    B -->|no break| C[buf lint + buf format --exit-code]
-    B -->|break detected| D{Intended major?}
-    C --> E[Approve + merge; tag acme/orders@v1.x.y]
-    D -->|yes| F[Bump package to v2: acme.orders.v2 + migration guide]
-    D -->|no| G[Reject — redesign as additive]
-    F --> E
-    G --> A
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_698e74469e07.png" alt="diagram"></div></p>
 <p><em>Figure 3-1: Schema evolution gate. Breaking changes require a new package version, not a justification comment.</em></p>
 <hr />
 <h2 id="the-four-call-shapes-when-to-use-each">The four call shapes — when to use each</h2>
 <p>gRPC defines four shapes distinguished by whether the client and server sides stream. All ride on one HTTP/2 stream; the difference is how many length-prefixed messages flow each way.</p>
-<p><pre><code>flowchart TB
-    subgraph U["Unary — 1 req → 1 resp"]
-        u1[CreateOrder] --> u2[Order]
-    end
-    subgraph SS["Server-streaming — 1 req → N resp"]
-        s1[WatchOrders] --> s2[stream Order events]
-    end
-    subgraph CS["Client-streaming — N req → 1 resp"]
-        c1[stream IngestReturnsRequest] --> c2[IngestReturnsResponse summary]
-    end
-    subgraph BD["Bidirectional — N req ↔ M resp"]
-        b1[stream ChatMessage] <--> b2[stream ChatMessage]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e0101321edbc.png" alt="diagram"></div></p>
 <p>Each shape has a distinct fit:</p>
 <table>
 <thead>
@@ -1615,31 +1606,7 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <hr />
 <h2 id="grpc-service-flow-from-stub-to-handler">gRPC service flow — from stub to handler</h2>
 <p>A gRPC call traverses more layers than a typical REST handler because the framework owns framing, status mapping, and cross-cutting concerns via interceptors.</p>
-<p><pre><code>sequenceDiagram
-    participant App as Client app
-    participant Stub as Generated stub
-    participant IC as Client interceptors
-    participant Chan as gRPC channel / LB
-    participant H2 as HTTP/2 transport
-    participant SChan as Server transport
-    participant IS as Server interceptors
-    participant Hdl as Service handler
-    App->>Stub: CreateOrder(ctx, req)
-    Note over Stub: marshal to protobuf,<br/>set grpc-timeout from ctx deadline
-    Stub->>IC: invoke (auth, tracing, retry)
-    IC->>Chan: pick subchannel (round_robin / xDS)
-    Chan->>H2: HEADERS + DATA (length-prefixed)
-    H2->>SChan: stream frames
-    SChan->>IS: demux to method, unmarshal
-    IS->>Hdl: (auth, logging, validation)
-    Hdl-->>IS: Order + nil  or  status.Error(codes.*)
-    IS-->>SChan: marshal response or status
-    SChan-->>H2: HEADERS(200) + DATA + TRAILERS(grpc-status)
-    H2-->>Chan: headers, data, trailers
-    Chan-->>IC: unmarshal, map grpc-status → error
-    IC-->>Stub: response or error
-    Stub-->>App: (*CreateOrderResponse, error)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f02e2c72f596.png" alt="diagram"></div></p>
 <p><em>Figure 3-2: gRPC service flow. Interceptors on both sides are the seam for auth, tracing, metrics, and retries without touching handler logic. The channel owns load balancing and deadline propagation.</em></p>
 <h3 id="deadlines-metadata-and-error-details">Deadlines, metadata, and error details</h3>
 <p><strong>Deadlines</strong> propagate as <code>grpc-timeout</code> (an absolute point in time, not a per-hop timeout). When service A calls B with a 300 ms deadline and B must call C, B passes the <em>same</em> deadline context to C — if 250 ms have elapsed, C sees ~50 ms remaining. This is the primary defence against cascading overload: work that cannot finish in the global budget is cancelled everywhere, rather than piling up.</p>
@@ -1718,9 +1685,9 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <p>Retries are opt-in per method and must be paired with idempotency. Retrying a non-idempotent <code>CreateOrder</code> without an idempotency key duplicates the order — the same hazard as retrying a non-idempotent <code>POST</code> in REST (Chapter 6).</p>
 <hr />
 <h2 id="buf-workflow-lint-breaking-format-generate">buf workflow — lint, breaking, format, generate</h2>
-<p><code>buf</code> (1.32.2) is the de-facto toolchain for Protobuf at scale. It replaces the ad-hoc <code>protoc</code> + shell-scripts setup with versioned, reproducible operations. Pin it — <code>buf</code> compatibility checks are only as good as the version that runs in CI.</p>
+<p><code>buf</code> (1.40.2) is the de-facto toolchain for Protobuf at scale. It replaces the ad-hoc <code>protoc</code> + shell-scripts setup with versioned, reproducible operations. Pin it — <code>buf</code> compatibility checks are only as good as the version that runs in CI.</p>
 <p><code>buf.yaml</code> — workspace and lint/breaking config:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># buf.yaml — buf 1.32.2</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># buf.yaml — buf 1.40.2</span>
 <span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buf.build/acme/apis</span>
 <span class="nt">deps</span><span class="p">:</span>
@@ -1732,14 +1699,13 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <span class="nt">lint</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">use</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DEFAULT</span>
-<span class="w">  </span><span class="nt">except</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PACKAGE_VERSION_SUFFIX</span><span class="w"> </span><span class="c1"># allow acme.orders.v1 — buf expects version suffix by default; this disables suffix check if you use custom versioning</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PACKAGE_VERSION_SUFFIX</span><span class="w">  </span><span class="c1"># require version suffix (acme.orders.v1); needed because DEFAULT does not include it</span>
 <span class="w">  </span><span class="c1"># forbid hand-written JSON names that diverge from proto naming</span>
 <span class="w">  </span><span class="nt">allow_comment_ignores</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 
 <p><code>buf.gen.yaml</code> — code generation:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># buf.gen.yaml — buf 1.32.2</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># buf.gen.yaml — buf 1.40.2</span>
 <span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class="nt">plugins</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">plugin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">buf.build/protocolbuffers/go:v1.34.2</span>
@@ -1774,7 +1740,7 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">git diff --exit-code gen/</span><span class="w">  </span><span class="c1"># generated code must be committed</span>
 </code></pre></div>
 
-<div class="highlight"><pre><span></span><code><span class="c1"># Local equivalents — buf 1.32.2</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Local equivalents — buf 1.40.2</span>
 buf<span class="w"> </span>lint
 buf<span class="w"> </span>format<span class="w"> </span>-w<span class="w">          </span><span class="c1"># format in place</span>
 buf<span class="w"> </span>breaking<span class="w"> </span>--against<span class="w"> </span><span class="s1">&#39;.git#branch=main&#39;</span>
@@ -1798,6 +1764,14 @@ buf<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </spa
 <li>Using <code>string</code> for timestamps or <code>double</code> for money — locale and precision bugs that cross every language boundary.</li>
 </ul>
 <hr />
+<h4 id="grpc-call-types">gRPC Call Types</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_516436210683.png" alt="diagram"></div></p>
+<h4 id="protobuf-build-pipeline">Protobuf Build Pipeline</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ef6bb3807c20.png" alt="diagram"></div></p>
+<h4 id="interceptor-chain">Interceptor Chain</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0d0ae2a06ec7.png" alt="diagram"></div></p>
+<h4 id="streaming-backpressure">Streaming Backpressure</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb5d3bf7ec40.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Use gRPC/Protobuf for interior service-to-service traffic where throughput, typing, and streaming outweigh REST's debuggability and cacheability; use REST at the edge.</li>
@@ -1806,13 +1780,13 @@ buf<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </spa
 <li><code>update_mask</code> + field presence (<code>optional</code> or <code>FieldMask</code>) is the correct partial-update pattern; without it, absent fields are misinterpreted as intentional clears.</li>
 <li>Choose unary by default; use server-streaming for tail/watch, client-streaming for bulk upload, and bidirectional only when both directions are genuinely independent.</li>
 <li>Deadlines propagate as <code>grpc-timeout</code> — treat them as a global budget, honour <code>ctx.Done()</code>, and map retryability to <code>codes.Code</code> (<code>UNAVAILABLE</code>/<code>ABORTED</code> retryable, <code>INVALID_ARGUMENT</code>/<code>NOT_FOUND</code> not).</li>
-<li><code>buf</code> 1.32.2 gives you <code>lint</code>, <code>breaking</code>, <code>format</code>, and <code>generate</code> as a single versioned gate; wire it into CI with <code>fetch-depth: 0</code> and fail the PR on any break that is not a new package version.</li>
+<li><code>buf</code> 1.40.2 gives you <code>lint</code>, <code>breaking</code>, <code>format</code>, and <code>generate</code> as a single versioned gate; wire it into CI with <code>fetch-depth: 0</code> and fail the PR on any break that is not a new package version.</li>
 </ul>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Protocol Buffers Language Specification (proto3) — https://protobuf.dev/programming-guides/proto3/ — the authoritative reference for field presence, <code>oneof</code>, maps, and well-known types.</li>
 <li>gRPC Core Concepts — https://grpc.io/docs/what-is-grpc/ — service definitions, the four call shapes, status codes, and metadata.</li>
-<li>Buf Documentation — https://buf.build/docs/ — especially <em>Lint</em>, <em>Breaking Changes</em>, and <em>Code Generation</em> (buf 1.32.2).</li>
+<li>Buf Documentation — https://buf.build/docs/ — especially <em>Lint</em>, <em>Breaking Changes</em>, and <em>Code Generation</em> (buf 1.40.2).</li>
 <li>Google Cloud. <em>API Improvement Proposals (AIPs)</em> — https://aip.dev/ — especially AIP-122 (resource names), AIP-132 (parent/collection), AIP-158 (pagination), AIP-234 (batch). Resource-oriented Protobuf conventions; even outside Google they prevent the most common design drift.</li>
 <li>Vol 3, Chapter 8 — gRPC and RPC Framework Internals — the wire companion to this chapter: HTTP/2 framing, varint encoding, HPACK, and the Fallacies of Distributed Computing.</li>
 <li>Souppaya et al. <em>Protovalidate</em> (buf.build/protovalidate) — declarative field constraints for Protobuf as a complement to service-side validation.</li>
@@ -2058,32 +2032,7 @@ buf<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </spa
 <hr />
 <h2 id="execution-from-query-to-resolvers-to-dataloader">Execution — from query to resolvers to DataLoader</h2>
 <p>A GraphQL request's lifecycle is more work than a REST handler's because the server must <em>plan</em> execution from the query shape:</p>
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant G as Gateway / Apollo Server
-    participant P as Parse + Validate
-    participant E as Executor
-    participant R as Resolvers
-    participant L as DataLoader
-    participant DB as Postgres / Service
-    C->>G: POST /graphql { query: "{ orders(first:20){ edges{ node{ id customer{ displayName } } } } }" }
-    G->>P: parse SDL + validate (depth, complexity, auth)
-    alt persisted query
-        P->>P: lookup hash → stored query
-    end
-    P->>E: Operation + Variables
-    E->>R: resolve Query.orders → [Order IDs]
-    loop for each Order in result
-        R->>L: customerLoader.load(order.customerId)
-    end
-    Note over L: batches N loads into 1 SELECT ... WHERE id IN (...)
-    L->>DB: SELECT * FROM customers WHERE id IN ($1, ... $N)
-    DB-->>L: rows
-    L-->>R: Customer objects (per-order, order preserved)
-    R-->>E: materialised Order graph
-    E-->>G: { data, errors, extensions }
-    G-->>C: JSON response
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7b2cacfc626.png" alt="diagram"></div></p>
 <p><em>Figure 4-1: GraphQL execution lifecycle. The DataLoader batch window collapses N per-entity loads into one query — the critical optimisation for any non-trivial graph.</em></p>
 <h3 id="the-n1-problem-measured">The N+1 problem — measured</h3>
 <p>The classic failure mode: a query asks for 20 orders and each order's customer. A naive resolver does:</p>
@@ -2092,19 +2041,7 @@ buf<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </spa
 </code></pre></div>
 
 <p>At 20 orders this is 21 queries; at 200 (a large page or a nested traversal) it is 201. Under load, this is not merely slow — it exhausts connection pools and amplifies tail latency. At 1,000 RPS, 21 queries per request is 21,000 DB queries per second where 2,000 would suffice.</p>
-<p><pre><code>flowchart TB
-    subgraph Naive[N+1 — naive resolvers]
-        Q1[Query.orders — 1 SELECT] --> R1[Order 1 — SELECT customer]
-        Q1 --> R2[Order 2 — SELECT customer]
-        Q1 --> R3[Order N — SELECT customer]
-        R1 & R2 & R3 -.-> D1[\"N sequential round-trips\"]
-    end
-    subgraph Batched[Batched — DataLoader]
-        Q2[Query.orders — 1 SELECT] --> B1[customerLoader.load × N — batched]
-        B1 --> S1[\"1 SELECT ... WHERE id IN (...)\"]
-        S1 --> C1[\"N customers — single round-trip\"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f6d1bc34f423.png" alt="diagram"></div></p>
 <p><em>Figure 4-2: N+1 versus batched execution. DataLoader's batch window turns N sequential point queries into one IN query, and its per-request memoisation prevents duplicate loads for the same entity within one operation.</em></p>
 <h3 id="solving-it-dataloader">Solving it — DataLoader</h3>
 <p>Facebook's <code>dataloader@2.2.2</code> is the standard solution. It provides two guarantees per request: <strong>batching</strong> (collect <code>load()</code> calls within one tick, dispatch as one function call) and <strong>memoisation</strong> (duplicate <code>load(id)</code> within one request hits cache, not the data source). Both are scoped to a single GraphQL operation — a new request gets a fresh loader, so cross-request staleness is not a concern.</p>
@@ -2331,28 +2268,7 @@ buf<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </spa
 </tbody>
 </table>
 <p>For most organisations beyond ~5 subgraphs, <strong>Federation 2</strong> is the right default: composition is validated in CI, entity ownership is explicit, and teams deploy subgraphs independently.</p>
-<p><pre><code>flowchart TB
-    subgraph Clients
-        Web
-        iOS
-    end
-    subgraph Gateway["Gateway — @apollo/gateway 2.5"]
-        Supergraph["Supergraph (composed)"]
-        QPlan["Query planner"]
-    end
-    subgraph Subgraphs
-        OrdersSG["orders subgraph\nOrder @key(id)"]
-        UsersSG["users subgraph\nCustomer @key(id)"]
-        CatalogSG["catalog subgraph\nProduct @key(sku)"]
-    end
-    Web --> Gateway
-    iOS --> Gateway
-    Supergraph --> QPlan
-    QPlan --> OrdersSG
-    QPlan --> UsersSG
-    QPlan --> CatalogSG
-    OrdersSG -. "extends Customer @external" .-> UsersSG
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f0e034aa5b5f.png" alt="diagram"></div></p>
 <p><em>Figure 4-3: Federated graph. Each subgraph owns its entities; the gateway's query planner fans out one client query into subgraph queries and joins the results.</em></p>
 <p>Minimal federated subgraph (orders) — <code>@apollo/subgraph@2.5.2</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c"># orders subgraph — federation v2.5</span>
@@ -2463,16 +2379,7 @@ npx<span class="w"> </span>@apollo/composition<span class="w"> </span>compose<sp
 <span class="p">};</span>
 </code></pre></div>
 
-<p><pre><code>flowchart LR
-    A[Client query] --> B{Validate}
-    B -->|depth/complexity exceeded| C[Reject 400 + extensions.code COMPLEXITY_EXCEEDED]
-    B -->|persisted hash unknown| D[Require full query once, then cache]
-    B -->|ok| E[Execute with timeout]
-    E --> F{Auth per field}
-    F -->|unauthorised field| G[Null + errors path]
-    F -->|authorised| H[Resolve via DataLoader]
-    H --> I[Response + metrics]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2ae9a37e7f35.png" alt="diagram"></div></p>
 <p><em>Figure 4-4: Production query lifecycle. Validation rejects abusive queries before execution; auth is field-level; DataLoader and timeouts bound the cost of what remains.</em></p>
 <hr />
 <h2 id="caching-where-graphql-pays-a-price">Caching — where GraphQL pays a price</h2>
@@ -2545,6 +2452,12 @@ npx<span class="w"> </span>@apollo/composition<span class="w"> </span>compose<sp
 <p><strong>Distributed-systems lens.</strong> Each subscription holds a server resource (WebSocket + iterator) for its lifetime. At 100,000 concurrent subscriptions, that is 100,000 open connections — a different scaling regime from stateless <code>POST /graphql</code>. Use subscriptions only when polling is genuinely insufficient (sub-second updates, collaborative state). For everything else, short-poll the query or consume events via Kafka (Vol 10, Ch 3).</p>
 </blockquote>
 <hr />
+<h4 id="graphql-execution-pipeline">GraphQL Execution Pipeline</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_feaedaf31137.png" alt="diagram"></div></p>
+<h4 id="federation-gateway">Federation Gateway</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_72cf4ae452be.png" alt="diagram"></div></p>
+<h4 id="n1-and-dataloader">N+1 and DataLoader</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5296e65aaa13.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>GraphQL's strength is client-shaped fetches over a unified graph; its cost is a gateway that must plan, batch, and bound arbitrary queries. Choose it for heterogeneous frontend consumers, not for interior service-to-service traffic.</li>
@@ -2579,20 +2492,7 @@ npx<span class="w"> </span>@apollo/composition<span class="w"> </span>compose<sp
 <h2 id="why-apis-version-the-distributed-systems-reason">Why APIs version — the distributed-systems reason</h2>
 <p>In a monolith, changing a function signature is a single commit: the compiler enumerates every call site and you fix them. In a distributed system, there is no global compiler. A service may have 40 consumers, three of which are outside your organisation, five of which cache a client binary on a mobile device you cannot force-upgrade, and two of which are batch jobs that deploy quarterly. Changing <code>status</code> from a string to an enum, or renaming <code>customer_id</code> to <code>customerId</code>, is not a rename — it is a deserialization failure in a process you did not build, running in a region you do not operate, at 03:00 when you are asleep.</p>
 <p>Versioning is the answer to a single question: <em>how does a producer ship a change without requiring every consumer to ship at the same time?</em> The mechanisms differ, but the invariant is the same: at any moment, multiple versions of the contract are <em>in flight</em> — in different clients, different gateway routes, and different service revisions doing a rolling deploy.</p>
-<p><pre><code>flowchart TB
-    subgraph Time
-        T0["T0: v1.3.0 — all consumers on v1"]
-        T1["T1: v1.4.0 — additive field (MINOR)"]
-        T2["T2: v2.0.0 — breaking rename (MAJOR)"]
-        T3["T3: v1 deprecated — Sunset: 2026-12-31"]
-        T4["T4: v1 removed — 410 Gone"]
-    end
-    T0 --> T1 --> T2 --> T3 --> T4
-    T1 -.-> C1["Old clients ignore new field — safe"]
-    T2 -.-> C2["Old clients pinned to /v1 — unaffected"]
-    T2 -.-> C3["New clients use /v2 — opt-in"]
-    T3 -.-> C4["Metrics track v1 traffic → migration guide"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c705455a8f1f.png" alt="diagram"></div></p>
 <p><em>Figure 5-1: Version timeline. Additive changes ship as MINOR without coordination; breaking changes ship as MAJOR with a sunset window; old and new versions are served concurrently.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> This chapter covers <em>API contract</em> versioning and evolution — how URIs, headers, and schemas change safely. <em>Storage</em> versioning — how tables, indexes, and serialized payloads evolve without downtime — is covered in Volume 5, Chapters 4 (Query Optimization), 7 (WAL/Recovery), and 14 (Pooling/Migrations). Where this chapter shows a SQL migration, it is to illustrate the wire-storage coordination point, not to re-derive storage internals. The wire-format compatibility matrix for Protobuf field types is detailed in Volume 8, Chapter 8 (Compatibility and Wire Formats).</p>
@@ -2638,15 +2538,7 @@ npx<span class="w"> </span>@apollo/composition<span class="w"> </span>compose<sp
 <li><strong>Changing validation (tightening) is MAJOR.</strong> Adding <code>minLength: 1</code> to a field that previously accepted <code>""</code> rejects payloads that previously succeeded.</li>
 <li><strong>Deprecation is MINOR; removal is MAJOR.</strong> Marking <code>legacyPriority</code> as <code>deprecated</code> warns consumers; removing it breaks them (see § Deprecation below).</li>
 </ul>
-<p><pre><code>flowchart TD
-    A[Proposed change] --> B{Does it remove or rename<br/>anything a consumer reads?}
-    B -->|yes| M1[MAJOR — new version path/package]
-    B -->|no| C{Does it add something<br/>new consumers can use?}
-    C -->|yes| M2[MINOR — additive, backward-compatible]
-    C -->|no| D{Docs / non-behavioural?}
-    D -->|yes| M3[PATCH]
-    D -->|no| M4[No version bump — not a contract change]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9ef1e40780ba.png" alt="diagram"></div></p>
 <p><em>Figure 5-2: SemVer decision tree for API contracts. \"Remove or rename\" includes tightening validation and making an optional field required.</em></p>
 <h3 id="versioning-the-artifact-not-just-the-url">Versioning the artifact, not just the URL</h3>
 <p>A disciplined setup versions the spec artifact alongside the route:</p>
@@ -2737,20 +2629,7 @@ buf<span class="w"> </span>push<span class="w"> </span>--tag<span class="w"> </s
 <li><strong>Contract</strong> — remove the old representation.</li>
 </ol>
 <p>At no point is there a state where a writer has stopped writing the old field but a reader still needs it.</p>
-<p><pre><code>sequenceDiagram
-    participant P as Producer (deploy)
-    participant S as Storage
-    participant C as Consumer
-    Note over P,S: Phase 1 — Expand (MINOR)
-    P->>S: write old + new (dual-write)
-    C->>S: read old (unchanged)
-    Note over P,S: Phase 2 — Migrate
-    P->>S: backfill old → new for existing rows
-    C->>C: switch to reading new
-    Note over P,S: Phase 3 — Contract (MAJOR, after Sunset)
-    P->>S: stop writing old; drop column
-    C->>S: read new only
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4b690f3e680f.png" alt="diagram"></div></p>
 <p><em>Figure 5-3: Expand-contract. Each phase is independently deployable and rollback-safe; no phase requires producer and consumer to deploy simultaneously.</em></p>
 <h3 id="example-1-renaming-a-restjson-field">Example 1 — Renaming a REST/JSON field</h3>
 <p><strong>Goal:</strong> Rename <code>customer_id</code> (snake_case) to <code>customerId</code> (camelCase) in <code>POST /v1/orders</code> and <code>GET /v1/orders/{id}</code>.</p>
@@ -2866,14 +2745,7 @@ buf<span class="w"> </span>push<span class="w"> </span>--tag<span class="w"> </s
 <h2 id="deprecation-and-sunset-retiring-old-behaviour">Deprecation and sunset — retiring old behaviour</h2>
 <p>A breaking change without a deprecation period is a coordination failure. Consumers need three things: notice, time, and a migration path.</p>
 <h3 id="the-lifecycle">The lifecycle</h3>
-<p><pre><code>stateDiagram-v2
-    [*] --> Active: publish v1
-    Active --> Deprecated: mark field/route deprecated
-    Deprecated --> SunsetAnnounced: set Sunset header + date
-    SunsetAnnounced --> Sunset: date reached; traffic < threshold
-    Sunset --> Removed: 410 Gone or 404 with Link to successor
-    Removed --> [*]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9e2bd279c449.png" alt="diagram"></div></p>
 <p><em>Figure 5-4: Deprecation lifecycle. Each transition is gated on traffic metrics and consumer notification, not on a calendar alone.</em></p>
 <h3 id="headers-rfc-8594-sunset-and-rfc-9745-deprecation">Headers — RFC 8594 (Sunset) and RFC 9745 (Deprecation)</h3>
 <p>Two standard headers signal lifecycle state on every response that serves deprecated behaviour:</p>
@@ -2961,8 +2833,8 @@ jobs:
 <span class="w">          </span>fail-on:<span class="w"> </span>ERR
 </code></pre></div>
 
-<h3 id="protobuf-buf-breaking-buf-1322">Protobuf — <code>buf breaking</code> (buf 1.32.2)</h3>
-<div class="highlight"><pre><span></span><code><span class="c1"># buf.yaml — buf 1.32.2</span>
+<h3 id="protobuf-buf-breaking-buf-1402">Protobuf — <code>buf breaking</code> (buf 1.40.2)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># buf.yaml — buf 1.40.2</span>
 <span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span>
 <span class="nt">lint</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">use</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">DEFAULT</span><span class="p p-Indicator">]</span>
@@ -3002,6 +2874,12 @@ buf<span class="w"> </span>lint<span class="w"> </span><span class="o">&amp;&amp
 <p><strong>Gateways and clients cache version decisions.</strong> A mobile client that cached <code>GET /v1/orders</code> with <code>Cache-Control: max-age=3600</code> will still call <code>/v1/</code> after you sunset it, until the cache expires or the binary updates. CDNs and service-mesh sidecars add more cache layers. The <code>Sunset</code> header must be honoured by intermediaries, and the gateway should continue serving deprecated versions with deprecation headers until traffic truly drains — not merely until the calendar says so.</p>
 <p><strong>Version-aware routing is infrastructure.</strong> At scale, <code>/v1/</code> and <code>/v2/</code> may be different capacity pools. The gateway's route table must be versioned and deployed atomically with the contract. A canary that routes 1% of <code>/v2/</code> traffic to a new <code>orders-v2</code> deployment while 99% stays on <code>orders-v1</code> is a standard technique for validating a MAJOR before full cutover — the same pattern as deployment strategies in Volume 11, Chapter 9, applied to API versions.</p>
 <hr />
+<h4 id="versioning-strategy-decision">Versioning Strategy Decision</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4e766b0b8a45.png" alt="diagram"></div></p>
+<h4 id="deprecation-timeline">Deprecation Timeline</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_16da6183499a.png" alt="diagram"></div></p>
+<h4 id="semver-state-transitions">SemVer State Transitions</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_72e48de72a58.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>SemVer for contracts: MAJOR = breaking (remove/rename/tighten), MINOR = additive (new optional field/endpoint), PATCH = non-behavioural. Adding an optional field is MINOR only if consumers ignore unknown fields — document that requirement.</li>
@@ -3016,7 +2894,7 @@ buf<span class="w"> </span>lint<span class="w"> </span><span class="o">&amp;&amp
 <li>IETF. <em>RFC 8594 — The Sunset HTTP Header Field</em> (2019) and <em>RFC 9745 — The Deprecation HTTP Header Field</em> (2024) — standard headers for deprecation and sunset signalling.</li>
 <li>IETF. <em>RFC 9457 — Problem Details for HTTP APIs</em> (2023) — the <code>application/problem+json</code> envelope used for <code>410 Gone</code> responses.</li>
 <li>Google. <em>API Improvement Proposals (AIPs)</em> — https://aip.dev/ — AIP-122 (resource names), AIP-136 (custom methods), AIP-149 (versioning), AIP-151 (long-running operations).</li>
-<li><code>buf</code> 1.32.2 — https://buf.build/docs/breaking — FILE vs PACKAGE vs WIRE breaking checks for Protobuf.</li>
+<li><code>buf</code> 1.40.2 — https://buf.build/docs/breaking — FILE vs PACKAGE vs WIRE breaking checks for Protobuf.</li>
 <li><code>oasdiff</code> 1.9.2 — https://github.com/Tufin/oasdiff — breaking-change detection for OpenAPI 3.x.</li>
 <li>Fowler, M. <em>Parallel Change</em> (https://martinfowler.com/bliki/ParallelChange.html) — the expand-contract pattern's original formulation.</li>
 <li>Newman, S. <em>Building Microservices</em> 2nd ed. (O'Reilly, 2021), Ch. 4 — versioning trade-offs and consumer-driven contracts.</li>
@@ -3086,33 +2964,7 @@ Did the order get created? Retry or not?
 <li><strong>Key expires</strong> after a TTL (24 hours is conventional; Stripe uses 24h). After expiry, the same key is treated as new.</li>
 </ol>
 <p>Critically, the key must be <strong>scoped to the caller</strong> (API key, user, tenant). Two different users sending the same UUID must not collide. And the server must handle <strong>concurrent duplicate requests</strong> — two identical <code>POST</code>s arriving within milliseconds, before either has stored a result.</p>
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant G as Gateway
-    participant S as Orders service
-    participant DB as Postgres (idempotency_keys)
-    C->>G: POST /v1/orders Idempotency-Key: abc-123 { customer_id, items }
-    G->>S: forward
-    S->>DB: INSERT idempotency_keys (key, principal, fingerprint, status='processing') ON CONFLICT?
-    alt first arrival
-        DB-->>S: inserted (processing)
-        S->>DB: create order (in same txn or after)
-        S->>DB: UPDATE idempotency_keys SET status='completed', response=...
-        S-->>G: 201 Created { order }
-        G-->>C: 201 { order }
-    else concurrent duplicate — row already processing
-        DB-->>S: conflict — status=processing
-        S-->>G: 409 or wait + return original (see handler)
-    else replay — same key, same fingerprint, already completed
-        DB-->>S: row status=completed, fingerprint matches
-        S-->>G: 201 (replayed body, same Location)
-        G-->>C: 201 (identical to original)
-    else same key, different body
-        DB-->>S: fingerprint mismatch
-        S-->>G: 422 fingerprint mismatch
-        G-->>C: 422 Idempotency-Key already used for different payload
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a49c0104b290.png" alt="diagram"></div></p>
 <p><em>Figure 6-1: Idempotency-Key lifecycle. The <code>processing</code> state is the concurrency guard; the fingerprint check prevents key reuse for a different operation; TTL bounds storage.</em></p>
 <h3 id="real-code-idempotency-key-handler-node-20110-express-4182-pg-8113-redis-72-ioredis-532">Real code — Idempotency-Key handler (Node 20.11.0, Express 4.18.2, pg 8.11.3, Redis 7.2 / ioredis 5.3.2)</h3>
 <p>This handler is production-shaped: concurrent-safe via <code>INSERT ... ON CONFLICT</code>, fingerprint-validated, TTL-bounded, and scoped to the authenticated principal. Two storage options are shown — Postgres (durable, transactional with the domain write) and Redis (lower latency, suitable when the idempotency store is separate from the domain store).</p>
@@ -3449,22 +3301,7 @@ Did the order get created? Retry or not?
 <span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant S as Orders service
-    participant DB as Postgres
-    C->>S: GET /orders?sort=-created_at&page_size=20
-    S->>DB: SELECT ... ORDER BY created_at DESC, id DESC LIMIT 21
-    DB-->>S: 21 rows
-    Note over S: has_more = (21 > 20), next_token = encode(last of 20)
-    S-->>C: 200 { data: 20 orders, pagination: { next_page_token, has_more: true } }
-    C->>S: GET /orders?sort=-created_at&page_size=20&page_token=eyJp...
-    S->>S: decode cursor → (last_created_at, last_id)
-    S->>DB: SELECT ... WHERE (created_at, id) < ($cursor) ORDER BY created_at DESC, id DESC LIMIT 21
-    DB-->>S: 7 rows
-    Note over S: has_more = false, next_token = null
-    S-->>C: 200 { data: 7 orders, pagination: { has_more: false } }
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fbb56358e5cf.png" alt="diagram"></div></p>
 <p><em>Figure 6-2: Cursor pagination walk. Each page fetches one extra row to determine <code>has_more</code> without a separate count query; the cursor encodes the last seen sort key and tie-breaker.</em></p>
 <p>Key choices:</p>
 <ul>
@@ -3612,18 +3449,7 @@ Did the order get created? Retry or not?
 <p><strong>Boundary note.</strong> <em>Which</em> filters can be served efficiently depends on the indexes that exist and how the planner uses them — composite indexes, partial indexes, and index-only scans. The storage-engine reasoning for why <code>filter[status]=paid AND created_at &gt;= ...</code> needs a composite index on <code>(status, created_at, id)</code> versus two single-column indexes is covered in Volume 5, Chapters 3 (Indexing) and 4 (Query Processing). The API contract here is the seam: it declares <em>which</em> filters are supported, and the storage layer must honour that declaration with an index. If the contract advertises a filter without a backing index, the API is correct but slow — a bug that surfaces as a latency regression, not a functional failure.</p>
 </blockquote>
 <h3 id="combining-pagination-filtering-and-sorting-the-full-pipeline">Combining pagination, filtering, and sorting — the full pipeline</h3>
-<p><pre><code>flowchart LR
-    A[GET /orders?filter + sort + page_token] --> B{Validate}
-    B -->|unknown field/sort| C[400 Bad Request]
-    B -->|ok| D[Decode cursor]
-    D --> E[Build WHERE: filters + keyset]
-    E --> F[SELECT ... ORDER BY sort, id LIMIT page_size+1]
-    F --> G{Rows > page_size?}
-    G -->|yes| H[has_more=true, next_token=encode(last)]
-    G -->|no| I[has_more=false, next_token=null]
-    H --> J[200 + Cache-Control: private, no-store]
-    I --> J
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d341ee150723.png" alt="diagram"></div></p>
 <p><em>Figure 6-3: Combined list pipeline. Validation rejects unsupported filters/sorts before touching the database; the keyset condition and filters share the same WHERE clause so one index can cover both when designed correctly.</em></p>
 <hr />
 <h2 id="idempotency-meets-pagination-the-retry-story">Idempotency meets pagination — the retry story</h2>
@@ -3636,6 +3462,14 @@ Did the order get created? Retry or not?
 <p><strong>Distributed-systems lens.</strong> At scale, list endpoints are called by batch jobs that page through millions of rows. Those jobs must be restartable: if the job crashes on page 842, it resumes from the last cursor, not from the beginning. Opaque cursors make this trivial (persist the cursor), while offset pagination makes it expensive (re-scan from zero). Design pagination for the batch consumer, not just the UI.</p>
 </blockquote>
 <hr />
+<h4 id="idempotency-key-flow">Idempotency Key Flow</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2667aa7de114.png" alt="diagram"></div></p>
+<h4 id="cursor-pagination-sequence">Cursor Pagination Sequence</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4a2b466a41c0.png" alt="diagram"></div></p>
+<h4 id="offset-vs-cursor-tradeoff">Offset vs Cursor Tradeoff</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b91ae473c3f2.png" alt="diagram"></div></p>
+<h4 id="retry-with-idempotency-safety">Retry with Idempotency Safety</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a76fd6f8ee1.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Make every <code>POST</code> that creates or mutates state idempotent via <code>Idempotency-Key</code>. The server must handle concurrent duplicate arrivals (<code>INSERT ... ON CONFLICT</code> / <code>SET NX</code>), distinguish replay (same fingerprint → return stored response) from misuse (different fingerprint → <code>422</code>), scope keys to the principal, and expire them on a bounded TTL (24h).</li>
@@ -3683,29 +3517,7 @@ Did the order get created? Retry or not?
 <blockquote>
 <p><strong>Invariant.</strong> An error response is part of the API's versioned contract exactly like a success response. Changing a machine-readable error <code>code</code>, reclassifying a <code>400</code> as <code>404</code>, or removing a detail field is a breaking change — see Chapter 8 (Compatibility). Treat errors with the same versioning discipline you give resources.</p>
 </blockquote>
-<p><pre><code>flowchart TB
-    subgraph ClientDecision["Client receives error — what it decides"]
-        E["Error response<br/>status + code + details + retry hint"]
-        Q1{"Retryable?<br/>UNAVAILABLE / 503 / 429?"}
-        Q2{"Client fix needed?<br/>INVALID_ARGUMENT / 400 / 422?"}
-        Q3{"Has structured details?<br/>field violations / quota / precondition"}
-        R1["Retry with backoff<br/>respect Retry-After / RetryInfo"]
-        R2["Fix request<br/>show field errors, don't retry"]
-        R3["Automated remediation<br/>refresh token, reduce rate, split batch"]
-        R4["Fail and surface<br/>log with request_id, alert if server error"]
-    end
-    E --> Q1
-    Q1 -- yes --> R1
-    Q1 -- no --> Q2
-    Q2 -- yes --> R2
-    Q2 -- no --> Q3
-    Q3 -- yes --> R3
-    Q3 -- no --> R4
-
-    style E fill:#f96,stroke:#333,color:#fff
-    style R1 fill:#6a6,stroke:#333,color:#fff
-    style R2 fill:#69c,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6bdb10d4b6f1.png" alt="diagram"></div></p>
 <hr />
 <h2 id="http-status-semantics-what-rfc-9110-actually-says">HTTP status semantics — what RFC 9110 actually says</h2>
 <p>HTTP status codes are not marketing labels ("we use <code>200</code> for everything and put the real status in the JSON"). They are routing and retry signals read by every intermediary between client and server: CDNs, API gateways, service meshes, and <code>fetch</code> itself.</p>
@@ -4317,28 +4129,7 @@ Did the order get created? Retry or not?
 <span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>sequenceDiagram
-    participant C as Client (Go SDK)
-    participant G as Gateway (grpc-gateway / Envoy)
-    participant S as Orders service (gRPC)
-
-    C->>G: POST /v1/orders {items} (HTTP/JSON)
-    G->>S: CreateOrder(CreateOrderRequest) (gRPC)
-    alt validation failure
-        S-->>G: status INVALID_ARGUMENT + BadRequest + ErrorInfo
-        G-->>C: 400 + application/problem+json<br/>code=VALIDATION_FAILED errors=[...]
-    else out of stock
-        S-->>G: status FAILED_PRECONDITION + PreconditionFailure + ErrorInfo OUT_OF_STOCK
-        G-->>C: 409 + problem+json code=OUT_OF_STOCK
-    else quota exceeded
-        S-->>G: status RESOURCE_EXHAUSTED + QuotaFailure + RetryInfo(37s)
-        G-->>C: 429 + problem+json + Retry-After: 37
-    else transient
-        S-->>G: status UNAVAILABLE (no details)
-        G-->>C: 503 + Retry-After + problem+json code=UNAVAILABLE
-        Note over C,G: Client retries with backoff (idempotent key)
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b91898512581.png" alt="diagram"></div></p>
 <hr />
 <h2 id="mapping-http-and-grpc-without-losing-meaning">Mapping HTTP and gRPC without losing meaning</h2>
 <p>Most systems are not pure REST or pure gRPC — a gRPC service sits behind an HTTP gateway (Envoy, <code>grpc-gateway</code>, <code>Connect</code>) that transcodes <code>google.api.http</code> bindings to JSON, or a REST service is called by a gRPC client via <code>grpc-status</code> trailers. The mapping must preserve two things: the <em>category</em> (<code>4xx</code> vs <code>5xx</code>, retryable vs not) and the <em>retry hint</em>.</p>
@@ -4441,24 +4232,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 </code></pre></div>
 
 <p>Both say the same thing: "retry after 37 seconds."</p>
-<p><pre><code>flowchart LR
-    subgraph GRPC["gRPC layer"]
-        GC["codes.Code<br/>+ google.rpc.Status<br/>+ ErrorDetails"]
-    end
-    subgraph Gateway["Transcoding gateway"]
-        M{"Mapping<br/>HTTP ↔ gRPC"}
-    end
-    subgraph HTTP["HTTP layer"]
-        HS["status code<br/>+ problem+json<br/>+ Retry-After"]
-    end
-    GC <--> M
-    M <--> HS
-
-    M --- N1["RESOURCE_EXHAUSTED<br/><--> 429 + RetryInfo/Retry-After"]
-    M --- N2["INVALID_ARGUMENT<br/><--> 400/422 + BadRequest"]
-    M --- N3["UNAVAILABLE<br/><--> 503 (retryable)"]
-    M --- N4["PERMISSION_DENIED<br/><--> 403 (not retryable)"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b31a0895278f.png" alt="diagram"></div></p>
 <h3 id="googleapihttp-transcoding-where-the-mapping-is-declared"><code>google.api.http</code> transcoding (where the mapping is declared)</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// orders.proto — the mapping lives in the proto, not in ad-hoc gateway config</span>
 <span class="k">syntax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;proto3&quot;</span><span class="p">;</span>
@@ -4496,30 +4270,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <li><strong>Not retryable without changing the request:</strong> <code>INVALID_ARGUMENT</code>/<code>400</code>, <code>NOT_FOUND</code>/<code>404</code>, <code>PERMISSION_DENIED</code>/<code>403</code>, <code>UNAUTHENTICATED</code>/<code>401</code>, <code>ALREADY_EXISTS</code>/<code>409</code> (idempotency conflict — see Ch 6), <code>FAILED_PRECONDITION</code>/<code>400</code>/<code>412</code>, <code>OUT_OF_RANGE</code>/<code>400</code>, <code>UNIMPLEMENTED</code>/<code>501</code>.</li>
 <li><strong><code>INTERNAL</code>/<code>500</code>:</strong> Treat as non-retryable by default. If a specific <code>INTERNAL</code> is known transient (brief invariant violation during a deploy), mark it with an <code>ErrorInfo</code> reason that the retry layer whitelists — don't make all <code>500</code>s retryable.</li>
 </ul>
-<p><pre><code>flowchart TB
-    E["Downstream returns error"]
-    R{"Retryable?<br/>UNAVAILABLE / ABORTED /<br/>RESOURCE_EXHAUSTED / DEADLINE*"}
-    I{"Idempotent<br/>operation?<br/>GET/PUT/DELETE or<br/>POST + Idempotency-Key"}
-    D{"Retry-After /<br/>RetryInfo<br/>present?"}
-    WAIT["Wait retry_delay<br/>(RetryInfo / Retry-After)<br/>+ jitter"]
-    BACKOFF["Backoff + jitter<br/>exponential"]
-    FAIL_NON["Fail fast<br/>map to caller error"]
-    FAIL_RETRY_EXHAUSTED["Retry budget exhausted<br/>surface last error"]
-
-    E --> R
-    R -- no --> FAIL_NON
-    R -- yes --> I
-    I -- no --> FAIL_NON
-    I -- yes --> D
-    D -- yes --> WAIT
-    D -- no --> BACKOFF
-    WAIT --> E
-    BACKOFF --> E
-
-    style FAIL_NON fill:#c55,stroke:#333,color:#fff
-    style WAIT fill:#6a6,stroke:#333,color:#fff
-    style BACKOFF fill:#6a6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_527a8b2710ec.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Critical.</strong> Non-idempotent <code>POST</code> without an <code>Idempotency-Key</code> must not be retried automatically on <code>UNAVAILABLE</code>/<code>DEADLINE_EXCEEDED</code>. The caller's retry turns a transient error into a duplicate order. Gateways that retry blindly on <code>503</code> must check <code>Idempotency-Key</code> or the operation's idempotency claim (Ch 6) before retrying.</p>
 </blockquote>
@@ -4587,6 +4338,12 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 </tbody>
 </table>
 <hr />
+<h4 id="error-taxonomy">Error Taxonomy</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e68412bbd112.png" alt="diagram"></div></p>
+<h4 id="retry-with-backoff-and-jitter">Retry with Backoff and Jitter</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7cbbd3da97ea.png" alt="diagram"></div></p>
+<h4 id="problemdetails-propagation">ProblemDetails Propagation</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_94cb90293154.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Treat every error response as versioned contract. Stable <code>code</code>/<code>ErrorInfo.reason</code> values are what clients switch on; <code>detail</code>/<code>message</code> are for humans. Changing a code is a breaking change.</li>
@@ -4656,23 +4413,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <blockquote>
 <p><strong>Distributed-systems lens.</strong> Every rolling deploy, blue/green cut, and Kafka topic has a window where <em>both</em> versions coexist. If the new producer's bytes break the old consumer, the rollout turns into an incident the moment 1% of traffic hits the new version. Backward compatibility is what lets you roll forward; forward compatibility is what lets you roll back or replay. Full compatibility is what lets you do either without coordination — and it is the invariant a schema registry <em>enforces</em> (see Vol 6, Ch 7 — Quorum Systems, on why coordination-free evolution matters, and Vol 10, Ch 3 — Kafka Architecture, on log immutability).</p>
 </blockquote>
-<p><pre><code>flowchart TB
-    subgraph Timeline["Mixed versions in flight — the window compatibility must cover"]
-        T0["T0: all producers v1<br/>all consumers v1<br/>all events v1 bytes"]
-        T1["T1: producers 50% v2, 50% v1<br/>consumers still v1<br/>needs BACKWARD compat<br/>old consumer ← new bytes"]
-        T2["T2: consumers 50% v2, 50% v1<br/>producers already v2<br/>needs FORWARD compat<br/>new consumer ← old bytes"]
-        T3["T3: all v2 — but topic still holds v1 bytes<br/>replay needs FORWARD compat"]
-        T0 --> T1 --> T2 --> T3
-    end
-
-    T1 --- B1["If new field breaks old reader →<br/>T1 is an incident at 1% rollout"]
-    T2 --- B2["If old bytes missing new required field →<br/>T2 is an incident; rollback also breaks"]
-
-    style T1 fill:#f96,stroke:#333,color:#fff
-    style T2 fill:#f96,stroke:#333,color:#fff
-    style B1 fill:#fee,stroke:#c55
-    style B2 fill:#fee,stroke:#c55
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0e2ff4543ec4.png" alt="diagram"></div></p>
 <p>The rest of the chapter shows how each wire format answers this question — and how to verify the answer mechanically.</p>
 <hr />
 <h2 id="wire-formats-compared-what-to-use-where">Wire formats compared — what to use where</h2>
@@ -4771,26 +4512,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <li><strong>Ultra-low-latency or zero-copy (feature store, game, device):</strong> FlatBuffers/Cap'n Proto — only if profiling shows serialization is the bottleneck.</li>
 <li><strong>Cache/memoization payloads (Redis, Memcached):</strong> MessagePack/CBOR if size matters and the reader is controlled; otherwise JSON for debuggability.</li>
 </ol>
-<p><pre><code>flowchart TB
-    Q1{"Public / browser / partner?"}
-    Q2{"Durable log / replay for years?"}
-    Q3{"Serialization is the bottleneck<br/>(profiled)?"}
-    Q4{"Internal service-to-service<br/>high QPS?"}
-
-    Q1 -- yes --> JSON["JSON + OpenAPI<br/>+ Connect JSON for gRPC browser bridge"]
-    Q1 -- no --> Q2
-    Q2 -- yes --> Avro["Avro or Protobuf<br/>+ Schema Registry / BSR<br/>BACKWARD_TRANSITIVE or FULL"]
-    Q2 -- no --> Q3
-    Q3 -- yes --> FB["FlatBuffers / Cap'n Proto<br/>zero-copy"]
-    Q3 -- no --> Q4
-    Q4 -- yes --> Proto["Protobuf + gRPC/Connect<br/>buf breaking + BSR"]
-    Q4 -- no --> JSON2["JSON is fine<br/>measure before optimizing"]
-
-    style JSON fill:#69c,stroke:#333,color:#fff
-    style Avro fill:#6a6,stroke:#333,color:#fff
-    style Proto fill:#6a6,stroke:#333,color:#fff
-    style FB fill:#fa6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f1fc214f39db.png" alt="diagram"></div></p>
 <hr />
 <h2 id="protobuf-wire-format-the-bytes-that-make-compatibility-work">Protobuf wire format — the bytes that make compatibility work</h2>
 <p>Protobuf's compatibility story is not magic — it falls out of the wire encoding. Understanding the bytes explains <em>why</em> unknown fields are ignored, why field numbers must never be reused, and why <code>reserved</code> exists.</p>
@@ -4934,23 +4656,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <span class="c1">// message Order { string promo_code = 2; }  // reuse of number 2</span>
 </code></pre></div>
 
-<p><pre><code>sequenceDiagram
-    participant Old as Old consumer (v1)
-    participant New as New producer (v1.1 adds promo_code=4)
-    participant Reg as Schema registry / BSR
-
-    Note over New,Reg: New producer registers schema v1.1<br/>registry checks BACKWARD compat — passes (addition only)
-    New->>Old: bytes: fields 1,2,3,4 (varint + length-delimited)
-    Old->>Old: Parse: recognize 1,2,3<br/>tag 4 unknown → skip length bytes<br/>no error, promo_code simply absent
-    Old-->>New: 200 OK (processed without promo_code)
-
-    participant OldP as Old producer (v1)
-    participant NewC as New consumer (v1.1)
-    OldP->>NewC: bytes: fields 1,2,3 only (no field 4)
-    NewC->>NewC: Parse: field 4 missing → default ""<br/>forward compatible if promo_code treated as optional
-
-    Note over Old,New: Reusing number 2 for promo_code would decode<br/>old quantity=300 as promo_code bytes — silent corruption
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_95939ce77913.png" alt="diagram"></div></p>
 <h3 id="json-openapi-compatibility-additive-is-safe-everything-else-is-suspect">JSON / OpenAPI compatibility — additive is safe, everything else is suspect</h3>
 <p>JSON has no wire-level field numbers — compatibility is purely conventional and must be enforced by tooling.</p>
 <table>
@@ -5023,21 +4729,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <hr />
 <h2 id="expand-contract-the-only-safe-migration">Expand-contract — the only safe migration</h2>
 <p>When the change <em>is</em> breaking (rename, type change, tighten), the flag-day alternative — "everyone upgrades at once" — fails at any non-trivial consumer count. Expand-contract (also called parallel change) is the mechanical alternative.</p>
-<p><pre><code>flowchart TB
-    E["Expand — add the new<br/>keep the old"]
-    D1["Dual-write / dual-serve<br/>producers write both<br/>consumers read either"]
-    M["Migrate — consumers move<br/>to the new field<br/>old field deprecated"]
-    D2["Dual-read — consumers prefer<br/>new, fall back to old"]
-    C["Contract — remove the old<br/>after traffic is zero"]
-    V1["v1: field customer_id"]
-    V2["v1.1 expand: customer_id + customerId<br/>both populated, either accepted"]
-    V3["v1.2 migrate: producers write customerId<br/>consumers prefer customerId"]
-    V4["v2.0 contract: customer_id removed<br/>reserved in proto; 410/404 in REST"]
-
-    V1 --> E --> D1 --> M --> D2 --> C --> V4
-    E -.-> V2
-    D2 -.-> V3
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_33cc0385485e.png" alt="diagram"></div></p>
 <p>Concrete storage + wire example:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">-- Phase 1 — Expand (backward compatible). Old code still reads customer_id; new code writes both.</span>
 <span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">customer_id_v2</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">;</span><span class="w">  </span><span class="c1">-- nullable</span>
@@ -5131,27 +4823,7 @@ openapi-diff<span class="w"> </span>--fail-on-incompatible<span class="w"> </spa
 </code></pre></div>
 
 <p>Publishing a schema that reuses a field number, tightens <code>required</code>, or narrows an <code>enum</code> is rejected at <code>POST /subjects/orders-value/versions</code> with a compatibility error — before any bytes hit the topic. Apicurio's <code>FULL_TRANSITIVE</code> and Buf Schema Registry's <code>breaking</code> check are the same idea: the registry is the compatibility gate for the log.</p>
-<p><pre><code>flowchart TB
-    Dev["Developer PR<br/>proto + openapi + Avro schema"]
-    BufCheck["buf breaking<br/>vs main / BSR"]
-    OASCheck["oasdiff breaking<br/>vs main openapi"]
-    RegCheck["Schema Registry<br/>compatibility check<br/>on publish"]
-    CI{"All checks<br/>pass?"}
-    Merge["Merge to main<br/>publish to BSR / Registry<br/>topic accepts only<br/>compatible schemas"]
-    Block["Block PR<br/>require MAJOR bump<br/>+ expand-contract +<br/>migration guide"]
-
-    Dev --> BufCheck
-    Dev --> OASCheck
-    Dev --> RegCheck
-    BufCheck --> CI
-    OASCheck --> CI
-    RegCheck --> CI
-    CI -- yes --> Merge
-    CI -- no --> Block
-
-    style Block fill:#c55,stroke:#333,color:#fff
-    style Merge fill:#6a6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_70875e3eeedf.png" alt="diagram"></div></p>
 <hr />
 <h2 id="the-distributed-systems-lens-living-with-mixed-versions">The distributed-systems lens — living with mixed versions</h2>
 <h3 id="rolling-deploys-and-the-two-invariants">Rolling deploys and the two invariants</h3>
@@ -5220,6 +4892,12 @@ openapi-diff<span class="w"> </span>--fail-on-incompatible<span class="w"> </spa
 </tbody>
 </table>
 <hr />
+<h4 id="compatibility-matrix">Compatibility Matrix</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cdced163e39a.png" alt="diagram"></div></p>
+<h4 id="breaking-change-detection-pipeline">Breaking Change Detection Pipeline</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb99862651db.png" alt="diagram"></div></p>
+<h4 id="consumer-upgrade-safe-path">Consumer Upgrade Safe Path</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a8604c68217.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Compatibility is about <em>mixed versions in flight</em>, not single-version correctness. Backward (old ← new) lets you roll forward; forward (new ← old) lets you roll back and replay; full (both) lets you do either without deploy ordering.</li>
@@ -5321,26 +4999,7 @@ openapi-diff<span class="w"> </span>--fail-on-incompatible<span class="w"> </spa
 <p>Standards are proposed as RFCs, discussed in an API guild (a cross-team community of practice), and adopted by consensus. Each domain team enforces the standard locally. Scales socially — ownership is distributed — but without automated enforcement, adoption is uneven. The team that disagreed with the pagination RFC quietly ignores it.</p>
 <h3 id="platform-enabled-the-model-that-scales">Platform-enabled — the model that scales</h3>
 <p>Standards are codified as machine-checkable rules (Spectral, buf lint) and shipped as a shared config package. CI enforces the rules automatically. Human review is reserved for the cases automation cannot judge — novel resource modeling, cross-domain consistency, deprecation planning. The platform team owns the <em>tooling</em>, not every decision.</p>
-<p><pre><code>flowchart TB
-    subgraph Centralized["Centralized — bottlenecks at scale"]
-        C1["Platform team<br/>owns guide + review"] --> C2["Every API → platform approval<br/>single queue"]
-        C2 --> C3["Coherent, but queue grows<br/>with service count"]
-        style C3 fill:#c55,stroke:#333,color:#fff
-    end
-
-    subgraph Federated["Federated — drifts without enforcement"]
-        F1["Guild / RFC process<br/>consensus standard"] --> F2["Each team enforces locally<br/>no automated gate"]
-        F2 --> F3["Socially scalable<br/>but uneven adoption"]
-        style F3 fill:#fa6,stroke:#333,color:#fff
-    end
-
-    subgraph PlatformEnabled["Platform-enabled — scales (recommended)"]
-        P1["Platform team ships<br/>shared Spectral + buf configs<br/>as versioned packages"] --> P2["CI enforces automatically<br/>lint + breaking check<br/>on every PR"]
-        P2 --> P3["Human review only for<br/>novel design + deprecation<br/>fast path for additive changes"]
-        P3 --> P4["Coherent + scalable<br/>right thing is the easy thing"]
-        style P4 fill:#6a6,stroke:#333,color:#fff
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5ba8c56a534.png" alt="diagram"></div></p>
 <p><strong>Recommendation for a senior backend engineer:</strong> start centralized if you are under ~30 services, federate socially as you grow, and invest in platform-enabled automation the moment the API review queue has a wait time. The automation is not optional at scale — it is the only way to keep review latency flat while service count grows.</p>
 <p>The canonical artifact is an <strong>API style guide</strong> — not a wiki page, but a lintable config. The next two sections build it.</p>
 <hr />
@@ -5796,55 +5455,8 @@ buf<span class="w"> </span>breaking<span class="w"> </span>proto<span class="w">
 <hr />
 <h2 id="the-governance-pipeline-from-proposal-to-sunset">The governance pipeline — from proposal to sunset</h2>
 <p>Linting and breaking-change detection are gates. The lifecycle that connects them is:</p>
-<p><pre><code>flowchart TB
-    A["1 Proposal<br/>RFC / API design doc<br/> requerida for new surface"] --> B["2 Author & lint<br/>Spectral + buf lint<br/>local + pre-commit"]
-    B --> C["3 PR — automated gates<br/>buf breaking vs main/BSR<br/>oasdiff breaking --fail-on ERR<br/>Spectral error = block"]
-    C --> D{"Automated<br/>gates pass?"}
-    D -- no --> R1["Revise<br/>fix lint / justify break<br/>with MAJOR bump"]
-    R1 --> B
-    D -- yes --> E{"Breaking<br/>or novel design?"}
-    E -- additive / trivial --> F["Fast path<br/>CODEOWNERS review<br/>merge"]
-    E -- breaking / novel --> G["Design review<br/>API guild / platform team<br/>check expand-contract +<br/>migration guide + Sunset"]
-    G --> H{"Approved?"}
-    H -- no --> R1
-    H -- yes --> F
-    F --> I["5 Publish<br/>merge to main<br/>publish to catalog / BSR /<br/>Schema Registry<br/>generate SDK (Ch 10)"]
-    I --> J["6 Operate<br/>scorecard + adoption metrics<br/>unknown-field / deserialize-failure<br/>field-presence during expand-contract"]
-    J --> K["7 Deprecate → sunset<br/>Deprecation header + Sunset<br/>Sunset link relation<br/>remove after traffic < 1% for<br/>retention window"]
-    K --> L["Archive<br/>reserved numbers/names<br/>changelog entry"]
-
-    style D fill:#69c,stroke:#333,color:#fff
-    style E fill:#69c,stroke:#333,color:#fff
-    style H fill:#69c,stroke:#333,color:#fff
-    style R1 fill:#fa6,stroke:#333,color:#fff
-    style G fill:#f96,stroke:#333,color:#fff
-</code></pre></p>
-<p><pre><code>sequenceDiagram
-    participant Dev as Developer
-    participant GH as GitHub PR + CI
-    participant Spec as Spectral / buf lint
-    participant Break as oasdiff / buf breaking
-    participant Review as CODEOWNERS / Guild
-    participant Reg as Catalog / BSR / Registry
-
-    Dev->>GH: open PR (openapi.yaml / proto)
-    GH->>Spec: spectral lint + buf lint
-    Spec-->>GH: errors / warnings (annotated on PR)
-    GH->>Break: oasdiff breaking vs main<br/>buf breaking vs main/BSR
-    Break-->>GH: ERR blocks merge<br/>WARN as PR comment
-    alt automated gates fail
-        GH-->>Dev: block — fix or justify with MAJOR bump
-    else gates pass
-        GH->>Review: route by CODEOWNERS
-        alt additive / trivial
-            Review-->>GH: fast-path approve
-        else breaking / novel
-            Review->>Review: guild / platform review<br/>expand-contract + migration guide + Sunset
-            Review-->>GH: approve or request changes
-        end
-        GH->>Reg: merge → publish spec to catalog/BSR<br/>trigger SDK generation (Ch 10)<br/>trigger contract tests (Ch 11)
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1527579995e3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a874a7530a5f.png" alt="diagram"></div></p>
 <p><strong>The <code>Sunset</code> / <code>Deprecation</code> lifecycle in HTTP headers</strong> (RFC 8594 + <code>draft-ietf-httpapi-deprecation-header</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
 <span class="na">Deprecation</span><span class="o">:</span> <span class="l">true</span>
@@ -6059,6 +5671,14 @@ buf<span class="w"> </span>breaking<span class="w"> </span>proto<span class="w">
 </tbody>
 </table>
 <hr />
+<h4 id="governance-council-flow">Governance Council Flow</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7d74fba69d3.png" alt="diagram"></div></p>
+<h4 id="ci-governance-pipeline">CI Governance Pipeline</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8d72093ac1ef.png" alt="diagram"></div></p>
+<h4 id="catalog-discovery">Catalog Discovery</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1907e7dd57f1.png" alt="diagram"></div></p>
+<h4 id="style-guide-enforcement-levels">Style Guide Enforcement Levels</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_41d357c44a59.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Governance at scale is platform-enabled, not committee-driven. Codify standards as machine-checkable rules (Spectral, buf lint), ship them as versioned packages, enforce them in CI, and reserve human review for breaking or novel changes — the fast path keeps review latency flat as service count grows.</li>
@@ -6313,18 +5933,7 @@ buf<span class="w"> </span>push<span class="w"> </span>--label<span class="w"> <
 <span class="c1">#     track: main</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TB
-    subgraph PublishTime["Publish-time enforcement — the registry never accepts a break"]
-        DevA["Dev A PR<br/>adds field 7: promo_code"] --> CIA["CI: buf breaking vs main ✓<br/>oasdiff breaking vs main ✓"]
-        DevB["Dev B PR (concurrent)<br/>adds field 7: discount_code<br/>CI vs Git main ✓ (stale baseline)"] --> CIB["CI: buf breaking vs Git main ✓<br/>passes — race not caught"]
-        CIA --> PushA["buf push / POST /subjects/.../versions<br/>registry checks vs PUBLISHED latest<br/>✓ accepted — now latest"]
-        CIB --> PushB["buf push / POST /subjects/.../versions<br/>registry checks vs NEW latest (A)<br/>✗ REJECTED — number 7 reuse"]
-        PushB --> Fix["Dev B rebases<br/>picks field 8<br/>buf breaking vs new latest ✓<br/>buf push ✓"]
-        style CIB fill:#fa6,stroke:#333,color:#fff
-        style PushB fill:#c55,stroke:#333,color:#fff
-        style Fix fill:#6a6,stroke:#333,color:#fff
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_91b8f2382ebd.png" alt="diagram"></div></p>
 <hr />
 <h2 id="wiring-producers-and-consumers">Wiring producers and consumers</h2>
 <h3 id="kafka-confluent-serializers-java-go-python">Kafka — Confluent serializers (Java, Go, Python)</h3>
@@ -6651,26 +6260,7 @@ npx<span class="w"> </span>@openapitools/openapi-generator-cli<span class="w"> <
 </code></pre></div>
 
 <h3 id="publishing-one-workflow-every-registry">Publishing — one workflow, every registry</h3>
-<p><pre><code>flowchart TB
-    Spec["Spec merge to main<br/>openapi.yaml 1.4.0 / proto commit"] --> Gen["buf generate +<br/>openapi-generator generate<br/>in CI"]
-    Gen --> Diff{"gen/ diff<br/>vs committed?"}
-    Diff -- stale --> Fail["Fail — runBuf generate locally<br/>and commit gen/"]
-    Diff -- clean --> Ver["Derive SDK version<br/>from spec version<br/>1.4.0"]
-    Ver --> Build["Build + test SDK<br/>npm build, go vet,<br/>pytest, mvn verify"]
-    Build --> Tag["Tag + changelog<br/>git tag sdk/v1.4.0<br/>CHANGELOG.md entry"]
-    Tag --> PubNPM["npm publish<br/>@acme/orders-client@1.4.0<br/>tag latest"]
-    Tag --> PubMaven["mvn deploy<br/>com.acme:orders-client:1.4.0<br/>to Maven Central / Nexus"]
-    Tag --> PubPyPI["twine upload<br/>acme-orders-client==1.4.0<br/>to PyPI / internal index"]
-    Tag --> PubGo["Go module<br/>git tag orders/v1.4.0<br/>GOPROXY serves it"]
-    PubNPM --> Catalog["Update catalog<br/>Backstage / Bump / BSR<br/>new SDK version linked"]
-    PubMaven --> Catalog
-    PubPyPI --> Catalog
-    PubGo --> Catalog
-
-    style Spec fill:#69c,stroke:#333,color:#fff
-    style Fail fill:#c55,stroke:#333,color:#fff
-    style Catalog fill:#6a6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2e35bcc11384.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/sdk-publish.yaml — publish SDKs on spec merge (Node 20, Java 17, Python 3.12, buf 1.40)</span>
 <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sdk-publish</span>
 <span class="nt">on</span><span class="p">:</span>
@@ -6863,6 +6453,14 @@ npx<span class="w"> </span>@openapitools/openapi-generator-cli<span class="w"> <
 </tbody>
 </table>
 <hr />
+<h4 id="sdk-generation-pipeline">SDK Generation Pipeline</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a85431c055af.png" alt="diagram"></div></p>
+<h4 id="schema-registry-publish-and-pin">Schema Registry Publish and Pin</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd101d0350d5.png" alt="diagram"></div></p>
+<h4 id="sdk-versioning">SDK Versioning</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0ae32b2b6dd.png" alt="diagram"></div></p>
+<h4 id="thin-facade-pattern">Thin Facade Pattern</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_36321a60405b.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>A schema in Git is a promise; a schema in a registry is an invariant. The registry — Confluent/Apicurio for Kafka (Avro/Protobuf/JSON Schema), BSR for Protobuf/gRPC, Apicurio for OpenAPI — makes the schema versioned, compatibility-checked, and discoverable, and refuses incompatible publishes before any bytes hit the wire.</li>
@@ -6929,23 +6527,7 @@ npx<span class="w"> </span>@openapitools/openapi-generator-cli<span class="w"> <
 </tbody>
 </table>
 <p>Contract tests fill the precise gap: they prove the <em>consumer's expectation</em> and the <em>provider's behavior</em> agree on the <em>contract</em> — without requiring both to run together.</p>
-<p><pre><code>flowchart TB
-    subgraph Pyramid["Test pyramid — what owns which guarantee"]
-        E2E["E2E — whole graph<br/>deploy check: does prod-like traffic succeed?<br/>slow, flaky, combinatorial"]
-        Contract["Contract — interface<br/>merge check: does consumer expectation<br/>match provider behavior?<br/>fast, isolated, version-aware"]
-        Integration["Integration — two services<br/>real downstream, seeded state"]
-        Unit["Unit — handler logic<br/>mocks of the contract<br/>fast but mocks can be wrong"]
-
-        Unit --> Integration --> Contract --> E2E
-    end
-
-    Note["Correct layering — contracts replace<br/>most E2E that was really testing the interface"]
-    E2E -.-> Note
-    Contract -.-> Note
-
-    style Contract fill:#6a6,stroke:#333,color:#fff
-    style E2E fill:#fa6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10e4d574b366.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Distributed-systems lens.</strong> Independent deployability is the invariant. In a system with fifty services, the cost of coordinating deploys ("deploy the provider, then deploy all ten consumers in order") is untenable. Contract tests preserve the ability for any service to deploy at any time — the consumer's contract is a <em>versioned expectation</em> that the provider verifies against every version it still serves. The provider does not need to be at the same commit as the consumer; it needs to satisfy every <em>published</em> contract that has not yet sunset.</p>
 </blockquote>
@@ -7230,28 +6812,7 @@ pact-broker<span class="w"> </span>record-deployment<span class="w"> </span><spa
 <span class="c1"># Broker UI: http://localhost:9292  — matrix view: which consumer versions are verified by which provider versions</span>
 </code></pre></div>
 
-<p><pre><code>sequenceDiagram
-    participant Consumer as Consumer CI<br/>web-frontend
-    participant Broker as Pact Broker<br/>(PactFlow / OSS)
-    participant Provider as Provider CI<br/>orders-service
-    participant Prod as Production<br/>(deployed versions)
-
-    Consumer->>Consumer: pact test → pacts/web-frontend-orders-service.json
-    Consumer->>Broker: pact-broker publish<br/>version=abc123, branch=main
-    Broker-->>Consumer: stored
-
-    Provider->>Broker: fetch pacts<br/>consumer selectors: main/latest<br/>+ deployedOrReleased
-    Broker-->>Provider: pacts for web-frontend@abc123<br/>+ mobile-app@def456 (still in prod)
-    Provider->>Provider: verify each pact<br/>state handlers + real handler
-    Provider->>Broker: publish verification results<br/>provider version=xyz789 ✓/✗
-    Provider-->>Provider: can-i-deploy? gate
-
-    Consumer->>Broker: can-i-deploy --to production?
-    Broker-->>Consumer: ✓ if provider xyz789 verified web-frontend@abc123
-    Consumer->>Prod: deploy
-
-    Note over Provider,Prod: Provider verifies EVERY consumer<br/>version still deployed — not just latest
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0e482454a26d.png" alt="diagram"></div></p>
 <p><strong>Version-aware verification</strong> is the key insight for distributed systems: the provider does not verify against "the consumer" — it verifies against <em>every pact version that is still deployed or released</em>. A consumer that ships weekly will have several versions in prod (canary, blue/green, mobile binaries). <code>DeployedOrReleased: true</code> (or <code>Tag: production</code> + <code>Tag: main</code>) ensures the provider cannot break an older consumer that has not yet upgraded.</p>
 <hr />
 <h2 id="provider-driven-contracts-the-spec-as-the-test">Provider-driven contracts — the spec as the test</h2>
@@ -7391,46 +6952,13 @@ npx<span class="w"> </span>@useoptic/optic@0.40.0<span class="w"> </span>diff<sp
 <hr />
 <h2 id="the-verification-matrix-contracts-at-fleet-scale">The verification matrix — contracts at fleet scale</h2>
 <p>With N consumers and M provider versions, naive E2E needs N×M environments. Contracts collapse it to a verification matrix that CI evaluates without running both sides together:</p>
-<p><pre><code>flowchart TB
-    subgraph Matrix["Verification matrix — CI evaluates without co-deployment"]
-        direction TB
-        C1["Consumer web-frontend<br/>pact v=abc123 (main)"] --> V1{"Provider<br/>orders-service@xyz789<br/>verifies"}
-        C2["Consumer web-frontend<br/>pact v=def456 (production)"] --> V1
-        C3["Consumer mobile-app<br/>pact v=ghi789 (production)"] --> V1
-        C4["Consumer partner-api<br/>pact v=jkl012 (production)"] --> V1
-
-        V1 --> B1["Pact Broker<br/>matrix: which provider<br/>verified which consumer"]
-        B1 --> D1{"can-i-deploy?"}
-        D1 -- all required verified --> Deploy["Deploy provider xyz789<br/>or consumer abc123"]
-        D1 -- any required failed --> Block["Block deploy<br/>see failing pact"]
-    end
-
-    P1["Provider-driven (Schemathesis/Dredd)<br/>verifies spec conformance<br/>on every provider PR"] --> V1
-
-    style Deploy fill:#6a6,stroke:#333,color:#fff
-    style Block fill:#c55,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_babe1174ce18.png" alt="diagram"></div></p>
 <p>The key property: the matrix grows <em>additively</em> (one more pact per consumer release, one more verification per provider release), not <em>multiplicatively</em> (one more E2E environment per N×M combination). At ten consumers with five versions in prod, E2E needs fifty environments; contracts need ten pacts and one provider verification that iterates over ten pacts.</p>
 <hr />
 <h2 id="api-evolution-in-practice-the-daily-discipline">API evolution in practice — the daily discipline</h2>
 <p>Contract tests make evolution a merge-time concern. The workflow that keeps the system moving without flag-days:</p>
 <h3 id="1-expand-contract-additive-first-removal-last-see-chapter-8">1) Expand-contract — additive first, removal last (see Chapter 8)</h3>
-<p><pre><code>flowchart LR
-    subgraph Expand["Expand — add the new, keep the old"]
-        E1["Spec: add optional field<br/>promo_code (field 4)<br/>Spectral ✓, oasdiff WARN"] --> E2["Provider: dual-write<br/>populate both fields<br/>Pact: new interaction<br/>+ old interaction still verified"]
-    end
-    subgraph Migrate["Migrate — consumers move"]
-        M1["Consumers: adopt promo_code<br/>new pact version<br/>provider verifies both"] --> M2["Metrics: field-presence<br/>legacy_discount_code → 0%"]
-    end
-    subgraph Contract["Contract — remove the old"]
-        C1["Spec: remove legacy field<br/>reserved number/name<br/>oasdiff ERR but MAJOR bump<br/>migration guide"] --> C2["Provider: stop dual-write<br/>Pact: legacy interaction removed<br/>after Sunset window"]
-    end
-    Expand --> Migrate --> Contract
-
-    style E1 fill:#69c,stroke:#333,color:#fff
-    style M2 fill:#fa6,stroke:#333,color:#fff
-    style C1 fill:#f96,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1d644d17a1a0.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Consumer contract during expand — both fields expected during the window</span>
 <span class="nx">willRespondWith</span><span class="p">({</span>
 <span class="w">  </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="kt">200</span><span class="p">,</span>
@@ -7576,6 +7104,12 @@ npx<span class="w"> </span>@useoptic/optic@0.40.0<span class="w"> </span>diff<sp
 </tbody>
 </table>
 <hr />
+<h4 id="pact-consumer-driven-flow">Pact Consumer-Driven Flow</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8db27aad89b7.png" alt="diagram"></div></p>
+<h4 id="contract-test-ci-pipeline">Contract Test CI Pipeline</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_59a3aa26ae7c.png" alt="diagram"></div></p>
+<h4 id="provider-verification-states">Provider Verification States</h4>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ca331194b46b.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>A schema proves the <em>specification</em> is compatible; a contract test proves the <em>implementation</em> honors it. Schemas catch evolution errors in the spec; contracts catch drift between spec and handler — neither replaces the other, and the registry cannot catch a handler that returns <code>string</code> where the spec promises <code>integer</code>.</li>

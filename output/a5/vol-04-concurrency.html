@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -226,19 +308,7 @@ program runs perfectly well on one core by interleaving its tasks — and parall
 require the kind of concurrency we mostly care about in this volume. A vectorized dot product is
 parallel with no concurrent structure at all: there are no independently-progressing tasks, just
 one operation applied across many data elements at once.</p>
-<p><pre><code>flowchart TB
-  subgraph CONC["Concurrency — one core, interleaved"]
-    direction LR
-    C1["Task A: run"] --> C2["Task B: run"] --> C3["Task A: run"] --> C4["Task C: run"] --> C5["Task B: run"]
-  end
-  subgraph PAR["Parallelism — three cores, simultaneous"]
-    direction TB
-    P1["Core 0: Task A ================"]
-    P2["Core 1: Task B ================"]
-    P3["Core 2: Task C ================"]
-  end
-  CONC -.->|"concurrency enables but does not require parallelism"| PAR
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dcd2e253a6e7.png" alt="diagram"></div></p>
 <p>The practical payoff of the distinction is that it tells you what a given change can possibly buy
 you. Adding cores to a program with no concurrent structure buys nothing. Adding concurrent
 structure to a program that is already saturating its cores buys nothing but overhead. And — the
@@ -273,23 +343,7 @@ tasks will occupy every worker and starve hundreds of cheap I/O-bound ones behin
 <p>There is no single concurrency model, and the choice among them is the most consequential
 architectural decision in this volume. Here is the map. Each entry gets an honest statement of what
 it buys and what it costs; each gets a full chapter later.</p>
-<p><pre><code>flowchart TD
-  ROOT["Concurrency models"]
-  ROOT --> SM["Shared mutable state"]
-  ROOT --> MP["No shared mutable state"]
-  ROOT --> DP["Data parallelism"]
-
-  SM --> LOCKS["Threads plus locks<br/>Ch2, Ch3, Ch5"]
-  SM --> LF["Lock-free and atomics<br/>Ch4"]
-  SM --> STM["Software transactional memory"]
-
-  MP --> ACT["Actors: Erlang, Akka<br/>Ch7"]
-  MP --> CSP["CSP: Go channels<br/>Ch7"]
-  MP --> EVT["Event loop plus async I/O<br/>Ch6"]
-  MP --> CORO["Coroutines, structured concurrency<br/>Ch8"]
-
-  DP --> SIMD["SIMD and map-reduce<br/>Vol 1 Ch7"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_694eecc55966.png" alt="diagram"></div></p>
 <h3 id="shared-memory-with-locks">Shared memory with locks</h3>
 <p>Threads share an address space and mutate shared data structures under mutual exclusion. This is
 the default model in C, C++, Java, C#, and Rust, and the one every backend engineer must
@@ -375,6 +429,7 @@ arrived, was repeatedly found to have errata, and was eventually disabled on mos
 generalizes: optimistic concurrency control is excellent when conflicts are rare and rollback is
 cheap, and poor otherwise — the same calculus that governs optimistic versus pessimistic locking in
 databases (Volume 5, Chapter 6).</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_34d25a9914aa.png" alt="diagram"></div></p>
 <h2 id="the-four-families-of-hazard">The four families of hazard</h2>
 <p>Every concurrency bug you will meet belongs to one of four families. Naming them precisely is
 worth the effort, because the fixes differ.</p>
@@ -435,6 +490,7 @@ the reason Chapter 3 is the hardest chapter in this volume.</p>
 </ul>
 <p>Chapter 5 treats these, including Coffman's four necessary conditions for deadlock and the
 strategies that break each one.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7c8fdfb49d1c.png" alt="diagram"></div></p>
 <h2 id="the-quantitative-laws">The quantitative laws</h2>
 <p>Concurrency discussions collapse into folklore without arithmetic. Four results do most of the
 practical work.</p>
@@ -494,16 +550,7 @@ throughput</strong>. That is not a theoretical curiosity — it is the single mo
 scaling behavior in production backend systems, and it has a concrete physical cause: cache-line
 ping-pong between cores (Volume 1, Chapters 4 and 8), lock convoys, and the O(N²) communication
 implied by N workers coordinating pairwise.</p>
-<p><pre><code>flowchart LR
-  subgraph SPEED["Speedup versus worker count"]
-    direction TB
-    G["Gustafson: S = N - alpha(N-1)<br/>linear, unbounded"]
-    A["Amdahl: S = 1/((1-p) + p/N)<br/>rises then flattens at 1/(1-p)"]
-    U["USL: C = N / (1 + alpha(N-1) + beta N(N-1))<br/>rises, peaks, then DECLINES"]
-    G --> A --> U
-  end
-  U --> NOTE["beta > 0 creates a maximum.<br/>Past N_max, more workers means less throughput."]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2c0654bf189f.png" alt="diagram"></div></p>
 <p>The operational lesson is direct: <strong>there is an optimal pool size, and it is not "as many as
 possible."</strong> Thread pools, database connection pools, and worker fleets all exhibit this. The
 canonical demonstration is connection pooling — teams routinely discover that a pool of 300
@@ -522,12 +569,7 @@ distribution, or scheduling discipline:</p>
 the average time an item spends in the system. Stated for a service: <em>the average number of
 requests in flight equals the arrival rate times the average latency.</em></p>
 <p>Its power is that you usually know two of the three and want the third.</p>
-<p><pre><code>flowchart LR
-  ARR["Arrivals<br/>lambda = 2000 req/s"] --> Q["Queue"]
-  Q --> POOL["Worker pool<br/>L = concurrency"]
-  POOL --> DONE["Completions"]
-  POOL -.-> NOTE["W = 50 ms average service time<br/>L = lambda x W = 2000 x 0.050 = 100 in flight<br/>Pool smaller than 100 means the queue grows without bound"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a6178f227b37.png" alt="diagram"></div></p>
 <p>Worked example: your service receives 2,000 requests per second and each takes 50 ms end to end.
 Then L = 2000 × 0.050 = <strong>100 requests in flight on average</strong>. If your thread pool has 100 workers,
 you are exactly at capacity with no headroom for variance — a bad place to be. If it has 40, the
@@ -544,6 +586,7 @@ you whether that size is past the point where more workers hurt.</strong> If Lit
 300 concurrent workers but the USL peak for your workload is at 80, you do not have a pool-sizing
 problem — you have an architecture problem, and the answer is to reduce W (make requests faster) or
 to shard the contended resource, not to add workers.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_429f051e8015.png" alt="diagram"></div></p>
 <h2 id="choosing-a-model">Choosing a model</h2>
 <p>The decision is mostly determined by the workload, and the errors are predictable.</p>
 <table>
@@ -805,20 +848,7 @@ split, and on Linux the slow path is built on <code>futex</code> (fast userspace
   — and if so, puts the thread to sleep on a wait queue keyed by the address. On release, the
   holder sees the waiters flag and calls <code>futex(FUTEX_WAKE, addr, 1)</code> to wake one waiter.</li>
 </ul>
-<p><pre><code>flowchart TD
-  START["lock()"] --> CAS{"CAS word 0 to 1<br/>succeeds?"}
-  CAS -->|"yes — UNCONTENDED"| FAST["Hold the lock<br/>~tens of cycles<br/>no syscall, stays in user space"]
-  CAS -->|"no — CONTENDED"| MARK["Set waiters flag"]
-  MARK --> WAIT["futex FUTEX_WAIT<br/>syscall into kernel"]
-  WAIT --> SLEEP["Thread parked on wait queue<br/>keyed by address"]
-  SLEEP --> WOKEN["Woken by FUTEX_WAKE"]
-  WOKEN --> CAS
-  FAST --> CS["critical section"]
-  CS --> UNLOCK["unlock(): store 0"]
-  UNLOCK --> CHECK{"waiters flag set?"}
-  CHECK -->|"no"| DONE["done — still no syscall"]
-  CHECK -->|"yes"| WAKE["futex FUTEX_WAKE<br/>syscall, wake one waiter"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c776a656741e.png" alt="diagram"></div></p>
 <p>The consequences of this design are worth stating explicitly, because they drive practical
 guidance throughout this volume:</p>
 <ul>
@@ -835,6 +865,7 @@ guidance throughout this volume:</p>
 <p>The same architecture appears under other names elsewhere: Windows uses <code>SRWLOCK</code> and
 <code>WaitOnAddress</code>, and the JVM's <code>synchronized</code> uses a related escalation from thin (CAS-based) to
 inflated (OS-monitor) locks. The details differ; the fast-path/slow-path principle does not.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_29fdfc9a7e34.png" alt="diagram"></div></p>
 <h2 id="the-family-of-locks">The family of locks</h2>
 <h3 id="spinlocks">Spinlocks</h3>
 <p>A spinlock busy-waits — repeatedly testing the word in a loop — rather than parking the thread.
@@ -976,6 +1007,7 @@ are so much easier in Java and Go than in C.</p>
 </tr>
 </tbody>
 </table>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c2489964a03.png" alt="diagram"></div></p>
 <h2 id="condition-variables-and-monitors">Condition variables and monitors</h2>
 <p>A lock provides mutual exclusion. It does not provide a way to <em>wait for a condition</em> — "wait until
 the queue is non-empty," "wait until the connection pool has a free slot." That is what condition
@@ -1020,27 +1052,7 @@ than situational. The equivalent Java is identical in structure:</p>
 <span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>sequenceDiagram
-    participant C as Consumer
-    participant M as Mutex
-    participant CV as Condition variable
-    participant P as Producer
-
-    C->>M: lock()
-    C->>C: test predicate — queue empty
-    C->>CV: wait(cv, m)
-    Note over C,M: wait() atomically releases m<br/>and blocks — no lost wakeup
-    P->>M: lock()
-    P->>P: enqueue(item)
-    P->>CV: signal(cv)
-    P->>M: unlock()
-    CV-->>C: wake
-    C->>M: re-acquire m before wait() returns
-    C->>C: RE-TEST predicate in while loop
-    Note over C: may be false — spurious or stolen<br/>wakeup — so loop back to wait()
-    C->>C: predicate true, dequeue
-    C->>M: unlock()
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_91b43097c16d.png" alt="diagram"></div></p>
 <p>A further subtlety: whether you signal while holding the mutex or after releasing it is a
 performance question, not a correctness one. Signaling while holding can cause the woken thread to
 immediately block again on the mutex you still hold — the "hurry up and wait" pattern. Modern
@@ -1075,13 +1087,7 @@ Amdahl's Law (Chapter 1) that serial fraction caps your scaling.</p>
 it multiplies the number of locks a given operation must hold, which invites deadlock through
 inconsistent acquisition order (Chapter 5) and adds per-lock overhead that can exceed the
 parallelism gained.</p>
-<p><pre><code>flowchart LR
-  A["ONE global lock<br/>simple, no deadlock<br/>serializes everything<br/>large Amdahl serial fraction"]
-  B["Striped: N shard locks<br/>parallel across shards<br/>one order to document<br/>hot key still serializes"]
-  C["Per-entry locks<br/>maximum parallelism<br/>ordering hazards, deadlock risk<br/>per-lock memory and overhead"]
-  A -->|"finer"| B -->|"finer"| C
-  C -->|"coarser"| B -->|"coarser"| A
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9a69ad02cea4.png" alt="diagram"></div></p>
 <h3 id="lock-striping">Lock striping</h3>
 <p>The standard resolution for hash-based structures is <strong>striping</strong>: partition the data into N
 independent shards, each with its own lock, and route each key to a shard by its hash. Operations
@@ -1144,25 +1150,12 @@ perform far worse than the same array padded to a line each.</p>
 <p><strong>Context switches.</strong> Once a thread parks, you pay the direct switch cost plus the indirect cost of
 a cold cache and TLB on resumption. This is what turns the contended path from "somewhat slower"
 into "hundreds of times slower."</p>
-<p><pre><code>flowchart LR
-  subgraph BAD["Contended: line ping-pongs"]
-    direction LR
-    K0["Core 0<br/>lock line: M"] -->|"invalidate"| K1["Core 1<br/>lock line: I to M"]
-    K1 -->|"invalidate"| K2["Core 2<br/>lock line: I to M"]
-    K2 -->|"invalidate"| K0
-  end
-  subgraph GOOD["Striped: independent lines"]
-    direction LR
-    S0["Core 0<br/>stripe 0 line: M"]
-    S1["Core 1<br/>stripe 1 line: M"]
-    S2["Core 2<br/>stripe 2 line: M"]
-  end
-  BAD -.->|"shard the lock, pad to cache lines"| GOOD
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7aaf03dba28c.png" alt="diagram"></div></p>
 <p>The Universal Scalability Law from Chapter 1 now has a concrete physical referent: <strong>α is the
 serialization from mutual exclusion, and β is this cache-coherence traffic.</strong> That is why adding
 threads past a point reduces throughput, and why the fix is to eliminate sharing rather than to
 lock it more cleverly.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1b12d45b59fd.png" alt="diagram"></div></p>
 <h2 id="practical-guidance">Practical guidance</h2>
 <p>Rules that survive contact with production:</p>
 <ul>
@@ -1356,26 +1349,7 @@ briefly. Cache coherence (Volume 1, Chapter 4) guarantees that all cores eventua
 value of each location, and that writes to a <em>single</em> location are seen in a consistent order. It
 says nothing about the relative order of writes to <em>different</em> locations, which is precisely what
 the litmus test exposes.</p>
-<p><pre><code>sequenceDiagram
-    participant T1 as Thread 1 on Core 0
-    participant SB1 as Store buffer 0
-    participant MEM as Cache / memory
-    participant SB2 as Store buffer 1
-    participant T2 as Thread 2 on Core 1
-
-    Note over MEM: x = 0, y = 0
-    T1->>SB1: store x = 1
-    Note over SB1: buffered, NOT yet visible
-    T2->>SB2: store y = 1
-    Note over SB2: buffered, NOT yet visible
-    T1->>MEM: load y
-    MEM-->>T1: 0 — Thread 2 store still buffered
-    T2->>MEM: load x
-    MEM-->>T2: 0 — Thread 1 store still buffered
-    SB1->>MEM: drain x = 1
-    SB2->>MEM: drain y = 1
-    Note over T1,T2: Result r1 == 0 and r2 == 0<br/>No interleaving explains it.<br/>Legal under x86-TSO.
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_014ec058ad06.png" alt="diagram"></div></p>
 <h2 id="sequential-consistency-the-model-you-assume-you-have">Sequential consistency: the model you assume you have</h2>
 <p>Leslie Lamport defined <strong>sequential consistency</strong> in 1979:</p>
 <blockquote>
@@ -1471,6 +1445,7 @@ The important categories are:</p>
 <p>Acquire and release are the natural pair: a release-store followed by an acquire-load of the same
 location creates an ordering edge between the two threads, which is the hardware realization of
 happens-before.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_df35580fdd0a.png" alt="diagram"></div></p>
 <h2 id="happens-before-the-central-formalism">Happens-before: the central formalism</h2>
 <p>You should almost never reason about store buffers directly. Language memory models give you a
 better tool: a partial order called <strong>happens-before</strong>, written <code>→</code>. The rule that matters is:</p>
@@ -1522,16 +1497,7 @@ via a volatile write/read, then A → C. This is the mechanism by which a volati
 Transitivity gives (1) → (4), so the read of <code>data</code> must observe 42 even though <code>data</code> is not itself
 volatile. Remove <code>volatile</code> from <code>ready</code> and the chain breaks: there is no edge, the accesses to
 <code>data</code> are concurrent, and the assert can fail — on ARM, routinely.</p>
-<p><pre><code>flowchart TB
-  subgraph T1["Thread 1 — publish"]
-    A1["(1) data = 42<br/>plain write"] --> A2["(2) ready = true<br/>VOLATILE write — release"]
-  end
-  subgraph T2["Thread 2 — consume"]
-    B1["(3) read ready == true<br/>VOLATILE read — acquire"] --> B2["(4) read data<br/>plain read"]
-  end
-  A2 ==>|"happens-before edge<br/>volatile write to volatile read"| B1
-  A1 -.->|"transitivity: (1) to (4)<br/>data == 42 is GUARANTEED"| B2
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_932a9d9018c8.png" alt="diagram"></div></p>
 <h3 id="the-drf-sc-guarantee">The DRF-SC guarantee</h3>
 <p>Here is the theorem that makes all of this tractable, and it deserves to be stated precisely:</p>
 <blockquote>
@@ -1559,6 +1525,7 @@ have races, and the consequences there differ sharply by language:</p>
 <p>And note again the point from Chapter 1: DRF-SC gives you sequential consistency, which eliminates
 <em>data races</em> — it does nothing about <em>race conditions</em>. A properly synchronized check-then-act is
 still a bug.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d98c7ca06132.png" alt="diagram"></div></p>
 <h2 id="language-memory-models-in-practice">Language memory models in practice</h2>
 <h3 id="c11-and-c11-explicit-memory-orders">C++11 and C11: explicit memory orders</h3>
 <p>C++11 introduced the first rigorous memory model for the language, with <code>std::atomic</code> and explicit
@@ -1652,15 +1619,7 @@ code relying on them was relying on implementation behavior. The revision also f
 that Go programs with data races have bounded, non-undefined behavior for word-sized types, while
 warning that races on multiword values can corrupt memory.</p>
 <h3 id="the-ordering-ladder">The ordering ladder</h3>
-<p><pre><code>flowchart TB
-  R["relaxed<br/>atomicity only, no ordering<br/>use: statistics counters, flags you re-check"]
-  A["acquire / release<br/>pairwise synchronizes-with edge<br/>free on x86, cheap on ARM<br/>use: publication, lock-free structures"]
-  S["seq_cst<br/>acquire-release PLUS one global total order<br/>full barrier on stores<br/>use: the default; anything you have not proven needs less"]
-  H["high-level primitives<br/>mutex, channel, concurrent collections<br/>use: essentially always"]
-  R -->|"stronger, slower"| A -->|"stronger, slower"| S
-  H -->|"built from"| S
-  S -.->|"prefer moving UP this list, not down"| H
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ef1358f66540.png" alt="diagram"></div></p>
 <h2 id="publication-and-safe-initialization">Publication and safe initialization</h2>
 <p>Getting an object safely from the thread that constructs it to threads that use it is the most
 common place these rules bite.</p>
@@ -1713,18 +1672,7 @@ acquire. Before Java 5 the JMM did not provide this and the idiom was simply unf
 <span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TB
-  subgraph BR["BROKEN: plain reference field"]
-    B1["allocate memory"] --> B2["publish reference<br/>may become visible FIRST"]
-    B1 --> B3["run constructor, set fields<br/>may become visible SECOND"]
-    B2 --> B4["Other thread sees non-null<br/>reads DEFAULT field values"]
-  end
-  subgraph FX["FIXED: volatile reference field"]
-    F1["allocate memory"] --> F2["run constructor, set fields"]
-    F2 --> F3["volatile write of reference<br/>RELEASE: constructor writes<br/>cannot move after this"]
-    F3 --> F4["Other thread volatile-reads<br/>ACQUIRE: sees fully built object"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cc53377bf801.png" alt="diagram"></div></p>
 <p>But note that in Java the better answer is usually to avoid DCL entirely. The <strong>initialization-on-
 demand holder</strong> idiom gets laziness and thread safety from the class-initialization rules, which the
 JVM already guarantees, with no volatile and no synchronization on the fast path:</p>
@@ -1755,6 +1703,7 @@ best available answer to most visibility problems.</p>
 <p>The escape caveat is important and easy to violate: registering a listener, starting a thread, or
 passing <code>this</code> to anything from inside a constructor publishes a partially-constructed object and
 forfeits the guarantee.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ed6deb812a80.png" alt="diagram"></div></p>
 <h2 id="practical-rules">Practical rules</h2>
 <ul>
 <li><strong>Prefer high-level primitives.</strong> A mutex, a channel, or a concurrent collection gives you the
@@ -2027,17 +1976,12 @@ to swap it in, and retry from the top if someone beat you.</p>
 the value — if it changed, we retry. The success order is <code>release</code> so that writes we performed
 before publishing become visible to whoever later acquires this value. And <code>compare_exchange_weak</code>
 updates <code>old</code> in place on failure, which is what makes the loop re-read for free.</p>
-<p><pre><code>flowchart TD
-  L["old = load(shared)"] --> C["next = f(old)<br/>computed on a PRIVATE snapshot<br/>no lock held"]
-  C --> CAS{"CAS(shared, old, next)"}
-  CAS -->|"success"| DONE["done — our update is published"]
-  CAS -->|"failure: someone else won<br/>old is refreshed with actual value"| C
-  DONE -.-> NOTE["Lock-free: SOME thread always wins each round.<br/>Not wait-free: one unlucky thread can lose forever.<br/>Under high contention the losers' work is wasted."]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d35ebde520ff.png" alt="diagram"></div></p>
 <p>Notice the shape of the cost. Under low contention this is one atomic operation, cheaper than a
 mutex. Under high contention, N threads each compute and N−1 discard the work — throughput
 collapses toward the serialized case while burning CPU on all cores. This is the USL's β term from
 Chapter 1 in its purest form, and it is why lock-free is not a general-purpose speedup.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3fe8be6e2662.png" alt="diagram"></div></p>
 <h2 id="the-aba-problem">The ABA problem</h2>
 <p>The subtle hazard that makes naive CAS insufficient. CAS answers the question <em>"is this location's
 value still X?"</em> — but the question you actually needed answered is <em>"is this location
@@ -2055,23 +1999,7 @@ unchanged?"</em> Those differ when a value can return to a previous state.</p>
 <p>The stack is now corrupt, pointing at freed memory. No individual operation was incorrect; the CAS
 did exactly what it promised. The flaw is that the pointer value A was reused, and CAS cannot
 distinguish "unchanged" from "changed back."</p>
-<p><pre><code>sequenceDiagram
-    participant T1 as Thread 1
-    participant S as Stack top
-    participant T2 as Thread 2
-
-    Note over S: top = A, list A to B to C
-    T1->>S: read top == A
-    T1->>T1: read A.next == B, save it
-    Note over T1: PREEMPTED before CAS
-    T2->>S: pop() removes A, top = B
-    T2->>S: pop() removes B, top = C
-    Note over T2: node B is FREED
-    T2->>S: push(A), top = A again
-    Note over S: top = A, list A to C. B is freed memory.
-    T1->>S: CAS(top, A, B) — SUCCEEDS, A matches
-    Note over S: top = B — FREED MEMORY. Stack corrupt.
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e636828ffbd7.png" alt="diagram"></div></p>
 <p>Mitigations, in rough order of practicality:</p>
 <ul>
 <li><strong>Tagged / versioned pointers.</strong> Pack a monotonically increasing counter alongside the pointer and
@@ -2088,6 +2016,7 @@ distinguish "unchanged" from "changed back."</p>
   references, so the "freed and reused" step cannot happen. ABA can still occur logically if you
   reuse <em>values</em>, but the memory-corruption form is eliminated.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_902f9ee1a813.png" alt="diagram"></div></p>
 <h2 id="memory-reclamation-the-genuinely-hard-part">Memory reclamation: the genuinely hard part</h2>
 <p>Here is the problem that separates lock-free programming from merely difficult programming, and it
 is the one most treatments underweight.</p>
@@ -2186,22 +2115,7 @@ CAS the head pointer.</p>
 <span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TB
-  subgraph PUSH["push(D): link first, then CAS the head"]
-    direction TB
-    PU1["1. read oldHead = top (A)"] --> PU2["2. newNode.next = A<br/>node D is still PRIVATE — invisible to others"]
-    PU2 --> PU3{"3. CAS(top, A, D)"}
-    PU3 -->|"success: top = D, list D to A to B to C"| PU4["done"]
-    PU3 -->|"failure: another thread changed top"| PU1
-  end
-  subgraph POP["pop(): read next, then CAS the head"]
-    direction TB
-    PO1["1. read oldHead = top (A)"] --> PO2["2. read newHead = A.next (B)<br/>THE ABA WINDOW IS HERE"]
-    PO2 --> PO3{"3. CAS(top, A, B)"}
-    PO3 -->|"success: top = B, return A.item"| PO4["done"]
-    PO3 -->|"failure: another thread changed top"| PO1
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e3c5d31a345d.png" alt="diagram"></div></p>
 <p>Note where the danger sits. In <code>push</code>, the new node is private until the CAS publishes it, so the
 window between reading <code>top</code> and swapping is harmless — a losing CAS simply retries. In <code>pop</code>, the
 thread reads <code>A.next</code> <em>before</em> the CAS and then acts on that stale reading, which is precisely the
@@ -2282,27 +2196,7 @@ dynamically grows the cell array. Writes become effectively contention-free and 
 linearly with cores; <code>sum()</code> walks the cells and is therefore approximate if concurrent updates are
 in flight — which is exactly the right trade for metrics, where you need a fast writer and an
 occasional reader.</p>
-<p><pre><code>flowchart TB
-  subgraph A["AtomicLong: one shared cache line"]
-    direction LR
-    C0["Core 0"] --> LINE["counter<br/>ONE cache line"]
-    C1["Core 1"] --> LINE
-    C2["Core 2"] --> LINE
-    C3["Core 3"] --> LINE
-    LINE --> BAD["Line ping-pongs on every increment.<br/>Updates fully serialize.<br/>More cores means LESS throughput."]
-  end
-  subgraph B["LongAdder: striped and padded"]
-    direction LR
-    D0["Core 0"] --> P0["cell 0<br/>own cache line"]
-    D1["Core 1"] --> P1["cell 1<br/>own cache line"]
-    D2["Core 2"] --> P2["cell 2<br/>own cache line"]
-    D3["Core 3"] --> P3["cell 3<br/>own cache line"]
-    P0 --> SUM["sum() adds the cells on read<br/>writes scale near-linearly"]
-    P1 --> SUM
-    P2 --> SUM
-    P3 --> SUM
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_deb479de9198.png" alt="diagram"></div></p>
 <p>The same pattern appears throughout systems programming under different names: per-CPU counters in
 the Linux kernel, sharded counters in distributed databases, <code>prometheus</code> client libraries batching
 per-thread. The principle generalizes past counters: <strong>when a write-heavy shared value becomes hot,
@@ -2310,6 +2204,7 @@ partition it and aggregate on read.</strong> Note the trade you are making — y
 strongly-consistent value readable at any instant for an eventually-consistent one that is exact
 only at rest. For metrics that is free; for a value that gates a decision, such as a quota, it is
 not, and you need the exact primitive or a different design.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_172ca51dd1c1.png" alt="diagram"></div></p>
 <h2 id="when-to-use-lock-free-and-when-not-to">When to use lock-free, and when not to</h2>
 <p><strong>Reach for lock-free when:</strong></p>
 <ul>
@@ -2404,6 +2299,7 @@ why STM failed to displace locks (Chapter 1) — the same calculus, decided by t
 with per-participant values summed on read; both trade instantaneous exactness for
 contention-freedom; both are exact only once updates quiesce. Volume 6 develops CRDTs properly, but
 the intuition is already in your hands: if a value is hot and writes dominate, stop sharing it.</p>
+<p><strong>Where to go next.</strong> Throughput and latency numbers for these structures under contention, and the jcstress/loom/TSan methodology for testing them, are in Chapter 10; the false-sharing physics that makes <code>LongAdder</code>'s padding matter is Volume 1, Chapter 8.</p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>The <strong>progress hierarchy</strong> — blocking, obstruction-free, lock-free, wait-free — is precise.
@@ -2554,11 +2450,7 @@ clean: with single-instance resources (a mutex is a resource with exactly one in
 system is deadlocked if and only if the wait-for graph contains a cycle</strong>. Deadlock detection is
 therefore cycle detection, which is linear-time graph traversal — cheap enough that database
 engines run it routinely, as we will see.</p>
-<p><pre><code>flowchart LR
-  T1["Thread 1<br/>holds lock A"] -->|"waits for B"| T2["Thread 2<br/>holds lock B"]
-  T2 -->|"waits for C"| T3["Thread 3<br/>holds lock C"]
-  T3 -->|"waits for A"| T1
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d0aa26380698.png" alt="diagram"></div></p>
 <p>The three-party cycle above is worth staring at, because it defeats the intuition trained on
 two-thread examples. No pair of these threads is in conflict — T1 and T3 never touch a common
 lock-pair in conflicting order between just the two of them. The deadlock only exists as a property
@@ -2575,16 +2467,7 @@ the pool-based entries in our taxonomy have such long production careers.</p>
 <h3 id="four-strategies-honestly-compared">Four strategies, honestly compared</h3>
 <p>The literature offers four responses to deadlock. All four are used in production software today —
 but in very different niches, and pretending otherwise is how textbooks mislead.</p>
-<p><pre><code>flowchart TD
-  DL["Deadlock requires ALL four<br/>Coffman conditions"] --> C1["1 Mutual exclusion"]
-  DL --> C2["2 Hold and wait"]
-  DL --> C3["3 No preemption"]
-  DL --> C4["4 Circular wait"]
-  C1 --> B1["Break it: share instead of lock<br/>immutability, RCU, lock-free — Ch4<br/>not available for genuinely exclusive state"]
-  C2 --> B2["Break it: acquire all resources<br/>at once, or hold none while waiting<br/>hurts concurrency, must know needs upfront"]
-  C3 --> B3["Break it: make waits preemptible<br/>tryLock with timeout and release<br/>DB engines abort victim transactions"]
-  C4 --> B4["Break it: impose a global lock order<br/>cycles become impossible<br/>the workhorse for in-process code"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_edc999505abb.png" alt="diagram"></div></p>
 <h4 id="prevention-break-a-condition">Prevention: break a condition</h4>
 <p><strong>Breaking mutual exclusion</strong> means not using exclusive resources at all: immutable data, thread
 confinement, the lock-free structures of Chapter 4, RCU from Chapter 2. Where it applies it is the
@@ -2734,6 +2617,7 @@ annoyance; a deadlocked singleton holding leadership is an outage — and note t
 informal detection-and-recovery, so something must detect stuckness, typically a liveness probe
 that actually exercises the stuck path); and the decision must be written down, because an
 undocumented ostrich is indistinguishable from ignorance.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fa4cbf130caf.png" alt="diagram"></div></p>
 <h2 id="a-taxonomy-of-real-deadlocks">A taxonomy of real deadlocks</h2>
 <p>The two-mutex example is the fruit fly of deadlock: ideal for study, rarely what actually bites.
 Production deadlocks come in recurring shapes, and recognizing the shape in code review is worth
@@ -2761,21 +2645,7 @@ blocked waiting for a child, and every child is in the queue waiting for a worke
 Coffman conditions: workers are exclusively held (1), parents hold a worker while waiting for
 another (2), nothing preempts a blocked worker (3), and parents wait on children who wait on the
 workers the parents hold (4). The pool is deadlocked at exactly its configured size, forever.</p>
-<p><pre><code>sequenceDiagram
-    participant A as Worker 1 of 2
-    participant B as Worker 2 of 2
-    participant Q as Pool queue
-
-    A->>A: run ParentTask 1
-    B->>B: run ParentTask 2
-    A->>Q: submit ChildTask 1
-    B->>Q: submit ChildTask 2
-    A->>A: block on childFuture1.get
-    B->>B: block on childFuture2.get
-    Note over A,B: both workers blocked —<br/>pool has zero free threads
-    Note over Q: ChildTask 1 and 2 queued,<br/>waiting for a free worker
-    Note over A,Q: parents wait on children,<br/>children wait on workers<br/>held by parents: circular wait
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_901cc22b99bd.png" alt="diagram"></div></p>
 <p>The insidious property is load dependence: the deadlock requires the pool to be saturated with
 parents, so it appears only at peak — the worst possible time — and vanishes when you restart the
 service and load drops, destroying the evidence. Fixes, in rough order of preference: <strong>never block
@@ -2819,6 +2689,7 @@ written in one visible function; it arrives through a callback, a signal handler
 <h3 id="distributed-deadlock">Distributed deadlock</h3>
 <p>The fifth family — wait-for cycles spanning processes and machines — changes the problem
 qualitatively enough that it gets the distributed-systems lens section to itself below.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e2012335e51f.png" alt="diagram"></div></p>
 <h2 id="livelock">Livelock</h2>
 <p>Deadlock is silent stillness; <strong>livelock</strong> is furious motion without progress. The threads are not
 blocked — they run, change state, consume CPU — but the system as a whole gets nowhere, because
@@ -2837,22 +2708,7 @@ retry policy: optimistic-concurrency retries against a hot row, CAS loops under 
 (Chapter 4's note on livelock in lock-free algorithms — lock-freedom guarantees <em>some</em> thread
 progresses, but obstruction-free designs can livelock), and, at the largest scale, fleets of
 clients retrying a struggling service on identical schedules.</p>
-<p><pre><code>sequenceDiagram
-    participant T1 as Thread 1
-    participant T2 as Thread 2
-
-    Note over T1,T2: fixed equal backoff — collision repeats
-    T1->>T1: lock A ok, try B — fail
-    T2->>T2: lock B ok, try A — fail
-    T1->>T1: release A, sleep 10ms
-    T2->>T2: release B, sleep 10ms
-    Note over T1,T2: wake at the same instant
-    T1->>T1: lock A ok, try B — fail again
-    T2->>T2: lock B ok, try A — fail again
-    Note over T1,T2: with randomized jitter instead:
-    T1->>T1: release A, sleep 3ms, lock A and B — done
-    T2->>T2: release B, sleep 9ms, lock B and A — done
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c858eac91f90.png" alt="diagram"></div></p>
 <p>The fix is to <strong>break the symmetry</strong>, and the standard tool is <strong>randomized exponential backoff</strong>:
 on the Nth consecutive failure, wait a <em>random</em> duration drawn from a window that grows
 (typically doubles) with N. The randomness decorrelates the contenders so collisions stop
@@ -3252,28 +3108,7 @@ the buffer, silently, forever — or until the peer happens to send more, which 
 protocols it will not do, because it is waiting for your reply to the request whose tail you
 never read. This is the classic ET hang: a distributed deadlock manufactured from one missing
 loop, and it appears under load and in integration, rarely at the desk.</p>
-<p><pre><code>sequenceDiagram
-    participant K as Kernel socket buffer
-    participant LT as Level-triggered loop
-    participant ET as Edge-triggered loop
-
-    K->>K: 2 KB arrives on fd
-    LT->>K: epoll_wait
-    K-->>LT: fd readable
-    LT->>K: read 1 KB of 2 KB
-    LT->>K: epoll_wait
-    K-->>LT: fd readable again — bytes remain
-    LT->>K: read remaining 1 KB
-    Note over LT: LT re-reports while the<br/>condition still holds
-
-    K->>K: 2 KB arrives on fd
-    ET->>K: epoll_wait
-    K-->>ET: fd readable — edge fired
-    ET->>K: read 1 KB of 2 KB
-    ET->>K: epoll_wait
-    Note over K,ET: no reply — no new edge,<br/>1 KB stranded in the buffer
-    Note over ET: therefore ET code must loop<br/>reading until EAGAIN before waiting
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fb25edcc04c5.png" alt="diagram"></div></p>
 <p>The ET contract is therefore: <strong>on every event, drain the fd — loop the operation until it
 returns <code>EAGAIN</code> — before returning to <code>epoll_wait</code>.</strong> (This is also why ET plus a blocking fd
 is doubly wrong: the drain loop's final read would hang.) But the fix creates the opposite
@@ -3398,6 +3233,7 @@ registered ET to make the drain obligation visible).</p>
 stateless between events. A real protocol handler attaches a state machine — parse position,
 partial frame, write queue — via <code>epoll_data_t</code>'s pointer form, and that heap object <em>is</em> the
 connection, in the same sense that a stack was the connection in thread-per-connection.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c981b34c8154.png" alt="diagram"></div></p>
 <h2 id="completion-based-io-io_uring-iocp-and-the-proactor">Completion-based I/O: io_uring, IOCP, and the proactor</h2>
 <p>Everything so far is a <strong>readiness</strong> model: the kernel tells you an operation <em>would now
 succeed</em>, and you then perform it yourself. The alternative is a <strong>completion</strong> model: you tell
@@ -3432,23 +3268,7 @@ costing hundreds of nanoseconds, more in the post-Spectre-mitigation world — a
 eliminating per-operation syscalls is a large fraction of io_uring's performance story. The rest
 comes from pre-registration: <code>io_uring_register</code> lets you register buffers and fd sets once, so
 the kernel skips per-operation pinning and fd-table lookups.</p>
-<p><pre><code>flowchart LR
-  subgraph APP["Application"]
-    PREP["Prepare SQEs:<br/>read, write, accept, fsync"]
-    REAP["Reap CQEs:<br/>result or negated errno<br/>plus user_data cookie"]
-  end
-  subgraph SHM["Shared memory rings via mmap"]
-    SQ["Submission queue<br/>app advances tail"]
-    CQ["Completion queue<br/>app advances head"]
-  end
-  subgraph KERN["Kernel"]
-    EXEC["Execute operations<br/>async, batched"]
-  end
-  PREP --> SQ
-  SQ -->|"io_uring_enter:<br/>one syscall per batch<br/>or none with SQPOLL"| EXEC
-  EXEC -->|"post completion"| CQ
-  CQ --> REAP
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_26e9db777d65.png" alt="diagram"></div></p>
 <p>The programming model, via the <code>liburing</code> helper library:</p>
 <div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">io_uring</span><span class="w"> </span><span class="n">ring</span><span class="p">;</span>
 <span class="n">io_uring_queue_init</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ring</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
@@ -3495,17 +3315,7 @@ years yet.</p>
 <p>A multiplexer is not yet an event loop. A production loop — libuv, libevent, Netty's
 <code>EventLoop</code>, Tokio's reactor+executor, Envoy's <code>Dispatcher</code> — wraps the poll call in a repeating
 structure with a small number of universal parts.</p>
-<p><pre><code>flowchart TD
-  START["Iteration begins"] --> TIMERS["Run expired timers<br/>from heap or timer wheel"]
-  TIMERS --> CALC["Compute poll timeout =<br/>delay until nearest timer<br/>or infinite if none pending"]
-  CALC --> POLL["epoll_wait with that timeout"]
-  POLL --> DISPATCH["Dispatch ready events:<br/>run each I/O callback to completion"]
-  DISPATCH --> DEFER["Run deferred work:<br/>microtasks, next-tick queue,<br/>thread-pool completions"]
-  DEFER --> ALIVE{"Anything still pending?<br/>handles, timers, requests"}
-  ALIVE -->|"yes"| START
-  ALIVE -->|"no"| EXIT["Loop exits"]
-  DISPATCH -.->|"one callback blocks<br/>for 200 ms"| STALL["Every timer late by 200 ms<br/>every socket unserviced<br/>loop lag visible fleet-wide"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ab7c74691cd7.png" alt="diagram"></div></p>
 <p><strong>Timers.</strong> Every loop needs "call me in 30 s" — connect timeouts, keepalives, retries. The
 poll timeout is simply the delay until the earliest timer, so timers cost nothing while the loop
 sleeps. Two data structures dominate: a <strong>binary min-heap</strong> (O(log n) insert/expire, exact
@@ -3637,17 +3447,7 @@ more; the remainder is your problem.</em></p>
 mostly-empty send buffer means the socket is <em>almost always writable</em>, so a permanently
 registered LT <code>EPOLLOUT</code> fires on every single <code>epoll_wait</code> — a busy loop burning a core to
 learn nothing. Watch writability only while you have something queued.</p>
-<p><pre><code>stateDiagram-v2
-    [*] --> Idle
-    Idle --> Idle: write accepts all bytes
-    Idle --> Queued: EAGAIN or short write, register EPOLLOUT
-    Queued --> Queued: app produces more, queue grows toward bound
-    Queued --> Draining: EPOLLOUT fires
-    Draining --> Queued: partial drain, EAGAIN again
-    Draining --> Idle: queue empty, unregister EPOLLOUT
-    Queued --> Closed: queue bound exceeded, disconnect slow client
-    Closed --> [*]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2ac9268f8b5c.png" alt="diagram"></div></p>
 <p>The remaining question is the queue's bound, and here is the classic bug: <strong>the unbounded write
 queue.</strong> The application produces data at its own rate — a pub/sub fanout, a log tail, a big
 query result — while the socket drains at the client's rate. Any gap accumulates in your heap.
@@ -3664,6 +3464,7 @@ side until <code>'drain'</code>) and what TCP itself does with its windows. The 
 disconnect, drop, or propagate — reappear at fleet scale in messaging systems, and Volume 10,
 Chapter 7 treats backpressure there; the socket-level version here is the atom from which those
 designs are built.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bda8fddb8a4b.png" alt="diagram"></div></p>
 <h2 id="the-thundering-herd-and-sharing-accept">The thundering herd, and sharing accept</h2>
 <p>Run N workers for N cores and one question remains: who accepts new connections? Let all N poll
 the same listening fd and you meet the <strong>thundering herd</strong>: a single incoming connection makes
@@ -3937,30 +3738,7 @@ model whose primitive matches the substrate distributes without translation.</p>
 lives on your core, another core, or another continent is not visible in the sending code.
 This is the model's boldest promise and — as the distributed-systems lens will argue — its
 most dangerous one. Hold the skepticism; the mechanics first.</p>
-<p><pre><code>flowchart TB
-  subgraph SUP["Supervision tree"]
-    S1["Supervisor<br/>strategy: one_for_one"]
-    S2["Supervisor<br/>strategy: one_for_all"]
-    W1["Worker actor A"]
-    W2["Worker actor B"]
-    W3["Worker actor C"]
-    W4["Worker actor D"]
-    S1 --> W1
-    S1 --> S2
-    S2 --> W2
-    S2 --> W3
-    S1 --> W4
-  end
-  subgraph ANATOMY["Inside one actor"]
-    MB["Mailbox: FIFO queue<br/>of pending messages"]
-    BEH["Behavior: handle one<br/>message at a time"]
-    ST["Private state<br/>no external access"]
-    MB --> BEH
-    BEH --> ST
-    BEH -->|"1 send messages<br/>2 create actors<br/>3 designate next behavior"| OUT["Effects"]
-  end
-  W2 -.->|"is one of these"| MB
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1d7846bc5561.png" alt="diagram"></div></p>
 <h3 id="erlangotp-the-model-taken-seriously">Erlang/OTP: the model taken seriously</h3>
 <p>Erlang is the deepest industrial realization of the actor model, and studying it repays
 the effort even if you never deploy a BEAM system, because OTP is a twenty-plus-year
@@ -4133,6 +3911,7 @@ but it is a discipline, enforced by review rather than by the runtime. Erlang en
 with per-process heaps and immutable terms; that enforcement, more than any single
 feature, is the gap between the two. There is no free path to actor safety on a
 shared-memory runtime: you buy it with copying, with immutability, or with vigilance.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_db00e0f7cc2a.png" alt="diagram"></div></p>
 <h2 id="csp-communicating-sequential-processes">CSP: Communicating Sequential Processes</h2>
 <h3 id="hoare-1978">Hoare, 1978</h3>
 <p>Tony Hoare's 1978 CACM paper <em>Communicating Sequential Processes</em> proposed, with unusual
@@ -4188,18 +3967,7 @@ also sees everything the receiver did before its receive began. The channel is n
 a data conduit; it is a synchronization edge, which is why transferring ownership of a
 pointer through a channel is safe: the happens-before edge publishes the pointee's state
 along with the pointer.</p>
-<p><pre><code>sequenceDiagram
-    participant S as "Sender goroutine"
-    participant C as "Unbuffered channel"
-    participant R as "Receiver goroutine"
-    S->>S: build result, write fields
-    S->>C: ch <- v  "blocks: no receiver yet"
-    Note over S,C: sender parked
-    R->>C: v := <-ch  "receiver arrives"
-    C-->>R: v delivered
-    C-->>S: send completes, sender resumes
-    Note over S,R: rendezvous is one event.<br/>All writes before the send<br/>happen-before the receive completing:<br/>receiver sees the built result fully.
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a8a35e87ad25.png" alt="diagram"></div></p>
 <p><strong>Buffered channels decouple, up to capacity.</strong> <code>make(chan T, C)</code> holds up to C elements;
 sends block only when the buffer is full, receives only when it is empty. The memory-model
 rule generalizes with a precision worth quoting: <strong>the k-th receive on a channel with
@@ -4272,6 +4040,7 @@ signatures like <code>func producer(out chan&lt;- int)</code> and <code>func con
 compiler-checked statements of protocol role: the producer <em>cannot</em> receive from its own
 output or, usefully, be closed by the wrong side, because <code>close</code> is disallowed on a
 receive-only channel. Cheap, local, static protocol enforcement; use it everywhere.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8650d21d0c2d.png" alt="diagram"></div></p>
 <h2 id="channel-patterns">Channel patterns</h2>
 <p>A small vocabulary of shapes covers most real Go concurrency. The canonical exposition is
 the Go blog's <em>Go Concurrency Patterns: Pipelines and cancellation</em>; here is the
@@ -4288,17 +4057,7 @@ is the load balancer, and slow workers naturally take fewer items. Fan-in: one g
 (or a <code>WaitGroup</code>-closed merge) multiplexes several channels back into one. This is also
 the honest <strong>worker pool</strong>: fan-out over a jobs channel, fan-in of results, bounded
 concurrency equal to the number of workers.</p>
-<p><pre><code>flowchart LR
-  GEN["generator<br/>emits jobs"] --> JOBS["jobs channel"]
-  JOBS --> W1["worker 1"]
-  JOBS --> W2["worker 2"]
-  JOBS --> W3["worker 3"]
-  W1 --> RES["results channel"]
-  W2 --> RES
-  W3 --> RES
-  RES --> SINK["collector"]
-  NOTE["one shared jobs channel does the balancing:<br/>each job is received by exactly one worker"] -.-> JOBS
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_16d8d17ca3f8.png" alt="diagram"></div></p>
 <p><strong>Cancellation: the done channel and <code>context</code>.</strong> A pipeline must be able to stop early —
 the consumer errored, the request timed out — and here the CSP coupling bites: a producer
 blocked on a send to an abandoned channel blocks <em>forever</em>, leaking the goroutine and
@@ -4427,6 +4186,7 @@ policy: run N goroutines, wait for all, return the first error, and — via
 <code>errgroup.WithContext</code> — cancel the shared context the moment any member fails, so
 siblings stop doing doomed work. It is structured concurrency in miniature, and Chapter 8
 generalizes it.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bd4bc47e5292.png" alt="diagram"></div></p>
 <h2 id="what-message-passing-does-not-fix">What message passing does not fix</h2>
 <p>Both models are routinely oversold. Here is the honest ledger; each entry names the
 migration of a Chapter 1 hazard, not a new species.</p>
@@ -4441,17 +4201,7 @@ ones: bound the queue and choose a policy for the full case — block the sender
 (backpressure, the CSP default recovered), shed load, or drop with a metric — or move to
 credit/pull-based schemes where consumers grant send permission. This is the in-process
 shadow of Volume 10, Chapter 7's backpressure story, and the design pressure is identical.</p>
-<p><pre><code>flowchart TB
-  P["Producer at 1100 msg/s"] --> Q{"Mailbox or channel"}
-  Q -->|"unbounded mailbox"| U1["Queue grows without limit"]
-  U1 --> U2["Latency climbs: every message<br/>waits behind a longer queue"]
-  U2 --> U3["Memory exhausted: OOM kill<br/>takes out ALL actors in the VM"]
-  Q -->|"bounded, capacity C"| B1["Queue fills to C"]
-  B1 --> B2{"Full-queue policy"}
-  B2 -->|"block sender"| B3["Backpressure propagates upstream<br/>producer slows to 1000 msg/s"]
-  B2 -->|"shed or drop"| B4["Explicit loss, counted in metrics<br/>system stays alive"]
-  U3 -.->|"the unbounded path fails late,<br/>globally, and unaccountably"| B2
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c1bd571fe07b.png" alt="diagram"></div></p>
 <p>Go's buffered channels are always bounded, so Go fails the <em>other</em> way:</p>
 <p><strong>Goroutine leaks from blocked communication.</strong> A goroutine parked on a channel operation
 that will never complete — sending to a channel nobody will drain, receiving from one
@@ -4793,24 +4543,7 @@ compiles to an anonymous type implementing <code>Future</code>, sized precisely,
 it, and the runtime need not exist until you poll it. The cost is that suspension is a property of
 the function's <em>type</em>, visible in every signature from the leaf I/O call up to <code>main</code> — which is
 the door through which the function-coloring problem enters.</p>
-<p><pre><code>flowchart TB
-  subgraph SF["Stackful: goroutine, virtual thread"]
-    direction TB
-    SF1["Own growable stack<br/>handler frame<br/>library frame<br/>decode frame"]
-    SF2["Suspend: save registers,<br/>switch stack pointer"]
-    SF3["Can suspend ANYWHERE<br/>in the call chain —<br/>callers unaware"]
-    SF1 --> SF2 --> SF3
-  end
-  subgraph SL["Stackless: async await"]
-    direction TB
-    SL1["No stack — a state object:<br/>state = 2<br/>saved locals: conn, buf"]
-    SL2["Suspend: store locals in object,<br/>record resume point, return"]
-    SL3["Can suspend ONLY at<br/>marked await points —<br/>every caller must be async"]
-    SL1 --> SL2 --> SL3
-  end
-  SF3 -.->|"cost: stack memory, FFI and<br/>growth complexity"| TRADE["Trade-off"]
-  SL3 -.->|"cost: function coloring,<br/>viral signatures"| TRADE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4adcb53ea3e1.png" alt="diagram"></div></p>
 <p>The comparison in one table:</p>
 <table>
 <thead>
@@ -4997,6 +4730,7 @@ thread a signal (SIGURG on Unix), whose handler suspends the goroutine at the ne
 regardless of calls. The general lesson survives the details: a cooperative runtime either grows a
 preemption mechanism, or it must give you a blocking-pool escape hatch and the discipline to use
 it — and usually both.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_04922f4ed386.png" alt="diagram"></div></p>
 <h2 id="structured-concurrency-the-go-statement-considered-harmful">Structured concurrency: the go statement considered harmful</h2>
 <p>Everything so far makes tasks <em>cheap</em>. Cheap tasks make a new problem acute: what governs their
 <em>lifetimes</em>? The primitive every runtime hands you — <code>go func(...)</code>, <code>Thread.start()</code>,
@@ -5037,24 +4771,7 @@ hypothetical. Four failure classes recur in every codebase that spawns freely:</
    showing forty thousand goroutines blocked on channels nobody will ever write to (Chapter 10
    covers the tooling).</li>
 </ol>
-<p><pre><code>flowchart LR
-  subgraph UN["Unstructured: fire and forget"]
-    direction TB
-    H1["handler starts"] --> S1["spawn helper task"]
-    S1 --> H2["handler returns —<br/>caller believes work is done"]
-    S1 -.-> T1["helper still running:<br/>holds connection, touches freed state,<br/>error has nowhere to go"]
-    T1 -.-> LEAK["leaked task —<br/>outlives its scope"]
-  end
-  subgraph ST["Structured: scope owns tasks"]
-    direction TB
-    G1["scope opens"] --> G2["spawn child A"]
-    G1 --> G3["spawn child B"]
-    G2 --> J["scope exit WAITS<br/>for A and B"]
-    G3 --> J
-    J --> G4["scope closes:<br/>all effects complete,<br/>errors propagated"]
-  end
-  UN -.->|"the fix"| ST
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d80a358cc48d.png" alt="diagram"></div></p>
 <h3 id="the-fix-scopes-own-tasks">The fix: scopes own tasks</h3>
 <p>Structured concurrency is one rule with three corollaries. <strong>The rule:</strong> concurrency may only be
 introduced inside a <em>scope</em> — a syntactic block — and every task spawned in the scope is owned by
@@ -5075,20 +4792,8 @@ until when?" answerable by reading the enclosing scopes. And, exactly as with <c
 what the restriction <em>enables</em>: because the runtime knows the tree, it can give you accurate
 cross-task stack traces (Kotlin and Trio print the logical parent chain, not the scheduler's call
 stack), meaningful task dumps, and resource cleanup tied to scope exit.</p>
-<p><pre><code>flowchart TD
-  ROOT["request scope<br/>deadline 800 ms"]
-  ROOT --> A["fetch profile"]
-  ROOT --> B["fetch orders"]
-  ROOT --> C["fetch recommendations"]
-  B --> B1["query shard 1"]
-  B --> B2["query shard 2"]
-  B2 -- "fails" --> ERR["error propagates UP<br/>to owning scope"]
-  ERR --> ROOT
-  ROOT -- "cancels" --> A
-  ROOT -- "cancels" --> C
-  ROOT -- "cancels" --> B1
-  ROOT --> DONE["scope exits only after all<br/>children finish or are cancelled —<br/>then rethrows the error"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a37e5ef706fe.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_51d8e74edf89.png" alt="diagram"></div></p>
 <h2 id="realizations-four-ecosystems-one-tree">Realizations: four ecosystems, one tree</h2>
 <h3 id="trio-nurseries-the-pattern-at-its-purest">Trio nurseries — the pattern at its purest</h3>
 <p>Nathaniel Smith's Python library <strong>Trio</strong> is where the pattern was first realized as the <em>only</em>
@@ -5283,6 +4988,7 @@ enforce this automatically — <code>context.WithTimeout</code> derived from an 
 the parent's deadline; Kotlin's nested <code>withTimeout</code> and Trio's nested cancel scopes fire
 whichever expires first. This is what makes timeouts <em>composable</em>: a library can impose its own
 internal timeout without ever extending the caller's budget.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ca9c64c0dae6.png" alt="diagram"></div></p>
 <h2 id="errors-across-task-boundaries">Errors across task boundaries</h2>
 <p>A scope with N children needs a policy for the moment child 3 fails while 1, 2, and 4 are still
 running. There are two defensible policies, and good APIs let you choose per scope:</p>
@@ -5346,23 +5052,7 @@ server sees the remaining budget in its handler context, and Go's gRPC integrati
 the wire exactly as it does across function calls: the effective deadline at any node is the
 minimum over its ancestors, network hops included. (Volume 8, Chapter 3 covers the mechanics;
 budget your hops so downstream services get useful slices, and subtract expected network time.)</p>
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant G as Gateway
-    participant A as Service A
-    participant B as Service B shard
-    C->>G: request, deadline 800 ms
-    Note over G: 50 ms spent locally
-    G->>A: RPC, grpc-timeout 750 ms
-    Note over A: 100 ms spent locally
-    A->>B: RPC, grpc-timeout 650 ms
-    Note over B: deadline = min over all ancestors
-    C--xG: client disconnects
-    Note over G: request context cancelled
-    G--xA: RPC cancelled on the wire
-    A--xB: cancellation propagates down the tree
-    Note over B: cooperative checkpoint observes<br/>cancellation, stops work, cleans up
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e2c21a5a170b.png" alt="diagram"></div></p>
 <p><strong>Cancellation crosses the wire — if the tree is intact.</strong> When the client disconnects, the
 gateway's server framework cancels the request context; because the outbound RPCs were made <em>with
 that context</em>, gRPC signals cancellation to service A (HTTP/2 <code>RST_STREAM</code>), whose handler context
@@ -5568,20 +5258,7 @@ there are three honest answers:</p>
 <code>DiscardOldestPolicy</code>, <code>CallerRunsPolicy</code>); in Go you build them from channel operations — a
 blocking send blocks, a <code>select</code> with <code>default</code> drops, and caller-runs is a <code>select</code> whose default
 branch invokes the function inline.</p>
-<p><pre><code>flowchart LR
-  P["Producers"] --> ADM{"queue has<br/>free slot?"}
-  ADM -->|"yes"| Q["Bounded queue<br/>capacity K<br/>depth = latency L over mu"]
-  Q --> W1["Worker 1"]
-  Q --> W2["Worker 2"]
-  Q --> WN["Worker N"]
-  W1 --> D["Done"]
-  W2 --> D
-  WN --> D
-  ADM -->|"no — policy: block"| BP["Producer waits<br/>backpressure upstream"]
-  ADM -->|"no — policy: drop"| REJ["Reject fast: 503 or error<br/>caller still has deadline budget"]
-  ADM -->|"no — policy: caller-runs"| CR["Producer runs task itself<br/>submission rate self-throttles"]
-  BP -.-> ADM
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8eeb81e08acb.png" alt="diagram"></div></p>
 <p>How big should the bound be? Small enough that the latency it implies is one you are willing to
 serve: a queue of K items in front of a pool draining μ items/s adds up to K/μ of waiting.
 If your latency budget for queueing is 100 ms and the pool drains 1,000 items/s, the queue bound
@@ -5675,6 +5352,7 @@ below).</p>
 <code>new ThreadPoolExecutor(n, n, 0, MILLISECONDS, new ArrayBlockingQueue&lt;&gt;(cap), policy)</code>, and
 shutdown via <code>shutdown()</code> → <code>awaitTermination(grace)</code> → <code>shutdownNow()</code> — the same three beats:
 stop intake, drain with a deadline, cancel stragglers.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e69a660cac2b.png" alt="diagram"></div></p>
 <h2 id="producerconsumer-the-fundamental-pattern">Producer–consumer: the fundamental pattern</h2>
 <p>Strip any concurrency architecture to its skeleton and you find producer–consumer with a bounded
 buffer: some threads generate work, some threads consume it, and a bounded queue between them
@@ -5760,25 +5438,7 @@ delay cut 99.9th-percentile latency from 1,800 ms to 74 ms while adding roughly 
 Hedge only idempotent operations (a hedged non-idempotent write is a duplicate write — see the
 idempotency section), and cancel the loser once a winner returns, or you pay the duplicate work
 anyway.</p>
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant G as Aggregator
-    participant P as Profile svc
-    participant R as Pricing svc
-    participant S as Recs svc
-
-    C->>G: GET page — deadline 300 ms
-    Note over G: fan out concurrently<br/>per-branch timeout 150 ms
-    G->>P: fetch profile
-    G->>R: fetch pricing
-    G->>S: fetch recommendations
-    P-->>G: 200 in 40 ms
-    R-->>G: 200 in 85 ms
-    Note over G,S: 150 ms elapse — recs branch<br/>times out, context cancelled
-    G--xS: cancel
-    G-->>C: 200 partial response in ~155 ms<br/>profile + pricing, recs omitted
-    Note over C: degraded but fast beats<br/>complete but late
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8a4f921c9b84.png" alt="diagram"></div></p>
 <p>In Go the shape is <code>errgroup.WithContext</code> plus <code>golang.org/x/sync/semaphore</code> (or
 <code>errgroup.SetLimit</code>) for the concurrency cap; in Java, <code>CompletableFuture.allOf</code> with per-future
 <code>orTimeout</code>, or structured concurrency's scopes in recent JDKs (Chapter 8).</p>
@@ -5831,6 +5491,7 @@ still want the result; detach the fetch's context deliberately.</p>
 <p>Coalescing composes with two other stampede defenses covered in the caching section below — TTL
 jitter and early refresh — and its distributed twin is the cache lock/lease (Volume 6, Chapter 8;
 Volume 7, Chapter 3 treats caching strategy end to end).</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7e1149ed553.png" alt="diagram"></div></p>
 <h2 id="rate-limiting-and-admission-control-in-process">Rate limiting and admission control in-process</h2>
 <p>A service that accepts every request accepts its own death. Two mechanisms guard the front door:
 rate limiting (bound the <em>rate</em> of admitted work) and load shedding (refuse work when the system
@@ -5899,6 +5560,7 @@ traffic classes first, keep health checks and payments — is the natural refine
 book's "Handling Overload" and "Addressing Cascading Failures" chapters are the standard field
 guides; Volume 11 develops shedding as a reliability practice, and Volume 11, Chapter 10 covers
 the pattern catalog around it.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ec6d67ddca95.png" alt="diagram"></div></p>
 <h2 id="bulkheads-isolating-the-blast-radius">Bulkheads: isolating the blast radius</h2>
 <p>The term is naval: a ship's hull is partitioned so one flooded compartment does not sink the
 vessel. The software version: <strong>partition your concurrency so one misbehaving dependency cannot
@@ -5917,17 +5579,7 @@ partial result — instead of dying. Sizing is Little's Law yet again: expected 
 its timeout bounds worst-case in-flight; permits somewhat above the <em>healthy</em> steady state
 (λ × normal latency) with headroom, but far below "all the threads," give the isolation without
 throttling normal operation.</p>
-<p><pre><code>flowchart TD
-  IN["Incoming requests<br/>server pool: 200 threads"] --> H["Handler"]
-  H --> SA["Semaphore A: 20 permits"]
-  H --> SB["Semaphore B: 20 permits"]
-  H --> SC["Semaphore C: 20 permits"]
-  SA --> A["Downstream A<br/>healthy, 10 ms"]
-  SB --> B["Downstream B<br/>healthy, 15 ms"]
-  SC --> C["Downstream C<br/>DEGRADED: 30 s latency"]
-  SC -.->|"permit 21+: reject fast"| FB["Fallback: partial result<br/>or cached value or error"]
-  C -.-> NOTE["At most 20 threads stuck in C.<br/>180 threads still serve A and B traffic."]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1257baefbd5b.png" alt="diagram"></div></p>
 <p>Choose pools over semaphores when the calls must also be <em>timed out from outside</em> (a thread pool
 lets you abandon a stuck call via future timeout; a semaphore-guarded synchronous call is only as
 bounded as its own timeout — which the next section insists exists anyway) or when the dependency
@@ -6006,26 +5658,7 @@ the ordering is the point.</p>
    the last batch on every deploy.</li>
 <li><strong>Exit zero.</strong> So the orchestrator can tell a clean stop from a crash.</li>
 </ol>
-<p><pre><code>sequenceDiagram
-    participant K as Orchestrator
-    participant LB as Load balancer
-    participant S as Service
-    participant W as In-flight work
-
-    K->>S: SIGTERM
-    S->>S: readiness probe now fails
-    LB->>S: still routing briefly
-    Note over LB,S: endpoint removal is async —<br/>keep serving until LB catches up
-    LB--xS: stops routing
-    S->>S: close listener, stop queue consumers
-    S->>W: drain: let running requests finish
-    W-->>S: most complete within deadline
-    Note over S,W: drain deadline expires
-    S->>W: cancel remaining contexts
-    W-->>S: stragglers abort cleanly
-    S->>S: flush buffers, close pools
-    S->>K: exit 0 — before the SIGKILL deadline
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dce419899ffd.png" alt="diagram"></div></p>
 <p>The <code>Pool.Shutdown</code> in the worker-pool code above is beats 2–4 in miniature: close intake, drain
 with deadline, cancel. Note the interlock with retries and idempotency: even a perfect drain
 cancels <em>some</em> work sometimes, so clients must retry, so retried work must be safe to repeat.
@@ -6373,19 +6006,7 @@ mostly revisits the same few schedules.</p>
 all ways of buying stronger evidence — either by extracting more information per execution (race
 detection), by visiting more of the space per unit of effort (schedule exploration and model
 checking), or by shrinking the space until visiting all of it is feasible (design for testability).</p>
-<p><pre><code>flowchart TB
-  SPACE["Interleaving space of one test<br/>astronomically many schedules"]
-  NAIVE["Plain unit test<br/>one fair schedule per run<br/>revisits the same few points"]
-  STRESS["Stress plus perturbation<br/>random walk over a wider region<br/>still a sliver, no guarantee"]
-  RACE["Race detector<br/>one schedule per run BUT<br/>flags races in adjacent schedules<br/>via happens-before analysis"]
-  MODEL["Model checker: loom, Lincheck<br/>exhaustive or bounded enumeration<br/>only feasible for SMALL components"]
-  PROD["Production plus observability<br/>the widest sampler you own<br/>detection after the fact"]
-  SPACE --> NAIVE
-  SPACE --> STRESS
-  SPACE --> RACE
-  SPACE --> MODEL
-  SPACE --> PROD
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5bec6e33bf51.png" alt="diagram"></div></p>
 <h2 id="a-taxonomy-of-the-prey">A taxonomy of the prey</h2>
 <p>Different defects yield to different tools, so the first diagnostic step is knowing which species
 you are hunting.</p>
@@ -6463,22 +6084,7 @@ accessing thread and that thread's clock value at the time. On every new access,
 access against the stored ones: if a previous <em>conflicting</em> access (write-write, write-read, or
 read-write) is not ordered before the current one under the recorded clocks, the two accesses are
 concurrent, and that is a data race — by definition, not by heuristic.</p>
-<p><pre><code>sequenceDiagram
-    participant T1 as Thread 1 clock C1
-    participant M as Mutex m clock Cm
-    participant X as Location x shadow
-    participant T2 as Thread 2 clock C2
-
-    Note over T1: C1 = [1,0]
-    T1->>X: write x, stamped T1@[1,0]
-    T1->>M: unlock — Cm joins C1, Cm = [1,0]
-    M->>T2: lock — C2 joins Cm, C2 = [1,1]
-    T2->>X: write x, stamped T2@[1,1]
-    Note over X: previous stamp [1,0] is dominated by [1,1]<br/>ordered — no race
-    Note over T2: later, T2 with C2 = [0,2]<br/>no lock taken this time
-    T2->>X: write x, stamped T2@[0,2]
-    Note over X: previous stamp T1@[1,0] NOT dominated:<br/>entry for T1 is 0 in [0,2]<br/>concurrent conflicting writes — DATA RACE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7c4381fe056a.png" alt="diagram"></div></p>
 <p>Full vector clocks on every access are expensive, and the practical detectors descend from the
 <strong>FastTrack</strong> insight (Flanagan and Freund, 2009): the vast majority of locations are accessed in an
 already-ordered fashion, so a single (thread, clock) <em>epoch</em> suffices to represent the last write,
@@ -6651,6 +6257,7 @@ testing, the model-checking tools of the next section are the right instrument.<
 <li><strong>Some synchronization the tool cannot model</strong> — cross-process shared memory, custom futex use —
   where you may get noise or silence, neither trustworthy.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_16afab7a795f.png" alt="diagram"></div></p>
 <h2 id="stress-testing-and-schedule-exploration">Stress testing and schedule exploration</h2>
 <h3 id="stress-alone-is-weaker-than-it-feels">Stress alone is weaker than it feels</h3>
 <p>The obvious response to "one schedule per run" is many threads, many iterations, many runs — and
@@ -6738,6 +6345,7 @@ retrofitting is close to impossible — and the simulator only tests what it mod
 the worst property of concurrency bugs (irreproducibility) into a non-issue, and it is the
 intellectual ancestor of the deterministic-simulation and Antithesis-style testing covered for
 distributed systems in Volume 6, Chapter 12.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1bd839d5842f.png" alt="diagram"></div></p>
 <h2 id="deadlock-and-leak-detection">Deadlock and leak detection</h2>
 <h3 id="reading-the-deadlock-out-of-a-thread-dump">Reading the deadlock out of a thread dump</h3>
 <p>Deadlocks (Chapter 5) are the friendliest concurrency bug: once entered, they persist, so a
@@ -6769,20 +6377,7 @@ Chapter 5's lock-ordering discipline. The detector only sees waits it can model:
 cycle that runs through a condition-variable wait, a full bounded queue, or an external resource,
 so a hung service with <em>no</em> reported deadlock still warrants reading the dump for clusters of
 threads parked in <code>await</code> or <code>poll</code> — a "communication deadlock" the cycle detector cannot see.</p>
-<p><pre><code>flowchart TB
-  HANG["Service hung or a pool starved"]
-  DUMP["Capture state: jstack or jcmd on JVM<br/>SIGQUIT for Go goroutine dump<br/>capture 2-3 dumps 10s apart"]
-  EXPL["Explicit deadlock section present?"]
-  CYCLE["Read the cycle: threads, locks, stacks<br/>fix via lock ordering — Chapter 5"]
-  PARK["No explicit deadlock:<br/>diff the dumps — which threads<br/>have not moved between snapshots?"]
-  COMM["Stuck in await, receive, or full-queue send:<br/>communication deadlock or lost signal"]
-  SLOW["All threads moving but slowly:<br/>not deadlock — contention or convoy<br/>go to contention profiling"]
-  HANG --> DUMP --> EXPL
-  EXPL -->|yes| CYCLE
-  EXPL -->|no| PARK
-  PARK --> COMM
-  PARK --> SLOW
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0c636433fd72.png" alt="diagram"></div></p>
 <p>Go's runtime panics with <code>fatal error: all goroutines are asleep - deadlock!</code> and full stacks when
 <em>every</em> goroutine is blocked — invaluable, but only for total deadlock; a partial deadlock among
 some goroutines while others serve traffic triggers nothing. For those, SIGQUIT dumps every
@@ -6872,6 +6467,7 @@ suite and hoping:</p>
    race detector report under the reproduction workload" converges fast precisely because the
    detector does not need the failure to manifest, only the racy accesses to execute.</li>
 </ol>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0016c0b4d68.png" alt="diagram"></div></p>
 <h2 id="designing-for-testability">Designing for testability</h2>
 <p>The strongest position in this chapter is the one that needs the least tooling: <strong>arrange the code
 so that its concurrency is small enough to verify exhaustively, and everything else is sequential.</strong></p>
@@ -6908,13 +6504,7 @@ coverage decreasing and realism increasing as you rise:</p>
 <li><strong>Continuous:</strong> a race-enabled canary in production, and the observability of the previous
    section, which is the widest schedule-sampler you will ever own.</li>
 </ol>
-<p><pre><code>flowchart TB
-  L1["Model-checked core<br/>loom, Lincheck, jcstress on small components<br/>exhaustive or bounded schedule coverage"]
-  L2["Race-detector CI lane<br/>full suite under -race or TSan<br/>required, blocks merge"]
-  L3["Nightly stress and soak<br/>perturbed schedules, leak canaries,<br/>simulation seeds"]
-  L4["Production observability plus race canary<br/>contention profiles, queue depths,<br/>goroutine counts, flight recorder"]
-  L1 -->|"less exhaustive, more realistic"| L2 --> L3 --> L4
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ddb8544130b3.png" alt="diagram"></div></p>
 <h2 id="the-distributed-systems-lens">The distributed-systems lens</h2>
 <p>Every technique in this chapter has a distributed sibling, and Volume 6, Chapter 12 is that
 sibling's chapter; the mapping is worth internalizing now because the <em>reasoning</em> transfers even

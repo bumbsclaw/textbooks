@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -481,14 +563,7 @@ orders since a date, for customers in a given region.</p>
 <span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">name</span><span class="p">;</span>
 </code></pre></div>
 
-<p><pre><code>flowchart BT
-  CUST["customers"] --> SC["selection: region = 'emea'"]
-  ORD["orders"] --> SO["selection: status = 'completed'<br/>AND placed_at >= 2026-01-01"]
-  SC --> J["join: o.customer_id = c.id"]
-  SO --> J
-  J --> G["group by c.name<br/>aggregate: sum of amount_cents"]
-  G --> P["projection: name, revenue_cents"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dd7a7eb95e50.png" alt="diagram"></div></p>
 <p>Read bottom-up: base relations at the leaves, result at the root. Notice the tree already
 shows one rewrite the optimizer will always make — the selections have been <em>pushed down</em>
 below the join, so the join sees only EMEA customers and completed recent orders rather than
@@ -520,10 +595,7 @@ keys. The operational consequences:</p>
 <p>A SELECT statement is written in one order and <em>means</em> another. The standard defines a logical
 evaluation order — every conforming implementation must behave <em>as if</em> it evaluated clauses in
 this sequence (the optimizer will do something cleverer, but observably equivalent):</p>
-<p><pre><code>flowchart LR
-  F["FROM<br/>+ JOIN/ON"] --> W["WHERE"] --> G["GROUP BY"] --> H["HAVING"]
-  H --> S["SELECT list<br/>+ window functions"] --> D["DISTINCT"] --> O["ORDER BY"] --> L["LIMIT /<br/>OFFSET"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b07aa68d9d16.png" alt="diagram"></div></p>
 <p>This one diagram resolves a whole family of "why won't SQL let me…" questions mechanically:</p>
 <ul>
 <li><strong>Why can't WHERE see a SELECT alias?</strong> <code>SELECT price * qty AS total … WHERE total &gt; 100</code>
@@ -616,13 +688,7 @@ explicit:</p>
 <span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="p">;</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TB
-  subgraph PART["Partition: customer_id = 42, ordered by placed_at"]
-    R1["row 1: 500"] --> R2["row 2: 300"] --> R3["row 3: 700<br/>current row"] --> R4["row 4: 200"] --> R5["row 5: 900"]
-  end
-  FR["frame for row 3 with ROWS UNBOUNDED PRECEDING:<br/>rows 1..3 — running total = 1500"] -.-> R3
-  FR2["frame with ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING:<br/>rows 2..4 — moving sum = 1200"] -.-> R3
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b1af07545ecb.png" alt="diagram"></div></p>
 <p>The frame is where the bites are. When you write <code>ORDER BY</code> in a window and <em>omit</em> the frame,
 the default is <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> — and <code>RANGE</code> includes all
 <em>peers</em> of the current row (rows equal under the ORDER BY). If two orders share a timestamp,
@@ -799,21 +865,7 @@ violating it above); <strong>3NF</strong> — no non-key attribute depends on an
 dependency); <strong>BCNF</strong> — the clean unifying statement: <em>for every nontrivial FD X → Y, X is a
 superkey</em>. Every arrow comes from a key. The decomposition, guided by the FDs — one relation
 per determinant:</p>
-<p><pre><code>flowchart LR
-  subgraph BEFORE["Before: one table, redundant facts"]
-    FLAT["order_lines_flat<br/>order_id, customer_id, customer_email,<br/>product_id, product_name, unit_price_cents, quantity<br/>email repeated per line — update anomaly<br/>product needs an order to exist — insert anomaly<br/>last line deletion loses product — delete anomaly"]
-  end
-  subgraph AFTER["After BCNF: every fact stated once"]
-    CUST2["customers<br/>id PK, email"]
-    ORD2["orders<br/>id PK, customer_id FK"]
-    PROD2["products<br/>id PK, name, unit_price_cents"]
-    LINES2["order_lines<br/>order_id FK, product_id FK, quantity<br/>PK order_id, product_id"]
-    ORD2 --> CUST2
-    LINES2 --> ORD2
-    LINES2 --> PROD2
-  end
-  BEFORE --> AFTER
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_264c5cc40649.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">customers</span><span class="w"> </span><span class="p">(</span>
 <span class="w">  </span><span class="n">id</span><span class="w">    </span><span class="nb">bigint</span><span class="w"> </span><span class="k">GENERATED</span><span class="w"> </span><span class="n">ALWAYS</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">IDENTITY</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
 <span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">UNIQUE</span>
@@ -1029,6 +1081,9 @@ merged dataset as maximally nullable until proven otherwise.</p>
   partition boundaries become expensive or impossible; the logical layer determines later
   shardability.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d920c7857007.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4985d7ac908e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f66f3c3ba62.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Codd, E. F., "A Relational Model of Data for Large Shared Data Banks," <em>Communications of
@@ -1165,7 +1220,7 @@ is find a key without scanning, or return rows in order. Everything else in this
 adding order.</p>
 <h2 id="b-trees">B+ trees</h2>
 <h3 id="structure-and-the-arithmetic-of-fanout">Structure, and the arithmetic of fanout</h3>
-<p>The B-tree family, introduced by Bayer and McCreight in 1970, is the ordered structure designed
+<p>The B-tree family, introduced by Bayer and McCreight in 1972 (submitted 1970, published <em>Acta Informatica</em>), is the ordered structure designed
 for page-granular storage. What databases actually use is the <strong>B+ tree</strong> variant, with three
 defining properties:</p>
 <ol>
@@ -1209,22 +1264,7 @@ parent routes to it via separator 12. Insert key 27:</p>
    the only way a B+ tree ever grows taller. Growth at the root is why every leaf stays at the
    same depth — the tree is self-balancing by construction.</li>
 </ol>
-<p><pre><code>flowchart TD
-  subgraph BEFORE["Before: insert 27 into a full leaf"]
-    P1["parent: ... 12 ..."]
-    L1["leaf: 12 23 31 47 — FULL"]
-    P1 --> L1
-  end
-  subgraph AFTER["After the split"]
-    P2["parent: ... 12 | 27 ..."]
-    L2["leaf: 12 23"]
-    L3["new leaf: 27 31 47"]
-    P2 --> L2
-    P2 --> L3
-    L2 -.->|"sibling link"| L3
-  end
-  BEFORE ==>|"split leaf, promote 27"| AFTER
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_64da587809c3.png" alt="diagram"></div></p>
 <p>Amortized, splits are rare — with fanout 100+, fewer than a percent of inserts split — but they
 are not free, and their placement is workload-dependent. Monotonically increasing keys (an
 auto-increment ID, a timestamp) always split the rightmost leaf, which engines special-case into
@@ -1326,15 +1366,7 @@ bulk, in the background.</p>
 memtable takes over, and a background thread <strong>flushes</strong> the immutable memtable to disk as an
 <strong>SSTable</strong> — a Sorted String Table, an immutable file of key-ordered entries — into level 0. The
 WAL segment covering that memtable can then be discarded.</p>
-<p><pre><code>flowchart LR
-  W["write: put or delete"] --> WAL["WAL append<br/>sequential, fsync per policy"]
-  WAL --> MT["memtable<br/>skiplist, in memory"]
-  MT -->|"full: 64 MiB"| IMM["immutable memtable"]
-  IMM -->|"background flush"| L0["L0 SSTables<br/>overlapping key ranges"]
-  L0 -->|"compaction"| L1["L1 SSTables<br/>disjoint ranges, ~256 MiB total"]
-  L1 -->|"compaction"| L2["L2 — 10x larger"]
-  L2 -->|"compaction"| LN["L3..Ln — 10x each"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_607b7393f30b.png" alt="diagram"></div></p>
 <p>Note what the design bought: every byte of I/O on the write path is sequential, writes are batched
 by the memtable into large flushes, and a burst of writes to the same key collapses into one entry
 at flush time. This — not magic — is why LSM ingest throughput embarrasses B-trees.</p>
@@ -1368,20 +1400,7 @@ so a range read must open a <strong>merging iterator</strong> across the memtabl
 every level, doing a heap-merge as it advances. Range-heavy workloads feel LSM read amplification
 with full force; prefix bloom filters (RocksDB <code>prefix_extractor</code>) claw some of it back for
 prefix-bounded scans.</p>
-<p><pre><code>flowchart TD
-  subgraph BT["B+ tree point read"]
-    Q1["lookup key"] --> R1["root — cached"]
-    R1 --> I1["internal — cached"]
-    I1 --> LF["leaf page<br/>1-2 disk reads total"]
-  end
-  subgraph LSM["LSM point read"]
-    Q2["lookup key"] --> M1["memtable"]
-    M1 -->|"miss"| M2["immutable memtables"]
-    M2 -->|"miss"| F0["each L0 file<br/>bloom filter first"]
-    F0 -->|"miss"| F1["one file per level L1..Ln<br/>bloom filter first"]
-    F1 --> HIT["first hit wins<br/>~1 block read if filters work<br/>many probes regardless"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7eaa67b60f8.png" alt="diagram"></div></p>
 <h3 id="compaction-the-heart-of-the-machine">Compaction: the heart of the machine</h3>
 <p>Left alone, flushes would pile up files forever and reads would drown. <strong>Compaction</strong> is the
 background process that merges SSTables into fewer, larger, sorted runs, dropping overwritten
@@ -1405,18 +1424,7 @@ low</strong> (steady-state space overhead around 10%, since ~90% of data sits in
 cost: a file pushed into the next level overlaps ~10 files there and rewrites them all, so each
 key is rewritten roughly the multiplier per level transit — <strong>write amplification on the order of
 the multiplier times the level count</strong>, commonly cited in the tens for a large store.</p>
-<p><pre><code>flowchart TD
-  subgraph ST["Size-tiered"]
-    A1["4 small runs, similar size"] -->|"merge"| A2["1 medium run"]
-    A3["4 medium runs"] -->|"merge"| A4["1 large run"]
-    A5["low write amp<br/>high read amp: overlapping runs<br/>high space amp: 2x during merge"]
-  end
-  subgraph LV["Leveled"]
-    B0["L0: overlapping flush files"] -->|"pick file, merge into overlap"| B1["L1: one sorted run, disjoint files"]
-    B1 -->|"same, 10x down"| B2["L2: 10x larger"]
-    B3["low read amp: 1 file per level<br/>low space amp: ~10 percent<br/>high write amp: ~10x per level"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_12eb3af0dd94.png" alt="diagram"></div></p>
 <p>This three-way tension is not an artifact of these two algorithms; it is the <strong>RUM conjecture</strong>
 (Athanassoulis et al., 2016): for Read, Update (write), and Memory/space overheads, an access
 method can be excellent on two only by paying on the third. B-trees minimize read amplification
@@ -1682,6 +1690,9 @@ them, you will be reading this chapter's diagrams with a network drawn through t
   segments and lakehouse files, and compaction debt and stall behavior are fleet-level
   operational inputs, not node-level trivia.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_075bd0e7e1af.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5595632856c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f51a5a03bed.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>O'Neil, P., Cheng, E., Gawlick, D., and O'Neil, E., "The Log-Structured Merge-Tree
@@ -1861,21 +1872,7 @@ ANALYZE</code> reports <code>Heap Fetches</code> for an index-only scan, and why
 freshly-loaded, never-vacuumed table performs like a plain index scan: the visibility map is
 empty until vacuum runs. If you are counting on index-only scans, you are also counting on vacuum
 keeping up.</p>
-<p><pre><code>flowchart TD
-  subgraph INNO["InnoDB — clustered"]
-    Q1["query: WHERE email = ..."] --> S1["secondary index on email<br/>descent 1"]
-    S1 --> PK["leaf entry holds<br/>PRIMARY KEY value"]
-    PK --> C1["clustered PK B+ tree<br/>descent 2"]
-    C1 --> R1["row lives in the<br/>clustered leaf page"]
-  end
-  subgraph PG["PostgreSQL — heap"]
-    Q2["query: WHERE email = ..."] --> S2["index on email<br/>one descent"]
-    S2 --> TID["leaf entry holds TID<br/>block and offset"]
-    TID --> H["heap page fetch"]
-    H --> V["visibility check via<br/>tuple header — MVCC"]
-    V --> R2["row version returned"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_375c4fcd7623.png" alt="diagram"></div></p>
 <h3 id="which-model-when">Which model when</h3>
 <p>Neither model dominates. Clustering makes PK-range scans superb — <code>WHERE user_id = ? ORDER BY
 created_at</code> on a PK of <code>(user_id, created_at)</code> reads physically contiguous pages, which is why
@@ -1959,18 +1956,7 @@ describe a contiguous range of the index's sort order?</strong></p>
 note the tension it hides: when different queries need different orders, one index cannot serve
 both seek shapes, and you must decide whether the second query merits a second index — which is a
 write-cost question, not an indexing question.</p>
-<p><pre><code>flowchart TD
-  IDX["composite index on<br/>customer_id, status, placed_at"] --> P1["WHERE customer_id = 42<br/>SEEK — leftmost prefix"]
-  IDX --> P2["WHERE customer_id = 42<br/>AND status = 'shipped'<br/>SEEK — two-column prefix"]
-  IDX --> P3["WHERE customer_id = 42<br/>AND status = 'shipped'<br/>AND placed_at > t<br/>SEEK all three, sorted output"]
-  IDX --> P4["WHERE customer_id = 42<br/>AND placed_at > t<br/>SEEK on customer only,<br/>FILTER on placed_at"]
-  IDX --> P5["WHERE status = 'shipped'<br/>NO SEEK — not a prefix"]
-  style P1 fill:#e6f4e6,stroke:#2e7d32,color:#000
-  style P2 fill:#e6f4e6,stroke:#2e7d32,color:#000
-  style P3 fill:#e6f4e6,stroke:#2e7d32,color:#000
-  style P4 fill:#fff8e1,stroke:#f9a825,color:#000
-  style P5 fill:#fdecea,stroke:#c62828,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4e61598756ce.png" alt="diagram"></div></p>
 <p><strong>Skip scans, briefly.</strong> The "not a prefix, therefore useless" verdict has a qualified exception.
 If the leading column has very few distinct values, the engine can iterate over each distinct
 value of <code>a</code> and perform a seek on <code>(a, b)</code> for each — logically rewriting <code>WHERE b = ?</code> into "for
@@ -2236,19 +2222,7 @@ clustered InnoDB PK, that means the whole table must be cache-resident to insert
 I/O, and a table that outgrows the buffer pool hits a throughput cliff — each insert becomes a
 random disk read (to fetch the target leaf) plus dirty-page writeback. This failure mode is
 gradual, then sudden, and it has a name in most InnoDB shops: "we used UUIDv4 primary keys."</p>
-<p><pre><code>flowchart TD
-  subgraph SEQ["sequential keys — rightmost inserts"]
-    A1["leaf: 100..199 FULL"] --> A2["leaf: 200..299 FULL"]
-    A2 --> A3["rightmost leaf: 300..347<br/>all inserts land here<br/>fills densely, then new page"]
-  end
-  subgraph RND["random keys — inserts everywhere"]
-    B1["leaf: aa..cf 50% full"]
-    B2["leaf: d0..e7 62% full"]
-    B3["leaf: e8..ff 55% full"]
-    B4["insert key b7"] --> B1
-    B1 --> B5["page FULL: split 50/50<br/>allocate page, move half,<br/>update parent, WAL it all"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b7775ac550c.png" alt="diagram"></div></p>
 <p>Mitigations, in order of preference: use sequential keys (<strong>UUIDv7</strong> gives you a time-ordered
 prefix with UUID's coordination-free generation — the practical best-of-both since its 2024
 standardization in RFC 9562); if random keys are imposed, keep them <em>out of the InnoDB PK</em> (make
@@ -2371,23 +2345,7 @@ lands on exactly the index partition holding the value. The pain moves to writes
 synchronous and you have bought a distributed transaction — two-phase commit on every base-table
 write (Chapter 10). Make it asynchronous and the index is maintained eventually, meaning it can
 return stale or phantom results.</p>
-<p><pre><code>flowchart TD
-  subgraph LOCAL["local secondary index — pain on reads"]
-    QL["query: email = x"] --> R["router"]
-    R --> S1["shard 1<br/>rows + local index"]
-    R --> S2["shard 2<br/>rows + local index"]
-    R --> S3["shard 3<br/>rows + local index"]
-    S1 --> MG["merge results<br/>scatter-gather, tail latency"]
-    S2 --> MG
-    S3 --> MG
-  end
-  subgraph GLOBAL["global secondary index — pain on writes"]
-    W["write row to shard 2"] --> S2b["shard 2<br/>base row"]
-    S2b -->|"sync: 2PC<br/>or async: replicate"| GP["index partition 7<br/>keyed by email"]
-    QG["query: email = x"] --> GP
-    GP --> ONE["single-partition read<br/>possibly stale if async"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7ad11086ee9.png" alt="diagram"></div></p>
 <p><strong>DynamoDB's GSIs are the canonical async design, and worth describing precisely.</strong> A DynamoDB
 global secondary index is a separate physical table with its own partition (and optional sort)
 key and its own provisioned throughput. Writes to the base table are replicated to each GSI
@@ -2451,6 +2409,9 @@ constraint is not arbitrary; it is the cost accounting of this chapter, applied 
   externalized global indexes; Cassandra's query-driven modeling is this trade-off adopted as
   doctrine.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_db8584b02418.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_99571ab6c647.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_704ad199d466.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>PostgreSQL documentation, Chapter 11 "Indexes" — index types, partial and expression indexes,
@@ -2518,15 +2479,7 @@ errors get amplified by network data movement.</p>
 <h2 id="the-pipeline-from-text-to-executable-plan">The pipeline: from text to executable plan</h2>
 <p>Every mature SQL engine processes a query in the same four stages. The names vary by vendor; the
 structure does not.</p>
-<p><pre><code>flowchart LR
-  SQL["SQL text"] --> P["Parse<br/>grammar check,<br/>build syntax tree"]
-  P --> A["Analyze and bind<br/>resolve names and types<br/>against the catalog"]
-  A --> R["Rewrite<br/>expand views<br/>flatten subqueries<br/>normalize predicates"]
-  R --> O["Optimize<br/>search the plan space,<br/>cost each candidate"]
-  O --> E["Execute<br/>run the physical plan,<br/>return rows"]
-  STATS["Statistics<br/>histograms, NDV,<br/>MCV lists, correlation"] -.->|"cardinality and<br/>cost estimates"| O
-  PC["Plan cache"] -.->|"skip straight to execute<br/>for repeated statements"| E
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd9fc59bff53.png" alt="diagram"></div></p>
 <p><strong>Parse</strong> is ordinary compiler front-end work: tokenize, check the grammar, build a syntax tree.
 The only decisions here are syntactic. Binding (PostgreSQL calls this <em>analysis</em>) then resolves
 every name against the catalog — which table is <code>orders</code>, what type is <code>created_at</code>, does the
@@ -2644,23 +2597,7 @@ the seq scan is the fastest available plan.</p>
 <p>Every relational engine implements essentially three join algorithms. Each has a shape of input
 for which it is clearly best, which is precisely why the optimizer's choice — driven by row-count
 estimates — matters so much.</p>
-<p><pre><code>flowchart TB
-  subgraph NL["Nested loop join"]
-    direction TB
-    NL1["For each OUTER row"] --> NL2["probe INNER<br/>naive: scan all M rows<br/>indexed: B-tree lookup"]
-    NL2 --> NL3["Cost: N times M naive<br/>N times log M indexed<br/>wins: small outer,<br/>indexed inner"]
-  end
-  subgraph HJ["Hash join"]
-    direction TB
-    HJ1["BUILD: hash smaller input<br/>into in-memory table"] --> HJ2["PROBE: stream larger input,<br/>look up each row's key"]
-    HJ2 --> HJ3["Cost: about N plus M<br/>needs memory for build side<br/>spills to disk partitions<br/>wins: large unsorted equijoins"]
-  end
-  subgraph MJ["Merge join"]
-    direction TB
-    MJ1["Both inputs sorted<br/>on the join key"] --> MJ2["Advance two cursors<br/>in lockstep, emit matches"]
-    MJ2 --> MJ3["Cost: N plus M after sorting<br/>wins: order pre-exists via index<br/>or is needed anyway"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0f878f67ca7a.png" alt="diagram"></div></p>
 <p><strong>Nested loop join</strong> is the simplest and, in its naive form, the worst: for each of N outer rows,
 scan all M inner rows — O(N·M), which at 10⁵ × 10⁵ is 10¹⁰ comparisons and a query that never
 comes back. The redeemed form is the <strong>indexed nested loop</strong>: for each outer row, probe an index
@@ -3089,23 +3026,7 @@ and data movement joins I/O and CPU as a first-class cost term — usually the <
 <li><strong>Distribution strategy for joins.</strong> When the join's two inputs are not partitioned on the join
   key, rows must move, and there are two ways to move them:</li>
 </ul>
-<p><pre><code>flowchart TB
-  subgraph BC["Broadcast join — replicate the small side"]
-    direction TB
-    BS["Small table S<br/>1 copy sent to EVERY node"] --> BN1["Node 1<br/>local join: S with T shard 1"]
-    BS --> BN2["Node 2<br/>local join: S with T shard 2"]
-    BS --> BN3["Node 3<br/>local join: S with T shard 3"]
-    BNOTE["Network cost: size of S times node count<br/>Large table T never moves<br/>Wins when S is genuinely small"]
-  end
-  subgraph SH["Shuffle join — repartition both sides"]
-    direction TB
-    SA["Table A shards"] -->|"re-hash every row<br/>on the join key"| SN1["Node 1<br/>key range 1"]
-    SA --> SN2["Node 2<br/>key range 2"]
-    SB["Table B shards"] -->|"re-hash every row<br/>on the join key"| SN1
-    SB --> SN2
-    SNOTE["Network cost: size of A plus size of B<br/>one full pass of both over the network<br/>Wins when both sides are large"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_57963c00cd88.png" alt="diagram"></div></p>
 <p>A <strong>broadcast</strong> join replicates the smaller input to every node holding the larger one; cost is
   |S| × number of nodes, and the big table never moves. A <strong>shuffle</strong> (repartition) join re-hashes
   <em>both</em> inputs on the join key so matching rows land on the same node; cost is |A| + |B| crossing
@@ -3175,6 +3096,10 @@ adaptivity (stop trusting estimates once real numbers exist).</p>
   failure mode — broadcasting a "small" table that isn't — takes down clusters, not queries. The
   same EXPLAIN-reading skill applies to fragments and stages.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fe6429b210fa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d6f854fe00d1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e138870abaf3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a5118f44a887.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Selinger, P. G., Astrahan, M. M., Chamberlin, D. D., Lorie, R. A., and Price, T. G., "Access
@@ -3438,17 +3363,7 @@ sensibly while the knobs let you trade honestly when a workload justifies it.</p
 <h3 id="the-transactions-life">The transaction's life</h3>
 <p>The classical state machine ties A and D together and is worth having in your head, because every
 error your driver surfaces corresponds to an edge in it:</p>
-<p><pre><code>stateDiagram-v2
-    [*] --> Active: BEGIN
-    Active --> Active: reads and writes
-    Active --> PartiallyCommitted: COMMIT issued
-    Active --> Failed: error, ROLLBACK,<br/>deadlock victim, crash
-    PartiallyCommitted --> Committed: log records forced<br/>to stable storage
-    PartiallyCommitted --> Failed: crash before<br/>log flush
-    Failed --> Aborted: undo applied,<br/>effects erased
-    Committed --> [*]: effects permanent
-    Aborted --> [*]: as if never run
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_34a1310374b2.png" alt="diagram"></div></p>
 <p>The interesting state is <em>partially committed</em>: <code>COMMIT</code> has been issued but the log is not yet on
 disk. A crash there aborts the transaction — which is correct, because the client never received
 the acknowledgment. The commit <em>point</em> is the instant the commit record reaches stable storage;
@@ -3498,15 +3413,7 @@ concrete: the interleaving is harmless because every conflict points the same wa
 <p>Now <code>r1(x)→w2(x)</code> gives T1 → T2, but <code>r2(x)→w1(x)</code> gives T2 → T1. Cycle. In serial order T1, T2,
 T2 would have read T1's write; in serial order T2, T1, vice versa; in this schedule <em>each read the
 initial value</em>, which no serial order produces. Two increments, counter goes up by one.</p>
-<p><pre><code>flowchart LR
-  subgraph SA["Schedule A — acyclic, serializable as T1 then T2"]
-    A1(("T1")) -->|"RW, WR, WW on x<br/>all point one way"| A2(("T2"))
-  end
-  subgraph SB["Schedule B — cycle, NOT serializable"]
-    B1(("T1")) -->|"r1 of x before w2 of x"| B2(("T2"))
-    B2 -->|"r2 of x before w1 of x"| B1
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_20745fdce77c.png" alt="diagram"></div></p>
 <p>Two caveats to keep you honest. Conflict-serializability is <em>sufficient</em>, not <em>necessary</em>: a
 strictly larger class (view-serializability) exists but is NP-hard to test, so every practical
 scheduler enforces the conflict flavor and cheerfully rejects a few schedules that were actually
@@ -3602,19 +3509,7 @@ and degrades by queueing; optimism is free until it degrades by burning CPU on d
 You also run OCC yourself, at application level, whenever you use a version-column
 (<code>UPDATE ... WHERE id = ? AND version = ?</code>, checking the row count) — the "optimistic locking" of
 ORMs — which is OCC with the database's own update atomicity as the validator.</p>
-<p><pre><code>flowchart LR
-  subgraph PL["Strict 2PL — pay before, block on conflict"]
-    direction LR
-    P1["growing phase:<br/>acquire lock at first touch<br/>of each item"] --> P2["work under locks<br/>conflicting txns WAIT"] --> P3["commit:<br/>log forced"] --> P4["release all locks"]
-    P2 -.->|"cyclic wait"| P5["deadlock detected:<br/>victim aborted, 40P01"]
-  end
-  subgraph OC["OCC — pay after, abort on conflict"]
-    direction LR
-    O1["read phase:<br/>run fully, no locks,<br/>writes buffered privately"] --> O2["validation:<br/>read set vs concurrent<br/>committed write sets"]
-    O2 -->|"clean"| O3["write phase:<br/>install writes, commit"]
-    O2 -->|"overlap"| O4["abort:<br/>all work discarded, retry"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8395a3595622.png" alt="diagram"></div></p>
 <h3 id="multiversion-mvcc">Multiversion: MVCC</h3>
 <p>The dominant modern design — Postgres, InnoDB, Oracle, and most newcomers — refuses the premise
 that readers and writers must fight at all. Writers never overwrite: each write creates a new
@@ -3746,32 +3641,7 @@ preference:</p>
    write time instead: <code>UPDATE ... SET ..., version = version + 1 WHERE id = ? AND version = ?</code> and
    treat zero rows updated as "someone else got there first."</li>
 </ol>
-<p><pre><code>sequenceDiagram
-    participant A as Session A
-    participant DB as Database row id 7
-    participant B as Session B
-    Note over A,B: Broken: plain SELECT then UPDATE at read committed
-    A->>DB: SELECT balance
-    DB-->>A: 100
-    B->>DB: SELECT balance
-    DB-->>B: 100
-    A->>DB: UPDATE balance = 70
-    A->>DB: COMMIT
-    B->>DB: UPDATE balance = 50
-    B->>DB: COMMIT
-    Note over A,B: Balance 50 — the withdrawal of 30 is LOST
-    Note over A,B: Fixed: SELECT FOR UPDATE serializes the read-modify-write
-    A->>DB: SELECT balance FOR UPDATE
-    DB-->>A: 100 — exclusive row lock held
-    B->>DB: SELECT balance FOR UPDATE
-    Note over B,DB: B BLOCKS at the read
-    A->>DB: UPDATE balance = 70
-    A->>DB: COMMIT
-    DB-->>B: 70 — fresh value after A commits
-    B->>DB: UPDATE balance = 20
-    B->>DB: COMMIT
-    Note over A,B: Balance 20 — equivalent to serial A then B
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e0ee927807f1.png" alt="diagram"></div></p>
 <h3 id="savepoints-partial-rollback-inside-the-unit">Savepoints: partial rollback inside the unit</h3>
 <p>Atomicity is all-or-nothing at transaction granularity, but <strong>savepoints</strong> let you mark points
 within a transaction and roll back to them without abandoning the whole:</p>
@@ -3904,6 +3774,9 @@ problem. It was, and remains, the thing worth paying for.</p>
   is the honest name for "the anomalies are now your application's job" — sometimes the right
   purchase, never a free one.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aa9b709c6f4e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_767e34e7dafa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d9d36b3c88ce.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Härder, T. and Reuter, A., "Principles of Transaction-Oriented Database Recovery," <em>ACM Computing
@@ -4140,24 +4013,7 @@ simultaneously, requests to go off call. Each transaction runs the same logic:</
 survives their own departure, and both commit — <strong>their write sets are disjoint</strong> (Alice's row
 versus Bob's row), so no write-write conflict detection fires. The roster is now empty. No serial
 execution could produce this: whichever transaction ran second would have counted 1 and refused.</p>
-<p><pre><code>sequenceDiagram
-    participant A as "Txn A - Alice"
-    participant DB as "Database"
-    participant B as "Txn B - Bob"
-
-    Note over DB: "on_call: Alice true, Bob true"
-    A->>DB: "BEGIN - snapshot taken"
-    B->>DB: "BEGIN - snapshot taken"
-    A->>DB: "SELECT count WHERE on_call"
-    DB-->>A: "2 - safe to leave"
-    B->>DB: "SELECT count WHERE on_call"
-    DB-->>B: "2 - safe to leave"
-    A->>DB: "UPDATE alice SET on_call = false"
-    B->>DB: "UPDATE bob SET on_call = false"
-    A->>DB: "COMMIT - ok, write sets disjoint"
-    B->>DB: "COMMIT - ok, write sets disjoint"
-    Note over DB: "on_call count is 0<br/>invariant broken<br/>no serial order explains this"
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1491c6fd5a61.png" alt="diagram"></div></p>
 <p>The general shape: <strong>read a predicate, decide based on it, write something the <em>other</em>
 transaction's predicate depends on.</strong> Each transaction's write invalidates the other's read, but
 neither writes what the other wrote. Once you know the shape you see it everywhere: enforcing
@@ -4278,19 +4134,7 @@ cheaper depends on whether your conflicts are real (pessimism wastes less work) 
 <p><strong>Oracle: caveat emptor.</strong> <code>SERIALIZABLE</code> is snapshot isolation. Write skew is possible at
 Oracle's maximum level; if you carry an invariant of that shape, you need <code>SELECT ... FOR UPDATE</code>
 or a materialized conflict, below.</p>
-<p><pre><code>flowchart BT
-  RU["READ UNCOMMITTED<br/>permits dirty reads<br/>vestigial - PG aliases to RC"]
-  RC["READ COMMITTED<br/>per-statement snapshots<br/>permits: read skew, lost update,<br/>write skew, phantoms"]
-  SI["SNAPSHOT ISOLATION<br/>PG REPEATABLE READ, Oracle SERIALIZABLE<br/>per-transaction snapshot,<br/>first-committer-wins<br/>permits: write skew"]
-  IRR["InnoDB REPEATABLE READ<br/>snapshot reads, current-version writes,<br/>next-key locks on locking reads<br/>permits: lost update, write skew"]
-  SER["SERIALIZABLE<br/>PG SSI - optimistic, retry on 40001<br/>InnoDB 2PL - blocking, retry on deadlock<br/>permits: nothing"]
-  RU -->|"stronger"| RC
-  RC -->|"stronger"| SI
-  RC -->|"stronger"| IRR
-  SI -->|"stronger"| SER
-  IRR -->|"stronger"| SER
-  SI -.-|"incomparable siblings<br/>different anomaly profiles"| IRR
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9a12558ba084.png" alt="diagram"></div></p>
 <h2 id="mvcc-mechanics">MVCC mechanics</h2>
 <p>Every level above READ UNCOMMITTED in a modern engine is built on <strong>multi-version concurrency
 control</strong>: instead of updating data in place and making readers wait, the engine keeps multiple
@@ -4320,22 +4164,7 @@ rollback is expensive (undo records must actually be applied to restore the pre-
 garbage problem moves from the table to the undo/history subsystem. Oracle pioneered this
 architecture (undo segments); SQL Server's snapshot modes use a version store in tempdb, a
 cousin.</p>
-<p><pre><code>flowchart TB
-  subgraph PG["PostgreSQL - copy-on-write heap"]
-    P1["tuple v1 in heap<br/>xmin 100 xmax 205<br/>dead - awaiting VACUUM"]
-    P2["tuple v2 in heap<br/>xmin 205 xmax 310<br/>dead - awaiting VACUUM"]
-    P3["tuple v3 in heap<br/>xmin 310 xmax 0<br/>live version"]
-    P1 -->|"ctid chain forward"| P2 -->|"ctid chain forward"| P3
-    PIDX["index entries may point<br/>at each version<br/>HOT avoids some"] --> P3
-  end
-  subgraph INNO["InnoDB - in-place update plus undo log"]
-    C["clustered index record<br/>newest version only<br/>DB_TRX_ID 310"]
-    U1["undo record<br/>pre-image for v2"]
-    U2["undo record<br/>pre-image for v1"]
-    C -->|"DB_ROLL_PTR"| U1 -->|"roll pointer"| U2
-    N["old readers walk the chain<br/>reconstructing versions<br/>purge trims from the tail"] -.-> U1
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ec334db1a021.png" alt="diagram"></div></p>
 <p>Neither architecture dominates. PostgreSQL pays on the write path (full-row versions, index
 amplification, VACUUM) and gets cheap aborts and simple reads; InnoDB pays on rollback and on
 old-snapshot reads and keeps its tables compact. The operational failure modes below are the same
@@ -4355,17 +4184,7 @@ and then cached on the tuple itself as <strong>hint bits</strong> so subsequent 
 reason the first scan after a bulk load is slow and writes pages. In full detail the rules run to
 hundreds of lines (<code>heapam_visibility.c</code> repays reading), handling subtransactions, your own
 uncommitted work, and in-progress edge cases, but the skeleton is this:</p>
-<p><pre><code>flowchart TB
-  S["tuple: xmin, xmax<br/>snapshot: xmin, xmax, xip list"] --> A{"tuple xmin<br/>aborted?"}
-  A -->|"yes"| DEAD["invisible - creator rolled back"]
-  A -->|"no"| B{"tuple xmin is my own<br/>uncommitted txn?"}
-  B -->|"yes"| MINE["visible - I see my own writes"]
-  B -->|"no"| C{"tuple xmin at or after<br/>snapshot xmax, or in xip list?"}
-  C -->|"yes"| INV["invisible - creator concurrent<br/>or started after snapshot"]
-  C -->|"no"| D{"tuple xmax set and that txn<br/>committed and visible<br/>to this snapshot?"}
-  D -->|"yes"| DEL["invisible - deleted before<br/>my snapshot"]
-  D -->|"no"| VIS["visible"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_23e173ce121e.png" alt="diagram"></div></p>
 <p>InnoDB's <strong>ReadView</strong> is the same idea with the same fields under different names: a low-water
 mark (<code>up_limit_id</code>), a high-water mark (<code>low_limit_id</code>), and the list of active transaction IDs
 at creation. The mechanical difference is what happens on a miss: PostgreSQL simply skips an
@@ -4632,6 +4451,9 @@ spend it.</strong></p>
   replica still serves stale reads. Isolation between transactions and consistency between
   replicas are separate axes — ask about both.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aed6ff2799fe.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cc2083ea71fd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e3080dcf4db.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Berenson, H., Bernstein, P., Gray, J., Melton, J., O'Neil, E., O'Neil, P., "A Critique of ANSI
@@ -4882,29 +4704,7 @@ uniforms. A senior engineer who has internalized group commit already understand
 <h2 id="one-commit-end-to-end">One commit, end to end</h2>
 <p>The pieces assemble into a sequence worth having fully explicit in your head. An <code>UPDATE</code> followed
 by <code>COMMIT</code>, on a healthy single-node Postgres with default settings:</p>
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant B as Backend process
-    participant BP as Buffer pool
-    participant LB as WAL buffer
-    participant WD as WAL on disk
-    participant CK as Checkpointer
-
-    C->>B: UPDATE accounts SET ...
-    B->>BP: modify heap page in memory
-    Note over BP: page is dirty, pageLSN = LSN of record
-    B->>LB: append WAL record for the change
-    C->>B: COMMIT
-    B->>LB: append commit record
-    B->>WD: flush WAL through commit LSN
-    Note over WD: fsync — the only durable write<br/>on the commit path. Group commit<br/>batches concurrent committers here
-    WD-->>B: flushed
-    B-->>C: COMMIT acknowledged
-    Note over BP,WD: dirty data page still only in memory
-    CK->>BP: minutes later, checkpoint
-    BP->>CK: write dirty page to data file
-    Note over CK: legal because pageLSN is<br/>already behind flushed WAL
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a839ae16412.png" alt="diagram"></div></p>
 <p>Three observations. First, the only synchronous disk write is the sequential log flush; the random
 data-page write happens minutes later, off the critical path, and may cover hundreds of accumulated
 changes to that page. Second, the WAL record was appended <em>before</em> commit but only <em>flushed</em> at
@@ -4930,16 +4730,7 @@ checkpoint's location where recovery can find it. A checkpoint is not a promise 
 clean; it is a photograph of exactly <em>how dirty</em> things were, so recovery can bound how far back it
 must look.</p>
 <p>Recovery after a crash makes three passes:</p>
-<p><pre><code>flowchart TD
-  subgraph LOG["The log as a timeline of LSNs"]
-    direction LR
-    CP["checkpoint<br/>ATT and DPT snapshot"] --> R1["updates by T1, T2<br/>T1 commits"] --> R2["updates by T2, T3<br/>T3 commits"] --> CRASH["CRASH<br/>T2 still active"]
-  end
-  LOG --> A["PASS 1 — ANALYSIS<br/>forward from checkpoint<br/>rebuild ATT and DPT<br/>losers: T2. redo start: min recLSN"]
-  A --> RD["PASS 2 — REDO<br/>forward from min recLSN<br/>repeat history: reapply EVERY change<br/>including T2's, gated by pageLSN"]
-  RD --> U["PASS 3 — UNDO<br/>backward over losers only<br/>roll back T2, writing a CLR<br/>for each undone record"]
-  U --> DONE["database consistent<br/>equals committed work exactly"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9081fc67bb57.png" alt="diagram"></div></p>
 <p><strong>Analysis</strong> scans forward from the last checkpoint, replaying the <em>bookkeeping</em>: the checkpoint's
 ATT and DPT snapshots are loaded, then updated per record — new transactions enter the ATT, commit
 and abort records retire them, updates to pages absent from the DPT add entries. At the crash
@@ -4996,19 +4787,7 @@ an old version — it is garbage with a plausible header. Its pageLSN might read
 half its contents are stale; per-record redo, applied to garbage, produces garbage. Checksums
 (<code>data_checksums</code> in Postgres, mandatory page checksums in InnoDB) <em>detect</em> the tear; something
 else must repair it. The two production answers bracket the design space:</p>
-<p><pre><code>flowchart TD
-  subgraph PG["Postgres — full-page writes"]
-    P1["checkpoint completes"] --> P2["first modification of page P<br/>after the checkpoint"]
-    P2 --> P3["WAL record carries a full image<br/>of page P, not just the change"]
-    P3 --> P4["later changes to P until next<br/>checkpoint log only deltas"]
-    P5["crash tears P during write-back"] --> P6["redo restores P from the full image<br/>then applies deltas — tear irrelevant"]
-  end
-  subgraph IN["InnoDB — doublewrite buffer"]
-    I1["flush a batch of dirty pages"] --> I2["write pages to the doublewrite<br/>area sequentially, then sync"]
-    I2 --> I3["write pages to their real<br/>locations, then sync"]
-    I4["crash tears a page in step two"] --> I5["recovery finds intact copy in<br/>doublewrite area, repairs, then redo"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_089f98d75033.png" alt="diagram"></div></p>
 <p><strong>Postgres: full-page writes.</strong> With <code>full_page_writes = on</code> (the default, and effectively
 mandatory on ordinary storage), the <em>first</em> modification of each page after a checkpoint logs a
 complete image of the page instead of a delta. Redo then never needs the on-disk page's prior
@@ -5112,13 +4891,7 @@ durability became fact.</p>
 been forced to build in order to recover: a totally ordered, durable, replayable stream of every
 change to the database. That artifact is too useful to leave to crashes, and mature systems expose
 it in four directions:</p>
-<p><pre><code>flowchart TD
-  WAL["The write-ahead log<br/>ordered, durable, replayable<br/>stream of every change"]
-  WAL --> REC["Crash recovery<br/>replay into the local buffer pool<br/>this chapter"]
-  WAL --> REP["Physical replication<br/>stream segments to standbys that<br/>run redo continuously — Ch 8"]
-  WAL --> CDC["Logical decoding — CDC<br/>decode records back into row events<br/>pgoutput, wal2json, Debezium"]
-  WAL --> PITR["Archiving and PITR<br/>base backup plus archived WAL<br/>replayed to any moment"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_574970c4ca87.png" alt="diagram"></div></p>
 <p><strong>Physical replication is recovery, running forever.</strong> A streaming standby is a server that starts
 in recovery mode and never leaves it: the primary ships WAL as it is generated, and the standby's
 apply process is the same redo loop this chapter described, running continuously against a live
@@ -5256,6 +5029,9 @@ and how they agree on its contents; they do not differ in what the log <em>is</e
   Kafka serves the log as a product, event sourcing applies it at the application layer.
   Recovery-by-replay is the universal pattern.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_182b275db77e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2bc800d771aa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bbfbc3b76f17.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., and Schwarz, P., "ARIES: A Transaction
@@ -5365,7 +5141,7 @@ pg_basebackup<span class="w"> </span>-h<span class="w"> </span>primary.db.intern
 </code></pre></div>
 
 <div class="highlight"><pre><span></span><code><span class="c1"># postgresql.conf on the primary</span>
-<span class="na">wal_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">replica</span><span class="w">            </span><span class="c1"># the default since PostgreSQL 10</span>
+<span class="na">wal_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">replica</span><span class="w">            </span><span class="c1"># the default since 9.6 (as `replica` since PG 10; renamed from `hot_standby`)</span>
 <span class="na">max_wal_senders</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">10</span>
 <span class="c1"># Replication slots make the primary retain WAL until this standby confirms it.</span>
 <span class="c1"># Cap the retention or a dead standby fills the primary&#39;s disk:</span>
@@ -5434,22 +5210,7 @@ changes, replicas' I/O threads pull it into a relay log, and applier threads exe
 <code>binlog_format = ROW</code> (the default since 5.7.7), events carry before/after row images — the same
 species of stream as <code>pgoutput</code>, and the reason the MySQL ecosystem grew change-data-capture
 tooling a decade before PostgreSQL's became mainstream.</p>
-<p><pre><code>flowchart TB
-  subgraph P["Primary"]
-    EX["Executor: commit T1"] --> WAL["WAL / binlog<br/>page redo or row events"]
-  end
-  subgraph PHY["Physical path — PostgreSQL streaming"]
-    WS["walsender: raw WAL bytes"] --> WR["walreceiver on standby"]
-    WR --> REDO["startup process:<br/>page-level redo, forever"]
-    REDO --> C1["Byte-identical cluster<br/>read-only, same major version"]
-  end
-  subgraph LOG["Logical path — pgoutput / MySQL binlog ROW"]
-    DEC["decoder: WAL to row changes<br/>INSERT / UPDATE / DELETE + old key"] --> APP["apply worker:<br/>executes row changes as SQL"]
-    APP --> C2["Independent database<br/>own layout, own version,<br/>per-table, DDL NOT shipped"]
-  end
-  WAL --> WS
-  WAL --> DEC
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_70ad32918496.png" alt="diagram"></div></p>
 <h3 id="statement-based-replication-the-cautionary-tale">Statement-based replication: the cautionary tale</h3>
 <p>The historically obvious design — replay the SQL text itself on each replica — was MySQL's
 original and, until 5.7.7, default mode. It is compact and human-readable, and it is wrong,
@@ -5563,38 +5324,7 @@ is the deliberate opposite of PostgreSQL's hang: MySQL chooses availability, Pos
 durability, and both are defensible — but you must know which contract you hold. A semi-sync
 deployment is only RPO = 0 <em>while the light is green</em>, so monitoring
 <code>Rpl_semi_sync_source_status</code> is part of the durability story, not an optional nicety.</p>
-<p><pre><code>sequenceDiagram
-    participant C as Client
-    participant P as Primary
-    participant R as Replica
-
-    Note over C,R: ASYNC — ack before ship
-    C->>P: COMMIT
-    P->>P: flush local WAL
-    P-->>C: OK
-    Note over P: X dies here: acknowledged<br/>commit lost — RPO > 0
-    P->>R: WAL stream (later)
-
-    Note over C,R: SYNC — ack after standby flush
-    C->>P: COMMIT
-    P->>P: flush local WAL
-    P->>R: WAL
-    R->>R: flush
-    R-->>P: ack
-    P-->>C: OK (latency += RTT)
-    Note over R: X replica dead: commits HANG<br/>availability now coupled
-
-    Note over C,R: SEMI-SYNC AFTER_SYNC — ack or timeout
-    C->>P: COMMIT
-    P->>P: sync binlog (not yet visible)
-    P->>R: binlog events
-    alt ack within timeout
-        R-->>P: relay log flushed
-        P-->>C: OK — lossless
-    else timeout
-        P-->>C: OK — degraded to async, silently
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8d1566b5a761.png" alt="diagram"></div></p>
 <h2 id="replication-lag-the-production-discipline">Replication lag: the production discipline</h2>
 <p>Lag is not an edge case; it is the steady-state property that defines what an async replica is.
 The question is never "is there lag" but "how much, how variable, and what does your application
@@ -5668,21 +5398,7 @@ Volume 6, Chapter 3 treats formally:</p>
   question that does not exist. The write dependency — B read A's post before writing — is
   invisible to per-object replication.</li>
 </ul>
-<p><pre><code>sequenceDiagram
-    participant U as User session
-    participant P as Primary
-    participant R as Lagging replica
-
-    U->>P: UPDATE profile SET bio = 'new' — COMMIT
-    P-->>U: OK (durable on primary)
-    Note over P,R: WAL for the update still in flight
-    U->>R: GET /profile — read routed to replica
-    R-->>U: bio = 'old'
-    Note over U: "My save was lost" — retry, support ticket
-    P->>R: WAL arrives, replica applies
-    U->>R: later read
-    R-->>U: bio = 'new' — write "reappears"
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7201fcea5d83.png" alt="diagram"></div></p>
 <h3 id="the-mitigation-toolkit">The mitigation toolkit</h3>
 <p>In escalating order of machinery:</p>
 <p><strong>Route by semantics.</strong> The oldest fix: reads that follow the user's own write, or that gate a
@@ -5767,23 +5483,7 @@ can remain plain leader-follower replication, but the decision of who leads is d
 consensus system</strong> — a small, rarely-written, strongly-consistent kernel governing a large,
 fast, weakly-replicated body. Volume 6, Chapter 8 covers these coordination services in depth;
 Chapters 5–6 cover the consensus protocols inside them.</p>
-<p><pre><code>sequenceDiagram
-    participant OP as Old primary
-    participant DCS as Consensus store etcd
-    participant A as Patroni on replica A
-    participant CL as Clients
-
-    OP->>DCS: refresh leader key (TTL 30s)
-    Note over OP,DCS: partition: refreshes stop
-    DCS->>DCS: leader key expires
-    A->>DCS: compare-and-set leader = A
-    DCS-->>A: won — at most one winner, by quorum
-    Note over OP: demotion watchdog: cannot see DCS,<br/>cannot refresh — steps down, read-only
-    A->>A: verify highest LSN, promote
-    CL->>DCS: discover new leader
-    CL->>A: writes resume
-    Note over OP: partition heals: key holder is A —<br/>pg_rewind, rejoin as standby
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f40a30294bf0.png" alt="diagram"></div></p>
 <p>One number closes the topic: with async replication, failover RPO is the lag at the moment of
 death. Your steady-state p99 lag <em>is</em> your data-loss budget, which is why the lag graphs from
 the previous section belong on the same dashboard as your durability SLO (Volume 11).</p>
@@ -5910,6 +5610,9 @@ configuration actually implements.</p>
 <li>A <strong>delayed replica</strong> is cheap insurance against the leading cause of data loss — humans —
   because normal replication propagates the mistake faithfully everywhere else.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eea5b86db20e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_af61cd36e146.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f4cbc029788.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>PostgreSQL documentation, <em>High Availability, Load Balancing, and Replication</em> — streaming
@@ -6148,26 +5851,7 @@ value stay ACID; transactions spanning key values become distributed transaction
 The shard key is load-bearing for performance, correctness, and operations simultaneously, and it
 is expensive to change — so it deserves more design scrutiny than any other schema decision you
 make. There are four basic schemes.</p>
-<p><pre><code>flowchart TD
-  subgraph HASH["Hash sharding"]
-    HK["key = user_4711"] --> HF["hash to slot<br/>slot to shard map"]
-    HF --> HS1["shard A<br/>slots 0-5460"]
-    HF --> HS2["shard B<br/>slots 5461-10922"]
-    HF --> HS3["shard C<br/>slots 10923-16383"]
-  end
-  subgraph RANGE["Range sharding"]
-    RK["key = 2026-08-14/evt123"] --> RM["range map<br/>split points"]
-    RM --> RS1["shard A<br/>min .. g"]
-    RM --> RS2["shard B<br/>g .. p"]
-    RM --> RS3["shard C<br/>p .. max"]
-  end
-  subgraph DIR["Directory sharding"]
-    DK["key = tenant_42"] --> DL["lookup service<br/>tenant to shard table"]
-    DL --> DS1["shard A<br/>tenants 1,7,42"]
-    DL --> DS2["shard B<br/>tenants 3,9,55"]
-    DL --> DS3["shard C<br/>whale tenant 12"]
-  end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_881518578e14.png" alt="diagram"></div></p>
 <h3 id="hash-sharding">Hash sharding</h3>
 <p>Route each key by a hash of its value. The virtue is statistical: a decent hash spreads any key
 population — sequential IDs, timestamps, hot prefixes — uniformly across shards, so you get even
@@ -6272,23 +5956,7 @@ is the unit at which the system fails.</p>
   operationally sanest answer: the whale gets its own capacity, its own SLO, and its own blast
   radius, and the shared shards return to statistics that hashing can handle.</li>
 </ul>
-<p><pre><code>flowchart TD
-  subgraph BEFORE["Before: celebrity key melts shard B"]
-    W1["writers"] --> KB["key = star_99"]
-    KB --> SB["shard B — 98% CPU"]
-    SA["shard A — 12%"]
-    SC["shard C — 11%"]
-  end
-  subgraph AFTER["After: salted into 3 sub-keys"]
-    W2["writers"] --> S0["star_99#0"] --> TA["shard A — 40%"]
-    W2 --> S1["star_99#1"] --> TB["shard B — 41%"]
-    W2 --> S2["star_99#2"] --> TC["shard C — 39%"]
-    RD["reader"] -.->|"fan-out and merge<br/>all 3 sub-keys"| TA
-    RD -.-> TB
-    RD -.-> TC
-  end
-  BEFORE -.->|"salt the hot key only"| AFTER
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_58fa8ffd8a18.png" alt="diagram"></div></p>
 <p>If this section feels familiar, it should: it is the hot-stripe problem from Volume 4, Chapter 2,
 where a striped lock degenerates to a global lock when one key dominates. The failure and every
 mitigation have exact in-process ancestors.</p>
@@ -6311,20 +5979,7 @@ anything: it picks whole virtual shards and moves them, updating one map entry p
 node means transferring it a fair share of vshards from the others — each move is independent,
 incremental, throttleable, and abortable, and routing stays unambiguous for every key not
 currently in a moving vshard.</p>
-<p><pre><code>flowchart TD
-  subgraph B4["Before: 12 vshards on 3 nodes"]
-    N1["node A<br/>v0 v1 v2 v3"]
-    N2["node B<br/>v4 v5 v6 v7"]
-    N3["node C<br/>v8 v9 v10 v11"]
-  end
-  subgraph AF["After: node D added — only 3 vshards moved"]
-    M1["node A<br/>v0 v1 v2"]
-    M2["node B<br/>v4 v5 v6"]
-    M3["node C<br/>v8 v9 v10"]
-    M4["node D<br/>v3 v7 v11"]
-  end
-  B4 -->|"move v3, v7, v11<br/>update assignment map<br/>no key rehashed"| AF
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dbb2bb7d204f.png" alt="diagram"></div></p>
 <p>This design is ubiquitous because it is right:</p>
 <ul>
 <li><strong>Redis Cluster</strong> fixes the slot space at <strong>16,384 slots</strong> (<code>CRC16(key) mod 16384</code>); every node
@@ -6352,30 +6007,7 @@ online data migration is the same five-phase pipeline. The enabling technology i
 capture</strong> — tailing the source's WAL or binlog as a stream of row changes (Chapter 7 built the
 log; Volume 10, Chapter 6 treats CDC as infrastructure) — or, lacking that, application-level
 dual-writes.</p>
-<p><pre><code>sequenceDiagram
-    participant App as Application
-    participant Src as Source shard
-    participant Pipe as CDC pipeline
-    participant Dst as New shards
-    participant Ver as Verifier
-
-    Note over Src,Dst: Phase 1 — bulk backfill
-    Pipe->>Src: snapshot rows, consistent cut
-    Pipe->>Dst: copy, throttled
-    Note over Src,Dst: Phase 2 — tail the log
-    App->>Src: writes continue
-    Src-->>Pipe: WAL or binlog changes
-    Pipe->>Dst: apply until lag near zero
-    Note over Ver: Phase 3 — verify
-    Ver->>Src: checksum row ranges
-    Ver->>Dst: checksum row ranges
-    Ver-->>Ver: must match, continuously
-    Note over App,Dst: Phase 4 — cut over
-    App->>Dst: reads shift, canary first
-    App->>Dst: writes switch, brief write pause covers lag
-    Note over Src: Phase 5 — retire
-    App-->>Src: kept as rollback target, then dropped
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_824307015860.png" alt="diagram"></div></p>
 <ol>
 <li><strong>Backfill.</strong> Snapshot the source at a consistent point (an MVCC snapshot, Chapter 6) and bulk-
    copy rows to their new homes, throttled so the source's live traffic is not degraded.</li>
@@ -6559,6 +6191,9 @@ sure you never mistake it for two.</p>
 <li><strong>Shard late; design keys early.</strong> A shardable schema — tenant ID everywhere, compound keys, no
   cross-tenant invariants — is cheap insurance; retrofitting one is the multi-year horror story.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f6bf8e2c898e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7fb83c72e8e0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_98a56c26f8f8.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Kleppmann, M., <em>Designing Data-Intensive Applications</em> (O'Reilly, 2017), Chapter 6
@@ -6705,27 +6340,7 @@ distributed transaction</strong> — and then sends <code>COMMIT</code> to all p
 it writes and sends <code>ABORT</code> instead. Each participant applies the decision locally, writes its
 own outcome record, releases locks, and acknowledges. When all acknowledgments arrive, the
 coordinator writes an <em>end</em> record and forgets the transaction.</p>
-<p><pre><code>sequenceDiagram
-    participant C as Coordinator
-    participant A as Participant A
-    participant B as Participant B
-
-    Note over C: phase 1 - voting
-    C->>A: PREPARE
-    C->>B: PREPARE
-    Note over A: force-write prepare record to WAL<br/>vote is now durable and binding
-    A-->>C: VOTE YES
-    Note over B: force-write prepare record to WAL
-    B-->>C: VOTE YES
-    Note over C: force-write COMMIT record<br/>THE commit point of the<br/>whole distributed transaction
-    Note over C: phase 2 - decision
-    C->>A: COMMIT
-    C->>B: COMMIT
-    Note over A,B: write commit record<br/>apply, release locks
-    A-->>C: ACK
-    B-->>C: ACK
-    Note over C: write end record, forget transaction
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b3c900ca21b4.png" alt="diagram"></div></p>
 <h3 id="prepared-means-promised-the-durability-obligations">Prepared means promised: the durability obligations</h3>
 <p>The protocol's correctness hangs entirely on two forced writes, and it is worth dwelling on each
 because both are Chapter 7 in action.</p>
@@ -6855,21 +6470,7 @@ coordinator eventually comes back. That proviso is the next section.</p>
 participant has surrendered the right to decide. Now let the coordinator crash — or become
 unreachable, which is indistinguishable — after the votes are in but before the decision reaches
 anyone.</p>
-<p><pre><code>sequenceDiagram
-    participant C as Coordinator
-    participant A as Participant A
-    participant B as Participant B
-
-    C->>A: PREPARE
-    C->>B: PREPARE
-    A-->>C: VOTE YES
-    B-->>C: VOTE YES
-    Note over C: CRASHES - possibly before,<br/>possibly after logging a decision
-    Note over A: in doubt<br/>cannot abort: C may have logged COMMIT<br/>cannot commit: another vote may have been NO
-    A->>B: cooperative termination:<br/>do you know the outcome?
-    B-->>A: no - I am in doubt too
-    Note over A,B: both hold every lock the prepared<br/>transaction took, indefinitely,<br/>until the coordinator returns
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_45a92bac2072.png" alt="diagram"></div></p>
 <p>The prepared participants are <strong>in doubt</strong>. Each one reasons: "I voted YES, so the coordinator
 <em>may</em> have logged COMMIT — I cannot abort. But some other participant <em>may</em> have voted NO — I
 cannot commit." Both inferences are sound, so the participant can do nothing but wait.
@@ -6967,17 +6568,7 @@ undoes it. The guarantee: either the saga runs <code>T1 … Tn</code> to complet
 every step's effect eventually cancelled. (The paper also defines <em>forward recovery</em> — persist
 enough state to retry onward from the failure point rather than unwinding — which is what modern
 workflow engines call "just retry the activity.")</p>
-<p><pre><code>flowchart TB
-    T1["T1 create order<br/>state PENDING - semantic lock"] --> T2["T2 reserve inventory"]
-    T2 --> T3["T3 charge payment<br/>PIVOT - last compensatable step"]
-    T3 --> T4["T4 arrange shipment<br/>retriable - after the pivot<br/>only forward, retry until success"]
-    T4 --> OK["T5 mark order CONFIRMED"]
-
-    T2 -->|"reservation fails"| C1["C1 cancel order<br/>state REJECTED"]
-    T3 -->|"payment declined"| C2["C2 release inventory"]
-    C2 --> C1
-    T4 -.->|"failure here does NOT compensate<br/>money is taken - roll FORWARD"| T4
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b22c59934860.png" alt="diagram"></div></p>
 <h3 id="what-a-saga-is-not-the-missing-i">What a saga is not: the missing I</h3>
 <p>Here is the sentence to tattoo somewhere visible: <strong>a saga is not a transaction.</strong> It preserves
 a weak form of atomicity — eventually, all-or-compensated — and each step is individually
@@ -7129,13 +6720,7 @@ broker, marking them as sent. If the process crashes after commit, the event is 
 sitting durably in the outbox, and the relay publishes it after recovery. If the transaction
 aborts, the outbox row aborts with it and no event escapes. Both dual-write interleavings are
 dead: the event and the state change share a single commit.</p>
-<p><pre><code>flowchart LR
-    SVC["order service"] --> TXN["one local ACID transaction<br/>UPDATE orders SET status = PAID<br/>INSERT INTO outbox VALUES ..."]
-    TXN --> DB[("PostgreSQL<br/>orders + outbox<br/>+ WAL")]
-    DB -->|"poll: SELECT unpublished<br/>or CDC: read the WAL"| RELAY["relay"]
-    RELAY -->|"publish, then mark sent"| BROKER["broker topic"]
-    BROKER --> CON["consumer<br/>idempotent - dedup on event_id"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_981c2af7d8a0.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">outbox</span><span class="w"> </span><span class="p">(</span>
 <span class="w">    </span><span class="n">id</span><span class="w">              </span><span class="nb">bigint</span><span class="w"> </span><span class="k">GENERATED</span><span class="w"> </span><span class="n">ALWAYS</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">IDENTITY</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
 <span class="w">    </span><span class="n">event_id</span><span class="w">        </span><span class="n">uuid</span><span class="w">        </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">gen_random_uuid</span><span class="p">(),</span><span class="w">  </span><span class="c1">-- consumer dedup key</span>
@@ -7293,6 +6878,9 @@ invariants are.</p>
   tolerance — different problems that compose. And exactly-once is a fiction at the boundary:
   the real contract everywhere is at-least-once delivery plus idempotent effects.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_14cfd6ecfa54.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_472d271b4d83.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e4721fac83a4.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Gray, J., "Notes on Data Base Operating Systems," in <em>Operating Systems: An Advanced Course</em>,
@@ -7421,27 +7009,7 @@ serializability. The SQL:2016 standard even added JSON operators.</p>
 — what shape your data takes and what operations are native to that shape — bundled with
 <strong>trade-off points</strong> — what the exemplar systems chose about consistency, distribution, and
 indexing. They are not ideologies, and choosing among them is engineering, not tribal affiliation.</p>
-<p><pre><code>flowchart TB
-  subgraph KV["Key-value"]
-    K1["key: user:412:session"] --> V1["value: opaque bytes<br/>store cannot see inside"]
-  end
-  subgraph DOC["Document"]
-    D1["_id: 412"] --> D2["nested JSON document<br/>name, addresses array,<br/>orders array<br/>store indexes inside it"]
-  end
-  subgraph WC["Wide-column"]
-    W1["partition key: sensor_17"] --> W2["clustering key 09:00 - cols: temp, hum"]
-    W1 --> W3["clustering key 09:05 - cols: temp"]
-    W1 --> W4["sparse sorted rows<br/>within the partition"]
-  end
-  subgraph GR["Graph"]
-    G1["node: Person Alice"] -- "KNOWS since 2019" --> G2["node: Person Bob"]
-    G2 -- "OWNS" --> G3["node: Account 991"]
-  end
-  KV -.- NOTE["Left to right: the store understands<br/>progressively more structure,<br/>and native queries get richer"]
-  DOC -.- NOTE
-  WC -.- NOTE
-  GR -.- NOTE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c4d4fe4eb9bb.png" alt="diagram"></div></p>
 <p>The ordering in the diagram is the useful mental model: from key-value to graph, the store
 understands progressively more of your data's structure, and in exchange for that understanding it
 can execute progressively richer queries natively — at the cost of progressively harder
@@ -7617,16 +7185,7 @@ Chapter 1's normalization question. Embedding is denormalization: one read fetch
 one atomic write updates it all, at the cost of duplication and growth. Referencing is
 normalization: one copy of shared data, at the cost of application-side joins (<code>$lookup</code> exists
 but is deliberately limited, especially across shards) and multi-document update surfaces.</p>
-<p><pre><code>flowchart TD
-  Q1["Is the child data always<br/>read with the parent?"] -->|"no"| REF1["Reference"]
-  Q1 -->|"yes"| Q2["Is the relationship bounded?<br/>A few, not thousands"]
-  Q2 -->|"no - unbounded growth"| REF2["Reference<br/>unbounded arrays grow toward the<br/>16 MB document cap and make<br/>every rewrite more expensive"]
-  Q2 -->|"yes"| Q3["Is the child shared<br/>by many parents?"]
-  Q3 -->|"yes - shared"| REF3["Reference<br/>embedding shared data means<br/>fan-out updates to every copy"]
-  Q3 -->|"no - exclusive"| Q4["Must an invariant hold<br/>across parent and child?"]
-  Q4 -->|"yes"| EMB1["Embed<br/>single-document atomicity<br/>covers the invariant for free"]
-  Q4 -->|"no"| EMB2["Embed by default<br/>one read, no join"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9e14f7be8488.png" alt="diagram"></div></p>
 <p>The rules of thumb the tree encodes: data read together should live together; unbounded arrays
 (comments on a viral post, events on a long-lived entity) must be referenced or bucketed, both
 because of MongoDB's 16 MB document cap and because rewriting an ever-growing document gets
@@ -7653,22 +7212,7 @@ sequential read of one contiguous region on a handful of replicas — this is th
 is very fast. Any query that does not supply the partition key is a cluster-wide scatter
 (<code>ALLOW FILTERING</code> — the clause whose name is a warning). The table <em>is</em> the index, and there is
 exactly one of it per table.</p>
-<p><pre><code>flowchart TB
-  subgraph RING["Cluster - partition key hashed onto the ring"]
-    N1["node A"] --- N2["node B"] --- N3["node C"]
-  end
-  RING --> P["partition: sensor_17<br/>lives on its replica set of nodes"]
-  subgraph PART["Inside the partition - rows physically sorted by clustering key"]
-    direction TB
-    R1["day 2026-08-14, ts 09:00 - temp 21.4, hum 40"]
-    R2["day 2026-08-14, ts 08:55 - temp 21.3, hum 41"]
-    R3["day 2026-08-14, ts 08:50 - temp 21.1"]
-    R4["... contiguous on disk, DESC order ..."]
-    R1 --> R2 --> R3 --> R4
-  end
-  P --> PART
-  PART --> QQ["Query with partition key + clustering range<br/>= one sequential read on one replica set.<br/>Query without partition key<br/>= scatter to every node."]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_186468b7255a.png" alt="diagram"></div></p>
 <p>This makes <strong>query-first modeling</strong> not a style preference but a discipline the architecture
 enforces. You do not model your entities and then write queries; you enumerate your queries and
 then create one table <em>per query</em>, denormalizing the same data into as many layouts as you have
@@ -7850,16 +7394,7 @@ divergence, because the second write fails independently of the first and nothin
 Cache invalidation is the same problem in miniature, and even the CDC-driven form only bounds the
 inconsistency window; it never removes it. Every derived read is a stale read of some age, and the
 age must be acceptable <em>by design</em>, not by luck.</p>
-<p><pre><code>flowchart LR
-  APP["Application services"] -->|"transactional writes"| PG["Postgres<br/>system of record"]
-  PG -->|"WAL tail - CDC<br/>Debezium"| LOG["Event log<br/>Kafka"]
-  LOG --> ES["Elasticsearch<br/>search index"]
-  LOG --> RS["Redis<br/>cache warm and invalidate"]
-  LOG --> DW["Warehouse<br/>analytics"]
-  APP -->|"reads, seconds stale"| ES
-  APP -->|"reads, ms to s stale"| RS
-  APP -.->|"NO dual writes from the app<br/>derived stores are downstream only"| LOG
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8206ed92bb22.png" alt="diagram"></div></p>
 <h2 id="the-distributed-systems-lens">The distributed-systems lens</h2>
 <p>The deepest legacy of the NoSQL era is not any database; it is that <strong>the trade-offs were always
 there, and NoSQL made them visible</strong>. A single-node RDBMS is a machine for hiding distributed
@@ -7927,6 +7462,9 @@ you — and Volume 7, Chapter 5 returns to modeling with the full toolbox in han
 <li><strong>Partition-key design is distributed-systems design handed to you.</strong> Everything from
   Chapters 9 and 10 — skew, hot keys, cross-partition invariants — now lives in your schema.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_40088283a314.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d69d1c72ee4c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0f90240b15cb.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Chang, F., et al., "Bigtable: A Distributed Storage System for Structured Data," <em>OSDI</em>, 2006 —
@@ -8068,28 +7606,7 @@ leader, which reads the decision (or its absence) from the replicated log and co
 protocol. 2PC's atomicity structure survives; its availability defect is repaired by putting
 consensus underneath every participant, coordinator included. The cost also survives: a cross-group
 commit is 2PC's extra round trips, each leg itself a consensus commit.</p>
-<p><pre><code>flowchart TB
-  subgraph SQL["SQL and transaction layer"]
-    C["Coordinator leader<br/>2PC coordinator for<br/>cross-group transactions"]
-  end
-  subgraph G1["Tablet A — Paxos group 1"]
-    L1["Leader zone 1<br/>holds lease, holds locks"]
-    F1a["Replica zone 2"]
-    F1b["Replica zone 3"]
-    L1 --> F1a
-    L1 --> F1b
-  end
-  subgraph G2["Tablet B — Paxos group 2"]
-    L2["Leader zone 2"]
-    F2a["Replica zone 1"]
-    F2b["Replica zone 3"]
-    L2 --> F2a
-    L2 --> F2b
-  end
-  C -->|"prepare / commit<br/>each message is a<br/>Paxos-replicated log entry"| L1
-  C -->|"prepare / commit"| L2
-  TT["TrueTime<br/>GPS + atomic clock<br/>time masters per datacenter"] -.->|"TT.now gives interval<br/>earliest to latest"| C
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f3dc298a1a34.png" alt="diagram"></div></p>
 <h3 id="truetime-bounded-uncertainty-as-an-api">TrueTime: bounded uncertainty as an API</h3>
 <p>Every distributed database needs to order transactions. Chapter 10's systems used a coordinator;
 TiDB (below) uses a centralized timestamp oracle; classic Lamport machinery (Volume 6, Chapter 2)
@@ -8138,25 +7655,7 @@ transaction that starts afterward — anywhere on the planet, through any replic
 <code>TT.now()</code> and receive an interval entirely above <code>s</code>, so its own timestamp must exceed <code>s</code>, and the
 real-time order and the timestamp order agree. No communication established that agreement. The
 machines never exchanged a message to order these two transactions; they consulted physics.</p>
-<p><pre><code>sequenceDiagram
-    participant CL as Client
-    participant L as Coordinator leader
-    participant P as Paxos group
-    participant T2 as Later transaction T2
-
-    CL->>L: commit T1
-    L->>L: acquire locks, pick s = TT.now latest
-    L->>P: replicate commit record at s
-    P-->>L: Paxos majority ack
-    Note over L: COMMIT-WAIT<br/>hold until TT.after s is true<br/>duration about 2 epsilon
-    L->>L: TT.after s — s is in the past<br/>on every clock in the fleet
-    L->>L: apply, release locks
-    L-->>CL: committed at s
-    Note over CL: only NOW does the client learn of s
-    CL->>T2: causes T2 somehow — next request
-    T2->>T2: TT.now earliest already above s<br/>so timestamp of T2 above s
-    Note over T2: real-time order equals<br/>timestamp order — external consistency
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_653a270d1072.png" alt="diagram"></div></p>
 <p>Sit with the trade, because it is the profound one and this chapter's version of Volume 4,
 Chapter 3's arc that stronger consistency costs performance: <strong>clock uncertainty becomes commit
 latency, linearly.</strong> Better clocks (smaller ε) mean faster commits; degraded clocks mean Spanner
@@ -8201,19 +7700,7 @@ reads from local state <em>without a Raft round trip</em>, because the lease (ti
 against the clock-skew failure modes Volume 6, Chapter 2 warns about) guarantees no other replica
 is concurrently committing writes it hasn't seen. This is the fencing-token discipline productized:
 reads cost one machine, writes cost a Raft quorum.</p>
-<p><pre><code>flowchart TB
-  APP["Application<br/>Postgres wire protocol"] --> GW["Gateway node<br/>SQL parsing, planning,<br/>KV routing"]
-  subgraph R42["Range 42 — key span users slash a to users slash m"]
-    LH["Leaseholder + Raft leader<br/>serves reads locally<br/>no consensus round trip"]
-    F1["Follower replica"]
-    F2["Follower replica"]
-    LH -->|"Raft log replication<br/>writes need a majority"| F1
-    LH -->|"Raft log replication"| F2
-  end
-  GW -->|"read — one hop"| LH
-  GW -->|"write — Raft quorum commit"| LH
-  GW -.->|"stale-tolerant read<br/>AS OF SYSTEM TIME<br/>follower read"| F2
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc31e873942e.png" alt="diagram"></div></p>
 <h3 id="hlcs-and-the-uncertainty-window-honesty-without-truetime">HLCs and the uncertainty window: honesty without TrueTime</h3>
 <p>CockroachDB timestamps transactions with <strong>hybrid logical clocks</strong> (Kulkarni et al., 2014). An HLC
 is a physical clock reading welded to a logical counter: it stays close to wall time, but on every
@@ -8429,20 +7916,7 @@ distributed SQL engine</strong>, paying quorum latency on every write, running r
 and operating (or renting) a consensus fleet — for a workload one Postgres node with a replica would
 serve with lower latency, richer features, and two decades of operational folklore. Distributed SQL
 is a rung you climb <em>to</em>, under pressure, not a default.</p>
-<p><pre><code>flowchart TB
-  A["Single-node Postgres or MySQL<br/>plus the Chapter 14 levers:<br/>pooling, tuning, bigger box, caching"]
-  B["Add read replicas — Chapter 8<br/>scales reads, accepts lag,<br/>writes still one node"]
-  C{"Writes exceed one node,<br/>or data exceeds one box?"}
-  D{"Do transactions cross<br/>the natural shard key?<br/>Is multi-region write<br/>a real requirement?"}
-  E["Sharding middleware — Chapter 9<br/>Vitess, Citus<br/>per-shard classic SQL,<br/>no global transactions"]
-  F["Distributed SQL<br/>Spanner, CockroachDB, TiDB, Yugabyte<br/>pay consensus latency,<br/>design topology deliberately"]
-  A -->|"read pressure"| B
-  B --> C
-  C -->|"no — stay here"| B
-  C -->|"yes"| D
-  D -->|"no — clean shard key,<br/>single-region"| E
-  D -->|"yes — cross-key transactions<br/>plus write scale plus geography"| F
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_590f4b0258d2.png" alt="diagram"></div></p>
 <p>Climb it in order. Chapter 14's operating levers first — a well-tuned single node with connection
 pooling handles more than most teams believe, with the simplest possible semantics. Read replicas
 next, accepting Chapter 8's documented anomalies for read scale. If write volume or data size
@@ -8512,6 +7986,9 @@ implementations — a lesson worth carrying well beyond databases.</p>
 <li>The meta-lesson: SQL and ACID survived the distribution transition because they specify <em>what</em>,
   not <em>how</em> — data independence proved portable to planet scale.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7c1426f39e2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f4e401c2447e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_55a54936ddd1.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Corbett, J. C., Dean, J., et al., "Spanner: Google's Globally-Distributed Database," <em>OSDI</em>,
@@ -8674,25 +8151,7 @@ row, running a substring search over every document — O(corpus) per query, plu
 the wrong question, because <code>LIKE</code> knows nothing about word boundaries ("quorums"?
 "Quorum,"?), morphology ("leasing" vs "lease"), or ranking. The inverted index is not a
 faster <code>LIKE</code>; it is a different question answered by a different structure.</p>
-<p><pre><code>flowchart LR
-  subgraph DOCS["Documents"]
-    D1["doc 1: 'the leader holds a lease'"]
-    D2["doc 2: 'quorum reads need no lease'"]
-    D3["doc 3: 'a quorum of replicas'"]
-  end
-  subgraph IDX["Inverted index: term to postings"]
-    T1["'leader' : 1"]
-    T2["'lease' : 1, 2"]
-    T3["'quorum' : 2, 3"]
-    T4["'replica' : 3"]
-  end
-  DOCS -->|"analysis: tokenize,<br/>lowercase, stem"| IDX
-  Q["query: quorum lease"] --> T2
-  Q --> T3
-  T2 --> M["intersect sorted postings:<br/>1,2 with 2,3 gives 2"]
-  T3 --> M
-  M --> R["score doc 2 with BM25,<br/>return ranked hits"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dbfd54c83dd8.png" alt="diagram"></div></p>
 <h3 id="the-analysis-pipeline">The analysis pipeline</h3>
 <p>Between raw text and the index sits the <strong>analyzer</strong>, and it is where most real-world search
 quality problems live. Analysis turns a string into a token stream through a pipeline that
@@ -8912,19 +8371,7 @@ scraped every 60 s, that second difference is almost always exactly zero — and
 encodes a zero delta-of-delta as a <strong>single bit</strong>. Nonzero values are encoded with a short
 prefix code selecting a width bucket sized to hold them. In Facebook's measurements, about
 96% of timestamps compressed to one bit.</p>
-<p><pre><code>flowchart TB
-  subgraph RAW["Raw timestamps: 64 bits each"]
-    R1["t0 = 02:00:00"] --> R2["02:01:00"] --> R3["02:02:00"] --> R4["02:03:02"] --> R5["02:04:02"]
-  end
-  subgraph DELTA["First delta, seconds"]
-    A1["60"] --> A2["60"] --> A3["62"] --> A4["60"]
-  end
-  subgraph DOD["Delta-of-delta: what is stored"]
-    B1["0 : one bit"] --> B2["plus 2 : few bits"] --> B3["minus 2 : few bits"]
-  end
-  RAW --> DELTA --> DOD
-  DOD --> N["regular series: about one bit per timestamp<br/>instead of 64"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bed2cddca499.png" alt="diagram"></div></p>
 <p><strong>Values: XOR of adjacent floats.</strong> Successive samples of one series are usually close in
 value, so the IEEE-754 bit patterns share their sign, exponent, and high mantissa bits, and
 <code>current XOR previous</code> is a word that is mostly zeros. If the XOR is exactly zero (value
@@ -8995,21 +8442,7 @@ for 100 columns and uses 3. A <strong>column store</strong> lays each column con
 reads exactly the three columns it needs: a ~33× raw I/O reduction on this example before
 compression is even mentioned — and analytical tables are routinely wider and the queried
 subset routinely this narrow.</p>
-<p><pre><code>flowchart TB
-  subgraph ROW["Row layout: pages carry whole rows"]
-    RP["page: id,date,region,amount,+96 cols / id,date,region,amount,+96 cols / ..."]
-  end
-  subgraph COL["Column layout: pages carry one column"]
-    C1["date: 2026-01-03, 2026-01-03, 2026-01-04, ..."]
-    C2["region: EU, EU, EU, US, US, ..."]
-    C3["amount: 12.50, 8.00, 41.99, ..."]
-    C4["96 other columns: never read"]
-  end
-  Q["query touches 3 of 100 columns"] --> ROW
-  Q --> COL
-  ROW --> RIO["reads 100 percent of table bytes"]
-  COL --> CIO["reads about 3 percent,<br/>then compression shrinks that 5 to 20x more"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a29ad964b284.png" alt="diagram"></div></p>
 <p>Compression is the second, larger win, and it falls out of homogeneity: a column is a run
 of values of one type, often sorted or clustered, with low local entropy. Four encoding
 families do most of the work. <strong>Run-length encoding (RLE)</strong>: a sorted or clustered column
@@ -9167,15 +8600,7 @@ application ("save to Postgres, then also POST to Elasticsearch") is the anti-pa
 name and ban: the second write fails independently, ordering across writers is undefined,
 and nothing reconciles the drift. The log gives every consumer the same ordered history and
 an offset to resume from.</p>
-<p><pre><code>flowchart LR
-  APP["application"] -->|"transactions"| OLTP["OLTP source of truth<br/>Postgres: rows + WAL, Ch7"]
-  OLTP -->|"CDC: WAL tailing<br/>or outbox, Vol 10 Ch6"| LOG["durable log<br/>Kafka"]
-  LOG --> SPIPE["indexer"] --> SEARCH["search cluster<br/>Elasticsearch: inverted index"]
-  LOG --> WPIPE["loader"] --> WH["warehouse or lakehouse<br/>ClickHouse / Iceberg: columnar"]
-  APP -.->|"metrics scraped, pull"| TSDB["Prometheus TSDB<br/>Gorilla chunks"]
-  SEARCH -.->|"lag: refresh + pipeline"| APP
-  WH -.->|"lag: minutes"| APP
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3d0915233e4e.png" alt="diagram"></div></p>
 <p>Two properties make the architecture safe rather than merely fashionable, and both are
 design obligations on you:</p>
 <p><strong>Rebuildability.</strong> Every derived store must be reconstructible from the source of truth
@@ -9271,6 +8696,9 @@ of truth and the teams owning the views, and lag SLOs are the contract between t
   store is data loss rather than an incident, it has silently become a second source of
   truth.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c1c2fa68a5f5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1044c0419ab0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b330c9d3dd6c.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Stonebraker, M. and Çetintemel, U., "'One Size Fits All': An Idea Whose Time Has Come
@@ -9439,25 +8867,7 @@ standard for Postgres: a single-threaded, event-driven proxy that speaks the Pos
 wire protocol, accepts thousands of client connections cheaply (each is just a socket
 and a small struct, not a process), and multiplexes them onto a small set of real
 server connections.</p>
-<p><pre><code>flowchart LR
-  subgraph FLEET["App fleet - 40 pods, autoscaling"]
-    P1["Pod 1<br/>HikariCP pool: 10"]
-    P2["Pod 2<br/>HikariCP pool: 10"]
-    PN["Pod 40<br/>HikariCP pool: 10"]
-  end
-  subgraph PGB["PgBouncer - transaction mode"]
-    CL["client side: up to 2000<br/>cheap socket connections"]
-    SV["server side: 20 pooled<br/>real backend connections"]
-  end
-  DB[("PostgreSQL<br/>max_connections = 100<br/>20 busy backends, warm caches")]
-  P1 --> CL
-  P2 --> CL
-  PN --> CL
-  CL --> SV
-  SV --> DB
-  NOTE["transaction mode breaks:<br/>session prepared statements*<br/>session advisory locks<br/>SET without LOCAL<br/>LISTEN, WITH HOLD cursors,<br/>temp tables"]
-  PGB -.- NOTE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6f164c714c8d.png" alt="diagram"></div></p>
 <p>PgBouncer has three pooling modes, and the mode determines both the multiplexing win
 and what it silently breaks:</p>
 <ul>
@@ -9582,14 +8992,7 @@ choreography.</p>
 schema additively compatible with both old and new code, move the data and the traffic,
 then remove the old shape. Each phase is a <strong>separate deploy</strong>, verified before the
 next begins. Compressing phases is how zero-downtime migrations cause downtime.</p>
-<p><pre><code>flowchart LR
-  A["1. EXPAND<br/>add nullable column<br/>deploy: DDL only"] --> B["2. DUAL-WRITE<br/>app writes old + new<br/>deploy N+1"]
-  B --> C["3. BACKFILL<br/>batched UPDATEs<br/>no deploy - a job"]
-  C --> D["4. VERIFY<br/>counts, checksums,<br/>NOT NULL check NOT VALID"]
-  D --> E["5. SWITCH READS<br/>app reads new column<br/>deploy N+2"]
-  E --> F["6. STOP OLD WRITES<br/>deploy N+3"]
-  F --> G["7. CONTRACT<br/>drop old column<br/>releases later"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f40c85722773.png" alt="diagram"></div></p>
 <p>Worked example — replacing a <code>numeric</code> money column with integer cents:</p>
 <ol>
 <li><strong>Expand.</strong> <code>ALTER TABLE orders ADD COLUMN total_cents bigint;</code> — nullable, no
@@ -9738,22 +9141,7 @@ plug: the ALTER waits on the report, every query on the table queues behind the 
 the connection pool fills with waiters, checkout timeouts fire fleet-wide, and you have
 a full outage caused by a DDL that "doesn't lock anything." This is among the most
 common self-inflicted database outages in industry.</p>
-<p><pre><code>sequenceDiagram
-    participant R as Report query
-    participant M as Migration
-    participant W as Web traffic
-    participant L as PG lock manager
-
-    R->>L: SELECT on orders — holds ACCESS SHARE, runs 10 min
-    M->>L: ALTER TABLE orders ADD COLUMN — needs ACCESS EXCLUSIVE
-    Note over M,L: ALTER queues behind the report
-    W->>L: ordinary SELECTs — need ACCESS SHARE
-    Note over W,L: fair queue: they wait BEHIND the ALTER<br/>all traffic on orders now blocks
-    Note over W: pool fills with waiters — checkout<br/>timeouts — fleet-wide outage
-    L-->>M: lock_timeout 2s fires — ALTER aborts
-    L-->>W: queue drains, traffic recovers in seconds
-    Note over M: retry with backoff, off-peak
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bba3ff120ef7.png" alt="diagram"></div></p>
 <p>The safety net is mechanical and should be baked into your migration tooling, not left
 to memory: set a short <code>lock_timeout</code> for every DDL statement, and retry with backoff.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># lock_timeout + retry: the DDL either gets the lock fast or gets out of the way.</span>
@@ -9812,18 +9200,7 @@ transactions per second. Most systems that "outgrew Postgres" outgrew an untuned
 Postgres, and bought distributed-systems complexity (Chapter 10's coordination costs,
 Chapter 9's cross-shard queries) to avoid an afternoon of profiling. Climb the ladder
 in order:</p>
-<p><pre><code>flowchart TD
-  S["Database is slow or saturated"] --> Q1{"Examined top queries?<br/>pg_stat_statements"}
-  Q1 -->|no| FIX["Step 0: fix queries<br/>indexes, N+1s, EXPLAIN<br/>cheapest, highest yield"]
-  FIX --> S
-  Q1 -->|yes| Q2{"Read-heavy and<br/>tolerates staleness?"}
-  Q2 -->|yes| CACHE["Cache or read replicas<br/>accept invalidation debt<br/>and lag discipline"]
-  CACHE --> S
-  Q2 -->|no| Q3{"Bigger box still<br/>meaningfully bigger?"}
-  Q3 -->|yes| VERT["Vertical scale<br/>hardware is cheaper than<br/>engineering time"]
-  VERT --> S
-  Q3 -->|no| SHARD["Now Chapter 9:<br/>partitioning and sharding<br/>the complexity is real"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_598f16ae8ccb.png" alt="diagram"></div></p>
 <p><strong>Step zero is query optimization</strong>, because it is the only step that <em>removes</em> load
 rather than redistributing it. <code>pg_stat_statements</code> (MySQL: <code>performance_schema</code> /
 <code>sys.statement_analysis</code>) aggregates every query by normalized fingerprint; the top ten
@@ -10080,6 +9457,9 @@ individual heroics or paved road.</p>
   deployments</strong> governed by the same compatibility rules as APIs; platform teams
   should productize all of it as paved road.</li>
 </ul>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3ae020715894.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_03cfda3c6d8d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_43fd6672c98d.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Wooldridge, B., "About Pool Sizing," HikariCP wiki — the pool-sizing argument, the

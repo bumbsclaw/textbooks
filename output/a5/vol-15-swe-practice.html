@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -209,29 +291,7 @@ hr {
 <hr />
 <h2 id="the-pyramid-the-diamond-and-the-trophy">The pyramid, the diamond, and the trophy</h2>
 <p>No single geometric metaphor is universally correct, but each captures a useful default distribution of effort.</p>
-<p><pre><code>flowchart TB
-    subgraph Pyramid["Testing Pyramid — traditional backend service"]
-        P_E2E["E2E — few, critical paths<br/>slow, high fidelity, high cost"]
-        P_INT["Integration — moderate<br/>real deps via Testcontainers"]
-        P_UNIT["Unit — many, fast, isolated<br/>domain logic, pure functions"]
-        P_E2E --> P_INT --> P_UNIT
-    end
-    subgraph Diamond["Testing Diamond — service with rich API surface"]
-        D_E2E2["E2E — few"]
-        D_INT2["Integration — many<br/>API + DB + queue contracts"]
-        D_UNIT2["Unit — moderate"]
-        D_E2E2 --> D_INT2 --> D_UNIT2
-    end
-    subgraph Trophy["Testing Trophy — frontend-heavy or BFF"]
-        T_E2E3["E2E — moderate"]
-        T_INT3["Integration — many"]
-        T_UNIT3["Unit — fewer<br/>thin domain layer"]
-        T_E2E3 --> T_INT3 --> T_UNIT3
-    end
-    style P_UNIT fill:#e8f5e9
-    style D_INT2 fill:#e3f2fd
-    style T_INT3 fill:#fff3e0
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0f28e5cdc707.png" alt="diagram"></div></p>
 <p><em>Figure 1-1: Three portfolio shapes. The pyramid is the default for domain-rich backend services. The diamond fits services whose primary complexity is at integration boundaries (API gateways, orchestrators). The trophy, popularised by Kent C. Dodds, suits UI-heavy stacks. Most backend portfolios should look like a pyramid or a diamond — not an ice-cream cone (inverted pyramid) where slow E2E tests dominate.</em></p>
 <table>
 <thead>
@@ -693,18 +753,7 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 <li><strong>Generator (strategy/arbitrary)</strong> — a recipe for producing random inputs, often with distribution controls (e.g., "small integers more often than large ones; empty strings with 5% probability").</li>
 <li><strong>Shrinking</strong> — when a property fails, the framework searches for the <em>smallest</em> input that still fails, turning a 200-character random string into a 1-character reproducer you can reason about.</li>
 </ul>
-<p><pre><code>flowchart LR
-    Gen["Generator<br/>random inputs"] --> Prop["Property check<br/>invariant holds?"]
-    Prop -->|pass| Gen
-    Prop -->|fail| Shrink["Shrinker<br/>minimise counterexample"]
-    Shrink --> Report["Minimal failing case<br/>+ seed for replay"]
-    Report --> Fix["Fix code"]
-    Fix --> Gen
-
-    style Prop fill:#e3f2fd
-    style Shrink fill:#fff3e0
-    style Report fill:#fce4ec
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_74100285ce6b.png" alt="diagram"></div></p>
 <p><em>Figure 1-2: The property-based testing loop. Generators explore the input space; the shrinker reduces failures to their essence; the seed makes every failure reproducible.</em></p>
 <h3 id="common-property-patterns-for-backend-code">Common property patterns for backend code</h3>
 <table>
@@ -966,18 +1015,7 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 </table>
 <p>Quarantine policy: when a test flakes, immediately mark it as quarantined (e.g., <code>t.Skip</code> with a tracking issue, or a <code>quarantine</code> tag that excludes it from the required status check) and file an issue. Do not leave it in the required path while "someone looks at it."</p>
 <h3 id="making-the-suite-fast-and-actionable">Making the suite fast and actionable</h3>
-<p><pre><code>flowchart LR
-    Push["git push"] --> Unit["Unit + property<br/>~30s, required"]
-    Unit --> Lint["Lint + static analysis<br/>parallel with unit"]
-    Unit --> Integ["Integration<br/>Testcontainers<br/>~3 min, required"]
-    Integ --> E2E["E2E — ephemeral env<br/>~8 min, required on main"]
-    Integ --> Contract["Contract verification<br/>Pact / schema<br/>~2 min"]
-
-    style Unit fill:#e8f5e9
-    style Integ fill:#e3f2fd
-    style E2E fill:#fff3e0
-    style Contract fill:#f3e5f5
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_037c58fb4d74.png" alt="diagram"></div></p>
 <p><em>Figure 1-3: A staged pipeline. Fast, deterministic stages gate every commit; slower, higher-fidelity stages gate merge to main. E2E and contract verification run in parallel with integration where possible to minimise wall-clock time.</em></p>
 <p>Practical CI optimisations:</p>
 <ul>
@@ -1042,7 +1080,15 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 <li>Nicolas Carlo et al. — "How to Specify It! A Guide to Writing Properties of Pure Functions" — patterns for deriving properties from specifications.</li>
 </ul>
 <hr />
-<p><em>Next: Chapter 2 — Contract Testing, Test Doubles, and Testability — where the focus shifts from testing a single service to testing the seams between services, the doubles that isolate them, and the design choices that make both possible.</em></p></div><div id="ch02-contract-testing"><h1 id="chapter-2-contract-testing-test-doubles-and-testability">Chapter 2 — Contract Testing, Test Doubles, and Testability</h1>
+<p><em>Next: Chapter 2 — Contract Testing, Test Doubles, and Testability — where the focus shifts from testing a single service to testing the seams between services, the doubles that isolate them, and the design choices that make both possible.</em></p>
+<h3 id="testing-pyramid">Testing pyramid</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_732b86df53c9.png" alt="diagram"></div></p>
+<h3 id="test-doubles-taxonomy">Test doubles taxonomy</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_42aa6527ccdb.png" alt="diagram"></div></p>
+<h3 id="flaky-test-triage">Flaky test triage</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ccdccd34947d.png" alt="diagram"></div></p>
+<h3 id="coverage-vs-confidence">Coverage vs confidence</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a285c41c4ad2.png" alt="diagram"></div></p></div><div id="ch02-contract-testing"><h1 id="chapter-2-contract-testing-test-doubles-and-testability">Chapter 2 — Contract Testing, Test Doubles, and Testability</h1>
 <p><strong>What this chapter covers.</strong> A backend service never runs alone — it calls databases, queues, peer services, and third-party APIs, and every one of those boundaries is a seam where assumptions diverge and bugs hide. This chapter is about testing those seams without coupling your suite to someone else's deployment schedule. You will learn the full taxonomy of test doubles and when each earns its keep, how consumer-driven contract testing with Pact (and schema-based alternatives) catches drift that integration tests miss, and how to design services for testability in the first place — so that seams are explicit, deterministic, and cheap to exercise. Every technique is grounded in runnable Pact, WireMock, and fake-based examples.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -1067,19 +1113,7 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 <hr />
 <h2 id="test-doubles-a-precise-taxonomy">Test doubles: a precise taxonomy</h2>
 <p>The term "mock" is used colloquially to mean any test double. Gerard Meszaros's taxonomy (<em>xUnit Test Patterns</em>, 2007) — refined by Martin Fowler — distinguishes five kinds. The distinction is not pedantry; each double has different coupling, fidelity, and maintenance characteristics.</p>
-<p><pre><code>flowchart TB
-    SUT["System Under Test"]
-
-    SUT --> Dummy["Dummy<br/>passed but never used<br/>fills a required param"]
-    SUT --> Stub["Stub<br/>canned answers<br/>to calls made during test"]
-    SUT --> Spy["Spy<br/>records calls<br/>for later assertion"]
-    SUT --> Mock["Mock<br/>pre-programmed<br/>expectations verified<br/>automatically"]
-    SUT --> Fake["Fake<br/>working implementation<br/>with simplified internals<br/>e.g. in-memory DB"]
-
-    style Fake fill:#e8f5e9
-    style Mock fill:#fff3e0
-    style Stub fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dbf61025fd9c.png" alt="diagram"></div></p>
 <p><em>Figure 2-1: The five test doubles. Dummies, stubs, spies, and mocks are all hollow — they have no real behaviour. Fakes are the exception: they have real (but simplified) behaviour.</em></p>
 <table>
 <thead>
@@ -1373,23 +1407,7 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 <p>In practice most organisations use both: Pact for the service graph they control, schema testing for the boundaries they publish or consume from outside.</p>
 <h3 id="consumer-driven-contracts-with-pact">Consumer-driven contracts with Pact</h3>
 <p>Pact formalises the consumer's expectations as a <strong>pact file</strong> (JSON) that records every interaction the consumer depends on: request shape, response shape, headers, status codes, and matching rules. The consumer test generates the pact; the provider test replays it against the real provider. A <strong>Pact Broker</strong> mediates — storing pacts, triggering provider verification, and gating deployments with <code>can-i-deploy</code>.</p>
-<p><pre><code>sequenceDiagram
-    participant Consumer as Consumer<br/>(Order Service)
-    participant Pact as Pact file<br/>(JSON)
-    participant Broker as Pact Broker
-    participant Provider as Provider<br/>(Payment Service)
-    participant CI as CI / CD
-
-    Consumer->>Pact: consumer test generates pact<br/>"given order ord-1 exists,<br/>when POST /charges,<br/>then 201 with charge_id"
-    Pact->>Broker: publish pact<br/>(consumer version, branch, tags)
-    Broker->>Provider: webhook — pact changed
-    Provider->>Broker: fetch pacts for verification
-    Provider->>Provider: replay interactions<br/>against real provider
-    Provider->>Broker: publish verification result
-    CI->>Broker: can-i-deploy?<br/>(consumer + provider versions)
-    Broker->>CI: yes / no — all pacts verified?
-    CI->>CI: gate deployment
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f65005f88c59.png" alt="diagram"></div></p>
 <p><em>Figure 2-2: The Pact lifecycle. Consumer and provider never need to be deployed together — the pact file and the broker decouple their verification. The <code>can-i-deploy</code> check is the deployment gate.</em></p>
 <h4 id="consumer-test-typescript-pact-foundationpact">Consumer test (TypeScript — <code>@pact-foundation/pact</code>)</h4>
 <div class="highlight"><pre><span></span><code><span class="c1">// consumer/pact/payment.pact.test.ts</span>
@@ -1707,28 +1725,7 @@ pact-broker<span class="w"> </span>can-i-deploy<span class="w"> </span><span cla
 <p>The cheapest way to test a seam is to make the seam explicit in the design. Testability is not a testing concern — it is an architectural concern. Code that is hard to test is usually hard to reason about, hard to change, and hard to operate.</p>
 <h3 id="ports-and-adapters-hexagonal-architecture">Ports and adapters (hexagonal architecture)</h3>
 <p>The core idea: the domain depends on <strong>ports</strong> (interfaces it owns), and infrastructure implements <strong>adapters</strong> that satisfy those ports. The domain never imports <code>net/http</code>, <code>sql.DB</code>, or <code>kafka.Producer</code> directly — it imports its own interfaces, which are trivial to fake in tests.</p>
-<p><pre><code>flowchart TB
-    subgraph Domain["Domain — pure, no I/O imports"]
-        Svc["CheckoutService<br/>business rules"]
-        PortGW["PaymentGateway<br/>port (interface)"]
-        PortRepo["OrderRepository<br/>port (interface)"]
-        Svc --> PortGW
-        Svc --> PortRepo
-    end
-    subgraph Adapters["Adapters — I/O, outside the domain"]
-        Stripe["StripeGateway<br/>implements PaymentGateway"]
-        Postgres["PostgresOrderRepo<br/>implements OrderRepository"]
-        FakeGW["FakeGateway<br/>test double"]
-        FakeRepo["FakeOrderRepo<br/>test double"]
-    end
-    Stripe -. implements .-> PortGW
-    Postgres -. implements .-> PortRepo
-    FakeGW -. implements .-> PortGW
-    FakeRepo -. implements .-> PortRepo
-
-    style Domain fill:#e8f5e9
-    style Adapters fill:#e3f2fd
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5a2816b3e094.png" alt="diagram"></div></p>
 <p><em>Figure 2-3: Ports and adapters. The domain owns the interfaces; adapters (including test doubles) plug into them. Swapping a real adapter for a fake requires no change to the domain.</em></p>
 <p><strong>Dependency injection — constructor injection over service locators:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// main.go — composition root (the only place that knows about concrete adapters)</span>
@@ -1823,24 +1820,7 @@ pact-broker<span class="w"> </span>can-i-deploy<span class="w"> </span><span cla
 <hr />
 <h2 id="composing-the-portfolio">Composing the portfolio</h2>
 <p>Chapter 1 gave you the pyramid; this chapter gives you the rules for filling it at the seams:</p>
-<p><pre><code>flowchart LR
-    Q1{"Do you control<br/>both sides?"}
-    Q1 -->|Yes| Q2{"Can you run<br/>the dependency<br/>as a container?"}
-    Q1 -->|No| Q3{"Is the provider<br/>contract formal<br/>(OpenAPI/proto)?"}
-    Q2 -->|Yes| Real["Real integration test<br/>Testcontainers<br/>highest fidelity"]
-    Q2 -->|No| Fake["Fake<br/>in-memory impl<br/>domain-owned port"]
-    Q3 -->|Yes| Schema["Schema contract test<br/>openapi-diff / buf breaking<br/>+ response conformance"]
-    Q3 -->|No| Pact["Consumer-driven Pact<br/>consumer + provider<br/>+ Broker gate"]
-    Real --> Gate["CI: can-i-deploy / breaking-change gate"]
-    Fake --> Gate
-    Schema --> Gate
-    Pact --> Gate
-
-    style Real fill:#e8f5e9
-    style Fake fill:#e3f2fd
-    style Pact fill:#f3e5f5
-    style Schema fill:#fff3e0
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8bbfb159bd7b.png" alt="diagram"></div></p>
 <p><em>Figure 2-4: Choosing the right seam test. When you control both sides and can run the dependency, a real integration test is the strongest signal. Otherwise, the choice between Pact and schema testing follows who owns the contract.</em></p>
 <p>A mature suite uses all four, each where it is strongest:</p>
 <ul>
@@ -1875,7 +1855,13 @@ pact-broker<span class="w"> </span>can-i-deploy<span class="w"> </span><span cla
 <li>WireMock — https://wiremock.org/docs/ — HTTP stubbing and response templating.</li>
 </ul>
 <hr />
-<p><em>Next: Chapter 3 — Load, Performance, and Chaos Testing — where the focus shifts from correctness to behaviour under pressure: how the system performs when traffic is heavy, resources are constrained, and failures are injected deliberately.</em></p></div><div id="ch03-load-testing"><h1 id="chapter-3-load-performance-and-chaos-testing">Chapter 3 — Load, Performance, and Chaos Testing</h1>
+<p><em>Next: Chapter 3 — Load, Performance, and Chaos Testing — where the focus shifts from correctness to behaviour under pressure: how the system performs when traffic is heavy, resources are constrained, and failures are injected deliberately.</em></p>
+<h3 id="consumer-driven-contract-testing-flow">Consumer-driven contract testing flow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_195e11a32585.png" alt="diagram"></div></p>
+<h3 id="contract-testing-vs-e2e">Contract testing vs E2E</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ce3783def5c2.png" alt="diagram"></div></p>
+<h3 id="pact-workflow">Pact workflow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c168b724f2e2.png" alt="diagram"></div></p></div><div id="ch03-load-testing"><h1 id="chapter-3-load-performance-and-chaos-testing">Chapter 3 — Load, Performance, and Chaos Testing</h1>
 <p><strong>What this chapter covers.</strong> Correctness is necessary but not sufficient — a service that returns the right answer in 50 ms for one request and 8 seconds for the thousandth concurrent request is failing its users just as surely as one that returns the wrong answer. This chapter covers the three disciplines that verify behaviour under pressure: load testing (can the system handle expected traffic?), performance testing (where are the bottlenecks and what are the limits?), and chaos testing (does the system degrade gracefully when the infrastructure misbehaves?). You will learn workload modelling, k6/Vegeta/Gatling in depth, profiling-driven performance analysis, chaos experiment design with Chaos Mesh and Litmus, and how to wire all three into CI and production safely. Every technique is grounded in runnable configs and real experiment definitions.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -1928,19 +1914,7 @@ pact-broker<span class="w"> </span>can-i-deploy<span class="w"> </span><span cla
 </table>
 <p>Load testing asks <em>how much can we handle and how does latency degrade?</em> Performance testing asks <em>where is the bottleneck and what is the theoretical limit?</em> Chaos testing asks <em>when something breaks — and it will — does the system do what we designed it to do?</em> Together they close the gap between "the code is correct" and "the system is reliable" (Volume 11).</p>
 <h3 id="where-this-chapter-sits">Where this chapter sits</h3>
-<p><pre><code>flowchart LR
-    Correct["Correctness<br/>Ch 1-2<br/>unit / integration<br/>contract / E2E"] --> Load["Load & Perf<br/>this chapter §1-4<br/>throughput, latency<br/>bottlenecks"]
-    Load --> Chaos["Chaos<br/>this chapter §5-6<br/>fault injection<br/>resilience"]
-    Chaos --> Prod["Production<br/>SLOs, monitoring<br/>incident response<br/>Vol 11"]
-
-    Correct -. fast feedback .-> CI["CI gate<br/>every commit"]
-    Load -. nightly / pre-release .-> CI
-    Chaos -. weekly / game day .-> CI
-
-    style Load fill:#e3f2fd
-    style Chaos fill:#fff3e0
-    style Correct fill:#e8f5e9
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1ee3b5cbfbf3.png" alt="diagram"></div></p>
 <p><em>Figure 3-1: The testing progression from correctness to resilience. Each layer answers a different question, runs at a different cadence, and gates a different promotion. All three feed production SLO confidence.</em></p>
 <hr />
 <h2 id="load-testing-concepts-and-workload-design">Load testing: concepts and workload design</h2>
@@ -2362,17 +2336,7 @@ vegeta<span class="w"> </span>report<span class="w"> </span>-type<span class="o"
 <p>Load testing tells you <em>that</em> the system is slow under load. Performance testing tells you <em>why</em> — and whether the fix actually helped.</p>
 <h3 id="profiling-hierarchy">Profiling hierarchy</h3>
 <p>When a load test breaches an SLO, the diagnosis follows a hierarchy from coarse to fine:</p>
-<p><pre><code>flowchart TB
-    SLO["SLO breach<br/>p99 latency > 800ms at 500 RPS"] --> Metrics["Metrics<br/>CPU, memory, GC, I/O, queue depth<br/>which resource is saturated?"]
-    Metrics --> Traces["Distributed traces<br/>which span dominates?<br/>DB vs. cache vs. downstream"]
-    Traces --> Profiles["Continuous profiles<br/>CPU / heap / lock / goroutine<br/>which function / allocation / mutex?"]
-    Profiles --> Micro["Microbenchmarks<br/>isolate the hot path<br/>validate the fix"]
-
-    style SLO fill:#fce4ec
-    style Metrics fill:#fff3e0
-    style Traces fill:#e3f2fd
-    style Profiles fill:#e8f5e9
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1ac9235bbc0c.png" alt="diagram"></div></p>
 <p><em>Figure 3-2: Performance diagnosis hierarchy. Each layer narrows the search — from system-level saturation to function-level hot spots — before you change a line of code.</em></p>
 <p><strong>1. System metrics — is a resource saturated?</strong></p>
 <p>Dashboards (Volume 11, Chapter 2) answer the first question: CPU throttling (cgroup <code>cpu.stat</code>), memory pressure (PSI, OOM kills), GC pauses, connection pool wait time, queue depth, and downstream latency. If CPU is at 95% during the load test, the bottleneck is compute — profile CPU. If CPU is at 30% but p99 is high, the bottleneck is elsewhere (I/O, locks, downstream).</p>
@@ -2551,21 +2515,7 @@ k6<span class="w"> </span>run<span class="w"> </span>scenarios/checkout-load.js<
 </table>
 <h3 id="designing-a-chaos-experiment">Designing a chaos experiment</h3>
 <p>Every experiment follows the same lifecycle:</p>
-<p><pre><code>flowchart LR
-    Steady["1. Steady state<br/>SLIs green<br/>load test running"] --> Hypo["2. Hypothesis<br/>SLO holds<br/>during fault X"]
-    Hypo --> Inject["3. Inject fault<br/>scoped, time-boxed<br/>with abort"]
-    Inject --> Observe["4. Observe<br/>SLIs, traces<br/>logs, alerts"]
-    Observe --> Abort{"5. Abort?<br/>SLO breached<br/>or timer?"}
-    Abort -->|yes| Rollback["Rollback fault<br/>verify recovery"]
-    Abort -->|no| Observe
-    Rollback --> Learn["6. Learn<br/>fix or tighten<br/>SLO / config"]
-    Learn --> Auto["7. Automate<br/>CI / schedule<br/>expand blast radius"]
-
-    style Steady fill:#e8f5e9
-    style Inject fill:#fff3e0
-    style Observe fill:#e3f2fd
-    style Rollback fill:#fce4ec
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a70fbedfe5ae.png" alt="diagram"></div></p>
 <p><em>Figure 3-3: The chaos experiment lifecycle. Every experiment is a controlled, abortable, observable hypothesis test — not ad-hoc destruction.</em></p>
 <p>A well-scoped experiment definition answers seven questions:</p>
 <ol>
@@ -2846,26 +2796,7 @@ toxiproxy-cli<span class="w"> </span>toxic<span class="w"> </span>remove<span cl
 <hr />
 <h2 id="wiring-it-together-ci-environments-and-observability">Wiring it together: CI, environments, and observability</h2>
 <h3 id="staged-pipeline">Staged pipeline</h3>
-<p><pre><code>flowchart TB
-    Push["git push"] --> Unit["Unit + property<br/>~30s, required"]
-    Unit --> Integ["Integration<br/>Testcontainers<br/>~3 min"]
-    Integ --> Contract["Contract<br/>Pact / schema<br/>~2 min"]
-    Integ --> PerfSmoke["Perf smoke<br/>k6 1 min, 20 RPS<br/>SLO gate"]
-    Contract --> Staging["Deploy to staging<br/>ephemeral env"]
-    PerfSmoke --> Staging
-    Staging --> Load["Load + stress<br/>k6/Vegeta 15 min<br/>peak + spike"]
-    Load --> Chaos["Chaos<br/>Chaos Mesh / Toxiproxy<br/>latency + pod-kill"]
-    Chaos --> Gate{"All gates<br/>green?"}
-    Gate -->|yes| Prod["Promote to prod"]
-    Gate -->|no| Block["Block — fix<br/>or tune SLO"]
-
-    style Unit fill:#e8f5e9
-    style Integ fill:#e3f2fd
-    style Contract fill:#f3e5f5
-    style PerfSmoke fill:#fff3e0
-    style Load fill:#ffe0b2
-    style Chaos fill:#fce4ec
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b2ce926b7e4.png" alt="diagram"></div></p>
 <p><em>Figure 3-4: Staged pipeline from commit to production. Fast, deterministic stages gate every commit; heavier load and chaos stages gate promotion. Each stage has an explicit SLO-aligned pass/fail signal — no stage is informational only.</em></p>
 <h3 id="environment-isolation">Environment isolation</h3>
 <p>Load and chaos tests must not run against shared environments where they can affect other teams or pollute data. Options in order of preference:</p>
@@ -2958,7 +2889,13 @@ toxiproxy-cli<span class="w"> </span>toxic<span class="w"> </span>remove<span cl
 <li>Volume 11, Chapter 7 — Load Testing and Capacity Planning and Chapter 8 — Chaos Engineering — the SRE companion to this chapter's SWE perspective.</li>
 </ul>
 <hr />
-<p><em>Next: Chapter 4 — Design Docs, RFCs, and Technical Decision-Making — where the focus shifts from verifying the system to deciding what to build and how to align a team around that decision before a line of code is written.</em></p></div><div id="ch04-design-docs"><h1 id="chapter-4-design-docs-rfcs-and-technical-decision-making">Chapter 4 — Design Docs, RFCs, and Technical Decision-Making</h1>
+<p><em>Next: Chapter 4 — Design Docs, RFCs, and Technical Decision-Making — where the focus shifts from verifying the system to deciding what to build and how to align a team around that decision before a line of code is written.</em></p>
+<h3 id="load-testing-types">Load testing types</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bdda24ea8e21.png" alt="diagram"></div></p>
+<h3 id="load-test-pipeline">Load test pipeline</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b84239476e65.png" alt="diagram"></div></p>
+<h3 id="k6-gatling-architecture">k6 / Gatling architecture</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c52356a9b0b3.png" alt="diagram"></div></p></div><div id="ch04-design-docs"><h1 id="chapter-4-design-docs-rfcs-and-technical-decision-making">Chapter 4 — Design Docs, RFCs, and Technical Decision-Making</h1>
 <p><strong>What this chapter covers.</strong> Every consequential engineering decision is made twice: once when someone has the idea and again when the team understands it well enough to critique it. Without a written artifact in between, the second step never happens — decisions are made in hallway conversations, Slack threads that scroll away, and meetings where the loudest voice wins. This chapter makes decision-making explicit and durable. You will learn when to write a design doc and when not to, how RFC and ADR processes actually work in high-performing organizations, what a good template looks like and why each section earns its place, how to frame alternatives and trade-offs so reviewers can reason rather than bikeshed, and how to run the review process — from async commentary to synchronous debate to recorded decision — without turning it into governance theatre.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -3090,45 +3027,8 @@ toxiproxy-cli<span class="w"> </span>toxic<span class="w"> </span>remove<span cl
 <p>A common confusion is between RFC and ADR. An RFC says "here is what we <em>should</em> do and why — please critique." An ADR says "here is what we <em>did</em> do and why — for the record." A healthy team produces both: RFCs before the work, ADRs after the decision. Some teams combine them — an RFC that, once approved, <em>becomes</em> the ADR by flipping its status. Either way, the append-only log of ADRs is the durable memory.</p>
 <hr />
 <h2 id="3-the-rfc-lifecycle">3. The RFC lifecycle</h2>
-<p><pre><code>stateDiagram-v2
-    [*] --> Draft: Author creates RFC
-    Draft --> Review: Publish for comment\n(announce to stakeholders)
-    Review --> Revising: Feedback received
-    Revising --> Review: Updated draft\nre-published
-    Review --> Accepted: Consensus / approval\n(all blocking concerns resolved)
-    Review --> Rejected: Proposal not viable\nor superseded
-    Review --> Abandoned: Author withdraws\nor no longer relevant
-    Accepted --> Implementing: Work begins\n(linked PRs / project)
-    Implementing --> Implemented: Shipped & verified\n(ADR recorded)
-    Implementing --> PartiallyImplemented: Shipped with\nfollow-ups / tech debt
-    Accepted --> Superseded: New RFC/ADR\nreplaces this decision
-    Rejected --> Draft: Revived with\nnew context
-    Abandoned --> Draft: Revived
-    Implemented --> Superseded: Later decision\nchanges direction
-    PartiallyImplemented --> Implementing: Follow-up work
-    Implemented --> [*]
-    Rejected --> [*]
-    Abandoned --> [*]
-    Superseded --> [*]
-</code></pre></p>
-<p><pre><code>flowchart TB
-    A["Idea or problem statement\n(author identifies need)"] --> B["Draft RFC\n(template, alternatives,\ntrade-offs, rollout)"]
-    B --> C["Pre-review\n(1-2 trusted reviewers\nfor early signal)"]
-    C --> D{"Ready for\nwide review?"}
-    D -- no --> B
-    D -- yes --> E["Publish + announce\n(Slack, mailing list,\nreview meeting invite)"]
-    E --> F["Async comment period\n(typically 5-10 business days)\nReviewers leave threaded comments"]
-    F --> G["Synchronous review meeting\n(if needed — resolve blocking\nconcerns, timebox 60 min)"]
-    G --> H{"Blocking concerns\nremain?"}
-    H -- yes --> I["Revise RFC\n(address concerns,\nrecord dissent)"]
-    I --> F
-    H -- no --> J["Decision\n(approve / reject / defer)\nRecord in ADR log"]
-    J --> K["Implementation\n(link PRs to RFC,\nupdate status)"]
-    K --> L["Retrospective\n(did the doc predict reality?\nupdate ADR if diverged)"]
-
-    style J fill:#6a6,stroke:#333,color:#fff
-    style I fill:#fa6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_267dd4177b2f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f828724c5d82.png" alt="diagram"></div></p>
 <h3 id="timeline-and-expectations">Timeline and expectations</h3>
 <table>
 <thead>
@@ -3231,15 +3131,7 @@ enough that a reviewer can spot what you missed._
 
 <span class="gu">### 4.1 Architecture diagram</span>
 
-<pre><code>flowchart LR
-    subgraph proposed
-        GW[API Gateway] --> K[Kafka topic: orders.v1]
-        K --> A[Order Service]
-        K --> B[Inventory Service]
-        K --> C[Search Indexer]
-        A --> DB[(Orders DB)]
-    end
-</code></pre>
+<div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ddc78bfbe92d.png" alt="diagram"></div>
 
 <span class="gu">### 4.2 Data flow and API changes</span>
 
@@ -3685,7 +3577,15 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <li>Will Larson — <em>An Elegant Puzzle: Systems of Engineering Management</em> (2019), Ch. 4 — Engineering decision-making at scale.</li>
 <li>Camille Fournier — <em>The Manager's Path</em> (2017), Ch. 8 — Technical decision-making and RFC culture.</li>
 <li>Google — <em>Software Engineering at Google</em> (2020), Ch. 8 — Style guides and code review; Ch. 14 — Documentation. https://abseil.io/resources/swe-book</li>
-</ul></div><div id="ch05-ddd"><h1 id="chapter-5-domain-driven-design-for-backend">Chapter 5 — Domain-Driven Design for Backend</h1>
+</ul>
+<h3 id="rfc-lifecycle">RFC lifecycle</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb3656f4cdc0.png" alt="diagram"></div></p>
+<h3 id="design-doc-structure">Design doc structure</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c52826f827e1.png" alt="diagram"></div></p>
+<h3 id="adrs-vs-rfcs">ADRs vs RFCs</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35baf00ba4a2.png" alt="diagram"></div></p>
+<h3 id="review-quality-checklist">Review quality checklist</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c1f410d2662f.png" alt="diagram"></div></p></div><div id="ch05-ddd"><h1 id="chapter-5-domain-driven-design-for-backend">Chapter 5 — Domain-Driven Design for Backend</h1>
 <p><strong>What this chapter covers.</strong> Most backend failures blamed on "microservices complexity" are actually domain-modeling failures: a shared database that couples teams through invisible foreign keys, a single <code>Order</code> object that means three different things in three services, an API that leaks internal workflow state because no one defined where one domain ends and another begins. Domain-Driven Design (DDD) is the discipline of making those boundaries explicit before they become incidents. This chapter covers DDD as a backend engineer uses it — not as abstract theory, but as concrete decisions about service boundaries, data ownership, transactional consistency, and inter-service communication. You will learn bounded contexts and context maps, entities vs. value objects vs. aggregates, domain events and their delivery guarantees, strategic patterns for decomposing monoliths, and where DDD helps, where it over-engineers, and how it composes with the rest of the backend stack.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -3991,24 +3891,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-    subgraph Aggregate["Aggregate: Order (consistency boundary)"]
-        ROOT["Order (root)\n- ID, status, version\n- enforces all invariants\n- sole entry point"]
-        LINES["OrderLines (value objects)\n- ProductID, qty, price\n- immutable, no identity"]
-        EVENTS["Uncommitted domain events\n- OrderConfirmed\n- OrderCancelled"]
-        ROOT --- LINES
-        ROOT --- EVENTS
-    end
-
-    EXT1["Other aggregates\nreferenced by ID only"] -.->|"CustomerID (not Customer object)"| ROOT
-    EXT2["Shipment aggregate\n(order_id FK by value)"] -.->|"OrderID"| ROOT
-
-    REPO["Repository\n(load/store whole aggregate\ntransactionally)"] --- Aggregate
-    REPO --- DB[("Orders table\n+ outbox table\n(same TX)")]
-
-    style ROOT fill:#6a6,stroke:#333,color:#fff
-    style REPO fill:#69c,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da6207c5bc7a.png" alt="diagram"></div></p>
 <h3 id="33-repositories-and-persistence">3.3 Repositories and persistence</h3>
 <p>A <strong>repository</strong> presents an aggregate as an in-memory collection, hiding persistence mechanics. It loads and stores <em>whole aggregates</em> transactionally.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Repository interface — domain layer, no infrastructure leakage.</span>
@@ -4085,34 +3968,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <h2 id="4-strategic-patterns-bounded-contexts-and-context-maps">4. Strategic patterns — bounded contexts and context maps</h2>
 <h3 id="41-bounded-contexts">4.1 Bounded contexts</h3>
 <p>A <strong>bounded context</strong> is an explicit boundary within which a particular domain model applies. Inside the boundary, terms have precise meanings and invariants hold. Across boundaries, the same real-world concept may be modeled differently — and that is intentional.</p>
-<p><pre><code>flowchart TB
-    subgraph Ordering["Ordering Context"]
-        O1["Cart / Checkout\nOrder aggregate\nPricing rules"]
-    end
-    subgraph Billing["Billing Context"]
-        B1["Invoice aggregate\nPayment aggregate\nTax calculation"]
-    end
-    subgraph Fulfillment["Fulfillment Context"]
-        F1["Shipment aggregate\nWarehouse allocation\nCarrier integration"]
-    end
-    subgraph Catalog["Catalog Context"]
-        C1["Product aggregate\nCategory, pricing\nSearch index"]
-    end
-    subgraph Identity["Identity Context"]
-        I1["Customer aggregate\nAuth, profile\nPreferences"]
-    end
-
-    Ordering -- "OrderConfirmed event\n(via Kafka)" --> Billing
-    Ordering -- "OrderConfirmed event" --> Fulfillment
-    Catalog -- "ProductPriceChanged event" --> Ordering
-    Identity -- "CustomerID (opaque reference)" --> Ordering
-    Ordering -- "ShipmentRequested event" --> Fulfillment
-    Fulfillment -- "ShipmentDelivered event" --> Ordering
-
-    style Ordering fill:#6a6,stroke:#333,color:#fff
-    style Billing fill:#69c,stroke:#333,color:#fff
-    style Fulfillment fill:#fa6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e189e3ee7a34.png" alt="diagram"></div></p>
 <p><strong>How to find bounded-context boundaries:</strong></p>
 <table>
 <thead>
@@ -4196,25 +4052,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>Each context owns its data exclusively — no shared tables, no cross-context foreign keys, no direct DB joins. Integration happens through well-defined interfaces (events, APIs, ACLs).</p>
 <h3 id="42-context-map-how-contexts-relate">4.2 Context map — how contexts relate</h3>
 <p>When bounded contexts must interact, the <em>relationship</em> between them is a design decision with concrete consequences:</p>
-<p><pre><code>flowchart TB
-    subgraph Map["Context Map — Relationship Types"]
-        direction TB
-
-        P1["Ordering"] <-->|"Partnership\n(shared planning,\ncoordinated releases)"| P2["Billing"]
-
-        CS1["Ordering\n(Customer)"] -->|"Customer / Supplier\n(ordering dictates,\nbilling conforms)"| CS2["Fulfillment\n(Supplier)"]
-
-        CONF1["Catalog\n(upstream)"] -->|"Conformist\n(downstream conforms\nto upstream model)"| CONF2["Search Indexing\n(downstream)"]
-
-        ACL1["Legacy ERP\n(upstream, messy model)"] -->|"Anticorruption Layer\n(ACL translates\nand isolates)"| ACL2["Ordering\n(protected model)"]
-
-        SK1["Ordering"] -.->|"Shared Kernel\n(shared code — use sparingly)"| SK2["Pricing\n(tightly coupled)"]
-
-        OH1["Ordering"] -->|"Open Host Service\n(published API/event\ncontract for many consumers)"| OH2["Multiple downstream\nconsumers"]
-
-        SEP1["Ordering"] -.-|"Separate Ways\n(no integration —\nduplicate simply)"| SEP2["Analytics\n(own copy via CDC)"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e22f1619002.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -4386,25 +4224,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </table>
 <h3 id="52-delivery-outbox-broker-and-idempotent-consumers">5.2 Delivery — outbox, broker, and idempotent consumers</h3>
 <p>Domain events must survive crashes. Publishing directly from the aggregate (fire-and-forget) risks inconsistency: the DB commit succeeds but the publish fails, or vice versa. The solution is the <strong>transactional outbox</strong> (Volume 10, Chapter 6):</p>
-<p><pre><code>sequenceDiagram
-    participant App as Application Service
-    participant DB as Postgres (orders + outbox)
-    participant Relay as CDC Relay (Debezium / poller)
-    participant Kafka as Kafka (orders.v1)
-    participant Consumer as Billing / Fulfillment
-
-    App->>DB: BEGIN
-    App->>DB: UPDATE orders + INSERT outbox<br/>(same transaction)
-    DB-->>App: COMMIT (atomic — both or neither)
-    Relay->>DB: Poll / CDC tail on outbox table
-    Relay->>Kafka: Publish event<br/>(idempotent producer)
-    Kafka-->>Relay: ACK
-    Relay->>DB: Mark outbox row as published<br/>(or delete)
-    Kafka->>Consumer: Deliver (at-least-once)
-    Consumer->>Consumer: Check inbox / idempotency table<br/>duplicate? skip
-    Consumer->>Consumer: Process event<br/>(update own aggregate)
-    Consumer->>DB: INSERT inbox (event_id)<br/>+ business write (same TX)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d40b425eee51.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Outbox table — polled or CDC-tailed by the relay.</span>
 <span class="c1">// CREATE TABLE outbox (</span>
 <span class="c1">//     id          BIGSERIAL PRIMARY KEY,</span>
@@ -4489,46 +4309,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <hr />
 <h2 id="6-strategic-decomposition-from-monolith-to-bounded-contexts">6. Strategic decomposition — from monolith to bounded contexts</h2>
 <p>Most teams do not start with bounded contexts — they start with a monolith and need to find them. The strangler-fig pattern, guided by DDD boundaries, is the proven approach.</p>
-<p><pre><code>flowchart TB
-    subgraph Phase1["Phase 1 — Monolith"]
-        M1["Monolith\n(single DB, shared tables)\norders + billing + fulfillment\nmixed in one codebase"]
-    end
-
-    subgraph Phase2["Phase 2 — Modular monolith"]
-        direction TB
-        MOD1["Ordering module\n(own package, own tables)"]
-        MOD2["Billing module\n(own package, own tables)"]
-        MOD3["Fulfillment module\n(own package, own tables)"]
-        MOD1 -.->|"domain events (in-process)"| MOD2
-        MOD1 -.-> MOD3
-        DB2[("Shared DB\nbut table ownership\nis enforced by convention")]
-        MOD1 --- DB2
-        MOD2 --- DB2
-        MOD3 --- DB2
-    end
-
-    subgraph Phase3["Phase 3 — Distributed"]
-        direction TB
-        SVC1["Ordering Service\n(own DB, own deploy)"]
-        SVC2["Billing Service\n(own DB, own deploy)"]
-        SVC3["Fulfillment Service\n(own DB, own deploy)"]
-        SVC1 -->|"Kafka: OrderConfirmed"| SVC2
-        SVC1 -->|"Kafka: OrderConfirmed"| SVC3
-        DB3A[("Orders DB")]
-        DB3B[("Billing DB")]
-        DB3C[("Fulfillment DB")]
-        SVC1 --- DB3A
-        SVC2 --- DB3B
-        SVC3 --- DB3C
-    end
-
-    Phase1 -->|"Identify bounded contexts<br/>enforce module boundaries"| Phase2
-    Phase2 -->|"Extract services<br/>replace in-process events<br/>with broker + outbox"| Phase3
-
-    style Phase1 fill:#fa6,stroke:#333,color:#fff
-    style Phase2 fill:#69c,stroke:#333,color:#fff
-    style Phase3 fill:#6a6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_312770c56765.png" alt="diagram"></div></p>
 <p><strong>Decomposition steps:</strong></p>
 <ol>
 <li>
@@ -4649,29 +4430,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-    subgraph Stack["Backend Stack — DDD Overlays the Stack"]
-        direction TB
-        LANG["Ubiquitous Language\n(API names, event schemas,\nDB columns, log fields)"]
-        CTX["Bounded Contexts\n(service + team + DB boundaries)"]
-        AGG["Aggregates\n(transactional units,\nOCC, outbox)"]
-        EVT["Domain Events\n(Kafka topics,\nAvro/Protobuf schemas)"]
-        REPO["Repositories\n(data access,\npooling, migrations)"]
-        ACL["ACLs / OHS\n(translation,\nversioned contracts)"]
-
-        LANG --- CTX
-        CTX --- AGG
-        AGG --- EVT
-        AGG --- REPO
-        CTX --- ACL
-        ACL --- EVT
-    end
-
-    OBS["Observability\n(trace per context,\nlag per topic)"] -.-> CTX
-    OBS -.-> EVT
-    SEC["Security\n(authZ per context,\nper-aggregate ACL)"] -.-> CTX
-    SEC -.-> AGG
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d3d2c9ed881d.png" alt="diagram"></div></p>
 <hr />
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
@@ -4694,7 +4453,9 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <li>Vlad Khononov — <em>Learning Domain-Driven Design</em> (2021) and <em>Balancing Coupling in Software Design</em> (2023). Modern, pragmatic treatment of strategic DDD and coupling analysis.</li>
 <li>Greg Young — <em>Versioning in an Event Sourced System</em> (2010). Event versioning and evolution — directly applicable to domain-event schemas on Kafka.</li>
 <li>confluent.io — <em>Event Sourcing, CQRS, and Outbox patterns</em> — operational guidance for DDD on Kafka. https://docs.confluent.io/kafka/design/</li>
-</ul></div><div id="ch06-patterns"><h1 id="chapter-6-design-patterns-and-anti-patterns-for-services">Chapter 6 — Design Patterns and Anti-Patterns for Services</h1>
+</ul>
+<h3 id="event-storming-to-bounded-contexts">Event storming to bounded contexts</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_752d69f7d70f.png" alt="diagram"></div></p></div><div id="ch06-patterns"><h1 id="chapter-6-design-patterns-and-anti-patterns-for-services">Chapter 6 — Design Patterns and Anti-Patterns for Services</h1>
 <p><strong>What this chapter covers.</strong> Every backend team eventually faces the same fork: solve a new problem by inventing a bespoke mechanism, or apply a known pattern whose trade-offs are understood. Patterns are not recipes to follow blindly — they are a shared vocabulary for naming recurring problems and the forces that shape their solutions. Anti-patterns are equally valuable: they name the attractive-but-wrong paths that look expedient and end in distributed monoliths, shared databases, and god services. This chapter builds a working catalog of patterns and anti-patterns at the service level — the layer where architecture meets code. You will learn the structural patterns that organize service internals (hexagonal/clean, layered vs. vertical slice, repository), the communication patterns that connect services (gateway, BFF, sidecar), the resilience and data patterns that keep them correct under failure (circuit breaker, outbox, saga, CQRS), and the behavioral patterns that keep business logic composable (strategy, decorator/middleware, observer). For each, you will see when it helps, what it costs, how it fails, and what to use instead when it does not fit.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -4756,94 +4517,13 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </ul>
 <hr />
 <h2 id="2-pattern-catalog-map-of-the-territory">2. Pattern catalog — map of the territory</h2>
-<p><pre><code>flowchart TB
-    subgraph Structural["Structural — how a service is organized internally"]
-        HEX["Hexagonal / Ports & Adapters\n(Clean, Onion)"]
-        LAYER["Layered vs Vertical Slice"]
-        REPO["Repository + Unit of Work"]
-        DI["Dependency Injection\n(Constructor, Wire, Fx)"]
-    end
-
-    subgraph Communication["Communication — how services connect"]
-        GW["API Gateway / BFF / Aggregator"]
-        SIDE["Sidecar / Ambassador\n(Service Mesh)"]
-        IDEM["Idempotency Key\n+ Exactly-Once via Outbox"]
-        DISC["Service Discovery\n+ Health Checks + Load Balancing"]
-    end
-
-    subgraph Resilience["Resilience — how services survive failure"]
-        CB["Circuit Breaker"]
-        RETRY["Retry + Jitter + Budget"]
-        BULK["Bulkhead / Concurrency Limit"]
-        TIME["Timeout + Deadline + Hedging"]
-    end
-
-    subgraph Data["Data — how services handle state across boundaries"]
-        OUTBOX["Transactional Outbox + CDC"]
-        SAGA["Saga (Choreography / Orchestration)"]
-        CQRS["CQRS + Event Sourcing"]
-        CACHE["Cache-Aside / Read-Through\n+ Invalidation"]
-    end
-
-    subgraph Behavioral["Behavioral — how logic stays composable"]
-        STRAT["Strategy (pluggable policies)"]
-        DECOR["Decorator / Middleware Chain"]
-        OBS["Observer / Domain Events"]
-        FACTORY["Factory / Builder\n(for complex aggregates)"]
-    end
-
-    subgraph Anti["Anti-Patterns — attractive but wrong"]
-        DMONO["Distributed Monolith"]
-        SDB["Shared Database"]
-        GOD["God Service / Big Ball of Mud"]
-        CHATTY["Chatty Service / N+1 Fan-Out"]
-        HAMMER["Golden Hammer / Cargo Cult"]
-    end
-
-    Structural --- Communication
-    Communication --- Resilience
-    Resilience --- Data
-    Data --- Behavioral
-    Behavioral -.->|"misapplied becomes"| Anti
-
-    style Structural fill:#6a6,stroke:#333,color:#fff
-    style Anti fill:#c55,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_32f6bd6fa718.png" alt="diagram"></div></p>
 <p>This chapter covers each category with one or two representative patterns in depth and others in comparative tables. Resilience and data patterns are summarized here and covered exhaustively in Volume 10 (Messaging/Streaming) and Volume 11 (Reliability/SRE) — this chapter focuses on <em>when and how to apply them</em> at the service-design level.</p>
 <hr />
 <h2 id="3-structural-patterns-organizing-service-internals">3. Structural patterns — organizing service internals</h2>
 <h3 id="31-hexagonal-architecture-ports-and-adapters">3.1 Hexagonal architecture (ports and adapters)</h3>
 <p>Hexagonal architecture (Alistair Cockburn, 2005), also called ports-and-adapters or clean/onion architecture, inverts the dependency direction: the domain sits at the center and depends on nothing; infrastructure (HTTP, DB, queues, clocks) depends on the domain through ports (interfaces).</p>
-<p><pre><code>flowchart TB
-    subgraph Hexagon["Hexagon — Domain at the center"]
-        DOMAIN["Domain\n(entities, value objects,\naggregates, domain services)\nNO infrastructure imports"]
-        PORTS_IN["Inbound Ports\n(interfaces the domain exposes)\nOrderService, CheckoutUseCase"]
-        PORTS_OUT["Outbound Ports\n(interfaces the domain requires)\nOrderRepository, PaymentGateway,\nEventPublisher, Clock"]
-        DOMAIN --- PORTS_IN
-        DOMAIN --- PORTS_OUT
-    end
-
-    subgraph Adapters["Adapters — outside the hexagon"]
-        HTTP["HTTP Adapter\n(REST/gRPC handler\n→ calls inbound port)"]
-        GRPC["gRPC Adapter"]
-        DB["Postgres Adapter\n(implements OrderRepository)"]
-        KAFKA["Kafka Adapter\n(implements EventPublisher)"]
-        STRIPE["Stripe Adapter\n(implements PaymentGateway)"]
-    end
-
-    HTTP --> PORTS_IN
-    GRPC --> PORTS_IN
-    PORTS_OUT --> DB
-    PORTS_OUT --> KAFKA
-    PORTS_OUT --> STRIPE
-
-    TEST["Tests\n(mock ports — no DB/Kafka/Stripe needed)"] -.-> PORTS_IN
-    TEST -.-> PORTS_OUT
-
-    style DOMAIN fill:#6a6,stroke:#333,color:#fff
-    style PORTS_IN fill:#69c,stroke:#333,color:#fff
-    style PORTS_OUT fill:#69c,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e6e36a0c9b3a.png" alt="diagram"></div></p>
 <p><strong>Concrete layout in Go:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="n">orders</span><span class="o">-</span><span class="n">service</span><span class="o">/</span>
 <span class="err">├──</span><span class="w"> </span><span class="n">internal</span><span class="o">/</span>
@@ -5071,31 +4751,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <hr />
 <h2 id="4-communication-patterns">4. Communication patterns</h2>
 <h3 id="41-api-gateway-bff-and-aggregator">4.1 API gateway, BFF, and aggregator</h3>
-<p><pre><code>flowchart TB
-    subgraph Clients["Clients"]
-        WEB["Web App"]
-        IOS["iOS App"]
-        ANDROID["Android App"]
-        PARTNER["Partner API"]
-    end
-
-    GW["API Gateway\n(auth, rate limiting,\nrouting, observability)"]
-
-    BFF_WEB["BFF — Web\n(aggregates for web UI)"]
-    BFF_MOBILE["BFF — Mobile\n(aggregates for mobile UI)"]
-
-    SVC_O["Orders Service"]
-    SVC_C["Catalog Service"]
-    SVC_U["Users Service"]
-
-    WEB --> GW --> BFF_WEB --> SVC_O & SVC_C & SVC_U
-    IOS & ANDROID --> GW --> BFF_MOBILE --> SVC_O & SVC_C & SVC_U
-    PARTNER --> GW --> SVC_O
-
-    style GW fill:#69c,stroke:#333,color:#fff
-    style BFF_WEB fill:#6a6,stroke:#333,color:#fff
-    style BFF_MOBILE fill:#6a6,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10e25efdf6a4.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -5235,19 +4891,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <hr />
 <h2 id="5-resilience-patterns-surviving-partial-failure">5. Resilience patterns — surviving partial failure</h2>
 <p>Resilience patterns are covered in depth in Volume 11, Chapter 10. This section maps them to service-design decisions — where each pattern lives and how they compose.</p>
-<p><pre><code>flowchart LR
-    CLIENT["Client / Caller"] --> T["Timeout / Deadline<br/>(per-call budget)"]
-    T --> R["Retry + Jitter + Budget<br/>(transient failures only)"]
-    R --> CB["Circuit Breaker<br/>(stop calling a failing downstream)"]
-    CB --> BH["Bulkhead / Concurrency Limit<br/>(isolate failure blast radius)"]
-    BH --> DOWNSTREAM["Downstream Service"]
-
-    CB -.->|"open → fast-fail"| FALLBACK["Fallback / Degraded Response"]
-    R -.->|"budget exhausted → fail"| FALLBACK
-
-    style CB fill:#fa6,stroke:#333,color:#fff
-    style FALLBACK fill:#c55,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_94c890bd2e0f.png" alt="diagram"></div></p>
 <p><strong>Composition order matters</strong> — timeout wraps retry, retry is gated by circuit breaker, bulkhead is innermost (closest to the downstream):</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Correct composition — timeout → retry (with budget) → circuit breaker → bulkhead → call.</span>
 <span class="kd">func</span><span class="w"> </span><span class="nx">CallCatalog</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">req</span><span class="w"> </span><span class="nx">CatalogRequest</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="nx">CatalogResponse</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -5371,45 +5015,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </tr>
 </tbody>
 </table>
-<p><pre><code>sequenceDiagram
-    participant Client
-    participant Orders as Orders Service
-    participant DB as Orders DB + Outbox
-    participant Kafka as Kafka
-    participant Payments as Payments Service
-    participant Inventory as Inventory Service
-
-    Client->>Orders: POST /orders
-    Orders->>DB: BEGIN — INSERT order + outbox(OrderCreated)
-    DB-->>Orders: COMMIT
-    Orders-->>Client: 202 Accepted
-
-    Kafka->>Payments: OrderCreated event
-    Payments->>Payments: Charge card
-    alt success
-        Payments->>Kafka: PaymentConfirmed
-    else failure
-        Payments->>Kafka: PaymentFailed
-    end
-
-    Kafka->>Inventory: OrderCreated event
-    Inventory->>Inventory: Reserve stock
-    alt success
-        Inventory->>Kafka: InventoryReserved
-    else failure
-        Inventory->>Kafka: InventoryFailed
-    end
-
-    Note over Orders: Saga orchestrator<br/>listens for Payment* + Inventory*<br/>→ Confirm or Compensate
-
-    alt all confirmed
-        Orders->>DB: UPDATE order → CONFIRMED
-    else any failed
-        Orders->>Kafka: OrderCancelled (compensation)
-        Payments->>Payments: Refund (compensation)
-        Inventory->>Inventory: Release (compensation)
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_82d826ce521e.png" alt="diagram"></div></p>
 <p><strong>Choosing choreography vs. orchestration:</strong></p>
 <ul>
 <li><strong>Choreography</strong> — services publish events; interested services react. Decoupled, no coordinator, but no single place to see "where is order #123 in the saga?" Use when the flow is linear and short (2–3 steps).</li>
@@ -5534,33 +5140,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <h2 id="8-anti-patterns-the-attractive-wrong-paths">8. Anti-patterns — the attractive wrong paths</h2>
 <p>Anti-patterns are not just "bad code" — they are solutions that <em>appear</em> beneficial but carry hidden costs that compound. Each anti-pattern below includes the seductive reasoning, the actual cost, and the refactoring path.</p>
 <h3 id="81-distributed-monolith">8.1 Distributed monolith</h3>
-<p><pre><code>flowchart TB
-    subgraph MonolithDoneRight["Modular Monolith (acceptable)"]
-        M["Single deployable\nmodules with explicit boundaries\nin-process calls\nsingle DB with owned tables"]
-        style M fill:#6a6,stroke:#333,color:#fff
-    end
-
-    subgraph DistributedMonolith["Distributed Monolith (anti-pattern)"]
-        A2["Service A"] -->|"sync HTTP<br/>required for every request"| B2["Service B"]
-        B2 -->|"sync HTTP<br/>required"| C2["Service C"]
-        C2 -->|"sync HTTP"| A2
-        A2 --- DB2[("Shared DB<br/>cross-service FKs")]
-        B2 --- DB2
-        C2 --- DB2
-        style A2 fill:#c55,stroke:#333,color:#fff
-        style B2 fill:#c55,stroke:#333,color:#fff
-        style C2 fill:#c55,stroke:#333,color:#fff
-    end
-
-    subgraph Proper["Properly Bounded Services"]
-        A3["Service A<br/>own DB"] -->|"async events<br/>eventual consistency"| B3["Service B<br/>own DB"]
-        B3 -->|"async events"| C3["Service C<br/>own DB"]
-        A3 -.->|"sync only where<br/>strong consistency required"| B3
-        style A3 fill:#6a6,stroke:#333,color:#fff
-        style B3 fill:#6a6,stroke:#333,color:#fff
-        style C3 fill:#6a6,stroke:#333,color:#fff
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8ef49479b231.png" alt="diagram"></div></p>
 <p><strong>Seduction:</strong> "We have microservices — each domain is a separate service with its own repo."</p>
 <p><strong>Reality:</strong> every request fans out synchronously to 3+ services; a failure in any one fails the whole request; deploys must be coordinated because services share a DB or make breaking synchronous assumptions; you have the operational cost of distributed systems with none of the independence benefits.</p>
 <p><strong>Diagnosis:</strong></p>
@@ -5812,7 +5392,9 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <li>Michael Nygard — <em>Release It!</em> (2nd ed., 2018). Circuit breaker, bulkhead, timeout, and other stability patterns grounded in production failure stories.</li>
 <li>Gregor Hohpe and Bobby Woolf — <em>Enterprise Integration Patterns</em> (2003). Messaging patterns (outbox, saga, event-driven) that underpin inter-service communication. https://www.enterpriseintegrationpatterns.com/</li>
 <li>Mark Richards — <em>Software Architecture Patterns</em> (2015) — layered, event-driven, microkernel patterns and their trade-offs. https://www.oreilly.com/library/view/software-architecture-patterns/9781491971437/</li>
-</ul></div><div id="ch07-refactoring"><h1 id="chapter-7-refactoring-and-managing-technical-debt">Chapter 7 — Refactoring and Managing Technical Debt</h1>
+</ul>
+<h3 id="pattern-selection-decision-tree">Pattern selection decision tree</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb909e11d608.png" alt="diagram"></div></p></div><div id="ch07-refactoring"><h1 id="chapter-7-refactoring-and-managing-technical-debt">Chapter 7 — Refactoring and Managing Technical Debt</h1>
 <p><strong>What this chapter covers.</strong> Every codebase accumulates friction: duplicated logic, tangled dependencies, leaky abstractions, and expedient shortcuts that outlive the deadline that justified them. Refactoring is the disciplined practice of improving internal structure without changing external behavior — the mechanism by which a team keeps a codebase malleable enough to absorb the next requirement without collapse. Technical debt is the complementary frame: the economic model that explains <em>why</em> friction accumulates, how to measure it, when to tolerate it, and when to pay it down. This chapter connects the two. You will learn a working catalog of refactoring techniques from single-function transforms to large-scale architectural migrations, the safety net that makes refactoring economically rational, the strategies that scale refactoring across services and teams (branch by abstraction, parallel change, expand-contract, strangler fig), and a complete system for managing technical debt as a portfolio — identification, quantification, prioritization, allocation, and governance.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -5874,20 +5456,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </blockquote>
 <h3 id="13-the-economics-why-refactor-at-all">1.3 The economics: why refactor at all?</h3>
 <p>Refactoring pays for itself through <strong>option value</strong> — it keeps the cost of the <em>next</em> change low. Without it, change cost compounds:</p>
-<p><pre><code>flowchart TB
-    A["Clean codebase<br/>change cost = baseline"] --> B["Shortcut taken<br/>deadline pressure"]
-    B --> C["Friction accumulates<br/>duplication, coupling, leaky abstractions"]
-    C --> D["Next feature costs 2-5x<br/>more time + more defects"]
-    D --> E{"Team response?"}
-    E -->|"Refactor continuously"| F["Pay small cost often<br/>change cost stays flat"]
-    E -->|"Defer indefinitely"| G["Velocity collapses<br/>rewrite demanded"]
-    F --> A
-    G --> H["Big-bang rewrite<br/>high risk, feature freeze"]
-    H -.->|"'Second system effect'"| C
-
-    style F fill:#6a6,stroke:#333,color:#fff
-    style G fill:#c55,stroke:#333,color:#fff
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4d80c7864589.png" alt="diagram"></div></p>
 <p>The business case is not aesthetic. Studies of change coupling (Yourdon, Lehman) and modern analyses from CodeScene and <em>Accelerate</em> (Forsgren et al.) show the same pattern: files with high churn <em>and</em> high complexity are where defects and lead time concentrate. Refactoring those hotspots yields disproportionate returns. Section 7 turns this intuition into a prioritization model.</p>
 <hr />
 <h2 id="2-code-smells-and-technical-debt-naming-the-problem">2. Code smells and technical debt — naming the problem</h2>
@@ -5980,15 +5549,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>Not every smell warrants action. A smell in cold code that rarely changes is low-priority. A smell in a hotspot — a file touched in every sprint — is a tax paid repeatedly. That distinction is the bridge to debt prioritization (Section 7).</p>
 <h3 id="22-technical-debt-a-taxonomy">2.2 Technical debt — a taxonomy</h3>
 <p>Ward Cunningham coined "technical debt" as a financial metaphor: shipping expedient code is like taking on debt — you gain speed now, you pay interest on every subsequent change until you repay the principal. The metaphor is powerful and frequently abused. A useful taxonomy separates four quadrants (Fowler):</p>
-<p><pre><code>quadrantChart
-    title Technical Debt Quadrant
-    x-axis "Inadvertent" --> "Deliberate"
-    y-axis "Prudent" --> "Reckless"
-    quadrant-1 "Deliberate & Reckless"
-    quadrant-2 "Deliberate & Prudent"
-    quadrant-3 "Inadvertent & Prudent"
-    quadrant-4 "Inadvertent & Reckless"
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_387260f82bf8.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -6147,20 +5708,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>Local refactorings preserve behavior within one codebase. Large-scale refactorings move behavior across module, service, or schema boundaries — often while production traffic is flowing. Long-lived feature branches are the failure mode: they diverge, conflict, and become unreviewable. The strategies below share one invariant: <strong><code>main</code> stays deployable after every commit; old and new coexist behind an abstraction until the migration is complete.</strong></p>
 <h3 id="41-branch-by-abstraction">4.1 Branch by abstraction</h3>
 <p>The workhorse for in-code migrations (e.g., replace an ORM, swap a pricing engine, extract a shared library).</p>
-<p><pre><code>sequenceDiagram
-    participant M as main branch
-    participant A as Abstraction introduced
-    participant N as New implementation
-    participant C as Cutover
-    participant R as Cleanup
-
-    M->>A: 1. Introduce abstraction<br/>(interface) over current impl
-    A->>A: Existing code now depends<br/>on abstraction; old impl is one adapter
-    A->>N: 2. Implement new adapter<br/>behind same abstraction
-    N->>N: Both adapters coexist<br/>tests cover both via interface
-    N->>C: 3. Switch wiring<br/>(config, flag, or DI binding)
-    C->>R: 4. Remove old adapter<br/>+ abstraction if only one impl remains
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f9973fa0bc43.png" alt="diagram"></div></p>
 <p>Concrete steps with a Go example:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Step 1 — introduce abstraction over current payment gateway</span>
 <span class="kd">type</span><span class="w"> </span><span class="nx">PaymentGateway</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
@@ -6187,23 +5735,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>The same pattern ports to Python/TypeScript/Java. The key discipline: each step is a reviewable, deployable commit. No branch lives longer than a day or two.</p>
 <h3 id="42-parallel-change-expand-and-contract">4.2 Parallel change (expand and contract)</h3>
 <p>Also called <em>parallel change</em> (Hills) and <em>expand-contract</em> for schemas. The invariant: <strong>expand first (add the new), migrate, then contract (remove the old)</strong>. Never break callers mid-migration.</p>
-<p><pre><code>flowchart LR
-    subgraph Expand["Phase 1 — Expand"]
-        A1["Add new field / method / table<br/>Old still works; new is optional"] --> A2["Dual-write or dual-read<br/>Both representations populated"]
-    end
-    subgraph Migrate["Phase 2 — Migrate"]
-        A2 --> B1["Backfill existing data<br/>Migrate callers one by one"]
-        B1 --> B2["New is primary<br/>Old is still populated for rollback"]
-    end
-    subgraph Contract["Phase 3 — Contract"]
-        B2 --> C1["Stop writing old<br/>Guard with fallback read"]
-        C1 --> C2["Delete old field / table / code<br/>After verification window"]
-    end
-
-    style Expand fill:#e3f2fd,stroke:#333
-    style Migrate fill:#fff3e0,stroke:#333
-    style Contract fill:#e8f5e9,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_974bf4b6d84b.png" alt="diagram"></div></p>
 <p>Database example — renaming <code>user.name</code> to <code>user.display_name</code> with zero downtime:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">-- Expand: add new column, dual-write via trigger or application code</span>
 <span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">display_name</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">;</span>
@@ -6221,25 +5753,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>Event-schema and API-contract migrations follow the same shape: add optional field → publish/subscribe both → migrate consumers → remove old. Backward and forward compatibility are non-negotiable (Vol 8, Ch 5/8; Vol 10, Ch 6).</p>
 <h3 id="43-strangler-fig">4.3 Strangler fig</h3>
 <p>For service extraction or replacing a subsystem that cannot be refactored in place (Vol 15, Ch 5 DDD — decomposing a monolith). A facade intercepts calls to the legacy system and gradually routes them to new services.</p>
-<p><pre><code>flowchart TB
-    subgraph Phase1["Phase 1 — Facade in front of monolith"]
-        Client --> Facade
-        Facade --> Monolith
-    end
-    subgraph Phase2["Phase 2 — Route incrementally"]
-        Client2[Client] --> Facade2[Facade / Gateway]
-        Facade2 -->|"/orders/* → new service"| NewOrders["New Orders Service"]
-        Facade2 -->|"/other/* → monolith"| Monolith2[Monolith - remainder]
-        NewOrders -.->|CDC / events| Monolith2
-    end
-    subgraph Phase3["Phase 3 — Monolith hollowed out"]
-        Client3[Client] --> NewOrders3["New Services"]
-        Monolith3["Monolith retired<br/>or kept for cold paths only"]
-        NewOrders3 -.-> Monolith3
-    end
-
-    Phase1 --> Phase2 --> Phase3
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8cb0183b107e.png" alt="diagram"></div></p>
 <p>Tactical notes:</p>
 <ul>
 <li>Route by <strong>bounded context</strong> (Vol 15, Ch 5), not by database table. A vertical slice that owns its data is the right extraction unit.</li>
@@ -6485,21 +5999,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <hr />
 <h2 id="7-the-refactoring-workflow-putting-it-together">7. The refactoring workflow — putting it together</h2>
 <p>A repeatable workflow that ties safety net, mechanics, and large-scale strategy into one loop:</p>
-<p><pre><code>flowchart TB
-    A["1. Identify hotspot<br/>churn x complexity + defect signal"] --> B["2. Characterize<br/>add golden/approval tests<br/>if coverage is thin"]
-    B --> C["3. Design target structure<br/>small RFC or ADR for cross-team moves"]
-    C --> D["4. Choose strategy<br/>local refactor vs branch-by-abstraction<br/>vs expand-contract vs strangler fig"]
-    D --> E["5. Execute in small steps<br/>each step: green suite + deployable main"]
-    E --> F["6. Verify in production<br/>shadow / canary / flag + SLO watch"]
-    F --> G{"Done?"}
-    G -- no --> E
-    G -- yes --> H["7. Contract & clean up<br/>remove old code, flags, compat shims"]
-    H --> I["8. Record ADR<br/>update debt register<br/>add fitness function to prevent regression"]
-
-    style B fill:#e3f2fd,stroke:#333
-    style E fill:#fff3e0,stroke:#333
-    style H fill:#e8f5e9,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9b559a717b5d.png" alt="diagram"></div></p>
 <p>Toolchain reference for each phase:</p>
 <table>
 <thead>
@@ -6579,7 +6079,9 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <li>K. Beck, <em>Tidy First?</em> (O'Reilly, 2023) — a compact, modern framing of tidyings vs. behavior changes vs. cohesion.</li>
 <li>N. Forsgren, J. Humble, G. Kim, <em>Accelerate</em> (IT Revolution, 2018) — evidence linking code quality, delivery performance, and organizational outcomes.</li>
 <li><em>SonarQube / SonarCloud</em> docs, <em>CodeScene</em> docs, <em>OpenRewrite</em> docs, <em>ast-grep</em> docs — concrete tooling for measurement and automated refactoring at scale.</li>
-</ul></div><div id="ch08-code-review"><h1 id="chapter-8-code-review-and-engineering-culture">Chapter 8 — Code Review and Engineering Culture</h1>
+</ul>
+<h3 id="refactoring-safety-net">Refactoring safety net</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2c69c89e102d.png" alt="diagram"></div></p></div><div id="ch08-code-review"><h1 id="chapter-8-code-review-and-engineering-culture">Chapter 8 — Code Review and Engineering Culture</h1>
 <p><strong>What this chapter covers.</strong> Code review is the highest-leverage practice a backend team adopts after automated testing — and the most frequently done badly. When it works, review catches defects that tests miss, distributes ownership, teaches idioms, and enforces the architectural boundaries that keep a service graph from collapsing into a distributed monolith. When it fails, it becomes a bottleneck, a theatre of nits, or a source of interpersonal friction that drives good engineers away. This chapter treats code review as a socio-technical system: part defect-detection mechanism, part knowledge-transfer protocol, part cultural institution. You will learn how to author reviewable changes, how to review effectively and efficiently, how to build automation that makes human review count, and how to scale the practice across teams without sacrificing speed. The second half widens the lens to engineering culture — psychological safety, ownership models, standards vs. autonomy, and the habits that turn a group of engineers into a team whose output exceeds the sum of its parts.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -6702,24 +6204,7 @@ Suggested reading order: &quot;Start with <span class="sb">`api/types.go`</span>
 <hr />
 <h2 id="3-the-review-process-a-layered-reading">3. The review process — a layered reading</h2>
 <h3 id="31-the-review-lifecycle">3.1 The review lifecycle</h3>
-<p><pre><code>flowchart TB
-    A["Author opens PR<br/>description + CI green"] --> B["Triage<br/>auto-assign reviewers<br/>via CODEOWNERS + rotation"]
-    B --> C["Automated gates<br/>format, lint, SAST, secrets,<br/>tests, coverage, compat checks"]
-    C -->|fail| A
-    C -->|pass| D["Human review<br/>layered reading"]
-    D --> E{"Verdict?"}
-    E -->|"Approve"| F["Merge<br/>squash / rebase per policy"]
-    E -->|"Request changes<br/>(blocking)"| G["Author revises<br/>new commits, re-request review"]
-    E -->|"Comment<br/>(non-blocking)"| G
-    G --> C
-    F --> H["Post-merge<br/>deploy, observe, follow-ups<br/>filed as issues not TODOs"]
-    D --> I["Async discussion<br/>threaded comments<br/>suggestion commits"]
-    I --> D
-
-    style C fill:#e3f2fd,stroke:#333
-    style D fill:#fff3e0,stroke:#333
-    style F fill:#e8f5e9,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1dc1f9086563.png" alt="diagram"></div></p>
 <p><strong>Latency target:</strong> First human response within <strong>one business half-day</strong> (4 hours in the reviewer's timezone). A PR that waits 2 days loses the author's context and blocks the pipeline. Enforce via SLAs and rotation, not goodwill.</p>
 <h3 id="32-layered-reading-what-to-look-for-in-order">3.2 Layered reading — what to look for, in order</h3>
 <p>Experienced reviewers read in layers, from cheapest to most expensive, stopping early if a layer fails:</p>
@@ -6885,20 +6370,7 @@ Suggested reading order: &quot;Start with <span class="sb">`api/types.go`</span>
 <hr />
 <h2 id="5-automation-before-human-review-make-humans-count">5. Automation before human review — make humans count</h2>
 <p>Human review should be spent on <em>judgment</em> — design, correctness, trade-offs. Everything that can be checked mechanically should be, and must block merge before a human is asked to look.</p>
-<p><pre><code>flowchart LR
-    A["git push"] --> B["Format<br/>gofmt, prettier, black, rustfmt"]
-    B --> C["Lint + Static Analysis<br/>golangci-lint, clippy, eslint,<br/>Semgrep, CodeQL, SonarQube"]
-    C --> D["Secrets + Dependency Audit<br/>gitleaks, trufflehog,<br/>osv-scanner, govulncheck"]
-    D --> E["Tests<br/>unit + integration<br/>Testcontainers where needed"]
-    E --> F["Compatibility<br/>buf breaking, schema registry,<br/>Pact can-i-deploy, openapi diff"]
-    F --> G["Coverage + Fitness<br/>coverage gate, ArchUnit,<br/>deptrac, complexity cap"]
-    G --> H{"All gates pass?"}
-    H -- no --> I["Fail fast<br/>notify author<br/>no human review requested"]
-    H -- yes --> J["Request human review<br/>now worth a human's time"]
-
-    style I fill:#ffcdd2,stroke:#333
-    style J fill:#c8e6c9,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f0ade212d15.png" alt="diagram"></div></p>
 <h3 id="51-non-negotiable-gates">5.1 Non-negotiable gates</h3>
 <table>
 <thead>
@@ -7098,20 +6570,7 @@ Example:
 
 <p>Use <code>praise</code> deliberately. Review that only points out flaws trains authors to dread the process. Naming what is good reinforces the behavior you want repeated.</p>
 <h3 id="72-handling-disagreement">7.2 Handling disagreement</h3>
-<p><pre><code>flowchart TB
-    A["Reviewer requests change<br/>Author disagrees"] --> B{"Is it correctness / security /<br/>data-loss risk?"}
-    B -- yes --> C["Reviewer blocking is appropriate<br/>Escalate if unresolved:<br/>bring in third reviewer / tech lead"]
-    B -- no --> D{"Is it significant design /<br/>maintainability concern?"}
-    D -- yes --> E["Discuss synchronously<br/>15-min call or huddle<br/>Document outcome in PR thread"]
-    E --> F{"Consensus?"}
-    F -- yes --> G["Apply agreed approach"]
-    F -- no --> H["Author decides, records dissent<br/>Reviewer approves with comment<br/>'Approved with reservation: ...'<br/>ADR updated if needed"]
-    D -- no --> I["Reviewer marks as nit / suggestion<br/>Author decides<br/>No blocking on taste"]
-
-    style C fill:#ffcdd2,stroke:#333
-    style H fill:#fff3e0,stroke:#333
-    style I fill:#e8f5e9,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_012aae02e2f2.png" alt="diagram"></div></p>
 <p>Principles:</p>
 <ul>
 <li><strong>Disagree and commit</strong> — once a decision is made (by author, tech lead, or RFC), the team commits even if individuals disagree. Record dissent in the PR or ADR; do not relitigate after merge.</li>
@@ -7421,7 +6880,15 @@ Skip (generated/mechanical):
 <li>M. Poppendieck &amp; T. Poppendieck, <em>Leading Lean Software Development</em> — cultural and process foundations that complement the DORA findings.</li>
 <li>E. Edmondson, "Psychological Safety and Learning Behavior in Work Teams" (Administrative Science Quarterly, 1999) — foundational research on safety as a predictor of team learning.</li>
 <li>GitHub <em>CODEOWNERS</em> docs, GitLab <em>Code Owners</em> docs, and <code>pre-commit</code> framework docs — concrete tooling for ownership and pre-review automation.</li>
-</ul></div><div id="ch09-debugging"><h1 id="chapter-9-debugging-and-incident-driven-learning">Chapter 9 — Debugging and Incident-Driven Learning</h1>
+</ul>
+<h3 id="code-review-flow">Code review flow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7837c251c0d.png" alt="diagram"></div></p>
+<h3 id="review-priority-pyramid">Review priority pyramid</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0196975bb60.png" alt="diagram"></div></p>
+<h3 id="effective-review-checklist">Effective review checklist</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b883f486564a.png" alt="diagram"></div></p>
+<h3 id="pr-size-vs-review-quality">PR size vs review quality</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e4188bbb7c4f.png" alt="diagram"></div></p></div><div id="ch09-debugging"><h1 id="chapter-9-debugging-and-incident-driven-learning">Chapter 9 — Debugging and Incident-Driven Learning</h1>
 <p><strong>What this chapter covers.</strong> Debugging is the most frequent engineering activity — developers spend 35–50% of their time understanding and fixing behavior they did not expect — and the least formally taught. Most engineers debug by intuition and accretion: print statements, hopeful hypotheses, and a mental model that is seldom made explicit. In a distributed backend, that approach collapses. Failures are partial, non-deterministic, and separated from their causes by network hops, queues, caches, and eventual-consistency windows. Logs are scattered across services, traces are sampled, metrics are aggregated past the point of usefulness, and the bug that pages you at 03:00 cannot be reproduced on a laptop. This chapter makes debugging systematic. You will learn a hypothesis-driven methodology that works from a single process to a service graph, a toolkit that spans debuggers, profilers, tracers, eBPF, and log analysis, safe techniques for debugging in production without making the incident worse, and — crucially — how to turn every incident into durable organizational learning. An incident is debugging at organizational scale: the same lifecycle of observation, hypothesis, and verification, but with coordination, communication, and a postmortem that produces fixes to the <em>system that allowed the defect</em>, not just the defect itself.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -7495,22 +6962,7 @@ Skip (generated/mechanical):
 <h2 id="2-a-systematic-debugging-lifecycle">2. A systematic debugging lifecycle</h2>
 <h3 id="21-the-hypothesis-driven-loop">2.1 The hypothesis-driven loop</h3>
 <p>The lifecycle is the scientific method applied to software. Each phase has a clear artifact and exit criterion.</p>
-<p><pre><code>flowchart TB
-    A["1. Observe<br/>collect symptoms, scope, timeline<br/>what / when / who is affected"] --> B["2. Hypothesize<br/>enumerate plausible causes<br/>rank by likelihood x cheap-to-test"]
-    B --> C["3. Instrument<br/>add cheapest observation<br/>that discriminates between hypotheses"]
-    C --> D["4. Test<br/>run experiment, compare<br/>prediction vs observation"]
-    D --> E{"Hypothesis<br/>confirmed?"}
-    E -- no --> F["Refute & narrow<br/>eliminate hypothesis<br/>refine model"]
-    F --> B
-    E -- yes --> G["5. Fix<br/>minimal change that<br/>addresses root cause"]
-    G --> H["6. Verify<br/>repro now passes<br/>no regression<br/>observed in prod"]
-    H --> I["7. Learn<br/>postmortem, runbook,<br/>fitness function"]
-    I --> A
-
-    style B fill:#e3f2fd,stroke:#333
-    style D fill:#fff3e0,stroke:#333
-    style G fill:#e8f5e9,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_301768741df0.png" alt="diagram"></div></p>
 <p><strong>Phase details:</strong></p>
 <table>
 <thead>
@@ -7611,25 +7063,7 @@ Skip (generated/mechanical):
 <h2 id="3-fault-isolation-narrowing-the-search">3. Fault isolation — narrowing the search</h2>
 <h3 id="31-divide-and-conquer">3.1 Divide and conquer</h3>
 <p>The fastest way to find a fault in a large system is to <strong>eliminate half the system per experiment</strong>. Binary search over space (which service?), time (which deploy?), and input (which request?).</p>
-<p><pre><code>flowchart TB
-    A["Symptom in service graph<br/>which service is faulty?"] --> B["Check downstream traces<br/>which span is anomalous?"]
-    B --> C{"Fault in callee<br/>or in caller?"}
-    C -->|callee slow| D["Drill into callee<br/>DB? cache? downstream?"]
-    C -->|caller misconfigured| E["Inspect caller<br/>timeout, retry, concurrency,<br/>payload"]
-    D --> F["Repeat inside callee<br/>divide its internals"]
-    E --> F
-    F --> G["Isolate to module / function<br/>minimal repro"]
-
-    H["Binary search over time<br/>which deploy introduced it?"] --> I["git bisect / deploy bisect<br/>half the deploys per test"]
-    I --> J["Single commit / config delta"]
-
-    K["Delta debugging over input<br/>which input triggers it?"] --> L["Minimize failing input<br/>1-minimal test case"]
-    L --> M["Root cause is input-dependent<br/>branch / data / race"]
-
-    style B fill:#e3f2fd,stroke:#333
-    style I fill:#fff3e0,stroke:#333
-    style L fill:#e8f5e9,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9cf2f5ffd000.png" alt="diagram"></div></p>
 <p><strong>Techniques:</strong></p>
 <table>
 <thead>
@@ -7782,18 +7216,7 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-r
 <hr />
 <h2 id="4-observability-for-debugging-logs-traces-metrics-profiles">4. Observability for debugging — logs, traces, metrics, profiles</h2>
 <p>Observability is not monitoring. Monitoring tells you <em>that</em> something is wrong; observability lets you ask <em>why</em> without shipping new code. For debugging, four pillars matter, each with a distinct role and failure mode.</p>
-<p><pre><code>flowchart LR
-    A["Alert fires<br/>SLO burn / error rate / latency"] --> B["Metrics<br/>where & when<br/>which service / shard / deploy"]
-    B --> C["Traces<br/>which request path<br/>which span is anomalous"]
-    C --> D["Logs<br/>why — structured context<br/>at the faulty span"]
-    D --> E["Profiles<br/>what resource<br/>CPU / alloc / lock / I/O"]
-    E --> F["Hypothesis<br/>falsifiable cause"]
-
-    style A fill:#ffcdd2,stroke:#333
-    style C fill:#e3f2fd,stroke:#333
-    style E fill:#fff3e0,stroke:#333
-    style F fill:#e8f5e9,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_257b16778079.png" alt="diagram"></div></p>
 <h3 id="41-structured-logging-the-narrative">4.1 Structured logging — the narrative</h3>
 <p>Logs are the narrative of a single request or event. For debugging, <strong>unstructured logs are a liability</strong> — they cannot be queried, correlated, or sampled intelligently.</p>
 <p><strong>Structured logging contract:</strong></p>
@@ -8050,25 +7473,7 @@ sum<span class="o">(</span>rate<span class="o">({</span><span class="nv">service
 <hr />
 <h2 id="6-debugging-in-production-safely">6. Debugging in production — safely</h2>
 <p>Production debugging is constrained by one rule: <strong>do not make the incident worse.</strong> Every instrumentation choice is evaluated on its blast radius and reversibility.</p>
-<p><pre><code>flowchart TB
-    A["Need prod signal<br/>cannot repro elsewhere"] --> B{"Can you get it<br/>read-only?"}
-    B -- yes --> C["Read-only techniques<br/>metrics, traces, profiles,<br/>log queries, pprof, eBPF"]
-    B -- no --> D{"Can you add<br/>safe instrumentation?"}
-    D -- yes --> E["Flag-guarded instrumentation<br/>sampled logging, dynamic trace<br/>behind flag + low sample rate"]
-    D -- no --> F{"Can you isolate<br/>a canary?"}
-    F -- yes --> G["Canary / shadow<br/>single pod with verbose<br/>instrumentation, not in LB"]
-    F -- no --> H["Reproduce off-prod<br/>staging + prod traffic replay<br/>+ prod data shape"]
-
-    C --> I["Observe"]
-    E --> I
-    G --> I
-    H --> I
-
-    style C fill:#e8f5e9,stroke:#333
-    style E fill:#fff3e0,stroke:#333
-    style G fill:#e3f2fd,stroke:#333
-    style H fill:#f3e5f5,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a7321cd5ac2d.png" alt="diagram"></div></p>
 <h3 id="61-read-only-techniques-preferred">6.1 Read-only techniques (preferred)</h3>
 <p>These add no load and cannot alter behavior:</p>
 <ul>
@@ -8139,21 +7544,7 @@ sum<span class="o">(</span>rate<span class="o">({</span><span class="nv">service
 <h2 id="7-incident-driven-learning-from-fix-to-system">7. Incident-driven learning — from fix to system</h2>
 <p>Debugging fixes the bug. Incident-driven learning fixes the <em>system that allowed the bug to reach production and to be hard to diagnose</em>. Every incident is an investment that has already been paid — in customer impact, on-call disruption, and engineering time. Learning is how you collect the return.</p>
 <h3 id="71-the-incident-lifecycle-and-the-learning-loop">7.1 The incident lifecycle and the learning loop</h3>
-<p><pre><code>flowchart TB
-    A["Detect<br/>alert, SLO burn, customer report"] --> B["Respond<br/>triage, assemble, communicate"]
-    B --> C["Mitigate<br/>stop the bleeding<br/>flag flip, rollback, shed load"]
-    C --> D["Resolve<br/>system returns to steady state<br/>verify via SLO"]
-    D --> E["Learn<br/>timeline, root cause,<br/>postmortem, action items"]
-    E --> F["Prevent<br/>fix system, not just bug<br/>fitness functions, runbooks,<br/>tests that would have caught it"]
-    F --> A
-
-    E -.->|"feeds"| G["Knowledge base<br/>runbooks, ADRs,<br/>hypothesis logs"]
-    G -.->|"accelerates"| A
-
-    style C fill:#ffcdd2,stroke:#333
-    style E fill:#e3f2fd,stroke:#333
-    style F fill:#e8f5e9,stroke:#333
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c9a8970cb991.png" alt="diagram"></div></p>
 <p>The critical distinction: <strong>mitigate before you debug.</strong> The incident responder's first job is not to find the root cause — it is to stop customer impact. Root-cause analysis happens after mitigation, under lower time pressure, with better signal. Conflating the two extends incidents.</p>
 <h3 id="72-timeline-construction-the-raw-material-of-learning">7.2 Timeline construction — the raw material of learning</h3>
 <p>A postmortem without a timeline is an opinion. Build the timeline from primary sources — deploy log, config diff, alert timeline, trace, and the hypothesis log — not from memory.</p>
@@ -8571,7 +7962,11 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <li>N. Forsgren, J. Humble, G. Kim, <em>Accelerate</em> (IT Revolution, 2018) and Google Cloud <em>DORA</em> (dora.dev) — evidence linking learning culture, delivery performance, and business outcomes.</li>
 <li>D. Sato et al., "Continuous Delivery" and related <em>DORA</em> capabilities — progressive delivery and flag-guarded debugging (Section 6).</li>
 <li>H. Ballance et al., <em>Honeycomb Observability</em> docs and C. Majors et al., <em>Observability Engineering</em> (O'Reilly, 2022) — high-cardinality observability for debugging distributed systems.</li>
-</ul></div><div id="ch10-teams"><h1 id="chapter-10-building-high-performing-engineering-teams">Chapter 10 — Building High-Performing Engineering Teams</h1>
+</ul>
+<h3 id="debugging-workflow">Debugging workflow</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7a11e45506f.png" alt="diagram"></div></p>
+<h3 id="observability-pillars-for-debugging">Observability pillars for debugging</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b1041673dee1.png" alt="diagram"></div></p></div><div id="ch10-teams"><h1 id="chapter-10-building-high-performing-engineering-teams">Chapter 10 — Building High-Performing Engineering Teams</h1>
 <p><strong>What this chapter covers.</strong> Tools, runtimes, and architectures do not ship software — teams do. Every system design decision from Volumes 1–14 becomes a team design decision at scale: who owns what, how decisions get made, how knowledge moves, and how performance is measured without perverse incentives. This chapter treats team building as an engineering discipline with measurable inputs, explicit trade-offs, and observable failure modes. You will learn the frameworks that separate high-performing teams from merely busy ones, the operating models that let teams scale without collapsing into coordination overhead, and the end-to-end people pipeline — hiring, onboarding, growth, and retention — adapted for the reality that modern backend teams are almost always distributed.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -8752,70 +8147,14 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <h3 id="23-devex-and-the-anti-goodhart-stance">2.3 DevEx and the anti-Goodhart stance</h3>
 <p>Abi Noda et al.'s <strong>DevEx framework</strong> (2023) organises developer experience into feedback loops, cognitive load, and flow state — a useful bridge between DORA/SPACE and concrete investment priorities (faster builds, better docs, fewer context switches).</p>
 <p>The meta-rule across all frameworks: <strong>metrics are for learning, not for ranking.</strong> As soon as CFR or PR count becomes a performance-review input, teams optimise the metric, not the outcome (Goodhart's Law). DORA's own guidance: use delivery metrics for <em>team-level</em> retrospectives and improvement hypotheses, never for individual stack-ranking.</p>
-<p><pre><code>flowchart TB
-    subgraph DORA["DORA — system behavior (team level, weekly)"]
-        DF["Deployment Frequency"]
-        LT["Lead Time for Changes"]
-        CFR["Change Failure Rate"]
-        MTTR["Failed Deployment Recovery Time"]
-        REL["Reliability — SLO attainment"]
-    end
-
-    subgraph SPACE["SPACE — human + system (quarterly, mixed methods)"]
-        S["Satisfaction & Well-being<br/>pulse survey, burnout items"]
-        P["Performance<br/>outcomes, OKRs, adoption"]
-        A["Activity<br/>commits, PRs, reviews — never alone"]
-        C["Communication & Collaboration<br/>review latency, bus factor"]
-        E["Efficiency & Flow<br/>focus time, handoff wait"]
-    end
-
-    subgraph Use["How to use them"]
-        Retro["Team retros & improvement bets<br/>never individual perf review"]
-        Invest["Investment decisions<br/>build speed, docs, platform"]
-        Health["Health check<br/>balance throughput + stability + sustainability"]
-    end
-
-    DORA --> Retro
-    SPACE --> Retro
-    DORA --> Invest
-    SPACE --> Health
-
-    style Retro fill:#e8f5e9
-    style Invest fill:#e3f2fd
-    style Health fill:#fff3e0
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6bf9c50bcf8b.png" alt="diagram"></div></p>
 <p><em>Figure 10-1: DORA and SPACE as complementary lenses. DORA answers "can we ship quickly and safely?"; SPACE answers "at what human cost, and does the output matter?" Both feed team-level learning, not individual ranking.</em></p>
 <hr />
 <h2 id="3-team-topology-designing-teams-the-way-you-design-systems">3. Team topology — designing teams the way you design systems</h2>
 <p>Conway's Law — "organisations design systems that mirror their communication structures" — is usually quoted as a warning. Treat it as a design tool. Team topology is the deliberate counterpart to system architecture.</p>
 <h3 id="31-the-team-topologies-model">3.1 The Team Topologies model</h3>
 <p>Skelton and Pais (<em>Team Topologies</em>, 2019, now the de facto reference for backend org design) propose <strong>four team types</strong> and <strong>three interaction modes</strong>. Use them to make ownership, cognitive load, and dependency explicit.</p>
-<p><pre><code>flowchart TB
-    subgraph Types["Four team types (Skelton & Pais)"]
-        Stream["Stream-Aligned Team<br/>owns a business capability end-to-end<br/>e.g. Checkout, Risk, Search<br/>optimises for flow"]
-        Platform["Platform Team<br/>paved road for stream teams<br/>CI/CD, K8s platform, IDP, observability<br/>optimises for leverage"]
-        Enabling["Enabling Team<br/>temporary, capability-building<br/>coaches, spikes, golden paths<br/>optimises for learning"]
-        Complicated["Complicated-Subsystem Team<br/>deep specialist, infrequent change<br/>pricing engine, HSM, ML ranking<br/>optimises for expertise"]
-    end
-
-    subgraph Modes["Three interaction modes"]
-        Collab["Collaboration<br/>joint discovery, pairing<br/>high bandwidth, time-boxed"]
-        Service["X-as-a-Service<br/>self-serve API/docs/SLO<br/>low overhead, versioned"]
-        Facilitate["Facilitating<br/>coaching, workshops, guardrails<br/>builds capability then steps back"]
-    end
-
-    Stream --- Collab
-    Stream --- Service
-    Platform --- Service
-    Enabling --- Facilitate
-    Complicated --- Service
-    Enabling --- Collab
-
-    style Stream fill:#e3f2fd
-    style Platform fill:#e8f5e9
-    style Enabling fill:#fff3e0
-    style Complicated fill:#f3e5f5
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1c7ce65da5a1.png" alt="diagram"></div></p>
 <p><em>Figure 10-2: Team Topologies — four team types and three interaction modes. Most healthy 50–200-engineer orgs carry 60–70% stream-aligned teams, one platform team per 30–50 stream engineers, and enabling teams that are explicitly temporary.</em></p>
 <p><strong>How to apply it:</strong></p>
 <ul>
@@ -8870,19 +8209,7 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <h2 id="4-hiring-the-highest-leverage-investment">4. Hiring — the highest-leverage investment</h2>
 <p>For backend teams, hiring quality compounds more than any other intervention. A strong hire raises the bar for the next hire; a weak hire lowers it and increases review load, incident risk, and attrition of strong peers. Treat hiring as a system with measurable throughput, quality, and fairness — not as a series of ad-hoc conversations.</p>
 <h3 id="41-the-pipeline">4.1 The pipeline</h3>
-<p><pre><code>flowchart LR
-    JD["Job Description<br/>outcomes, stack, level"] --> Source["Sourcing<br/>referrals, outbound, inbound"]
-    Source --> Screen["Recruiter Screen<br/>15-20 min, comp & interest"]
-    Screen --> TechScreen["Technical Screen<br/>60 min, coding + systems signal"]
-    TechScreen --> Onsite["Onsite / Virtual Loop<br/>4-5 interviews, scorecard"]
-    Onsite --> Debrief["Hiring Debrief<br/>calibrated, bar-raiser has veto"]
-    Debrief --> Offer["Offer & Close<br/>level, comp, team match"]
-    Offer --> Preboard["Pre-boarding<br/>laptop, env, first-week plan"]
-
-    style JD fill:#e3f2fd
-    style Debrief fill:#fff3e0
-    style Offer fill:#e8f5e9
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bd37b11bd2b3.png" alt="diagram"></div></p>
 <p><em>Figure 10-3: A structured hiring pipeline. Every stage has a written purpose, a scorecard, and a pass-through rate you track — the pipeline is itself a system to be instrumented, not just endured.</em></p>
 <p><strong>Job descriptions that select for the right candidates</strong> describe outcomes and constraints, not wish-list keywords:</p>
 <blockquote>
@@ -9006,31 +8333,7 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <h2 id="6-growth-retention-and-the-engineering-ladder">6. Growth, retention, and the engineering ladder</h2>
 <p>Retention is not a perk problem — it is an <strong>expectations and growth</strong> problem. Engineers leave when they cannot see a credible path to mastery, autonomy, and impact inside the organisation.</p>
 <h3 id="61-the-dual-track-ladder">6.1 The dual-track ladder</h3>
-<p><pre><code>flowchart TB
-    subgraph IC["Individual Contributor Track"]
-        IC2["IC2 — Early Career<br/>scoped tasks, close guidance"]
-        IC3["IC3 — Mid<br/>owns features, independent on team"]
-        IC4["IC4 — Senior<br/>owns services / areas, mentors, designs"]
-        IC5["IC5 — Staff<br/>cross-team technical leadership,<br/>ambiguous problems, org influence"]
-        IC6["IC6 — Senior Staff / Principal<br/>org/company-wide bets,<br/>sets technical direction"]
-        IC2 --> IC3 --> IC4 --> IC5 --> IC6
-    end
-
-    subgraph M["Management Track"]
-        M1["M1 — Engineering Manager<br/>team health + delivery,<br/>coaching, hiring"]
-        M2["M2 — Senior EM / Group Lead<br/>multiple teams, staffing strategy"]
-        M3["M3 — Director<br/>org design, portfolio, cross-org influence"]
-        M1 --> M2 --> M3
-    end
-
-    IC4 -.->|"lateral, no demotion"| M1
-    M1 -.->|"lateral, rare but supported"| IC5
-    IC2 ---|"shared expectations:<br/>ownership, collaboration, craft"| M1
-
-    style IC4 fill:#e3f2fd
-    style IC5 fill:#e8f5e9
-    style M1 fill:#fff3e0
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1be11661cab5.png" alt="diagram"></div></p>
 <p><em>Figure 10-4: Dual-track ladder — IC and management are parallel, equally valued, and crossable without penalty. The Staff/Principal tier is not "senior with more years" but a distinct scope of influence and ambiguity.</em></p>
 <p><strong>Levels describe scope, not tenure.</strong> A common failure is to treat IC5 as "IC4 with 5 extra years." Instead, anchor each level in three dimensions:</p>
 <table>
@@ -9161,22 +8464,7 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 </table>
 <p><strong>Async-first</strong> does not mean "no meetings." It means the default path for decisions, status, and knowledge is a durable, searchable artifact (doc, RFC, ADR, recorded demo), and meetings are reserved for high-bandwidth activities: debate, brainstorming, incident response, and relationship building.</p>
 <h3 id="72-the-async-first-operating-loop">7.2 The async-first operating loop</h3>
-<p><pre><code>sequenceDiagram
-    participant A as Author (any TZ)
-    participant Doc as Durable Artifact<br/>(RFC / ADR / Decision Log)
-    participant Reviewers as Reviewers (async)
-    participant Decision as Decision
-    participant Record as Record & Broadcast
-
-    A->>Doc: Write proposal with context,<br/>options, recommendation (24h SLA)
-    Doc->>Reviewers: Async review — comments,<br/>suggestions, concerns (48h window)
-    Reviewers-->>Doc: Threaded feedback, explicit approval/blocks
-    Doc->>Decision: Resolve — DACI decision or lazy consensus<br/>(disagree-and-commit logged)
-    Decision->>Record: ADR / Decision Log + broadcast<br/>(Slack/Email + catalog link)
-    Record-->>A: Implement with traceable rationale
-
-    Note over A,Record: Meetings only when async stalls —<br/>time-boxed, with pre-read and written outcome
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da1ec5584b6c.png" alt="diagram"></div></p>
 <p><em>Figure 10-5: Async-first decision loop. The durable artifact — not the meeting — is the source of truth. Time-boxed async windows replace "wait for the next sync" and make time-zone distribution an advantage (review happens overnight).</em></p>
 <p><strong>Concrete mechanisms that make async-first work:</strong></p>
 <p><strong>1. Communication charter (one page, team-owned):</strong></p>
@@ -9346,22 +8634,7 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <li><strong>Measurement</strong> (DORA + SPACE, used for learning) determines whether the team can see itself clearly and improve intentionally.</li>
 </ul>
 <p>No team optimises all five at once. The pragmatic order for a team that is struggling: fix <strong>structure and ownership</strong> first (ambiguous ownership makes everything else noisy), then <strong>operating model</strong> (make decisions durable), then <strong>pipeline</strong> (hire and onboard well), then <strong>growth</strong> (retain and compound). Measure throughout, but measure to learn.</p>
-<p><pre><code>flowchart TB
-    Structure["1. Structure & Ownership<br/>topology, service catalogue,<br/>pager, SLOs"]
-    Operating["2. Operating Model<br/>async-first, decision logs,<br/>rituals, focus time"]
-    Pipeline["3. People Pipeline<br/>structured hiring + 30/60/90<br/>onboarding"]
-    Growth["4. Growth & Retention<br/>dual-track ladder, 1:1s,<br/>feedback, coaching"]
-    Measure["5. Measurement for Learning<br/>DORA + SPACE retros,<br/>improvement bets"]
-
-    Structure --> Operating --> Pipeline --> Growth --> Measure
-    Measure -.->|"feedback — adjust"| Structure
-
-    style Structure fill:#e3f2fd
-    style Operating fill:#fff3e0
-    style Pipeline fill:#e8f5e9
-    style Growth fill:#f3e5f5
-    style Measure fill:#fce4ec
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_be48982aa5dd.png" alt="diagram"></div></p>
 <p><em>Figure 10-6: Sequencing team investment. Structure and operating model are prerequisites — without clear ownership and durable decisions, hiring and growth investments leak away as coordination overhead.</em></p>
 <hr />
 <h2 id="key-takeaways">Key takeaways</h2>
@@ -9392,4 +8665,6 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 </ul>
 <hr />
 <p><em>This chapter closes Volume 15 — Software Engineering Practice — and with it the main Backend Engineer's Library (Volumes 1–15). The Companion Series on Supply Chain Security (Books 1–8, 75 chapters) remains as a specialist reference. The arc of the library — from transistor to team — reflects a conviction: reliable backend systems are built by teams that treat people, process, and measurement with the same rigour they bring to consistency models, storage engines, and consensus protocols. The technology changes; the need for safe, clear, and humane teams does not.</em></p>
-<p><em>Next steps for the reader: revisit the DORA and SPACE signals for your current team, audit one ownership boundary and one decision log, and run a single improvement bet through a full retro cycle. Small, closed loops compound.</em></p></div></body></html>
+<p><em>Next steps for the reader: revisit the DORA and SPACE signals for your current team, audit one ownership boundary and one decision log, and run a single improvement bet through a full retro cycle. Small, closed loops compound.</em></p>
+<h3 id="team-topologies">Team topologies</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b8e9f09844f0.png" alt="diagram"></div></p></div></body></html>

@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -187,28 +269,7 @@ hr {
 <li><strong>Garbage collection</strong> — when and how unreachable objects are reclaimed.</li>
 <li><strong>Just-in-time compilation</strong> — how hot code is optimized after profiling.</li>
 </ol>
-<p><pre><code>flowchart TB
-    SRC["Java / Kotlin / Scala source"] --> BC["Bytecode (.class / .jar)"]
-    BC --> CL["Class loading + verification<br/>Metaspace"]
-    CL --> INT["Interpreter<br/>(fast startup, profile collection)"]
-    INT --> C1["C1 compiler (client)<br/>light opts, fast compile"]
-    C1 --> C2["C2 compiler (server)<br/>heavy opts, profiling-driven"]
-    C2 --> CC["Code cache<br/>native machine code"]
-    CC --> EXEC["Execution"]
-    INT --> EXEC
-    EXEC --> PROF["Profiling: branch counts,<br/>types, call sites"]
-    PROF --> C1
-    PROF --> C2
-    C2 -. deoptimize .-> INT
-
-    subgraph MEM["Memory"]
-        HEAP["Heap (G1/ZGC/...)"]
-        META["Metaspace / Compressed class space"]
-        STK["Thread stacks"]
-        DIR["Direct / off-heap (ByteBuffer, Unsafe)"]
-    end
-    EXEC --- MEM
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2d782c1a9a41.png" alt="diagram"></div></p>
 <p>The JVM process is a single OS process with many threads sharing one heap. There is no per-request isolation — a pathological allocation in one handler pressures GC for every thread. Understanding shared heap dynamics is prerequisite to sizing, tuning, and debugging.</p>
 <h3 id="the-process-and-its-threads">The process and its threads</h3>
 <div class="highlight"><pre><span></span><code>JVM process (PID 1 in container)
@@ -225,31 +286,10 @@ hr {
 <h2 id="2-memory-layout">2. Memory layout</h2>
 <h3 id="heap-generations">Heap generations</h3>
 <p>The generational heap exploits the <em>weak generational hypothesis</em>: most objects die young. New objects allocate in Eden; survivors are copied to Survivor spaces and then tenured to Old. This lets the collector scan only a small young generation most of the time.</p>
-<p><pre><code>flowchart TB
-    subgraph HEAP["Heap"]
-        direction TB
-        subgraph YOUNG["Young generation"]
-            EDEN["Eden<br/>new allocations<br/>(bump pointer / TLAB)"]
-            S0["Survivor S0"]
-            S1["Survivor S1"]
-            EDEN -->|minor GC: copy survivors| S0
-            EDEN --> S1
-            S0 <-->|alternating| S1
-        end
-        YOUNG -->|tenuring threshold| OLD["Old generation<br/>long-lived objects"]
-        OLD --> HUM["Humongous region (G1)<br/>objects > 50% region size"]
-    end
-    META["Metaspace<br/>class metadata, JIT code metadata"]
-    STACK["Thread stacks<br/>-Xss per thread"]
-    CODE["Code cache<br/>-XX:ReservedCodeCacheSize"]
-    DIRECT["Direct memory<br/>MaxDirectMemorySize"]
-
-    HEAP -.-> GC["GC manages heap only"]
-    META -.-> MC["Not GC-collected<br/>class unloading"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_be75b0375cde.png" alt="diagram"></div></p>
 <p><strong>TLAB (Thread-Local Allocation Buffer).</strong> To avoid atomic increments on every <code>new</code>, each thread reserves a small Eden slice and bumps a pointer locally. TLAB allocation is ~10 instructions. When a TLAB fills, the thread requests a new one. TLAB sizing is adaptive (<code>-XX:TLABSize</code>, <code>-XX:+PrintTLAB</code>); undersized TLABs cause contention on the Eden lock, visible in allocation profiling.</p>
 <p><strong>G1 regions.</strong> G1 divides the heap into ~2048 equal regions (1–32 MB each, power of two). Regions are tagged Eden/Survivor/Old/Humongous and collected as sets. There is no fixed Young/Old boundary — G1 adapts it (<code>-XX:G1NewSizePercent</code>, <code>-XX:G1MaxNewSizePercent</code>, <code>-XX:MaxGCPauseMillis</code>).</p>
-<p><strong>Compressed oops and compressed class pointers.</strong> On 64-bit JVMs, object references compress to 32 bits when heap &lt; ~32 GB (<code>UseCompressedOops</code>, <code>UseCompressedClassPointers</code>), saving ~20–30% heap. Above ~32 GB, oops widen and memory footprint jumps — the classic reason to size heaps at 26–30 GB rather than 32–36 GB.</p>
+<p><strong>Compressed oops and compressed class pointers.</strong> On 64-bit JVMs, object references compress to 32 bits when heap &lt; ~32 GiB (32,766 MB with default <code>ObjectAlignmentInBytes=8</code>; ~64 GiB with 16-byte alignment) (<code>UseCompressedOops</code>, <code>UseCompressedClassPointers</code>), saving ~20–30% heap. Above that threshold, oops widen and memory footprint jumps — the classic reason to size heaps at 26–30 GB rather than 32–36 GB.</p>
 <h3 id="non-heap-memory">Non-heap memory</h3>
 <table>
 <thead>
@@ -326,43 +366,10 @@ cat<span class="w"> </span>/sys/fs/cgroup/memory.max
 <hr />
 <h2 id="3-garbage-collection-how-it-works">3. Garbage collection — how it works</h2>
 <p>All JVM collectors trace reachability from GC roots (thread stacks, statics, JNI handles). Unreachable objects are reclaimed. The differences are <em>when</em> tracing happens (stop-the-world vs. concurrent), <em>how</em> live objects are handled (copy, compact, sweep), and what pauses result.</p>
-<p><pre><code>flowchart LR
-    subgraph STW["Stop-the-world (STW)"]
-        direction TB
-        A1["App threads<br/>RUNNING"] --> S1["Safepoint<br/>all threads paused"]
-        S1 --> GC1["GC work<br/>(mark / copy / compact)"]
-        GC1 --> R1["Resume"]
-    end
-    subgraph CONC["Mostly concurrent"]
-        direction TB
-        A2["App threads<br/>RUNNING"] --> C1["Concurrent mark<br/>app runs alongside"]
-        C1 --> S2["Brief STW<br/>(remark / relocate)"]
-        S2 --> C2["Concurrent compact / relocate"]
-        C2 --> R2["Resume (or never fully stopped)"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e2f3e59ad325.png" alt="diagram"></div></p>
 <p><strong>Safepoints.</strong> STW pauses require all threads to reach a safepoint (method call, loop back-edge, safepoint poll). Long non-safepoint loops (e.g., counted loops without safepoint polls before JDK 10) could delay GC — fixed by loop strip mining and <code>GuaranteedSafepointInterval</code>.</p>
 <h3 id="generational-collection-cycle">Generational collection cycle</h3>
-<p><pre><code>sequenceDiagram
-    participant App as App threads
-    participant Eden as Eden
-    participant S as Survivor (S0/S1)
-    participant Old as Old gen
-    participant GC as GC threads
-
-    App->>Eden: allocate (TLAB bump)
-    Note over Eden: Eden fills
-    App->>GC: allocation failure → safepoint
-    GC->>Eden: mark live (from roots)
-    GC->>S: copy survivors to S1
-    GC->>Eden: reclaim dead (pointer reset)
-    App->>App: resume
-    Note over S: age++ per survival
-    GC->>Old: tenure if age >= MaxTenuringThreshold<br/>or Survivor overflow
-    Note over Old: fills over many minor GCs
-    App->>GC: Old fills / G1 IHOP / ZGC threshold
-    GC->>Old: major / mixed / concurrent cycle
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_de3897fbc9ec.png" alt="diagram"></div></p>
 <h3 id="collector-comparison">Collector comparison</h3>
 <table>
 <thead>
@@ -474,25 +481,7 @@ jstat<span class="w"> </span>-gc<span class="w"> </span>-t<span class="w"> </spa
 <h2 id="4-the-jit-compiler">4. The JIT compiler</h2>
 <p>Bytecode is portable but slow. The JIT compiles hot methods to native code after profiling, with optimizations that an AOT compiler cannot do because they depend on runtime behavior.</p>
 <h3 id="tiered-compilation">Tiered compilation</h3>
-<p><pre><code>flowchart TB
-    BC["Bytecode"] --> INT["Interpreter<br/>counts invocations + branches"]
-    INT -->|threshold ~1000| C1["C1 (tier 3)<br/>fast compile, light opts<br/>insert profiling counters"]
-    C1 -->|hotter ~10000| C2["C2 (tier 4)<br/>heavy opts: inlining, escape analysis,<br/>loop unrolling, vectorization"]
-    C2 --> NATIVE["Native code in CodeCache"]
-    NATIVE --> REPROF["Re-profile<br/>(types changed?)"]
-    REPROF -->|deoptimize| INT
-    REPROF -->|recompile| C2
-
-    subgraph OPTS["C2 optimizations"]
-        INL["Inlining"]
-        EA["Escape analysis / scalar replacement"]
-        VEC["Auto-vectorization (SIMD)"]
-        LOOP["Loop unrolling / peeling"]
-        NULLCHK["Null-check elimination"]
-        LOCK["Lock elision (biased / thin)"]
-    end
-    C2 --- OPTS
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8b236795fad5.png" alt="diagram"></div></p>
 <p>Default on 64-bit server JVM: tiered compilation (<code>-XX:+TieredCompilation</code>), 5 levels. <code>-XX:TieredStopAtLevel=1</code> disables C2 (faster startup, slower peak — useful for short-lived CLI / Lambda).</p>
 <p><strong>Inlining</strong> is the most impactful optimization — it enables most others. C2 inlines up to <code>-XX:MaxInlineSize=35</code> and <code>-XX:FreqInlineSize=325</code> bytecodes, bounded by <code>MaxInlineLevel</code>. Virtual calls that are monomorphic (one receiver type observed) inline with a guard; bimorphic inline with two guards; megamorphic stays virtual (and slow). <em>Small methods win</em> — keep hot paths in small, final or effectively-final methods.</p>
 <p><strong>Escape analysis</strong> eliminates allocations when an object does not escape its thread/method. A <code>new Point(x,y)</code> that is consumed locally may be scalar-replaced into registers — zero GC pressure. Enabled by <code>-XX:+DoEscapeAnalysis</code> (default). Visible in JFR allocation samples: fewer TLAB allocations after warmup.</p>
@@ -613,7 +602,7 @@ java<span class="w"> </span>-Xms1g<span class="w"> </span>-Xmx1400m<span class="
 </ul>
 <p><strong>ZGC — p99-optimized service (JDK 21, 8+ GB heap):</strong></p>
 <div class="highlight"><pre><span></span><code>java<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-XX:+UseZGC<span class="w"> </span>--enable-preview<span class="w"> </span>-XX:+ZGenerational<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-XX:+UseZGC<span class="w"> </span>-XX:+ZGenerational<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-XX:MaxGCPauseMillis<span class="o">=</span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-XX:+ZUncommit<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-Xlog:gc*:file<span class="o">=</span>/var/log/app/gc.log:time,uptime:filecount<span class="o">=</span><span class="m">10</span>,filesize<span class="o">=</span>20M<span class="w"> </span><span class="se">\</span>
@@ -738,7 +727,11 @@ jcmd<span class="w"> </span>&lt;pid&gt;<span class="w"> </span>Compiler.codelist
 <li>JFR Runtime Guide — https://docs.oracle.com/en/java/javase/21/jfr/</li>
 <li><em>Java Performance Companion</em> — async-profiler docs: https://github.com/async-profiler/async-profiler</li>
 <li>Shipilev, <em>JVM Anatomy Quarks</em> — https://shipilev.net/jvm/anatomy/ (TLABs, safepoints, compressed oops, biased locking)</li>
-</ul></div><div id="ch02-go-runtime"><h1 id="chapter-2-the-go-runtime-scheduler-memory-model-and-gc">Chapter 2 — The Go Runtime: Scheduler, Memory Model, and GC</h1>
+</ul>
+<h3 id="jvm-memory-layout">JVM memory layout</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0fbd4949d938.png" alt="diagram"></div></p>
+<h3 id="jit-compilation-pipeline">JIT compilation pipeline</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_96efee26e47a.png" alt="diagram"></div></p></div><div id="ch02-go-runtime"><h1 id="chapter-2-the-go-runtime-scheduler-memory-model-and-gc">Chapter 2 — The Go Runtime: Scheduler, Memory Model, and GC</h1>
 <p><strong>What this chapter covers.</strong> Go powers a huge share of backend infrastructure — Kubernetes, etcd, Prometheus, Docker, CockroachDB, and countless microservices — because its runtime was designed for concurrent network services from day one. Yet its simplicity is deceptive: goroutines are not threads, the scheduler is not the OS scheduler, the memory model is not sequential consistency, and the GC is not stop-the-world. Misunderstanding any of these leads to subtle bugs: goroutine leaks that OOM a pod, data races that only reproduce under load, STW pauses blamed on "GC" that are actually scheduler stalls, and <code>GOMAXPROCS</code> set wrong in containers. This chapter explains the runtime you actually run in production — the M:N scheduler (G/M/P), the memory model and <code>sync</code> primitives, and the concurrent tri-color GC — with traces you capture and flags you set.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -760,12 +753,7 @@ jcmd<span class="w"> </span>&lt;pid&gt;<span class="w"> </span>Compiler.codelist
 <li><strong>Scheduling is cooperative + preemptive.</strong> The runtime multiplexes goroutines onto OS threads, with its own run queues and work stealing — distinct from <code>pthreads</code> or <code>tokio</code>.</li>
 <li><strong>GC is concurrent and low-pause.</strong> Since Go 1.8 the collector is mostly concurrent; STW pauses are typically &lt; 1 ms, but allocation rate and <code>GOGC</code> still shape latency and CPU.</li>
 </ol>
-<p><pre><code>flowchart TB
-    SRC["Go source"] --> CMP["go build<br/>static binary (runtime linked in)"]
-    CMP --> BIN["Binary: app + runtime<br/>(scheduler, GC, netpoller, alloc)"]
-    BIN --> RUN["At startup:<br/>runtime.schedinit()<br/>GOMAXPROCS Ps created<br/>netpoller + timers + GC init"]
-    RUN --> EXEC["Goroutines run on Ms<br/>GC runs concurrently<br/>netpoller drives I/O"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ca6dc5362f80.png" alt="diagram"></div></p>
 <p>The runtime version is pinned at compile time (<code>go version -m ./app</code>, <code>runtime.Version()</code>). Upgrading Go <em>is</em> upgrading the runtime — GC pacing, scheduler preemption, and <code>GOMEMLIMIT</code> behavior change across versions (notably 1.18+ for <code>GOMEMLIMIT</code>, 1.14 for async preemption, 1.21 for new timer implementation).</p>
 <hr />
 <h2 id="2-the-scheduler-g-m-p">2. The scheduler — G, M, P</h2>
@@ -776,31 +764,7 @@ jcmd<span class="w"> </span>&lt;pid&gt;<span class="w"> </span>Compiler.codelist
 <li><strong>M (machine)</strong> — an OS thread that executes Gs. Created on demand up to <code>GOMAXPROCS</code> for CPU-bound work plus extras for blocking syscalls.</li>
 <li><strong>P (processor)</strong> — a scheduling context: run queue, cache for allocation (mcache), and GC state. Count = <code>GOMAXPROCS</code>. A G must hold a P to run user code.</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph PS["Ps (GOMAXPROCS = 4)"]
-        P1["P1<br/>local queue: G1→G2→G3"]
-        P2["P2<br/>local queue: G4→G5"]
-        P3["P3<br/>local queue: G6"]
-        P4["P4<br/>local queue: (empty)"]
-    end
-    GQ["Global runnable queue<br/>(overflow + new Gs)"]
-    NP["Netpoller<br/>(epoll/kqueue)"]
-
-    M1["M1 (thread)"] --- P1
-    M2["M2 (thread)"] --- P2
-    M3["M3 (thread)"] --- P3
-    M4["M4 (thread)"] --- P4
-
-    P1 -->|steal half when empty| P2
-    P4 -->|steal| P1
-    P2 -->|poll ready Gs| NP
-    GQ -->|distribute| PS
-
-    GIO["G blocked on I/O<br/>(no M, no P)"] -.-> NP
-    NP -.->|I/O ready → runnable| GQ
-
-    GSYS["G in syscall<br/>(M blocked, P handed off)"] -.-> P2
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f93e3e79ca4.png" alt="diagram"></div></p>
 <p><strong>How scheduling happens:</strong></p>
 <ol>
 <li>Each P has a local run queue (lock-free, 256 entries). <code>go f()</code> pushes to local queue; <code>GOMAXPROCS</code> local queues reduce contention vs. one global queue.</li>
@@ -845,12 +809,7 @@ go<span class="w"> </span>tool<span class="w"> </span>trace<span class="w"> </sp
 <span class="c1">// View: go tool trace /tmp/trace.out  (or upload to https://gotraceui.dev)</span>
 </code></pre></div>
 
-<p><pre><code>flowchart LR
-    G1["G: handleRequest<br/>running on P1/M1"] -->|blocks on conn.Read| PARK["park G<br/>M1/P1 free"]
-    PARK --> OTHER["P1/M1 runs G2,G3"]
-    NP2["Netpoller<br/>epoll_wait"] -->|fd ready| READY["G runnable<br/>→ P queue"]
-    READY --> M1B["M1/P1 resumes G"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_23a3efc49d64.png" alt="diagram"></div></p>
 <h3 id="gomaxprocs-and-containers"><code>GOMAXPROCS</code> and containers</h3>
 <p><code>GOMAXPROCS</code> defaults to host CPU count — wrong in containers where cgroup quota is smaller. Since Go 1.5 you must set it explicitly or use automaxprocs.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Option 1: uber-go/automaxprocs — reads cgroup quota at startup</span>
@@ -947,16 +906,7 @@ go<span class="w"> </span>tool<span class="w"> </span>trace<span class="w"> </sp
 <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">data2</span><span class="p">)</span>
 </code></pre></div>
 
-<p><pre><code>sequenceDiagram
-    participant G1 as Goroutine 1
-    participant Ch as Channel / Mutex / Once
-    participant G2 as Goroutine 2
-    G1->>G1: write x = 1
-    G1->>Ch: send / Unlock / close
-    Note over Ch: happens-before edge
-    Ch->>G2: receive / Lock / <-done
-    G2->>G2: read x — guaranteed 1
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_79dbdadb5049.png" alt="diagram"></div></p>
 <p>For anything beyond the table above (e.g., <code>context.Context</code> cancellation, <code>sync.Map</code> publication), check the package docs for its happens-before guarantees. When in doubt, the race detector is authoritative:</p>
 <div class="highlight"><pre><span></span><code>go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-race<span class="w"> </span>./...<span class="w">            </span><span class="c1"># ~2-10x slower, ~5-10x more memory — CI only</span>
 go<span class="w"> </span>run<span class="w"> </span>-race<span class="w"> </span>./cmd/server<span class="w">      </span><span class="c1"># also works for binaries (dev/staging)</span>
@@ -1006,22 +956,10 @@ go<span class="w"> </span>vet<span class="w"> </span>./...<span class="w">      
 <h2 id="4-garbage-collection">4. Garbage collection</h2>
 <p>Go's GC is a <strong>concurrent, tri-color, mark-sweep collector</strong> with a concurrent mark phase and brief STW pauses for stack scanning and mark termination. It prioritizes low latency (&lt; 1 ms STW) over throughput.</p>
 <h3 id="tri-color-marking">Tri-color marking</h3>
-<p><pre><code>flowchart TB
-    subgraph ROOTS["Roots (stacks, globals, registers)"]
-        R1["G stacks"]
-        R2["Globals"]
-    end
-    W["White: not yet reached<br/>(candidate garbage)"]
-    GRAY["Gray: reached, children not scanned"]
-    B["Black: reached, children scanned"]
-    W -->|scan finds refs| GRAY -->|children scanned| B
-    B -->|sweep reclaims| FREE["Free (white at end)"]
-
-    ROOTS --> GRAY
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f85d6c274bcb.png" alt="diagram"></div></p>
 <ol>
 <li><strong>Mark setup (STW, ~10–100 µs):</strong> stop-the-world to enable write barriers and scan stacks.</li>
-<li><strong>Concurrent mark:</strong> GC workers (25% of <code>GOMAXPROCS</code> by default) traverse the heap concurrently with mutators. Write barriers (<code>hybrid barrier</code> since 1.18) ensure no live object is lost when mutators mutate concurrently.</li>
+<li><strong>Concurrent mark:</strong> GC workers (25% of <code>GOMAXPROCS</code> by default) traverse the heap concurrently with mutators. Write barriers (<code>hybrid barrier</code> since Go 1.8) ensure no live object is lost when mutators mutate concurrently.</li>
 <li><strong>Mark termination (STW, ~10–100 µs):</strong> second STW to finish marking and flush buffers.</li>
 <li><strong>Concurrent sweep:</strong> reclaim white objects and return memory to allocator (proportional sweep by mutators + background sweeper).</li>
 </ol>
@@ -1059,17 +997,7 @@ env:
 <span class="w">    </span>value:<span class="w"> </span><span class="s2">&quot;100&quot;</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TB
-    LIVE["Live heap after GC"] --> CALC{"next_gc = live * (1+GOGC/100)<br/>also: GOMEMLIMIT bound"}
-    CALC -->|heap reaches trigger| MARK["Concurrent mark + sweep"]
-    MARK --> LIVE
-    CALC -->|GOMEMLIMIT closer than GOGC trigger| EARLY["Early GC<br/>(effective GOGC reduced)"]
-
-    subgraph LIMITS["Container 1 GiB"]
-        HEAP["Heap (GOMEMLIMIT 900MiB)"]
-        OTHER["Other: stacks, code, direct"]
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a35015cffce8.png" alt="diagram"></div></p>
 <p><strong>Reading GC behavior:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># GODEBUG=gctrace — one line per GC</span>
 <span class="nv">GODEBUG</span><span class="o">=</span><span class="nv">gctrace</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>./app<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
@@ -1283,7 +1211,9 @@ go<span class="w"> </span>version<span class="w"> </span>-m<span class="w"> </sp
 <li><em>GOMEMLIMIT</em> — https://tip.golang.org/doc/gc-guide#GOMEMLIMIT ; <em>A Guide to the Go Garbage Collector</em> — https://go.dev/doc/gc-guide</li>
 <li><em>uber-go/automaxprocs</em> — https://github.com/uber-go/automaxprocs</li>
 <li>Cox, <em>Hardware Memory Models</em> — https://research.swtch.com/hwmm (background for understanding Go's model vs. x86/ARM)</li>
-</ul></div><div id="ch03-rust"><h1 id="chapter-3-rust-for-backend-systems">Chapter 3 — Rust for Backend Systems</h1>
+</ul>
+<h3 id="goroutine-scheduling-gmp-model">Goroutine scheduling - GMP model</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_16d7b8f11e23.png" alt="diagram"></div></p></div><div id="ch03-rust"><h1 id="chapter-3-rust-for-backend-systems">Chapter 3 — Rust for Backend Systems</h1>
 <p><strong>What this chapter covers.</strong> Rust has moved from systems curiosity to backend workhorse — powering proxies (Cloudflare Pingora, AWS Firecracker), databases (TiKV, SurrealDB), streaming (Vector, NATS), and an expanding layer of microservices where latency, memory footprint, and correctness justify the learning curve. Its promise is strong: memory safety without a garbage collector, fearless concurrency via the type system, and C-like performance with a modern toolchain. Its cost is also real: ownership and lifetimes, async complexity, and a smaller operational playbook than JVM or Go. This chapter gives you the Rust you need for backend services — ownership/borrowing/lifetimes in practice, error handling and trait-based design, <code>tokio</code> async runtime and hyper/axum service stacks, and the operational reality of deploying Rust services (build, size, profiling, interop) — with enough depth to write, review, and operate production Rust.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -1365,16 +1295,7 @@ go<span class="w"> </span>version<span class="w"> </span>-m<span class="w"> </sp
 <hr />
 <h2 id="2-ownership-borrowing-and-lifetimes">2. Ownership, borrowing, and lifetimes</h2>
 <p>Ownership is Rust's single most important idea. Every value has exactly one owner; when the owner goes out of scope, the value is dropped. Borrowing lets other code temporarily access the value without taking ownership, under rules the compiler enforces.</p>
-<p><pre><code>flowchart TB
-    OWN["Owner: let s = String::from('hello')<br/>s owns heap allocation"]
-    OWN --> MOVE["Move: let t = s<br/>s invalidated, t now owns"]
-    OWN --> BORROW["Borrow: &s or &mut s<br/>temporary, owner retains ownership"]
-    BORROW --> SHARED["&T shared borrow<br/>many readers OR"]
-    BORROW --> MUT["&mut T mutable borrow<br/>one writer, no readers"]
-    SHARED & MUT --> RULE["Rule: at any point,<br/>either N shared OR 1 mutable<br/>never both"]
-    MOVE --> DROP["Drop when owner leaves scope<br/>memory freed deterministically"]
-    BORROW --> DROP
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e817f2363417.png" alt="diagram"></div></p>
 <h3 id="ownership-and-move-semantics">Ownership and move semantics</h3>
 <div class="highlight"><pre><span></span><code><span class="k">fn</span><span class="w"> </span><span class="nf">ownership_demo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// s1 owns the String</span>
@@ -1499,21 +1420,7 @@ go<span class="w"> </span>version<span class="w"> </span>-m<span class="w"> </sp
 <span class="k">fn</span><span class="w"> </span><span class="nf">get_config</span><span class="p">()</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kp">&amp;</span><span class="o">&#39;</span><span class="nb">static</span><span class="w"> </span><span class="nc">Config</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">CONFIG</span><span class="p">.</span><span class="n">get_or_init</span><span class="p">(</span><span class="o">||</span><span class="w"> </span><span class="n">Config</span><span class="p">::</span><span class="n">load</span><span class="p">())</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>flowchart LR
-    subgraph OWNERSHIP["Ownership"]
-        BOX["Box<T><br/>1 owner, heap"]
-        ARC["Arc<T><br/>N owners, atomic RC<br/>Send + Sync"]
-        RC["Rc<T><br/>N owners, non-atomic RC<br/>!Send"]
-    end
-    subgraph INTERIOR["Interior mutability"]
-        MUTEX["Mutex<T><br/>exclusive + thread-safe"]
-        RWLOCK["RwLock<T><br/>many readers or 1 writer"]
-        CELL["Cell / RefCell<br/>single-threaded interior mut"]
-        ATOMIC["AtomicU64 etc.<br/>lock-free"]
-    end
-    ARC --> MUTEX
-    BOX -.->|often wraps| MUTEX
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_07a170b5569f.png" alt="diagram"></div></p>
 <hr />
 <h2 id="3-error-handling-and-type-driven-design">3. Error handling and type-driven design</h2>
 <h3 id="result-and-option"><code>Result</code> and <code>Option</code></h3>
@@ -1638,22 +1545,7 @@ go<span class="w"> </span>version<span class="w"> </span>-m<span class="w"> </sp
 <h2 id="4-async-rust-tokio-and-service-stacks">4. Async Rust — <code>tokio</code> and service stacks</h2>
 <p>Synchronous Rust handles concurrency with threads (<code>std::thread</code>) and channels (<code>std::sync::mpsc</code>, <code>crossbeam</code>). For I/O-bound backend services, <strong>async Rust with <code>tokio</code></strong> is the standard — it provides an async runtime analogous to Go's scheduler but with explicit <code>async</code>/<code>await</code> syntax and <code>Future</code>-based tasks.</p>
 <h3 id="tokio-runtime"><code>tokio</code> runtime</h3>
-<p><pre><code>flowchart TB
-    subgraph RT["Tokio runtime (multi-thread)"]
-        direction TB
-        W1["Worker 1<br/>run queue"]
-        W2["Worker 2<br/>run queue"]
-        W3["Worker 3<br/>run queue"]
-        W4["Worker 4<br/>run queue"]
-        W1 <-->|work stealing| W2
-        W3 <--> W4
-        IO["I/O driver (mio/epoll)<br/>net, timers, signals"]
-        IO -.->|wake task| W1
-        IO -.-> W2
-    end
-    TASK["async tasks<br/>(Future state machines)<br/>spawn, select!, join!"] --> RT
-    BLOCK["blocking task<br/>(spawn_blocking)"] -.->|dedicated pool| RT
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_90e942be84b9.png" alt="diagram"></div></p>
 <p>Like Go's P, tokio workers steal tasks. Unlike Go, tasks are <code>Future</code>s — state machines generated by <code>async fn</code> — and preemption is cooperative at <code>.await</code> points. A future that never <code>.await</code>s blocks its worker, just as a Go goroutine that never calls a function blocked pre-1.14.</p>
 <div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">tokio</span><span class="p">::</span><span class="n">time</span><span class="p">::{</span><span class="n">sleep</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">};</span>
 
@@ -2049,15 +1941,7 @@ cargo<span class="w"> </span>bench<span class="w">  </span><span class="c1"># us
 <span class="k">for</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">handles</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">h</span><span class="p">.</span><span class="k">await</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
 
-<p><pre><code>flowchart TB
-    OWN2["Value: String<br/>owned by task A"]
-    OWN2 -->|Arc::clone| SHARED["Arc<String><br/>shared, ref-counted"]
-    SHARED --> T1["Task 1: &String<br/>read-only, no lock"]
-    SHARED --> T2["Task 2: &String<br/>read-only, no lock"]
-    MUT["Arc<Mutex<HashMap>>"] --> T3["Task 3: lock().await<br/>exclusive write"]
-    MUT --> T4["Task 4: lock().await<br/>waits for T3"]
-    T3 -.->|drop guard| T4
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_12edb44ab5e6.png" alt="diagram"></div></p>
 <p>For data-parallel CPU work, <code>rayon</code> (parallel iterators) is the idiomatic choice — it uses work stealing like tokio but for synchronous CPU tasks:</p>
 <div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">rayon</span><span class="p">::</span><span class="n">prelude</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
 
@@ -2106,7 +1990,13 @@ cargo<span class="w"> </span>bench<span class="w">  </span><span class="c1"># us
 <li>McNamara — <em>Rust in Action</em> (Manning) — systems/backend patterns.</li>
 <li><em>Rust Atomics and Locks</em> (Mara Bos) — https://marabos.nl/atomics/ (concurrency primitives)</li>
 <li><em>tracing</em> — https://docs.rs/tracing ; <em>tokio-console</em> — https://github.com/tokio-rs/console</li>
-</ul></div><div id="ch04-gc"><h1 id="chapter-4-garbage-collection-across-runtimes">Chapter 4 — Garbage Collection Across Runtimes</h1>
+</ul>
+<h3 id="rust-ownership-and-borrowing">Rust ownership and borrowing</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8cf9a9897cae.png" alt="diagram"></div></p>
+<h3 id="rust-async-execution-model">Rust async execution model</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0a5c4d58c9ce.png" alt="diagram"></div></p>
+<h3 id="cargo-build-pipeline">Cargo build pipeline</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_39c7cce03ac9.png" alt="diagram"></div></p></div><div id="ch04-gc"><h1 id="chapter-4-garbage-collection-across-runtimes">Chapter 4 — Garbage Collection Across Runtimes</h1>
 <p><strong>What this chapter covers.</strong> Every managed runtime you operate — JVM, Go, V8/Node, CPython, .NET — hides a garbage collector that directly shapes your p99, your CPU headroom, and your OOM-kill rate. Teams that treat GC as "just works" get surprised by 800 ms G1 pauses on a 16 GB heap, by Node's incremental marking stealing event-loop ticks, or by Python's reference-count churn stalling an <code>asyncio</code> service under load. This chapter gives you a single mental model for GC across all backend runtimes: how collectors actually reclaim memory, how the classic algorithms differ, how each production collector (G1, ZGC, Shenandoah, Go's tri-color, V8's Orinoco, CPython's refcount+cyclic, .NET's generational) makes its latency/throughput/footprint trade-offs, and how to observe and tune them with real flags, logs, and dashboards. Chapter 1 covered the JVM's own memory/JIT machinery; Chapter 2 covered Go's GC; here we unify the theory and compare runtimes side by side.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -2157,22 +2047,7 @@ cargo<span class="w"> </span>bench<span class="w">  </span><span class="c1"># us
 </tbody>
 </table>
 <p>A backend service's GC behavior is dominated by its <strong>allocation rate</strong> (bytes/sec) and <strong>live set</strong> (bytes that survive a collection), not by heap size alone. A 4 GB heap with 2 GB/sec allocation and a 100 MB live set behaves nothing like a 4 GB heap with 100 MB/sec allocation and a 3 GB live set. Every tuning decision flows from those two numbers.</p>
-<p><pre><code>flowchart TB
-    REQ["Incoming requests<br/>allocations/sec"] --> ALLOC["Allocator<br/>(bump pointer / free list / TLAB)"]
-    ALLOC --> HEAP["Heap<br/>live set + garbage"]
-    HEAP --> GC["Collector<br/>mark → sweep/compact/copy"]
-    GC -->|frees / compacts| HEAP
-    GC -->|STW pause / concurrent work| MUT["Mutator threads<br/>(your code)"]
-    MUT -->|allocates| ALLOC
-    MUT --> REQ
-
-    subgraph PRESSURE["Backpressure signals"]
-        CPU["GC CPU %"]
-        PAUSE["Pause p99"]
-        OOM["OOM / promotion failure"]
-    end
-    GC --> PRESSURE
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a74494718b41.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-gc-fundamentals">2. GC fundamentals</h2>
 <h3 id="21-reachability-and-roots">2.1 Reachability and roots</h3>
@@ -2222,18 +2097,7 @@ cargo<span class="w"> </span>bench<span class="w">  </span><span class="c1"># us
 <li>Objects that survive N collections are <strong>tenured / promoted</strong> to <strong>old / tenured / major</strong> generation, collected rarely.</li>
 </ul>
 <p>Cross-generational pointers (<code>old → young</code>) are tracked via <strong>remembered sets</strong> / <strong>card tables</strong> (JVM G1's cards, Go's write barrier buffer, V8's store buffer) so young collections do not scan the entire old heap. The cost of maintaining remembered sets is the hidden tax of generational GC — pathological patterns (large old-to-young pointer fanout) inflate remembered-set size and young pause time.</p>
-<p><pre><code>flowchart TB
-    subgraph GEN["Generational heap"]
-        EDEN["Eden / Nursery<br/>bump-pointer alloc<br/>collect every ~10-100ms"]
-        SURV["Survivor S0/S1<br/>copy survivors<br/>aging / tenuring threshold"]
-        OLD["Old / Tenured / Major<br/>collect rarely<br/>mark-sweep-compact or concurrent"]
-        EDEN -->|minor GC<br/>copy survivors| SURV
-        SURV -->|tenure after N survivals<br/>promotion| OLD
-        OLD -.->|remembered set<br/>card table| EDEN
-    end
-    ALLOC2["New allocation"] --> EDEN
-    OLD -->|major / full GC| RECLAIM["Reclaim / compact"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8d5ddc309f1d.png" alt="diagram"></div></p>
 <hr />
 <h2 id="3-the-algorithm-palette">3. The algorithm palette</h2>
 <h3 id="31-mark-sweep">3.1 Mark-sweep</h3>
@@ -2254,22 +2118,7 @@ cargo<span class="w"> </span>bench<span class="w">  </span><span class="c1"># us
 <li><strong>Concurrent</strong> — GC threads run alongside mutators on other cores (Go, ZGC, Shenandoah, G1's concurrent marking). Requires barriers and careful phase coordination; reduces STW but burns CPU and needs headroom (floating garbage — objects that die after being marked live must wait for the next cycle).</li>
 </ul>
 <h3 id="36-algorithm-comparison">3.6 Algorithm comparison</h3>
-<p><pre><code>flowchart LR
-    subgraph ALGO["GC algorithms"]
-        MS["Mark-Sweep<br/>mark + free-list sweep"]
-        MC["Mark-Compact<br/>mark + slide + update ptrs"]
-        CP["Copying / Semi-space<br/>copy live, flip spaces"]
-        GEN2["Generational<br/>copy young + mark old"]
-        CONC["Concurrent<br/>mark with mutator<br/>(barriers)"]
-        INCR["Incremental<br/>slice marking<br/>interleaved"]
-    end
-    MS -->|fragments| FRAG["Fragmentation:<br/>high"]
-    MC -->|no fragment<br/>moves objects| FRAG2["Fragmentation:<br/>none"]
-    CP -->|needs 2x heap<br/>pause ∝ live set| LIVE["Pause scales with:<br/>live set"]
-    GEN2 -->|most effective| BEST["Best for weak-gen<br/>workloads"]
-    CONC -->|low pause<br/>needs barriers + CPU| LOW["p99:<br/>lowest"]
-    INCR -->|main-thread slices<br/>still STW per slice| MID["p99:<br/>medium"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1210f1956df8.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -2626,36 +2475,7 @@ node<span class="w"> </span>--expose-gc<span class="w"> </span>app.js<span class
 <hr />
 <h2 id="5-cross-runtime-comparison">5. Cross-runtime comparison</h2>
 <h3 id="51-head-to-head">5.1 Head-to-head</h3>
-<p><pre><code>flowchart TB
-    subgraph JVM["JVM (G1 / ZGC)"]
-        J_ALGO["Generational<br/>region-based<br/>concurrent mark<br/>evacuation / relocate"]
-        J_PAUSE["G1: 10-200ms<br/>ZGC: <1ms"]
-        J_THRU["Throughput: high<br/>(G1) / medium<br/>(ZGC barriers)"]
-        J_MEM["Heap: 512M-100s GB<br/>needs headroom"]
-        J_ALGO --> J_PAUSE --> J_THRU --> J_MEM
-    end
-    subgraph GO["Go"]
-        G_ALGO["Non-generational<br/>concurrent tri-color<br/>non-moving, pacer"]
-        G_PAUSE["STW <1ms<br/>(mark term)"]
-        G_THRU["Throughput: high<br/>assists under pressure"]
-        G_MEM["Heap: small-medium<br/>GOMEMLIMIT coop"]
-        G_ALGO --> G_PAUSE --> G_THRU --> G_MEM
-    end
-    subgraph V8["V8 / Node"]
-        V_ALGO["Generational<br/>Scavenge young<br/>concurrent mark old"]
-        V_PAUSE["Young: <1ms<br/>Old mark: slices<br/>~1-10ms STW total"]
-        V_THRU["Throughput: medium<br/>main-thread GC"]
-        V_MEM["Heap: ~2GB default<br/>--max-old-space-size"]
-        V_ALGO --> V_PAUSE --> V_THRU --> V_MEM
-    end
-    subgraph PY["CPython"]
-        P_ALGO["Refcount +<br/>generational cyclic<br/>STW, GIL-held"]
-        P_PAUSE["Refcount: 0ms<br/>Cyclic: 1-50ms<br/>(proportional to tracked objs)"]
-        P_THRU["Throughput: medium<br/>refcount churn"]
-        P_MEM["Heap: OS malloc<br/>+ pymalloc arenas"]
-        P_ALGO --> P_PAUSE --> P_THRU --> P_MEM
-    end
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0aeb8eb3afd8.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -2940,7 +2760,13 @@ node<span class="w"> </span>--allow-nativesyntax<span class="w"> </span>--trace-
 <li>CPython <code>gc</code> module — https://docs.python.org/3/library/gc.html and <em>PEP 442 — Safe object finalization</em>; <code>tracemalloc</code> — https://docs.python.org/3/library/tracemalloc.html.</li>
 <li>Meyer — <em>Memory Management Reference</em> — https://www.memorymanagement.org/ — concise algorithm glossary.</li>
 <li>Hertz — <em>Quantifying the performance of garbage collection vs. explicit memory management</em> (OOPSLA 2005) — throughput/pause/footprint trade-offs measured.</li>
-</ul></div><div id="ch05-profiling"><h1 id="chapter-5-profiling-and-performance-tuning">Chapter 5 — Profiling and Performance Tuning</h1>
+</ul>
+<h3 id="gc-roots-and-reachability">GC roots and reachability</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c8c001ed06c4.png" alt="diagram"></div></p>
+<h3 id="generational-gc-lifecycle">Generational GC lifecycle</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6c8c44d9fa02.png" alt="diagram"></div></p>
+<h3 id="stop-the-world-vs-concurrent-gc">Stop-the-world vs concurrent GC</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5952a0831196.png" alt="diagram"></div></p></div><div id="ch05-profiling"><h1 id="chapter-5-profiling-and-performance-tuning">Chapter 5 — Profiling and Performance Tuning</h1>
 <p><strong>What this chapter covers.</strong> "It feels slow" is not a diagnosis. Profiling is how you turn latency, CPU, and memory complaints into quantified evidence — which function burns cycles, which allocation path churns the heap, which lock serializes your throughput, and which I/O call blocks the event loop. This chapter is the profiling and tuning playbook you use in production for every runtime in this volume: how profilers actually work (sampling, instrumentation, eBPF), how to capture and read CPU flame graphs, off-CPU and allocation profiles, how to use <code>perf</code>, <code>async-profiler</code>, <code>pprof</code>, <code>py-spy</code>/<code>austin</code>, <code>clinic</code>/<code>0x</code>, and eBPF/BCC for cross-runtime observability, how to build continuous profiling into your fleet, and how to tune methodically without cargo-culting flags. Chapter 1 covered JVM internals, Chapter 2 Go's runtime, Chapter 4 GC theory — here you learn to measure all of them.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -2968,19 +2794,7 @@ node<span class="w"> </span>--allow-nativesyntax<span class="w"> </span>--trace-
 <li><strong>Why is memory growing?</strong> Live heap growth vs. allocation rate vs. native/off-heap leak?</li>
 <li><strong>What is the contention?</strong> Which lock, channel, or event-loop stall serializes concurrency?</li>
 </ol>
-<p><pre><code>flowchart TB
-    SYMPTOM["Symptom<br/>p99 ↑ / CPU ↑ / OOMs / throttle"] --> TRIAGE{"Triage:<br/>CPU-bound,<br/>memory-bound,<br/>or contention/I-O?"}
-    TRIAGE -->|CPU high| CPU["CPU profile<br/>flame graph, top functions"]
-    TRIAGE -->|Heap / GC pressure| MEM["Allocation + heap profile<br/>alloc flame graph, live heap"]
-    TRIAGE -->|Latency w/o CPU| OFF["Off-CPU / lock / I-O profile<br/>blocked stacks, event-loop lag"]
-    CPU --> HYP["Hypothesis:<br/>hot function / alloc site / lock"]
-    MEM --> HYP
-    OFF --> HYP
-    HYP --> FIX["One change:<br/>code, config, or flag"]
-    FIX --> REPROF["Re-profile under same load<br/>compare flame graphs"]
-    REPROF -->|improved| SHIP["Ship + monitor<br/>continuous profiling"]
-    REPROF -->|no change| HYP
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c45c57479901.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-how-profilers-work">2. How profilers work</h2>
 <h3 id="21-sampling-vs-instrumentation-vs-tracing">2.1 Sampling vs. instrumentation vs. tracing</h3>
@@ -3043,13 +2857,7 @@ main; GC; mark; concurrentMark                ██████         9%
 <li><strong>Allocation flame graph</strong> — stacks weighted by bytes allocated, not samples. Reveals GC pressure sources even when GC itself is not hot.</li>
 <li><strong>Differential flame graph</strong> — <code>before</code> vs. <code>after</code> (e.g., pre/post deploy). Red = more samples after, blue = fewer — directly shows what a change did. Essential for verifying tuning.</li>
 </ul>
-<p><pre><code>flowchart TB
-    RAW["Raw samples<br/>(perf.data / jfr / pprof)"] --> FOLDED["Folded stacks<br/>stack;func;leaf COUNT"]
-    FOLDED --> FLAME["Flame graph SVG<br/>(width = count)"]
-    FOLDED --> DIFF["Differential<br/>before vs after<br/>red = regressed"]
-    FLAME --> READ["Read:<br/>widest plateau = hotspot<br/>tower = deep chain<br/>narrow = cold"]
-    DIFF --> VERIFY["Verify tuning:<br/>did the hotspot shrink?"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e213e7c3a4c2.png" alt="diagram"></div></p>
 <hr />
 <h2 id="3-toolchain-by-runtime">3. Toolchain by runtime</h2>
 <h3 id="31-linux-perf-the-substrate">3.1 Linux <code>perf</code> — the substrate</h3>
@@ -3319,23 +3127,7 @@ bpftrace<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;
 <li><strong>Wide <code>futex</code> / <code>pthread_mutex</code></strong> — lock contention. Correlate with lock profiler (async-profiler <code>lock</code>, Go <code>mutex</code> profile, <code>perf lock</code>).</li>
 <li><strong>Node event-loop lag</strong> — <code>monitorEventLoopDelay</code> p99 &gt; 50 ms or <code>clinic doctor</code> flagging <code>event loop delay</code>. Flame graph shows synchronous leaf blocking the loop. Fix by moving to <code>worker_threads</code>, <code>setImmediate</code> chunking, or increasing libuv pool.</li>
 </ul>
-<p><pre><code>flowchart TB
-    FLAME["CPU flame graph<br/>widest = hottest"] --> HOT{"Hot leaf is..."}
-    HOT -->|your code<br/>(parse, serialize, hash)| CODE["Optimize code<br/>cache, batch, better algo"]
-    HOT -->|GC / alloc| GC2["Reduce allocation<br/>reuse buffers, pool"]
-    HOT -->|kernel / syscall| KERN["Batch I-O<br/>buffered writes, io_uring"]
-    HOT -->|lock / park| LOCK["Reduce contention<br/>shard, lock-free, bigger pool"]
-
-    OFF2["Off-CPU / wall flame graph"] --> BLOCK{"Blocked on..."}
-    BLOCK -->|futex / mutex| LOCK
-    BLOCK -->|I-O / net| IO["I-O bottleneck<br/>pool size, timeout, retry"]
-    BLOCK -->|sleep / timer| TIMER["Timer churn<br/>coalesce timers"]
-
-    DIFF2["Differential flame graph<br/>before vs after"] --> VERIFY2{"Hotspot..."}
-    VERIFY2 -->|shrunk| DONE["Tuning worked"]
-    VERIFY2 -->|moved| MOVED["Bottleneck shifted<br/>profile again"]
-    VERIFY2 -->|grew| REGRESS["Regressed<br/>revert + re-profile"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f29ebdf7a33d.png" alt="diagram"></div></p>
 <hr />
 <h2 id="5-performance-tuning-methodology">5. Performance tuning methodology</h2>
 <p>Tuning without methodology produces flag soup that is slower than the default. Use a loop:</p>
@@ -3432,17 +3224,7 @@ bpftrace<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;
 <h2 id="6-continuous-profiling-in-production">6. Continuous profiling in production</h2>
 <p>One-off profiling finds today's bottleneck. Continuous profiling (always-on, low-overhead sampling across the fleet) finds regressions the week they ship.</p>
 <p>Architecture:</p>
-<p><pre><code>flowchart TB
-    AGENT["Agent per node/pod<br/>perf_events + eBPF + runtime hooks<br/>(Parca agent / Pyroscope / Polar Signals)<br/>~1-2% CPU, 99Hz sampling"]
-    SYM["Symbolization<br/>debuginfo, perf map, JIT maps<br/>(node-side or central)"]
-    STORE["Central store<br/>columnar profiles<br/>(Parca, Pyroscope, Pyroscope Cloud)"]
-    UI["UI + API<br/>flame graph, diff, search<br/>by service / pod / version"]
-    ALERT["Alert / CI gate<br/>regression vs baseline<br/>p99 / CPU / alloc rate"]
-
-    AGENT --> SYM --> STORE --> UI --> ALERT
-    UI -.->|correlate| METRICS["Metrics (Prometheus)<br/>Traces (OTel)<br/>Logs (Loki)"]
-    METRICS -.-> UI
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f0acd1eac0af.png" alt="diagram"></div></p>
 <p>Implementation notes:</p>
 <ul>
 <li><strong>Agents.</strong> Parca agent (eBPF + <code>perf_events</code>, Go/Rust/C++/Python/Node/JVM via frame pointers and <code>perf map</code>), Grafana Pyroscope (language SDKs + eBPF), Polar Signals — all ~1–2% overhead at 99 Hz. Run as DaemonSet (host <code>perf_events</code>) or sidecar (per-pod <code>pprof</code> scraping).</li>
@@ -3504,7 +3286,13 @@ bpftrace<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;
 <li>Parca — https://www.parca.dev/ ; Grafana Pyroscope — https://grafana.com/docs/pyroscope/ ; Polar Signals — https://www.polarsignals.com/.</li>
 <li><em>Linux perf wiki</em> — https://perf.wiki.kernel.org/ and <em>eBPF docs</em> — https://ebpf.io/.</li>
 <li>Volume 2, Chapter 11 — <em>Performance Analysis: perf, ftrace, eBPF</em> and Volume 11 — <em>Reliability/SRE</em> for kernel and SLO context.</li>
-</ul></div><div id="ch06-python-node"><h1 id="chapter-6-python-and-nodejs-runtimes-for-backend">Chapter 6 — Python and Node.js Runtimes for Backend</h1>
+</ul>
+<h3 id="profiling-types-overview">Profiling types overview</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fa240cb63f34.png" alt="diagram"></div></p>
+<h3 id="continuous-profiling-pipeline">Continuous profiling pipeline</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c9475c8fba88.png" alt="diagram"></div></p>
+<h3 id="flame-graph-reading-guide">Flame graph reading guide</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4a93036f412b.png" alt="diagram"></div></p></div><div id="ch06-python-node"><h1 id="chapter-6-python-and-nodejs-runtimes-for-backend">Chapter 6 — Python and Node.js Runtimes for Backend</h1>
 <p><strong>What this chapter covers.</strong> Python and Node.js run a huge share of backend services — not because they are the fastest runtimes, but because they are the most productive for I/O-bound APIs, orchestration layers, data-adjacent services, and frontends-for-backends where time-to-ship and ecosystem outweigh raw throughput. Yet both runtimes have sharp edges that surprise teams coming from JVM/Go: Python's GIL serializes CPU work on one core even with threads, and Node's single-threaded event loop stalls on any synchronous leaf. This chapter gives you the runtime you actually operate — CPython's interpreter, GIL (and free-threaded 3.13t), asyncio and the GIL-free future, plus V8 + libuv's event loop, worker threads, and clustering — with real service code (FastAPI/ASGI, Express/Fastify), process models (gunicorn/uvicorn, PM2/cluster), and production tuning (GC thresholds, <code>--max-old-space-size</code>, event-loop lag, <code>UV_THREADPOOL_SIZE</code>). Chapter 4 covered GC across runtimes and Chapter 5 covered profiling; here you learn to build, scale, and debug Python and Node services correctly.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -3599,23 +3387,7 @@ bpftrace<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;
 
 <h3 id="22-the-gil-what-it-is-and-why-it-exists">2.2 The GIL — what it is and why it exists</h3>
 <p>The <strong>Global Interpreter Lock</strong> is a mutex that protects CPython's object model: reference counts (<code>ob_refcnt</code>), GC bookkeeping, and interpreter state are not thread-safe without it. Only the thread holding the GIL may execute Python bytecode or touch Python objects.</p>
-<p><pre><code>flowchart TB
-    subgraph PROC["CPython process (one GIL)"]
-        GIL@{ shape: stadium, label: "GIL (mutex)" }
-        T1["Thread 1<br/>ceval loop<br/>LOAD_FAST / BINARY_OP"]
-        T2["Thread 2<br/>ceval loop<br/>waiting for GIL"]
-        T3["Thread 3<br/>in C extension<br/>GIL released (I/O)"]
-        IO["I/O / C extension<br/>(numpy, socket, sleep)<br/>GIL released"]
-
-        T1 ---|holds| GIL
-        T2 -.->|waits| GIL
-        T3 -.->|re-acquires on return| GIL
-        T1 --> IO
-        IO --> T1
-    end
-    SCHED["OS scheduler<br/>preempts threads<br/>every ~5ms (sys.getswitchinterval)"]
-    SCHED -.->|signals GIL drop| T1
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_014c49c5a46c.png" alt="diagram"></div></p>
 <p>Consequences for backend services:</p>
 <ul>
 <li><strong>CPU-bound threads do not parallelize.</strong> Two threads doing <code>hashlib.sha256</code> in pure Python (or tight loops) run interleaved on one core, not in parallel. Wall time ≈ sum of CPU times, plus context-switch overhead.</li>
@@ -3675,21 +3447,7 @@ bpftrace<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;
 <hr />
 <h2 id="3-python-concurrency-threads-processes-asyncio">3. Python concurrency — threads, processes, asyncio</h2>
 <h3 id="31-the-three-models">3.1 The three models</h3>
-<p><pre><code>flowchart TB
-    REQ["Incoming request"] --> CHOICE{"Concurrency model?"}
-
-    CHOICE -->|I/O-bound, many conns| ASYNC["asyncio + ASGI<br/>1 process, 1 thread, N tasks<br/>cooperative at await<br/>uvloop for speed"]
-    CHOICE -->|I/O-bound, blocking libs| THREAD["ThreadPoolExecutor<br/>N threads, GIL released on I/O<br/>good for boto3, psycopg2 sync"]
-    CHOICE -->|CPU-bound| PROC2["multiprocessing / ProcessPoolExecutor<br/>N processes, no GIL sharing<br/>IPC via pickle/queue/shared_memory"]
-
-    ASYNC --> LOOP["Event loop<br/>selectors → callbacks → tasks"]
-    THREAD --> GIL2["GIL<br/>only one thread runs Python<br/>at a time; I/O releases it"]
-    PROC2 --> MEM["Separate heaps<br/>share via SharedMemory<br/>or Ray/Dask for data"]
-
-    LOOP --> SCALE1["Scale: more tasks<br/>+ uvloop + async drivers"]
-    GIL2 --> SCALE2["Scale: more processes<br/>(gunicorn workers)"]
-    MEM --> SCALE3["Scale: more processes<br/>+ shared nothing or shm"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_772fb43dd604.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -3968,29 +3726,7 @@ gunicorn<span class="w"> </span>wsgi:app<span class="w"> </span>--workers<span c
 
 <p>Node is <strong>single-threaded for JavaScript</strong> — one V8 isolate, one call stack, one event loop per process. I/O is offloaded to the kernel (non-blocking <code>epoll</code>/<code>kqueue</code>) or to <code>libuv</code>'s thread pool (<code>fs</code>, <code>crypto</code>, <code>dns.lookup</code>, <code>zlib</code>). JavaScript never runs in parallel within one process; it interleaves at <code>await</code> / callback boundaries.</p>
 <h3 id="52-the-event-loop-phases-in-order">5.2 The event loop — phases in order</h3>
-<p><pre><code>flowchart TB
-    subgraph LOOP["libuv event loop — one iteration"]
-        TIMERS["Timers<br/>setTimeout / setInterval<br/>expired timers"]
-        PENDING["Pending callbacks<br/>TCP errors, some I/O deferred"]
-        IDLE["Idle / Prepare<br/>internal (rarely user-visible)"]
-        POLL["Poll<br/>epoll/kqueue: wait for I/O<br/>run I/O callbacks (read, accept)<br/>block here if no timers (bounded by next timer)"]
-        CHECK["Check<br/>setImmediate callbacks"]
-        CLOSE["Close callbacks<br/>socket.on close, handle close"]
-        TIMERS --> PENDING --> IDLE --> POLL --> CHECK --> CLOSE --> TIMERS
-    end
-
-    subgraph MICRO["Microtasks — run after each phase, before next phase"]
-        NEXT["process.nextTick<br/>(highest priority, starves loop if abused)"]
-        PROMISE["Promise.then / await<br/>(microtask queue)"]
-        NEXT --> PROMISE
-    end
-
-    MICRO -.->|drains after| LOOP
-    LOOP -.->|schedules| MICRO
-
-    BLOCK["Blocking leaf<br/>JSON.parse 10MB / pbkdf2Sync<br/>fs.readFileSync in handler"] -.->|stalls| POLL
-    BLOCK -.->|stalls| TIMERS
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4898c139997e.png" alt="diagram"></div></p>
 <p>Key rules for backend services:</p>
 <ul>
 <li><strong>Timers vs. immediates.</strong> <code>setTimeout(fn, 0)</code> runs in Timers phase (next iteration, after poll); <code>setImmediate(fn)</code> runs in Check phase (this or next iteration, after poll). Under I/O, <code>setImmediate</code> fires before <code>setTimeout(0)</code> — don't rely on ordering between them.</li>
@@ -4066,19 +3802,7 @@ gunicorn<span class="w"> </span>wsgi:app<span class="w"> </span>--workers<span c
 </code></pre></div>
 
 <h3 id="62-worker-threads-child-processes-and-cluster">6.2 Worker threads, child processes, and cluster</h3>
-<p><pre><code>flowchart TB
-    MAIN["Main thread<br/>event loop<br/>V8 isolate<br/>handles requests"]
-
-    MAIN --> WT["worker_threads<br/>separate V8 isolates<br/>share ArrayBuffer via SharedArrayBuffer<br/>for CPU work (crypto, parse, image)"]
-    MAIN --> CP["child_process<br/>separate process<br/>IPC via stdio/message<br/>for isolation / native binaries"]
-    MAIN --> CLUST["cluster / PM2<br/>N processes, 1 port<br/>SO_REUSEPORT or round-robin<br/>for multi-core utilization"]
-
-    WT -->|postMessage| MAIN
-    CP -->|send| MAIN
-    CLUST --> LB["Kernel / Node<br/>connection balancing<br/>across workers"]
-
-    NOTE["Rule: keep main thread for I-O<br/>offload CPU to workers<br/>scale cores via cluster"]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ec4028f42b38.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// worker_threads — CPU offload with message passing</span>
 <span class="c1">// main.js</span>
 <span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Worker</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:worker_threads&#39;</span><span class="p">;</span>
@@ -4248,18 +3972,7 @@ fs.writeFileSync<span class="o">(</span><span class="s1">&#39;/tmp/heap.heapsnap
 
 <hr />
 <h2 id="8-python-vs-node-choosing-and-bounding">8. Python vs. Node — choosing and bounding</h2>
-<p><pre><code>flowchart TB
-    REQ2["New backend service"] --> Q1{"Workload?"}
-    Q1 -->|CPU-bound / data-heavy| PYCPU["Python: offload to<br/>multiprocessing / Ray / Go sidecar<br/>Node: worker_threads / native addon"]
-    Q1 -->|I-O fan-out, many conns| ASYNC2["Both work:<br/>Python ASGI + asyncio<br/>Node event loop<br/>Pick by team + ecosystem"]
-    Q1 -->|Real-time (WS, SSE)| NODE2["Node: first-class WS/SSE<br/>Python: ASGI + websockets<br/>Both viable; Node slightly ahead"]
-    Q1 -->|ML / data pipeline| PY2["Python: numpy/torch/pandas<br/>Node: call Python sidecar<br/>Don't do ML in Node"]
-
-    PYCPU --> BOUND["Bound the weakness:<br/>cache, queue, circuit breaker<br/>separate CPU pool"]
-    ASYNC2 --> BOUND
-    NODE2 --> BOUND
-    PY2 --> BOUND
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8945ea953fc6.png" alt="diagram"></div></p>
 <p>Practical rules:</p>
 <ul>
 <li><strong>For CPU work, neither runtime is the compute — both are the orchestrator.</strong> Hashing, image processing, ML inference, and heavy JSON transforms belong in <code>multiprocessing</code>/<code>ProcessPoolExecutor</code> (Python), <code>worker_threads</code> (Node), or a Go/Rust microservice behind a queue. Don't fight the GIL or the event loop — route around them.</li>
@@ -4298,7 +4011,11 @@ fs.writeFileSync<span class="o">(</span><span class="s1">&#39;/tmp/heap.heapsnap
 <li><em>clinic.js</em> — https://clinicjs.org/ ; <em>0x</em> — https://github.com/davidmarkclements/0x ; <em>py-spy</em> — https://github.com/benfred/py-spy ; <em>austin</em> — https://github.com/P403n1x87/austin.</li>
 <li>McKinney — <em>High Performance Python</em> (2nd ed., O'Reilly) — GIL, asyncio, and profiling.</li>
 <li>Roberts — <em>High Performance Browser Networking</em> (O'Reilly) — event loop and I/O model context.</li>
-</ul></div><div id="ch07-wasm"><h1 id="chapter-7-webassembly-and-emerging-runtimes">Chapter 7 — WebAssembly and Emerging Runtimes</h1>
+</ul>
+<h3 id="python-gil-execution-model">Python GIL execution model</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_250f47a08f3d.png" alt="diagram"></div></p>
+<h3 id="nodejs-event-loop-phases">Node.js event loop phases</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d252ef71f7b3.png" alt="diagram"></div></p></div><div id="ch07-wasm"><h1 id="chapter-7-webassembly-and-emerging-runtimes">Chapter 7 — WebAssembly and Emerging Runtimes</h1>
 <p><strong>What this chapter covers.</strong> WebAssembly (Wasm) began as a browser optimization and has become a credible backend runtime: a portable, sandboxed, near-native-speed execution format with sub-millisecond cold starts, capability-based security, and language-agnostic composition. Around it has grown a second wave of emerging runtimes — Wasmtime, WasmEdge, and WAMR on the Wasm side; Deno and Bun rethinking JavaScript server runtimes; GraalVM Native Image collapsing the JVM to a native binary; and edge/serverless hosts like Fastly Compute and Fermyon Spin building entire platforms on Wasm. This chapter gives you the mental model, the system architecture, and hands-on code to evaluate and operate Wasm and these emerging runtimes in backend systems — where they already win, where they still lose, and how to embed them safely.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -4403,26 +4120,7 @@ wasmtime<span class="w"> </span>run<span class="w"> </span>--invoke<span class="
 
 <h3 id="22-linear-memory-and-sandboxing">2.2 Linear memory and sandboxing</h3>
 <p>The most important architectural property for backend use is <strong>linear-memory isolation</strong>:</p>
-<p><pre><code>flowchart TB
-    subgraph HostProcess["Host Process (Rust / Go / JS)"]
-        HR["Host memory — heap, stacks, handles"]
-        RT["Wasm Runtime (Wasmtime / WasmEdge)<br/>JIT + validator + WASI impl"]
-        subgraph Sandbox["Wasm Sandbox — one per tenant / request"]
-            MEM["Linear Memory<br/>contiguous bytes, 0..N<br/>bounds-checked on every load/store"]
-            MOD["Module instance<br/>functions + tables + globals"]
-            CAP["Capability handles<br/>pre-opened dirs, sockets<br/>clock, random"]
-        end
-        HR --- RT
-        RT -->|"instantiate + fuel limit"| Sandbox
-        Sandbox -->|"import only CAP"| RT
-        RT -->|"fd_write / http_fetch<br/>via WASI"| HostOS["OS — files, net, clock"]
-    end
-    Attacker["Untrusted Wasm module"] -->|"load/store offset<br/>trap if OOB"| MEM
-    Attacker -.->|"cannot forge handle<br/>no ambient open()"| HostOS
-
-    style Sandbox fill:#e8f5e9,stroke:#2e7d32
-    style RT fill:#e3f2fd,stroke:#1565c0
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_240e87e09826.png" alt="diagram"></div></p>
 <p>Key consequences:</p>
 <ul>
 <li>A buggy or malicious module can corrupt only its own linear memory, not host memory. Every <code>i32.load offset=...</code> is bounds-checked (often folded into a single guard page access at runtime for speed).</li>
@@ -4883,29 +4581,7 @@ spin<span class="w"> </span>up<span class="w">  </span><span class="c1"># http:/
 <hr />
 <h2 id="7-security-properties-and-limits">7. Security properties and limits</h2>
 <p>Wasm's security story is strong but easy to misread.</p>
-<p><pre><code>flowchart LR
-    subgraph Capabilities["Capability Boundary — host decides"]
-        FD["Pre-opened dirs<br/>(read-only /tmp/scratch)"]
-        HTTP["Outbound HTTP<br/>allow-listed hosts"]
-        CLOCK["Clock + Random<br/>monotonic only"]
-        KV["Key-Value handles<br/>per-tenant namespace"]
-    end
-    subgraph Sandbox["Wasm Module"]
-        CODE["Untrusted code<br/>linear memory only"]
-    end
-    subgraph Enforcement["Runtime Enforcement"]
-        FUEL["Fuel metering<br/>trap on budget exceeded"]
-        EPOCH["Epoch deadline<br/>break infinite loops"]
-        LIMIT["ResourceLimiter<br/>max memory 16 MiB"]
-        CACHE["Compilation cache<br/>validated before exec"]
-    end
-    Capabilities -->|"imported handles only"| Sandbox
-    Sandbox --> Enforcement
-    Enforcement --> HostOS["Host OS — no ambient authority"]
-
-    style Sandbox fill:#fff3e0,stroke:#ef6c00
-    style Enforcement fill:#fce4ec,stroke:#c62828
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b718b3f21a04.png" alt="diagram"></div></p>
 <p>What Wasm <strong>does</strong> guarantee:</p>
 <ul>
 <li><strong>Memory isolation</strong> via validated bounds checks; no escape from linear memory to host heap.</li>
@@ -4999,29 +4675,7 @@ ls<span class="w"> </span>-lh<span class="w"> </span>target/app<span class="w"> 
 </code></pre></div>
 
 <p>Fit for backend: scale-to-zero APIs, CLI tools, and Kubernetes Jobs where startup under 100 ms matters and the team already owns JVM code. Not a fit for apps heavy on dynamic class loading (many legacy Spring features, heavy use of <code>Class.forName</code>), or where G1/ZGC's peak throughput beats Native Image's AOT-compiled throughput.</p>
-<p><pre><code>flowchart TB
-    subgraph JavaBuilds["JVM Build Targets — same source"]
-        SRC["Java / Kotlin source"]
-        SRC --> JAR["JAR on HotSpot<br/>JIT, G1/ZGC<br/>peak throughput, slow start"]
-        SRC --> NI["GraalVM Native Image<br/>AOT compiled<br/>fast start, smaller RSS<br/>closed world"]
-    end
-    subgraph JSBuilds["JavaScript / TypeScript Builds"]
-        TSSRC["TypeScript source"]
-        TSSRC --> NODE["Node.js<br/>V8, npm, mature"]
-        TSSRC --> DENO["Deno<br/>permissions, TS native<br/>single binary"]
-        TSSRC --> BUN["Bun<br/>JSC, fast install/serve"]
-        TSSRC --> WASMJS["Wasm from JS host<br/>or Workers via Wasm binding"]
-    end
-    subgraph WasmBuilds["Wasm Targets"]
-        RUSTSRC["Rust / Go / C source"] --> WASM["Wasm component<br/>sandboxed, portable<br/>fuel-metered"]
-        WASM --> HOSTS["Hosts: Wasmtime, WasmEdge,<br/>Fastly, Spin, Envoy"]
-    end
-    JAR & NI & NODE & DENO & BUN & HOSTS --> SELECT["Chapter 9 selection matrix"]
-
-    style WASM fill:#e8f5e9,stroke:#2e7d32
-    style NI fill:#e3f2fd,stroke:#1565c0
-    style DENO fill:#fff3e0,stroke:#ef6c00
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4b4ca1caae91.png" alt="diagram"></div></p>
 <hr />
 <h2 id="9-observability-and-debugging">9. Observability and debugging</h2>
 <p>Wasm modules are black boxes unless the host instruments them:</p>
@@ -5075,7 +4729,15 @@ perf<span class="w"> </span>record<span class="w"> </span>-F<span class="w"> </s
 <li>Deno manual — https://docs.deno.com/runtime/manual, Bun docs — https://bun.sh/docs</li>
 <li>GraalVM Native Image — https://www.graalvm.org/latest/reference-manual/native-image/</li>
 <li>Luke Wagner, <em>WebAssembly Component Model</em> — design docs and WIT spec — https://github.com/WebAssembly/component-model</li>
-</ul></div><div id="ch08-ffi"><h1 id="chapter-8-ffi-native-extensions-and-polyglot-interop">Chapter 8 — FFI, Native Extensions, and Polyglot Interop</h1>
+</ul>
+<h3 id="wasm-compilation-and-execution">WASM compilation and execution</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_82dccf8be6fd.png" alt="diagram"></div></p>
+<h3 id="wasm-vs-container-isolation">WASM vs container isolation</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8037c5e328b5.png" alt="diagram"></div></p>
+<h3 id="wasm-use-cases-map">WASM use cases map</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d17d3b9fe340.png" alt="diagram"></div></p>
+<h3 id="wasm-component-model">WASM component model</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aa309d434d68.png" alt="diagram"></div></p></div><div id="ch08-ffi"><h1 id="chapter-8-ffi-native-extensions-and-polyglot-interop">Chapter 8 — FFI, Native Extensions, and Polyglot Interop</h1>
 <p><strong>What this chapter covers.</strong> Backend systems are polyglot by necessity: a high-throughput API in Go calls a Rust classifier, a Python service shells out to a C image pipeline, and the JVM loads a native codec shared library that — if it segfaults — crashes the entire pod. Foreign Function Interfaces (FFI), native extensions, and polyglot runtimes make that heterogeneity possible; they also puncture the isolation assumptions every runtime otherwise provides. This chapter explains FFI mechanisms concretely (C ABI, JNI/JNA/Panama, cgo/CGo-free approaches, Python C/API and <code>pyo3</code>, Node N-API, Wasm as a safer boundary), shows production-safe embedding patterns with real code, enumerates failure modes that leak across the boundary (memory, threads, signals, GC interaction), and gives you a checklist for deciding whether to cross the boundary in-process or over a process/service boundary instead.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -5092,29 +4754,7 @@ perf<span class="w"> </span>record<span class="w"> </span>-F<span class="w"> </s
 <hr />
 <h2 id="1-the-boundary-and-why-it-matters">1. The boundary and why it matters</h2>
 <p>Backend runtimes promise isolation: the JVM traps NPEs, Go recovers panics, Python raises exceptions, Node never segfaults (from JavaScript). FFI breaks that promise deliberately — by linking foreign code into the same address space so calls cost nanoseconds to microseconds instead of milliseconds over a socket, and so bulk data moves without serialization.</p>
-<p><pre><code>flowchart TB
-    subgraph ProductCode["Product Code — safe runtime"]
-        APP["Service handler\n(Java / Go / Python / JS)"]
-    end
-    subgraph Boundary["FFI Boundary — where safety ends"]
-        SHIM["Shim / binding layer<br/>JNI header • cgo wrapper<br/>pyo3 / N-API • Panama descriptor"]
-        ABI["C ABI — calling convention<br/>layout, ownership, lifetimes"]
-    end
-    subgraph NativeLib["Native Library — outside GC, outside safety"]
-        LIB["Rust / C / C++ library<br/>simd codec, crypto, ML, image pipeline"]
-        MEM["Manual memory<br/>malloc / free<br/>no GC"]
-        SIG["Signals & threads<br/>SIGSEGV kills the process<br/>pthread blocks the scheduler"]
-    end
-    APP -->|"call via shim<br/>pin GC roots"| SHIM -->|"extern C / dlopen"| ABI --> LIB
-    LIB --> MEM
-    LIB --> SIG
-
-    SIG -.->|"segfault, abort"| APP
-    MEM -.->|"leak, UAF, double-free"| APP
-
-    style Boundary fill:#fff3e0,stroke:#ef6c00
-    style NativeLib fill:#fce4ec,stroke:#c62828
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_be4f1f3531b5.png" alt="diagram"></div></p>
 <p>The central tension: <strong>FFI gives the callee ambient authority</strong> — access to the process's memory, file descriptors, and signal handlers — while <strong>Wasm (Chapter 7) gives it only granted capabilities</strong>. That difference explains why Wasm is the safer polyglot boundary and FFI the faster one. Most backend FFI incidents trace to forgetting which side owns what across that boundary.</p>
 <hr />
 <h2 id="2-the-c-abi-lingua-franca">2. The C ABI lingua franca</h2>
@@ -5348,15 +4988,7 @@ go<span class="w"> </span>vet<span class="w"> </span>./...<span class="w">  </sp
 </code></pre></div>
 
 <p>Why cgo is expensive for backend services:</p>
-<p><pre><code>flowchart LR
-    G["Goroutine calls C\nvia cgo"] --> PIN["Thread pinned\nM locked to OS thread\ncannot be reused"]
-    PIN --> SWITCH["Stack switch\nGo stack -> C stack\n~1-2 us"]
-    SWITCH --> BLOCK["If C blocks\nP loses its M\nmay spawn new M"]
-    BLOCK --> COST["Throughput + tail latency cost\nworst under fan-out"]
-
-    style PIN fill:#fce4ec,stroke:#c62828
-    style BLOCK fill:#fff3e0,stroke:#ef6c00
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_12ceb9ffe131.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Thread pinning.</strong> The goroutine's <code>M</code> (OS thread) is locked for the duration of the C call and cannot run other goroutines.</li>
 <li><strong>Blocking.</strong> A long-running C call holds that <code>M</code>; under high concurrency the runtime may create new OS threads (visible as <code>runtime: newosproc</code>), increasing RSS and context-switch cost.</li>
@@ -5638,20 +5270,7 @@ node<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; &#
 <hr />
 <h2 id="8-in-process-vs-out-of-process-when-not-to-use-ffi">8. In-process vs. out-of-process: when not to use FFI</h2>
 <p>The fastest call is not the cheapest system. A single native segfault that restarts a pod serving 1,000 RPS is more expensive than 200 microseconds of serialization to a sidecar.</p>
-<p><pre><code>flowchart TB
-    Q{"Should this be<br/>in-process FFI?"}
-    Q -->|"Yes — trusted, fast,<br/>small, well-tested lib"| FFI["In-process FFI<br/>direct call, zero copy<br/>add sandboxing via seccomp/userns if needed"]
-    Q -->|"No — untrusted, large,<br/>crash-prone, or blocking"| SIDE["Sidecar / subprocess<br/>Unix socket / localhost gRPC<br/>isolated crash & resource limits"]
-    Q -->|"No — language not co-located<br/>or team boundary"| SVC["Separate service<br/>HTTP/gRPC, independent deploy<br/>strongest isolation"]
-
-    FFI --> FFIOPS["Ops: pin versions,<br/>sig-verify .so, limit with cgroups,<br/>monitor segfault restarts"]
-    SIDE --> SIDEOPS["Ops: supervise child,<br/>restart on crash, cap memory/CPU,<br/>health-check the socket"]
-    SVC --> SVCOPS["Ops: service discovery,<br/>retry + circuit breaker<br/>(Volume 10, Chapter 1)"]
-
-    style FFI fill:#fce4ec,stroke:#c62828
-    style SIDE fill:#fff3e0,stroke:#ef6c00
-    style SVC fill:#e8f5e9,stroke:#2e7d32
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8afd5c1f4372.png" alt="diagram"></div></p>
 <p>Concrete out-of-process patterns:</p>
 <p><strong>Python subprocess pool behind a Go service</strong> (isolate the GIL and crash domain):</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// pool.go — Go front-end, Python workers on Unix sockets</span>
@@ -5775,7 +5394,15 @@ cosign<span class="w"> </span>verify-blob<span class="w"> </span>target/release/
 <li><code>cxx</code> — safe C++/Rust interop — https://cxx.rs/</li>
 <li><code>cbindgen</code> / <code>bindgen</code> — https://github.com/mozilla/cbindgen, https://rust-lang.github.io/rust-bindgen/</li>
 <li>PEP 703 — Making the GIL Optional in CPython — https://peps.python.org/pep-0703/</li>
-</ul></div><div id="ch09-runtime-selection"><h1 id="chapter-9-runtime-selection-and-performance-trade-offs">Chapter 9 — Runtime Selection and Performance Trade-offs</h1>
+</ul>
+<h3 id="ffi-boundary-crossing">FFI boundary crossing</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_47520b9efe50.png" alt="diagram"></div></p>
+<h3 id="ffi-safety-considerations">FFI safety considerations</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4bfc9d60a05e.png" alt="diagram"></div></p>
+<h3 id="n-api-vs-native-addon-lifecycle">N-API vs native addon lifecycle</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_364faa0ffaec.png" alt="diagram"></div></p>
+<h3 id="wasm-as-safer-ffi-alternative">WASM as safer FFI alternative</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7867b8966cd1.png" alt="diagram"></div></p></div><div id="ch09-runtime-selection"><h1 id="chapter-9-runtime-selection-and-performance-trade-offs">Chapter 9 — Runtime Selection and Performance Trade-offs</h1>
 <p><strong>What this chapter covers.</strong> Chapters 1–8 surveyed the runtime landscape — JVM, Go, Rust, Wasm, Python, Node, GraalVM Native Image, Deno, Bun, and the FFI boundaries between them. This chapter turns that survey into a decision you can defend to a principal engineer, a capacity planner, and a finance team. Runtime selection is not a benchmark shoot-out; it is a multi-criteria trade-off over latency shape (p50 vs. p99 vs. jitter), throughput per core and per gigabyte, memory footprint and density, startup and warmup, failure isolation, ecosystem maturity, hiring and operational cost, and supply-chain surface. We build a quantitative framework, run honest benchmarks, document the pitfalls that make most published comparisons misleading, and close with a reproducible selection process and migration playbook for real backends.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -5799,23 +5426,7 @@ cosign<span class="w"> </span>verify-blob<span class="w"> </span>target/release/
 <li><strong>Platform operability</strong> — failure isolation, debuggability, supply-chain risk, and cost at fleet scale.</li>
 </ul>
 <p>Optimizing any one in isolation produces brittle decisions. This chapter optimizes the weighted sum.</p>
-<p><pre><code>flowchart TB
-    REQ["Service requirements<br/>SLOs, scale, data shape, team, risk"] --> D{"Decompose into<br/>measurable criteria"}
-    D --> LAT["Latency shape<br/>p50 / p99 / jitter"]
-    D --> THR["Throughput<br/>RPS per core / per GiB"]
-    D --> MEM["Memory & density<br/>RSS, heap, buffer reuse"]
-    D --> START["Startup & warmup<br/>cold start, JIT, scale-to-zero"]
-    D --> ISO["Failure isolation<br/>GC pause, segfault scope, Wasm vs FFI"]
-    D --> ECO["Ecosystem & hiring<br/>libs, tooling, talent"]
-    D --> COST["TCO per 1k RPS<br/>compute + ops + incident cost"]
-    LAT & THR & MEM & START & ISO & ECO & COST --> SCORE["Weighted selection matrix<br/>Section 6"]
-    SCORE --> VERIFY["Validate with<br/>representative benchmark + shadow"]
-    VERIFY --> DECIDE["Decision + migration plan<br/>Section 8"]
-
-    style REQ fill:#e3f2fd,stroke:#1565c0
-    style SCORE fill:#e8f5e9,stroke:#2e7d32
-    style DECIDE fill:#fff3e0,stroke:#ef6c00
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f35d94969e07.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-the-dimensions-and-how-to-measure-them">2. The dimensions — and how to measure them</h2>
 <h3 id="21-latency-shape">2.1 Latency shape</h3>
@@ -6052,22 +5663,7 @@ cosign<span class="w"> </span>verify-blob<span class="w"> </span>target/release/
 </tbody>
 </table>
 <p>† Python p99 is low only when GIL-released extensions do the heavy lifting; pure-Python loops jitter poorly.</p>
-<p><pre><code>quadrantChart
-    title Runtime positioning — throughput vs operability (illustrative)
-    x-axis Low operability --> High operability
-    y-axis Low throughput --> High throughput
-    quadrant-1 Invest in tooling
-    quadrant-2 The sweet quadrant
-    quadrant-3 Reconsider
-    quadrant-4 Power at a cost
-    JVM: [0.90, 0.82]
-    Go: [0.72, 0.78]
-    Rust: [0.62, 0.92]
-    Wasm: [0.55, 0.60]
-    Python: [0.70, 0.30]
-    Node: [0.68, 0.50]
-    NativeImage: [0.75, 0.80]
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9496c0a174b4.png" alt="diagram"></div></p>
 <p>Positions are illustrative and workload-dependent; the quadrant chart is a conversation tool, not a ranking. A data-plane proxy and a batch feature pipeline belong in different quadrants.</p>
 <hr />
 <h2 id="4-running-honest-benchmarks">4. Running honest benchmarks</h2>
@@ -6347,19 +5943,7 @@ python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;
 </code></pre></div>
 
 <p>Add <strong>density constraints</strong>: a 2.5 GiB-RSS JVM pod allows ~20 pods per 64 GiB node; a 40 MiB Rust pod allows &gt;200 before CPU, not memory, binds. At high replica counts, JVM density is memory-bound while Rust/Go are CPU-bound — the node shape that minimizes cost differs (memory-heavy vs. CPU-heavy instance families).</p>
-<p><pre><code>flowchart TB
-    MEASURE["Measured: RPS per pod at SLO\nSection 4"] --> PODS["Pods required =\nceiling(target / per-pod * 1.3)"]
-    PODS --> NODES["Nodes required =\nceiling(pods * RSS / allocatable)\nalso ceiling(pods * cpu / allocatable)"]
-    NODES --> COMPUTE["Compute $/mo\ninstance family * nodes"]
-    COMPUTE --> TCO["TCO per 1k RPS\ncompute + over-provision\n+ on-call hours + incidents"]
-    PODS --> OPS["Ops load\nmore pods = more churn\nbut smaller blast radius"]
-    OPS --> TCO
-    TCO --> SELECT["Runtime that minimizes TCO\nat the SLO, not at peak RPS"]
-
-    style MEASURE fill:#e3f2fd,stroke:#1565c0
-    style TCO fill:#e8f5e9,stroke:#2e7d32
-    style SELECT fill:#fff3e0,stroke:#ef6c00
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9ad791b3139a.png" alt="diagram"></div></p>
 <h3 id="52-when-tco-flips-the-obvious-ranking">5.2 When TCO flips the obvious ranking</h3>
 <p>TCO can reverse a pure-throughput ranking:</p>
 <ul>
@@ -6370,23 +5954,7 @@ python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;
 <hr />
 <h2 id="6-a-selection-framework">6. A selection framework</h2>
 <p>Score each candidate on a consistent 1–5 scale, with weights that reflect <em>this service</em>, not a generic preference. Below is a template; <strong>re-weight for every decision</strong> — a latency SLO of p99 &lt; 20 ms weights jitter at 2× a batch pipeline.</p>
-<p><pre><code>flowchart LR
-    subgraph Criteria["Scoring criteria — 1 to 5, weighted sum"]
-        C1["Latency & jitter<br/>weight 0.25"]
-        C2["Throughput per core<br/>weight 0.15"]
-        C3["Memory & density<br/>weight 0.15"]
-        C4["Startup & elasticity<br/>weight 0.10"]
-        C5["Failure isolation<br/>weight 0.10"]
-        C6["Ecosystem & velocity<br/>weight 0.15"]
-        C7["Operability & risk<br/>weight 0.10"]
-    end
-    Criteria --> SUM["Weighted score<br/>sum w_i * score_i"]
-    SUM --> SENS["Sensitivity: vary weights ±0.05<br/>does winner change?"]
-    SENS --> DECISION["Decision + rationale<br/>Section 7"]
-
-    style SUM fill:#e8f5e9,stroke:#2e7d32
-    style SENS fill:#fff3e0,stroke:#ef6c00
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d5ecf4058ce7.png" alt="diagram"></div></p>
 <p>Filled for a concrete workload — <strong>public JSON API, p99 &lt; 50 ms at 50k RPS, three teams, Kubernetes, moderate polyglot needs</strong>:</p>
 <table>
 <thead>
@@ -6538,21 +6106,7 @@ python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;
 <li><strong>Shadow / dark launch</strong> — new runtime receives duplicated traffic, responses compared but not served; promotion requires p99 and correctness thresholds (diff &lt; ε for 7 days).</li>
 <li><strong>Wasm as the coexistence layer</strong> — embed the new logic as Wasm inside the old service (e.g., Rust codec as <code>wasmtime</code> inside a JVM service, per Chapter 7) so only the module, not the service, is replaced.</li>
 </ul>
-<p><pre><code>flowchart LR
-    GW["Gateway / Ingress"] --> OLD["Old runtime\nJVM service"]
-    GW --> NEW["New runtime\nRust service"]
-    OLD --> DB["Shared DB / queue"]
-    NEW --> DB
-    GW -.->|"1-5% shadow<br/>compare responses"| SHADOW["Shadow verifier<br/>diff + metrics"]
-    NEW -.-> SHADOW
-    OLD -.-> SHADOW
-    SHADOW --> PROMOTE{"Promote when<br/>p99 within 10%<br/>and diff < 0.01%?"}
-    PROMOTE -->|"yes"| CUTOVER["Increase NEW weight<br/>via gateway split"]
-    PROMOTE -->|"no"| FIX["Fix + re-shadow"]
-
-    style SHADOW fill:#e3f2fd,stroke:#1565c0
-    style CUTOVER fill:#e8f5e9,stroke:#2e7d32
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cc842d3e4296.png" alt="diagram"></div></p>
 <h3 id="72-gateway-traffic-split-concrete">7.2 Gateway traffic split (concrete)</h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># Istio VirtualService — 95/5 canary from JVM to Rust, with header-based pinning for testing</span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.istio.io/v1beta1</span>
@@ -6621,4 +6175,8 @@ python3<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;
 <li>Go <code>pprof</code> and <code>trace</code> — https://go.dev/doc/diagnostics</li>
 <li><em>Continuous Profiling</em> — Google Cloud Profiler, Pyroscope — workload-representative sampling at fleet scale.</li>
 <li>Charity Majors — on deployment frequency and fleet warmup — https://charity.wtf/</li>
-</ul></div></body></html>
+</ul>
+<h3 id="runtime-selection-decision-matrix">Runtime selection decision matrix</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_34a5f5b4df4a.png" alt="diagram"></div></p>
+<h3 id="runtime-cost-model">Runtime cost model</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_397941a7c0e2.png" alt="diagram"></div></p></div></body></html>

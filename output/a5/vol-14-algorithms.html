@@ -158,6 +158,88 @@ hr {
     font-size: 9pt;
     color: #777;
 }
+
+/* ── Pygments syntax highlighting (friendly) ── */
+/* pygments pre handled by main CSS */
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f0f0f0; }
+.highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #007020 } /* Comment.Preproc */
+.highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #F00 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888 } /* Generic.Output */
+.highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #902000 } /* Keyword.Type */
+.highlight .m { color: #40A070 } /* Literal.Number */
+.highlight .s { color: #4070A0 } /* Literal.String */
+.highlight .na { color: #4070A0 } /* Name.Attribute */
+.highlight .nb { color: #007020 } /* Name.Builtin */
+.highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.highlight .no { color: #60ADD5 } /* Name.Constant */
+.highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #007020 } /* Name.Exception */
+.highlight .nf { color: #06287E } /* Name.Function */
+.highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #BB60D5 } /* Name.Variable */
+.highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.highlight .sr { color: #235388 } /* Literal.String.Regex */
+.highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #06287E } /* Name.Function.Magic */
+.highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+/* Highlight block overrides for print */
+.highlight pre {
+    background: #f6f8fa;
+    border: 0.5pt solid #d0d7de;
+}
+.highlight code {
+    background: none;
+}
 </style></head>
 <body>
     <div class="title-page">
@@ -202,24 +284,7 @@ hr {
 </ul>
 <p>Common misuse: saying "this algorithm is O(n log n)" when you mean Theta(n log n). O is an upper bound — every O(n) algorithm is also O(n²). When you know the tight bound, say Theta. In practice, most engineers use "O" to mean Theta colloquially; be precise in design docs and interviews.</p>
 <h3 id="complexity-classes-that-matter-in-backend">Complexity classes that matter in backend</h3>
-<p><pre><code>flowchart LR
-    subgraph Classes["Growth Rate (log-log scale)"]
-        O1["O(1) — hash lookup,<br/>array index"]
-        Olog["O(log n) — binary search,<br/>B-tree lookup"]
-        Olin["O(n) — linear scan,<br/>single pass"]
-        Onlogn["O(n log n) — comparison<br/>sort, merge join"]
-        On2["O(n²) — nested loops,<br/>naive join"]
-        Oexp["O(2ⁿ) — brute-force<br/>TSP, SAT"]
-    end
-    O1 --> Olog --> Olin --> Onlogn --> On2 --> Oexp
-
-    style O1 fill:#4ade80,stroke:#166534,color:#000
-    style Olog fill:#86efac,stroke:#166534,color:#000
-    style Olin fill:#fde68a,stroke:#92400e,color:#000
-    style Onlogn fill:#fdba74,stroke:#9a3412,color:#000
-    style On2 fill:#fca5a5,stroke:#991b1b,color:#000
-    style Oexp fill:#fecaca,stroke:#991b1b,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f93d3da91b0.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -299,27 +364,7 @@ hr {
 
 <h2 id="13-amortized-analysis-and-why-it-can-mislead">1.3 Amortized analysis and why it can mislead</h2>
 <p>Amortized analysis averages cost over a sequence of operations. Classic example: dynamic array (vector) append is amortized O(1) — most appends are a write and increment, but every doubling requires O(n) copy. Over n appends the total cost is O(n), so amortized cost per append is O(1).</p>
-<p><pre><code>sequenceDiagram
-    participant Client
-    participant Vec as Dynamic Array<br/>(cap=4, len=3)
-    participant Alloc as Allocator
-
-    Client->>Vec: append(x) — len 3→4
-    Note over Vec: fast path: write + len++<br/>O(1), no allocation
-    Vec-->>Client: ok (8 ns)
-
-    Client->>Vec: append(y) — len 4→4, cap full
-    Vec->>Alloc: alloc(cap*2 = 8)
-    Alloc-->>Vec: new buffer
-    Vec->>Vec: copy 4 elements
-    Vec->>Vec: write y, len=5, cap=8
-    Note over Vec: slow path: alloc + copy<br/>O(n), blocks caller
-    Vec-->>Client: ok (320 ns + alloc jitter)
-
-    Client->>Vec: append(z) — len 5→6
-    Note over Vec: fast path again O(1)
-    Vec-->>Client: ok (8 ns)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e9f41a1c2042.png" alt="diagram"></div></p>
 <p><strong>Why this matters for p99.</strong> If that dynamic array is on the request path (e.g., accumulating response bytes), the amortized O(1) hides a latency spike every doubling. At 50K RPS, 1-in-1024 requests hitting the slow path means ~49 requests per second experience the spike. If the copy is large enough, your p99.9 degrades visibly.</p>
 <p><strong>Mitigations for latency-sensitive paths:</strong></p>
 <ul>
@@ -351,27 +396,7 @@ hr {
 
 <h2 id="14-cost-models-beyond-the-ram-model">1.4 Cost models beyond the RAM model</h2>
 <h3 id="the-memory-hierarchy">The memory hierarchy</h3>
-<p><pre><code>flowchart TB
-    CPU["CPU core<br/>~0.3 ns / cycle @ 3 GHz"]
-    L1["L1 cache — 32-64 KiB<br/>~1 ns · ~4 cycles"]
-    L2["L2 cache — 256 KiB - 1 MiB<br/>~4 ns · ~12 cycles"]
-    L3["L3 cache — 8-64 MiB shared<br/>~15 ns · ~45 cycles"]
-    RAM["DRAM — GiB<br/>~80 ns · ~240 cycles"]
-    SSD["NVMe SSD — TiB<br/>~80 µs · ~240K cycles"]
-    NET["Cross-AZ network RTT<br/>~500 µs - 1 ms · ~1.5M cycles"]
-    DISK["Spinning disk / S3<br/>~5-20 ms · ~15M cycles"]
-
-    CPU --> L1 --> L2 --> L3 --> RAM --> SSD --> NET --> DISK
-
-    style CPU fill:#4ade80,stroke:#166534,color:#000
-    style L1 fill:#86efac,stroke:#166534,color:#000
-    style L2 fill:#bbf7d0,stroke:#166534,color:#000
-    style L3 fill:#fef08a,stroke:#854d0e,color:#000
-    style RAM fill:#fde68a,stroke:#92400e,color:#000
-    style SSD fill:#fdba74,stroke:#9a3412,color:#000
-    style NET fill:#fca5a5,stroke:#991b1b,color:#000
-    style DISK fill:#fecaca,stroke:#991b1b,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3126b05348b1.png" alt="diagram"></div></p>
 <p><strong>Practical implications:</strong></p>
 <table>
 <thead>
@@ -619,18 +644,7 @@ hr {
 <h2 id="16-complexity-in-the-distributed-systems-lens">1.6 Complexity in the distributed-systems lens</h2>
 <h3 id="latency-budgets-propagate">Latency budgets propagate</h3>
 <p>A user-facing request fans out to 20 downstream calls. If each call is O(log n) with a 2 ms p99 and you do them sequentially, the aggregate is 40 ms before your own logic. Make them concurrent and the tail becomes <code>max(p99_i)</code> — but now you pay coordination overhead and head-of-line blocking if any shard is slow. Complexity analysis of the <em>fan-out</em> (sequential vs parallel vs batched) is as important as the per-call complexity.</p>
-<p><pre><code>flowchart LR
-    Client --> GW["API Gateway"]
-    GW --> S1["Service A<br/>O(log n) · 2ms p99"]
-    GW --> S2["Service B<br/>O(1) · 0.5ms p99"]
-    GW --> S3["Service C<br/>O(n) scan · 15ms p99"]
-    GW --> S4["Service D<br/>O(log n) · 2ms p99"]
-
-    S1 & S2 & S3 & S4 --> Agg["Aggregation<br/>max when parallel<br/>sum when sequential"]
-
-    style S3 fill:#fca5a5,stroke:#991b1b,color:#000
-    style Agg fill:#fef08a,stroke:#854d0e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_54a32c18b910.png" alt="diagram"></div></p>
 <h3 id="choosing-data-structures-under-slo-constraints">Choosing data structures under SLO constraints</h3>
 <table>
 <thead>
@@ -692,7 +706,13 @@ hr {
 <li>Cliff Click — "Aging and Modern Hardware" (QCon 2009 talk) — memory hierarchy and its effect on data-structure choice.</li>
 <li>JMH samples (openjdk.java.net/projects/code-tools/jmh) and Go <code>testing</code> package docs — correct microbenchmark methodology for JVM and Go.</li>
 <li>Brendan Gregg — <em>Systems Performance: Enterprise and the Cloud</em>, 2nd ed. (2020). Chapters 6-7 on CPU, memory, and benchmarking.</li>
-</ul></div><div id="ch02-hashing"><h1 id="chapter-2-hashing-and-hash-tables-at-scale">Chapter 2 — Hashing and Hash Tables at Scale</h1>
+</ul>
+<h3 id="complexity-classes-overview">Complexity classes overview</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8ead43be8a32.png" alt="diagram"></div></p>
+<h3 id="time-vs-space-tradeoff">Time vs space tradeoff</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d753aa76fde6.png" alt="diagram"></div></p>
+<h3 id="amortized-analysis-intuition">Amortized analysis intuition</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c3afb6223022.png" alt="diagram"></div></p></div><div id="ch02-hashing"><h1 id="chapter-2-hashing-and-hash-tables-at-scale">Chapter 2 — Hashing and Hash Tables at Scale</h1>
 <p><strong>What this chapter covers.</strong> Hash tables are the most heavily used data structure in backend systems — powering caches, session stores, deduplication, sharding, and every in-memory index. Yet most engineers treat them as a black box: <code>dict</code> in Python, <code>HashMap</code> in Java, <code>map</code> in Go. This chapter opens the box. We cover what makes a hash function good (uniformity, avalanche, speed), how collisions are resolved in practice, how modern open-addressing tables (SwissTable, Robin Hood) achieve cache efficiency, how to build a concurrent hash table without locking the world, and how persistent hash structures (LSM + hash indexes) work when data exceeds RAM. Every section includes real code — from a pedagogical hash table you can read in 80 lines to production-relevant benchmarks and a discussion of the tables that back Redis, RocksDB, and Go's runtime map.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -702,6 +722,9 @@ hr {
 <li>Design concurrent access: striped locks, lock-free buckets, RCU, and sharded maps — and know when each is appropriate.</li>
 <li>Connect hash tables to storage engines: hash indexes vs B-tree indexes, LSM hash-assisted lookups, and hash-partitioned sharding.</li>
 </ul>
+<blockquote>
+<p><strong>Boundary note.</strong> This chapter covers single-node hash-table design (hash functions, collision resolution, resizing, concurrency). For hash-partitioned placement across a fleet see Ch. 5 — Consistent Hashing &amp; Rendezvous Hashing; for probabilistic hash structures (Bloom, Cuckoo, HyperLogLog) see Ch. 4 — Probabilistic Data Structures. Hash-based sharding of storage engines is introduced here only as context for Ch. 5's ring and HRW analysis.</p>
+</blockquote>
 <hr />
 <h2 id="21-what-a-hash-function-must-do">2.1 What a hash function must do</h2>
 <p>A hash function <code>h: Key -&gt; [0, 2^b)</code> maps an unbounded key space into a bounded integer range. For hash tables, the table then does <code>index = h(key) % capacity</code>. Three properties matter:</p>
@@ -796,29 +819,7 @@ hr {
 <p>If your service hashes user-controlled strings (HTTP headers, query params, JSON keys), ensure the table uses a randomized hash. If it does not, an attacker can degrade your p99 to O(n) at will.</p>
 <h2 id="22-collision-resolution-from-chaining-to-swisstable">2.2 Collision resolution — from chaining to SwissTable</h2>
 <p>A hash table has <code>m</code> buckets and <code>n</code> entries; load factor <code>alpha = n / m</code>. Collisions are inevitable once <code>n</code> approaches <code>m</code> by the birthday paradox (50% collision probability at <code>n ~ 1.2 * sqrt(m)</code>).</p>
-<p><pre><code>flowchart TB
-    subgraph Chaining["Separate Chaining"]
-        B1["bucket 0<br/>key_A -> key_F -> nil"]
-        B2["bucket 1<br/>nil"]
-        B3["bucket 2<br/>key_B -> nil"]
-        B4["bucket 3<br/>key_C -> key_D -> key_E -> nil"]
-        note1["Each bucket is a linked<br/>list or small vector.<br/>Cache-hostile: pointer chasing."]
-    end
-
-    subgraph OpenAddr["Open Addressing — Linear Probing"]
-        S0["slot 0: key_A"]
-        S1["slot 1: key_F<br/>(collided, probed +1)"]
-        S2["slot 2: key_B"]
-        S3["slot 3: key_C"]
-        S4["slot 4: empty"]
-        S5["slot 5: key_D<br/>(collided, probed +2)"]
-        note2["All entries in one<br/>contiguous array.<br/>Cache-friendly: linear scan."]
-    end
-
-    Chaining ~~~ OpenAddr
-    style B4 fill:#fca5a5,stroke:#991b1b,color:#000
-    style S5 fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_24f8ca9bf522.png" alt="diagram"></div></p>
 <h3 id="separate-chaining">Separate chaining</h3>
 <p>Each bucket holds a linked list (or small dynamic array) of entries that hashed there. Lookup walks the chain.</p>
 <ul>
@@ -870,7 +871,7 @@ hr {
 </tr>
 </tbody>
 </table>
-<p><strong>Linear probing performance</strong> degrades sharply above load factor ~0.7 due to clustering. The expected probe length is <code>1/(1 - alpha)</code> for unsuccessful search (Knuth). At alpha=0.5 it is 2, at alpha=0.9 it is 10, at alpha=0.99 it is 100. Keep load below 0.7 or use Robin Hood / SwissTable.</p>
+<p><strong>Linear probing performance</strong> degrades sharply above load factor ~0.7 due to clustering. Expected probes: unsuccessful <code>1/(1 - alpha)</code>, successful <code>½(1 + 1/(1 - alpha))</code> (Knuth). At alpha=0.5 that is 2 / 1.5, at alpha=0.9 it is 10 / 5.5, at alpha=0.99 it is 100 / 50.5. Keep load below 0.7 or use Robin Hood / SwissTable.</p>
 <h3 id="robin-hood-hashing">Robin Hood hashing</h3>
 <p>Robin Hood hashing augments linear probing with a fairness invariant: each entry tracks its <strong>probe distance</strong> (how far it is from its ideal bucket). On insertion, if the new key has probed farther than the occupant, they swap — the occupant is displaced and continues probing. This bounds the maximum probe distance and dramatically improves tail latency.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Robin Hood hash table — pedagogical implementation (single-threaded)</span>
@@ -982,40 +983,15 @@ hr {
     <span class="c1"># vs 8-15 with naive linear probing — that is the p99 win.</span>
 </code></pre></div>
 
-<h3 id="swisstable-abseil-rust-hashbrown-go-124">SwissTable (Abseil / Rust hashbrown / Go 1.24+)</h3>
+<h3 id="swisstable-abseil-rust-hashbrown-go-swiss-table-experiment">SwissTable (Abseil / Rust hashbrown / Go swiss-table experiment)</h3>
 <p>SwissTable is the current state of the art for open-addressing hash tables. Key ideas:</p>
 <ol>
 <li><strong>Group probing with SIMD.</strong> Buckets are grouped in 16s. A single SIMD instruction compares 16 control bytes (metadata) against the 7-bit hash fragment in parallel. Most lookups find the group via one SIMD compare; only on group miss do you probe the next group.</li>
 <li><strong>7-bit control bytes + 1-bit sentinel.</strong> Each slot has a control byte: <code>empty</code> (0b10000000), <code>deleted</code> (0b11111110), or <code>full</code> with 7 bits of hash. Lookup first matches control bytes via SIMD, then verifies the full key only on candidates. This filters 127/128 of non-matching slots without touching the keys array — cache win.</li>
 <li><strong>No per-entry pointers.</strong> Everything is array-indexed. Excellent prefetcher behavior.</li>
 </ol>
-<p>SwissTable powers <code>absl::flat_hash_map</code> (C++), <code>hashbrown::HashMap</code> (Rust, and since Rust 1.56 the standard <code>HashMap</code>), and Go's <code>swiss</code> map experiment (Go 1.24+). If you use any of these languages, you already benefit — but knowing <em>why</em> they are faster (2-3x over chaining for small keys, better p99) helps you size and tune.</p>
-<p><pre><code>flowchart LR
-    subgraph Control["Control bytes (1 per slot, SIMD-scanned)"]
-        C0["0x8A<br/>h=0x0A"]
-        C1["0x80<br/>empty"]
-        C2["0x8A<br/>h=0x0A"]
-        C3["0x83<br/>h=0x03"]
-        C4["0x80<br/>empty"]
-        C5["0xFF<br/>deleted"]
-        C6["0x0A<br/>h=0x0A"]
-        C7["0x80<br/>empty"]
-    end
-    subgraph Slots["Key-Value slots (only touched on match)"]
-        S0["k: foo<br/>v: 42"]
-        S2["k: bar<br/>v: 17"]
-        S3["k: baz<br/>v: 99"]
-        S6["k: qux<br/>v: 5"]
-    end
-    Lookup["Lookup h=0x0A<br/>SIMD match → slots 0,2,6<br/>only compare those keys"]
-
-    Control -.->|"SIMD compare<br/>16 at once"| Lookup
-    Lookup -.->|"verify full key<br/>only on candidates"| Slots
-
-    style C0 fill:#86efac,stroke:#166534,color:#000
-    style C2 fill:#86efac,stroke:#166534,color:#000
-    style C6 fill:#86efac,stroke:#166534,color:#000
-</code></pre></p>
+<p>SwissTable powers <code>absl::flat_hash_map</code> (C++), <code>hashbrown::HashMap</code> (Rust, and since Rust 1.56 the standard <code>HashMap</code>), and Go's <code>swiss</code> map experiment (expected Go 1.24; see golang/go#54766). If you use any of these languages, you already benefit — but knowing <em>why</em> they are faster (2-3x over chaining for small keys, better p99) helps you size and tune.</p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b1e9ae4b2a74.png" alt="diagram"></div></p>
 <h2 id="23-load-factor-resizing-and-incremental-rehash">2.3 Load factor, resizing, and incremental rehash</h2>
 <h3 id="when-to-resize">When to resize</h3>
 <p>Resizing means allocating a larger array (typically 2x) and rehashing every entry — O(n) work. Doing it all at once pauses the table. Strategies:</p>
@@ -1198,26 +1174,7 @@ hr {
 </blockquote>
 <h3 id="option-3-lock-free-rcu">Option 3 — Lock-free / RCU</h3>
 <p>For read-heavy workloads (routing tables, config maps that change rarely), RCU (Read-Copy-Update) is ideal: readers are wait-free (no locks, no atomics beyond a pointer read), writers copy the table, publish with an atomic swap, and reclaim the old table after a grace period.</p>
-<p><pre><code>sequenceDiagram
-    participant R1 as Reader 1
-    participant R2 as Reader 2
-    participant W as Writer
-    participant Mem as Memory
-
-    R1->>Mem: atomic load pointer P1<br/>(no lock, no CAS)
-    R2->>Mem: atomic load pointer P1
-
-    W->>W: copy table P1 -> P2
-    W->>W: mutate P2 (add key)
-    W->>Mem: atomic store P2<br/>(publish — new readers see P2)
-
-    Note over R1: still reading via P1<br/>(old snapshot, still valid)
-    R1-->>W: finishes read (quiescent)
-
-    W->>Mem: reclaim P1 after<br/>grace period (all pre-swap<br/>readers done)
-
-    R2->>Mem: atomic load pointer P2<br/>(sees new table)
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dad034f80279.png" alt="diagram"></div></p>
 <p>In Go, <code>sync.Map</code> uses a related technique (read map + dirty map with atomic promotion). In Java, <code>ConcurrentHashMap</code> uses per-bin CAS + <code>synchronized</code> on first node — effectively fine-grained locking with lock-free fast path for uncontended bins.</p>
 <h3 id="when-to-use-what">When to use what</h3>
 <table>
@@ -1296,7 +1253,7 @@ hr {
 <p><strong>Choosing the table:</strong></p>
 <ul>
 <li>Language default is usually right for general use. Override only with reason: <code>FxHash</code> for trusted integer keys where speed matters, <code>SipHash</code> when keys are adversarial.</li>
-<li>For large, long-lived, read-heavy maps (&gt;100K entries, &gt;90% reads), consider SwissTable-backed types (<code>absl::flat_hash_map</code>, <code>hashbrown</code>, Go <code>swiss</code>) — measurable win.</li>
+<li>For large, long-lived, read-heavy maps (&gt;100K entries, &gt;90% reads), consider SwissTable-backed types (<code>absl::flat_hash_map</code>, <code>hashbrown</code>, Go <code>swiss</code> experiment) — measurable win.</li>
 <li>For highly concurrent maps, shard or use <code>ConcurrentHashMap</code> / <code>sync.Map</code> / RCU. Do not share a single-locked map across 32 cores.</li>
 </ul>
 <p><strong>Sizing:</strong></p>
@@ -1338,10 +1295,18 @@ hr {
 <li>Knuth — <em>The Art of Computer Programming</em>, Vol. 3, Section 6.4 (hashing) — the classical analysis of chaining and open addressing.</li>
 <li>Abseil SwissTable design doc (abseil.io/about/design/swisstables) — control bytes, SIMD probing, and why SwissTable beats chaining.</li>
 <li>Rust <code>hashbrown</code> crate docs (docs.rs/hashbrown) — SwissTable implementation details and benchmarks.</li>
-<li>Go <code>runtime/map</code> and <code>swiss</code> experiment (github.com/golang/go/issues/54766) — Go's map evolution toward SwissTable.</li>
+<li>Go <code>runtime/map</code> and <code>swiss</code> experiment — Go's map evolution toward SwissTable (expected Go 1.24; see golang/go#54766) — hedged as forward-looking until release.</li>
 <li>Crosby &amp; Wallach — "Denial of Service via Algorithmic Complexity Attacks" (USENIX Security 2003) — the original hash-flooding paper.</li>
 <li>RocksDB / LevelDB bloom filter docs — hash-assisted LSM point lookups at scale.</li>
-</ul></div><div id="ch03-trees"><h1 id="chapter-3-balanced-trees-and-ordered-structures">Chapter 3 — Balanced Trees and Ordered Structures</h1>
+</ul>
+<h3 id="hash-table-collision-resolution">Hash table collision resolution</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_02cbbd32ac22.png" alt="diagram"></div></p>
+<h3 id="consistent-hashing-ring">Consistent hashing ring</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e021ee63e559.png" alt="diagram"></div></p>
+<h3 id="cryptographic-vs-non-cryptographic-hash-use">Cryptographic vs non-cryptographic hash use</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_596f8434e79d.png" alt="diagram"></div></p>
+<h3 id="load-factor-and-resizing">Load factor and resizing</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a59a5efa9924.png" alt="diagram"></div></p></div><div id="ch03-trees"><h1 id="chapter-3-balanced-trees-and-ordered-structures">Chapter 3 — Balanced Trees and Ordered Structures</h1>
 <p><strong>What this chapter covers.</strong> Hash tables answer "does this key exist?" in O(1), but many backend problems are ordered: range scans over time-series, prefix searches over keys, sorted iteration for merge joins, and maintaining a sorted index that supports concurrent writes. For these, you need ordered structures — balanced trees and their on-disk cousin, the B-tree. This chapter covers binary search trees from first principles, why unbalanced trees degrade to linked lists, how AVL and red-black trees restore balance through rotations, why B-trees dominate storage engines, and how concurrent ordered indexes (Bw-tree, lock-free skip lists) power modern databases. We implement an AVL tree and a B-tree from scratch, visualize rotations, and connect every structure to the systems that depend on it — from PostgreSQL indexes to RocksDB memtables to the Linux kernel's <code>rbtree</code>.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -1366,29 +1331,7 @@ hr {
 <li><strong>Insert</strong> — search for where the key would be, attach a new leaf. O(h).</li>
 <li><strong>Delete</strong> — three cases: leaf (remove), one child (bypass), two children (replace with successor/predecessor). O(h).</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph Balanced["Balanced BST — h = O(log n)"]
-        B8["8"]
-        B8 --> B4["4"]
-        B8 --> B12["12"]
-        B4 --> B2["2"]
-        B4 --> B6["6"]
-        B12 --> B10["10"]
-        B12 --> B14["14"]
-        B2 --> B1["1"]
-        B2 --> B3["3"]
-    end
-
-    subgraph Degenerate["Degenerate BST — h = O(n) — linked list"]
-        D1["1"] --> D2["2"] --> D3["3"] --> D4["4"] --> D5["5"] --> D6["6"] --> D8["8"]
-    end
-
-    Balanced ~~~ Degenerate
-
-    style B8 fill:#86efac,stroke:#166534,color:#000
-    style D1 fill:#fca5a5,stroke:#991b1b,color:#000
-    style D8 fill:#fca5a5,stroke:#991b1b,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cc5589184083.png" alt="diagram"></div></p>
 <p>Both trees hold the same keys. The balanced one has height 3 (Theta(log n)) — every operation visits at most 4 nodes. The degenerate one has height 6 (Theta(n)) — operations visit every node. The degenerate case arises naturally when keys arrive in sorted order (timestamps, auto-increment IDs, sequential UUIDs) — exactly the insertion order common in backend systems.</p>
 <blockquote>
 <p><strong>Fundamental fact.</strong> BST operations cost O(h), not O(log n). O(log n) holds only when h = O(log n), which requires rebalancing. Every "balanced BST" is a strategy for maintaining h = O(log n) under arbitrary insertions and deletions.</p>
@@ -1454,28 +1397,7 @@ hr {
 <h2 id="32-restoring-balance-avl-and-red-black-trees">3.2 Restoring balance — AVL and red-black trees</h2>
 <h3 id="rotations-the-primitive">Rotations — the primitive</h3>
 <p>Every balanced BST restores its invariant through <strong>rotations</strong> — local restructurings that change heights without violating the BST ordering.</p>
-<p><pre><code>flowchart TB
-    subgraph RightRotation["Right Rotation — pivot on y"]
-        direction TB
-        R_before["Before:<br/>y (unbalanced)<br/>/ \\<br/>x  C<br/>/ \\<br/>A  B<br/>height: A,B,C known"]
-        R_arrow["rotate_right(y)"]
-        R_after["After:<br/>x (new root)<br/>/ \\<br/>A  y<br/>  / \\<br/>  B  C"]
-        R_before --> R_arrow --> R_after
-    end
-
-    subgraph LeftRotation["Left Rotation — pivot on x"]
-        direction TB
-        L_before["Before:<br/>x (unbalanced)<br/>/ \\<br/>A  y<br/>  / \\<br/>  B  C"]
-        L_arrow["rotate_left(x)"]
-        L_after["After:<br/>y (new root)<br/>/ \\<br/>x  C<br/>/ \\<br/>A  B"]
-        L_before --> L_arrow --> L_after
-    end
-
-    R_after ~~~ L_before
-
-    style R_arrow fill:#fef08a,stroke:#854d0e,color:#000
-    style L_arrow fill:#fef08a,stroke:#854d0e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6aff8c29b59c.png" alt="diagram"></div></p>
 <p>A rotation preserves in-order traversal (hence BST ordering), runs in O(1), and changes heights by at most 1. Double rotations (left-right, right-left) handle the zig-zag case where a single rotation is insufficient.</p>
 <h3 id="avl-trees-height-balanced">AVL trees — height-balanced</h3>
 <p><strong>Invariant:</strong> For every node, the heights of its left and right subtrees differ by at most 1. Balance factor <code>bf = height(left) - height(right)</code> is in {-1, 0, +1}.</p>
@@ -1654,36 +1576,7 @@ hr {
 <li>Every root-to-leaf path has the same number of black nodes (black-height).</li>
 </ol>
 <p>These guarantee height &lt;= <code>2 * log2(n+1)</code> — slightly taller than AVL but with fewer rotations on average. Insert does at most 2 rotations; delete at most 3. This makes red-black trees preferred when writes are frequent: Linux kernel <code>rbtree</code>, Java <code>TreeMap</code>, C++ <code>std::map</code>, and historically many database index implementations.</p>
-<p><pre><code>flowchart TB
-    subgraph RBExample["Red-Black Tree — black-height = 2"]
-        RB8["8 : BLACK"]
-        RB4["4 : RED"]
-        RB12["12 : RED"]
-        RB2["2 : BLACK"]
-        RB6["6 : BLACK"]
-        RB10["10 : BLACK"]
-        RB14["14 : BLACK"]
-        RB1["1 : RED"]
-        RB3["3 : RED"]
-
-        RB8 --> RB4 & RB12
-        RB4 --> RB2 & RB6
-        RB12 --> RB10 & RB14
-        RB2 --> RB1 & RB3
-    end
-
-    Note["Every root-to-leaf path<br/>has exactly 2 black nodes<br/>(excluding root).<br/>Red nodes have black children."]
-
-    style RB8 fill:#1f2937,stroke:#000,color:#fff
-    style RB4 fill:#fca5a5,stroke:#991b1b,color:#000
-    style RB12 fill:#fca5a5,stroke:#991b1b,color:#000
-    style RB2 fill:#1f2937,stroke:#000,color:#fff
-    style RB6 fill:#1f2937,stroke:#000,color:#fff
-    style RB10 fill:#1f2937,stroke:#000,color:#fff
-    style RB14 fill:#1f2937,stroke:#000,color:#fff
-    style RB1 fill:#fca5a5,stroke:#991b1b,color:#000
-    style RB3 fill:#fca5a5,stroke:#991b1b,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5523afa9df36.png" alt="diagram"></div></p>
 <h3 id="avl-vs-red-black-when-to-use-which">AVL vs red-black — when to use which</h3>
 <table>
 <thead>
@@ -1730,36 +1623,7 @@ hr {
 <li>All leaves are at the same depth.</li>
 <li>Keys within a node are sorted; children partition the key space.</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph BTree["B-tree  order m=5  —  height 2, fanout 4-5"]
-        R["Root: [30 | 60]"]
-        C1["[10 | 20]"]
-        C2["[40 | 50]"]
-        C3["[70 | 80 | 90]"]
-        L1["[5,8]"]
-        L2["[12,15]"]
-        L3["[22,25]"]
-        L4["[32,38]"]
-        L5["[42,48]"]
-        L6["[52,58]"]
-        L7["[62,68]"]
-        L8["[72,78]"]
-        L9["[82,88]"]
-        L10["[92,95]"]
-
-        R --> C1 & C2 & C3
-        C1 --> L1 & L2 & L3
-        C2 --> L4 & L5 & L6
-        C3 --> L7 & L8 & L9 & L10
-    end
-
-    Note2["Each node = one disk page (4-16 KiB).<br/>Fanout 100-1000 → depth 3-4 for billions of keys.<br/>All leaves at same depth."]
-
-    style R fill:#86efac,stroke:#166534,color:#000
-    style C1 fill:#bbf7d0,stroke:#166534,color:#000
-    style C2 fill:#bbf7d0,stroke:#166534,color:#000
-    style C3 fill:#bbf7d0,stroke:#166534,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d6a5d4cd1eb8.png" alt="diagram"></div></p>
 <h3 id="why-b-trees-dominate-storage">Why B-trees dominate storage</h3>
 <p>The key number is <strong>fanout</strong> — keys per node. With 16 KiB pages and 16-byte keys, a B-tree node holds ~500-1000 keys. For n = 1 billion:</p>
 <ul>
@@ -1995,33 +1859,7 @@ hr {
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart LR
-    subgraph Writes["Write Path"]
-        Mem["Memtable<br/>(skip list / B-tree)<br/>in-memory, ordered"]
-        WAL["WAL<br/>durability"]
-        SST["SSTables<br/>sorted, immutable<br/>on disk"]
-        Mem -->|flush when full| SST
-        WAL -.->|replay on crash| Mem
-    end
-
-    subgraph Reads["Read Path — LSM"]
-        RMem["check Memtable<br/>O(log n)"]
-        BF["Bloom filter<br/>per SSTable<br/>skip if definitely<br/>not present"]
-        RSST["binary search<br/>within SSTable blocks<br/>O(log B)"]
-        RMem --> BF --> RSST
-    end
-
-    subgraph BTreePath["Read Path — B-tree"]
-        Root["Root page<br/>(cached)"]
-        Internal["Internal pages<br/>fanout 500-1000"]
-        Leaf["Leaf page<br/>contains values<br/>(B+tree)"]
-        Root --> Internal --> Leaf
-    end
-
-    style Mem fill:#86efac,stroke:#166534,color:#000
-    style SST fill:#fde68a,stroke:#92400e,color:#000
-    style BF fill:#fef08a,stroke:#854d0e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8b3d34c35337.png" alt="diagram"></div></p>
 <h2 id="34-ordered-structures-in-practice-indexes-and-concurrency">3.4 Ordered structures in practice — indexes and concurrency</h2>
 <h3 id="postgresql-index-types-choosing-correctly">PostgreSQL index types — choosing correctly</h3>
 <p>PostgreSQL exposes multiple index types; the default B-tree is not always optimal:</p>
@@ -2225,7 +2063,11 @@ hr {
 <li>Graefe — <em>Modern B-Tree Techniques</em> (Foundations and Trends in Databases, 2011) — comprehensive survey of B-tree variants, latch coupling, and write-optimized trees.</li>
 <li>RocksDB wiki (github.com/facebook/rocksdb/wiki) — LSM memtable (skip list), SSTable format, and bloom-filter-assisted reads.</li>
 <li>PostgreSQL docs — "Indexes" (postgresql.org/docs/current/indexes.html) — B-tree, hash, GiST, GIN, BRIN with operational guidance.</li>
-</ul></div><div id="ch04-probabilistic"><h1 id="chapter-4-probabilistic-structures-bloom-filters-hyperloglog-and-count-min-sketch">Chapter 4 — Probabilistic Structures: Bloom Filters, HyperLogLog, and Count-Min Sketch</h1>
+</ul>
+<h3 id="tree-traversal-orders">Tree traversal orders</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_603ea80a3238.png" alt="diagram"></div></p>
+<h3 id="avl-vs-red-black-balance-comparison">AVL vs Red-Black balance comparison</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b086f1a195e8.png" alt="diagram"></div></p></div><div id="ch04-probabilistic"><h1 id="chapter-4-probabilistic-structures-bloom-filters-hyperloglog-and-count-min-sketch">Chapter 4 — Probabilistic Structures: Bloom Filters, HyperLogLog, and Count-Min Sketch</h1>
 <p><strong>What this chapter covers.</strong> Exact data structures answer every query correctly but pay for it in memory and sometimes latency. When your dataset has billions of keys or your SLO demands microsecond answers, trading a small, <em>quantifiable</em> error for orders-of-magnitude memory savings is the right engineering call. This chapter covers the three probabilistic workhorses of backend infrastructure: Bloom filters (set membership with no false negatives), HyperLogLog (cardinality estimation in kilobytes), and Count-Min Sketch (frequency estimation over streams). We derive the error formulas, show how to size each structure for a target accuracy, implement each from scratch, and trace where they appear in real systems — from LSM-tree read paths and CDN cache admission to distinct-user counting and heavy-hitter detection.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -2299,32 +2141,7 @@ hr {
 <li><strong>Insert(x):</strong> compute <code>h_1(x) ... h_k(x)</code>, set those <em>k</em> bits to 1.</li>
 <li><strong>Query(x):</strong> compute the same <em>k</em> positions. If any bit is 0, <em>x</em> was definitely never inserted. If all <em>k</em> are 1, <em>x</em> is <em>probably</em> in the set — but the bits could have been set by other keys (a false positive).</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph Insert["Insert('apple') — k=3 hashes"]
-        Key1["key = 'apple'"] --> H1a["h₁ → 2"]
-        Key1 --> H2a["h₂ → 7"]
-        Key1 --> H3a["h₃ → 11"]
-        H1a --> B1["bit array (m=16)"]
-        H2a --> B1
-        H3a --> B1
-    end
-
-    subgraph Query["Query — same k positions"]
-        Q1["Query('apple') → 2,7,11 all 1 → MAYBE (true positive or FP)"]
-        Q2["Query('grape') → 1,7,14 → bit 1 is 0 → DEFINITELY NOT"]
-    end
-
-    subgraph Bits["Bit array state after inserting apple, banana"]
-        direction LR
-        B0["0:0"] --- B1a["1:0"] --- B2["2:1"] --- B3["3:0"] --- B4["4:1"] --- B5["5:0"] --- B6["6:0"] --- B7["7:1"] --- B8["8:0"] --- B9["9:1"] --- B10["10:0"] --- B11["11:1"] --- B12["12:0"] --- B13["13:0"] --- B14["14:0"] --- B15["15:0"]
-    end
-
-    style B2 fill:#86efac,stroke:#166534,color:#000
-    style B7 fill:#86efac,stroke:#166534,color:#000
-    style B11 fill:#86efac,stroke:#166534,color:#000
-    style B4 fill:#fde68a,stroke:#92400e,color:#000
-    style B9 fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cff71c12c4ae.png" alt="diagram"></div></p>
 <p>There are no false negatives: if <em>x</em> was inserted, all its <em>k</em> bits are 1, so a query always returns "maybe." False positives occur when an unseen key happens to hit only bits already set by other insertions.</p>
 <h3 id="422-sizing-the-math-that-matters">4.2.2 Sizing — the math that matters</h3>
 <p>After inserting <em>n</em> keys with <em>m</em> bits and <em>k</em> hashes, the probability a given bit is still 0 is:</p>
@@ -2552,24 +2369,7 @@ merge OK
 <p>Counting distinct elements (<code>COUNT(DISTINCT user_id)</code>) exactly requires Ω(n) memory. HyperLogLog (Flajolet et al., 2007) estimates cardinalities from thousands to billions with ~1% error in ~12 KB, and sketches from different shards merge by taking a register-wise maximum.</p>
 <h3 id="431-intuition-coin-flips-and-leading-zeros">4.3.1 Intuition — coin flips and leading zeros</h3>
 <p>Hash each element uniformly to 64 bits. For a random hash, the probability that it starts with <em>r</em> leading zeros is <code>2^(-r)</code>. If the maximum number of leading zeros seen across all elements is <em>R</em>, then roughly <code>2^R</code> distinct elements were observed. One "experiment" is noisy, so HLL runs <em>m = 2^p</em> experiments in parallel, sharded by the first <em>p</em> bits of the hash.</p>
-<p><pre><code>flowchart LR
-    subgraph Hash["Hash element"]
-        Key["key = 'user:4821'"] --> H["h = 0b 0110 1 000..."]
-    end
-    subgraph Split["Split hash (p=4, m=16)"]
-        H --> Idx["index = first p bits = 0110 (6)"]
-        H --> W["w = remaining bits = 1 000..."]
-        W --> Rho["ρ(w) = leading zeros + 1 = 4"]
-    end
-    subgraph Regs["Registers M[0..15]"]
-        R6["M[6] = max(M[6], 4)"]
-    end
-    Idx --> R6
-    Rho --> R6
-
-    style Idx fill:#bfdbfe,stroke:#1e40af,color:#000
-    style Rho fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_74444518fcac.png" alt="diagram"></div></p>
 <p>Each of the <em>m</em> registers stores the maximum ρ seen for keys that mapped to it. Registers need only ~6 bits each (ρ never exceeds 64 for 64-bit hashes), so <em>m = 16384</em> registers cost ~12 KB.</p>
 <h3 id="432-the-estimator">4.3.2 The estimator</h3>
 <p>The raw harmonic-mean estimator:</p>
@@ -2622,21 +2422,7 @@ merge OK
 <p>Doubling <em>m</em> halves variance but doubles memory — choose <em>p</em> from your error budget. Redis <code>PFADD</code> defaults to <em>p=14</em>.</p>
 <h3 id="433-sparse-representation-why-hll-is-tiny-for-small-sets">4.3.3 Sparse representation — why HLL is tiny for small sets</h3>
 <p>At small cardinalities, most registers are zero. Instead of storing all <em>m</em> bytes, HLL++ stores a sorted, compressed list of <code>(index, ρ)</code> pairs that were actually touched — often &lt; 1 KB for <em>n &lt; m</em>. It switches to dense (full byte array) only when sparse would be larger. This is why <code>PFCOUNT</code> on a set of 100 elements uses far less than 12 KB.</p>
-<p><pre><code>flowchart TB
-    subgraph Sparse["Sparse mode — n << m"]
-        S1["sorted list: (idx=6,ρ=4), (42,2), (101,5)..."]
-        S1 --> SEnc["varint + delta encoding"]
-        SEnc --> SSize["~ a few hundred bytes"]
-    end
-    subgraph Dense["Dense mode — n >> m"]
-        D1["byte array M[0..m-1] — one byte per register"]
-        D1 --> DSize["m bytes (e.g. 16 KiB)"]
-    end
-    Sparse -- "switch when sparse > dense" --> Dense
-
-    style SSize fill:#86efac,stroke:#166534,color:#000
-    style DSize fill:#bfdbfe,stroke:#1e40af,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e84c98d7ad75.png" alt="diagram"></div></p>
 <h3 id="434-implementation">4.3.4 Implementation</h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
@@ -2769,23 +2555,7 @@ merge test: exact distinct=164,832  full HLL=165,901  merged HLL=165,901  (shoul
 <div class="highlight"><pre><span></span><code>count(x) ≤ estimate(x) ≤ count(x) + ε · N      where N = total increments
 </code></pre></div>
 
-<p><pre><code>flowchart TB
-    subgraph Update["Update('apple', +1) — d=3 rows"]
-        Key["key='apple'"] --> H1["h₁→2"]
-        Key --> H2["h₂→5"]
-        Key --> H3["h₃→1"]
-        H1 --> R1["row 0: [0,0,1,0,0,2,0,0] — col 2 ++"]
-        H2 --> R2["row 1: [0,0,0,0,0,1,0,0] — col 5 ++"]
-        H3 --> R3["row 2: [0,1,0,0,0,0,0,0] — col 1 ++"]
-    end
-    subgraph Query["Query('apple') → min(1,1,1) = 1 (possibly over-estimated if collisions)"]
-        Q1["row0 col2 = 1"]
-        Q2["row1 col5 = 1"]
-        Q3["row2 col1 = 1"]
-        Q1 & Q2 & Q3 --> Ans["answer = min = 1"]
-    end
-    style Ans fill:#86efac,stroke:#166534,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_93808b665d81.png" alt="diagram"></div></p>
 <p>Collisions cause over-estimation, never under-estimation, because a counter aggregates all keys that hash to it and <code>min</code> picks the least-contaminated row.</p>
 <h3 id="442-sizing">4.4.2 Sizing</h3>
 <div class="highlight"><pre><span></span><code>w = ceil(e / ε)        controls error magnitude   (wider → less collision)
@@ -3002,26 +2772,7 @@ Heavy hitters (&gt;5% of stream):
 </ul>
 <hr />
 <h2 id="45-choosing-and-composing-a-decision-guide">4.5 Choosing and composing — a decision guide</h2>
-<p><pre><code>flowchart TD
-    Q1{"Question to answer?"}
-    Q1 -->|"Is x in S?"| B{"Need deletions?"}
-    Q1 -->|"How many distinct?"| HLL["HyperLogLog"]
-    Q1 -->|"How many times<br/>did x occur?"| CMS{"Key space bounded?"}
-    Q1 -->|"Top-K / heavy hitters?"| HH["CMS + Heap<br/>or Space-Saving"]
-
-    B -->|"No"| BF["Bloom filter<br/>(9.6 bits/key @1% FPR)"]
-    B -->|"Yes"| CF{"Mutable & small?"}
-    CF -->|"Yes"| CBF["Counting Bloom<br/>(4-bit counters)"]
-    CF -->|"No / large"| CKF["Cuckoo filter<br/>or Cuckoo + Bloom fallback"]
-
-    CMS -->|"Yes — fits in hash map"| EXACT["Exact hash map<br/>(simpler, zero error)"]
-    CMS -->|"No — streaming / huge"| CMS2["Count-Min Sketch<br/>(ε=0.001, δ=0.01)"]
-
-    style BF fill:#86efac,stroke:#166534,color:#000
-    style HLL fill:#bfdbfe,stroke:#1e40af,color:#000
-    style CMS2 fill:#fde68a,stroke:#92400e,color:#000
-    style HH fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1f94de0f481e.png" alt="diagram"></div></p>
 <p><strong>Composition patterns:</strong></p>
 <ul>
 <li><strong>Bloom + exact store (LSM pattern):</strong> Bloom says "not present" → skip I/O. "Maybe present" → confirm on disk. False positives only cost an extra I/O, not correctness.</li>
@@ -3082,7 +2833,11 @@ Heavy hitters (&gt;5% of stream):
 <li>Flajolet et al. — "HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm" (AOFA 2007) and Heule et al. — "HyperLogLog in Practice" (Google, 2013) — the HLL++ improvements (sparse, bias correction) that every production implementation follows.</li>
 <li>Cormode &amp; Muthukrishnan — "An Improved Data Stream Summary: The Count-Min Sketch and its Applications" (J. Algorithms 2005) — the CMS paper; concise analysis of ε, δ guarantees.</li>
 <li>RedisBloom, Apache DataSketches, and Caffeine (TinyLFU) — production implementations worth reading as reference code.</li>
-</ul></div><div id="ch05-consistent-hashing"><h1 id="chapter-5-consistent-hashing-and-rendezvous-hashing">Chapter 5 — Consistent Hashing and Rendezvous Hashing</h1>
+</ul>
+<h3 id="bloom-filter-operation">Bloom filter operation</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_382afe103ad2.png" alt="diagram"></div></p>
+<h3 id="probabilistic-data-structure-tradeoffs">Probabilistic data structure tradeoffs</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_59afa8d917a7.png" alt="diagram"></div></p></div><div id="ch05-consistent-hashing"><h1 id="chapter-5-consistent-hashing-and-rendezvous-hashing">Chapter 5 — Consistent Hashing and Rendezvous Hashing</h1>
 <p><strong>What this chapter covers.</strong> Every backend that shards data or spreads load across nodes faces the same problem: given a key, which node owns it? The naive answer — <code>hash(key) % N</code> — breaks the moment <em>N</em> changes, forcing a near-total reshuffle. In a fleet of thousands of nodes where membership churns constantly, that reshuffle is an outage. This chapter covers the two hash-based placement strategies that solve it: consistent hashing (the ring with virtual nodes that powers Dynamo, Cassandra, Riak, and every CDN) and rendezvous hashing / highest-random-weight (the simpler, stateless alternative that powers load balancers and sharded caches). We derive why each works, quantify their balance and churn properties, implement both from scratch, and show how to operate them — replication, failure handling, bounded loads, and heterogeneity.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -3107,22 +2862,7 @@ Heavy hitters (&gt;5% of stream):
 </ul>
 <p>This is not a theoretical concern. In a large fleet, nodes join and leave continuously (deploys, autoscaling, failures). A placement scheme that reshuffles the world on every change cannot be operated.</p>
 <p><strong>What we need:</strong> a mapping where adding or removing one node moves only <code>O(1/N)</code> of keys — the theoretical minimum, since the new node must take <code>1/(N+1)</code> of the space and a failed node's <code>1/N</code> must be absorbed. Consistent hashing and rendezvous hashing both achieve this, by different mechanisms.</p>
-<p><pre><code>flowchart TB
-    subgraph Naive["hash mod N — N=3 → N=4"]
-        N1["Keys: hash % 3"] --> R1["Node 0: 33%<br/>Node 1: 33%<br/>Node 2: 33%"]
-        N1 --> Arrow1["add Node 3"]
-        Arrow1 --> R2["Node 0: ~25% (75% of its keys moved!)<br/>Node 1: ~25%<br/>Node 2: ~25%<br/>Node 3: ~25%"]
-        R2 --- Bad["~75% of all keys remapped ❌"]
-    end
-    subgraph Consistent["Consistent ring — N=3 → N=4"]
-        C1["Keys on ring"] --> CR1["Node 0: 33%<br/>Node 1: 33%<br/>Node 2: 33%"]
-        C1 --> Arrow2["add Node 3 — takes 1/4 from neighbors"]
-        Arrow2 --> CR2["Node 0: ~25%<br/>Node 1: ~25%<br/>Node 2: ~25%<br/>Node 3: ~25%"]
-        CR2 --- Good["only ~25% of keys remapped ✅"]
-    end
-    style Bad fill:#fca5a5,stroke:#991b1b,color:#000
-    style Good fill:#86efac,stroke:#166534,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_77df9c9e63d3.png" alt="diagram"></div></p>
 <hr />
 <h2 id="52-consistent-hashing-the-ring">5.2 Consistent hashing — the ring</h2>
 <h3 id="521-the-construction-karger-et-al-1997">5.2.1 The construction (Karger et al., 1997)</h3>
@@ -3134,25 +2874,7 @@ Heavy hitters (&gt;5% of stream):
 </code></pre></div>
 
 <p>When a node joins, it takes ownership of the arc between itself and its predecessor — only keys in that arc move. When a node leaves, its arc is absorbed by its successor — only its keys move. In both cases, <code>~1/N</code> of keys move. No other node's assignment changes.</p>
-<p><pre><code>flowchart TB
-    subgraph Ring3["Ring with 3 nodes — arcs labeled by owner"]
-        R3A["N1 @ 0x20<br/>owns (N3, N1]"]
-        R3B["N2 @ 0x7F<br/>owns (N1, N2]"]
-        R3C["N3 @ 0xC4<br/>owns (N2, N3]"]
-        R3A --> R3B --> R3C --> R3A
-    end
-    subgraph Ring4["After adding N4 @ 0x55 — only arc (N1,N2] splits"]
-        R4A["N1 @ 0x20<br/>owns (N3, N1] — unchanged"]
-        R4B["N4 @ 0x55<br/>owns (N1, N4] — NEW, ~1/4 of ring"]
-        R4C["N2 @ 0x7F<br/>owns (N4, N2] — shrunk"]
-        R4D["N3 @ 0xC4<br/>owns (N2, N3] — unchanged"]
-        R4A --> R4B --> R4C --> R4D --> R4A
-    end
-    Ring3 -.->|"only keys in (0x20, 0x55] move<br/>(N1 → N4)"| Ring4
-
-    style R4B fill:#86efac,stroke:#166534,color:#000
-    style R4C fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_68bda8affe18.png" alt="diagram"></div></p>
 <h3 id="522-the-imbalance-problem-why-one-point-per-node-fails">5.2.2 The imbalance problem — why one point per node fails</h3>
 <p>With one hash point per node and random placement, arc sizes follow an exponential distribution. Some node inevitably owns a much larger arc than average. Variance is high:</p>
 <ul>
@@ -3206,22 +2928,7 @@ Heavy hitters (&gt;5% of stream):
 </tbody>
 </table>
 <p>Ketama (the widely copied memcached consistent-hashing library) uses <em>V = 100–200</em> — enough that imbalance is negligible for operational purposes, while the ring (sorted list of <code>V·N</code> points) still fits in memory and lookups are <code>O(log(V·N))</code> via binary search.</p>
-<p><pre><code>flowchart TB
-    subgraph OneVnode["One vnode per node — N=3 — high variance"]
-        O1["N1 owns one large arc — 45%"]
-        O2["N2 owns one small arc — 15%"]
-        O3["N3 owns one medium arc — 40%"]
-        O1 & O2 & O3 --> OVar["max/mean = 1.35x — one node hot"]
-    end
-    subgraph ManyVnodes["V=100 vnodes per node — N=3 — low variance"]
-        M1["N1 owns 100 scattered arcs — ~33.3%"]
-        M2["N2 owns 100 scattered arcs — ~33.1%"]
-        M3["N3 owns 100 scattered arcs — ~33.6%"]
-        M1 & M2 & M3 --> MVar["max/mean = 1.01x — balanced ✅"]
-    end
-    style OVar fill:#fca5a5,stroke:#991b1b,color:#000
-    style MVar fill:#86efac,stroke:#166534,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4cfdc9185c77.png" alt="diagram"></div></p>
 <p>Additional benefits of vnodes:</p>
 <ul>
 <li><strong>Heterogeneity.</strong> Give larger machines more vnodes proportional to capacity: a 2x node gets 2x vnodes and naturally holds 2x load — no special-casing.</li>
@@ -3440,30 +3147,7 @@ Heavy hitters (&gt;5% of stream):
 <li><strong>Hinted handoff.</strong> A coordinator that cannot reach the owner stores the write locally as a <em>hint</em> and replays it when the owner recovers. No data loss for transient failures.</li>
 <li><strong>Bounded-load consistent hashing.</strong> Plain consistent hashing can overload a successor that absorbs a large failed arc. Bounded-load variants (Mirrokni et al., 2018 — Google's consistent hashing with bounded loads) cap each node's load at <code>(1 + ε) · mean</code> and spill excess keys to the next non-full node. This trades one extra hop for overload protection.</li>
 </ul>
-<p><pre><code>flowchart LR
-    subgraph Normal["Normal — 4 nodes, balanced"]
-        N1["N1: 25%"]
-        N2["N2: 25%"]
-        N3["N3: 25%"]
-        N4["N4: 25%"]
-    end
-    subgraph Failed["N3 fails — naive ring"]
-        F1["N1: 25%"]
-        F2["N2: 25%"]
-        F4["N4: 50% — absorbs N3's arc ❌<br/>2x load spike"]
-    end
-    subgraph Bounded["N3 fails — bounded load (cap 30%)"]
-        B1["N1: 28%"]
-        B2["N2: 30% (capped)"]
-        B4["N4: 30% (capped)"]
-        BExtra["spill → next non-full node<br/>or shed / backpressure"]
-    end
-    Normal --> Failed
-    Normal --> Bounded
-    style F4 fill:#fca5a5,stroke:#991b1b,color:#000
-    style B2 fill:#fde68a,stroke:#92400e,color:#000
-    style B4 fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c381abbb243f.png" alt="diagram"></div></p>
 <h3 id="543-heterogeneity-and-weights">5.4.3 Heterogeneity and weights</h3>
 <p>Fleets are rarely uniform — some nodes have more RAM, faster disks, or more CPU. Consistent hashing handles this naturally: assign <code>V · weight</code> vnodes. A node with weight 2 gets twice the arcs and twice the load. When you replace a generation of hardware, adjust weights and only <code>O(Δweight)</code> keys move.</p>
 <blockquote>
@@ -3483,28 +3167,7 @@ Heavy hitters (&gt;5% of stream):
 <li><strong>Perfect balance.</strong> Each key picks its owner by an independent uniform draw, so load is binomial(<code>K</code> keys, <code>p=1/N</code>) — standard deviation <code>√(K/N)</code> per node, with no vnode tuning. No ring to maintain.</li>
 <li><strong>Stateless.</strong> No sorted ring structure — just the node list and a hash function.</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph HRW["HRW lookup for key='user:4821' — N=4"]
-        Key["key='user:4821'"]
-        Key --> S1["score(N1)=H(key‖N1)=0x3A..."]
-        Key --> S2["score(N2)=H(key‖N2)=0xF1... ← max"]
-        Key --> S3["score(N3)=H(key‖N3)=0x72..."]
-        Key --> S4["score(N4)=H(key‖N4)=0x0E..."]
-        S2 --> Winner["owner = N2"]
-    end
-    subgraph Churn["After adding N5"]
-        Key2["same key"] --> T1["N1:0x3A"]
-        Key2 --> T2["N2:0xF1 ← still max for this key"]
-        Key2 --> T3["N3:0x72"]
-        Key2 --> T4["N4:0x0E"]
-        Key2 --> T5["N5:0xC8 — new contender"]
-        T2 --> W2["stays on N2 (4/5 of keys unaffected)"]
-        T5 -.->|"only keys where N5 happens<br/>to be max will move"| W2
-    end
-    style S2 fill:#86efac,stroke:#166534,color:#000
-    style T2 fill:#86efac,stroke:#166534,color:#000
-    style T5 fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8a32b56c8d28.png" alt="diagram"></div></p>
 <h3 id="552-implementation">5.5.2 Implementation</h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
@@ -3607,22 +3270,7 @@ After adding node-e: 20,012/100,000 moved (20.0%, ideal ~20%)
 </ul>
 <hr />
 <h2 id="56-comparison-and-choosing">5.6 Comparison and choosing</h2>
-<p><pre><code>flowchart TB
-    Q1{"How many nodes?"}
-    Q1 -->|"≤ few thousand"| Q2{"Need to add/remove<br/>arbitrary nodes?"}
-    Q1 -->|"10k+ / dense 0..N-1"| JUMP["Jump consistent hash<br/>O(log N), no ring"]
-    Q2 -->|"Yes — churn, failures"| Q3{"Lookup cost sensitive?"}
-    Q2 -->|"Only grow/shrink at end"| JUMP
-
-    Q3 -->|"N ≤ 1k, O(N) hash OK"| HRW["Rendezvous (HRW)<br/>simpler, perfect balance,<br/>stateless — LB, cache shard"]
-    Q3 -->|"N large or p99 critical"| RING["Consistent hash ring<br/>O(log V·N), vnodes=100-200<br/>storage, Dynamo/Cassandra"]
-
-    Q1 -->|"Weighted / heterogeneous"| W["Both support weights<br/>Ring: V·weight vnodes<br/>HRW: score·weight"]
-
-    style HRW fill:#86efac,stroke:#166534,color:#000
-    style RING fill:#bfdbfe,stroke:#1e40af,color:#000
-    style JUMP fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1ecfc6eaf679.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -3709,7 +3357,9 @@ After adding node-e: 20,012/100,000 moved (20.0%, ideal ~20%)
 <li>Lamping &amp; Veach — "A Fast, Minimal Memory, Consistent Hash Algorithm" (Google, 2014; arxiv:1406.2294) — Jump consistent hash.</li>
 <li>Mirrokni et al. — "Consistent Hashing with Bounded Loads" (2018; arxiv:1608.01350) — the bounded-load extension that prevents absorption overload.</li>
 <li>Ketama consistent hashing (github.com/RJ/ketama) — the memcached implementation that standardized <code>V=100–200</code> and is still the reference for most ring libraries.</li>
-</ul></div><div id="ch06-sorting"><h1 id="chapter-6-sorting-external-sorting-and-streaming">Chapter 6 — Sorting, External Sorting, and Streaming</h1>
+</ul>
+<h3 id="virtual-nodes-on-hash-ring">Virtual nodes on hash ring</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e0ae54b251a4.png" alt="diagram"></div></p></div><div id="ch06-sorting"><h1 id="chapter-6-sorting-external-sorting-and-streaming">Chapter 6 — Sorting, External Sorting, and Streaming</h1>
 <p><strong>What this chapter covers.</strong> Sorting is the most heavily optimized primitive in backend infrastructure — it underlies index builds, log compaction, merge joins, deduplication, top-K queries, shuffle stages, and every offline pipeline that touches data larger than RAM. This chapter moves from in-memory sorting (why comparison sorts stop at <code>n log n</code>, when non-comparison sorts break that barrier, and how modern engines pick algorithms) to external sorting (the two-phase run-formation + k-way merge that sorts terabytes on disk) and finally to streaming algorithms (one-pass, sublinear-space techniques for data that never fits anywhere). Every section includes real, runnable code — from a tight in-memory benchmark harness to a full external sort that spills to disk and merges with a heap.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -3722,22 +3372,7 @@ After adding node-e: 20,012/100,000 moved (20.0%, ideal ~20%)
 <hr />
 <h2 id="61-the-landscape-what-kind-of-sort-do-you-need">6.1 The landscape — what kind of sort do you need?</h2>
 <p>The right algorithm is determined by two questions: <em>how large is n relative to RAM?</em> and <em>what do you know about the keys?</em></p>
-<p><pre><code>flowchart TD
-    Q1{"Data fits in RAM?"}
-    Q1 -->|"Yes"| Q2{"Keys have exploitable<br/>structure (small int range,<br/>fixed-width, uniform)?"}
-    Q1 -->|"No — larger than RAM<br/>or unbounded stream"| Q3{"Need total order<br/>or just top-K / sample / aggregate?"}
-
-    Q2 -->|"No — general comparable keys"| CMP["Comparison sort<br/>O(n log n) — Timsort / introsort<br/>Section 6.2"]
-    Q2 -->|"Yes"| LIN["Non-comparison sort<br/>O(n) — radix / counting / bucket<br/>Section 6.3"]
-
-    Q3 -->|"Total order of all data"| EXT["External sort<br/>runs + k-way merge<br/>Section 6.4"]
-    Q3 -->|"Top-K / sample / aggregate<br/>over stream"| STR["Streaming algorithms<br/>heap, reservoir, windowing<br/>Section 6.5"]
-
-    style CMP fill:#bfdbfe,stroke:#1e40af,color:#000
-    style LIN fill:#86efac,stroke:#166534,color:#000
-    style EXT fill:#fde68a,stroke:#92400e,color:#000
-    style STR fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3285554baa20.png" alt="diagram"></div></p>
 <p>Backend examples for each:</p>
 <ul>
 <li><strong>In-memory comparison sort</strong> — sorting API results, in-memory index probes, ordering a batch before a merge join. <em>n</em> is bounded (page size, batch size).</li>
@@ -3960,28 +3595,7 @@ n=1,000,000  sorted        0.008s  125.00 M/s
 <p>External sort handles data larger than memory by using disk as an extension of RAM. The classic algorithm (Knuth, 1973) has two phases:</p>
 <p><strong>Phase 1 — Run formation.</strong> Read input in chunks that fit in memory, sort each chunk in RAM, write it as a <em>sorted run</em> to disk. If input is <em>D</em> bytes and memory is <em>M</em>, this produces <code>R = ⌈D / M⌉</code> runs.</p>
 <p><strong>Phase 2 — K-way merge.</strong> Merge the <em>R</em> runs into one sorted output using a min-heap of size <em>R</em> (one entry per run — the current head of each run). Repeatedly extract the minimum, emit it, and refill from the run it came from. If <code>R &gt; K</code> (fan-in limit, typically 64–128 to bound heap and file handles), do multi-level merging: merge runs in groups of <em>K</em> into larger runs, then merge those.</p>
-<p><pre><code>flowchart TB
-    subgraph Phase1["Phase 1 — Run Formation (D/M runs)"]
-        Input["Input file (D bytes)"]
-        Input --> C1["Chunk 1 (M) → sort → Run 1"]
-        Input --> C2["Chunk 2 (M) → sort → Run 2"]
-        Input --> C3["..."]
-        Input --> CN["Chunk R (≤M) → sort → Run R"]
-    end
-    subgraph Phase2["Phase 2 — K-way Heap Merge"]
-        R1["Run 1 ─┐"]
-        R2["Run 2 ─┤"]
-        R3["Run 3 ─┤"]
-        RMore["... ─┤"]
-        RN["Run R ─┘"]
-        R1 & R2 & R3 & RMore & RN --> Heap["Min-heap (size R)<br/>one head per run"]
-        Heap --> Out["Sorted output — one sorted stream"]
-    end
-    Phase1 --> Phase2
-
-    style Heap fill:#bfdbfe,stroke:#1e40af,color:#000
-    style Out fill:#86efac,stroke:#166534,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c871ec8f330c.png" alt="diagram"></div></p>
 <p><strong>I/O cost model:</strong> each byte is read and written twice (once per phase) → <code>2·D</code> reads + <code>2·D</code> writes in the single-level case. With multi-level merging (<code>L</code> levels), cost is <code>2·L·D</code>. For <code>D = 1 TB</code>, <code>M = 1 GB</code>, <code>R = 1000</code>, <code>K = 100</code> → <code>L = 2</code> levels (1000 → 10 → 1), so <code>4·D = 4 TB</code> of I/O. On NVMe at 3 GB/s, ~22 minutes of raw I/O — dominated by sequential throughput, not random seeks (runs are read sequentially).</p>
 <h3 id="642-replacement-selection-producing-longer-runs">6.4.2 Replacement selection — producing longer runs</h3>
 <p>Naive run formation produces runs of exactly <em>M</em> (memory size / record size) records. Replacement selection can produce runs averaging <em>2M</em> by using a heap:</p>
@@ -4301,23 +3915,7 @@ reservoir sample (k=5 from 1M): [705232, 844800, 733587, 961841, 165894]
 <li><strong>Tumbling window</strong> — fixed, non-overlapping intervals <code>[0,W), [W,2W), ...</code>. Simple: reset state at each boundary.</li>
 <li><strong>Sliding window</strong> — every event defines a window <code>[t-W, t]</code>. More expensive: need to expire old events.</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph Tumbling["Tumbling window — W=5min"]
-        T1["[00:00-00:05): count=1200"]
-        T2["[00:05-00:10): count=980"]
-        T3["[00:10-00:15): count=1500"]
-        T1 --> T2 --> T3
-    end
-    subgraph Sliding["Sliding window — W=5min, slide=1min"]
-        S1["[00:00-00:05): 1200"]
-        S2["[00:01-00:06): 1180"]
-        S3["[00:02-00:07): 1210"]
-        S1 -.->|"overlap — events counted<br/>in multiple windows"| S2
-        S2 -.-> S3
-    end
-    style T1 fill:#bfdbfe,stroke:#1e40af,color:#000
-    style S1 fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4a9075396baa.png" alt="diagram"></div></p>
 <p>Efficient sliding-window aggregation uses a deque of buckets (one per slide interval) plus an incremental aggregate that subtracts expired buckets:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">time_mod</span>
@@ -4441,7 +4039,15 @@ reservoir sample (k=5 from 1M): [705232, 844800, 733587, 961841, 165894]
 <li>Nyberg et al. — "AlphaSort: A Cache-Sensitive Parallel External Sort" (VLDB 1994) and Graefe — "Implementing Sorting in Database Systems" (ACM Computing Surveys, 2006) — external sort in database engines: run formation, merge optimization, and parallel execution.</li>
 <li>Vitter — "External Memory Algorithms and Data Structures" (ACM Computing Surveys, 2001) — the I/O model and optimal external sorting bounds.</li>
 <li>Flink / Kafka Streams / Spark Structured Streaming documentation on windowing (tumbling, sliding, session) and watermarking — the production realization of streaming aggregation at scale.</li>
-</ul></div><div id="ch07-graphs"><h1 id="chapter-7-graphs-in-systems">Chapter 7 — Graphs in Systems</h1>
+</ul>
+<h3 id="sorting-algorithm-taxonomy">Sorting algorithm taxonomy</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cf8212f18dba.png" alt="diagram"></div></p>
+<h3 id="quicksort-partition-step">Quicksort partition step</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a63da8948755.png" alt="diagram"></div></p>
+<h3 id="stability-in-sorting">Stability in sorting</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_40beb61028d2.png" alt="diagram"></div></p>
+<h3 id="external-sorting-for-large-datasets">External sorting for large datasets</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6c9dbc7f04ac.png" alt="diagram"></div></p></div><div id="ch07-graphs"><h1 id="chapter-7-graphs-in-systems">Chapter 7 — Graphs in Systems</h1>
 <p><strong>What this chapter covers.</strong> Almost every backend system is a graph even when it is not labeled as one: service dependencies form a directed graph, build pipelines are DAGs, network topologies are weighted graphs, database deadlock waits are cycles, and recommendation engines traverse social graphs. This chapter treats graphs as a systems primitive. We cover representations and their cache/I/O trade-offs, traversal (BFS/DFS), shortest paths (Dijkstra, Bellman-Ford), DAG scheduling and topological sort, connectivity and strongly connected components, minimum spanning trees, and Union-Find. Every algorithm is implemented in runnable Python and connected to the backend problem it actually solves — from dependency resolution to failure blast-radius analysis.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -4511,35 +4117,7 @@ reservoir sample (k=5 from 1M): [705232, 844800, 733587, 961841, 165894]
 </tr>
 </tbody>
 </table>
-<p><pre><code>flowchart TB
-    subgraph ServiceGraph["Service Dependency Graph — directed"]
-        GW["API Gateway"]
-        Auth["Auth Service"]
-        User["User Service"]
-        Catalog["Catalog Service"]
-        Cart["Cart Service"]
-        Payment["Payment Service"]
-        Inv["Inventory Service"]
-        DB1[("User DB")]
-        DB2[("Catalog DB")]
-        DB3[("Orders DB")]
-        Queue[["Event Queue"]]
-
-        GW --> Auth & User & Catalog & Cart
-        User --> DB1
-        Catalog --> DB2
-        Cart --> Catalog & Inv & Queue
-        Payment --> Queue & DB3
-        Inv --> DB3
-        Auth --> DB1
-    end
-
-    style GW fill:#86efac,stroke:#166534,color:#000
-    style Queue fill:#fef08a,stroke:#854d0e,color:#000
-    style DB1 fill:#bfdbfe,stroke:#1e40af,color:#000
-    style DB2 fill:#bfdbfe,stroke:#1e40af,color:#000
-    style DB3 fill:#bfdbfe,stroke:#1e40af,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_86c58f4900de.png" alt="diagram"></div></p>
 <p>If this graph has a cycle (Cart -&gt; Catalog -&gt; Cart, or a circular retry dependency), deployments can deadlock, health checks can flap, and cascading failures can loop. Detecting that cycle is a graph algorithm.</p>
 <blockquote>
 <p><strong>Mental model.</strong> Whenever your system has entities and relationships, draw the graph — even informally. The shape of the graph (DAG? dense? weighted? ephemeral?) determines which algorithm and representation you need.</p>
@@ -4547,40 +4125,7 @@ reservoir sample (k=5 from 1M): [705232, 844800, 733587, 961841, 165894]
 <hr />
 <h2 id="72-representation-where-theory-meets-cache-and-memory">7.2 Representation — where theory meets cache and memory</h2>
 <h3 id="the-three-classic-representations">The three classic representations</h3>
-<p><pre><code>flowchart LR
-    subgraph Example["Example: V=4, E=4<br/>0→1, 0→2, 1→2, 2→3"]
-        direction TB
-        N0([0]) --> N1([1])
-        N0 --> N2([2])
-        N1 --> N2
-        N2 --> N3([3])
-    end
-
-    subgraph AdjList["Adjacency List<br/>O(V+E) memory<br/>iterate neighbors: O(degree)"]
-        AL0["0: [1, 2]"]
-        AL1["1: [2]"]
-        AL2["2: [3]"]
-        AL3["3: []"]
-    end
-
-    subgraph AdjMatrix["Adjacency Matrix<br/>O(V²) memory<br/>edge query: O(1)"]
-        M0["0: 0 1 1 0"]
-        M1["1: 0 0 1 0"]
-        M2["2: 0 0 0 1"]
-        M3["3: 0 0 0 0"]
-    end
-
-    subgraph EdgeList["Edge List<br/>O(E) memory<br/>iterate all edges: O(E)"]
-        E0["(0,1)"]
-        E1["(0,2)"]
-        E2["(1,2)"]
-        E3["(2,3)"]
-    end
-
-    style AdjList fill:#bbf7d0,stroke:#166534,color:#000
-    style AdjMatrix fill:#fef08a,stroke:#854d0e,color:#000
-    style EdgeList fill:#bfdbfe,stroke:#1e40af,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a8e15557ad1e.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -4732,22 +4277,7 @@ reservoir sample (k=5 from 1M): [705232, 844800, 733587, 961841, 165894]
 <p>BFS and DFS are the two fundamental traversals. Both visit every reachable vertex exactly once in O(V + E) time, but they differ in order and guarantees.</p>
 <h3 id="bfs-level-by-level-shortest-path-in-unweighted-graphs">BFS — level by level, shortest path in unweighted graphs</h3>
 <p>BFS uses a queue. It visits vertices in order of distance (number of edges) from the source. For unweighted graphs, this <em>is</em> the shortest path.</p>
-<p><pre><code>flowchart TB
-    S([S - source]) --> A([A - level 1])
-    S --> B([B - level 1])
-    A --> C([C - level 2])
-    A --> D([D - level 2])
-    B --> D
-    B --> E([E - level 2])
-    C --> F([F - level 3])
-    D --> F
-    E --> F
-
-    style S fill:#86efac,stroke:#166534,color:#000
-    style A fill:#bbf7d0,stroke:#166534,color:#000
-    style B fill:#bbf7d0,stroke:#166534,color:#000
-    style F fill:#fef08a,stroke:#854d0e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3d65a5b19346.png" alt="diagram"></div></p>
 <p><strong>Use BFS when:</strong> you need shortest path in an unweighted graph (fewest hops), level-order processing (blast-radius by hop count), or to test bipartiteness / find connected components in order of distance.</p>
 <h3 id="dfs-depth-first-recursion-and-explicit-stack">DFS — depth first, recursion and explicit stack</h3>
 <p>DFS uses a stack (implicitly via recursion, or explicitly). It explores as far as possible along each branch before backtracking.</p>
@@ -4909,22 +4439,7 @@ reservoir sample (k=5 from 1M): [705232, 844800, 733587, 961841, 165894]
 <hr />
 <h2 id="74-shortest-paths-weighted-graphs">7.4 Shortest paths — weighted graphs</h2>
 <p>When edges have weights (latency, cost, distance), BFS no longer suffices. Three algorithms cover the practical space.</p>
-<p><pre><code>flowchart LR
-    subgraph WeightedGraph["Weighted Directed Graph — latencies in ms"]
-        A([A]) -->|4| B([B])
-        A -->|2| C([C])
-        B -->|1| C
-        B -->|5| D([D])
-        C -->|8| D
-        C -->|10| E([E])
-        D -->|2| E
-        B -->|3| E
-    end
-
-    Note["Shortest A→E:<br/>A→B→E = 4+3 = 7<br/>A→C→... longer<br/>Dijkstra finds 7"]
-    style A fill:#86efac,stroke:#166534,color:#000
-    style E fill:#fef08a,stroke:#854d0e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f016bdc21830.png" alt="diagram"></div></p>
 <h3 id="dijkstra-non-negative-weights-the-workhorse">Dijkstra — non-negative weights, the workhorse</h3>
 <p>Dijkstra's algorithm maintains a priority queue of tentative distances. At each step it extracts the vertex with minimum distance (greedy — safe because weights are non-negative, so no future path can improve an already-extracted vertex). Complexity: O((V + E) log V) with a binary heap.</p>
 <p><strong>Precondition:</strong> All edge weights &gt;= 0. If any weight is negative, Dijkstra can produce wrong answers — use Bellman-Ford.</p>
@@ -5099,29 +4614,7 @@ reservoir sample (k=5 from 1M): [705232, 844800, 733587, 961841, 165894]
 <hr />
 <h2 id="75-dags-topological-sort-and-dependency-resolution">7.5 DAGs, topological sort, and dependency resolution</h2>
 <p>A <strong>directed acyclic graph (DAG)</strong> has no directed cycles. DAGs are the structure of any dependency system: if A depends on B, B must be built/deployed/started before A. A <strong>topological order</strong> is a linear ordering of vertices such that every edge u -&gt; v has u before v. Every DAG has at least one topological order; a directed graph has a topological order if and only if it is acyclic.</p>
-<p><pre><code>flowchart TB
-    subgraph DAG["Build DAG — edges = depends-on"]
-        A["app (binary)"]
-        B["server (lib)"]
-        C["auth (lib)"]
-        D["proto (generated)"]
-        E["config (lib)"]
-        F["base image"]
-        G["migrations"]
-
-        A --> B & C & D
-        B --> D & E
-        C --> D
-        G --> F
-        A --> G
-    end
-
-    Order["One valid topological order:<br/>F → D → E → C → B → G → A<br/>(all dependencies before dependents)"]
-
-    style A fill:#86efac,stroke:#166534,color:#000
-    style F fill:#bfdbfe,stroke:#1e40af,color:#000
-    style D fill:#fef08a,stroke:#854d0e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5aa05cdc47b8.png" alt="diagram"></div></p>
 <h3 id="kahns-algorithm-bfs-based">Kahn's algorithm (BFS-based)</h3>
 <p>Repeatedly remove vertices with in-degree 0 (no remaining dependencies), decrement neighbors' in-degrees, and continue. If you cannot remove all vertices, a cycle exists.</p>
 <h3 id="dfs-based-topological-sort">DFS-based topological sort</h3>
@@ -5264,26 +4757,7 @@ reservoir sample (k=5 from 1M): [705232, 844800, 733587, 961841, 165894]
 <h2 id="76-connectivity-sccs-and-union-find">7.6 Connectivity, SCCs, and Union-Find</h2>
 <h3 id="connected-components-undirected-and-sccs-directed">Connected components (undirected) and SCCs (directed)</h3>
 <p>In a directed graph, a <strong>strongly connected component (SCC)</strong> is a maximal set of vertices mutually reachable from each other. SCCs partition the graph into a DAG of components (the <em>condensation graph</em>). Finding SCCs answers: which services form a circular dependency cluster? Which transactions are deadlocked together?</p>
-<p><pre><code>flowchart TB
-    subgraph SCC_A["SCC A — cycle"]
-        A1([A1]) --> A2([A2]) --> A3([A3]) --> A1
-    end
-    subgraph SCC_B["SCC B — single node"]
-        B1([B1])
-    end
-    subgraph SCC_C["SCC C — cycle"]
-        C1([C1]) <--> C2([C2])
-    end
-
-    A2 --> B1 --> C1
-    A3 --> C2
-
-    Note2["Condensation DAG:<br/>SCC_A → SCC_B → SCC_C<br/>(always a DAG)"]
-
-    style SCC_A fill:#fca5a5,stroke:#991b1b,color:#000
-    style SCC_B fill:#fef08a,stroke:#854d0e,color:#000
-    style SCC_C fill:#fca5a5,stroke:#991b1b,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_19862d989da9.png" alt="diagram"></div></p>
 <h3 id="kosarajus-algorithm-two-passes-of-dfs">Kosaraju's algorithm — two passes of DFS</h3>
 <ol>
 <li>DFS on G, record finish times (post-order).</li>
@@ -5433,7 +4907,10 @@ for u, v, w in [(0,1,4),(0,2,3),(1,2,1),(1,3,2),(2,3,4),(3,4,2),(2,4,5)]:
     net.add_edge(u, v, w)
 mst, cost = kruskal_mst(net)
 print(f&quot;\nMST edges: {mst}  total cost: {cost}&quot;)
-</code></pre></div></div><div id="ch08-rate-limiting-scheduling"><h1 id="chapter-8-rate-limiting-and-scheduling-algorithms">Chapter 8 — Rate-Limiting and Scheduling Algorithms</h1>
+</code></pre></div>
+
+<h3 id="graph-representation-comparison">Graph representation comparison</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_375112e5dbac.png" alt="diagram"></div></p></div><div id="ch08-rate-limiting-scheduling"><h1 id="chapter-8-rate-limiting-and-scheduling-algorithms">Chapter 8 — Rate-Limiting and Scheduling Algorithms</h1>
 <p><strong>What this chapter covers.</strong> Every backend that faces the open internet must decide which requests to serve, which to delay, and which to reject — and in what order. Rate limiting enforces quotas and protects shared resources from overload and abuse. Scheduling decides the order in which admitted work actually runs. Both are algorithmic problems with direct consequences for tail latency, fairness, and availability. This chapter covers the full family of rate-limiting algorithms — fixed window, sliding window log, sliding window counter, token bucket, leaky bucket, and GCRA — with runnable implementations, correctness analysis, and the distributed-systems concerns that make single-node algorithms insufficient. It then covers scheduling — FIFO, priority, fair queuing, weighted fair queuing, deficit round robin, and deadline-aware scheduling — and shows how rate limiting and scheduling compose into a coherent overload-management strategy.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -5447,17 +4924,7 @@ print(f&quot;\nMST edges: {mst}  total cost: {cost}&quot;)
 <hr />
 <h2 id="81-why-rate-limiting-and-scheduling-are-inseparable">8.1 Why rate limiting and scheduling are inseparable</h2>
 <p>Rate limiting answers <strong>"should this request be admitted?"</strong> Scheduling answers <strong>"in what order should admitted requests run?"</strong> In practice they form a pipeline:</p>
-<p><pre><code>flowchart LR
-    Client --> RL["Rate Limiter<br/>admit / reject / delay"]
-    RL -->|admitted| Queue["Scheduling Queue<br/>FIFO / priority / fair"]
-    RL -->|rejected| Rej["429 / 503<br/>Retry-After"]
-    Queue --> Workers["Worker Pool<br/>concurrency limit"]
-    Workers --> Upstream
-
-    style RL fill:#86efac,stroke:#166534,color:#000
-    style Queue fill:#fef08a,stroke:#854d0e,color:#000
-    style Rej fill:#fca5a5,stroke:#991b1b,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8c41e7a0fbb0.png" alt="diagram"></div></p>
 <p>Without rate limiting, a burst of 10x traffic can saturate workers, fill queues, and cause every request — including high-priority ones — to time out (retry amplification makes it worse). Without scheduling, even a well-rate-limited system can starve important tenants or let one tenant's expensive requests block everyone else (head-of-line blocking).</p>
 <p>The two systems share vocabulary but differ in mechanism: rate limiting is about <strong>counting and metering over time windows</strong>; scheduling is about <strong>ordering and interleaving</strong> admitted work.</p>
 <blockquote>
@@ -5467,31 +4934,7 @@ print(f&quot;\nMST edges: {mst}  total cost: {cost}&quot;)
 <h2 id="82-windows-fixed-sliding-log-and-sliding-counter">8.2 Windows — fixed, sliding log, and sliding counter</h2>
 <h3 id="fixed-window-simple-but-bursty">Fixed window — simple but bursty</h3>
 <p>Divide time into fixed intervals (e.g., 60 s). Keep a counter per window. When the counter reaches the limit, reject until the next window.</p>
-<p><pre><code>flowchart TB
-    subgraph FixedWindow["Fixed Window — limit 5 per 10s"]
-        direction LR
-        W1["Window 1<br/>0 - 10s<br/>count: 5 ✓"]
-        W2["Window 2<br/>10 - 20s<br/>count: 5 ✓"]
-    end
-    Problem["Boundary burst:<br/>5 at 9.9s + 5 at 10.1s = 10 in 0.2s<br/>2× intended rate"]
-
-    W1 ~~~ W2
-    W2 --> Problem
-
-    subgraph SlidingCounter["Sliding Window Counter — limit 10 per 60s"]
-        Prev["Prev window 0-60s: 8"]
-        Curr["Curr window 60-120s: 4<br/>elapsed 15s → overlap 75%"]
-        Calc["sliding = 8×0.75+4 = 10 → at limit"]
-        Prev --> Curr --> Calc
-    end
-
-    Problem ~~~ SlidingCounter
-
-    style W1 fill:#86efac,stroke:#166534,color:#000
-    style W2 fill:#86efac,stroke:#166534,color:#000
-    style Problem fill:#fca5a5,stroke:#991b1b,color:#000
-    style Calc fill:#86efac,stroke:#166534,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_04ca93a08b6c.png" alt="diagram"></div></p>
 <p><strong>Fixed window problem:</strong> At window boundaries, up to 2 * limit requests can pass in a burst smaller than the window. For 100 req/s with 1 s windows, 100 at t=0.99 s and 100 at t=1.01 s pass — 200 in 20 ms. Fixed windows are acceptable only for generous quotas where bursts do not threaten downstream.</p>
 <p><strong>Sliding window log</strong> — store a timestamp per request, evict outside the window, count remainder. Precise but O(limit) memory per key — infeasible for 10K req/min with millions of keys.</p>
 <p><strong>Sliding window counter</strong> — approximate as <code>sliding = prev × overlap + curr</code> where <code>overlap = (window - elapsed)/window</code>. Two counters, O(1) memory, ~1-5% error. Used by Nginx/Envoy.</p>
@@ -5683,32 +5126,7 @@ print(f&quot;\nMST edges: {mst}  total cost: {cost}&quot;)
 <li><strong>Burst-hostile:</strong> Even if 100 requests arrive at once, they are released one at a time at the leak rate. This smooths traffic for downstream that cannot tolerate any burst (e.g., a legacy database with strict connection limits).</li>
 <li><strong>Trade-off:</strong> Adds latency — bursty arrivals are queued rather than admitted immediately.</li>
 </ul>
-<p><pre><code>flowchart TB
-    subgraph TokenBucket["Token Bucket — burst allowed"]
-        direction LR
-        TTokens["Tokens<br/>refill 10/s<br/>capacity 20"]
-        TReq["Burst of 15<br/>arrives at once"]
-        TOut["15 admitted<br/>instantly<br/>(bucket had 20)"]
-        TReq --> TTokens --> TOut
-        TNext["Next request<br/>100ms later<br/>1 token refilled<br/>→ admitted"]
-        TOut ~~~ TNext
-    end
-
-    subgraph LeakyBucket["Leaky Bucket — burst smoothed"]
-        direction LR
-        LQueue["Queue<br/>leak 10/s<br/>capacity 20"]
-        LReq["Burst of 15<br/>arrives at once"]
-        LOut["1 admitted<br/>immediately<br/>14 queued<br/>released 1 per 100ms"]
-        LReq --> LQueue --> LOut
-        LNext["Takes 1.4s<br/>to drain<br/>smooth output"]
-        LOut ~~~ LNext
-    end
-
-    style TTokens fill:#86efac,stroke:#166534,color:#000
-    style TOut fill:#bbf7d0,stroke:#166534,color:#000
-    style LQueue fill:#fef08a,stroke:#854d0e,color:#000
-    style LOut fill:#fde68a,stroke:#92400e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_78371262f5ac.png" alt="diagram"></div></p>
 <p><strong>When to use which:</strong></p>
 <table>
 <thead>
@@ -5919,23 +5337,7 @@ print(f&quot;\nMST edges: {mst}  total cost: {cost}&quot;)
 </code></pre></div>
 
 <p>GCRA with <code>tau = 0</code> is a strict rate limiter (no burst — exactly <code>1/T</code> spacing). With <code>tau &gt; 0</code> it allows bursts of <code>b</code> requests. The algorithm is O(1) per request, O(1) memory, and trivially serializable to Redis or memcached with a single <code>GET</code>/<code>SET</code> or Lua script — which is why it powers many distributed limiters (e.g., <code>redis-cell</code>, Cloudflare's limiter).</p>
-<p><pre><code>flowchart TB
-    subgraph GCRA["GCRA — TAT timeline (r=2/s, T=0.5s, burst=3, tau=1.0s)"]
-        direction LR
-        R1["req at 0.0s<br/>TAT=0.5 ✓"]
-        R2["req at 0.1s<br/>TAT=1.0 ✓"]
-        R3["req at 0.2s<br/>TAT=1.5 ✓"]
-        R4["req at 0.3s<br/>TAT would be 2.0<br/>now=0.3 < TAT-tau=0.5<br/>→ REJECT"]
-        R5["req at 1.6s<br/>now=1.6 >= 0.5<br/>TAT=max(1.5,1.6)+0.5=2.1 ✓"]
-        R1 --> R2 --> R3 --> R4 --> R5
-    end
-
-    style R1 fill:#86efac,stroke:#166534,color:#000
-    style R2 fill:#86efac,stroke:#166534,color:#000
-    style R3 fill:#86efac,stroke:#166534,color:#000
-    style R4 fill:#fca5a5,stroke:#991b1b,color:#000
-    style R5 fill:#86efac,stroke:#166534,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cca85b444d77.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># GCRA — Generic Cell Rate Algorithm (virtual scheduling)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
@@ -6006,32 +5408,7 @@ print(f&quot;\nMST edges: {mst}  total cost: {cost}&quot;)
 <hr />
 <h2 id="85-distributed-rate-limiting-local-global-and-in-between">8.5 Distributed rate limiting — local, global, and in between</h2>
 <p>A single-node limiter is accurate but useless when traffic arrives at N replicas behind a load balancer. Three strategies exist, with a clear trade-off between accuracy and coordination cost:</p>
-<p><pre><code>flowchart TB
-    Clients --> LB["Load Balancer"]
-    LB --> A["Replica A<br/>local limit: 100/s"]
-    LB --> B["Replica B<br/>local limit: 100/s"]
-    LB --> C["Replica C<br/>local limit: 100/s"]
-
-    subgraph Local["Local limiting — no coordination"]
-        LA["Each replica enforces 100/s<br/>Global = 300/s nominal<br/>But if traffic skews to one replica,<br/>that replica throttles while others idle"]
-    end
-
-    subgraph Global["Global limiting — central counter"]
-        G["Redis / memcached<br/>atomic INCR + TTL<br/>accurate global 100/s<br/>but +1 RTT per request<br/>and a single point of contention"]
-    end
-
-    subgraph Hybrid["Hybrid — local + periodic sync"]
-        H["Local counters with<br/>periodic reconciliation<br/>or probabilistic refill<br/>bounded error, no per-request RTT"]
-    end
-
-    A ~~~ Local
-    B ~~~ Global
-    C ~~~ Hybrid
-
-    style Local fill:#fef08a,stroke:#854d0e,color:#000
-    style Global fill:#fca5a5,stroke:#991b1b,color:#000
-    style Hybrid fill:#86efac,stroke:#166534,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f7c0f8eede44.png" alt="diagram"></div></p>
 <h3 id="strategy-1-local-limiting-divide-the-quota">Strategy 1 — Local limiting (divide the quota)</h3>
 <p>Give each replica <code>limit / N</code> tokens. No coordination. Simple, fast (no network), but inaccurate under skew: if one replica receives 80% of traffic, it throttles aggressively while others have spare capacity. Over-provisioning the divisor (e.g., <code>limit / N * 1.5</code>) trades accuracy for availability — common when strict accuracy is not required.</p>
 <h3 id="strategy-2-centralized-counter-redis-memcached">Strategy 2 — Centralized counter (Redis / memcached)</h3>
@@ -6370,29 +5747,7 @@ print(f&quot;\nMST edges: {mst}  total cost: {cost}&quot;)
 <hr />
 <h2 id="87-scheduling-ordering-admitted-work">8.7 Scheduling — ordering admitted work</h2>
 <p>Once requests are admitted, the order in which they execute determines fairness, tail latency, and SLO attainment.</p>
-<p><pre><code>flowchart TB
-    subgraph FIFO["FIFO — simple, unfair under skew"]
-        F1["Tenant A: 100 cheap reqs"] --> FQ["Queue (FIFO)"] --> FW["Workers"]
-        F2["Tenant B: 1 expensive req"] --> FQ
-        Note1["B waits behind 100 of A's reqs<br/>head-of-line blocking"]
-    end
-
-    subgraph Fair["Fair Queuing — per-tenant queues, round-robin"]
-        Q1["Tenant A queue"] --> Arb["Round-Robin<br/>Arbiter"] --> FW2["Workers"]
-        Q2["Tenant B queue"] --> Arb
-        Note2["B gets every other slot<br/>no starvation"]
-    end
-
-    subgraph Priority["Strict Priority — always serve highest first"]
-        P1["High priority"] --> PQ["Priority Queue"] --> FW3["Workers"]
-        P2["Low priority"] --> PQ
-        Note3["Low priority can starve<br/>if high-priority load is sustained"]
-    end
-
-    style FQ fill:#fca5a5,stroke:#991b1b,color:#000
-    style Arb fill:#86efac,stroke:#166534,color:#000
-    style PQ fill:#fef08a,stroke:#854d0e,color:#000
-</code></pre></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ef5d11e5a933.png" alt="diagram"></div></p>
 <h3 id="fifo-the-default-and-its-failure-mode">FIFO — the default, and its failure mode</h3>
 <p>FIFO is simple and preserves ordering, but a single tenant or request class that floods the queue blocks everyone — classic head-of-line blocking. In backend systems this manifests as one customer's bulk import starving interactive requests for all other customers.</p>
 <h3 id="strict-priority-urgent-first-but-watch-for-starvation">Strict priority — urgent first, but watch for starvation</h3>
@@ -6616,4 +5971,7 @@ class DeadlineItem:
 <span class="n">edf2</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="ss">&quot;fresh&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">deadline</span><span class="o">=</span><span class="n">now</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">10.0</span><span class="p">)</span>
 <span class="n">expired</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">edf2</span><span class="p">.</span><span class="n">pop_if_expired</span><span class="p">(</span><span class="n">now</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1.0</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="ss">&quot;  expired at t+1.0: {expired} (stale dropped, fresh remains)&quot;</span><span class="p">)</span>
-</code></pre></div></div></body></html>
+</code></pre></div>
+
+<h3 id="token-bucket-vs-leaky-bucket">Token bucket vs leaky bucket</h3>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_859f15ee0382.png" alt="diagram"></div></p></div></body></html>
