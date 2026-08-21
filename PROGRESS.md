@@ -497,3 +497,11 @@ Batch 48 — 2026-08-21: ch07/ch03 rewrites expanded + Vol18 ch09 + Vol19 ch08 l
 - Vol20 ch03 Lifetimes/Variance expanded (6,320→8,736w, 8 mermaid — now full E0597/E0382 + PhantomData)
 - Vol18 ch09 Build Tooling (Maven POM/lifecycle, Gradle DSL/cache, sbt, BOM, 6,001w, 8 mermaid)
 - Vol19 ch08 Vue/Svelte (reactive Proxy vs $state runes, patch block, compiled output, 8,454w, 8 mermaid — trimmed 9→8)
+
+Batch 49 — 2026-08-21: Vol19 ch09-ch12 + Vol20 ch05-ch06 landed (batch 5/6 — 6 ch).
+- Vol19 ch09 Rendering (SSR/streaming/Islands/Qwik resumability, 7,312w, 8 mermaid)
+- Vol19 ch10 State/Data (TanStack stale/gc, optimistic, Jotai DAG, 9,478w, 8 mermaid — trimmed 10→8)
+- Vol19 ch11 Testing Tooling (Vitest workers, Playwright trace, flat ESLint, 7,138w, 8 mermaid)
+- Vol19 ch12 Production Frontend (Core Web Vitals, RUM, CDN edge/RSC, 6,889w, 8 mermaid — trimmed 11→8)
+- Vol20 ch05 Async Rust (Future/Pin/Tokio work-stealing, 8,103w, 8 mermaid)
+- Vol20 ch06 Memory/Allocators (Arc/Mutex, jemalloc vs mimalloc, Bytes zero-copy, 9,043w, 8 mermaid)
