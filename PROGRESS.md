@@ -462,3 +462,8 @@ Batch 40 — 2026-08-21: Vol18 ch04-ch06 + Vol19 ch04 + Vol20 ch02 landed (batch
 - Vol18 ch06 Concurrency/Loom (monitors, VarHandle, carrier vs virtual, AQS, 7,171w, 8 mermaid)
 - Vol19 ch04 Types/Prototypes/Modules (coercion, prototype chain, Proxy, CJS vs ESM, 10,833w, 8 mermaid)
 - Vol20 ch02 Ownership/Borrow Checker (move, Copy/Clone, NLL/Polonius, 7,743w, 7 mermaid)
+
+Batch 41 — 2026-08-21: Vol19 ch03, ch05-ch06 landed (batch 2b — 3 ch).
+- Vol19 ch03 Node.js Internals (libuv 6 phases, threadpool, N-API/napi-rs, worker_threads vs cluster, AsyncLocalStorage, 11,152w, 8 mermaid)
+- Vol19 ch05 Async JavaScript (Promise states, job queue, async/await desugaring, generators, 8,648w, 7 mermaid)
+- Vol19 ch06 Bundlers (RSPack/Vite/esbuild, treesaking, code splitting, HMR, module federation, 7,634w, 8 mermaid — trimmed from 9)
