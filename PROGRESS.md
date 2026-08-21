@@ -375,9 +375,9 @@ until then their paths are as listed above).
 
 ## Volume 16 — Python and CPython Internals (`vol-16-python-cpython-internals/`)
 
-- [ ] 16.01 CPython Architecture: Source to Execution — `ch01-cpython-architecture.md`
-- [ ] 16.02 Objects, Reference Counting, and the PyObject System — `ch02-objects-refcount.md`
-- [ ] 16.03 Bytecode, the ceval Loop, and Adaptive Specialization (PEP 659) — `ch03-bytecode-ceval.md`
+- [x] 16.01 CPython Architecture: Source to Execution — `ch01-cpython-architecture.md`
+- [x] 16.02 Objects, Reference Counting, and the PyObject System — `ch02-objects-refcount.md`
+- [x] 16.03 Bytecode, the ceval Loop, and Adaptive Specialization (PEP 659) — `ch03-bytecode-ceval.md`
 - [ ] 16.04 Memory Management: pymalloc, GC, Arenas, and Immortal Objects — `ch04-memory-management.md`
 - [ ] 16.05 The GIL: Mechanics, Evolution, Per-Interpreter GIL and Free-Threaded Python — `ch05-gil.md`
 - [ ] 16.06 The Type System: Classes, MRO, Descriptors, Slots, and the Attribute Protocol — `ch06-type-system.md`
@@ -390,9 +390,9 @@ until then their paths are as listed above).
 
 ## Volume 17 — Golang and Go Internals (`vol-17-go-internals/`)
 
-- [ ] 17.01 The Go Toolchain: Modules, Build, Linker, and the Static Binary Model — `ch01-toolchain.md`
-- [ ] 17.02 Types, Memory Layout, and Generics Internals — `ch02-types-generics.md`
-- [ ] 17.03 Functions, Methods, Defer, Panic/Recover, and the ABI — `ch03-functions-abi.md`
+- [x] 17.01 The Go Toolchain: Modules, Build, Linker, and the Static Binary Model — `ch01-toolchain.md`
+- [x] 17.02 Types, Memory Layout, and Generics Internals — `ch02-types-generics.md`
+- [x] 17.03 Functions, Methods, Defer, Panic/Recover, and the ABI — `ch03-functions-abi.md`
 - [ ] 17.04 Goroutines, the Scheduler (G-M-P), and the Netpoller — `ch04-scheduler-netpoller.md`
 - [ ] 17.05 Memory Allocator, Stacks, and the Concurrent Tri-Color GC — `ch05-allocator-gc.md`
 - [ ] 17.06 The Go Memory Model, Atomics, and Synchronization Primitives — `ch06-memory-model.md`
