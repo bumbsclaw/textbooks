@@ -467,3 +467,7 @@ Batch 41 — 2026-08-21: Vol19 ch03, ch05-ch06 landed (batch 2b — 3 ch).
 - Vol19 ch03 Node.js Internals (libuv 6 phases, threadpool, N-API/napi-rs, worker_threads vs cluster, AsyncLocalStorage, 11,152w, 8 mermaid)
 - Vol19 ch05 Async JavaScript (Promise states, job queue, async/await desugaring, generators, 8,648w, 7 mermaid)
 - Vol19 ch06 Bundlers (RSPack/Vite/esbuild, treesaking, code splitting, HMR, module federation, 7,634w, 8 mermaid — trimmed from 9)
+
+Batch 42 — 2026-08-21: Vol19 ch06 + Vol20 ch04 landed (batch 2c — 2 ch).
+- Vol19 ch06 Bundlers (RSPack/Vite/esbuild, pre-bundle, treesaking, splitChunks, HMR, 7,634w, 8 mermaid — trimmed from 9)
+- Vol20 ch04 Traits/Generics/Monomorphization (orphan rule, vtable, const generics, 6,046w, 8 mermaid — trimmed from 9)
