@@ -448,3 +448,10 @@ until then their paths are as listed above).
 - [ ] 20.11 Testing, Linting, and Tooling — `ch11-testing-linting.md`
 - [ ] 20.12 Production Rust: Cross-Compilation, Workspaces, Telemetry, and Deployment at Scale — `ch12-production-rust.md`
 
+
+Batch 39 — 2026-08-21: Vol18 ch01-ch03 + Vol19 ch01-ch02 landed (batch 1/6 of Vols 18-20).
+- Vol18 ch01 JVM Architecture (HotSpot interpreter/C1/C2/Graal, classfile CAFEBABE, 202 opcodes, verification, ~7.2k words, 7 mermaid)
+- Vol18 ch02 Class Loading/JPMS (delegation, StackMapTable, initialization deadlock, JPMS/jlink, ~6.1k words, 7 mermaid)
+- Vol18 ch03 JMM/Object Layout (happens-before, visibility, safe publication, mark word, TLAB, ~9.1k words, 8 mermaid)
+- Vol19 ch01 JS Engines (V8 Ignition/Maglev/TurboFan, hidden classes/ICs, SpiderMonkey/JSC, ~6.6k words, 8 mermaid)
+- Vol19 ch02 Event Loop (browser vs libuv phases, microtasks, starvation, ~7.1k words, 8 mermaid — trimmed gantt)
