@@ -505,3 +505,11 @@ Batch 49 — 2026-08-21: Vol19 ch09-ch12 + Vol20 ch05-ch06 landed (batch 5/6 —
 - Vol19 ch12 Production Frontend (Core Web Vitals, RUM, CDN edge/RSC, 6,889w, 8 mermaid — trimmed 11→8)
 - Vol20 ch05 Async Rust (Future/Pin/Tokio work-stealing, 8,103w, 8 mermaid)
 - Vol20 ch06 Memory/Allocators (Arc/Mutex, jemalloc vs mimalloc, Bytes zero-copy, 9,043w, 8 mermaid)
+
+Batch 50 — 2026-08-21: Vol20 ch07-ch12 landed (batch 6/6 FINAL — 6 ch, ~54k words) — Vol18-20 36/36 COMPLETE.
+- Vol20 ch07 Errors/Unsafe (Result/?, anyhow/thiserror, MaybeUninit/Miri/fuzz, 6,999w, 7 mermaid)
+- Vol20 ch08 Concurrency (Send/Sync, Atomics Ordering, Treiber lock-free/epoch, 12,432w, 8 mermaid)
+- Vol20 ch09 Macros/Codegen (macro_rules TT, syn/quote derive, build.rs tonic, 8,686w, 8 mermaid)
+- Vol20 ch10 FFI/Polyglot (extern C, PyO3, napi-rs, WASM, 9,898w, 8 mermaid)
+- Vol20 ch11 Testing/Tooling (nextest, clippy pedantic, loom/shuttle, 9,727w, 8 mermaid)
+- Vol20 ch12 Production (cross-compile zigbuild, workspace, OTel, cargo-chef, 7,351w, 6 mermaid)
