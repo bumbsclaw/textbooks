@@ -271,7 +271,7 @@ hr {
 <li><strong>Lower and emit.</strong> The AST is lowered to a linear sequence of bytecode instructions. <code>javac</code> resolves constants, generates synthetic methods (like <code>&lt;clinit&gt;</code> for static initializers), and produces a <code>ClassWriter</code> that serializes the bytecode into the classfile binary format.</li>
 <li><strong>Post-verification.</strong> Since JDK 5, <code>javac</code> emits <code>StackMapTable</code> attributes so the JVM can verify bytecode using a single-pass dataflow analysis (type checking) instead of the old, expensive type inference algorithm. The compiler itself may also emit deprecation warnings, unchecked cast warnings, and other annotation processing output.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b4be449f1e76.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b4be449f1e76.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-the-classfile-format-binary-anatomy">2. The classfile format — binary anatomy</h2>
 <p>Every <code>.class</code> file is a single 8-bit-byte stream. There are no alignment requirements, no padding bytes — the format is dense and positional. The JVM specification (§4.1–§4.9) defines every field precisely.</p>
@@ -431,7 +431,7 @@ xxd<span class="w"> </span>Hello.class<span class="w"> </span><span class="p">|<
 <li><strong>Record</strong>: JDK 16+. For record classes, lists the record components.</li>
 <li><strong>PermittedSubclasses</strong>: JDK 17+. For sealed classes, lists permitted subclasses.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_07878ca62f6a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_07878ca62f6a.png" alt="diagram"></div></p>
 <hr />
 <h2 id="3-bytecode-the-instruction-set">3. Bytecode — the instruction set</h2>
 <p>The JVM is a <strong>stack machine</strong>: instructions operate on an operand stack, not registers. Each instruction is a 1-byte opcode followed by zero or more operands (encoded as 1, 2, or 4 bytes, big-endian). There are approximately 202 distinct opcodes in the current specification. Every opcode name is a mnemonic — <code>iload</code>, <code>iadd</code>, <code>invokevirtual</code>, <code>tableswitch</code> — and each has a precise semantic contract for what it pops from and pushes to the operand stack, what local variables it reads, and how it affects control flow.</p>
@@ -668,7 +668,7 @@ xxd<span class="w"> </span>Hello.class<span class="w"> </span><span class="p">|<
 <li><strong>Dynamic linking</strong>: a reference to the runtime constant pool for the frame, used to resolve symbolic references to concrete addresses (field offsets, method pointers) on first use.</li>
 <li><strong>Return address</strong>: where to resume execution in the caller's frame after <code>return</code>, <code>ireturn</code>, <code>areturn</code>, etc. On exception, the return address comes from the exception handler table.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_645783d34c15.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_645783d34c15.png" alt="diagram"></div></p>
 <h3 id="41-method-invocation-pushing-a-frame">4.1 Method invocation — pushing a frame</h3>
 <p>When <code>invokevirtual java/io/PrintStream.println(Ljava/lang/String;)V</code> executes:</p>
 <ol>
@@ -705,7 +705,7 @@ xxd<span class="w"> </span>Hello.class<span class="w"> </span><span class="p">|<
 <p><strong>Stage 3 — Bytecode verification (dataflow analysis)</strong>: The bytecode instructions are analyzed for type safety. The verifier simulates execution, tracking the types on the operand stack and in local variables at every point. At a merge point (e.g., the join of two branches of an <code>if</code> statement), the verifier checks that the types on both paths are compatible. If the classfile has a <code>StackMapTable</code> attribute (JDK 5+), the verifier uses it as an oracle — it checks that the frames in the <code>StackMapTable</code> match the types implied by the bytecode, without having to infer them. This is the "type checking" algorithm and is O(n) in the size of the bytecode. Without <code>StackMapTable</code>, the verifier falls back to "type inference" — a more expensive O(n³) algorithm that computes types at every point. The JVM emits a warning for classes without <code>StackMapTable</code> and rejects them entirely in strict mode.</p>
 <p><strong>Stage 4 — Stack map frame verification</strong>: The <code>StackMapTable</code> frames are validated against the actual bytecode structure. Every branch target must have a corresponding frame; every frame must list the correct types for each local variable slot and operand stack position. Mismatches cause <code>VerifyError</code>.</p>
 <p><strong>Stage 5 — Dataflow integrity</strong>: Finally, the verifier checks that the operand stack is empty (or has only the return type) at every return instruction, that no local variable is read before it is written, and that <code>athrow</code> and <code>jsr</code> (retired but still valid in old classfiles) are correctly handled.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f82a1aa8eb33.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f82a1aa8eb33.png" alt="diagram"></div></p>
 <h3 id="52-why-stackmaptable-matters-for-kotlin">5.2 Why StackMapTable matters for Kotlin</h3>
 <p>Kotlin generates <code>StackMapTable</code> attributes in all its bytecode, but the structure is more complex than Java's due to Kotlin's null-safety encoding. A <code>String?</code> parameter in Kotlin compiles to the same descriptor (<code>Ljava/lang/String;</code>) as Java's <code>String</code>, but Kotlin adds null-check instructions (<code>checkcast</code> after loads, <code>ifnonnull</code> guards) and relies on the verifier to prove that <code>null</code> cannot flow through non-nullable paths. When you see <code>VerifyError</code> in a Kotlin-generated classfile, the <code>StackMapTable</code> is almost always the root cause — either the table is inconsistent with the bytecode, or the verifier found a path where a null reference could reach a non-null instruction.</p>
 <hr />
@@ -722,7 +722,7 @@ xxd<span class="w"> </span>Hello.class<span class="w"> </span><span class="p">|<
 <p>JIT-compiled native code lives in the <strong>code cache</strong> — a dedicated region of native memory (<code>-XX:ReservedCodeCacheSize</code>, default 240 MB). When the code cache is full, the JVM stops JIT-compiling and falls back to the interpreter — performance degrades dramatically. Large applications with many classes (Scala, Kotlin, Spring Boot) can fill the code cache; raise it to 512 MB or more with <code>-XX:ReservedCodeCacheSize=512m</code>.</p>
 <h3 id="65-direct-off-heap-memory">6.5 Direct (off-heap) memory</h3>
 <p><code>ByteBuffer.allocateDirect</code> and Netty's <code>ByteBuf</code> allocate memory outside the GC heap, managed by <code>Cleaner</code> (phantom reference-based) or manual deallocation. The limit is <code>-XX:MaxDirectMemorySize</code>. Direct buffers are useful for I/O (avoiding heap-to-native copies) but are invisible to the garbage collector until the cleaner runs — premature deallocation or insufficient direct memory limits cause <code>OutOfMemoryError: Direct buffer memory</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_982ed8ad0f7c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_982ed8ad0f7c.png" alt="diagram"></div></p>
 <hr />
 <h2 id="7-hotspot-the-interpreter-jit-compilers-and-graal">7. HotSpot — the interpreter, JIT compilers, and Graal</h2>
 <p>HotSpot is the reference JVM — the one shipped in OpenJDK, Oracle JDK, Amazon Corretto, Eclipse Temurin, and every major distribution. Its distinguishing feature is <strong>adaptive optimization</strong>: it profiles execution behavior at runtime and compiles hot methods to optimized native code, with the ability to deoptimize and recompile when assumptions break.</p>
@@ -775,7 +775,7 @@ xxd<span class="w"> </span>Hello.class<span class="w"> </span><span class="p">|<
 2. At <code>-XX:CompileThreshold</code> (default 10,000 for server, 1,500 for client), method compiles at level 2 (C1 with profiling).
 3. If the C2 queue is not backlogged, and the method accumulates enough profiling data (another threshold), it compiles at level 4 (C2). The level 3 compilation may occur in parallel as an intermediate step.
 4. If C2 compilation fails or the method is "too hot" for C1 to handle without profiling, it stays at level 3 (C1 without profiling).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8b451c7b15a0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8b451c7b15a0.png" alt="diagram"></div></p>
 <h3 id="72-what-the-jit-actually-optimizes">7.2 What the JIT actually optimizes</h3>
 <p>The C2 compiler (and increasingly, GraalVM's Graal compiler when used as C2 replacement) performs optimizations that are only possible because the JVM profiles runtime behavior:</p>
 <ul>
@@ -846,7 +846,7 @@ xxd<span class="w"> </span>Hello.class<span class="w"> </span><span class="p">|<
 - <strong><code>jmods/</code></strong> is for the <code>jlink</code> tool, not for the running JVM. You can delete <code>jmods/</code> from a container image to save ~60 MB without affecting execution.
 - <strong><code>lib/server/libjvm.so</code></strong> is the HotSpot shared library — the entire JVM in one <code>.so</code>. The launcher (<code>bin/java</code>) loads this, initializes the JVM, and transfers control to <code>JNI_CreateJavaVM</code>.
 - <strong><code>include/</code></strong> is needed only when compiling JNI native code (<code>-I$JAVA_HOME/include -I$JAVA_HOME/include/linux</code>).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c81657e8ec0d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c81657e8ec0d.png" alt="diagram"></div></p>
 <hr />
 <h2 id="9-distributed-systems-lens">9. Distributed-systems lens</h2>
 <p>The JVM architecture described in this chapter has direct implications for operating Java/Kotlin services at scale:</p>
@@ -969,7 +969,7 @@ tree. Each loader has a well-defined scope:</p>
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_add1bae535ec.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_add1bae535ec.png" alt="diagram"></div></p>
 <p>You can inspect these loaders at runtime:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">LoaderHierarchy</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -1011,7 +1011,7 @@ first. Instead, it follows the <strong>parent-first delegation model</strong>:</
 <li>Only if the parent throws <code>ClassNotFoundException</code>, call <code>findClass(name)</code> on
    the current loader.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ae5ac8870063.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ae5ac8870063.png" alt="diagram"></div></p>
 <p>This design ensures that core Java classes — <code>java.lang.String</code>, <code>java.util.List</code>
 — are always loaded by the bootstrap or platform loader, never by an application
 loader. This is both a correctness guarantee and a security boundary: you cannot
@@ -1173,7 +1173,7 @@ either synchronizing the I/O or designing the lookup to be idempotent.</p>
 through <strong>linking</strong> — a three-phase pipeline that turns raw bytes into a
 usable class with valid bytecode, allocated static storage, and symbolic
 references resolved to actual types.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_948d1ca1bd60.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_948d1ca1bd60.png" alt="diagram"></div></p>
 <h3 id="verification-making-sure-the-bytes-are-safe">Verification: making sure the bytes are safe</h3>
 <p>Verification is the most computationally expensive linking phase. It ensures
 that the bytecode does not violate the structural constraints of the JVM —
@@ -1192,7 +1192,7 @@ the type state (primitive types or class/interface types) of the operand stack
 and local variables at every branch target and exception handler. The verifier
 walks the bytecode, checking that at every point the actual types match the
 declared <code>StackMapFrame</code> types.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2a87c006cb43.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2a87c006cb43.png" alt="diagram"></div></p>
 <p>The type-checking verifier is both faster and simpler than the type-inference
 verifier, but it requires the compiler to emit <code>StackMapTable</code> data. If you
 are hand-writing bytecode (e.g., via ASM, ByteBuddy, or a bytecode
@@ -1294,7 +1294,7 @@ safely reference the superclass's static fields.</p>
 <h3 id="the-classloader-deadlock-pattern">The classloader deadlock pattern</h3>
 <p>Circular static initialization across two class loaders is one of the most
 insidious JVM bugs. Consider:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c85f230dcaba.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c85f230dcaba.png" alt="diagram"></div></p>
 <p>Thread 1 loads class A. The JVM locks A's <code>Class&lt;?&gt;</code> object and begins
 executing A's <code>&lt;clinit&gt;</code>. A's static initializer references class B, so the
 JVM tries to load B — but B's class loader is the same one, so it locks B's
@@ -1463,7 +1463,7 @@ Here is a realistic example for a payment-processing service:</p>
 When module A requires module B, A can access B's exported packages. The
 readability graph is acyclic at the module level — circular module
 dependencies are rejected at link time.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8e48bb2c8de4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8e48bb2c8de4.png" alt="diagram"></div></p>
 <h3 id="exports-vs-opens">exports vs opens</h3>
 <p>This distinction is critical and frequently misunderstood:</p>
 <ul>
@@ -1571,7 +1571,7 @@ jlink<span class="w"> </span><span class="se">\</span>
 <span class="c1"># com.google.guava@31.1</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_15b56b6a78f1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_15b56b6a78f1.png" alt="diagram"></div></p>
 <p>The startup time and memory improvement is substantial. A Spring Boot
 application that bundles a full JRE at 300 MB can be reduced to a jlink
 image of 50 MB with 20-30% faster startup (fewer classes to load and verify).
@@ -1957,7 +1957,7 @@ JVM:</p>
 </table>
 <p>There is no general <code>hb</code> edge for a plain write followed by a plain read, for <code>Atomic*</code> plain modes, for <code>ConcurrentHashMap.get</code> vs. <code>put</code> on different keys, or for any framework "eventually" — only the rows above (and their <code>java.util.concurrent</code> implementations that internally use <code>volatile</code>/<code>synchronized</code>/<code>VarHandle</code> release-acquire).</p>
 <h3 id="23-happens-before-graph">2.3 Happens-before graph</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1b84a73370a3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1b84a73370a3.png" alt="diagram"></div></p>
 <p>Transitivity is the workhorse. The common publish pattern:</p>
 <div class="highlight"><pre><span></span><code><span class="nv">T0</span>:<span class="w">  </span><span class="nv">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="w">          </span><span class="o">//</span><span class="w"> </span><span class="nv">W</span><span class="ss">(</span><span class="nv">x</span><span class="ss">)</span><span class="w">  </span>—<span class="w"> </span><span class="nv">plain</span><span class="w"> </span><span class="nv">write</span>
 <span class="nv">T0</span>:<span class="w">  </span><span class="nv">volatileReady</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">true</span><span class="w">  </span><span class="o">//</span><span class="w"> </span><span class="nv">VW</span><span class="w"> </span>—<span class="w"> </span><span class="nv">volatile</span><span class="w"> </span><span class="nv">write</span>
@@ -2006,7 +2006,7 @@ JVM:</p>
 </table>
 <p>The JIT is often the bigger source of surprises than the CPU. A field read hoisted out of a loop, a null check eliminated because the JIT proved non-null on the fast path — these produce "impossible" values that no hardware litmus test predicts.</p>
 <h3 id="32-reordering-illustrated">3.2 Reordering illustrated</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_096bb36fc849.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_096bb36fc849.png" alt="diagram"></div></p>
 <p>The classic four litmus tests (each <code>hb</code>-free by default):</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// StoreStore — can T1 see y==1 before x==1?</span>
 <span class="c1">//   T0: x=1; y=1;     T1: r1=y; r2=x;   Outcome r1==1 &amp;&amp; r2==0 legal?  YES on ARM, NO on x86 (TSO orders stores)</span>
@@ -2081,7 +2081,7 @@ JVM:</p>
 </code></pre></div>
 
 <h3 id="42-safe-publication-patterns">4.2 Safe publication patterns</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_66a696c913d6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_66a696c913d6.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -2427,7 +2427,7 @@ java<span class="w"> </span>-cp<span class="w"> </span>jol-core.jar:target/class
 <li><code>SZ</code> — field size in bytes (4 for compressed oop, 8 for uncompressed).</li>
 <li><code>Instance size</code> — <code>alignUp(header + fields + padding, 8)</code>. Every object is a multiple of 8 bytes; with <code>-XX:ObjectAlignmentInBytes=16</code> (large heaps), multiples of 16.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ac5916b80f92.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ac5916b80f92.png" alt="diagram"></div></p>
 <hr />
 <h2 id="6-heap-organization-generations-tlabs-and-regions">6. Heap organization: generations, TLABs, and regions</h2>
 <h3 id="61-the-generational-hypothesis">6.1 The generational hypothesis</h3>
@@ -2443,7 +2443,7 @@ java<span class="w"> </span>-cp<span class="w"> </span>jol-core.jar:target/class
 <span class="w">  </span><span class="n">Collection</span><span class="w"> </span><span class="n">sets</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">chosen</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">pause</span><span class="w"> </span><span class="n">goal</span><span class="p">,</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">fixed</span><span class="w"> </span><span class="n">generation</span><span class="w"> </span><span class="n">sizes</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6bf39846b40d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6bf39846b40d.png" alt="diagram"></div></p>
 <p>Survivor mechanics (Parallel / G1 Young):</p>
 <ul>
 <li><strong>Eden</strong> fills via TLAB bump allocation until full, then a <strong>minor GC</strong> copies live Eden + <code>from</code> Survivor objects into <code>to</code> Survivor, incrementing their age (mark word <code>age</code> field, 4 bits → max 15).</li>
@@ -2459,7 +2459,7 @@ java<span class="w"> </span>-cp<span class="w"> </span>jol-core.jar:target/class
 <span class="n">ZGC</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Shenandoah</span><span class="p">:</span><span class="w"> </span><span class="n">colored</span><span class="w"> </span><span class="n">pointers</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">load</span><span class="w"> </span><span class="n">barriers</span><span class="p">,</span><span class="w"> </span><span class="n">no</span><span class="w"> </span><span class="n">fixed</span><span class="w"> </span><span class="n">Young</span><span class="o">/</span><span class="n">Old</span><span class="w"> </span><span class="n">split</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">same</span><span class="w"> </span><span class="n">sense</span><span class="w"> </span><span class="p">(</span><span class="n">generational</span><span class="w"> </span><span class="n">ZGC</span><span class="p">,</span><span class="w"> </span><span class="n">JEP</span><span class="w"> </span><span class="mi">474</span><span class="p">,</span><span class="w"> </span><span class="n">adds</span><span class="w"> </span><span class="n">generations</span><span class="w"> </span><span class="n">atop</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">region</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="n">see</span><span class="w"> </span><span class="n">Chapter</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="o">.</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7daa18b21368.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7daa18b21368.png" alt="diagram"></div></p>
 <h3 id="62-tlab-allocation-without-contention">6.2 TLAB — allocation without contention</h3>
 <p>Allocation must be fast: a backend allocating 1 GB/s cannot take a lock per <code>new</code>. The <strong>Thread-Local Allocation Buffer</strong> (TLAB) makes it a bump pointer:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Conceptual TLAB (HotSpot: thread.cpp, CollectedHeap, ThreadLocalAllocBuffer)</span>
@@ -2544,7 +2544,7 @@ java<span class="w"> </span>-cp<span class="w"> </span>jol-core.jar:target/class
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_99afbc49af56.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_99afbc49af56.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Backend lens — sizing.</strong> Size TLABs and Eden so that request-scoped allocations never hit the slow path mid-request. A 256 KB TLAB holds ~8k 32-byte objects — enough for a typical HTTP handler. If <code>jstat -gc</code> shows frequent Young GC and <code>TLABWasteTargetPercent</code> waste is high, Eden is too small or a single allocation site is producing humongous arrays (check with <code>jmap -histo</code> + <code>G1Humongous</code> logs: <code>-Xlog:gc+heap=info</code>).</p>
 </blockquote>
@@ -2610,7 +2610,7 @@ java<span class="w"> </span>-cp<span class="w"> </span>jol-core.jar:target/class
 <span class="n">Atomic</span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">atomic</span><span class="p">):</span><span class="w"> </span><span class="n">volatile</span><span class="w"> </span><span class="n">semantics</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="n">same</span><span class="w"> </span><span class="n">barriers</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">volatile</span><span class="o">.</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7bcae2c580d8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7bcae2c580d8.png" alt="diagram"></div></p>
 <p><code>VarHandle</code> is the modern surface for fine-grained ordering (replacing <code>Unsafe</code> and ad-hoc <code>volatile</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.invoke.MethodHandles</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.invoke.VarHandle</span><span class="p">;</span>
@@ -2987,7 +2987,7 @@ Live set = {A,B,C,D,E}; garbage = {F,G}
 <p>No black object directly references a white object.</p>
 </blockquote>
 <p>If the invariant holds, marking is complete when no grey remains — white objects are garbage.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3bbeadf32ffe.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3bbeadf32ffe.png" alt="diagram"></div></p>
 <p>STW collectors trivially maintain the invariant — the mutator is stopped, so no new edges appear. <strong>Concurrent</strong> collectors must maintain it while the mutator runs and mutates the graph. Two violations are possible:</p>
 <ol>
 <li>Mutator creates a new edge <code>black → white</code> (stores a white object into a black object's field).</li>
@@ -3031,7 +3031,7 @@ Live set = {A,B,C,D,E}; garbage = {F,G}
 <li><strong>Remembered set ( remembered set ):</strong> per-region set of cards that contain pointers <em>into</em> that region. Refined concurrently by <code>G1ConcurrentRefine</code> threads draining dirty-card queues. At evacuation, the remembered set tells the collector which Old cards to scan to update references to moved Young objects.</li>
 </ul>
 <p>ZGC and Shenandoah avoid remembered sets entirely — their <strong>load barriers</strong> make cross-region pointer tracking unnecessary (every load self-heals).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_22b28d14f479.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_22b28d14f479.png" alt="diagram"></div></p>
 <p><strong>Cost awareness.</strong> Every reference store pays at least one barrier. G1's post-barrier is unconditional for Old→Young stores (card dirty is a single byte store, ~3–5 ns). ZGC's load barrier is on every reference <em>load</em> — more frequent than stores — but is elided by the JIT when it can prove the oop is already remapped (<code>ZBarrierSetC2::escapeIsSafe</code>). Barrier overhead is the dominant throughput tax of concurrent collectors: G1 ~5–10%, ZGC/Shenandoah ~10–20% vs. Parallel, recouped only if pause reduction lets you hit SLOs with fewer instances.</p>
 <hr />
 <h2 id="4-the-generational-hypothesis-and-heap-anatomy">4. The generational hypothesis and heap anatomy</h2>
@@ -3054,7 +3054,7 @@ Old   ── tenured survivors + direct-allocated large objects
 Metaspace (off-heap) ── class metadata, not collected with the Java heap
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_546fdb7c0fec.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_546fdb7c0fec.png" alt="diagram"></div></p>
 <p>G1, ZGC, and Shenandoah replace the contiguous Young/Old split with a <strong>region array</strong> (see Sections 6–9), but the generational invariant is the same: young regions are collected frequently and cheaply, old regions rarely.</p>
 <h3 id="43-sizing-knobs-that-actually-matter">4.3 Sizing knobs that actually matter</h3>
 <table>
@@ -3172,7 +3172,7 @@ java<span class="w"> </span>-XX:+UseParallelGC<span class="w"> </span><span clas
 <p>CMS (Concurrent Mark-Sweep, removed in JDK 14, JEP 363) was the first low-pause production collector: concurrent marking with incremental-update barriers, STW initial-mark and remark, concurrent sweep. It did <strong>not</strong> compact — free lists fragmented until a Serial Old Full GC compacted. Fragmentation-induced Full GC was CMS's fatal flaw and the reason G1 replaced it. If you still see CMS flags in legacy configs (<code>-XX:+UseConcMarkSweepGC</code>, <code>-XX:CMSInitiatingOccupancyFraction</code>), treat them as tech debt — the collector does not exist on JDK 17+.</p>
 <h3 id="62-g1-heap-the-region-array">6.2 G1 heap: the region array</h3>
 <p>G1 divides the heap into equal-size regions (<code>-XX:G1HeapRegionSize</code>, 1–32 MB, default heap/2048). Each region has a <em>role</em> that changes over time:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4e0a2ce9fd53.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4e0a2ce9fd53.png" alt="diagram"></div></p>
 <p>Key properties:</p>
 <ul>
 <li><strong>No fixed Young/Old boundary.</strong> G1 picks the Young set per GC from free + Eden + Survivor regions to meet <code>MaxGCPauseMillis</code>. Young size is adaptive.</li>
@@ -3288,7 +3288,7 @@ java<span class="w"> </span>-XX:+UseG1GC<span class="w"> </span><span class="se"
 <p>JDK 17 used <strong>multi-mapping</strong> (three virtual mappings of the same physical heap at different colored addresses) so that a colored pointer could be dereferenced directly after <code>mmap</code> tricks. JDK 21 on x86-64 with 5-level paging and on AArch64 with 52-bit VA uses the same technique; on platforms where multi-mapping is unavailable ZGC falls back to explicit masking.</p>
 <h3 id="72-load-barriers">7.2 Load barriers</h3>
 <p>Every reference load (<code>aload</code>, <code>getfield</code>, <code>aaload</code>) is instrumented:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1b0dd8e5c0d2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1b0dd8e5c0d2.png" alt="diagram"></div></p>
 <p>Pseudocode of the fast path (HotSpot <code>ZBarrierSetAssembler::load_barrier_fast_path</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="c1">; r = obj.field  (colored oop in register)</span>
 <span class="nf">test</span><span class="w"> </span><span class="no">r</span><span class="p">,</span><span class="w"> </span><span class="no">ZAddressBadMask</span><span class="w">       </span><span class="c1">; single TEST instruction on x86 — ~1 cycle</span>
@@ -3457,7 +3457,7 @@ java<span class="w"> </span>-XX:+UseShenandoahGC<span class="w"> </span>-Xms16g<
 <h2 id="9-generational-zgc-jdk-21-jep-474">9. Generational ZGC (JDK 21, JEP 474)</h2>
 <p>Non-generational ZGC treats every object equally: every GC marks the whole heap. For backends where 90%+ of objects die young, this wastes marking and relocation work on short-lived garbage that a Young GC could reclaim at O(live-young) cost. <strong>Generational ZGC</strong> (JEP 474, delivered in JDK 21 as <code>-XX:+ZGenerational</code>, default since JDK 23) adds generations atop ZGC's concurrent relocation.</p>
 <h3 id="91-architecture">9.1 Architecture</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2e83d3914f51.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2e83d3914f51.png" alt="diagram"></div></p>
 <p>Key additions over non-generational ZGC:</p>
 <ul>
 <li><strong>Young generation:</strong> small pages (2 MB), collected frequently. Minor GC marks only Young + Old→Young references. Promotion age is tracked per object (like G1's age field).</li>
@@ -3529,7 +3529,7 @@ java<span class="w"> </span>-XX:+UseZGC<span class="w"> </span>-XX:+ZGenerationa
 <hr />
 <h2 id="10-choosing-a-collector-the-latency-throughput-heap-matrix">10. Choosing a collector: the latency-throughput-heap matrix</h2>
 <p>No collector is best for all workloads. The choice is a tradeoff among throughput, pause, heap size, and operational maturity.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3cc071dad0da.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3cc071dad0da.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -3805,7 +3805,7 @@ jfr<span class="w"> </span>print<span class="w"> </span>--events<span class="w">
 <p>Ship <code>jdk.GarbageCollection</code> + <code>jdk.GCPause</code> to your metrics pipeline (Prometheus via JFR exporter, or OpenTelemetry JFR receiver) to graph pause percentiles alongside request p99 — the correlation is the most persuasive tuning evidence for leadership.</p>
 <h3 id="117-gc-pause-timeline-visualizing-stw-vs-concurrent">11.7 GC pause timeline — visualizing STW vs. concurrent</h3>
 <p>STW pauses block all Java threads; concurrent phases run alongside the mutator.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f82e42a123d0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f82e42a123d0.png" alt="diagram"></div></p>
 <p>G1's Young GCs are 15–30 ms STW every 1–2 seconds; ZGC's STW is &lt; 1 ms with concurrent work filling the gaps. The mutator's throughput is <code>1 − (STW time / wall time)</code> — for G1 ~98–99%, for ZGC ~99.9%+.</p>
 <h3 id="118-tuning-recipes">11.8 Tuning recipes</h3>
 <p><strong>Recipe 1: G1 Young GC too frequent (Eden too small)</strong></p>
@@ -3963,7 +3963,7 @@ java<span class="w"> </span>-XX:+UseZGC<span class="w"> </span>-XX:+ZGenerationa
 <p>Before the JIT compiles anything, the <strong>template interpreter</strong> executes it. Understanding the interpreter is not academic — it determines your baseline latency, it collects the profiling data that drives every JIT decision, and it is where execution resumes after every deoptimization.</p>
 <h3 id="11-architecture">1.1 Architecture</h3>
 <p>HotSpot's interpreter is not a switch-based interpreter (like early JVMs). It is a <strong>template interpreter</strong>: for each of the ~202 bytecodes, HotSpot generates a short, hand-optimized assembly-language "template" at JVM startup. These templates are stored in a contiguous code buffer called the <strong>interpreter generator</strong>. Execution dispatches through a table of function pointers indexed by opcode number.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9a9714cc15ba.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9a9714cc15ba.png" alt="diagram"></div></p>
 <p>This is faster than a <code>switch</code> because:
 - The indirect jump through <code>dispatch_table</code> is a single branch prediction unit entry — the CPU's BTB (Branch Target Buffer) learns it quickly.
 - Each template is hand-tuned for its specific opcode (e.g., <code>iload_0</code> is a single register move, not a loop iteration).
@@ -4063,7 +4063,7 @@ Level 2 (C1 + profiling)
 Level 4 (C2 full optimization)
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_36b3985ac653.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_36b3985ac653.png" alt="diagram"></div></p>
 <p>If C2 compilation fails or the queue is backlogged, the method may stay at level 3 (C1 without profiling) as a stable intermediate state. When deoptimization occurs, the method falls all the way back to level 0 (interpreter) — it does not resume at C1.</p>
 <h3 id="22-thresholds-and-flags">2.2 Thresholds and flags</h3>
 <table>
@@ -4123,7 +4123,7 @@ Level 4 (C2 full optimization)
 <p>Setting <code>-XX:TieredStopAtLevel=3</code> disables C2 entirely — useful for latency-sensitive microservices where C2 compilation pauses are unacceptable. The trade-off is 10–20% lower peak throughput.</p>
 <h3 id="23-the-compilation-queue">2.3 The compilation queue</h3>
 <p>C1 and C2 compilation requests go into separate <strong>method queues</strong>. A pool of compiler threads (controlled by <code>-XX:CICompilerCount</code>, default = 3 × number of CPUs for tiered mode) pulls methods from the queue and compiles them.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_579f6f2fce26.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_579f6f2fce26.png" alt="diagram"></div></p>
 <p>The key operational insight: <strong>C2 compilation is expensive</strong> — a complex method can take 100ms+ to compile. During that time, the method either continues executing at C1 speed (level 3) or blocks on the C2 queue. In large applications with many hot methods, the C2 queue can back up, creating a compilation backlog that delays peak performance. Monitor this with <code>jcmd Compiler.cqueue</code> and <code>-XX:+PrintCompilation</code>.</p>
 <hr />
 <h2 id="3-c1-the-fast-compiler">3. C1 — the fast compiler</h2>
@@ -4182,7 +4182,7 @@ Level 4 (C2 full optimization)
 <li><strong>Control edges</strong> represent sequencing: a <code>region</code> node merges control flow from multiple branches; a <code>merge</code> node joins data from both paths.</li>
 <li><strong>Memory edges</strong> track which memory state each operation reads from and writes to — enabling precise alias analysis.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3ea9a8a2f7a3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3ea9a8a2f7a3.png" alt="diagram"></div></p>
 <h3 id="42-global-value-numbering-gvn">4.2 Global Value Numbering (GVN)</h3>
 <p>GVN assigns each unique computation a "value number" and replaces duplicate computations with references to the first. This eliminates redundant loads, redundant arithmetic, and common subexpressions — across basic blocks, not just within them.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Before GVN</span>
@@ -4370,7 +4370,7 @@ Level 4 (C2 full optimization)
 <p>C2 reads IC data during compilation to make inlining decisions. The IC is the bridge between profiling and optimization.</p>
 <h3 id="54-inlining-tree-output">5.4 Inlining tree output</h3>
 <p>When you enable <code>-XX:+PrintInlining</code>, C2 logs its inlining decisions:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8af7b418d505.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8af7b418d505.png" alt="diagram"></div></p>
 <p>Reading the inlining tree:
 - <strong>Unhighlighted nodes</strong>: Successfully inlined — the callee's code is embedded in the caller.
 - <strong>Red nodes</strong> (<code>EntityManager::find</code>, <code>UserMapper::toDto</code>): Not inlined — <code>EntityManager::find</code> lacks type profile (JPA proxies vary by provider), <code>UserMapper::toDto</code> exceeds the 35-byte <code>MaxInlineSize</code> threshold.
@@ -4641,7 +4641,7 @@ Level 4 (C2 full optimization)
 
 <p>After a deopt storm, the affected methods must recompile — which takes C2 time and fills the code cache with both the old (now-deleted) and new compiled code. In severe cases, this can cause a <strong>performance cliff</strong>: the JVM spends more time compiling than executing.</p>
 <h3 id="74-deoptimization-flow">7.4 Deoptimization flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_de7965699462.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_de7965699462.png" alt="diagram"></div></p>
 <hr />
 <h2 id="8-profiling-infrastructure">8. Profiling infrastructure</h2>
 <p>The JIT's optimization quality depends entirely on the quality of its profiling data. HotSpot collects three categories of profile information:</p>
@@ -4757,7 +4757,7 @@ jcmd<span class="w"> </span>&lt;pid&gt;<span class="w"> </span>JFR.start<span cl
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb6d3a322806.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eb6d3a322806.png" alt="diagram"></div></p>
 <h3 id="92-jvmci-the-compiler-interface">9.2 JVMCI — the compiler interface</h3>
 <p>JVMCI (JEP 243, JDK 9+) defines a clean interface between HotSpot and its JIT compiler. This decoupling means:</p>
 <ul>
@@ -5066,7 +5066,7 @@ jstack<span class="w"> </span>&lt;pid&gt;<span class="w"> </span><span class="p"
 <h2 id="2-monitors-how-synchronized-works-inside-hotspot">2. Monitors — how <code>synchronized</code> works inside HotSpot</h2>
 <p>Every Java object can be a monitor. The <code>synchronized</code> keyword and <code>Object.wait()</code>/<code>notify()</code> operate on a hidden <code>ObjectMonitor</code> structure tied to the object's header. The implementation has evolved through three historical stages, and understanding them explains the performance characteristics you observe in production.</p>
 <h3 id="21-monitor-inflation-states">2.1 Monitor inflation states</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d2f3c30f4ee6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d2f3c30f4ee6.png" alt="diagram"></div></p>
 <p><strong>Unlocked.</strong> The object's mark word (8 bytes) is in normal state: either a hash code (25 bits) + age (4 bits) + tag bits <code>01</code>, or all zeros if no hash has been computed. This is the state for 99%+ of objects.</p>
 <p><strong>Lightweight lock (thin lock).</strong> When a thread enters <code>synchronized</code> on an uncontended object, HotSpot attempts a CAS: it swaps the mark word with a pointer to a <strong>lock record</strong> on the thread's own stack. If the CAS succeeds, the thread now owns a lightweight lock — no <code>ObjectMonitor</code> allocated, no kernel involvement, ~5–10 ns on a modern CPU.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Lightweight lock acquisition (HotSpot internals, simplified):</span>
@@ -5091,7 +5091,7 @@ jstack<span class="w"> </span>&lt;pid&gt;<span class="w"> </span><span class="p"
 
 <p>The critical distinction: lightweight locks use only CAS (user space), while fat locks may use <code>futex</code> (kernel space) when threads actually block. In a low-contention scenario (typical microservice with short critical sections), lightweight locks are the norm. In a high-contention scenario (many threads fighting for the same monitor), the overhead shifts from CAS retries to kernel parking/unparking.</p>
 <h3 id="22-monitor-entry-and-exit">2.2 Monitor entry and exit</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aaeb4048f46c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aaeb4048f46c.png" alt="diagram"></div></p>
 <p>The <code>synchronized</code> entry path in HotSpot (<code>synchronizer.cpp</code>, <code>ObjectSynchronizer::enter</code>):</p>
 <ol>
 <li>Try CAS lock record into mark word (lightweight). If success → done.</li>
@@ -5210,7 +5210,7 @@ jstack<span class="w"> </span>&lt;pid&gt;<span class="w"> </span><span class="p"
 </tbody>
 </table>
 <h3 id="33-varhandle-access-modes-diagram">3.3 VarHandle access modes diagram</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ddfce1d3ee27.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ddfce1d3ee27.png" alt="diagram"></div></p>
 <h3 id="34-cas-and-fence-operations">3.4 CAS and fence operations</h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.invoke.MethodHandles</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.invoke.VarHandle</span><span class="p">;</span>
@@ -5416,7 +5416,7 @@ jstack<span class="w"> </span>&lt;pid&gt;<span class="w"> </span><span class="p"
 <h2 id="5-project-loom-virtual-threads">5. Project Loom — virtual threads</h2>
 <p>Virtual threads (JEP 425, preview in JDK 19, final in JDK 21) are lightweight threads managed entirely by the JVM rather than the OS. They are not green threads, coroutines, or continuations in the Go sense — they are a continuation-based concurrency primitive that allows millions of concurrent tasks on a small number of OS carrier threads.</p>
 <h3 id="51-carrier-threads-vs-virtual-threads">5.1 Carrier threads vs. virtual threads</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7a5e355e23f4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7a5e355e23f4.png" alt="diagram"></div></p>
 <p>The key architectural points:</p>
 <ul>
 <li><strong>Carrier threads</strong> are real platform threads (OS-backed). The default number is <code>Runtime.getRuntime().availableProcessors()</code> — typically 4–128 on cloud instances.</li>
@@ -5610,7 +5610,7 @@ Virtual throughput:   95238 tasks/sec
 </code></pre></div>
 
 <h3 id="62-structured-concurrency-scope-tree">6.2 Structured concurrency scope tree</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e763bc710ba3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e763bc710ba3.png" alt="diagram"></div></p>
 <h3 id="63-scopedvalue-thread-local-without-the-threadlocal">6.3 ScopedValue — thread-local without the ThreadLocal</h3>
 <p><code>ScopedValue</code> (JEP 429, preview in JDK 21+) provides immutable, scope-bound context that flows to child virtual threads automatically. Unlike <code>ThreadLocal</code>, <code>ScopedValue</code> is:</p>
 <ul>
@@ -5691,7 +5691,7 @@ Virtual throughput:   95238 tasks/sec
 <h2 id="7-forkjoinpool-the-work-stealing-scheduler">7. ForkJoinPool — the work-stealing scheduler</h2>
 <p><code>ForkJoinPool</code> is the backbone of virtual thread scheduling, parallel streams (<code>stream().parallel()</code>), and <code>CompletableFuture</code>'s common pool. It is a specialized <code>ExecutorService</code> designed for divide-and-conquer tasks and for efficiently scheduling millions of lightweight tasks.</p>
 <h3 id="71-architecture">7.1 Architecture</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7cd74640a003.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7cd74640a003.png" alt="diagram"></div></p>
 <p>Each carrier thread maintains a <strong>work-stealing deque</strong> (double-ended queue). Tasks submitted via <code>submit()</code> go to the shared submission queue; tasks forked via <code>ForkJoinTask.fork()</code> go to the <strong>local deque</strong> of the thread that forked them. When a carrier thread's local deque is empty, it attempts to <strong>steal</strong> a task from the tail of another carrier's deque (random victim selection). Stealing from the tail (while the owner works from the head) minimizes contention.</p>
 <h3 id="72-forkjoinpool-with-virtual-threads">7.2 ForkJoinPool with virtual threads</h3>
 <p>When you use <code>Executors.newVirtualThreadPerTaskExecutor()</code>, the JVM creates a <code>ForkJoinPool</code> with <code>availableProcessors()</code> carrier threads and submits each virtual thread as a task to the pool. The pool also supports a custom scheduler for virtual threads:</p>
@@ -5744,7 +5744,7 @@ jcmd<span class="w"> </span>&lt;pid&gt;<span class="w"> </span>JFR.start<span cl
 </code></pre></div>
 
 <h3 id="82-aqs-queue-structure">8.2 AQS queue structure</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f8d88b280a1c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f8d88b280a1c.png" alt="diagram"></div></p>
 <p>The CLH queue (named after Craig, Landin, and Hagersten) is a lock-free linked list. New waiters CAS themselves onto the tail. The head is either the current lock holder or a sentinel. Each node has a <code>status</code> field:
 - <code>0</code> — waiting (initial state)
 - <code>SIGNAL</code> — needs to <code>unparkSuccessor()</code> when the predecessor releases
@@ -5825,7 +5825,7 @@ jcmd<span class="w"> </span>&lt;pid&gt;<span class="w"> </span>JFR.start<span cl
 - <strong>Treeification:</strong> When a bucket exceeds 8 entries (and the table is large enough), the linked list converts to a red-black tree. This prevents O(n) degradation from hash collisions. The treeify threshold is <code>TREEIFY_THRESHOLD = 8</code>; the untreeify threshold is <code>UNTREEIFY_THRESHOLD = 6</code>.
 - <strong>Counter cells:</strong> <code>size()</code> and <code>mappingCount()</code> do not lock the table — they use <code>CounterCell[]</code> (similar to <code>LongAdder</code>), distributing increment operations across cells to avoid contention. This trades exactness for throughput — <code>size()</code> is approximate under concurrent modification.</p>
 <h3 id="85-juc-class-hierarchy">8.5 JUC class hierarchy</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2d12b504997d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2d12b504997d.png" alt="diagram"></div></p>
 <hr />
 <h2 id="9-thread-dump-analysis-a-complete-example">9. Thread dump analysis — a complete example</h2>
 <p>A production JVM under load will occasionally exhibit slow response times, high CPU, or deadlocks. Thread dumps are the primary diagnostic tool. Here is a complete workflow:</p>
@@ -5977,7 +5977,7 @@ jattach<span class="w"> </span>&lt;pid&gt;<span class="w"> </span>jcmd<span clas
 <h2 id="1-how-kotlinc-lowers-kotlin-to-jvm-bytecode">1. How <code>kotlinc</code> lowers Kotlin to JVM bytecode</h2>
 <p>Kotlin does not ship a runtime VM. The <code>kotlinc</code> frontend parses Kotlin source, runs type resolution, and emits JVM bytecode via ASM — the same bytecode instructions (<code>aload</code>, <code>invokevirtual</code>, <code>invokedynamic</code>) that <code>javac</code> emits. Understanding this lowering is non-optional for backend work: debuggers, profilers (<code>async-profiler</code>, JFR), decompilers, and reflection all show you the JVM view, not the Kotlin view.</p>
 <h3 id="11-compilation-pipeline-in-one-picture">1.1 Compilation pipeline in one picture</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_74001050b12d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_74001050b12d.png" alt="diagram"></div></p>
 <p>The key observation: by the time the class file reaches the verifier, there is no trace of "Kotlin" — only classes, methods, fields, and annotations. The <code>kotlin.Metadata</code> annotation preserves the original Kotlin signature for reflection and for the Kotlin compiler when another module depends on this class, but the JVM itself never reads it.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Inspect what the Kotlin compiler actually emitted</span>
 kotlinc<span class="w"> </span>Service.kt<span class="w"> </span>-d<span class="w"> </span>/tmp/classes
@@ -6097,7 +6097,7 @@ javap<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_167055909745.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_167055909745.png" alt="diagram"></div></p>
 <p>Why this matters for services: Jackson, JPA, gRPC codegen, and annotation processors reflect over JVM artifacts. A <code>private set</code> property is invisible to frameworks that call setters reflectively unless they use Kotlin-aware modules (<code>jackson-module-kotlin</code> reads <code>Metadata</code> to find the private setter). A <code>lateinit</code> property that is never initialized throws <code>UninitializedPropertyAccessException</code> — a subclass of <code>RuntimeException</code> that bypasses exhaustive initialization checks and surfaces only at request time, typically under a rarely-hit code path. In a distributed service, that is a 500 you only see in production.</p>
 <p>Backing-field bytecode for a simple property read/write:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">fun</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="n">u</span><span class="p">:</span><span class="w"> </span><span class="n">User</span><span class="p">):</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="p">{</span>
@@ -6328,7 +6328,7 @@ javap<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span
 <span class="w">  </span><span class="n">invokedynamic</span><span class="w"> </span><span class="c1">#4,  0  // InvokeDynamic #1:run:()Ljava/lang/Runnable;</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3d24f345dbe1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3d24f345dbe1.png" alt="diagram"></div></p>
 <p>Why <code>invokedynamic</code> matters: before JDK 8, Kotlin generated an anonymous inner class (<code>EventHandler$1.class</code>) per lambda — one file per lambda, loaded eagerly. With <code>invokedynamic</code> (the default since Kotlin 1.4 targeting JVM 8+), the SAM instance is created via <code>LambdaMetafactory</code> at first invocation, and the JVM may share the factory across call sites. For a service that creates thousands of short-lived lambdas per request (stream pipelines, coroutine builders), this eliminates class-loading churn and metaspace pressure.</p>
 <p><strong>SAM ambiguity pitfall.</strong> If a Java method is overloaded with two SAM types:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Java</span>
@@ -6346,7 +6346,7 @@ javap<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span
 <hr />
 <h2 id="5-null-safety-the-type-system-the-boundary-and-the-operators">5. Null-safety — the type system, the boundary, and the operators</h2>
 <h3 id="51-the-three-tiers-of-nullability">5.1 The three tiers of nullability</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_313b70538f7d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_313b70538f7d.png" alt="diagram"></div></p>
 <p>Kotlin's null-safety is a <strong>type-system guarantee that degrades at the Java boundary</strong>. Within pure Kotlin, <code>String</code> cannot hold <code>null</code> — the compiler rejects <code>val s: String = null</code>. The JVM still represents <code>String</code> as a nullable reference (<code>Ljava/lang/String;</code>), but the compiler inserts <code>Intrinsics.checkNotNull*</code> guards at function entry points and before dereferences that cross nullable boundaries. When all code is Kotlin, these guards are redundant but cheap (one branch, JIT-elided after profiling shows non-null).</p>
 <p>The guarantee breaks at platform types. Any Java-declared type without a nullability annotation arrives in Kotlin as <code>T!</code> — the compiler does not know whether it is <code>T</code> or <code>T?</code> and lets you use it as either, emitting no check. This is the single largest source of Kotlin NPEs in mixed codebases.</p>
 <h3 id="52-platform-types-and-jspecify">5.2 Platform types and JSpecify</h3>
@@ -6696,7 +6696,7 @@ javap<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span
 </code></pre></div>
 
 <p>It returns <code>Object</code> — either the real <code>String</code> result (if the function completed without suspending) or the singleton <code>kotlin.coroutines.intrinsics.CoroutineSingletons.COROUTINE_SUSPENDED</code> (if it suspended). The caller checks <code>if (result === COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED</code> to propagate suspension up the stack. No thread is blocked; the current frame is simply returned and the continuation object holds the state.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_80d32531adfd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_80d32531adfd.png" alt="diagram"></div></p>
 <h3 id="72-walking-a-real-javap-c-p-dump">7.2 Walking a real <code>javap -c -p</code> dump</h3>
 <p>Compile a minimal suspend function and inspect:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// File: Demo.kt</span>
@@ -6804,7 +6804,7 @@ javap<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span
 <hr />
 <h2 id="8-dispatchers-structured-concurrency-cancellation-and-exception-handling">8. Dispatchers, structured concurrency, cancellation, and exception handling</h2>
 <h3 id="81-dispatcher-topology">8.1 Dispatcher topology</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_26ce61abb730.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_26ce61abb730.png" alt="diagram"></div></p>
 <p>Concrete guidance for backend services:</p>
 <table>
 <thead>
@@ -6875,7 +6875,7 @@ javap<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span
 
 <p><code>withContext</code> is itself a suspend function that suspends, switches dispatcher via <code>ContinuationInterceptor</code>, executes the block, and switches back on return. The switch cost is one suspension + one dispatch — roughly 1–2 microseconds on a warm JVM. Avoid wrapping single non-blocking calls in <code>withContext</code>; the switch overhead exceeds the work.</p>
 <h3 id="82-structured-concurrency-coroutinescope-vs-supervisorscope">8.2 Structured concurrency — <code>coroutineScope</code> vs. <code>supervisorScope</code></h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1261934ce10b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1261934ce10b.png" alt="diagram"></div></p>
 <p><strong><code>coroutineScope</code></strong> — all children must succeed; any child failure cancels the parent and all siblings. Use when children are subtasks of a single logical operation (scatter-gather where partial results are useless).</p>
 <p><strong><code>supervisorScope</code></strong> — children failures do not cancel siblings or parent; each child's exception is isolated. Use when children are independent operations where partial success is acceptable (fan-out to multiple downstreams, batch processing).</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// coroutineScope — all-or-nothing</span>
@@ -7053,7 +7053,7 @@ javap<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span
 </code></pre></div>
 
 <p>At each call site the compiler expands the reified type to a concrete class literal:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9813514bf512.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9813514bf512.png" alt="diagram"></div></p>
 <p>Constraints on <code>reified</code>:</p>
 <ul>
 <li>Only <code>inline</code> functions can have <code>reified</code> parameters — the type must be inlined at the call site to become a concrete class literal.</li>
@@ -7300,7 +7300,7 @@ javap<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span
 
 <p>Platform types are invisible in source — you never write <code>String!</code>. They appear only in tooling (IDE hints, error messages) and in the compiler's internal type representation. They propagate through inference: if <code>a</code> is <code>String!</code> and you write <code>val d = a</code>, then <code>d</code> is also <code>String!</code>. They collapse only when assigned to a definite Kotlin type (<code>String</code> or <code>String?</code>) or when used in a context that demands one.</p>
 <p>Support for JSR-305 (<code>@Nullable</code>/<code>@NotNull</code>), JetBrains <code>@Nullable</code>/<code>@NotNull</code>, and AndroidX annotations determines whether a Java type maps to <code>T</code>/<code>T?</code> or remains <code>T!</code>. Without annotations, Kotlin must assume the worst — and it is the caller's responsibility to handle <code>null</code>. In distributed systems, this matters at every service boundary where Kotlin calls a Java library (gRPC stubs, JDBC drivers, Jackson deserialization): an unannotated Java getter returning <code>null</code> will slip past the Kotlin type checker via <code>T!</code> and surface as an NPE far from the call site.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_96398c6c2ce6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_96398c6c2ce6.png" alt="diagram"></div></p>
 <h3 id="13-flexible-intersection-and-other-internal-types">1.3 Flexible, intersection, and other internal types</h3>
 <p>Beyond <code>T</code>/<code>T?</code>/<code>T!</code>, the Kotlin compiler uses several types that rarely appear in source but explain error messages and bytecode:</p>
 <table>
@@ -7394,7 +7394,7 @@ javap<span class="w"> </span>-v<span class="w"> </span>-p<span class="w"> </span
 <li><strong>Covariant</strong> (<code>out T</code> in Kotlin, <code>? extends T</code> in Java): <code>Container&lt;Cat&gt; &lt;: Container&lt;Animal&gt;</code>. You can read <code>T</code> values (they are at least <code>Animal</code>), but you cannot safely write <code>T</code> (you might put a <code>Dog</code> into a <code>Container&lt;Cat&gt;</code>).</li>
 <li><strong>Contravariant</strong> (<code>in T</code> in Kotlin, <code>? super T</code> in Java): <code>Container&lt;Animal&gt; &lt;: Container&lt;Cat&gt;</code> — the subtype relation flips. You can write <code>T</code> values (any <code>Cat</code> is an <code>Animal</code>), but reading yields only <code>Any?</code>/<code>Object</code>.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7e3005f52e3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e7e3005f52e3.png" alt="diagram"></div></p>
 <h3 id="22-declaration-site-vs-use-site-variance">2.2 Declaration-site vs use-site variance</h3>
 <p>This is the central design difference between Kotlin and Java:</p>
 <table>
@@ -7817,7 +7817,7 @@ javap<span class="w"> </span>-v<span class="w"> </span>-p<span class="w"> </span
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_be2e749d0b12.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_be2e749d0b12.png" alt="diagram"></div></p>
 <h3 id="33-typeof-ktype-and-the-ktype-token">3.3 <code>typeOf</code>, <code>KType</code>, and the <code>KType</code> token</h3>
 <p><code>T::class</code> gives you a <code>KClass</code> (the erased class), but loses generic arguments: <code>T::class</code> for <code>List&lt;String&gt;</code> yields <code>List::class</code>. To preserve full generic type information, Kotlin 1.6+ provides <code>typeOf&lt;T&gt;()</code> (requiring <code>reified T</code> inline context or experimental <code>optIn</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nn">kotlin.reflect.typeOf</span>
@@ -7943,7 +7943,7 @@ javap<span class="w"> </span>-v<span class="w"> </span>-p<span class="w"> </span
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3aa31c3f7618.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3aa31c3f7618.png" alt="diagram"></div></p>
 <h3 id="42-star-projection-erasure-demo">4.2 Star projection erasure demo</h3>
 <p>The following program demonstrates how <code>*</code>, <code>Any?</code>, and Java raw types differ at runtime — and that all three erase to the same bytecode:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// StarProjectionDemo.kt</span>
@@ -8242,7 +8242,7 @@ javap<span class="w"> </span>-v<span class="w"> </span>-p<span class="w"> </span
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_59123f631de3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_59123f631de3.png" alt="diagram"></div></p>
 <p>Contracts are experimental (<code>@OptIn(ExperimentalContracts::class)</code>) but stable in practice; the standard library uses them extensively (<code>requireNotNull</code>, <code>check</code>, <code>error</code>, <code>TODO</code>, <code>let</code>, <code>run</code>, <code>also</code>, <code>apply</code>). Custom contracts are most valuable in shared validation libraries: a single <code>validateRequest()</code> with a contract can narrow types across every service that calls it, eliminating repetitive <code>!!</code> and <code>?.let</code> chains.</p>
 <p>Limitations: contracts apply only to <code>inline</code> functions (or functions the compiler can analyze as effectively inline in the stdlib), cannot express arbitrary predicates (only null checks and type tests), and are not inherited — overriding a contracted function does not carry the contract to the override. For complex validation, prefer returning a sealed result type over relying solely on contracts.</p>
 <hr />
@@ -8294,7 +8294,7 @@ javap<span class="w"> </span>-v<span class="w"> </span>-p<span class="w"> </span
 <span class="c1">// boxed: (Ljava/util/List;)D — List of boxed Meter objects</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4bc50dcd213b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4bc50dcd213b.png" alt="diagram"></div></p>
 <h3 id="63-inline-classes-deprecated-vs-value-classes">6.3 Inline classes (deprecated) vs value classes</h3>
 <p><code>inline class</code> was the experimental predecessor. It is deprecated in favor of <code>@JvmInline value class</code>, which generalizes to multi-property value classes in Kotlin 2.0+ (via <code>@JvmInline</code> single-property restriction being lifted for non-JVM targets). Migrate any remaining <code>inline class</code> declarations:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Deprecated:</span>
@@ -8625,7 +8625,7 @@ javap<span class="w"> </span>-v<span class="w"> </span>-p<span class="w"> </span
 <p>Maven's central abstraction is the <strong>Project Object Model</strong> (POM): an XML document that declares project metadata, dependencies, plugins, and profiles. Every Maven build executes a fixed <strong>lifecycle</strong> — a sequence of named phases — and each phase is bound to one or more <strong>plugin goals</strong> that perform the actual work.</p>
 <h3 id="11-the-default-lifecycle-phases">1.1 The default lifecycle phases</h3>
 <p>The <code>jar</code> packaging lifecycle (the most common) runs these phases in order:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9da917c9c0fa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9da917c9c0fa.png" alt="diagram"></div></p>
 <p>Running <code>mvn package</code> executes <code>validate → compile → test → package</code>. Running <code>mvn install</code> adds <code>verify → install</code>. The lifecycle is deterministic — every phase executes its preceding phases first, and plugins declared in the POM are bound to phases via their <code>&lt;executions&gt;</code> or via packaging-default bindings (e.g., <code>maven-jar:jar</code> automatically binds to the <code>package</code> phase when <code>&lt;packaging&gt;jar&lt;/packaging&gt;</code>).</p>
 <h3 id="12-pom-inheritance-and-the-effective-pom">1.2 POM inheritance and the effective POM</h3>
 <p>Maven POMs inherit from a parent POM and ultimately from the <strong>Super POM</strong> (<code>org.apache.maven:maven-model</code>). The <strong>effective POM</strong> is the fully-resolved result of inheritance, property interpolation, and plugin defaults:</p>
@@ -8798,7 +8798,7 @@ javap<span class="w"> </span>-v<span class="w"> </span>-p<span class="w"> </span
 <h2 id="2-gradle-kotlin-dsl-configuration-cache-and-version-catalogs">2. Gradle — Kotlin DSL, configuration cache, and version catalogs</h2>
 <p>Gradle replaces Maven's XML and fixed lifecycle with a <strong>directed acyclic graph</strong> (DAG) of <strong>tasks</strong>. Configuration is done in Groovy or Kotlin DSL (<code>build.gradle.kts</code>), and the build is expressed as a program — not a declarative tree. The critical distinction for senior engineers: Gradle separates <strong>configuration time</strong> (evaluating <code>build.gradle.kts</code>) from <strong>execution time</strong> (running task actions).</p>
 <h3 id="21-configuration-vs-execution">2.1 Configuration vs execution</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7f461c810c6f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7f461c810c6f.png" alt="diagram"></div></p>
 <p>The Configuration Cache — enabled via <code>org.gradle.configuration-cache=true</code> — serializes the result of the configuration phase to disk. On subsequent builds, Gradle skips configuration entirely if <code>build.gradle.kts</code> files haven't changed, jumping straight to execution. This is why you should never do I/O (network calls, file reads, shell commands) during configuration — it breaks the cache and makes builds non-reproducible.</p>
 <h3 id="22-a-multi-module-kotlin-dsl-build">2.2 A multi-module Kotlin DSL build</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// settings.gradle.kts</span>
@@ -8859,11 +8859,11 @@ javap<span class="w"> </span>-v<span class="w"> </span>-p<span class="w"> </span
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c61aee90aad6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c61aee90aad6.png" alt="diagram"></div></p>
 <p>The catalog is the single source of truth. Upgrading Jackson from 2.17.2 to 2.18.0 is a one-line change in <code>libs.versions.toml</code>, and every module picks it up. This eliminates the "grep for version strings across 40 <code>build.gradle</code> files" maintenance burden that plagues large JVM monorepos.</p>
 <h3 id="23-build-cache-and-remote-caching">2.3 Build cache and remote caching</h3>
 <p>Gradle's build cache stores task outputs keyed by task inputs (source files, configuration, tool versions). On a cache hit, Gradle skips the task entirely:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cd3aceab81f7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cd3aceab81f7.png" alt="diagram"></div></p>
 <p>Configure the build cache in <code>gradle.properties</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># gradle.properties</span>
 <span class="na">org.gradle.caching</span><span class="o">=</span><span class="s">true</span>
@@ -8978,7 +8978,7 @@ javap<span class="w"> </span>-v<span class="w"> </span>-p<span class="w"> </span
 </code></pre></div>
 
 <p>sbt caches resolution results in <code>~/.sbt/1.0/resolution-cache/</code> and in <code>project/target/</code>. The <strong>cached resolution</strong> feature (enabled by default in sbt 1.3+) stores the resolved dependency graph and only re-resolves when <code>build.sbt</code> or <code>*.sbt</code> files change. This avoids the overhead of hitting repositories on every compile.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d83b4329ed3e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d83b4329ed3e.png" alt="diagram"></div></p>
 <p>sbt's incremental compiler (the Zinc compiler) tracks source-level dependencies at the individual definition level. If you change one function in one file, only the files that depend on that definition are recompiles. Zinc builds a dependency graph of Scala/Java source files and their API surfaces — a change to a <code>val</code> declaration recompiles everything that references it; a change to a local <code>private def</code> recompiles only the enclosing class.</p>
 <h3 id="34-sbt-in-practice-commands-scopes-and-settings">3.4 sbt in practice — commands, scopes, and settings</h3>
 <p>sbt's interactive shell is its killer feature. Unlike Maven and Gradle (which require a separate command for every invocation), sbt provides a REPL where you can run tasks, inspect settings, and hot-reload changes:</p>
@@ -9074,7 +9074,7 @@ sbt&gt;<span class="w"> </span>reload<span class="w">               </span><span
 <h2 id="4-dependency-resolution-conflict-resolution-substitution-locking">4. Dependency resolution — conflict resolution, substitution, locking</h2>
 <p>Across all three tools, the dependency resolver must handle three problems: <strong>transitive resolution</strong> (pulling in indirect dependencies), <strong>conflict resolution</strong> (choosing one version when multiple are requested), and <strong>reproducibility</strong> (ensuring the same build produces the same artifact tomorrow).</p>
 <h3 id="41-conflict-resolution-strategies">4.1 Conflict resolution strategies</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d7b4d217bac2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d7b4d217bac2.png" alt="diagram"></div></p>
 <p>The difference matters in production. Maven's nearest-wins can silently select an older, vulnerable version if it happens to be closer in the dependency tree. Gradle's highest-version strategy avoids this but can break binary compatibility when a library expects a specific API that a newer version removed. sbt allows explicit control:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Force a specific version — overrides all resolution strategies</span>
 <span class="n">dependencyOverrides</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;org.apache.logging.log4j&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;log4j-core&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="s">&quot;2.17.2&quot;</span>
@@ -9231,7 +9231,7 @@ sbt&gt;<span class="w"> </span>reload<span class="w">               </span><span
 <hr />
 <h2 id="6-artifact-repositories-maven-central-nexus-artifactory-and-signatures">6. Artifact repositories — Maven Central, Nexus, Artifactory, and signatures</h2>
 <h3 id="61-the-repository-topology">6.1 The repository topology</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_036433c06d1f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_036433c06d1f.png" alt="diagram"></div></p>
 <h3 id="62-why-a-private-proxy-matters">6.2 Why a private proxy matters</h3>
 <p>Directly resolving from Maven Central in production CI/CD has several problems:</p>
 <ol>
@@ -9448,7 +9448,7 @@ sbt&gt;<span class="w"> </span>reload<span class="w">               </span><span
 <p>Maven's diagnostic equivalent is the <code>-X</code> (debug) flag: <code>mvn package -X</code> prints the full reactor build order, every plugin goal execution, and the resolved dependency tree with conflict resolution decisions. For dependency-specific debugging, <code>mvn dependency:tree -DoutputType=dot</code> generates a Graphviz-compatible dependency graph that can be visualized to understand why a particular version was selected.</p>
 <h3 id="74-supply-chain-hardening-through-build-tooling">7.4 Supply-chain hardening through build tooling</h3>
 <p>Build tooling is the last line of defense before an artifact reaches production. The layered defense:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_01380682fa2e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_01380682fa2e.png" alt="diagram"></div></p>
 <p>No single layer is sufficient. Maven Central had typosquatting attacks in 2020 and 2021 where packages named <code>com.google.mavem</code> (note the typo) exfiltrated credentials. The repository firewall catches known-malicious packages; the build tool catches checksum mismatches and version drift; the CI pipeline generates SBOMs for audit and scans for newly-disclosed CVEs.</p>
 <p>For JVM projects specifically, the attack surface includes not just direct dependencies but also Maven plugins (which execute arbitrary code during the build), annotation processors (which run during compilation), and test dependencies (which execute in CI with elevated permissions). A compromised <code>maven-compiler-plugin</code> could inject bytecode during compilation, bypassing all source-level security measures. The defense: pin plugin versions in <code>&lt;pluginManagement&gt;</code>, use Gradle's plugin verification (<code>gradle/verification-metadata.xml</code>), and run builds in isolated containers with no network access except to approved repositories.</p>
 <hr />
@@ -9600,7 +9600,7 @@ sbt&gt;<span class="w"> </span>reload<span class="w">               </span><span
 </tbody>
 </table>
 <p>In production, the correct default is <strong>always-on JFR at the <code>profile</code> or <code>continuous</code> setting plus continuous profiling at low frequency</strong> (e.g., async-profiler wall at 500 Hz or Pyroscope at 10 Hz). Reserve high-frequency or allocation profiling for targeted 60-second captures.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_26fef69fcf12.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_26fef69fcf12.png" alt="diagram"></div></p>
 <h3 id="12-what-senior-teams-get-wrong">1.2 What senior teams get wrong</h3>
 <ul>
 <li><strong>Metrics-only tuning.</strong> Dashboards show <code>jvm_gc_pause_seconds</code> spiking but not <em>why</em>. Teams bump <code>-Xmx</code> or lower <code>MaxGCPauseMillis</code> without a profile — the real cause is a 4 MB per-request allocation inside a Jackson serializer, fixable with one buffer reuse.</li>
@@ -9655,7 +9655,7 @@ sbt&gt;<span class="w"> </span>reload<span class="w">               </span><span
 </table>
 <h3 id="22-event-taxonomy-what-the-jvm-can-tell-you">2.2 Event taxonomy — what the JVM can tell you</h3>
 <p>JFR defines 140+ event types. Every event carries <code>startTime</code>, <code>duration</code> (for duration events), <code>eventThread</code>, and <code>stackTrace</code>. The taxonomy matters because enabling the wrong set blinds you at 1% cost, while enabling everything costs 2% and buries signal in noise.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3a2b1b49ba3b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3a2b1b49ba3b.png" alt="diagram"></div></p>
 <p>The two most important selectors for backend work are <code>profile.jfc</code> and <code>continuous.jfc</code> (both shipped in <code>$JAVA_HOME/lib/jfr/</code>). Their practical difference:</p>
 <table>
 <thead>
@@ -10196,7 +10196,7 @@ curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </spa
 </code></pre></div>
 
 <p><code>--jfrsync</code> is the recommended bridge for production: it synchronizes async-profiler's samples with the JVM's JFR clock so both event streams share timestamps in JMC. Without it, correlating an async-profiler CPU hot spot with a JFR allocation or lock event requires manual time alignment.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_193b3c957e54.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_193b3c957e54.png" alt="diagram"></div></p>
 <hr />
 <h2 id="4-flame-graphs-how-to-read-them-without-fooling-yourself">4. Flame graphs — how to read them without fooling yourself</h2>
 <p>A flame graph is a histogram of stack traces, not a call graph. Every sample's stack is folded into a horizontal bar whose width is proportional to its frequency. The y-axis is stack depth; the x-axis is alphabetical, not temporal. The <em>widest plateau</em> is the hottest code — but only within the mode you sampled.</p>
@@ -10234,7 +10234,7 @@ curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </spa
 <p><strong>Differential flame graphs.</strong> To verify a fix, capture before and after with identical load, then render the <em>difference</em>: <code>flamegraph.pl --diff</code>. Red frames grew, blue frames shrank. A successful allocation fix shows the <code>byte[]</code> plateau shrinking and <code>G1 Young GC</code> time shrinking with it.</p>
 </li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2df9c6ecc97b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2df9c6ecc97b.png" alt="diagram"></div></p>
 <h3 id="42-generating-and-comparing-flame-graphs">4.2 Generating and comparing flame graphs</h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># Capture before the fix — collapsed stacks</span>
 /tmp/async-profiler/profiler.sh<span class="w"> </span>-e<span class="w"> </span>cpu<span class="w"> </span>-d<span class="w"> </span><span class="m">60</span><span class="w"> </span>-o<span class="w"> </span>collapsed<span class="w"> </span>-f<span class="w"> </span>/tmp/before.collapsed<span class="w"> </span><span class="m">12345</span>
@@ -10381,7 +10381,7 @@ java<span class="w"> </span>-jar<span class="w"> </span>jxray.jar<span class="w"
 <h3 id="53-eclipse-mat-the-dominator-walkthrough">5.3 Eclipse MAT — the dominator walkthrough</h3>
 <p>Eclipse Memory Analyzer (MAT, <code>eclipse.org/mat</code>) is the reference tool for <code>hprof</code> analysis. Its core abstraction is the <strong>dominator tree</strong> — the structure that answers "if this object were collected, how much heap would be freed transitively?"</p>
 <p>An object <code>X</code> <em>dominates</em> object <code>Y</code> if every path from a GC root to <code>Y</code> goes through <code>X</code>. The <em>retained heap</em> of <code>X</code> is the sum of shallow heaps of all objects dominated by <code>X</code>. The object with the largest retained heap is the leak's retainer — not necessarily the largest object, but the one whose removal frees the most memory.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_895c8441aac7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_895c8441aac7.png" alt="diagram"></div></p>
 <p><strong>MAT walkthrough — from opening the dump to the fix:</strong></p>
 <p><em>Step 1 — Leak Suspects report.</em> On opening a dump, MAT offers <em>Leak Suspects</em> — a heuristic report ranking the largest retained sets. Treat it as a starting hypothesis. In a checkout service leak, it typically reports:</p>
 <div class="highlight"><pre><span></span><code><span class="n">Problem</span><span class="w"> </span><span class="n">Suspect</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span>
@@ -10807,7 +10807,7 @@ curl<span class="w"> </span>http://pyroscope.monitoring.svc:4040/pyroscope/label
 <h2 id="8-tuning-workflow-measure-profile-fix-verify">8. Tuning workflow — measure, profile, fix, verify</h2>
 <p>Profiling without a workflow produces confident anecdotes. A disciplined loop produces verified improvements that survive the next deploy.</p>
 <h3 id="81-the-four-phase-loop">8.1 The four-phase loop</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_698d7d84c2ca.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_698d7d84c2ca.png" alt="diagram"></div></p>
 <p><strong>Phase 1 — Measure.</strong> Before touching a profiler, record the baseline with the same load you will use to verify. At minimum: p50/p99/p999 latency, throughput (RPS), allocation rate (MB/s), Young GC interval, Old occupancy slope, CPU utilization, and lock contention rate. Snapshot the metric dashboard and commit the GC log segment. Without a baseline, any profile is entertainment.</p>
 <p><strong>Phase 2 — Profile.</strong> Capture all relevant modes <em>simultaneously</em> under that load — <code>cpu</code> + <code>wall</code> + <code>alloc</code> + <code>lock</code> + JFR + GC log. A single mode lies by omission. The allocation flame graph that explains Young GC pressure is invisible in <code>cpu</code> mode; the lock convoy that explains collapsed throughput is invisible in <code>alloc</code> mode.</p>
 <p><strong>Phase 3 — Fix.</strong> Make one change at a time. The most impactful JVM fixes, ordered by frequency in backend services:</p>
@@ -10902,7 +10902,7 @@ grep<span class="w"> </span><span class="s2">&quot;Pause Young&quot;</span><span
 <li><strong>Correlate profiles with traces via exemplars.</strong> When a trace's span is slow, the trace ID should link to the profile shard for that pod and time window. Grafana's <em>Traces to profiles</em> feature (Tempo + Pyroscope) does this when both signals share <code>service_name</code> and time. The alternative is manual hunting.</li>
 <li><strong>Budget profiling overhead like any other SLO cost.</strong> Continuous profiling at 10 Hz + JFR <code>profile</code> costs ~1–2% CPU. That is cheaper than the 5–10% of over-provisioning you carry because you cannot see where CPU is spent. Treat it as observability spend with a measurable return (fewer instances for the same p99).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2225b9d3ca4d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2225b9d3ca4d.png" alt="diagram"></div></p>
 <hr />
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
@@ -10963,7 +10963,7 @@ grep<span class="w"> </span><span class="s2">&quot;Pause Young&quot;</span><span
 <p>Its cost model has also survived 27 years, and that is the problem.</p>
 <h3 id="21-the-jni-call-path">2.1 The JNI call path</h3>
 <p>Every JNI call crosses three distinct layers: Java, the JNI function table, and native code. Understanding the path explains both the overhead and the failure modes.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_11471ebade23.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_11471ebade23.png" alt="diagram"></div></p>
 <p>Three details matter for performance and correctness:</p>
 <ol>
 <li>
@@ -11118,7 +11118,7 @@ cat<span class="w"> </span>src/main/native/com_example_crypto_NativeOps.h
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_91f41de7dab1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_91f41de7dab1.png" alt="diagram"></div></p>
 <p><strong>Rules senior engineers violate and then debug for days:</strong></p>
 <ol>
 <li>
@@ -11406,7 +11406,7 @@ java<span class="w"> </span>-Djava.library.path<span class="o">=</span>/opt/myap
 </table>
 <h3 id="31-memorysegment-and-arena-explicit-lifetimes">3.1 MemorySegment and Arena — explicit lifetimes</h3>
 <p>The core insight: native memory should have an explicit, lexically scoped lifetime, not a GC-managed one. <code>Arena</code> provides that scope; <code>MemorySegment</code> is a bounded view into it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6cb9f149767d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6cb9f149767d.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Panama FFM — allocating and accessing native memory (JDK 22, --enable-preview before 22, final in 22)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.foreign.*</span><span class="p">;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.invoke.VarHandle</span><span class="p">;</span>
@@ -11790,7 +11790,7 @@ cat<span class="w"> </span>src/main/java/com/example/bindings/Record.java<span c
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a7475116d6e6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a7475116d6e6.png" alt="diagram"></div></p>
 <p><strong>Interpretation for capacity planning:</strong></p>
 <ul>
 <li><strong>Trivial calls (getters, CRC, hash).</strong> Panama wins decisively. If your hot loop calls a native getter per record, switching JNI → Panama <code>critical</code> can reclaim 25–40 ns per call × billions of calls = seconds of wall time. This is the HFT / feature-store case.</li>
@@ -11805,7 +11805,7 @@ cat<span class="w"> </span>src/main/java/com/example/bindings/Record.java<span c
 <h3 id="41-the-closed-world-assumption-and-reachability">4.1 The closed-world assumption and reachability</h3>
 <p>The JIT operates under an <strong>open world</strong>: any class can be loaded at any time via <code>Class.forName</code>, <code>ServiceLoader</code>, or a custom classloader. It must be prepared to deoptimize when new classes appear.</p>
 <p>Native Image inverts this. At build time it assumes the <strong>closed world</strong>: the set of classes, methods, and resources reachable from the entry point (<code>main</code> + discovered roots) is the <em>entire</em> program. Nothing else will be loaded at runtime. This enables whole-program analysis that a JIT cannot do:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1e467d6a47b9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1e467d6a47b9.png" alt="diagram"></div></p>
 <p><strong>Points-to (reachability) analysis</strong> is the core algorithm. Starting from roots (main, build-time initializers, JNI entry points, reflection config), the compiler walks every reachable method, tracks which types are instantiated (<code>new</code>), which methods are invoked, and which fields are read. Anything not reached is dead-code eliminated — including entire JDK modules. A Hello World native binary is ~8 MB; a Spring Boot service is ~60–90 MB versus a 200 MB container with a full JDK. The elimination is aggressive: an unused <code>java.sql</code> driver, a dead <code>Jackson</code> subtype, or an unreferenced <code>kotlinx.coroutines</code> dispatcher simply disappears from the binary.</p>
 <p>The price is that <strong>every dynamic feature must be declared</strong>. If the analysis cannot see a reflective access, that path is eliminated and fails at runtime with <code>ClassNotFoundException</code> or <code>NoSuchMethodException</code> — not at build time.</p>
 <h3 id="42-build-time-vs-run-time-initialization">4.2 Build-time vs. run-time initialization</h3>
@@ -11953,7 +11953,7 @@ native-image<span class="w"> </span>-jar<span class="w"> </span>target/app.jar<s
 <li><strong>JNI stub.</strong> Native Image can still call JNI libraries, but the JNI implementation is Substrate's, not HotSpot's — behavioral differences exist (e.g., <code>GetPrimitiveArrayCritical</code> semantics, <code>JVM TI</code> agent support is limited).</li>
 <li><strong>No class loading, no bytecode, no interpreter.</strong> <code>Class.forName</code> with a non-configured name fails. <code>MethodHandles.Lookup</code> for unconfigured members fails. Agents (<code>-javaagent</code>) are not supported at runtime (they run at build time instead).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f872cd9c0cee.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f872cd9c0cee.png" alt="diagram"></div></p>
 <h3 id="45-profile-guided-optimization-pgo">4.5 Profile-guided optimization (PGO)</h3>
 <p>AOT compilation without profiles cannot do the speculative optimizations that make the JIT fast (inline the monomorphic call site, devirtualize, eliminate the null check that profiling says never fires). PGO closes part of that gap by feeding runtime profiles back into the build.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Step 1: Build an instrumented binary that collects profiles</span>
@@ -12040,7 +12040,7 @@ native-image<span class="w"> </span>--pgo<span class="o">=</span>default.iprof<s
 </ul>
 <hr />
 <h2 id="6-choosing-the-interop-mechanism-a-decision-framework">6. Choosing the interop mechanism — a decision framework</h2>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5581adfb2e1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c5581adfb2e1.png" alt="diagram"></div></p>
 <p><strong>Heuristics distilled:</strong></p>
 <ol>
 <li>
@@ -12423,7 +12423,7 @@ jcmd<span class="w"> </span>&lt;pid&gt;<span class="w"> </span>VM.native_memory<
 
 <p><code>jcmd &lt;pid&gt; VM.native_memory detail</code> breaks down <code>Internal</code> into direct buffers — essential when a service uses Netty or gRPC.</p>
 <h3 id="22-heap-sizing-decision">2.2 Heap sizing decision</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d3259c14ca33.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d3259c14ca33.png" alt="diagram"></div></p>
 <p>Practical rules:</p>
 <ul>
 <li><strong>Heap should be 60-75% of container limit for typical HTTP services.</strong> Services with heavy Netty/direct-buffer use or many threads target 50-60%. Batch jobs with few threads can push to 75-80%.</li>
@@ -12904,7 +12904,7 @@ java<span class="w"> </span>-XX:CRaCRestoreFrom<span class="o">=</span>/tmp/cr-c
 </tbody>
 </table>
 <p>For most Kubernetes deployments, <strong>AppCDS is the right default</strong>: low risk, no privilege, safe fallback. Add CRaC when scale-to-zero latency is a product requirement (serverless, preview environments, bursty batch).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c57788cefe05.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c57788cefe05.png" alt="diagram"></div></p>
 <p>The diagram compresses a real <code>time java -jar app.jar</code> progression. CRaC's restore phase is the only one that starts with compiled code already in the code cache and profiling already populated — the first request after restore runs at steady-state throughput, not interpreter speed.</p>
 <hr />
 <h2 id="6-deployment-jlink-custom-runtime-layers-and-distroless">6. Deployment: jlink custom runtime, layers, and distroless</h2>

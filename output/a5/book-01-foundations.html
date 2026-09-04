@@ -333,7 +333,7 @@ registry → deployment → runtime. But the trunk alone is misleading, because 
 attack surface lives in the <em>sidecar chains</em> that feed it: dependency registries feeding
 the build, base images feeding the container build, plugin marketplaces feeding CI, and
 SaaS integrations holding standing credentials into several stages at once.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fdd5ec869cbf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fdd5ec869cbf.png" alt="diagram"></div></p>
 <p>Read the diagram with three observations in mind.</p>
 <p><strong>Every solid arrow is a trust decision.</strong> When CI triggers on a webhook, it trusts that
 the SCM's claim about "what changed and who changed it" is true. When the deploy
@@ -478,7 +478,7 @@ threats (C, E, F, and parts of G/H via verification). Source threats and post-de
 threats (compromised deploy machinery, runtime tampering) are acknowledged in the model
 but largely out of scope of the v1.0 levels; deployment-side controls are the business
 of Book 6, and source-side controls of Book 7.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f3f5263dd3bc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f3f5263dd3bc.png" alt="diagram"></div></p>
 <p>When you encounter a new incident writeup, the first useful move is to place it on this
 diagram. event-stream (Chapter 4) is A executed against a <em>dependency's</em> repo, reaching
 you via D. Codecov (Chapter 5) is E — a tampered CI-time script exfiltrating build
@@ -519,7 +519,7 @@ perimeter.</p>
 <p>The propagation dynamics are worth seeing end to end, because the striking feature is
 how every step after the initial compromise consists of systems working exactly as
 designed:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0c9c407c70ad.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0c9c407c70ad.png" alt="diagram"></div></p>
 <p>The defender's problem, made vivid: at which step in that sequence would your current
 controls have fired? For most organizations the honest answer is "the last one, if the
 EDR vendor had a signature" — which is to say, after the attacker had already won the
@@ -541,7 +541,7 @@ numbers vary by ecosystem — JVM services commonly land in the hundreds of jars
 module graph tends to be leaner but still routinely spans hundreds of modules, Python
 sits in between — but the structure is the same everywhere: <strong>a shallow layer of chosen
 dependencies riding on a deep pyramid of unchosen ones.</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb959157c093.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cb959157c093.png" alt="diagram"></div></p>
 <p>The research literature put numbers on this years ago: Zimmermann et al.'s 2019 study of
 the npm ecosystem ("Small World with High Risks," USENIX Security) found that installing
 an average npm package implicitly trusts roughly 80 other packages and dozens of distinct
@@ -677,7 +677,7 @@ be excellent — with commensurate investment in the platform's own supply chain
 merge to the template repo, how the base image is itself built and attested, how the
 controller's credentials are scoped. Chapter 9 develops this lens fully; Books 4 and 6
 build the machinery.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f8603a61bd8e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f8603a61bd8e.png" alt="diagram"></div></p>
 <p>A concrete miniature of the multiplication problem, because it is the single most common
 finding in real fleets — the unpinned CI action:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/build.yml — found, with variations, in most of the fleet</span>
@@ -773,9 +773,9 @@ meaning "reachable and credentialed" and starts meaning "verified."</p>
   that enforce evidence at trust boundaries).</li>
 </ul>
 <h3 id="supply-chain-trust-boundaries-and-crossing-points">Supply-chain trust boundaries and crossing points</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b1993c92162d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b1993c92162d.png" alt="diagram"></div></p>
 <h3 id="transitive-dependency-explosion">Transitive dependency explosion</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a42dfec560f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6a42dfec560f.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>SLSA v1.0 specification, especially the threat model ("Supply chain threats"):
@@ -818,7 +818,7 @@ meaning "reachable and credentialed" and starts meaning "verified."</p>
 <p>A useful taxonomy for this domain must satisfy two requirements that are in mild tension. It must be <strong>organized by defender-relevant structure</strong> — controls attach to places in the chain, so the primary axis should be <em>where</em> the compromise occurs. And it must capture <strong>attacker-relevant structure</strong> — the same place can be reached by stolen credentials, by patient social engineering, or by a legitimate owner turning hostile, and those require different defenses (credential hygiene versus contributor vetting versus update gating). Hence two axes, not one.</p>
 <h2 id="axis-one-where-in-the-chain-the-compromise-occurs">Axis one: where in the chain the compromise occurs</h2>
 <p>The primary axis follows the flow of software from a developer's intent to a consumer's runtime. This aligns with the SLSA v1.0 threat model, which labels threats A through H along the same pipeline. We group them into four stages.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b8ab3043aec2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b8ab3043aec2.png" alt="diagram"></div></p>
 <p>The letters map to SLSA v1.0's threats as published. Threats A and B are <em>source</em> threats: A is an unauthorized change to the source that the SCM accepts as legitimate; B is a compromise of the source repository platform itself. Threats C, D, and E are <em>build</em> threats: C is building from a source other than the reviewed one, D is using a compromised dependency during the build, and E is compromise of the build process. Threats F and G are <em>distribution</em> threats: F is uploading a package that did not come from the build system, and G is compromise of the package registry. Threat H is a <em>consumption</em> threat: the consumer selects and uses a compromised package — the class where dependency confusion and typosquatting live.</p>
 <p>Two notes on how we deviate from SLSA. First, SLSA's framing is deliberately build-centric — it exists to justify provenance, so its threat labels cluster around the build. Our four-stage grouping is symmetric across the chain because we are classifying <em>all</em> attacks, not motivating one control family. Second, SLSA folds "malicious maintainer" implicitly into threat A (an authorized actor makes an unauthorized-in-spirit change). We surface it explicitly on the second axis, because a legitimate maintainer acting maliciously defeats every source-integrity control that assumes the maintainer is honest.</p>
 <h3 id="source-stage-threats">Source-stage threats</h3>
@@ -838,7 +838,7 @@ meaning "reachable and credentialed" and starts meaning "verified."</p>
 <p>The value of the second axis is that it predicts <em>which controls help</em>. Technical-compromise attacks yield to credential hygiene and detection; social-engineering attacks yield to process and contributor governance; legitimate-but-malicious attacks yield only to update gating and reduced trust in upstream. A control that addresses one axis-value tells you nothing about the other two.</p>
 <h2 id="the-taxonomy-tree">The taxonomy tree</h2>
 <p>Combining both axes, the named patterns organize as follows. The tree is grouped by chain stage; trust-subversion mode is noted per leaf where it is characteristic.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a338a4bea3cc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a338a4bea3cc.png" alt="diagram"></div></p>
 <p>The rest of the chapter walks each leaf, grouped by stage, and states four properties per pattern: <strong>attacker capability</strong> required, <strong>blast radius</strong>, <strong>detectability</strong>, and a one-line <strong>representative incident</strong>. The full case studies are Chapters 3–5; here we characterize, not narrate.</p>
 <h2 id="source-stage-patterns">Source-stage patterns</h2>
 <p><strong>Account takeover (ATO).</strong> The attacker obtains a maintainer's SCM or registry credentials — via phishing, credential stuffing, malware, or a leaked token — and acts as them. <em>Capability:</em> valid credentials or session; MFA bypass if enabled. <em>Blast radius:</em> everything the account can publish or push; for a popular package, millions of downstream installs. <em>Detectability:</em> moderate — anomalous publish times, new IPs, or unusual version jumps can flag it, but the artifact itself looks authentic. <em>Incident:</em> ESLint 2018 (<code>eslint-scope</code>), where stolen npm credentials pushed token-stealing releases.</p>
@@ -861,7 +861,7 @@ meaning "reachable and credentialed" and starts meaning "verified."</p>
 <h2 id="consumption-stage-patterns">Consumption-stage patterns</h2>
 <p>These are the attacks that require no compromise of anything you own — only that your resolver or a developer selects the attacker's artifact.</p>
 <p><strong>Dependency confusion.</strong> An organization uses internal package names (e.g., <code>acme-auth-client</code>) that are not published to the public registry. If the build's resolver is configured to consult the public registry as well, an attacker who publishes <code>acme-auth-client</code> publicly — often with a higher version number — can cause the resolver to prefer the public (malicious) package over the intended internal one. Alex Birsan's 2021 research demonstrated this against Apple, Microsoft, and dozens of other large firms simply by mining internal package names from leaked <code>package.json</code> files and publishing matching public packages. <em>Capability:</em> knowledge of an internal package name and the ability to publish that name publicly. No compromise required. <em>Blast radius:</em> every build that mis-resolves — potentially every service using the internal package. <em>Detectability:</em> moderate; the malicious fetch is visible in resolver logs, and scoped registries / namespace reservation prevent it (Book 2, Chapter 3). This is <em>the</em> canonical internal-package risk and is examined at the end of this chapter and again in Book 2.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8510240d7739.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8510240d7739.png" alt="diagram"></div></p>
 <p>The sequence exposes the root cause precisely: a resolver configured with <em>both</em> an internal and a public source, and a version-selection rule ("highest wins") that does not prefer the trusted source. Fix the resolution policy — scoped registries, explicit source pinning, namespace reservation on the public registry — and the confusion disappears. This is a <em>configuration</em> vulnerability, not a code one.</p>
 <p><strong>Typosquatting.</strong> The attacker publishes a package whose name is a near-miss of a popular one (<code>reqeusts</code> for <code>requests</code>, <code>electorn</code> for <code>electron</code>), relying on developer typos and copy-paste errors. <em>Capability:</em> the ability to publish a plausibly-named package. <em>Blast radius:</em> whoever mistypes — smaller than dependency confusion, but continuous. <em>Detectability:</em> high with name-similarity scanning and install-time policy; low if developers install ad hoc. <em>Incident:</em> endemic on npm and PyPI; recurring campaigns publish hundreds of typosquats at a time.</p>
 <p><strong>Combosquatting.</strong> A variant that <em>adds</em> tokens to a real name rather than misspelling it: <code>python3-dateutil</code> (the real one is <code>python-dateutil</code>), or <code>&lt;real-lib&gt;-utils</code>, <code>node-&lt;real-lib&gt;</code>. It exploits the plausibility of the extra token. <em>Capability:</em> same as typosquatting. <em>Blast radius:</em> developers who assume the composed name is an official variant. <em>Detectability:</em> moderate; harder than typosquatting because the name is not obviously wrong. <em>Incident:</em> observed alongside typosquatting campaigns in both ecosystems.</p>
@@ -1029,7 +1029,7 @@ meaning "reachable and credentialed" and starts meaning "verified."</p>
 </table>
 <h2 id="where-each-class-strikes">Where each class strikes</h2>
 <p>The chain-stage view, annotated with the patterns that dominate each junction, makes the coverage question concrete: a control placed at one node does nothing for attacks that strike elsewhere.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7fccde2a392.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c7fccde2a392.png" alt="diagram"></div></p>
 <h2 id="distributed-systems-lens">Distributed-systems lens</h2>
 <p>For a small team shipping one application, the dominant risk is consumption-stage: typosquats and malicious install scripts on the handful of open-source packages they pull. As an organization grows into a large microservice fleet with internal packages and an internal registry, the risk profile shifts in three specific ways.</p>
 <p><strong>Dependency confusion becomes the signature internal-package risk.</strong> The precondition for confusion is exactly the thing that defines a mature backend org: a corpus of internally-named packages (<code>acme-*</code>, <code>@acme/*</code>) consumed by many services, resolved by build pipelines that also reach the public registry. Every internal package name is a public-registry namespace an attacker can squat. The blast radius scales with fleet size: one mis-resolved internal utility can land in dozens of services' builds simultaneously. This is why Birsan's 2021 research hit large enterprises specifically — small shops have few internal packages to confuse. The mitigations (namespace reservation on the public registry, scoped registries with source pinning, resolver policy that never prefers public over internal) are Book 2, Chapter 3 material, but the <em>risk assessment</em> belongs here: if you run an internal registry, dependency confusion is your highest-probability supply chain exposure, and it is a configuration problem you can close deterministically.</p>
@@ -1054,11 +1054,11 @@ meaning "reachable and credentialed" and starts meaning "verified."</p>
 <li>Taxonomy enables <strong>ownership mapping</strong>: source-stage to security/SCM admins, build-stage to the platform/build team, distribution-stage to platform and vendor-risk, consumption-stage jointly to app teams and the platform team.</li>
 </ul>
 <h3 id="taxonomy-to-mitigation-mapping">Taxonomy-to-mitigation mapping</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f2f06e2ce661.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f2f06e2ce661.png" alt="diagram"></div></p>
 <h3 id="attack-lifecycle-from-injection-to-execution">Attack lifecycle: from injection to execution</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1eacfd7a8ad6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1eacfd7a8ad6.png" alt="diagram"></div></p>
 <h3 id="subversion-of-trust-vs-direct-compromise">Subversion-of-trust vs direct compromise</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_59c0473e10cf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_59c0473e10cf.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>SLSA v1.0 — "Threats &amp; mitigations" (the A–H threat model): https://slsa.dev/spec/v1.0/threats</li>
@@ -1206,7 +1206,7 @@ the build server, only for the seconds between file-swap and restore, and only i
 resulting signed binary. Every artifact a developer could inspect — the Git history, the
 pull requests, the source in the IDE — was clean.</p>
 </blockquote>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f2263f05e3cb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f2263f05e3cb.png" alt="diagram"></div></p>
 <p>Two design lessons for a build-platform engineer fall out of this diagram immediately.
 First, the attack targets the <em>gap between source and artifact</em>: any control that verifies
 "the artifact corresponds to this reviewed source" would have had a chance; controls that
@@ -1245,7 +1245,7 @@ intrusion. SUNBURST delivered a memory-only dropper — <strong>TEARDROP</strong
 From there the operation was manual: credential theft, lateral movement, and in cloud and
 identity environments, forging SAML tokens (the "Golden SAML" technique) to move into
 Microsoft 365 and Azure AD. The Orion backdoor was only the front door.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_caad4d117455.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_caad4d117455.png" alt="diagram"></div></p>
 <p>The 18,000-versus-100 gap is now legible as strategy. Mass distribution maximizes the number
 of doors the attacker <em>could</em> open; selective activation minimizes the operational footprint,
 noise, and exposure of opening them. Every activated implant is a chance to be caught. A
@@ -1356,7 +1356,7 @@ the <strong>Lazarus</strong> umbrella, and specifically consistent with the DPRK
 financially motivated <strong>AppleJeus</strong> campaigns against cryptocurrency and financial targets.
 Unlike SolarWinds' espionage mission, 3CX's ultimate objective appears to have skewed toward
 financial theft.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc560e940ce8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dc560e940ce8.png" alt="diagram"></div></p>
 <p><strong>The EDR false-positive-dismissal failure mode.</strong> There is a specific operational lesson in
 how 3CX was — and was not — caught. Endpoint detection and response (EDR) products <em>did</em> flag
 3CXDesktopApp's behavior. But because the alerts named a signed, trusted, widely deployed
@@ -1577,11 +1577,11 @@ subject of nearly everything that follows.</p>
   infrastructure.</li>
 </ul>
 <h3 id="solarwinds-sunburst-injection-flow">SolarWinds SUNBURST injection flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b8eb4a1241a6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b8eb4a1241a6.png" alt="diagram"></div></p>
 <h3 id="build-system-chokepoint-one-compromise-many-victims">Build-system chokepoint: one compromise, many victims</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0302a02b422e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0302a02b422e.png" alt="diagram"></div></p>
 <h3 id="3cx-vs-solarwinds-comparison-of-build-compromise-vectors">3CX vs SolarWinds: comparison of build-compromise vectors</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8c06aeb3c297.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8c06aeb3c297.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>CrowdStrike, "SUNSPOT: An Implant in the Build Process" (January 11, 2021) — the primary
@@ -1676,7 +1676,7 @@ automatically the moment your version range permits it. Trust does not compose t
 assumes it does. Every edge in the dependency graph is an implicit statement that you trust the
 target as much as the source — and the graph is large enough that no human ever checks whether
 that is true.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6e2f7789b025.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6e2f7789b025.png" alt="diagram"></div></p>
 <p>The four incidents in this chapter each pry at a different joint of this machine. Read them not
 as a catalogue of bad luck but as a demonstration that the channel itself — automatic, deep,
 executing — is the vulnerability, and the specific payloads are interchangeable.</p>
@@ -1728,7 +1728,7 @@ releases were roughly versions <strong>5.0.2 through 5.1.0</strong>.</p>
 researcher was overwhelmingly unlikely to reproduce. Targeting was not just about who got robbed;
 it was a <em>stealth mechanism</em>, an anti-analysis measure built directly into the payload — the
 dependency-channel analogue of SUNBURST's sandbox checks.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d3398f40711e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d3398f40711e.png" alt="diagram"></div></p>
 <p><strong>How it was found.</strong> The gate that made the payload stealthy is also, indirectly, what exposed
 it. A developer noticed a <strong>runtime deprecation warning</strong> traced to <code>flatmap-stream</code>: the payload
 used <code>crypto.createDecipher</code>, an API Node had deprecated. Pulling that thread — why is this
@@ -1776,7 +1776,7 @@ payloads:</p>
 the poisoned version, a coin-miner and an infostealer running at install time. There was no
 exploit and no user interaction beyond the install every CI pipeline performs thousands of times
 a day.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b92575db50d0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b92575db50d0.png" alt="diagram"></div></p>
 <p><strong>Detection and response.</strong> Salman regained control of the account quickly. He recognized the
 compromise — reportedly tipped by a flood of unusual account activity — deprecated the malicious
 versions, and published clean patched releases (<strong>0.7.30</strong>, <strong>0.8.1</strong>, <strong>1.0.1</strong>). A GitHub
@@ -1881,7 +1881,7 @@ user's <strong><code>.gitconfig</code></strong> and <strong>SSH keys</strong> (<
 user's home directory. It exfiltrated this data by <strong>encoding it into DNS queries</strong> to an
 attacker-controlled domain (<code>*.h4ck.cfd</code>) — a DNS-tunnelling channel that blends into ordinary
 name-resolution traffic and often survives egress filtering that would block direct HTTP.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f79b5a922c7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8f79b5a922c7.png" alt="diagram"></div></p>
 <p><strong>Response.</strong> PyTorch published an advisory around the <strong>end of December 2022 / early January
 2023</strong>. Their remediation is instructive because it is the standard defensive playbook for
 dependency confusion: they <strong>renamed</strong> the real dependency from <code>torchtriton</code> to
@@ -2128,11 +2128,11 @@ that happens <em>to</em> you automatically into something you <em>govern</em> de
   not funnel.</li>
 </ul>
 <h3 id="dependency-confusion-attack-flow">Dependency confusion attack flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ef8b291585e4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ef8b291585e4.png" alt="diagram"></div></p>
 <h3 id="typosquatting-and-combosquatting-variants">Typosquatting and combosquatting variants</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5483ada7e51b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5483ada7e51b.png" alt="diagram"></div></p>
 <h3 id="maintainer-account-takeover-chain">Maintainer account takeover chain</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc47c9264024.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dc47c9264024.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>npm (GitHub) Security team, "Details about the event-stream incident" (November 26, 2018) — the
@@ -2267,7 +2267,7 @@ co-maintainer. By 2023 Jia Tan was merging changes, was listed in contact/securi
 information for the project, and — critically — was in a position to <em>cut releases</em>. The
 attacker had converted a burned-out volunteer's need for help into legitimate release
 authority over a library on nearly every Linux system on the planet.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1a9376372099.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1a9376372099.png" alt="diagram"></div></p>
 <p>Notice how little of this is technical. There is no exploit in the social-engineering phase,
 no vulnerability, nothing a scanner could flag. The entire first act of the operation is a
 study in human factors: identify a critical, under-resourced project; find the one exhausted
@@ -2318,7 +2318,7 @@ crack the payload lived in.</p>
    reviewed.</p>
 </li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_79f77e512fcb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_79f77e512fcb.png" alt="diagram"></div></p>
 <p>Every step was designed to be boring at the point a human might inspect it. Binary blobs in
 a compression test suite: expected. An extra <code>.m4</code> macro in an Autotools tarball: expected.
 Shell in <code>configure</code>: nobody reads generated <code>configure</code> output. The attack's genius was not
@@ -2346,7 +2346,7 @@ of the correct attacker private key could embed a signed, encrypted command payl
 certificate/key presented during the SSH handshake, which the backdoor would extract and
 execute — <strong>before authentication completed</strong>. The result was pre-authentication remote code
 execution as <code>sshd</code> (typically root), gated by a key only the attacker held.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b274657c98f4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b274657c98f4.png" alt="diagram"></div></p>
 <p>Two design choices in the runtime hook deserve emphasis, because they show the same
 discipline as the build-time staging. First, the backdoor was <strong>keyed</strong>: it was not a
 generic "anyone can log in" bypass but a private-key-gated capability, meaning that even
@@ -2435,7 +2435,7 @@ the environment variables from the customer's CI runner and sent them — via <c
 <strong>remote server controlled by the attackers</strong>. In effect, every CI pipeline that ran the
 uploader during the compromise window quietly shipped its secrets to a third party, as a
 side effect of collecting coverage.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_88231b0f6876.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_88231b0f6876.png" alt="diagram"></div></p>
 <h3 id="timeline-and-detection">Timeline and detection</h3>
 <p>The alteration was in place from roughly <strong>late January 2021</strong> and persisted until it was
 caught on <strong>April 1, 2021</strong> — a dwell time of more than two months, during which every
@@ -2505,7 +2505,7 @@ JNDI/LDAP reference could cause the JVM to <strong>fetch and instantiate a remot
 a target to <em>log a string you control</em>. Proof-of-concept exploitation was as simple as
 setting a <code>User-Agent</code> header to a JNDI string and watching the target reach out to your
 server.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_012be6f573d1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_012be6f573d1.png" alt="diagram"></div></p>
 <p>The vulnerability was disclosed publicly on <strong>December 9-10, 2021</strong>, and mass scanning and
 exploitation began almost immediately — the barrier to entry was so low that opportunistic
 exploitation was global within hours.</p>
@@ -2749,11 +2749,11 @@ failure modes, and a serious program defends against all of them at once.</p>
   unpaid volunteer (xz).</li>
 </ul>
 <h3 id="xz-utils-social-engineering-timeline">XZ Utils social-engineering timeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb05e46a301c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cb05e46a301c.png" alt="diagram"></div></p>
 <h3 id="codecov-bash-uploader-compromise-propagation">Codecov Bash Uploader compromise propagation</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_97395e960564.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_97395e960564.png" alt="diagram"></div></p>
 <h3 id="log4shell-vulnerable-component-in-depth-of-tree">Log4Shell: vulnerable component in depth of tree</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e1ccfd2f4986.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e1ccfd2f4986.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Andres Freund, "backdoor in upstream xz/liblzma leading to ssh server compromise,"
@@ -2871,7 +2871,7 @@ for that key," "this identity signed that digest" — and verification walks the
 artifact back up to a trust anchor it already holds. If every link checks out and terminates
 at an anchor, the artifact is trusted; if any link is broken or the chain does not reach an
 anchor, it is not.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5d70b214e386.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5d70b214e386.png" alt="diagram"></div></p>
 <p>Two properties of chains matter for the rest of the series. First, <strong>a chain is only as
 strong as its root and its weakest link</strong> — a perfectly valid signature chained to an anchor
 you never verified out of band proves nothing, and an intermediate key silently stolen breaks
@@ -3127,7 +3127,7 @@ one. The tree below targets a concrete, realistic objective — <em>execute atta
 code in Company X's production environment</em> — and branches through the four chain stages. It
 is deliberately not exhaustive; it is meant to show the <em>shape</em> of the reasoning and to make
 the cheapest-path logic visible.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_472112ae8232.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_472112ae8232.png" alt="diagram"></div></p>
 <p>Two things fall out of the tree immediately. First, the defender must cover <em>every</em> leaf,
 because the attacker only needs one; this is the <strong>weakest-link</strong> property we quantify in the
 economics section. Second, the leaves are wildly unequal in cost. <code>D1</code> (publish a typosquat)
@@ -3150,7 +3150,7 @@ server cannot edit has added a real gate.</p>
 <p>The sequence below shows gates along a representative pipeline. Each gate can <em>reject</em> — halt
 the artifact's progress — and each checks a property the previous stage could not forge on its
 own.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_82756cb24309.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_82756cb24309.png" alt="diagram"></div></p>
 <p>Notice how the gates map onto the <em>three kinds of trust</em>: Gate 1 establishes <strong>identity</strong> and
 authorized change; Gates 2–3 establish <strong>artifact</strong> integrity (hashes, signatures); Gate 4 —
 the admission controller checking provenance against policy — is the <strong>process</strong> gate, the one
@@ -3235,7 +3235,7 @@ comes from the <strong>marginal return</strong> of each control — the risk red
 these vary by more than an order of magnitude. Some controls are cheap and enormously valuable;
 others are expensive and, for most organizations, marginal. Placing them on a cost/value grid
 is the single most useful budgeting exercise in the field.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_92a8f6968b34.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_92a8f6968b34.png" alt="diagram"></div></p>
 <p>The pattern is consistent and worth internalizing:</p>
 <ul>
 <li><strong>Cheap, high value (do first).</strong> MFA on maintainer and CI accounts closes the compromised-
@@ -3393,11 +3393,11 @@ defended accordingly.</p>
   because concentrating trust relocates the risk rather than removing it.</li>
 </ul>
 <h3 id="belief-trust-and-trustworthiness-distinction">Belief, trust, and trustworthiness distinction</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da4c437037ac.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_da4c437037ac.png" alt="diagram"></div></p>
 <h3 id="stride-applied-to-the-supply-chain">STRIDE applied to the supply chain</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f8d2b7eb63dc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f8d2b7eb63dc.png" alt="diagram"></div></p>
 <h3 id="threat-model-scoping-what-is-in-out">Threat-model scoping: what is in / out</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bc58225d83c5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bc58225d83c5.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Ken Thompson, "Reflections on Trusting Trust," <em>Communications of the ACM</em> 27(8), August
@@ -3499,7 +3499,7 @@ vulnerability disclosure policy; review third-party components)? Artifact-level 
 narrow, deep, mechanically checkable, and often automatable. Process-level frameworks are
 broad, shallow-per-item, human-audited, and cover the whole software development lifecycle
 rather than one slice of it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_75f020b14849.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_75f020b14849.png" alt="diagram"></div></p>
 <p>Keep this diagram in your head. SLSA lives in the production/technical quadrant: narrow, deep,
 about artifacts. SSDF lives in the production/process quadrant: broad, whole-lifecycle, about
 what your organization does. S2C2F lives on the consumption side, spanning technical and
@@ -3551,7 +3551,7 @@ against the claim.</p>
 <p>The levels are, at bottom, a scale of <strong>how much you can trust that birth certificate</strong>. Does
 one exist at all? Is it signed? Could the baby have forged its own certificate?</p>
 <h3 id="the-build-track-levels">The Build track levels</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b9bdf5fafb43.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b9bdf5fafb43.png" alt="diagram"></div></p>
 <p><strong>Build L0 — no guarantees.</strong> The baseline. No provenance, no requirements. A binary built on
 a developer laptop and uploaded by hand is L0. This is not a failing grade so much as the
 absence of any claim; it exists so that "L0" is a thing you can say instead of "outside the
@@ -3595,7 +3595,7 @@ work.</p>
 <h3 id="the-threat-model-ah">The threat model: A–H</h3>
 <p>SLSA levels are calibrated against an explicit threat taxonomy. The v1.0 spec enumerates supply
 chain threats <strong>A through H</strong>, laid out along the path from source to consumer:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a36b1ea5b853.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a36b1ea5b853.png" alt="diagram"></div></p>
 <p>The letters, per the v1.0 threats specification:</p>
 <table>
 <thead>
@@ -3693,7 +3693,7 @@ do</em>, from developer training to incident response.</p>
 concrete controls. This is a deliberate design choice: SSDF aims to be technology-agnostic and
 composable, a common vocabulary that maps onto whatever concrete practices you already run,
 rather than a competing control set. The practices are grouped into <strong>four families</strong>:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b66c8d3d5a01.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b66c8d3d5a01.png" alt="diagram"></div></p>
 <ul>
 <li><strong>PO — Prepare the Organization.</strong> Get people, processes, and tooling ready <em>before</em> you
   build: define security requirements for software and for the toolchain, assign roles, provide
@@ -3767,7 +3767,7 @@ case-study chapters, you will recognize nearly every one.</p>
 levels (1–4)</strong>. Each individual requirement is tagged with the maturity level at which it
 applies, so "S2C2F Level 2" means "you meet every requirement tagged Level 1 and 2 across all
 eight practices."</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_acd93419ff17.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_acd93419ff17.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Ingest</strong> — pull open source through a controlled internal feed or mirror rather than letting
   every build reach straight out to public registries. This single practice is the linchpin: it
@@ -3833,7 +3833,7 @@ verifier.</p>
 <h2 id="how-they-fit-together">How they fit together</h2>
 <p>Here is the synthesis, which is the part worth carrying out of this chapter. Three frameworks,
 three positions on the two axes:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f5724beda8e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8f5724beda8e.png" alt="diagram"></div></p>
 <p>And the same three, compared on the dimensions that actually differ:</p>
 <table>
 <thead>
@@ -4084,9 +4084,9 @@ and the number.</p>
 </li>
 </ul>
 <h3 id="framework-coverage-map-which-layer-each-protects">Framework coverage map: which layer each protects</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ddb2f565c57b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ddb2f565c57b.png" alt="diagram"></div></p>
 <h3 id="adoption-ladder-incremental-maturity">Adoption ladder: incremental maturity</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a1282009cb4c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a1282009cb4c.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>SLSA (Supply-chain Levels for Software Artifacts), <strong>v1.0</strong> — the specification at <code>slsa.dev</code>:
@@ -4193,7 +4193,7 @@ have to be hit by a bus — leave abruptly, for any reason — before a project 
 the knowledge and access to continue are gone. A bus factor of 1 means one person holds the
 commit rights, the release keys, the design knowledge, and the security-response
 responsibility. Governance model and bus factor are tightly coupled.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1a0c1a8ff210.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1a0c1a8ff210.png" alt="diagram"></div></p>
 <p><strong>Solo maintainer.</strong> One person, usually unpaid, often maintaining the project on evenings and
 weekends. This is the modal state of the long tail of npm/PyPI/crates.io, and — critically —
 it is also true of some <em>extremely</em> load-bearing packages. Bus factor 1. Security response
@@ -4327,7 +4327,7 @@ takes for granted precisely because they "just work." Nobody funds left-pad. Eve
 <h2 id="economics-and-sustainability">Economics and sustainability</h2>
 <p>If the disease is unfunded critical infrastructure, the treatments are the various funding
 models — none of which fully works, and all of which have instructive failure modes.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a7be130f15df.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a7be130f15df.png" alt="diagram"></div></p>
 <h3 id="funding-models-and-their-failure-modes">Funding models and their failure modes</h3>
 <p><strong>Foundations.</strong> Companies pay membership dues; the foundation funds infrastructure, legal, CI,
 and sometimes staff. <em>Failure mode:</em> foundation money tends to reach the foundation's flagship
@@ -4395,7 +4395,7 @@ difficult, for three structural reasons:</p>
 <p>Two crises bookend the institutional history: Heartbleed (2014) exposed the underfunding of
 critical infrastructure, and xz-utils (2024) exposed that even funded attention had not solved
 the maintainer-capture problem. The response has accreted in layers.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b24b28021d61.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b24b28021d61.png" alt="diagram"></div></p>
 <p><strong>Core Infrastructure Initiative (CII), 2014.</strong> Formed by the Linux Foundation directly in
 response to Heartbleed, the CII pooled money from major technology companies to fund the
 maintenance and security of critical projects that were dangerously underfunded — OpenSSL,
@@ -4626,7 +4626,7 @@ constraint. Three consequences follow directly.</p>
 scrutiny across the whole graph guarantees you under-scrutinize the few that matter while
 wasting effort on leaves that don't. The tractable strategy is a two-axis triage: <strong>how
 load-bearing is this dependency (criticality)</strong> against <strong>how well-maintained is it (health)</strong>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_28b7eee1e3df.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_28b7eee1e3df.png" alt="diagram"></div></p>
 <p>The upper-left quadrant — <strong>high criticality, low health</strong> — is where your finite attention
 belongs. Those are the packages that are both load-bearing <em>and</em> fragile: the Nebraska blocks
 in your specific graph. For each one you have a menu of responses, roughly in ascending cost:
@@ -4711,9 +4711,9 @@ should be <em>you</em>.</p>
   security chokepoint.</li>
 </ul>
 <h3 id="open-source-funding-and-sustainability-risk">Open-source funding and sustainability risk</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f1bc94119c07.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f1bc94119c07.png" alt="diagram"></div></p>
 <h3 id="ecosystem-health-signals">Ecosystem health signals</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_016f23e6e09c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_016f23e6e09c.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Randall Munroe, xkcd #2347, "Dependencies" (<code>xkcd.com/2347</code>) — the Nebraska-maintainer
@@ -4844,7 +4844,7 @@ the same CI templates or reusable workflows. Every pod gets the same injected si
 same telemetry agent. So the estate's supply-chain graph is not N disjoint lines; it is a graph
 with a small number of <strong>high-degree nodes</strong> — components consumed by nearly everything — and a
 long tail of leaf dependencies used by one or two services.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_718ee64ac6e2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_718ee64ac6e2.png" alt="diagram"></div></p>
 <p>This graph structure is the whole point. In classic reliability engineering you learn to hunt
 for the single points of failure — the shared database, the one load balancer. Supply chain
 security at scale is the same hunt with a different failure mode: not "what breaks everything if
@@ -4932,7 +4932,7 @@ as a byproduct of using the standard tooling rather than as a checklist they mus
 satisfy.</p>
 <p>From a supply chain standpoint the paved road is a <strong>trust chokepoint</strong>, and the word chokepoint
 carries both meanings deliberately.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_92b058b1467e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_92b058b1467e.png" alt="diagram"></div></p>
 <p><strong>The good direction.</strong> Centralizing the build and deploy path concentrates the trust you have
 to establish well into a <em>small, expert-run</em> surface. Instead of asking 400 product teams to
 each correctly configure provenance, pin dependencies, sign artifacts, and harden a Dockerfile —
@@ -5011,7 +5011,7 @@ a <strong>mesh of services that trust each other over the network.</strong> Supp
 becomes an <em>initial-access</em> vector for lateral movement. The attacker's foothold is a backdoored
 library in <code>svc-orders</code>; their objective is the data in <code>svc-payments</code>; the path between them is
 the internal API surface that every microservice architecture is built to expose.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_21959e79cecb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_21959e79cecb.png" alt="diagram"></div></p>
 <p>The security of this hinges entirely on step 4: <strong>when <code>svc-payments</code> receives an internal
 request, does it verify what the caller is and whether it is authorized, or does it trust the
 request simply because it arrived on the internal network?</strong> The failure mode is the flat,
@@ -5203,7 +5203,7 @@ security.</strong> At the scale where you have distinct app, platform, and secur
 supply chain is <em>divided among owners</em>, and the divisions do not perfectly tile the chain — they
 overlap in some places and, more dangerously, leave gaps in others.</p>
 <p>Map the ownership as it typically falls out:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ed8764bff00e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ed8764bff00e.png" alt="diagram"></div></p>
 <p>The characteristic gaps, each of which is a real place attacks have landed:</p>
 <ul>
 <li><strong>Transitive dependencies.</strong> App teams feel ownership of the dependencies they <em>chose</em> (the ones
@@ -5373,9 +5373,9 @@ single-artifact model the earlier chapters implicitly assumed:</p>
   where the Accountable column is blank.</li>
 </ul>
 <h3 id="supply-chain-as-a-distributed-system">Supply chain as a distributed system</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aa1e9e61abee.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aa1e9e61abee.png" alt="diagram"></div></p>
 <h3 id="consistency-vs-availability-in-registries">Consistency vs availability in registries</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d9cd8b181058.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d9cd8b181058.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Netflix Technology Blog, "The Paved PaaS to Microservices" and related posts on the paved-road
@@ -5479,7 +5479,7 @@ adopted does it by default. Discovering existing coverage does two things: it st
 proposing work that is half-done, and it surfaces the <em>inconsistency</em> that is itself a finding —
 if 30% of images are signed by three different mechanisms, you have a standardization problem
 before you have a coverage problem.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_588a09e1e9c1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_588a09e1e9c1.png" alt="diagram"></div></p>
 <p>The output of this phase is not a report; it is a living map, kept current by the same APIs that
 produced it. The moment the map becomes a stale document, the program is back to securing an
 imagined system. Wire the discovery queries into a scheduled job so the map refreshes weekly, and
@@ -5506,7 +5506,7 @@ a controlled feed, whether artifacts are signed, whether an SBOM is produced, an
 is deliberately coarse. Precision here is false comfort; you want the shape, and the shape is
 usually "a small paved-road majority at a decent level, a long tail of snowflakes at zero, and
 the highest-risk system somewhere it should not be."</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_93a6c7eb0cb4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_93a6c7eb0cb4.png" alt="diagram"></div></p>
 <h3 id="threat-model-driven-prioritization">Threat-model-driven prioritization</h3>
 <p>A baseline tells you where you are weak. It does not tell you where weakness <em>matters</em>, and those
 are different questions. Prioritization is where Chapter 6's threat-modeling and economics come
@@ -5533,7 +5533,7 @@ phases also track marginal return: Phase 1 is the cheapest work with the highest
 subsequent phase costs more per unit of risk retired. Most organizations should be in Phase 1 or
 2. Very few operationally need Phase 3 everywhere, and Phase 4 is a permanent operating mode, not
 a finish line.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_440ccd88857d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_440ccd88857d.png" alt="diagram"></div></p>
 <h3 id="phase-1-foundational-hygiene">Phase 1 — Foundational hygiene</h3>
 <p>This is the highest-ROI, lowest-cost work in the entire program, and if the org has done nothing,
 this is where 100% of the first quarter goes. None of it is glamorous. All of it retires enormous
@@ -5697,7 +5697,7 @@ first for the highest-maturity teams, with a documented break-glass exception pa
 The organizations that skip straight to blocking do not get better security faster; they get an
 outage, a rollback, and a security team that has spent its political capital and will not be
 allowed to enforce anything for a year.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5d120a2cc8f8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5d120a2cc8f8.png" alt="diagram"></div></p>
 <p>Two properties make this humane. First, <strong>the paved road carries the rollout</strong>: because the
 control lives in shared tooling, flipping it from warn to enforce is a change the platform team
 makes centrally, and teams on the paved road are carried across the transition without individual
@@ -5729,7 +5729,7 @@ enabler team's roadmap is a coverage-expansion plan.</p>
 <p>Chapter 9 argued that every stage of the chain needs exactly one Accountable owner, and that
 attacks live in the rows where the Accountable column is blank. The program makes that RACI
 explicit and <em>staffs</em> it. Three organizational actors, mapped to the phased work:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d5ab35af9582.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d5ab35af9582.png" alt="diagram"></div></p>
 <p>The division that works: <strong>security defines</strong> what good looks like (policy, threat model,
 standards, the metrics), <strong>platform builds</strong> it into the paved road (the templates, the signing,
 the admission control), and <strong>app teams consume</strong> it by walking the road. Security does not build
@@ -5967,9 +5967,9 @@ would be a checklist, and it is the scale that makes it an engineering disciplin
   its monitoring and metrics feed back into re-assessment as the estate and threats change.</li>
 </ul>
 <h3 id="program-roadmap-crawl-to-walk-to-run">Program roadmap: crawl to walk to run</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dd63018a04e8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dd63018a04e8.png" alt="diagram"></div></p>
 <h3 id="risk-prioritized-backlog">Risk-prioritized backlog</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_919253e6bb47.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_919253e6bb47.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>OpenSSF, "Secure Supply Chain Consumption Framework (S2C2F)" specification — the eight practice

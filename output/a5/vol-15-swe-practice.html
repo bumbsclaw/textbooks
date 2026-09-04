@@ -291,7 +291,7 @@ hr {
 <hr />
 <h2 id="the-pyramid-the-diamond-and-the-trophy">The pyramid, the diamond, and the trophy</h2>
 <p>No single geometric metaphor is universally correct, but each captures a useful default distribution of effort.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0f28e5cdc707.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0f28e5cdc707.png" alt="diagram"></div></p>
 <p><em>Figure 1-1: Three portfolio shapes. The pyramid is the default for domain-rich backend services. The diamond fits services whose primary complexity is at integration boundaries (API gateways, orchestrators). The trophy, popularised by Kent C. Dodds, suits UI-heavy stacks. Most backend portfolios should look like a pyramid or a diamond — not an ice-cream cone (inverted pyramid) where slow E2E tests dominate.</em></p>
 <table>
 <thead>
@@ -753,7 +753,7 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 <li><strong>Generator (strategy/arbitrary)</strong> — a recipe for producing random inputs, often with distribution controls (e.g., "small integers more often than large ones; empty strings with 5% probability").</li>
 <li><strong>Shrinking</strong> — when a property fails, the framework searches for the <em>smallest</em> input that still fails, turning a 200-character random string into a 1-character reproducer you can reason about.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_74100285ce6b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_74100285ce6b.png" alt="diagram"></div></p>
 <p><em>Figure 1-2: The property-based testing loop. Generators explore the input space; the shrinker reduces failures to their essence; the seed makes every failure reproducible.</em></p>
 <h3 id="common-property-patterns-for-backend-code">Common property patterns for backend code</h3>
 <table>
@@ -1015,7 +1015,7 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 </table>
 <p>Quarantine policy: when a test flakes, immediately mark it as quarantined (e.g., <code>t.Skip</code> with a tracking issue, or a <code>quarantine</code> tag that excludes it from the required status check) and file an issue. Do not leave it in the required path while "someone looks at it."</p>
 <h3 id="making-the-suite-fast-and-actionable">Making the suite fast and actionable</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_037c58fb4d74.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_037c58fb4d74.png" alt="diagram"></div></p>
 <p><em>Figure 1-3: A staged pipeline. Fast, deterministic stages gate every commit; slower, higher-fidelity stages gate merge to main. E2E and contract verification run in parallel with integration where possible to minimise wall-clock time.</em></p>
 <p>Practical CI optimisations:</p>
 <ul>
@@ -1082,13 +1082,13 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 <hr />
 <p><em>Next: Chapter 2 — Contract Testing, Test Doubles, and Testability — where the focus shifts from testing a single service to testing the seams between services, the doubles that isolate them, and the design choices that make both possible.</em></p>
 <h3 id="testing-pyramid">Testing pyramid</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_732b86df53c9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_732b86df53c9.png" alt="diagram"></div></p>
 <h3 id="test-doubles-taxonomy">Test doubles taxonomy</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_42aa6527ccdb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_42aa6527ccdb.png" alt="diagram"></div></p>
 <h3 id="flaky-test-triage">Flaky test triage</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ccdccd34947d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ccdccd34947d.png" alt="diagram"></div></p>
 <h3 id="coverage-vs-confidence">Coverage vs confidence</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a285c41c4ad2.png" alt="diagram"></div></p></div><div id="ch02-contract-testing"><h1 id="chapter-2-contract-testing-test-doubles-and-testability">Chapter 2 — Contract Testing, Test Doubles, and Testability</h1>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a285c41c4ad2.png" alt="diagram"></div></p></div><div id="ch02-contract-testing"><h1 id="chapter-2-contract-testing-test-doubles-and-testability">Chapter 2 — Contract Testing, Test Doubles, and Testability</h1>
 <p><strong>What this chapter covers.</strong> A backend service never runs alone — it calls databases, queues, peer services, and third-party APIs, and every one of those boundaries is a seam where assumptions diverge and bugs hide. This chapter is about testing those seams without coupling your suite to someone else's deployment schedule. You will learn the full taxonomy of test doubles and when each earns its keep, how consumer-driven contract testing with Pact (and schema-based alternatives) catches drift that integration tests miss, and how to design services for testability in the first place — so that seams are explicit, deterministic, and cheap to exercise. Every technique is grounded in runnable Pact, WireMock, and fake-based examples.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -1113,7 +1113,7 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 <hr />
 <h2 id="test-doubles-a-precise-taxonomy">Test doubles: a precise taxonomy</h2>
 <p>The term "mock" is used colloquially to mean any test double. Gerard Meszaros's taxonomy (<em>xUnit Test Patterns</em>, 2007) — refined by Martin Fowler — distinguishes five kinds. The distinction is not pedantry; each double has different coupling, fidelity, and maintenance characteristics.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dbf61025fd9c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dbf61025fd9c.png" alt="diagram"></div></p>
 <p><em>Figure 2-1: The five test doubles. Dummies, stubs, spies, and mocks are all hollow — they have no real behaviour. Fakes are the exception: they have real (but simplified) behaviour.</em></p>
 <table>
 <thead>
@@ -1407,7 +1407,7 @@ mutmut<span class="w"> </span>junitxml<span class="w"> </span>&gt;<span class="w
 <p>In practice most organisations use both: Pact for the service graph they control, schema testing for the boundaries they publish or consume from outside.</p>
 <h3 id="consumer-driven-contracts-with-pact">Consumer-driven contracts with Pact</h3>
 <p>Pact formalises the consumer's expectations as a <strong>pact file</strong> (JSON) that records every interaction the consumer depends on: request shape, response shape, headers, status codes, and matching rules. The consumer test generates the pact; the provider test replays it against the real provider. A <strong>Pact Broker</strong> mediates — storing pacts, triggering provider verification, and gating deployments with <code>can-i-deploy</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f65005f88c59.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f65005f88c59.png" alt="diagram"></div></p>
 <p><em>Figure 2-2: The Pact lifecycle. Consumer and provider never need to be deployed together — the pact file and the broker decouple their verification. The <code>can-i-deploy</code> check is the deployment gate.</em></p>
 <h4 id="consumer-test-typescript-pact-foundationpact">Consumer test (TypeScript — <code>@pact-foundation/pact</code>)</h4>
 <div class="highlight"><pre><span></span><code><span class="c1">// consumer/pact/payment.pact.test.ts</span>
@@ -1725,7 +1725,7 @@ pact-broker<span class="w"> </span>can-i-deploy<span class="w"> </span><span cla
 <p>The cheapest way to test a seam is to make the seam explicit in the design. Testability is not a testing concern — it is an architectural concern. Code that is hard to test is usually hard to reason about, hard to change, and hard to operate.</p>
 <h3 id="ports-and-adapters-hexagonal-architecture">Ports and adapters (hexagonal architecture)</h3>
 <p>The core idea: the domain depends on <strong>ports</strong> (interfaces it owns), and infrastructure implements <strong>adapters</strong> that satisfy those ports. The domain never imports <code>net/http</code>, <code>sql.DB</code>, or <code>kafka.Producer</code> directly — it imports its own interfaces, which are trivial to fake in tests.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5a2816b3e094.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5a2816b3e094.png" alt="diagram"></div></p>
 <p><em>Figure 2-3: Ports and adapters. The domain owns the interfaces; adapters (including test doubles) plug into them. Swapping a real adapter for a fake requires no change to the domain.</em></p>
 <p><strong>Dependency injection — constructor injection over service locators:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// main.go — composition root (the only place that knows about concrete adapters)</span>
@@ -1820,7 +1820,7 @@ pact-broker<span class="w"> </span>can-i-deploy<span class="w"> </span><span cla
 <hr />
 <h2 id="composing-the-portfolio">Composing the portfolio</h2>
 <p>Chapter 1 gave you the pyramid; this chapter gives you the rules for filling it at the seams:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8bbfb159bd7b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8bbfb159bd7b.png" alt="diagram"></div></p>
 <p><em>Figure 2-4: Choosing the right seam test. When you control both sides and can run the dependency, a real integration test is the strongest signal. Otherwise, the choice between Pact and schema testing follows who owns the contract.</em></p>
 <p>A mature suite uses all four, each where it is strongest:</p>
 <ul>
@@ -1857,11 +1857,11 @@ pact-broker<span class="w"> </span>can-i-deploy<span class="w"> </span><span cla
 <hr />
 <p><em>Next: Chapter 3 — Load, Performance, and Chaos Testing — where the focus shifts from correctness to behaviour under pressure: how the system performs when traffic is heavy, resources are constrained, and failures are injected deliberately.</em></p>
 <h3 id="consumer-driven-contract-testing-flow">Consumer-driven contract testing flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_195e11a32585.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_195e11a32585.png" alt="diagram"></div></p>
 <h3 id="contract-testing-vs-e2e">Contract testing vs E2E</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ce3783def5c2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ce3783def5c2.png" alt="diagram"></div></p>
 <h3 id="pact-workflow">Pact workflow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c168b724f2e2.png" alt="diagram"></div></p></div><div id="ch03-load-testing"><h1 id="chapter-3-load-performance-and-chaos-testing">Chapter 3 — Load, Performance, and Chaos Testing</h1>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c168b724f2e2.png" alt="diagram"></div></p></div><div id="ch03-load-testing"><h1 id="chapter-3-load-performance-and-chaos-testing">Chapter 3 — Load, Performance, and Chaos Testing</h1>
 <p><strong>What this chapter covers.</strong> Correctness is necessary but not sufficient — a service that returns the right answer in 50 ms for one request and 8 seconds for the thousandth concurrent request is failing its users just as surely as one that returns the wrong answer. This chapter covers the three disciplines that verify behaviour under pressure: load testing (can the system handle expected traffic?), performance testing (where are the bottlenecks and what are the limits?), and chaos testing (does the system degrade gracefully when the infrastructure misbehaves?). You will learn workload modelling, k6/Vegeta/Gatling in depth, profiling-driven performance analysis, chaos experiment design with Chaos Mesh and Litmus, and how to wire all three into CI and production safely. Every technique is grounded in runnable configs and real experiment definitions.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -1914,7 +1914,7 @@ pact-broker<span class="w"> </span>can-i-deploy<span class="w"> </span><span cla
 </table>
 <p>Load testing asks <em>how much can we handle and how does latency degrade?</em> Performance testing asks <em>where is the bottleneck and what is the theoretical limit?</em> Chaos testing asks <em>when something breaks — and it will — does the system do what we designed it to do?</em> Together they close the gap between "the code is correct" and "the system is reliable" (Volume 11).</p>
 <h3 id="where-this-chapter-sits">Where this chapter sits</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1ee3b5cbfbf3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1ee3b5cbfbf3.png" alt="diagram"></div></p>
 <p><em>Figure 3-1: The testing progression from correctness to resilience. Each layer answers a different question, runs at a different cadence, and gates a different promotion. All three feed production SLO confidence.</em></p>
 <hr />
 <h2 id="load-testing-concepts-and-workload-design">Load testing: concepts and workload design</h2>
@@ -2336,7 +2336,7 @@ vegeta<span class="w"> </span>report<span class="w"> </span>-type<span class="o"
 <p>Load testing tells you <em>that</em> the system is slow under load. Performance testing tells you <em>why</em> — and whether the fix actually helped.</p>
 <h3 id="profiling-hierarchy">Profiling hierarchy</h3>
 <p>When a load test breaches an SLO, the diagnosis follows a hierarchy from coarse to fine:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1ac9235bbc0c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1ac9235bbc0c.png" alt="diagram"></div></p>
 <p><em>Figure 3-2: Performance diagnosis hierarchy. Each layer narrows the search — from system-level saturation to function-level hot spots — before you change a line of code.</em></p>
 <p><strong>1. System metrics — is a resource saturated?</strong></p>
 <p>Dashboards (Volume 11, Chapter 2) answer the first question: CPU throttling (cgroup <code>cpu.stat</code>), memory pressure (PSI, OOM kills), GC pauses, connection pool wait time, queue depth, and downstream latency. If CPU is at 95% during the load test, the bottleneck is compute — profile CPU. If CPU is at 30% but p99 is high, the bottleneck is elsewhere (I/O, locks, downstream).</p>
@@ -2515,7 +2515,7 @@ k6<span class="w"> </span>run<span class="w"> </span>scenarios/checkout-load.js<
 </table>
 <h3 id="designing-a-chaos-experiment">Designing a chaos experiment</h3>
 <p>Every experiment follows the same lifecycle:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a70fbedfe5ae.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a70fbedfe5ae.png" alt="diagram"></div></p>
 <p><em>Figure 3-3: The chaos experiment lifecycle. Every experiment is a controlled, abortable, observable hypothesis test — not ad-hoc destruction.</em></p>
 <p>A well-scoped experiment definition answers seven questions:</p>
 <ol>
@@ -2796,7 +2796,7 @@ toxiproxy-cli<span class="w"> </span>toxic<span class="w"> </span>remove<span cl
 <hr />
 <h2 id="wiring-it-together-ci-environments-and-observability">Wiring it together: CI, environments, and observability</h2>
 <h3 id="staged-pipeline">Staged pipeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b2ce926b7e4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6b2ce926b7e4.png" alt="diagram"></div></p>
 <p><em>Figure 3-4: Staged pipeline from commit to production. Fast, deterministic stages gate every commit; heavier load and chaos stages gate promotion. Each stage has an explicit SLO-aligned pass/fail signal — no stage is informational only.</em></p>
 <h3 id="environment-isolation">Environment isolation</h3>
 <p>Load and chaos tests must not run against shared environments where they can affect other teams or pollute data. Options in order of preference:</p>
@@ -2891,11 +2891,11 @@ toxiproxy-cli<span class="w"> </span>toxic<span class="w"> </span>remove<span cl
 <hr />
 <p><em>Next: Chapter 4 — Design Docs, RFCs, and Technical Decision-Making — where the focus shifts from verifying the system to deciding what to build and how to align a team around that decision before a line of code is written.</em></p>
 <h3 id="load-testing-types">Load testing types</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bdda24ea8e21.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bdda24ea8e21.png" alt="diagram"></div></p>
 <h3 id="load-test-pipeline">Load test pipeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b84239476e65.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b84239476e65.png" alt="diagram"></div></p>
 <h3 id="k6-gatling-architecture">k6 / Gatling architecture</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c52356a9b0b3.png" alt="diagram"></div></p></div><div id="ch04-design-docs"><h1 id="chapter-4-design-docs-rfcs-and-technical-decision-making">Chapter 4 — Design Docs, RFCs, and Technical Decision-Making</h1>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c52356a9b0b3.png" alt="diagram"></div></p></div><div id="ch04-design-docs"><h1 id="chapter-4-design-docs-rfcs-and-technical-decision-making">Chapter 4 — Design Docs, RFCs, and Technical Decision-Making</h1>
 <p><strong>What this chapter covers.</strong> Every consequential engineering decision is made twice: once when someone has the idea and again when the team understands it well enough to critique it. Without a written artifact in between, the second step never happens — decisions are made in hallway conversations, Slack threads that scroll away, and meetings where the loudest voice wins. This chapter makes decision-making explicit and durable. You will learn when to write a design doc and when not to, how RFC and ADR processes actually work in high-performing organizations, what a good template looks like and why each section earns its place, how to frame alternatives and trade-offs so reviewers can reason rather than bikeshed, and how to run the review process — from async commentary to synchronous debate to recorded decision — without turning it into governance theatre.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -3027,8 +3027,8 @@ toxiproxy-cli<span class="w"> </span>toxic<span class="w"> </span>remove<span cl
 <p>A common confusion is between RFC and ADR. An RFC says "here is what we <em>should</em> do and why — please critique." An ADR says "here is what we <em>did</em> do and why — for the record." A healthy team produces both: RFCs before the work, ADRs after the decision. Some teams combine them — an RFC that, once approved, <em>becomes</em> the ADR by flipping its status. Either way, the append-only log of ADRs is the durable memory.</p>
 <hr />
 <h2 id="3-the-rfc-lifecycle">3. The RFC lifecycle</h2>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_267dd4177b2f.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f828724c5d82.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_267dd4177b2f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f828724c5d82.png" alt="diagram"></div></p>
 <h3 id="timeline-and-expectations">Timeline and expectations</h3>
 <table>
 <thead>
@@ -3131,7 +3131,7 @@ enough that a reviewer can spot what you missed._
 
 <span class="gu">### 4.1 Architecture diagram</span>
 
-<div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ddc78bfbe92d.png" alt="diagram"></div>
+<div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ddc78bfbe92d.png" alt="diagram"></div>
 
 <span class="gu">### 4.2 Data flow and API changes</span>
 
@@ -3579,13 +3579,13 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <li>Google — <em>Software Engineering at Google</em> (2020), Ch. 8 — Style guides and code review; Ch. 14 — Documentation. https://abseil.io/resources/swe-book</li>
 </ul>
 <h3 id="rfc-lifecycle">RFC lifecycle</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb3656f4cdc0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cb3656f4cdc0.png" alt="diagram"></div></p>
 <h3 id="design-doc-structure">Design doc structure</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c52826f827e1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c52826f827e1.png" alt="diagram"></div></p>
 <h3 id="adrs-vs-rfcs">ADRs vs RFCs</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35baf00ba4a2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_35baf00ba4a2.png" alt="diagram"></div></p>
 <h3 id="review-quality-checklist">Review quality checklist</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c1f410d2662f.png" alt="diagram"></div></p></div><div id="ch05-ddd"><h1 id="chapter-5-domain-driven-design-for-backend">Chapter 5 — Domain-Driven Design for Backend</h1>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c1f410d2662f.png" alt="diagram"></div></p></div><div id="ch05-ddd"><h1 id="chapter-5-domain-driven-design-for-backend">Chapter 5 — Domain-Driven Design for Backend</h1>
 <p><strong>What this chapter covers.</strong> Most backend failures blamed on "microservices complexity" are actually domain-modeling failures: a shared database that couples teams through invisible foreign keys, a single <code>Order</code> object that means three different things in three services, an API that leaks internal workflow state because no one defined where one domain ends and another begins. Domain-Driven Design (DDD) is the discipline of making those boundaries explicit before they become incidents. This chapter covers DDD as a backend engineer uses it — not as abstract theory, but as concrete decisions about service boundaries, data ownership, transactional consistency, and inter-service communication. You will learn bounded contexts and context maps, entities vs. value objects vs. aggregates, domain events and their delivery guarantees, strategic patterns for decomposing monoliths, and where DDD helps, where it over-engineers, and how it composes with the rest of the backend stack.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -3891,7 +3891,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da6207c5bc7a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_da6207c5bc7a.png" alt="diagram"></div></p>
 <h3 id="33-repositories-and-persistence">3.3 Repositories and persistence</h3>
 <p>A <strong>repository</strong> presents an aggregate as an in-memory collection, hiding persistence mechanics. It loads and stores <em>whole aggregates</em> transactionally.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Repository interface — domain layer, no infrastructure leakage.</span>
@@ -3968,7 +3968,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <h2 id="4-strategic-patterns-bounded-contexts-and-context-maps">4. Strategic patterns — bounded contexts and context maps</h2>
 <h3 id="41-bounded-contexts">4.1 Bounded contexts</h3>
 <p>A <strong>bounded context</strong> is an explicit boundary within which a particular domain model applies. Inside the boundary, terms have precise meanings and invariants hold. Across boundaries, the same real-world concept may be modeled differently — and that is intentional.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e189e3ee7a34.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e189e3ee7a34.png" alt="diagram"></div></p>
 <p><strong>How to find bounded-context boundaries:</strong></p>
 <table>
 <thead>
@@ -4052,7 +4052,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>Each context owns its data exclusively — no shared tables, no cross-context foreign keys, no direct DB joins. Integration happens through well-defined interfaces (events, APIs, ACLs).</p>
 <h3 id="42-context-map-how-contexts-relate">4.2 Context map — how contexts relate</h3>
 <p>When bounded contexts must interact, the <em>relationship</em> between them is a design decision with concrete consequences:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e22f1619002.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5e22f1619002.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -4224,7 +4224,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </table>
 <h3 id="52-delivery-outbox-broker-and-idempotent-consumers">5.2 Delivery — outbox, broker, and idempotent consumers</h3>
 <p>Domain events must survive crashes. Publishing directly from the aggregate (fire-and-forget) risks inconsistency: the DB commit succeeds but the publish fails, or vice versa. The solution is the <strong>transactional outbox</strong> (Volume 10, Chapter 6):</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d40b425eee51.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d40b425eee51.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Outbox table — polled or CDC-tailed by the relay.</span>
 <span class="c1">// CREATE TABLE outbox (</span>
 <span class="c1">//     id          BIGSERIAL PRIMARY KEY,</span>
@@ -4309,7 +4309,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <hr />
 <h2 id="6-strategic-decomposition-from-monolith-to-bounded-contexts">6. Strategic decomposition — from monolith to bounded contexts</h2>
 <p>Most teams do not start with bounded contexts — they start with a monolith and need to find them. The strangler-fig pattern, guided by DDD boundaries, is the proven approach.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_312770c56765.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_312770c56765.png" alt="diagram"></div></p>
 <p><strong>Decomposition steps:</strong></p>
 <ol>
 <li>
@@ -4430,7 +4430,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d3d2c9ed881d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d3d2c9ed881d.png" alt="diagram"></div></p>
 <hr />
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
@@ -4455,7 +4455,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <li>confluent.io — <em>Event Sourcing, CQRS, and Outbox patterns</em> — operational guidance for DDD on Kafka. https://docs.confluent.io/kafka/design/</li>
 </ul>
 <h3 id="event-storming-to-bounded-contexts">Event storming to bounded contexts</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_752d69f7d70f.png" alt="diagram"></div></p></div><div id="ch06-patterns"><h1 id="chapter-6-design-patterns-and-anti-patterns-for-services">Chapter 6 — Design Patterns and Anti-Patterns for Services</h1>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_752d69f7d70f.png" alt="diagram"></div></p></div><div id="ch06-patterns"><h1 id="chapter-6-design-patterns-and-anti-patterns-for-services">Chapter 6 — Design Patterns and Anti-Patterns for Services</h1>
 <p><strong>What this chapter covers.</strong> Every backend team eventually faces the same fork: solve a new problem by inventing a bespoke mechanism, or apply a known pattern whose trade-offs are understood. Patterns are not recipes to follow blindly — they are a shared vocabulary for naming recurring problems and the forces that shape their solutions. Anti-patterns are equally valuable: they name the attractive-but-wrong paths that look expedient and end in distributed monoliths, shared databases, and god services. This chapter builds a working catalog of patterns and anti-patterns at the service level — the layer where architecture meets code. You will learn the structural patterns that organize service internals (hexagonal/clean, layered vs. vertical slice, repository), the communication patterns that connect services (gateway, BFF, sidecar), the resilience and data patterns that keep them correct under failure (circuit breaker, outbox, saga, CQRS), and the behavioral patterns that keep business logic composable (strategy, decorator/middleware, observer). For each, you will see when it helps, what it costs, how it fails, and what to use instead when it does not fit.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -4517,13 +4517,13 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </ul>
 <hr />
 <h2 id="2-pattern-catalog-map-of-the-territory">2. Pattern catalog — map of the territory</h2>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_32f6bd6fa718.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_32f6bd6fa718.png" alt="diagram"></div></p>
 <p>This chapter covers each category with one or two representative patterns in depth and others in comparative tables. Resilience and data patterns are summarized here and covered exhaustively in Volume 10 (Messaging/Streaming) and Volume 11 (Reliability/SRE) — this chapter focuses on <em>when and how to apply them</em> at the service-design level.</p>
 <hr />
 <h2 id="3-structural-patterns-organizing-service-internals">3. Structural patterns — organizing service internals</h2>
 <h3 id="31-hexagonal-architecture-ports-and-adapters">3.1 Hexagonal architecture (ports and adapters)</h3>
 <p>Hexagonal architecture (Alistair Cockburn, 2005), also called ports-and-adapters or clean/onion architecture, inverts the dependency direction: the domain sits at the center and depends on nothing; infrastructure (HTTP, DB, queues, clocks) depends on the domain through ports (interfaces).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e6e36a0c9b3a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e6e36a0c9b3a.png" alt="diagram"></div></p>
 <p><strong>Concrete layout in Go:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="n">orders</span><span class="o">-</span><span class="n">service</span><span class="o">/</span>
 <span class="err">├──</span><span class="w"> </span><span class="n">internal</span><span class="o">/</span>
@@ -4751,7 +4751,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <hr />
 <h2 id="4-communication-patterns">4. Communication patterns</h2>
 <h3 id="41-api-gateway-bff-and-aggregator">4.1 API gateway, BFF, and aggregator</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10e25efdf6a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_10e25efdf6a4.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -4891,7 +4891,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <hr />
 <h2 id="5-resilience-patterns-surviving-partial-failure">5. Resilience patterns — surviving partial failure</h2>
 <p>Resilience patterns are covered in depth in Volume 11, Chapter 10. This section maps them to service-design decisions — where each pattern lives and how they compose.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_94c890bd2e0f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_94c890bd2e0f.png" alt="diagram"></div></p>
 <p><strong>Composition order matters</strong> — timeout wraps retry, retry is gated by circuit breaker, bulkhead is innermost (closest to the downstream):</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Correct composition — timeout → retry (with budget) → circuit breaker → bulkhead → call.</span>
 <span class="kd">func</span><span class="w"> </span><span class="nx">CallCatalog</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">req</span><span class="w"> </span><span class="nx">CatalogRequest</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="nx">CatalogResponse</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -5015,7 +5015,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_82d826ce521e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_82d826ce521e.png" alt="diagram"></div></p>
 <p><strong>Choosing choreography vs. orchestration:</strong></p>
 <ul>
 <li><strong>Choreography</strong> — services publish events; interested services react. Decoupled, no coordinator, but no single place to see "where is order #123 in the saga?" Use when the flow is linear and short (2–3 steps).</li>
@@ -5140,7 +5140,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <h2 id="8-anti-patterns-the-attractive-wrong-paths">8. Anti-patterns — the attractive wrong paths</h2>
 <p>Anti-patterns are not just "bad code" — they are solutions that <em>appear</em> beneficial but carry hidden costs that compound. Each anti-pattern below includes the seductive reasoning, the actual cost, and the refactoring path.</p>
 <h3 id="81-distributed-monolith">8.1 Distributed monolith</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8ef49479b231.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8ef49479b231.png" alt="diagram"></div></p>
 <p><strong>Seduction:</strong> "We have microservices — each domain is a separate service with its own repo."</p>
 <p><strong>Reality:</strong> every request fans out synchronously to 3+ services; a failure in any one fails the whole request; deploys must be coordinated because services share a DB or make breaking synchronous assumptions; you have the operational cost of distributed systems with none of the independence benefits.</p>
 <p><strong>Diagnosis:</strong></p>
@@ -5394,7 +5394,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <li>Mark Richards — <em>Software Architecture Patterns</em> (2015) — layered, event-driven, microkernel patterns and their trade-offs. https://www.oreilly.com/library/view/software-architecture-patterns/9781491971437/</li>
 </ul>
 <h3 id="pattern-selection-decision-tree">Pattern selection decision tree</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb909e11d608.png" alt="diagram"></div></p></div><div id="ch07-refactoring"><h1 id="chapter-7-refactoring-and-managing-technical-debt">Chapter 7 — Refactoring and Managing Technical Debt</h1>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eb909e11d608.png" alt="diagram"></div></p></div><div id="ch07-refactoring"><h1 id="chapter-7-refactoring-and-managing-technical-debt">Chapter 7 — Refactoring and Managing Technical Debt</h1>
 <p><strong>What this chapter covers.</strong> Every codebase accumulates friction: duplicated logic, tangled dependencies, leaky abstractions, and expedient shortcuts that outlive the deadline that justified them. Refactoring is the disciplined practice of improving internal structure without changing external behavior — the mechanism by which a team keeps a codebase malleable enough to absorb the next requirement without collapse. Technical debt is the complementary frame: the economic model that explains <em>why</em> friction accumulates, how to measure it, when to tolerate it, and when to pay it down. This chapter connects the two. You will learn a working catalog of refactoring techniques from single-function transforms to large-scale architectural migrations, the safety net that makes refactoring economically rational, the strategies that scale refactoring across services and teams (branch by abstraction, parallel change, expand-contract, strangler fig), and a complete system for managing technical debt as a portfolio — identification, quantification, prioritization, allocation, and governance.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -5456,7 +5456,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 </blockquote>
 <h3 id="13-the-economics-why-refactor-at-all">1.3 The economics: why refactor at all?</h3>
 <p>Refactoring pays for itself through <strong>option value</strong> — it keeps the cost of the <em>next</em> change low. Without it, change cost compounds:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4d80c7864589.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4d80c7864589.png" alt="diagram"></div></p>
 <p>The business case is not aesthetic. Studies of change coupling (Yourdon, Lehman) and modern analyses from CodeScene and <em>Accelerate</em> (Forsgren et al.) show the same pattern: files with high churn <em>and</em> high complexity are where defects and lead time concentrate. Refactoring those hotspots yields disproportionate returns. Section 7 turns this intuition into a prioritization model.</p>
 <hr />
 <h2 id="2-code-smells-and-technical-debt-naming-the-problem">2. Code smells and technical debt — naming the problem</h2>
@@ -5549,7 +5549,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>Not every smell warrants action. A smell in cold code that rarely changes is low-priority. A smell in a hotspot — a file touched in every sprint — is a tax paid repeatedly. That distinction is the bridge to debt prioritization (Section 7).</p>
 <h3 id="22-technical-debt-a-taxonomy">2.2 Technical debt — a taxonomy</h3>
 <p>Ward Cunningham coined "technical debt" as a financial metaphor: shipping expedient code is like taking on debt — you gain speed now, you pay interest on every subsequent change until you repay the principal. The metaphor is powerful and frequently abused. A useful taxonomy separates four quadrants (Fowler):</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_387260f82bf8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_387260f82bf8.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -5708,7 +5708,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>Local refactorings preserve behavior within one codebase. Large-scale refactorings move behavior across module, service, or schema boundaries — often while production traffic is flowing. Long-lived feature branches are the failure mode: they diverge, conflict, and become unreviewable. The strategies below share one invariant: <strong><code>main</code> stays deployable after every commit; old and new coexist behind an abstraction until the migration is complete.</strong></p>
 <h3 id="41-branch-by-abstraction">4.1 Branch by abstraction</h3>
 <p>The workhorse for in-code migrations (e.g., replace an ORM, swap a pricing engine, extract a shared library).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f9973fa0bc43.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f9973fa0bc43.png" alt="diagram"></div></p>
 <p>Concrete steps with a Go example:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Step 1 — introduce abstraction over current payment gateway</span>
 <span class="kd">type</span><span class="w"> </span><span class="nx">PaymentGateway</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span>
@@ -5735,7 +5735,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>The same pattern ports to Python/TypeScript/Java. The key discipline: each step is a reviewable, deployable commit. No branch lives longer than a day or two.</p>
 <h3 id="42-parallel-change-expand-and-contract">4.2 Parallel change (expand and contract)</h3>
 <p>Also called <em>parallel change</em> (Hills) and <em>expand-contract</em> for schemas. The invariant: <strong>expand first (add the new), migrate, then contract (remove the old)</strong>. Never break callers mid-migration.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_974bf4b6d84b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_974bf4b6d84b.png" alt="diagram"></div></p>
 <p>Database example — renaming <code>user.name</code> to <code>user.display_name</code> with zero downtime:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">-- Expand: add new column, dual-write via trigger or application code</span>
 <span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">display_name</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">;</span>
@@ -5753,7 +5753,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <p>Event-schema and API-contract migrations follow the same shape: add optional field → publish/subscribe both → migrate consumers → remove old. Backward and forward compatibility are non-negotiable (Vol 8, Ch 5/8; Vol 10, Ch 6).</p>
 <h3 id="43-strangler-fig">4.3 Strangler fig</h3>
 <p>For service extraction or replacing a subsystem that cannot be refactored in place (Vol 15, Ch 5 DDD — decomposing a monolith). A facade intercepts calls to the legacy system and gradually routes them to new services.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8cb0183b107e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8cb0183b107e.png" alt="diagram"></div></p>
 <p>Tactical notes:</p>
 <ul>
 <li>Route by <strong>bounded context</strong> (Vol 15, Ch 5), not by database table. A vertical slice that owns its data is the right extraction unit.</li>
@@ -5999,7 +5999,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <hr />
 <h2 id="7-the-refactoring-workflow-putting-it-together">7. The refactoring workflow — putting it together</h2>
 <p>A repeatable workflow that ties safety net, mechanics, and large-scale strategy into one loop:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9b559a717b5d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9b559a717b5d.png" alt="diagram"></div></p>
 <p>Toolchain reference for each phase:</p>
 <table>
 <thead>
@@ -6081,7 +6081,7 @@ adr<span class="w"> </span>generate<span class="w"> </span>graph<span class="w">
 <li><em>SonarQube / SonarCloud</em> docs, <em>CodeScene</em> docs, <em>OpenRewrite</em> docs, <em>ast-grep</em> docs — concrete tooling for measurement and automated refactoring at scale.</li>
 </ul>
 <h3 id="refactoring-safety-net">Refactoring safety net</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2c69c89e102d.png" alt="diagram"></div></p></div><div id="ch08-code-review"><h1 id="chapter-8-code-review-and-engineering-culture">Chapter 8 — Code Review and Engineering Culture</h1>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2c69c89e102d.png" alt="diagram"></div></p></div><div id="ch08-code-review"><h1 id="chapter-8-code-review-and-engineering-culture">Chapter 8 — Code Review and Engineering Culture</h1>
 <p><strong>What this chapter covers.</strong> Code review is the highest-leverage practice a backend team adopts after automated testing — and the most frequently done badly. When it works, review catches defects that tests miss, distributes ownership, teaches idioms, and enforces the architectural boundaries that keep a service graph from collapsing into a distributed monolith. When it fails, it becomes a bottleneck, a theatre of nits, or a source of interpersonal friction that drives good engineers away. This chapter treats code review as a socio-technical system: part defect-detection mechanism, part knowledge-transfer protocol, part cultural institution. You will learn how to author reviewable changes, how to review effectively and efficiently, how to build automation that makes human review count, and how to scale the practice across teams without sacrificing speed. The second half widens the lens to engineering culture — psychological safety, ownership models, standards vs. autonomy, and the habits that turn a group of engineers into a team whose output exceeds the sum of its parts.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -6204,7 +6204,7 @@ Suggested reading order: &quot;Start with <span class="sb">`api/types.go`</span>
 <hr />
 <h2 id="3-the-review-process-a-layered-reading">3. The review process — a layered reading</h2>
 <h3 id="31-the-review-lifecycle">3.1 The review lifecycle</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1dc1f9086563.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1dc1f9086563.png" alt="diagram"></div></p>
 <p><strong>Latency target:</strong> First human response within <strong>one business half-day</strong> (4 hours in the reviewer's timezone). A PR that waits 2 days loses the author's context and blocks the pipeline. Enforce via SLAs and rotation, not goodwill.</p>
 <h3 id="32-layered-reading-what-to-look-for-in-order">3.2 Layered reading — what to look for, in order</h3>
 <p>Experienced reviewers read in layers, from cheapest to most expensive, stopping early if a layer fails:</p>
@@ -6370,7 +6370,7 @@ Suggested reading order: &quot;Start with <span class="sb">`api/types.go`</span>
 <hr />
 <h2 id="5-automation-before-human-review-make-humans-count">5. Automation before human review — make humans count</h2>
 <p>Human review should be spent on <em>judgment</em> — design, correctness, trade-offs. Everything that can be checked mechanically should be, and must block merge before a human is asked to look.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f0ade212d15.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8f0ade212d15.png" alt="diagram"></div></p>
 <h3 id="51-non-negotiable-gates">5.1 Non-negotiable gates</h3>
 <table>
 <thead>
@@ -6570,7 +6570,7 @@ Example:
 
 <p>Use <code>praise</code> deliberately. Review that only points out flaws trains authors to dread the process. Naming what is good reinforces the behavior you want repeated.</p>
 <h3 id="72-handling-disagreement">7.2 Handling disagreement</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_012aae02e2f2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_012aae02e2f2.png" alt="diagram"></div></p>
 <p>Principles:</p>
 <ul>
 <li><strong>Disagree and commit</strong> — once a decision is made (by author, tech lead, or RFC), the team commits even if individuals disagree. Record dissent in the PR or ADR; do not relitigate after merge.</li>
@@ -6882,13 +6882,13 @@ Skip (generated/mechanical):
 <li>GitHub <em>CODEOWNERS</em> docs, GitLab <em>Code Owners</em> docs, and <code>pre-commit</code> framework docs — concrete tooling for ownership and pre-review automation.</li>
 </ul>
 <h3 id="code-review-flow">Code review flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7837c251c0d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c7837c251c0d.png" alt="diagram"></div></p>
 <h3 id="review-priority-pyramid">Review priority pyramid</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0196975bb60.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a0196975bb60.png" alt="diagram"></div></p>
 <h3 id="effective-review-checklist">Effective review checklist</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b883f486564a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b883f486564a.png" alt="diagram"></div></p>
 <h3 id="pr-size-vs-review-quality">PR size vs review quality</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e4188bbb7c4f.png" alt="diagram"></div></p></div><div id="ch09-debugging"><h1 id="chapter-9-debugging-and-incident-driven-learning">Chapter 9 — Debugging and Incident-Driven Learning</h1>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e4188bbb7c4f.png" alt="diagram"></div></p></div><div id="ch09-debugging"><h1 id="chapter-9-debugging-and-incident-driven-learning">Chapter 9 — Debugging and Incident-Driven Learning</h1>
 <p><strong>What this chapter covers.</strong> Debugging is the most frequent engineering activity — developers spend 35–50% of their time understanding and fixing behavior they did not expect — and the least formally taught. Most engineers debug by intuition and accretion: print statements, hopeful hypotheses, and a mental model that is seldom made explicit. In a distributed backend, that approach collapses. Failures are partial, non-deterministic, and separated from their causes by network hops, queues, caches, and eventual-consistency windows. Logs are scattered across services, traces are sampled, metrics are aggregated past the point of usefulness, and the bug that pages you at 03:00 cannot be reproduced on a laptop. This chapter makes debugging systematic. You will learn a hypothesis-driven methodology that works from a single process to a service graph, a toolkit that spans debuggers, profilers, tracers, eBPF, and log analysis, safe techniques for debugging in production without making the incident worse, and — crucially — how to turn every incident into durable organizational learning. An incident is debugging at organizational scale: the same lifecycle of observation, hypothesis, and verification, but with coordination, communication, and a postmortem that produces fixes to the <em>system that allowed the defect</em>, not just the defect itself.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -6962,7 +6962,7 @@ Skip (generated/mechanical):
 <h2 id="2-a-systematic-debugging-lifecycle">2. A systematic debugging lifecycle</h2>
 <h3 id="21-the-hypothesis-driven-loop">2.1 The hypothesis-driven loop</h3>
 <p>The lifecycle is the scientific method applied to software. Each phase has a clear artifact and exit criterion.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_301768741df0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_301768741df0.png" alt="diagram"></div></p>
 <p><strong>Phase details:</strong></p>
 <table>
 <thead>
@@ -7063,7 +7063,7 @@ Skip (generated/mechanical):
 <h2 id="3-fault-isolation-narrowing-the-search">3. Fault isolation — narrowing the search</h2>
 <h3 id="31-divide-and-conquer">3.1 Divide and conquer</h3>
 <p>The fastest way to find a fault in a large system is to <strong>eliminate half the system per experiment</strong>. Binary search over space (which service?), time (which deploy?), and input (which request?).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9cf2f5ffd000.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9cf2f5ffd000.png" alt="diagram"></div></p>
 <p><strong>Techniques:</strong></p>
 <table>
 <thead>
@@ -7216,7 +7216,7 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-r
 <hr />
 <h2 id="4-observability-for-debugging-logs-traces-metrics-profiles">4. Observability for debugging — logs, traces, metrics, profiles</h2>
 <p>Observability is not monitoring. Monitoring tells you <em>that</em> something is wrong; observability lets you ask <em>why</em> without shipping new code. For debugging, four pillars matter, each with a distinct role and failure mode.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_257b16778079.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_257b16778079.png" alt="diagram"></div></p>
 <h3 id="41-structured-logging-the-narrative">4.1 Structured logging — the narrative</h3>
 <p>Logs are the narrative of a single request or event. For debugging, <strong>unstructured logs are a liability</strong> — they cannot be queried, correlated, or sampled intelligently.</p>
 <p><strong>Structured logging contract:</strong></p>
@@ -7473,7 +7473,7 @@ sum<span class="o">(</span>rate<span class="o">({</span><span class="nv">service
 <hr />
 <h2 id="6-debugging-in-production-safely">6. Debugging in production — safely</h2>
 <p>Production debugging is constrained by one rule: <strong>do not make the incident worse.</strong> Every instrumentation choice is evaluated on its blast radius and reversibility.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a7321cd5ac2d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a7321cd5ac2d.png" alt="diagram"></div></p>
 <h3 id="61-read-only-techniques-preferred">6.1 Read-only techniques (preferred)</h3>
 <p>These add no load and cannot alter behavior:</p>
 <ul>
@@ -7544,7 +7544,7 @@ sum<span class="o">(</span>rate<span class="o">({</span><span class="nv">service
 <h2 id="7-incident-driven-learning-from-fix-to-system">7. Incident-driven learning — from fix to system</h2>
 <p>Debugging fixes the bug. Incident-driven learning fixes the <em>system that allowed the bug to reach production and to be hard to diagnose</em>. Every incident is an investment that has already been paid — in customer impact, on-call disruption, and engineering time. Learning is how you collect the return.</p>
 <h3 id="71-the-incident-lifecycle-and-the-learning-loop">7.1 The incident lifecycle and the learning loop</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c9a8970cb991.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c9a8970cb991.png" alt="diagram"></div></p>
 <p>The critical distinction: <strong>mitigate before you debug.</strong> The incident responder's first job is not to find the root cause — it is to stop customer impact. Root-cause analysis happens after mitigation, under lower time pressure, with better signal. Conflating the two extends incidents.</p>
 <h3 id="72-timeline-construction-the-raw-material-of-learning">7.2 Timeline construction — the raw material of learning</h3>
 <p>A postmortem without a timeline is an opinion. Build the timeline from primary sources — deploy log, config diff, alert timeline, trace, and the hypothesis log — not from memory.</p>
@@ -7964,9 +7964,9 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <li>H. Ballance et al., <em>Honeycomb Observability</em> docs and C. Majors et al., <em>Observability Engineering</em> (O'Reilly, 2022) — high-cardinality observability for debugging distributed systems.</li>
 </ul>
 <h3 id="debugging-workflow">Debugging workflow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7a11e45506f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c7a11e45506f.png" alt="diagram"></div></p>
 <h3 id="observability-pillars-for-debugging">Observability pillars for debugging</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b1041673dee1.png" alt="diagram"></div></p></div><div id="ch10-teams"><h1 id="chapter-10-building-high-performing-engineering-teams">Chapter 10 — Building High-Performing Engineering Teams</h1>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b1041673dee1.png" alt="diagram"></div></p></div><div id="ch10-teams"><h1 id="chapter-10-building-high-performing-engineering-teams">Chapter 10 — Building High-Performing Engineering Teams</h1>
 <p><strong>What this chapter covers.</strong> Tools, runtimes, and architectures do not ship software — teams do. Every system design decision from Volumes 1–14 becomes a team design decision at scale: who owns what, how decisions get made, how knowledge moves, and how performance is measured without perverse incentives. This chapter treats team building as an engineering discipline with measurable inputs, explicit trade-offs, and observable failure modes. You will learn the frameworks that separate high-performing teams from merely busy ones, the operating models that let teams scale without collapsing into coordination overhead, and the end-to-end people pipeline — hiring, onboarding, growth, and retention — adapted for the reality that modern backend teams are almost always distributed.</p>
 <p>Learning goals — after this chapter you should be able to:</p>
 <ul>
@@ -8147,14 +8147,14 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <h3 id="23-devex-and-the-anti-goodhart-stance">2.3 DevEx and the anti-Goodhart stance</h3>
 <p>Abi Noda et al.'s <strong>DevEx framework</strong> (2023) organises developer experience into feedback loops, cognitive load, and flow state — a useful bridge between DORA/SPACE and concrete investment priorities (faster builds, better docs, fewer context switches).</p>
 <p>The meta-rule across all frameworks: <strong>metrics are for learning, not for ranking.</strong> As soon as CFR or PR count becomes a performance-review input, teams optimise the metric, not the outcome (Goodhart's Law). DORA's own guidance: use delivery metrics for <em>team-level</em> retrospectives and improvement hypotheses, never for individual stack-ranking.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6bf9c50bcf8b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6bf9c50bcf8b.png" alt="diagram"></div></p>
 <p><em>Figure 10-1: DORA and SPACE as complementary lenses. DORA answers "can we ship quickly and safely?"; SPACE answers "at what human cost, and does the output matter?" Both feed team-level learning, not individual ranking.</em></p>
 <hr />
 <h2 id="3-team-topology-designing-teams-the-way-you-design-systems">3. Team topology — designing teams the way you design systems</h2>
 <p>Conway's Law — "organisations design systems that mirror their communication structures" — is usually quoted as a warning. Treat it as a design tool. Team topology is the deliberate counterpart to system architecture.</p>
 <h3 id="31-the-team-topologies-model">3.1 The Team Topologies model</h3>
 <p>Skelton and Pais (<em>Team Topologies</em>, 2019, now the de facto reference for backend org design) propose <strong>four team types</strong> and <strong>three interaction modes</strong>. Use them to make ownership, cognitive load, and dependency explicit.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1c7ce65da5a1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1c7ce65da5a1.png" alt="diagram"></div></p>
 <p><em>Figure 10-2: Team Topologies — four team types and three interaction modes. Most healthy 50–200-engineer orgs carry 60–70% stream-aligned teams, one platform team per 30–50 stream engineers, and enabling teams that are explicitly temporary.</em></p>
 <p><strong>How to apply it:</strong></p>
 <ul>
@@ -8209,7 +8209,7 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <h2 id="4-hiring-the-highest-leverage-investment">4. Hiring — the highest-leverage investment</h2>
 <p>For backend teams, hiring quality compounds more than any other intervention. A strong hire raises the bar for the next hire; a weak hire lowers it and increases review load, incident risk, and attrition of strong peers. Treat hiring as a system with measurable throughput, quality, and fairness — not as a series of ad-hoc conversations.</p>
 <h3 id="41-the-pipeline">4.1 The pipeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bd37b11bd2b3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bd37b11bd2b3.png" alt="diagram"></div></p>
 <p><em>Figure 10-3: A structured hiring pipeline. Every stage has a written purpose, a scorecard, and a pass-through rate you track — the pipeline is itself a system to be instrumented, not just endured.</em></p>
 <p><strong>Job descriptions that select for the right candidates</strong> describe outcomes and constraints, not wish-list keywords:</p>
 <blockquote>
@@ -8333,7 +8333,7 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <h2 id="6-growth-retention-and-the-engineering-ladder">6. Growth, retention, and the engineering ladder</h2>
 <p>Retention is not a perk problem — it is an <strong>expectations and growth</strong> problem. Engineers leave when they cannot see a credible path to mastery, autonomy, and impact inside the organisation.</p>
 <h3 id="61-the-dual-track-ladder">6.1 The dual-track ladder</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1be11661cab5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1be11661cab5.png" alt="diagram"></div></p>
 <p><em>Figure 10-4: Dual-track ladder — IC and management are parallel, equally valued, and crossable without penalty. The Staff/Principal tier is not "senior with more years" but a distinct scope of influence and ambiguity.</em></p>
 <p><strong>Levels describe scope, not tenure.</strong> A common failure is to treat IC5 as "IC4 with 5 extra years." Instead, anchor each level in three dimensions:</p>
 <table>
@@ -8464,7 +8464,7 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 </table>
 <p><strong>Async-first</strong> does not mean "no meetings." It means the default path for decisions, status, and knowledge is a durable, searchable artifact (doc, RFC, ADR, recorded demo), and meetings are reserved for high-bandwidth activities: debate, brainstorming, incident response, and relationship building.</p>
 <h3 id="72-the-async-first-operating-loop">7.2 The async-first operating loop</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da1ec5584b6c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_da1ec5584b6c.png" alt="diagram"></div></p>
 <p><em>Figure 10-5: Async-first decision loop. The durable artifact — not the meeting — is the source of truth. Time-boxed async windows replace "wait for the next sync" and make time-zone distribution an advantage (review happens overnight).</em></p>
 <p><strong>Concrete mechanisms that make async-first work:</strong></p>
 <p><strong>1. Communication charter (one page, team-owned):</strong></p>
@@ -8634,7 +8634,7 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <li><strong>Measurement</strong> (DORA + SPACE, used for learning) determines whether the team can see itself clearly and improve intentionally.</li>
 </ul>
 <p>No team optimises all five at once. The pragmatic order for a team that is struggling: fix <strong>structure and ownership</strong> first (ambiguous ownership makes everything else noisy), then <strong>operating model</strong> (make decisions durable), then <strong>pipeline</strong> (hire and onboard well), then <strong>growth</strong> (retain and compound). Measure throughout, but measure to learn.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_be48982aa5dd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_be48982aa5dd.png" alt="diagram"></div></p>
 <p><em>Figure 10-6: Sequencing team investment. Structure and operating model are prerequisites — without clear ownership and durable decisions, hiring and growth investments leak away as coordination overhead.</em></p>
 <hr />
 <h2 id="key-takeaways">Key takeaways</h2>
@@ -8667,4 +8667,4 @@ Root cause is not &quot;PR <span class="ni">#2841</span>&quot; — it is &quot;t
 <p><em>This chapter closes Volume 15 — Software Engineering Practice — and with it the main Backend Engineer's Library (Volumes 1–15). The Companion Series on Supply Chain Security (Books 1–8, 75 chapters) remains as a specialist reference. The arc of the library — from transistor to team — reflects a conviction: reliable backend systems are built by teams that treat people, process, and measurement with the same rigour they bring to consistency models, storage engines, and consensus protocols. The technology changes; the need for safe, clear, and humane teams does not.</em></p>
 <p><em>Next steps for the reader: revisit the DORA and SPACE signals for your current team, audit one ownership boundary and one decision log, and run a single improvement bet through a full retro cycle. Small, closed loops compound.</em></p>
 <h3 id="team-topologies">Team topologies</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b8e9f09844f0.png" alt="diagram"></div></p></div></body></html>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b8e9f09844f0.png" alt="diagram"></div></p></div></body></html>

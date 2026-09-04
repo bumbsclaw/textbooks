@@ -274,7 +274,7 @@ hr {
 <li><strong>Compatibility is defined by CPython's choices.</strong> Syntax, import semantics, <code>sys.path</code> initialization, <code>PYTHONPATH</code>/<code>PYTHONHOME</code>/<code>-E</code>/<code>-I</code> isolation flags, and <code>audit hooks</code> are specified by what CPython actually does.</li>
 </ul>
 <p>CPython follows a yearly release cadence (3.11, 3.12, 3.13, …), each with a single <code>main</code> branch and a <code>3.x</code> stable branch after feature freeze. Minor versions are ABI-stable for C extensions compiled against the Stable ABI (<code>Py_LIMITED_API</code>) but not for bytecode — <code>.pyc</code> magic numbers change on every feature release.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9a4d2a5309f1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9a4d2a5309f1.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-repository-layout-where-things-live">2. Repository layout — where things live</h2>
 <p>Clone <code>github.com/python/cpython</code> and the top level is immediately informative. Every directory maps to a phase of the pipeline or a layer of the runtime.</p>
@@ -377,7 +377,7 @@ hr {
 <hr />
 <h2 id="3-the-pipeline-at-a-glance">3. The pipeline at a glance</h2>
 <p>Source text becomes running code in a strict, observable pipeline. Every stage has a C file (or pair of files) and a Python-level introspection hook.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd4517f29467.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fd4517f29467.png" alt="diagram"></div></p>
 <p>What to notice:</p>
 <ul>
 <li><strong>Tokenize → Parse → AST is lossless-to-lossy.</strong> The tokenizer preserves every byte (including whitespace, comments, and encoding) as tokens; the parser discards whitespace/comments and builds structure; the AST discards parentheses and other syntactic sugar and keeps semantics.</li>
@@ -464,7 +464,7 @@ hr {
 python<span class="w"> </span>-m<span class="w"> </span>tokenize<span class="w"> </span>Lib/pathlib.py<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2fc3dee4cfc9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2fc3dee4cfc9.png" alt="diagram"></div></p>
 <hr />
 <h2 id="5-parser-peg-since-39-pep-617">5. Parser — PEG since 3.9 (PEP 617)</h2>
 <h3 id="the-old-world-pgen-ll1">The old world: <code>pgen</code> / LL(1)</h3>
@@ -704,7 +704,7 @@ python<span class="w"> </span>-m<span class="w"> </span>ast<span class="w"> </sp
 </ol>
 <h3 id="pycodeobject-the-immutable-bytecode-container"><code>PyCodeObject</code> — the immutable bytecode container</h3>
 <p>Every function, class body, module, lambda, and comprehension gets its own <code>PyCodeObject</code> (<code>Objects/codeobject.c</code>, <code>Include/cpython/code.h</code>):</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b64caa01ddae.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b64caa01ddae.png" alt="diagram"></div></p>
 <p>Inspect any code object from Python:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">dis</span>
 
@@ -845,7 +845,7 @@ python<span class="w"> </span>-m<span class="w"> </span>py_compile<span class="w
 <li><strong>Find</strong> — iterate <code>sys.meta_path</code> (list of <code>MetaPathFinder</code>s). Each finder's <code>find_spec(fullname, path, target)</code> returns a <code>ModuleSpec</code> or <code>None</code>. First non-<code>None</code> wins.</li>
 <li><strong>Load</strong> — the spec's <code>loader</code> (<code>Loader.exec_module(module)</code>) populates the module object. Loaders handle source files, bytecode, extensions, namespaces, zip, etc.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7ab93fbca1ea.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7ab93fbca1ea.png" alt="diagram"></div></p>
 <p>Key details:</p>
 <ul>
 <li><strong><code>sys.meta_path</code> order matters.</strong> Inserting a finder at index 0 interposes on every import — the hook <code>pytest</code>, <code>coverage</code>, and <code>importlib.machinery</code> abuse for rewriting. The default order is <code>BuiltinImporter</code>, <code>FrozenImporter</code>, <code>PathFinder</code>.</li>
@@ -865,7 +865,7 @@ strings<span class="w"> </span>./python<span class="w"> </span><span class="p">|
 <hr />
 <h2 id="11-interpreter-startup-from-execve-to-first-user-bytecode">11. Interpreter startup — from <code>execve</code> to first user bytecode</h2>
 <p>When you run <code>python app.py</code>, the OS <code>execve</code>s the <code>python</code> binary; what follows is a carefully ordered initialization in <code>Python/pylifecycle.c</code> and <code>Python/initconfig.c</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_417638d68069.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_417638d68069.png" alt="diagram"></div></p>
 <h3 id="walk-the-stages">Walk the stages</h3>
 <p><strong>1. <code>PyConfig</code> (<code>Python/initconfig.c</code>).</strong> Every knob that affects startup is unified in <code>PyConfig</code> / <code>PyPreConfig</code>: <code>argv</code>, <code>warnoptions</code>, <code>xoptions</code> (<code>-X</code>), <code>isolated</code> (<code>-I</code>), <code>use_environment</code> (<code>-E</code>), <code>site_import</code> (<code>-S</code>), <code>write_bytecode</code>, <code>module_search_paths</code>, <code>executable</code>, <code>prefix</code>/<code>exec_prefix</code>, and hash randomization. <code>PyConfig_Read</code> applies precedence: defaults → <code>pyvenv.cfg</code> → env vars → command-line flags → programmatic overrides. This is the place to look when <code>sys.path</code> surprises you.</p>
 <p><strong>2. Preinitialization (<code>pylifecycle.c:_Py_PreInitializeFromPyArgv</code>).</strong> Allocates the <code>PyRuntimeState</code>, initializes the GC (<code>gcmodule.c</code>), obmalloc (<code>obmalloc.c</code>), pymalloc arenas, unicode internals, and the <code>PyThreadState</code> for the main thread. No Python code has run yet.</p>
@@ -1154,7 +1154,7 @@ python<span class="w">    </span>-c<span class="w"> </span><span class="s2">&quo
 <h2 id="1-the-everything-is-an-object-contract">1. The Everything-Is-An-Object Contract</h2>
 <p>CPython takes "everything is an object" literally. There is no separate universe of primitives versus objects as in Java or JavaScript. An integer is a heap allocation. A function is a heap allocation. A type is a heap allocation. <code>None</code> itself is a singleton heap allocation (<code>_Py_NoneStruct</code>) that lives for the lifetime of the interpreter.</p>
 <p>This uniformity flows from one C struct. Every Python value begins with the same two fields — a reference count and a pointer to its type — and everything else is layered on top. The payoff is conceptual simplicity: a single ownership discipline, a single dispatch mechanism (<code>ob_type-&gt;tp_*</code> slots), a single way to ask "what are you?" The price is that even <code>42</code> costs a heap object, and that every pointer assignment must maintain a counter.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ac20f66f9cea.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ac20f66f9cea.png" alt="diagram"></div></p>
 <p>Note the self-reference: <code>type</code>'s type is itself (<code>PyType_Type.ob_type == &amp;PyType_Type</code>). That circularity is bootstrapped at interpreter startup and is the reason <code>isinstance(type, type)</code> is true.</p>
 <hr />
 <h2 id="2-pyobject_head-the-universal-prefix">2. PyObject_HEAD — The Universal Prefix</h2>
@@ -1224,7 +1224,7 @@ python<span class="w">    </span>-c<span class="w"> </span><span class="s2">&quo
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35023349c473.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_35023349c473.png" alt="diagram"></div></p>
 <p>Concrete examples — how three types extend the prefix:</p>
 <div class="highlight"><pre><span></span><code><span class="cm">/* float — fixed-size, no ob_size */</span>
 <span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
@@ -1318,7 +1318,7 @@ python<span class="w">    </span>-c<span class="w"> </span><span class="s2">&quo
 <li><strong><code>tp_vectorcall</code></strong> — the fast calling convention introduced in 3.8 that avoids tuple/dict construction for calls.</li>
 <li><strong><code>tp_mro</code></strong> — the linearized method resolution order (C3 linearization), cached as a tuple for fast attribute lookup.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_71db511d3621.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_71db511d3621.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Backend lens.</strong> In a C extension you define a type by filling a <code>PyTypeObject</code> (or more commonly a <code>PyType_Spec</code> + <code>PyType_FromSpec</code>). Forgetting to set <code>Py_TPFLAGS_HAVE_GC</code> on a container type means the GC will never traverse it — cycles through it will leak. Forgetting <code>tp_traverse</code> while setting the flag is equally fatal: the GC will walk uninitialized memory.</p>
 </blockquote>
@@ -1359,7 +1359,7 @@ python<span class="w">    </span>-c<span class="w"> </span><span class="s2">&quo
 <li>For GC-tracked objects, untracks from the GC generation lists first.</li>
 <li>Returns memory to pymalloc / free lists / <code>free()</code> depending on type.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da5768855758.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_da5768855758.png" alt="diagram"></div></p>
 <h3 id="42-who-owns-what-the-contract">4.2 Who owns what — the contract</h3>
 <p>Every <code>PyObject*</code> in C is either an <strong>owned (strong / new) reference</strong> or a <strong>borrowed (weak / unowned) reference</strong>. The distinction is not in the pointer type — it is a <em>contract</em> documented per function.</p>
 <table>
@@ -1760,7 +1760,7 @@ len=1000  allocated=1131  waste= 131
 
 <p><strong>Python 3.6+ — compact dict (PyPy-inspired, by Mark Shannon):</strong></p>
 <p>Splits storage into a dense entries array (insertion-ordered) and a sparse indices array.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a5624dfabc5b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a5624dfabc5b.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="nx">Compact</span><span class="w"> </span><span class="nx">dict</span><span class="w"> </span><span class="p">(</span><span class="m m-Double">3.6</span><span class="o">+</span><span class="p">):</span><span class="w"> </span><span class="nx">dict</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;a&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">}</span>
 
 <span class="nx">PyDictObject</span>
@@ -1867,7 +1867,7 @@ len=1000  allocated=1131  waste= 131
 <li><strong>Compact</strong> — header + character buffer in one allocation (the common case — all strings created normally).</li>
 <li><strong>Legacy / non-compact</strong> — header points at separately-allocated buffer (only for strings resized via legacy APIs or <code>PyUnicode_FromStringAndSize</code> edge cases; rare).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_453435d50948.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_453435d50948.png" alt="diagram"></div></p>
 <p>Backend consequences:</p>
 <ul>
 <li><strong>ASCII strings cost 1 byte/char + ~49 bytes overhead</strong> (header), not 4. A service holding millions of short ASCII keys (HTTP headers, metric names) uses ~4× less memory than pre-3.3.</li>
@@ -1906,7 +1906,7 @@ len=1000  allocated=1131  waste= 131
 <span class="cp">#define PyLong_MASK  (PyLong_BASE - 1)</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35676d7ec5e7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_35676d7ec5e7.png" alt="diagram"></div></p>
 <p>Why 30 bits and not 32? So that intermediate products of two digits fit in 64 bits without overflow: <code>PyLong_MASK * PyLong_MASK &lt; 2⁶⁰ &lt; 2⁶⁴</code>, and <code>digit * digit + carry</code> fits in a <code>uint64_t</code> with room for carry propagation. On 32-bit builds, CPython historically used 15-bit digits for the same reason (15+15 &lt; 32).</p>
 <p>Concrete walkthrough:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Inspecting the digit array (Python 3.12+ exposes this via _pylong or ctypes;</span>
@@ -2026,7 +2026,7 @@ len=1000  allocated=1131  waste= 131
 <span class="c1"># traverse and break the cycle — see Chapter 4.</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2f55526e39d3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2f55526e39d3.png" alt="diagram"></div></p>
 <p>Not every cycle needs the GC. Only <strong>container types</strong> that can hold references to other Python objects and are flagged <code>Py_TPFLAGS_HAVE_GC</code> participate. Non-container types (<code>int</code>, <code>str</code>, <code>float</code>, <code>tuple</code> of non-containers in some optimizations) are not tracked — they cannot form cycles by themselves.</p>
 <p>The GC (covered fully in Chapter 4) works in three generations with thresholds <code>(700, 10, 10)</code>:</p>
 <ul>
@@ -2238,7 +2238,7 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 <li><strong>Why <code>.pyc</code> invalidation, import time, and cold-start latency correlate.</strong> Import executes bytecode; specializing bytecode reduces work per import.</li>
 </ul>
 <p>CPython compiles each code block (module, function, class body, comprehension, lambda) to a <code>PyCodeObject</code> once, then evaluates it many times. The compilation from AST to bytecode (<code>Python/compile.c</code>) is cheap; the evaluation loop (<code>Python/ceval.c</code>, ~6,000 lines) is where your request spends its life.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ad6557906b63.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ad6557906b63.png" alt="diagram"></div></p>
 <p>Understanding the shape of <code>co_code</code> and how <code>ceval</code> dispatches it is prerequisite to reading any CPython profile.</p>
 <hr />
 <h2 id="2-bytecode-format-wordcode-and-cache-aware-wordcode">2. Bytecode format — wordcode and cache-aware wordcode</h2>
@@ -2682,7 +2682,7 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 <span class="w">  </span><span class="mi">90</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mi">98</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="n">lasti</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a07f4f2d4c98.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a07f4f2d4c98.png" alt="diagram"></div></p>
 <p>Inspecting the table directly — it is a varint-encoded byte stream, not human-readable without <code>dis</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="n">co</span> <span class="o">=</span> <span class="n">with_try</span><span class="o">.</span><span class="vm">__code__</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">co</span><span class="o">.</span><span class="n">co_exceptiontable</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))</span>          <span class="c1"># raw varint bytes — compact</span>
@@ -2721,7 +2721,7 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 <li><code>PyFrameObject</code> still exists but is now a <strong>lazily materialized view</strong> — created on demand when Python code accesses <code>inspect.currentframe()</code>, <code>traceback</code> formatting, or <code>sys._getframe()</code>. Most frames never materialize.</li>
 </ul>
 <p>Effect: call overhead dropped ~30%, traceback cost stayed ~identical (frames are materialized when needed), and the interpreter can keep the hot frame pointer in a register.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a1008505760a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a1008505760a.png" alt="diagram"></div></p>
 <p>What this means for <code>co_code</code> inspection: <code>dis</code> still reports offsets as if frames were heap objects, but <code>frame.f_code.co_code</code> is now accessed via <code>frame-&gt;f_code</code> on the C-stack frame. The <code>frame</code> object you see from <code>inspect.currentframe()</code> is the materialized view — its <code>f_lasti</code> and <code>f_valuestack</code> are copied from the underlying <code>_PyInterpreterFrame</code> on materialization.</p>
 <p>Checking frame allocation in practice:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">dis</span>
@@ -2740,7 +2740,7 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 </code></pre></div>
 
 <p>For backend engineers the practical takeaway is sizing: frame allocation is no longer a GC/allocator bottleneck, so deep call stacks (middleware chains, decorator stacks) are cheaper, and <code>perf</code> will show less time in <code>PyFrame_New</code> / <code>_PyFrame_MakeAndSetFrameObject</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4b5b02dd09ca.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4b5b02dd09ca.png" alt="diagram"></div></p>
 <hr />
 <h2 id="6-the-ceval-loop-fetch-dispatch-execute">6. The <code>ceval</code> loop — fetch, dispatch, execute</h2>
 <h3 id="61-the-big-loop">6.1 The big loop</h3>
@@ -2796,9 +2796,9 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 <li><strong>Eval breaker is checked once per opcode</strong> (or once per <code>JUMP_BACKWARD_NO_INTERRUPT</code> batch). <code>PyErr_CheckSignals</code>, <code>PyGC_CollectIfThreshold</code>, <code>handleGILDropRequest</code>, and <code>pending_calls</code> all funnel through <code>tstate-&gt;eval_breaker</code> — a single atomic load.</li>
 <li><strong>Reference counting is inline.</strong> Every <code>LOAD_FAST</code> does a <code>Py_INCREF</code>; every <code>BINARY_OP</code> does two <code>Py_DECREF</code>s. These are simple integer increments on <code>ob_refcnt</code> — not atomic in the GIL build — so they are cheap but not free.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_49f50eddbde5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_49f50eddbde5.png" alt="diagram"></div></p>
 <h3 id="62-dispatch-computed-goto-vs-switch">6.2 Dispatch — computed <code>goto</code> vs. <code>switch</code></h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_16334f6e7610.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_16334f6e7610.png" alt="diagram"></div></p>
 <p>CPython builds with computed <code>goto</code> when the compiler supports <code>__GNUC__</code> labels-as-values (GCC, Clang — i.e., every production build on Linux/macOS). The fallback <code>switch</code> is only used on MSVC or when <code>USE_COMPUTED_GOTOS</code> is disabled.</p>
 <p>Why it matters: the dispatch branch is the single hottest branch in the process. <code>perf record</code> on a Python workload will show the top hotspot as an indirect branch in <code>_PyEval_EvalFrameDefault</code>. Computed <code>goto</code> saves one bounds check and lets the CPU's branch predictor learn per-opcode targets (each opcode's <code>DISPATCH()</code> is a distinct indirect <code>jmp</code>), rather than predicting a single <code>switch</code> dispatch site. Measured gain is ~10–15% on <code>ceval</code> alone — before any specialization.</p>
 <p>The macros that implement it:</p>
@@ -2834,7 +2834,7 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 <p>PEP 659 (Faster CPython, Mark Shannon, 2021) observes that <strong>most call sites are monomorphic</strong>: a given <code>BINARY_OP</code> at a given offset almost always sees the same pair of types. If the interpreter could remember "this <code>BINARY_OP</code> is always <code>int + int</code>" and guard that assumption, it could use a fast path (<code>long_add</code> directly, no slot lookup) and fall back to the generic path only on guard failure.</p>
 <p>The mechanism has three stages: <strong>quickening → adaptive counting → specialization</strong>, with <strong>deoptimization</strong> on failure.</p>
 <h3 id="72-lifecycle-generic-adaptive-specialized-deopt">7.2 Lifecycle — generic → adaptive → specialized → deopt</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e582a8f414d0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e582a8f414d0.png" alt="diagram"></div></p>
 <p>Concrete walk-through with <code>BINARY_OP</code>:</p>
 <ol>
 <li><code>compile.c</code> emits <code>BINARY_OP 0 (+)</code> with 1 trailing <code>CACHE</code> word (zero-initialized).</li>
@@ -2847,7 +2847,7 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 <p>The counter values are per-opcode and tuned so that specialization happens after ~8–50 executions — enough to confirm monomorphism without delaying the win on a hot loop, but not so eagerly that a polymorphic call site specializes prematurely.</p>
 <h3 id="73-inline-caches-what-lives-in-the-cache-words">7.3 Inline caches — what lives in the <code>CACHE</code> words</h3>
 <p>Each specializing opcode reserves a fixed number of <code>CACHE</code> words immediately after itself in <code>co_code</code>. The specialized handler treats those words as typed storage — not as opcodes to execute (the dispatch loop skips them by advancing <code>next_instr</code> past the cache).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_11c38aadaa10.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_11c38aadaa10.png" alt="diagram"></div></p>
 <p>Example — <code>LOAD_GLOBAL</code> (5 words):</p>
 <ul>
 <li>Word 0: adaptive counter (8 bits) + unused.</li>
@@ -3542,7 +3542,7 @@ import<span class="w"> </span>_testcapi<span class="w">  </span><span class="c1"
 <hr />
 <h2 id="3-pymalloc-internals-arenas-pools-blocks-size-classes">3. pymalloc internals — arenas, pools, blocks, size classes</h2>
 <h3 id="31-the-three-level-hierarchy">3.1 The three-level hierarchy</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5ad682cfe430.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5ad682cfe430.png" alt="diagram"></div></p>
 <p>Key constants from <code>Objects/obmalloc.c</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="cp">#define ALIGNMENT               8                </span><span class="cm">/* worst-case alignment */</span>
 <span class="cp">#define ALIGNMENT_SHIFT         3</span>
@@ -3608,7 +3608,7 @@ import<span class="w"> </span>_testcapi<span class="w">  </span><span class="c1"
 <li><strong>Used with free list</strong> — some blocks freed: <code>freeblock</code> singly-linked list supplies blocks; <code>nextoffset</code> supplies virgin blocks until exhausted.</li>
 <li><strong>Full</strong> — <code>ref.count == nblocks</code> and no virgin space: pool is removed from <code>freepools</code> and linked into <code>usedpools[szidx]</code> (per-size-class list of full pools).</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c59db27cb3d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5c59db27cb3d.png" alt="diagram"></div></p>
 <h3 id="33-size-classes-and-free-lists">3.3 Size classes and free lists</h3>
 <p>Size classes are simply every multiple of 8 up to 512:</p>
 <div class="highlight"><pre><span></span><code>szidx:  0    1    2    3    4    5  ...  63
@@ -3690,7 +3690,7 @@ size:   8   16   24   32   40   48  ... 512  bytes
 </code></pre></div>
 
 <p><code>MADV_DONTNEED</code> tells the kernel the pages can be reclaimed — RSS drops — but the virtual mapping stays, so re-touching the arena faults pages back in without a new <code>mmap</code>/<code>munmap</code> syscall pair. The threshold <code>Py_MAX_UNUSED_ARENAS</code> bounds how many empty arenas are retained (default 16 × 256 KiB = 4 MiB of virtual slack).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f193cfa62bb2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f193cfa62bb2.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Backend lens — why <code>ps aux</code> RSS can stay high after a memory spike.</strong> If your service ingests a 500 MB batch, pymalloc will <code>mmap</code> ~2,000 arenas. After the batch is freed, pages are <code>madvise</code>'d away and RSS <em>should</em> drop — but only if no live object pins a pool. One surviving 32-byte <code>str</code> in a pool keeps that pool's 4 KiB resident; one surviving pool keeps the arena's virtual mapping alive. <code>tracemalloc</code> shows live Python bytes; <code>sys._debugmallocstats()</code> shows pool/arena occupancy; <code>cat /proc/&lt;pid&gt;/smaps | grep -A5 'heap\|anon'</code> shows which arenas the kernel still counts. The fix is usually to avoid mixing long-lived and short-lived objects in the same size class — see §12.</p>
 </blockquote>
@@ -3901,7 +3901,7 @@ size:   8   16   24   32   40   48  ... 512  bytes
 
 <p><code>PyObject_GC_New</code> allocates <code>sizeof(PyGC_Head) + sizeof(PyObject)</code> bytes, zeroes the header, and calls <code>PyObject_GC_Track</code> when the object is fully initialized.</p>
 <h3 id="62-generations-thresholds-and-gcget_count-gccollect-gcfreeze">6.2 Generations, thresholds, and <code>gc.get_count</code> / <code>gc.collect</code> / <code>gc.freeze</code></h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_00c68a40c534.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_00c68a40c534.png" alt="diagram"></div></p>
 <p>The three generations and their default thresholds (<code>Modules/gcmodule.c</code> → <code>gc.set_threshold</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
 
@@ -4045,7 +4045,7 @@ size:   8   16   24   32   40   48  ... 512  bytes
 <span class="cm">/* Objects still with gc_refs == 0 are unreachable islands = garbage cycles */</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aae5820fcf57.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aae5820fcf57.png" alt="diagram"></div></p>
 <p>The subtlety: <code>c</code> above has only an internal ref (from <code>b</code>). If <code>a</code> and <code>b</code> are unreachable, <code>c</code> is also unreachable even though <code>b→c</code> looks like a strong edge — because the cycle's external refcount is zero as a whole. The DFS transitively marks everything reachable from an externally-rooted object; islands with no external roots remain at <code>gc_refs == 0</code>.</p>
 <h3 id="73-handling-weakrefs-and-finalizers-before-deletion">7.3 Handling weakrefs and finalizers before deletion</h3>
 <p>Between "find unreachable" and "delete unreachable" sits the most delicate code in <code>gcmodule.c</code>:</p>
@@ -4075,7 +4075,7 @@ size:   8   16   24   32   40   48  ... 512  bytes
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_89c26690e09b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_89c26690e09b.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Why <code>__del__</code> once leaked cycles.</strong> Before PEP 442, any cycle containing an object with <code>__del__</code> was declared uncollectable and appended to <code>gc.garbage</code> — a global list that grew forever unless the application cleared it. A single class with <code>__del__</code> in a cycle could pin its entire island permanently. Since PEP 442 the collector orders finalizers, calls them, and then re-checks reachability; only objects that remain unreachable after finalization are freed. <code>gc.garbage</code> is now empty in normal operation — if you see it non-empty, you have a <code>DEBUG_SAVEALL</code> misconfiguration or a C extension that misuses <code>tp_del</code>.</p>
 </blockquote>
@@ -4335,7 +4335,7 @@ size:   8   16   24   32   40   48  ... 512  bytes
 <h2 id="10-how-immortal-objects-change-free-threaded-python-pep-703-313t">10. How immortal objects change free-threaded Python (PEP 703, 3.13t)</h2>
 <p>Free-threaded CPython (<code>--disable-gil</code>, <code>python3.13t</code>) replaces non-atomic <code>ob_refcnt++</code> with atomic or biased reference counting (PEP 703). Every <code>Py_INCREF</code> becomes an <code>atomic_fetch_add</code> or a per-thread biased counter that must be merged on collection — expensive when millions of increments hit the same object.</p>
 <p>Immortal objects eliminate that cost entirely for the hottest objects:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cdb229170886.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cdb229170886.png" alt="diagram"></div></p>
 <p>What changes in the free-threaded build:</p>
 <table>
 <thead>
@@ -4463,7 +4463,7 @@ python3.13t<span class="w"> </span>-c<span class="w"> </span><span class="s2">&q
 <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f9608aefbef0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f9608aefbef0.png" alt="diagram"></div></p>
 <p>Key APIs:</p>
 <table>
 <thead>
@@ -5180,7 +5180,7 @@ python3.13t<span class="w"> </span>-c<span class="w"> </span><span class="s2">&q
 </tbody>
 </table>
 <p>The GIL drop path is the <code>GIL_DROP_REQUEST</code> bit. The full cycle:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e70f516afdf7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e70f516afdf7.png" alt="diagram"></div></p>
 <h3 id="23-the-5-ms-switch-interval">2.3 The 5 ms switch interval</h3>
 <p><code>sys.getswitchinterval()</code> / <code>sys.setswitchinterval()</code> controls how long a thread runs before it is <em>willing</em> to drop the GIL for a waiter. Default: <strong>0.005 s (5 ms)</strong>.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -5259,7 +5259,7 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 </code></pre></div>
 
 <p>Lifecycle diagram — the full acquire/release state machine including the I/O path:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b76751f14e34.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b76751f14e34.png" alt="diagram"></div></p>
 <h3 id="25-gil-vs-os-locks-cooperative-vs-preemptive">2.5 GIL vs. OS locks — cooperative vs. preemptive</h3>
 <table>
 <thead>
@@ -5427,7 +5427,7 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 
 <p>The forced handoff is the crucial insight: <code>drop_gil</code> does <code>COND_SIGNAL</code> <em>and then waits</em>. The waiter is woken and is the only thread that can set <code>gil.locked = 1</code> next. The previous holder cannot win a race against itself — it is already waiting.</p>
 <p>Signaling comparison:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4103ecf12b54.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4103ecf12b54.png" alt="diagram"></div></p>
 <p>Measured impact (Pitrou's benchmarks, 2010; Beazley's post-fix re-run):</p>
 <ul>
 <li>Two CPU-bound threads: old GIL showed high variance and ~20–30% unfairness in per-thread progress; new GIL is fair within ~5% and <code>perf</code> shows clean 5 ms ping-pong.</li>
@@ -5441,7 +5441,7 @@ python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;
 <p>Before 3.12 all subinterpreters shared <strong>one process-wide GIL</strong>. So they shared the same serialization bottleneck, and worse, they shared C extension static state — two interpreters importing the same extension that stored globals in <code>static</code> variables would corrupt each other. Only extensions that used PEP 3121 (<code>PyModuleDef</code> with per-module state) were safe, and many did not.</p>
 <p>PEP 684 ("A Per-Interpreter GIL", Eric Snow, 3.12) fixes the first half: <strong>each interpreter gets its own GIL</strong>. Interpreters can now run Python in parallel on different cores, limited only by shared process resources (GC, <code>pymalloc</code> — being isolated in follow-up work).</p>
 <h3 id="42-architecture">4.2 Architecture</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8b75be3c69dd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8b75be3c69dd.png" alt="diagram"></div></p>
 <p>In <code>Include/internal/pycore_interp.h</code> (3.12) the GIL moved from <code>_PyRuntimeState</code> to <code>PyInterpreterState</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Before 3.11 — in _PyRuntimeState</span>
 <span class="k">struct</span><span class="w"> </span><span class="nc">_py_runtime_state</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">_gil_runtime_state</span><span class="w"> </span><span class="n">gil</span><span class="p">;</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">};</span>
@@ -5950,7 +5950,7 @@ threads=8  pure_python=0.06s  hashlib=0.05s   # ~5.5× on 8 cores — sublinear 
 <p>Takeaway: single-threaded free-threaded is ~5–15% slower (atomics, wider header, <code>mimalloc</code> indirection). Multi-threaded <strong>CPU-bound</strong> work scales near-linearly to core count; <strong>I/O-bound</strong> work is already parallel and shows little delta — exactly what backend sizing cares about.</p>
 <h3 id="63-gil-contention-trace-what-py-spy-yappi-show">6.3 GIL contention trace — what <code>py-spy</code> / <code>yappi</code> show</h3>
 <p>Before free-threaded, a contended GIL looks like this in a <code>py-spy --gil</code> recording:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_04aefc0e682f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_04aefc0e682f.png" alt="diagram"></div></p>
 <p>Wider <code>_PyEval_EvalFrameDefault</code> in <code>py-spy</code> flames = holder; narrow <code>take_gil</code> / <code>COND_WAIT</code> = waiter. Under contention each thread spends ~75% of wall time in <code>take_gil</code> — pure waste. <code>yappi</code> quantifies it:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">yappi</span>
 <span class="n">yappi</span><span class="o">.</span><span class="n">set_clock_type</span><span class="p">(</span><span class="s2">&quot;wall&quot;</span><span class="p">)</span>
@@ -5964,7 +5964,7 @@ threads=8  pure_python=0.06s  hashlib=0.05s   # ~5.5× on 8 cores — sublinear 
 
 <p>On free-threaded, the same trace shows all four threads in <code>PyEval_EvalFrameDefault</code> simultaneously — no <code>take_gil</code> at all (there is no GIL). Contention moves to <code>PyMutex</code> on shared containers and <code>mimalloc</code> shard contention — visible as <code>PyCriticalSection_Begin</code> / <code>mimalloc_malloc</code> in <code>perf</code>.</p>
 <p>Performance comparison matrix — when free-threaded wins, loses, or ties:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_affa1683642a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_affa1683642a.png" alt="diagram"></div></p>
 <hr />
 <h2 id="7-migration-guide-from-gil-to-per-interpreter-gil-to-free-threaded">7. Migration guide — from GIL to per-interpreter GIL to free-threaded</h2>
 <h3 id="71-triaging-your-codebase">7.1 Triaging your codebase</h3>
@@ -6175,7 +6175,7 @@ python3.13t<span class="w"> </span>-c<span class="w"> </span><span class="s2">&q
 </code></pre></div>
 
 <h3 id="82-sizing-under-free-threaded-when-threads-replace-processes">8.2 Sizing under free-threaded — when threads replace processes</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b2b5cf3a3354.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b2b5cf3a3354.png" alt="diagram"></div></p>
 <p>Quantitative sizing for a backend that is <strong>30% CPU</strong> (JSON + templates) and <strong>70% I/O</strong> (DB + cache) with p50 = 80 ms on GIL build:</p>
 <table>
 <thead>
@@ -6256,7 +6256,7 @@ perf<span class="w"> </span>stat<span class="w"> </span>-e<span class="w"> </spa
 
 <hr />
 <h2 id="9-putting-it-together-the-trajectory">9. Putting it together — the trajectory</h2>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9f2afcb068e6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9f2afcb068e6.png" alt="diagram"></div></p>
 <p>The GIL is not being removed in one release — it is being <em>factored</em> into finer locks, release by release:</p>
 <ul>
 <li><strong>3.12</strong>: GIL moves from process to interpreter — parallelism via subinterpreters, shared-nothing.</li>
@@ -6317,7 +6317,7 @@ perf<span class="w"> </span>stat<span class="w"> </span>-e<span class="w"> </spa
 <li><strong>Metaclasses power frameworks you depend on.</strong> Django models, SQLAlchemy declarative base, Pydantic <code>ModelMetaclass</code>, <code>ABCMeta</code> — all intercept class creation via <code>type.__new__</code>. Debugging "why does my model have a <code>_sa_instance_state</code> attribute I never declared" requires reading the metaclass.</li>
 <li><strong>Special-method dispatch has a fast path that bypasses your Python.</strong> <code>obj + other</code> does not do <code>getattr(obj, "__add__")</code>; it reads <code>obj-&gt;ob_type-&gt;tp_as_number-&gt;nb_add</code> directly. Overriding <code>__getattr__</code> will not intercept <code>__add__</code> lookup — a common surprise when building proxy objects for RPC or tracing.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f92de679c34b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f92de679c34b.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-pytypeobject-types-are-objects-that-describe-objects">2. PyTypeObject — types are objects that describe objects</h2>
 <h3 id="21-everything-is-a-pyobject-including-types">2.1 Everything is a PyObject, including types</h3>
@@ -6458,7 +6458,7 @@ perf<span class="w"> </span>stat<span class="w"> </span>-e<span class="w"> </spa
 </code></pre></div>
 
 <h3 id="22-the-type-hierarchy-who-points-at-whom">2.2 The type hierarchy — who points at whom</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9722a5886198.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9722a5886198.png" alt="diagram"></div></p>
 <p>Critical invariant: <code>type</code> is its own type (<code>PyType_Type.ob_type == &amp;PyType_Type</code>), bootstrapped in <code>Objects/typeobject.c:PyType_Ready</code> at interpreter startup. Every heap type (created by <code>class</code>) has <code>Py_TPFLAGS_HEAPTYPE</code> set, owns its <code>tp_dict</code>, and appears in its base's <code>tp_subclasses</code> weak set — which is how <code>__subclasses__()</code> works.</p>
 <hr />
 <h2 id="3-type-creation-type__new__-and-metaclasses">3. Type creation — <code>type.__new__</code> and metaclasses</h2>
@@ -6490,7 +6490,7 @@ perf<span class="w"> </span>stat<span class="w"> </span>-e<span class="w"> </spa
 </ol>
 <h3 id="32-metaclasses-intercepting-class-creation">3.2 Metaclasses — intercepting class creation</h3>
 <p>A metaclass is just a subclass of <code>type</code> whose <code>__new__</code> / <code>__init__</code> intercepts step 2–6 above. Every class has a metaclass; if you do not declare one it is <code>type</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3778c297c558.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3778c297c558.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Minimal ORM-style metaclass — the pattern behind Django/SQLAlchemy/Pydantic</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Field</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Descriptor that will become a slot descriptor after metaclass processing.&quot;&quot;&quot;</span>
@@ -6577,7 +6577,7 @@ perf<span class="w"> </span>stat<span class="w"> </span>-e<span class="w"> </spa
 <p><code>merge</code> repeatedly picks the first head that does not appear in the tail of any other list, appends it, and removes it from all lists. If no such head exists, the hierarchy is inconsistent.</p>
 <p>CPython implements this in <code>Objects/typeobject.c:mro_internal</code> and <code>pmerge</code>.</p>
 <h3 id="43-worked-diamond">4.3 Worked diamond</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_59c80f9ac341.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_59c80f9ac341.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Diamond — the classic case</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>  <span class="k">pass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span> <span class="k">pass</span>
@@ -6655,7 +6655,7 @@ perf<span class="w"> </span>stat<span class="w"> </span>-e<span class="w"> </spa
 <h2 id="5-the-attribute-protocol-the-full-lookup-chain">5. The attribute protocol — the full lookup chain</h2>
 <p>Every <code>obj.attr</code> and <code>type(obj).attr</code> lookup executes a precise sequence in <code>PyObject_GenericGetAttr</code> (<code>Objects/object.c</code>) and <code>type_getattro</code> (<code>Objects/typeobject.c</code>). The difference between "instance attribute" and "class attribute" is not where the value is stored but where the lookup finds it.</p>
 <h3 id="51-instance-attribute-lookup-object__getattribute__-default">5.1 Instance attribute lookup (<code>object.__getattribute__</code> default)</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4c74fab06c00.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4c74fab06c00.png" alt="diagram"></div></p>
 <p>The priority order, stated precisely:</p>
 <ol>
 <li>
@@ -6746,7 +6746,7 @@ perf<span class="w"> </span>stat<span class="w"> </span>-e<span class="w"> </spa
     <span class="k">def</span><span class="w"> </span><span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>  <span class="c1"># PEP 487, called at class creation</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1ad36aae2872.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1ad36aae2872.png" alt="diagram"></div></p>
 <p>The classification:</p>
 <table>
 <thead>
@@ -6903,7 +6903,7 @@ perf<span class="w"> </span>stat<span class="w"> </span>-e<span class="w"> </spa
 <li><code>tp_basicsize</code> grows by <code>n_slots * sizeof(PyObject*)</code> — each slot is a pointer stored inline in the instance struct, right after the <code>PyObject_HEAD</code>.</li>
 <li>There is no per-instance dict at all; the instance is essentially a fixed-size struct.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fc4bdb22803a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fc4bdb22803a.png" alt="diagram"></div></p>
 <h3 id="72-memory-and-speed-tradeoffs">7.2 Memory and speed tradeoffs</h3>
 <table>
 <thead>
@@ -7492,7 +7492,7 @@ Peak tracemalloc 100k SlotPoint: 14.9 MB
 <li><strong>Streaming responses.</strong> <code>StreamingResponse(content=generator)</code> — where <code>generator</code> is a Python generator yielding chunks — is the idiomatic way to stream large CSVs, LLM token streams, and S3 passthroughs without buffering the whole body. Misunderstanding generator state (<code>GEN_SUSPENDED</code> vs. <code>GEN_CLOSED</code>) and <code>yield from</code> delegation is how you leak connections and deadlock ASGI servers.</li>
 <li><strong>Concurrency model.</strong> <code>async def</code> handlers run cooperatively on a single event loop. An <code>await</code> that lowers to the wrong awaitable, or a blocking call hidden inside an <code>async def</code> that never hits <code>GET_AWAITABLE</code>, blocks the loop and starves every concurrent request. Understanding <code>GET_AWAITABLE</code> / <code>SEND</code> / <code>YIELD_VALUE</code> lowering — and that the event loop is just a scheduler pumping <code>send(None)</code> — is the difference between reading async traces and guessing.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_393dbf73a689.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_393dbf73a689.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-function-objects-pyfunctionobject-is-a-typed-object">2. Function objects — <code>PyFunctionObject</code> is a typed object</h2>
 <h3 id="21-every-def-creates-a-heap-pyfunctionobject">2.1 Every <code>def</code> creates a heap <code>PyFunctionObject</code></h3>
@@ -7585,7 +7585,7 @@ Peak tracemalloc 100k SlotPoint: 14.9 MB
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_59ffed0755c9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_59ffed0755c9.png" alt="diagram"></div></p>
 <h3 id="23-introspecting-the-function-object">2.3 Introspecting the function object</h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">types</span><span class="o">,</span><span class="w"> </span><span class="nn">inspect</span><span class="o">,</span><span class="w"> </span><span class="nn">textwrap</span><span class="o">,</span><span class="w"> </span><span class="nn">dis</span>
 
@@ -7741,7 +7741,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 <hr />
 <h2 id="3-calling-convention-from-fx-to-a-new-frame">3. Calling convention — from <code>f(x)</code> to a new frame</h2>
 <h3 id="31-the-three-dispatch-layers">3.1 The three dispatch layers</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d5334e9f994e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d5334e9f994e.png" alt="diagram"></div></p>
 <p>Historically, <code>PyObject_Call(callable, args_tuple, kwargs_dict)</code> was the universal entry — it packed all arguments into a tuple and dict, then dispatched through <code>tp_call</code> (<code>PyTypeObject.tp_call</code>). Every call paid tuple/dict allocation even for <code>f(1, 2)</code>.</p>
 <p>PEP 590 (Python 3.8+) introduced <strong>vectorcall</strong>: the caller passes a C array of <code>PyObject*</code> plus a <code>kwnames</code> tuple, without packing positionals into a tuple. Types that support it set <code>tp_vectorcall_offset</code> and publish a <code>vectorcallfunc</code> at that offset. The interpreter's <code>CALL</code> opcode now emits a vectorcall directly; <code>PyObject_Call</code> is the fallback for C callers that already have packed tuples.</p>
 <h3 id="32-what-vectorcall-looks-like-in-c">3.2 What vectorcall looks like in C</h3>
@@ -7812,7 +7812,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 <li><code>PRECALL</code> records <code>nargs</code> and reserves stack slots for the callee's frame; its 1 cache word holds the adaptive counter.</li>
 <li><code>CALL</code> reads the inline cache (4 words) that specialize to <code>CALL_PY_EXACT_ARGS</code>, <code>CALL_PY_WITH_DEFAULTS</code>, <code>CALL_NO_KW_BUILTIN_O</code>, etc. After a few executions, a monomorphic <code>callee(x, 1)</code> call will specialize to <code>CALL_PY_EXACT_ARGS</code> and skip arity checks via cached <code>PyCodeObject</code> metadata.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7f5ff21d8fd7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7f5ff21d8fd7.png" alt="diagram"></div></p>
 <h3 id="34-tp_call-the-legacy-slot-and-c-callables">3.4 <code>tp_call</code> — the legacy slot and C callables</h3>
 <p>C functions (<code>PyCFunctionObject</code>, <code>PyMethodDef</code> with <code>METH_VARARGS</code>/<code>METH_FASTCALL</code>/<code>METH_O</code>) do not use <code>PyFunctionObject</code> at all — they are <code>PyCFunction_Type</code> with their own <code>tp_call</code> (<code>cfunction_call</code> / <code>cfunction_vectorcall</code> in <code>Objects/methodobject.c</code>). Built-in types (<code>list</code>, <code>dict</code>, <code>int</code>) have <code>tp_call</code> pointing at <code>type_call</code> (<code>Objects/typeobject.c</code>) which allocates an instance via <code>tp_new</code> + <code>tp_init</code>.</p>
 <p>The observable invariant: every <code>callable(...)</code> ultimately reaches either a <code>vectorcallfunc</code> (fast) or <code>ternaryfunc tp_call</code> (legacy). Pure-Python functions always prefer vectorcall; <code>PyObject_Call(func, args, kwargs)</code> from C is the path that must pack.</p>
@@ -8286,7 +8286,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 </tbody>
 </table>
 <h3 id="63-the-generator-state-machine">6.3 The generator state machine</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cf62abcddbe1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cf62abcddbe1.png" alt="diagram"></div></p>
 <p><code>gi_running</code> is a re-entrance guard: <code>yield</code> inside a generator that recursively resumes itself (e.g., <code>list(g)</code> where <code>g</code> yields and the <code>__next__</code> machinery re-enters) raises <code>ValueError: generator already executing</code>. This is a bug, not a feature to work around.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span><span class="o">,</span><span class="w"> </span><span class="nn">types</span>
 
@@ -8447,7 +8447,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 </code></pre></div>
 
 <h3 id="73-delegation-chain">7.3 Delegation chain</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2aba2a2b0b99.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2aba2a2b0b99.png" alt="diagram"></div></p>
 <p><code>throw()</code> and <code>close()</code> propagate along the same chain: <code>delegator.throw(exc)</code> calls <code>subgen.throw(exc)</code> via <code>gi_yieldfrom</code>, and <code>delegator.close()</code> calls <code>subgen.close()</code>. If the sub-generator handles the exception and yields again, delegation resumes; if it propagates, the delegator sees the exception.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># throw propagation through yield from</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">inner</span><span class="p">():</span>
@@ -8877,7 +8877,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 </code></pre></div>
 
 <p>The pattern <code>GET_AITER → GET_ANEXT → GET_AWAITABLE → SEND/YIELD_VALUE/RESUME</code> is the async-iteration pump — the direct analogue of <code>GET_ITER → FOR_ITER</code> for sync iteration, but with an await in the middle because <code>__anext__</code> returns an awaitable.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ed8a29c81e63.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ed8a29c81e63.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># End-to-end async iterable</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 
@@ -8910,7 +8910,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 <h2 id="10-the-asyncawait-stack-event-loop-coroutine-awaitable">10. The async/await stack — event loop → coroutine → awaitable</h2>
 <h3 id="101-the-full-await-chain">10.1 The full await chain</h3>
 <p>There is no concurrency without a loop. Every <code>await</code> yields control back to the event loop, which parks the coroutine and resumes it when the awaitable completes. The stack, bottom to top:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb47058e79e8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eb47058e79e8.png" alt="diagram"></div></p>
 <p>Concretely, <code>await asyncio.sleep(0)</code> executes:</p>
 <ol>
 <li><code>asyncio.sleep(0)</code> returns a coroutine object (<code>PyCoroObject</code>, <code>CO_COROUTINE</code>).</li>
@@ -9567,7 +9567,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 </code></pre></div>
 
 <p>Notice the <code>finally</code> body at offsets 32..62 (non-exceptional return) is repeated at 122..150 (after <code>except</code> success) and at 174..204 (unwinding path) — the compiler inlines <code>finally</code> at every exit point. The exception table stitches those copies together.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_69534234f639.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_69534234f639.png" alt="diagram"></div></p>
 <p><em>Diagram 1 — Exception table vs. block stack. Pre-3.11 every <code>try</code> emitted <code>SETUP_FINALLY</code>/<code>POP_BLOCK</code> into the bytecode and maintained a runtime <code>PyTryBlock</code> stack. Since 3.11 the bytecode is straight-line; the <code>co_exceptiontable</code> declaratively maps protected ranges to handler offsets and <code>ceval</code> scans it only on the exceptional path.</em></p>
 <hr />
 <h2 id="4-bytecode-lowering-tryexceptfinallyelse">4. Bytecode lowering — <code>try</code>/<code>except</code>/<code>finally</code>/<code>else</code></h2>
@@ -9668,7 +9668,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 </ul>
 <h3 id="43-unwind-search-exception_unwind-up-the-frame-stack">4.3 Unwind search — <code>exception_unwind</code> up the frame stack</h3>
 <p>When an opcode sets the exception indicator and the current offset has no table entry covering it, <code>ceval</code> does not immediately propagate to the caller. It walks <em>frames</em>, not just table entries:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c0848809cfdf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c0848809cfdf.png" alt="diagram"></div></p>
 <p><em>Diagram 2 — Unwind search up the frame stack. <code>ceval.c:handle_eval_breaker</code> / <code>exception_unwind</code> first scans the current frame's <code>co_exceptiontable</code> for a covering entry. On miss or <code>RERAISE</code>, it pops the frame and scans the caller, repeating until a handler is found or the thread boundary is reached. Each frame's table is independent; there is no global handler list.</em></p>
 <p>In C this is roughly:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Python/ceval.c — simplified unwind loop</span>
@@ -9708,7 +9708,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 </code></pre></div>
 
 <p>On exception, <code>PyTraceBack_Here(frame)</code> is called as the frame unwinds — it allocates a <code>PyTracebackObject</code>, sets <code>tb_next</code> to the previous <code>curexc_traceback</code>, and chains it. The youngest frame (where the exception was raised) is the <em>head</em>; <code>tb_next</code> walks toward the oldest caller. <code>BaseException.__traceback__</code> points to the head.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3948fc6ba428.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3948fc6ba428.png" alt="diagram"></div></p>
 <p><em>Diagram 6 — Traceback object chain. Each <code>PyTracebackObject</code> holds <code>tb_frame</code> / <code>tb_lineno</code> / <code>tb_lasti</code> and <code>tb_next</code> links to the caller. <code>exc.__traceback__</code> is the head (youngest frame); <code>tb_next</code> walks outward. The chain is built during unwind by <code>PyTraceBack_Here</code> and torn down when the exception is cleared or <code>__traceback__</code> is reassigned.</em></p>
 <p>Key properties:</p>
 <ul>
@@ -9817,7 +9817,7 @@ agen   flags=0x143   GEN=False  CORO=False  ASYNCGEN=True
 </tbody>
 </table>
 <p>Only <code>__cause__</code> is set by <code>raise ... from</code>. <code>__context__</code> is set automatically by <code>PyErr_SetObject</code> when <code>tstate-&gt;curexc_value</code> is non-NULL and <code>__suppress_context__</code> is False. The two can coexist — <code>__cause__</code> takes display priority.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_26c0acfcef1b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_26c0acfcef1b.png" alt="diagram"></div></p>
 <p><em>Diagram 3 — Chained exception graph: <code>__context__</code> (implicit) vs. <code>__cause__</code> (explicit <code>raise ... from</code>) vs. suppressed (<code>raise ... from None</code>). <code>__context__</code> is set automatically when a new exception is raised inside an <code>except</code> block; <code>__cause__</code> is set only by explicit <code>from</code>; <code>from None</code> sets <code>__suppress_context__</code> to hide the implicit chain from rendering while preserving it on the object.</em></p>
 <h3 id="62-live-demo">6.2 Live demo</h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
@@ -9978,7 +9978,7 @@ RuntimeError: clean
 
 <p><code>BEFORE_WITH</code> (opcode 53) does two things in one dispatch: it calls <code>type(mgr).__enter__(mgr)</code> (via <code>PyObject_CallMethod</code>), pushes the result for <code>STORE_FAST</code>, and pushes the <code>__exit__</code> callable onto the stack for later use. The <code>__exit__</code> callable stays on the stack across the body — that is why the protected range <code>30..60</code> has <code>stack_depth=1</code>.</p>
 <p>On the exceptional path (<code>PUSH_EXC_INFO</code> at 88): <code>WITH_EXCEPT_START</code> calls <code>__exit__(exc_type, exc_val, exc_tb)</code> with the current exception triple, pushes its boolean return, and <code>POP_JUMP_FORWARD_IF_TRUE</code> decides suppression. <code>RERAISE 2</code> with oparg 2 pops the <code>__exit__</code> callable and re-raises with the original traceback if not suppressed.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4890f95e15f7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4890f95e15f7.png" alt="diagram"></div></p>
 <p><em>Diagram 4 — <code>WITH</code> protocol sequence. <code>BEFORE_WITH</code> calls <code>__enter__</code> and retains <code>__exit__</code> on the stack across the body. On normal exit the <code>finally</code>-like inline path calls <code>__exit__(None,None,None)</code>. On exceptional exit the exception table jumps to <code>PUSH_EXC_INFO</code> / <code>WITH_EXCEPT_START</code>, which calls <code>__exit__</code> with the exception triple; a truthy return suppresses, falsy re-raises via <code>RERAISE 2</code>.</em></p>
 <h3 id="72-suppress-vs-propagate-__exit__-return-value">7.2 Suppress vs. propagate — <code>__exit__</code> return value</h3>
 <p>The only thing that determines suppression is the truthiness of <code>__exit__</code>'s return value. <code>None</code> and <code>False</code> propagate; <code>True</code> (or any truthy object) suppresses:</p>
@@ -10214,7 +10214,7 @@ RuntimeError: clean
 <li><code>PREP_RERAISE_STAR</code> (opcode 88) collects the <code>LIST_APPEND</code>'d remainders and either leaves <code>None</code> (all matched) or builds the residual <code>ExceptionGroup</code> to re-raise.</li>
 <li>Each <code>except*</code> body has its own exception-table entry with <code>stack_depth=4</code> (the extra stack items for the group-splitting protocol) and <code>lasti</code>.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7be1518f0c01.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7be1518f0c01.png" alt="diagram"></div></p>
 <p><em>Diagram 5 — <code>ExceptionGroup</code> split tree (PEP 654). Each <code>except*</code> clause runs <code>CHECK_EG_MATCH</code>, which splits the incoming group into a matching subgroup (bound to <code>as</code> and handled) and a non-matching remainder pushed for the next handler. <code>PREP_RERAISE_STAR</code> reassembles any unmatched remainder — if empty, execution continues; if non-empty, the residual <code>ExceptionGroup</code> is re-raised.</em></p>
 <h3 id="85-split-subgroup-api-and-nesting">8.5 <code>split</code> / <code>subgroup</code> API and nesting</h3>
 <div class="highlight"><pre><span></span><code><span class="n">eg</span> <span class="o">=</span> <span class="n">ExceptionGroup</span><span class="p">(</span><span class="s2">&quot;outer&quot;</span><span class="p">,</span> <span class="p">[</span>
@@ -10715,7 +10715,7 @@ RuntimeError: clean
 <hr />
 <h2 id="3-the-import-call-flow-import-foo-to-exec_module">3. The import call flow — <code>import foo</code> to <code>exec_module</code></h2>
 <p>At the language level, <code>import foo.bar</code> is syntactic sugar for a call to <code>__import__("foo.bar", globals(), locals(), [], 0)</code>, which in CPython 3.11+ compiles to <code>IMPORT_NAME</code> (or <code>IMPORT_FROM</code> for <code>from foo import bar</code>). Both paths converge on <code>importlib._bootstrap._gcd_import</code> (the "get child data" import), which is aliased as <code>builtins.__import__</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b3f56eda247b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b3f56eda247b.png" alt="diagram"></div></p>
 <p>Step-by-step in <code>_bootstrap.py</code> terms:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Simplified skeleton of _bootstrap._find_and_load (read the real thing</span>
 <span class="c1"># at Lib/importlib/_bootstrap.py — search for def _find_and_load):</span>
@@ -10786,7 +10786,7 @@ RuntimeError: clean
 <hr />
 <h2 id="4-dispatch-sysmeta_path-syspath_hooks-syspath_importer_cache">4. Dispatch — <code>sys.meta_path</code>, <code>sys.path_hooks</code>, <code>sys.path_importer_cache</code></h2>
 <p>Three attributes on <code>sys</code> form the dispatch table. Understanding their precedence explains every "where did this module come from?" question.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_699ba9c112c4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_699ba9c112c4.png" alt="diagram"></div></p>
 <h3 id="sysmeta_path-the-first-chance-intercept"><code>sys.meta_path</code> — the first-chance intercept</h3>
 <p>A list of <em>finder</em> objects. Each must implement <code>find_spec(fullname, path, target=None)</code>. Iteration stops at the first finder returning a non-<code>None</code> <code>ModuleSpec</code>. Ordering matters:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -11050,7 +11050,7 @@ RuntimeError: clean
 <hr />
 <h2 id="7-modulespec-the-contract-between-finder-and-loader">7. <code>ModuleSpec</code> — the contract between finder and loader</h2>
 <p>PEP 451's <code>ModuleSpec</code> is the central data structure. The finder creates it; the loader consumes it; the resulting module carries it as <code>__spec__</code>. Every field matters for introspection and for frameworks that synthesize modules.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dd9b03272ea6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dd9b03272ea6.png" alt="diagram"></div></p>
 <p>Complete field reference:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
 
@@ -11148,7 +11148,7 @@ RuntimeError: clean
 
 <h3 id="the-import-lock-_impacquire_lock-_modulelock">The import lock — <code>_imp.acquire_lock</code> / <code>_ModuleLock</code></h3>
 <p>Import is not free-threaded. CPython protects the <code>sys.modules</code> insertion + <code>exec_module</code> window with a per-module lock plus a global import lock (historically a single global lock; since 3.3, a per-module lock keyed by name with a global fallback for extension init).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_acd82f581c57.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_acd82f581c57.png" alt="diagram"></div></p>
 <p>In C, the lock lives in <code>Python/import.c</code> (<code>import_lock</code> / <code>import_lock_thread</code> / <code>_PyImport_AcquireLock</code>) and is exposed to Python as <code>_imp.acquire_lock()</code> / <code>_imp.release_lock()</code> / <code>_imp.lock_held()</code>. In Python, <code>_bootstrap._ModuleLock</code> wraps it with re-entrancy tracking so the same thread can re-enter import for a different name.</p>
 <p>Practical consequences:</p>
 <ul>
@@ -11228,7 +11228,7 @@ RuntimeError: clean
 <hr />
 <h2 id="10-namespace-packages-pep-420-no-__init__py">10. Namespace packages — PEP 420 (no <code>__init__.py</code>)</h2>
 <p>Before PEP 420 (Python 3.3), every package required an <code>__init__.py</code>. A directory without one was invisible to import. PEP 420 introduced <em>namespace packages</em>: directories (or zip entries) that contribute to a package's <code>__path__</code> without owning it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8980ffea770b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8980ffea770b.png" alt="diagram"></div></p>
 <p>Key differences:</p>
 <table>
 <thead>
@@ -11329,7 +11329,7 @@ RuntimeError: clean
 <h2 id="11-editable-installs-pep-660">11. Editable installs — PEP 660</h2>
 <p><code>pip install -e .</code> (editable install) makes the working tree importable without copying files to <code>site-packages</code>. Before PEP 660 (Python 3.10 era), this was implemented by <code>setuptools</code>' <code>setup.py develop</code>: a <code>.egg-link</code> file plus a <code>.pth</code> that added the project root to <code>sys.path</code>, and a shim <code>__editable___</code> finder for <code>src/</code> layouts. That mechanism was <code>setuptools</code>-specific, required <code>setup.py</code>, and broke <code>importlib.resources</code> for many layouts.</p>
 <p>PEP 660 standardizes editable installs via <code>importlib.machinery</code> and a build-backend-provided import hook:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ae7c8931b252.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ae7c8931b252.png" alt="diagram"></div></p>
 <p>What actually lands in <code>site-packages</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># After `pip install -e .` in a project with `src/my_pkg/__init__.py`:</span>
 
@@ -12116,7 +12116,7 @@ python<span class="w"> </span>--check-hash-based-pycs<span class="o">=</span>nev
 <li><strong>Packaging is an ABI problem.</strong> Whether your wheel is <code>cp312-cp312-linux_x86_64</code> (CPython-version-locked) or <code>cp312-abi3-linux_x86_64</code> (Stable ABI, runs on 3.12+) determines whether you ship one wheel or six, whether your CI matrix explodes, and whether your users on Python 3.13 hit an <code>ImportError</code> on day one. §9 makes the tradeoff quantitative.</li>
 <li><strong>Embedding is architecture.</strong> Postgres <code>plpython3u</code>, Redis modules, Nginx <code>ngx_python</code>, game servers, and custom sidecars all embed CPython as a library. Embedding (§12) turns CPython from "the process" into a component you initialize, configure, and tear down — with subinterpreters (PEP 684) as the isolation primitive.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb4f3abbcca3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eb4f3abbcca3.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-c-api-basics-pyobject-and-the-one-rule">2. C API basics — <code>PyObject*</code> and the one rule</h2>
 <h3 id="21-everything-is-a-pyobject-but-now-you-manage-the-count">2.1 Everything is a <code>PyObject*</code>, but now you manage the count</h3>
@@ -12181,7 +12181,7 @@ python<span class="w"> </span>--check-hash-based-pycs<span class="o">=</span>nev
 </code></pre></div>
 
 <p><strong>Borrowed references are invalidated by any call that might mutate the owner.</strong> <code>PyList_GetItem(list, 0)</code> is borrowed from <code>list</code>. If you then do <code>PyList_Append(list, x)</code>, the list may reallocate <code>ob_item</code> and the pointer you borrowed may dangle. Rule: <code>Py_INCREF</code> immediately if you will do anything that might touch the owner.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d9299ab81f24.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d9299ab81f24.png" alt="diagram"></div></p>
 <h3 id="23-stealing-references-the-third-contract">2.3 Stealing references — the third contract</h3>
 <p>A few APIs <strong>steal</strong> a reference: you pass an owned reference and the callee takes ownership, so you must <em>not</em> <code>Py_DECREF</code> even though you previously owned it.</p>
 <div class="highlight"><pre><span></span><code><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PyUnicode_FromString</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// owned, +1</span>
@@ -12849,7 +12849,7 @@ python<span class="w"> </span>--check-hash-based-pycs<span class="o">=</span>nev
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0fbc71058297.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0fbc71058297.png" alt="diagram"></div></p>
 <hr />
 <h2 id="8-buffer-protocol-py_buffer-getbuffer-memoryview-zero-copy-with-numpy">8. Buffer protocol — <code>Py_buffer</code>, <code>getbuffer</code>, <code>memoryview</code>, zero-copy with <code>numpy</code></h2>
 <p>The buffer protocol is CPython's zero-copy exchange format. Any object that holds a contiguous (or strided) byte region can expose it as a <code>Py_buffer</code> so consumers (<code>memoryview</code>, <code>numpy</code>, <code>Pillow</code>, <code>bytearray</code>, <code>mmap</code>) can read/write it without copying.</p>
@@ -12949,7 +12949,7 @@ python<span class="w"> </span>--check-hash-based-pycs<span class="o">=</span>nev
 <span class="c1"># WARNING: fa must stay alive as long as np_arr/mv2 exist (view.obj keeps it alive)</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_41d1209f4a68.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_41d1209f4a68.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Backend lens — when zero-copy matters.</strong> A service that decodes 10k images/s with <code>Pillow</code> and feeds them to an ML model via <code>numpy</code> must avoid per-image copies. <code>Pillow</code>'s <code>tobytes</code> copies; <code>memoryview</code> + buffer protocol does not. The same applies to <code>mmap</code>'d model weights, <code>bytearray</code> network buffers, and <code>array('f')</code> feature vectors. Always check <code>mv.contiguous</code> / <code>PyBuffer_IsContiguous</code> before assuming a single <code>memcpy</code> suffices — non-contiguous (strided, Fortran-order) buffers require per-row copies or <code>PyBuffer_ToContiguous</code>.</p>
 </blockquote>
@@ -13104,7 +13104,7 @@ python3.13<span class="w"> </span>-c<span class="w"> </span><span class="s2">&qu
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d100cc6d673d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d100cc6d673d.png" alt="diagram"></div></p>
 <h3 id="102-minimal-hpy-module-compare-with-3">10.2 Minimal HPy module — compare with §3</h3>
 <div class="highlight"><pre><span></span><code><span class="cm">/* hpy_mymod.c — HPy equivalent of mymod_hello */</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;hpy.h&gt;</span>
@@ -13403,7 +13403,7 @@ cc<span class="w"> </span>embed.c<span class="w"> </span>-o<span class="w"> </sp
 <span class="n">Py_FinalizeEx</span><span class="p">();</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e8063b4ecfb7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e8063b4ecfb7.png" alt="diagram"></div></p>
 <p>Caveats:</p>
 <ul>
 <li>Many extensions are <strong>not</strong> subinterpreter-safe — they use C globals (<code>m_size = -1</code> modules, global caches). Importing such an extension in two subinterpreters corrupts state. Check <code>PyModuleDef.m_size &gt;= 0</code> and <code>Py_mod_gil</code> slot.</li>
@@ -13427,11 +13427,11 @@ cc<span class="w"> </span>embed.c<span class="w"> </span>-o<span class="w"> </sp
 </code></pre></div>
 
 <p><code>Py_RunMain</code> handles <code>PyImport_ImportModule("runpy")</code> for <code>-m</code>, <code>PyRun_SimpleFile</code> for scripts, and the REPL loop — all on top of the same embedding primitives you use. Reading <code>Modules/main.c</code> is the best way to see production-grade embedding with proper <code>PyStatus</code> error handling, <code>PyConfig</code> isolation flags, and <code>Py_ExitStatusException</code> paths.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_00c3c6ab5940.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_00c3c6ab5940.png" alt="diagram"></div></p>
 <hr />
 <h2 id="13-the-call-path-how-objmethod-reaches-your-c-function">13. The call path — how <code>obj.method()</code> reaches your C function</h2>
 <p>Understanding the dispatch path explains both performance and debugging. Since Chapter 3 (bytecode/<code>ceval</code>) and Chapter 7 (functions/vectorcall), you know that <code>CALL</code> bytecodes use <code>vectorcall</code> (PEP 590) when available. C functions participate in the same protocol.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_57a06a80d0a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_57a06a80d0a4.png" alt="diagram"></div></p>
 <p>Three dispatch tiers, fastest first:</p>
 <ol>
 <li><strong><code>vectorcall</code> (PEP 590)</strong> — <code>METH_FASTCALL</code> / <code>METH_FASTCALL|METH_KEYWORDS</code> functions expose <code>tp_vectorcall</code> directly. <code>ceval.c</code> calls them with a <code>PyObject *const *args</code> array and <code>nargs</code> — no tuple, no dict allocation. This is the path for all modern C extensions and for <code>PyFunctionObject</code> itself.</li>
@@ -13614,7 +13614,7 @@ make<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</s
 <hr />
 <h2 id="2-profiler-taxonomy-four-families-four-overhead-budgets">2. Profiler taxonomy — four families, four overhead budgets</h2>
 <p>Not all profilers measure the same thing. Choosing the wrong family gives you a precise answer to the wrong question.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_26653c47951b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_26653c47951b.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -13961,7 +13961,7 @@ memray<span class="w"> </span>run<span class="w"> </span>--follow-fork<span clas
 <hr />
 <h2 id="6-the-profiling-workflow-collect-flame-fix-verify">6. The profiling workflow — collect, flame, fix, verify</h2>
 <p>Profiling without a workflow produces artifacts, not improvements. Standardize the loop so every engineer on the fleet does it the same way.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a4f7c665d2e4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a4f7c665d2e4.png" alt="diagram"></div></p>
 <p>Concrete checklist per phase:</p>
 <p><strong>1. Collect.</strong> Always sample a prod-like environment — staging with prod-shaped traffic or a single canary pod. Deterministic profiles from a laptop lie about cache, I/O, and contention. Record long enough to include GC cycles and JIT warmup (≥30s). Pin the version, commit, and workload.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Canary capture — the artifact you will diff against</span>
@@ -13978,7 +13978,7 @@ perf<span class="w"> </span>record<span class="w"> </span>-F<span class="w"> </s
 <hr />
 <h2 id="7-recap-the-specializing-adaptive-interpreter-pep-659">7. Recap — the specializing adaptive interpreter (PEP 659)</h2>
 <p>Chapter 3 covered this in depth; here is the compressed recap you need to understand the JIT.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_257ed7e3433f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_257ed7e3433f.png" alt="diagram"></div></p>
 <p>How it works, in one paragraph: every adaptive opcode (<code>BINARY_OP</code>, <code>LOAD_GLOBAL</code>, <code>LOAD_ATTR</code>, <code>STORE_ATTR</code>, <code>BINARY_SUBSCR</code>, <code>CALL</code>, <code>COMPARE_OP</code>, <code>UNPACK_SEQUENCE</code>, <code>FOR_ITER</code>) starts as <code>*_ADAPTIVE</code> with an 8-bit counter (initial value ~8, tuned per opcode). Each execution decrements the counter; when it hits zero the interpreter inspects the live types and values, and if they are stable and optimizable it <strong>rewrites the opcode in place</strong> to a specialized form and fills the trailing <code>CACHE</code> words with the observed type, version tag, or function target. Subsequent executions take a <strong>guarded fast path</strong>: check that the cached type/version still matches, and if so execute inline (no <code>PyObject_GetAttr</code> dict lookup, no <code>PyNumber_Add</code> dispatch). On mismatch, <strong>deoptimize</strong> — rewrite back to adaptive and resume counting.</p>
 <p>Impact quantified (CPython 3.11, <code>pyperformance</code> geometric mean):</p>
 <ul>
@@ -13993,7 +13993,7 @@ perf<span class="w"> </span>record<span class="w"> </span>-F<span class="w"> </s
 <p>CPython's JIT (PEP 744, authored by Brandt Bucher, merged for 3.13) deliberately chose the simplest viable strategy: <strong>copy-and-patch</strong>. Instead of a full optimizing compiler (SSA IR, register allocation, LLVM), it stitches together pre-compiled machine-code <em>stencils</em> (templates with holes) — one stencil per <strong>uop</strong> (micro-operation) — patching the holes with runtime constants (addresses, offsets, guards) and emitting a contiguous native function. No IR, no register allocator, no LLVM dependency — just <code>memcpy</code> + patch + <code>mprotect(X)</code>.</p>
 <p>This keeps the implementation small (~15k lines), auditable, and portable (x86-64 and AArch64 in 3.13), at the cost of not doing loop unrolling, vectorization, or sophisticated inlining — those are future work.</p>
 <h3 id="82-tier-1-tier-2-pipeline">8.2 Tier 1 → tier 2 pipeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fea5b053af66.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fea5b053af66.png" alt="diagram"></div></p>
 <p>Step by step:</p>
 <p><strong>1. Tier 1 specialization must happen first.</strong> The JIT does not compile cold bytecode. It consumes <em>already-specialized</em> tier-1 traces — the type feedback collected in <code>CACHE</code> words is the JIT's type information. No specialization, no tier-2 compilation. This is why 3.11's specialization was prerequisite to 3.13's JIT.</p>
 <p><strong>2. Uops — the JIT's IR.</strong> The <em>tier-2 optimizer</em> (<code>Python/optimizer.c</code>, <code>Python/bytecodes.c</code>) translates a hot bytecode region into a linear sequence of <strong>uops</strong> (micro-ops). Uops are finer-grained than bytecodes: one bytecode like <code>LOAD_ATTR</code> becomes <code>_LOAD_ATTR_INSTANCE_VALUE</code> + <code>_GUARD_TYPE_VERSION</code> + <code>_CHECK_ATTR_AUX</code>. The uop set in 3.13 is ~50 ops, defined in <code>Python/bytecodes.c</code> with the <code>_Py_UOP_*</code> family and the <code>TIER2</code> tier. Uops carry operands as explicit arguments, not stack effects — easier to stencil.</p>
@@ -14086,7 +14086,7 @@ make<span class="w"> </span>-j<span class="k">$(</span>nproc<span class="k">)</s
 
 <p>You pay for Cython in build complexity and type annotations. You earn it back as 10–100× speedups on the annotated hot path — the rest of the codebase stays plain Python.</p>
 <h3 id="92-cython-compilation-pipeline">9.2 Cython compilation pipeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_33fed72eed0d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_33fed72eed0d.png" alt="diagram"></div></p>
 <p>Build pipeline in practice:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Minimal project layout</span>
 <span class="c1"># myext.pyx          — Cython source</span>
@@ -14271,7 +14271,7 @@ python<span class="w"> </span>bench.py
 <hr />
 <h2 id="10-alternative-runtimes-pypy-graalpy-and-free-threaded-cpython">10. Alternative runtimes — PyPy, GraalPy, and free-threaded CPython</h2>
 <p>CPython is not the only Python. For backend services the choice is between execution model, not just version.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d85e7d44572d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d85e7d44572d.png" alt="diagram"></div></p>
 <h3 id="101-pypy-the-tracing-jit">10.1 PyPy — the tracing JIT</h3>
 <p>PyPy's JIT is a <strong>tracing JIT</strong>, fundamentally different from CPython's method-at-a-time copy-and-patch.</p>
 <p>How tracing works: the interpreter runs normally until a loop becomes hot (a backward jump taken ~1000 times). At that point it starts <strong>recording</strong> — it traces the exact path taken through the loop, including inlined callees, producing a linear sequence of operations. That trace is then <strong>optimized</strong> (constant folding, allocation removal, type specialization along the traced path) and compiled to machine code. Execution jumps to the compiled trace; any operation that deviates from the traced path hits a <strong>guard</strong> and bails out to the interpreter. The next hot path through the same loop may be traced as a <strong>bridge</strong> stitched onto the original trace.</p>
@@ -14369,7 +14369,7 @@ python<span class="w"> </span>bench.py
 <li><strong>Pyroscope</strong> (from Grafana Labs) — push model, <code>pyroscope</code> agent wraps <code>py-spy</code>/<code>austin</code> or <code>perf</code>, Grafana-native UI, pprof and native formats.</li>
 </ul>
 <p>Architecture — same for both:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f52c398eaca2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f52c398eaca2.png" alt="diagram"></div></p>
 <p>Operational guidance:</p>
 <ul>
 <li><strong>Sample rate:</strong> 49–99 Hz per pod, aggregated fleet-wide — enough to see 1% regressions, low enough to stay &lt;2% overhead at fleet scale.</li>
@@ -14381,7 +14381,7 @@ python<span class="w"> </span>bench.py
 <h3 id="112-jit-warmup-and-autoscaling-the-cold-start-trap">11.2 JIT warmup and autoscaling — the cold-start trap</h3>
 <p>Both specialization (PEP 659) and the copy-and-patch JIT (PEP 744) are <strong>warmup-dependent</strong>: cold code runs unspecialized and un-JITed, then specializes after ~8 executions and JITs after a higher threshold (hundreds to thousands of executions of the hot region). For long-lived pods this is irrelevant; for autoscaled fleets it is a <code>p99</code> problem.</p>
 <p>What happens during a scale-up:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bed8d9910cdd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bed8d9910cdd.png" alt="diagram"></div></p>
 <p>Mitigations:</p>
 <ul>
 <li><strong>Warmup traffic.</strong> Before adding a pod to the load-balancer pool, send synthetic warmup requests that exercise the hot paths (the same workload you profiled). Kubernetes <code>readinessProbe</code> with a warmup phase or a <code>preStart</code> hook that runs <code>python warmup.py</code> works. Measure time-to-warm — typically 5–30s depending on request rate and JIT threshold.</li>
@@ -14494,7 +14494,7 @@ python<span class="w"> </span>bench.py
 </tbody>
 </table>
 <p>These are layered. PEP 518 defines the <code>pyproject.toml</code> format and the <code>[build-system]</code> table. PEP 517 defines the API that a build backend must expose (<code>build_wheel</code>, <code>build_sdist</code>, <code>get_requires_for_build_wheel</code>). PEP 621 defines the project metadata fields in <code>[project]</code>. PEP 660 defines the editable install protocol. Your build backend implements the PEP 517 API; your project metadata lives in <code>[project]</code>; and the rest of the tooling (pip, build, twine) calls the backend through that API.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c03f6be2376d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c03f6be2376d.png" alt="diagram"></div></p>
 <h3 id="11-pyprojecttoml-the-universal-metadata-file">1.1 pyproject.toml — the universal metadata file</h3>
 <p><code>pyproject.toml</code> replaced <code>setup.py</code>, <code>setup.cfg</code>, and <code>MANIFEST.in</code> with a single TOML file. Here is a complete example:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># pyproject.toml — complete example for a backend service library</span>
@@ -14574,7 +14574,7 @@ python<span class="w"> </span>bench.py
 <li>The artifact is then installed into the target environment.</li>
 </ol>
 <p>This isolation prevents the build from depending on packages that happen to be installed in your system Python. It is the mechanism that makes <code>pyproject.toml</code> self-describing — the build requirements are explicit, not implicit.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b107616b17a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b107616b17a4.png" alt="diagram"></div></p>
 <p>Build isolation has a cost: the first build of a project installs all build dependencies from scratch. For CI, this is typically fine. For local development, tools like <code>pip install --no-build-isolation -e .</code> skip the isolation — but you must then ensure the build dependencies are already installed. Modern tools like uv handle this transparently.</p>
 <h3 id="13-build-backends-compared">1.3 Build backends compared</h3>
 <table>
@@ -14665,7 +14665,7 @@ python<span class="w"> </span>bench.py
 </code></pre></div>
 
 <p>The <code>py3-none-any</code> tag means: compatible with Python 3, no specific ABI, any platform. This is the universal wheel — installable on any system with Python 3+.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e25d29c22d7f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e25d29c22d7f.png" alt="diagram"></div></p>
 <h3 id="23-the-stable-abi-and-abi3-wheels">2.3 The stable ABI and abi3 wheels</h3>
 <p>CPython's stable ABI (introduced in PEP 384, refined in later PEPs) guarantees that C extensions compiled against the stable ABI on Python 3.2+ will work on any later Python 3.x without recompilation. The <code>abi3</code> tag in a wheel filename means the extension was compiled against the stable ABI.</p>
 <p>A typical abi3 wheel:</p>
@@ -14897,7 +14897,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <li><code>PS1</code> — modified to show the venv name in your shell prompt.</li>
 </ol>
 <p>Critically, the venv's <code>python</code> binary is either a symlink or a copy of the system Python. The venv does not contain a separate Python installation — it contains only <code>site-packages</code>, <code>bin/</code> symlinks, and <code>pyvenv.cfg</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f654898cee57.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f654898cee57.png" alt="diagram"></div></p>
 <h3 id="53-python-specific-docker-images">5.3 Python-specific Docker images</h3>
 <table>
 <thead>
@@ -14949,7 +14949,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </table>
 <p>The trade-off is clear: smaller base image means faster pulls and smaller attack surface, but Alpine uses musl (ABI incompatibility with manylinux wheels), and distroless has no shell (harder to debug).</p>
 <h3 id="54-venv-vs-container-layering">5.4 venv vs container layering</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ecd85ba048e0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ecd85ba048e0.png" alt="diagram"></div></p>
 <p>In a container, you typically do <em>not</em> use venv — the container itself is the isolation boundary. The base image provides Python, <code>pip install</code> adds dependencies, and <code>COPY</code> adds your code. Layer ordering matters for cache efficiency: change the layer that changes most often (your code) last.</p>
 <hr />
 <h2 id="6-docker-multi-stage-builds-for-python">6. Docker multi-stage builds for Python</h2>
@@ -15244,12 +15244,12 @@ pip-audit<span class="w"> </span>--format<span class="w"> </span>cyclonedx-json<
 2. Installs from the lockfile and audits both the installed environment and the lockfile.
 3. Generates a CycloneDX SBOM for compliance and tracking.
 4. Verifies that the checked-in lockfile is up to date (catches stale lockfiles).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_916a44136ee9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_916a44136ee9.png" alt="diagram"></div></p>
 <hr />
 <h2 id="9-deployment-at-scale-gunicorn-uvicorn-and-the-process-model">9. Deployment at scale — gunicorn, uvicorn, and the process model</h2>
 <h3 id="91-the-worker-process-model">9.1 The worker process model</h3>
 <p>A Python web service at scale runs multiple worker processes, each with its own GIL, memory space, and event loop (for async frameworks). The process manager (gunicorn, uvicorn with workers, or Kubernetes) handles lifecycle:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_44008902f733.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_44008902f733.png" alt="diagram"></div></p>
 <h3 id="92-gunicorn-configuration">9.2 gunicorn configuration</h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># gunicorn.conf.py — production configuration</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
@@ -15517,7 +15517,7 @@ pip-audit<span class="w"> </span>--format<span class="w"> </span>cyclonedx-json<
 
 <p>The correlation between traces (OpenTelemetry) and logs (structlog) via <code>trace_id</code> and <code>span_id</code> is what makes debugging distributed systems feasible — you can jump from a log line to the full trace, or from a trace to all related logs.</p>
 <h3 id="103-the-full-observation-stack">10.3 The full observation stack</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8374fa48ae7d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8374fa48ae7d.png" alt="diagram"></div></p>
 <hr />
 <h2 id="11-reproducible-build-verification">11. Reproducible build verification</h2>
 <p>Reproducibility means: given the same source, the same environment, and the same tools, you produce the same artifact. For Python, this requires controlling:</p>
@@ -15528,7 +15528,7 @@ pip-audit<span class="w"> </span>--format<span class="w"> </span>cyclonedx-json<
 <li><strong>Environment variables</strong> — <code>SOURCE_DATE_EPOCH</code>, <code>PYTHONDONTWRITEBYTECODE</code>, <code>LC_ALL=C</code>.</li>
 <li><strong>Timestamps</strong> — <code>SOURCE_DATE_EPOCH</code> pins the modification time in archives and pyc headers.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1936f0361065.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1936f0361065.png" alt="diagram"></div></p>
 <p>Verification command:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Build twice and compare</span>
 <span class="nv">SOURCE_DATE_EPOCH</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>build<span class="w"> </span>--wheel<span class="w"> </span>-o<span class="w"> </span>dist1/
@@ -15542,7 +15542,7 @@ sha256sum<span class="w"> </span>dist1/*.whl<span class="w"> </span>dist2/*.whl
 <hr />
 <h2 id="12-end-to-end-deployment-flow">12. End-to-end deployment flow</h2>
 <p>Putting it all together: a modern Python service goes from code to production through this pipeline:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0d72df4693ed.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0d72df4693ed.png" alt="diagram"></div></p>
 <hr />
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>

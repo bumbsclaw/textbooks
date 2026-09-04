@@ -427,7 +427,7 @@ down, progress resumes. Raft and Paxos (Chapters 5 and 6) are built exactly this
 evaluate any distributed component, the first question to ask is which of its guarantees are
 safety (unconditional) and which are liveness (conditional on timing) — vendors are chronically
 vague about the difference.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1b590faa7a63.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1b590faa7a63.png" alt="diagram"></div></p>
 <h3 id="failure-models">Failure models</h3>
 <p>The failure model states <em>how</em> components are allowed to fail. The models form a strict hierarchy —
 each admits everything below it plus new misbehavior — and tolerating a stronger model costs more.</p>
@@ -467,7 +467,7 @@ some participants profit from cheating. There, protocols like PBFT and its desce
 volume goes no deeper into BFT than this paragraph; when you see it advertised for
 single-organization infrastructure, the right response is skepticism about whether the threat
 model justifies tripling the replica count.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9cb9034c0280.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9cb9034c0280.png" alt="diagram"></div></p>
 <h3 id="network-models">Network models</h3>
 <p>The third axis states what the links do to messages.</p>
 <ul>
@@ -524,7 +524,7 @@ and the other does not — contradicting correctness. So no such protocol exists
 acknowledgment needs its own acknowledgment: A cannot act until sure B knows, B cannot be sure A
 knows B knows, ad infinitum. Common knowledge — I know, you know, I know you know, forever — is
 unattainable over a link that can lose even one message.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bd53a57378ef.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bd53a57378ef.png" alt="diagram"></div></p>
 <p>What it means in practice — and what it does not. It does <em>not</em> mean reliable communication is
 hopeless: retransmission gets a message through with probability approaching 1, and TCP works
 fine. What it kills, permanently, is <strong>certainty</strong>: the sender of a message can never be certain
@@ -594,7 +594,7 @@ system stalls behind a corpse. This single ambiguity is the root of a remarkable
 distributed-systems machinery: it is why leadership is granted as a <em>lease</em> (a term that expires)
 rather than a permanent title, why leases alone are insufficient, and why <strong>fencing tokens</strong>
 exist — Volume 4, Chapter 2 closed on exactly this design, and here is the failure it prevents:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0e18eb193a10.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0e18eb193a10.png" alt="diagram"></div></p>
 <p>Read the diagram as a parable of the whole chapter. The lease protocol is safe <em>under the
 assumption</em> that a live leaseholder renews before expiry — a timing assumption. A GC pause longer
 than the lease violates the assumption; the guarantee ("at most one writer") evaporates at that
@@ -779,9 +779,9 @@ reliability practices of Volume 11 are the same habit with dashboards attached.<
   exceeding a lease, a backward-stepping clock, a lying fsync — monitor the assumptions your
   correctness cites, and test by attacking them (Chapter 12).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e0675d7f197f.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ab26aa40f5b9.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_38a9ec6f542d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e0675d7f197f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ab26aa40f5b9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_38a9ec6f542d.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Fischer, M. J., Lynch, N. A., and Paterson, M. S., "Impossibility of Distributed Consensus with
@@ -1051,7 +1051,7 @@ Java Memory Model's happens-before is Lamport's definition with "message send/re
 by "volatile write/read" and "unlock/lock," and JSR-133 says so. Learned once, it applies twice:
 a volatile write publishing prior plain writes and a message send carrying prior state are the
 same edge in the same partial order, one across threads, one across machines.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1cbe7965c64e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1cbe7965c64e.png" alt="diagram"></div></p>
 <p>The relation answers the ordering question exactly where it can be answered and refuses where it
 cannot. What it does not yet give us is anything a program can <em>compute with</em>: <code>→</code> is defined
 over the global execution, which no node sees. The rest of the chapter is about mechanisms that
@@ -1097,7 +1097,7 @@ single integer, and the compression is lossy in exactly one direction: it can <e
 ordering it was told about, but it <strong>cannot detect concurrency</strong> — given two timestamps, you
 cannot distinguish "a caused b" from "unrelated." Any design that reads causality out of Lamport
 timestamp comparisons is broken by construction.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_513b44005857.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_513b44005857.png" alt="diagram"></div></p>
 <p>What Lamport clocks <em>are</em> good for is manufacturing a <strong>total order consistent with causality</strong>.
 Break ties between equal timestamps by process ID — order events by the pair <code>(L, pid)</code> — and
 every node that sees the same set of events sorts them identically, with the sort never
@@ -1157,7 +1157,7 @@ the other in some slot — ⟺ <code>a ∥ b</code>.</p>
 by the partial order on vectors. Given two timestamps and nothing else, you can answer "did one
 cause the other, or are they concurrent?" — the question Lamport clocks cannot.</p>
 <p>A worked example with three nodes:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5757677befd4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5757677befd4.png" alt="diagram"></div></p>
 <p>Walk the two comparisons. <code>c1 = [0,0,1]</code> versus <code>b2 = [2,2,0]</code>: <code>c1</code> is greater in slot C, <code>b2</code>
 greater in slots A and B — incomparable, therefore concurrent, which is right: no message
 connected C to B before <code>b2</code>. After <code>b3</code> merges C's vector, <code>b3 = [2,3,2]</code> dominates <code>c1</code> — and
@@ -1262,7 +1262,7 @@ properties, from the paper:</p>
   schema, API, or protocol field designed for a plain timestamp. Monotone, causal, and
   wire-compatible with <code>int64</code> time: that is the entire sales pitch.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1e85ee8ba2d5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1e85ee8ba2d5.png" alt="diagram"></div></p>
 <p>This is why HLCs are the workhorse of modern distributed databases — CockroachDB's transaction
 timestamps and MongoDB's cluster time are HLCs, and Volume 5, Chapter 12 covered how CockroachDB
 builds MVCC and its uncertainty-interval reads on top of them; the database mechanics stay there.
@@ -1409,9 +1409,9 @@ choice among consistency models. One relation, learned once, load-bearing in bot
   causal tokens (sessions, <code>traceparent</code>) because clocks cannot see causality they were never
   told about.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_643893099a59.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2b7bfb134e0b.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35db7da63a21.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_643893099a59.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2b7bfb134e0b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_35db7da63a21.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Lamport, L., "Time, Clocks, and the Ordering of Events in a Distributed System," <em>CACM</em> 21(7),
@@ -1546,7 +1546,7 @@ no placement of points that explains this history. The value went <em>backwards<
 exactly what a lagging read replica produces: B's read hit the leader, C's hit a follower that had
 not yet applied the write. The machinery from Volume 5, Chapter 8 was working as designed; the
 contract it delivered was not linearizability.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bd9e1597809e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bd9e1597809e.png" alt="diagram"></div></p>
 <h3 id="why-linearizability-is-the-gold-standard-locality">Why linearizability is the gold standard: locality</h3>
 <p>Herlihy and Wing proved a property they called <strong>locality</strong>, and it is the deepest reason
 linearizability occupies the position it does: <strong>a history over multiple objects is linearizable if
@@ -1743,7 +1743,7 @@ precisely the read-then-write edge of happens-before, scoped to one session. Thi
 coincidence — it is a known result that the four guarantees, enforced for all sessions
 simultaneously, are essentially equivalent to causal consistency. Session guarantees are causal
 consistency sold by the slice.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10c94a34dcdf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_10c94a34dcdf.png" alt="diagram"></div></p>
 <p>The implementations are exactly the "mitigation toolkit" Volume 5, Chapter 8 presented for
 replication-lag symptoms, and it is worth recognizing that those mitigations <em>were</em> session
 guarantees in the wild, assembled ad hoc:</p>
@@ -1795,7 +1795,7 @@ one — into a lattice, with one crucial subtlety: <strong>transaction isolation
 not a rung on the same ladder. Isolation levels (Volume 5, Chapter 6) constrain how multi-object
 transactions interleave; the models of this chapter constrain single-operation recency and order.
 Strict serializability is the point where the axes meet.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a5ae16fd8637.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a5ae16fd8637.png" alt="diagram"></div></p>
 <p>The partition line drawn on the right is the lattice's most consequential feature: everything at
 sequential consistency and above requires coordination and must sacrifice availability under
 partition (Chapter 4); causal and below can remain available. That line is <em>why</em> the lattice has
@@ -1882,7 +1882,7 @@ handles the decision points: uniqueness, balances, inventory decrements, leaders
 derived radiates outward through asynchronous replication into caches, search indexes, feeds,
 and analytics stores, each serving reads at local latency under weak guarantees, with session
 tokens layered where users would otherwise notice.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aff5d18a24b7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aff5d18a24b7.png" alt="diagram"></div></p>
 <p>Two disciplines make this architecture work rather than merely exist. First, <strong>per-operation
 mixing is the mature posture</strong>: consistency is chosen per operation, not per system. The same
 inventory service does a linearizable decrement at checkout and an eventually consistent read on
@@ -1972,9 +1972,9 @@ consistent, probably fast" is a hope.</p>
   is a <strong>linearizable spine with an eventual periphery</strong>, mixed per operation, with staleness
   measured and budgeted as an SLO.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3807901fc594.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_20a4ddf2b152.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9f5bae3499b7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3807901fc594.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_20a4ddf2b152.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9f5bae3499b7.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Herlihy, M. and Wing, J., "Linearizability: A Correctness Condition for Concurrent Objects,"
@@ -2211,7 +2211,7 @@ implicitly assume "reachability is transitive" or "either the network works or i
 misbehave in ways their designers never enumerated. A classic pathology: a leader that can reach a
 majority of its followers but not the coordination service, or vice versa, leading to two
 components each holding half of the evidence needed to act.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3b6a459ad4c9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3b6a459ad4c9.png" alt="diagram"></div></p>
 <p><strong>Partitions flap.</strong> Links that fail cleanly and stay failed are the kind operators like; links
 that oscillate — seconds of loss, seconds of health, repeat — are the kind that turn a
 leader-election protocol into a leadership carousel, each flap triggering an election whose
@@ -2257,7 +2257,7 @@ times per second in fleets where a partition has not happened for months.</p>
 <p>This is why PACELC, not CAP, is the framework that should appear on the architecture slide. CAP
 answers "what happens in the bad minutes"; PACELC also answers "what does every good millisecond
 cost," and the second question is usually the one the business feels.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_117a7cfbba4f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_117a7cfbba4f.png" alt="diagram"></div></p>
 <h3 id="classifying-real-systems-with-the-required-hedging">Classifying real systems, with the required hedging</h3>
 <p>Abadi's article classifies systems into the four corners, and the exercise is illuminating as long
 as two hedges stay attached. First, per the category-error section above, these are labels for
@@ -2326,7 +2326,7 @@ linearizable and remains <em>mostly</em> available: clients who can reach the ma
 nothing, and clients attached to the minority side get errors until the partition heals or they
 re-route. That asymmetric outcome — availability for some clients, refusal for others, invariants
 intact for all — is what "CP" actually means operationally.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ee05ba3f51ac.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ee05ba3f51ac.png" alt="diagram"></div></p>
 <h3 id="the-ap-choice-both-sides-accept-and-we-go-into-debt">The AP choice: both sides accept, and we go into debt</h3>
 <p>Under the availability choice, every reachable replica keeps accepting writes — there is no
 majority requirement, and perhaps no leader at all (the Dynamo-style leaderless design of
@@ -2341,7 +2341,7 @@ a presence flag, unacceptable for money), semantic merge (union the carts), push
 to the application, or choosing data structures whose merges are automatic and principled
 (CRDTs). The one option that does not exist is not deciding: an AP configuration without a
 designed conflict-resolution story has simply chosen "corrupt quietly."</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_19e8b2ec5d50.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_19e8b2ec5d50.png" alt="diagram"></div></p>
 <h3 id="leases-and-fencing-making-the-minority-actually-stop">Leases and fencing: making the minority actually stop</h3>
 <p>The CP story above contains a step that deserves suspicion: "N1 stops serving." Why would it? From
 N1's own point of view, the world has merely gone quiet — and Chapter 1 taught that a node cannot
@@ -2552,9 +2552,9 @@ will do when the medium misbehaves.</p>
 <li><strong>Coordination is the cost center</strong> — the same conclusion Volume 4 reached inside one machine,
   now with a theorem attached. Buy agreement only where the invariant demands it.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d0cfaf8c8987.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d9486b2998a4.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc8cfaaf0ed5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d0cfaf8c8987.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d9486b2998a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dc8cfaaf0ed5.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Gilbert, S. and Lynch, N., "Brewer's Conjecture and the Feasibility of Consistent, Available,
@@ -2760,7 +2760,7 @@ least one acceptor. Every safety property below is bought with that intersection
 </code></pre></div>
 
 <p>The happy path, with one proposer and three acceptors:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9fbd74215b51.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9fbd74215b51.png" alt="diagram"></div></p>
 <p>Two round trips, majority participation in each. Now the interesting part.</p>
 <h3 id="why-it-is-safe">Why it is safe</h3>
 <p>The claim to prove: <strong>once a value is chosen, no different value can ever be chosen.</strong> Not by a
@@ -2802,7 +2802,7 @@ chosen; it maintains the stronger invariant that any value that <em>might</em> h
 preserved by every later proposal. Uncertainty is handled by conservatism, not by detection.</p>
 <p>Here is the argument as an execution — a duel where the second proposer is forced to adopt the
 first one's value:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6712a1234f87.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6712a1234f87.png" alt="diagram"></div></p>
 <p>Note the subtlety the diagram surfaces: X had been accepted by only <em>one</em> acceptor — it was not
 chosen, and P2 was in principle free to choose Y. But P2 cannot tell whether A1's acceptance is a
 lone straggler or the visible edge of a majority, so the rule makes it adopt X regardless. Paxos
@@ -2849,7 +2849,7 @@ the command commits on a majority of acceptances — <strong>one round trip per 
 for different slots pipeline. This is the shape of essentially every production consensus system:
 steady-state replication is a single leader streaming accepts to a majority; the two-phase
 machinery surfaces only at leadership change.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d1ace1588008.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d1ace1588008.png" alt="diagram"></div></p>
 <h3 id="gaps-recovery-and-reconfiguration">Gaps, recovery, and reconfiguration</h3>
 <p>The pieces the neat picture omits are exactly the pieces that make consensus engineering hard.</p>
 <p><strong>Log gaps.</strong> A new leader's blanket phase 1 returns, for each slot, what the acceptors have
@@ -3017,7 +3017,7 @@ Paxos group, so participant votes survive individual node deaths too. The layeri
 provides fault tolerance within each group</strong> (so no single machine's death blocks anything). 2PC
 over Paxos is still 2PC — a partitioned-away participant <em>group</em> still blocks the transaction,
 per the spec — but the classic in-doubt window from a single machine crash is engineered away.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ab3d3f67258c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ab3d3f67258c.png" alt="diagram"></div></p>
 <p>Read the layering as a slogan: <em>2PC decides what all must do; Paxos makes sure nobody who decided
 can forget.</em> When someone tells you "2PC is obsolete, consensus replaced it," they have the
 relationship wrong — the problems are different, and the modern answer composes them.</p>
@@ -3095,9 +3095,9 @@ will not budget for it, and should not have to.</p>
 <li><strong>Never hand-roll consensus.</strong> If split-brain can corrupt your data, put etcd or ZooKeeper
   under it (Chapter 8). Same moral as "don't write lock-free structures," with higher stakes.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3e05beaef737.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d57dc6cb5cee.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e4b03dcda5b2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3e05beaef737.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d57dc6cb5cee.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e4b03dcda5b2.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Lamport, L., "The Part-Time Parliament," <em>ACM Transactions on Computer Systems</em> 16(2), 1998 —
@@ -3234,7 +3234,7 @@ completely:</p>
   down to follower. A leader never steps down merely because of silence — an important asymmetry
   we will revisit under asymmetric partitions.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bff9168fdd96.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bff9168fdd96.png" alt="diagram"></div></p>
 <h3 id="the-two-rpcs">The two RPCs</h3>
 <p>Raft needs only two RPC types (plus InstallSnapshot, added later for compaction):</p>
 <ul>
@@ -3293,7 +3293,7 @@ refuses to elect anyone who would need to pull. The comparison must be (term, in
 not log length alone — a longer log full of uncommitted entries from a stale term loses to a
 shorter log whose last entry has a higher term, and Figure 8 below shows exactly why length alone
 would be catastrophic.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e096e6eb19b1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e096e6eb19b1.png" alt="diagram"></div></p>
 <h3 id="split-votes-and-re-election">Split votes and re-election</h3>
 <p>When two candidates split the vote, neither reaches a majority, both time out, and both retry in a
 higher term with fresh random timeouts. Nothing needs to be undone: the failed term simply never
@@ -3362,7 +3362,7 @@ the leader's entries. Decrementing by one RPC per entry is painfully slow for a 
 so real implementations use the standard backoff optimization: the rejection carries the term of
 the conflicting entry and the first index the follower holds for that term, letting the leader
 skip a whole term per round trip.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c28888c09691.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c28888c09691.png" alt="diagram"></div></p>
 <p>Truncation looks alarming — followers deleting log entries — until you observe what can be
 truncated: only entries the current leader does not have, and by Leader Completeness (below) every
 committed entry is in the current leader's log, so truncated entries were never committed and no
@@ -3381,7 +3381,7 @@ matches on every server holding the later entry).</p>
 server can be elected leader without it and overwrite it. The paper's Figure 8 exhibits the
 counterexample, and every Raft implementer should be able to reproduce it from memory. Five
 servers, S1–S5; all hold a term-1 entry at index 1.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2cb68867b506.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2cb68867b506.png" alt="diagram"></div></p>
 <p>Walk branch (d) slowly. At step (c) the term-2 entry at index 2 sits on S1, S2, S3 — a majority.
 If majority presence meant commitment, S1 would apply it and acknowledge the client. But S5's log
 ends in term 3, which is <em>newer than term 2</em>, so the up-to-date check lets S5 collect votes from
@@ -3726,9 +3726,9 @@ necessary. It has never once been sufficient.</p>
   Consume Raft via etcd/Consul or a maintained library, and point Jepsen-style testing at your
   integration — that is where the bugs actually are.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4e9b0e54cafc.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_97d861e8db0e.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_624eb454fccb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4e9b0e54cafc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_97d861e8db0e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_624eb454fccb.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Ongaro, D. and Ousterhout, J., "In Search of an Understandable Consensus Algorithm," <em>USENIX ATC</em>,
@@ -3816,7 +3816,7 @@ it contains only N, and R + W &gt; N — contradiction. So a read that gathers R
 guaranteed to have heard from at least one replica that acknowledged the most recent successful
 write, and if versions are comparable (a big <em>if</em> we return to shortly), the read returns that
 write's value or something newer.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c72de8577356.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c72de8577356.png" alt="diagram"></div></p>
 <p>Notice what the argument does and does not use. It uses only counting — no synchrony assumption,
 no leader, no agreement protocol. It does not care <em>which</em> W replicas acknowledged the write or
 <em>which</em> R answered the read; any-W and any-R overlap. That generality is the source of the
@@ -4014,7 +4014,7 @@ substitute node stores the value with a <strong>hint</strong> — metadata namin
 standing in for — in a local table, and periodically attempts delivery: when the home node
 recovers, the substitute replays the hinted writes to it and then deletes them. This is
 <strong>hinted handoff</strong>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9dddbdb409f3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9dddbdb409f3.png" alt="diagram"></div></p>
 <p>Understand precisely what has been traded. Write availability is now superb: a write succeeds as
 long as <em>any</em> W nodes anywhere in the (reachable side of the) cluster are up. But the
 intersection proof from the start of the chapter quietly assumed both quorums were drawn from the
@@ -4058,7 +4058,7 @@ match, until the mismatching <em>leaves</em> are isolated. Those leaves name the
 actually diverge, and only their keys are exchanged and reconciled. A single divergent key costs
 one root comparison plus one path of length log(leaves) — a few hashes — instead of a
 full-range scan.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_90c03e94dd26.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_90c03e94dd26.png" alt="diagram"></div></p>
 <p>The cost that the paper is honest about, and that operators rediscover: the trees must be built,
 and rebuilt as data changes. Cassandra constructs them on demand during repair by scanning and
 hashing the data (a "validation compaction"), which is why full repairs are I/O-heavy events to
@@ -4088,7 +4088,7 @@ them and writes the merged result back, which descends from both and collapses t
    values and writes back through Sx: D5, version <code>[Sx:3, Sy:1, Sz:1]</code>, which descends from both
    siblings. Convergence.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5664c787ce37.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5664c787ce37.png" alt="diagram"></div></p>
 <p>What should "merge" mean? That is an application question, and the shopping cart is the
 canonical answer because it has a natural one: <strong>set union of the cart items</strong>. Two concurrent
 add-to-cart operations merge into a cart containing both items; no add is ever lost. The
@@ -4372,9 +4372,9 @@ not yet a delivered one — durability at an intermediary is not visibility at t
   replicas spread across failure domains, and read/write consistency levels reviewed as a pair
   — because "write ONE, read ONE, where did my write go" is an incident class, not a puzzle.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dfcccdf4e2fb.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_74082a57fd77.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0f98f3c72c4e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dfcccdf4e2fb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_74082a57fd77.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0f98f3c72c4e.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>DeCandia, G. et al., "Dynamo: Amazon's Highly Available Key-value Store," <em>SOSP</em>, 2007 — the
@@ -4624,7 +4624,7 @@ unlock():
 <em>is</em> the leader; everyone else is a hot standby watching its predecessor, and succession is
 automatic and ordered. Patroni's PostgreSQL failover (Volume 5, Chapter 8) is exactly this pattern
 over ZooKeeper or etcd, with the leader key doubling as the advertisement of who to follow.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4cc25db695bb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4cc25db695bb.png" alt="diagram"></div></p>
 <p><strong>Barriers.</strong> The <em>double barrier</em> enters and leaves a computation in lockstep: to enter, each
 participant creates an ephemeral child under the barrier node and watches until the child count
 reaches N, then proceeds; to leave, each deletes its child and waits until the children are gone.
@@ -4745,7 +4745,7 @@ ZooKeeper recipe:</p>
    the watch-the-predecessor structure again, so a handoff wakes one waiter, not the herd.</li>
 <li>Release is deleting your key, or your lease expiring and deleting it for you.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c4c3e9e4132d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c4c3e9e4132d.png" alt="diagram"></div></p>
 <p>Nothing here is protocol magic; it is lease (liveness), CAS transaction (atomic claim), and watch
 (notification), which is why the same construction ports to any store with those three primitives.</p>
 <h3 id="the-api-surface">The API surface</h3>
@@ -4783,7 +4783,7 @@ Note what this is <em>not</em>: not an etcd or ZooKeeper bug, not a mistuned tim
 client-side checks. It is the impossibility from Chapter 1 — a paused process is indistinguishable
 from a dead one — colliding with the necessity of leases. The service's view and the holder's view
 <em>cannot</em> be kept synchronized through an unbounded pause.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_90edbb6a0c06.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_90edbb6a0c06.png" alt="diagram"></div></p>
 <h3 id="fencing-tokens">Fencing tokens</h3>
 <p>The fix accepts that the stale holder will act, and makes its actions harmless. A <strong>fencing token</strong>
 is a number that (a) the lock service issues with each grant, (b) is strictly greater for every
@@ -4871,7 +4871,7 @@ etcd outage by <em>converging</em> rather than replaying: workloads keep running
 throughout, and when etcd returns, reconciliation closes whatever gap accumulated. Edge-triggered
 designs — act on the event's content — are brittle under exactly the losses that distributed
 watches make routine.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0588951356e7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0588951356e7.png" alt="diagram"></div></p>
 <p>Controller replicas coordinate leadership through the API itself: a <code>Lease</code> object
 (<code>coordination.k8s.io/v1</code>) holding <code>holderIdentity</code> and a duration; the leader renews it, and rivals
 take over when renewal lapses (controller-manager defaults: 15 s lease, 10 s renew deadline, 2 s
@@ -5029,9 +5029,9 @@ the ones that survive their coordination service's bad days.</p>
 <li>Don't use one for data paths, queues, stale-tolerant config, or efficiency-only locks — every
   avoided use shrinks the blast radius of the one dependency everything else shares.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1a6398535fa3.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c0ea1c96b4c2.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4e1983f7bead.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1a6398535fa3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c0ea1c96b4c2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4e1983f7bead.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Hunt, P., Konar, M., Junqueira, F., and Reed, B., "ZooKeeper: Wait-free coordination for
@@ -5120,7 +5120,7 @@ pick. This is the Two Generals problem from Chapter 1 wearing work clothes: two 
 communicating over a lossy channel cannot reach common knowledge that a message was
 delivered, no matter how many acknowledgments and acknowledgments-of-acknowledgments they
 exchange. The last message sent is always unacknowledged, so someone is always uncertain.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f841e1edaf01.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f841e1edaf01.png" alt="diagram"></div></p>
 <p>Faced with this ambiguity, the client has exactly two options, and they define the two
 implementable delivery semantics:</p>
 <ul>
@@ -5432,7 +5432,7 @@ wire-level exchange:</p>
 <p>The client times out, retries with the <strong>same header</strong>, and receives the same <code>200</code> and
 the same <code>ch_3Nx...</code> body — replayed from the key store, no second charge. The whole
 protocol, drawn once:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e1588e3601e9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e1588e3601e9.png" alt="diagram"></div></p>
 <h2 id="deduplication-layer-by-layer-what-each-hop-actually-gives-you">Deduplication layer by layer: what each hop actually gives you</h2>
 <p>A real request crosses many hops, and several of them advertise deduplication. The honest
 inventory matters, because the recurring failure mode is trusting a layer's dedup beyond
@@ -5508,7 +5508,7 @@ tables — is mandatory when duplicates are incidents: charges, orders, inventor
 movements, anything a finance team reconciles. Metrics can drop; money cannot; and the
 common estimating error is assessing the <em>message</em> rather than the <em>effect</em>: an innocuous-
 looking "user signed up" event that triggers a welcome credit is a money message.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cc67b5181000.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cc67b5181000.png" alt="diagram"></div></p>
 <p>The last box is not a joke. If you cannot attach an identity to an operation, you cannot
 distinguish a duplicate from a legitimate repeat, even in principle — no infrastructure
 can rescue a protocol in which "add $50" twice-on-purpose and "add $50" twice-by-retry
@@ -5518,7 +5518,7 @@ which $50 this is.</p>
 <p>Assemble the pieces into the flow you will actually build. A user pays for an order; the
 API records it and returns quickly; a consumer fulfills the charge against a payment
 provider asynchronously.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6c4724a7d68d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6c4724a7d68d.png" alt="diagram"></div></p>
 <p>Walk the hops and name each one's discipline. The <strong>browser</strong> mints key <code>K</code> when the
 payment form renders, so a double-click and a timeout-retry carry the same key. The
 <strong>API</strong> claims <code>K</code> in its idempotency table, writes the order, and writes an outbox row —
@@ -5704,9 +5704,9 @@ writes</em> — and when the answer runs out, that is where your dedupe table go
   client sessions with serial numbers inside the replicated state machine are this
   chapter's pattern at the bottom of the stack.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9d5a4b495a6f.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc648d8916d8.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_54d815fe1a5b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9d5a4b495a6f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dc648d8916d8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_54d815fe1a5b.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Saltzer, J., Reed, D., and Clark, D., "End-to-End Arguments in System Design," <em>ACM
@@ -5914,7 +5914,7 @@ regular heartbeat stream does not become hair-trigger sensitive. Two practical s
 window must be primed before φ is meaningful (implementations seed it conservatively), and a node
 that <em>pauses</em> — GC, CPU throttle — poisons its own statistics on resumption until enough fresh
 samples arrive.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eafb7c7230f8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eafb7c7230f8.png" alt="diagram"></div></p>
 <p>One more virtue of the continuous output: different consumers can apply different thresholds to
 the <em>same</em> detector — a load balancer stops routing at φ = 3 (cheap to be wrong, expensive to be
 slow) while the rebalancer that migrates terabytes waits for φ = 10. A boolean detector forces one
@@ -5973,7 +5973,7 @@ showed Dynamo doing exactly this for replica data). <strong>Rumor-mongering</str
 <em>updates</em>, hot and cheap, but because it loses interest in old rumors (stop forwarding after m
 redundant contacts, or with probability 1/m), a rumor can die out before reaching everyone.
 Production systems run both: rumors for speed, a slow anti-entropy sweep as the backstop.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_141b2b831663.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_141b2b831663.png" alt="diagram"></div></p>
 <h3 id="gossiping-membership-itself">Gossiping membership itself</h3>
 <p>To turn gossip into a failure detector, make the payload the membership list: a map from node
 identity to (address, status, <strong>version</strong>). In the classic heartbeat-counter design, each node
@@ -6041,7 +6041,7 @@ that incarnation — a partitioned node that returns must rejoin as a fresh memb
 <p>The suspicion window is the false-positive/latency trade-off made explicit and <em>bought at a
 discount</em>: it adds latency only to the suspicion-to-confirm tail, in exchange for catching nearly
 all false accusations before they become membership changes.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_863301f32194.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_863301f32194.png" alt="diagram"></div></p>
 <h3 id="infection-style-dissemination-piggybacked">Infection-style dissemination, piggybacked</h3>
 <p>SWIM's second separation: there is no broadcast channel and no separate gossip subsystem.
 Membership updates — joins, suspicions, refutations, confirmations — ride as piggybacked payload
@@ -6260,7 +6260,7 @@ Orchestrators and autoscalers consume it (Volume 12): a false NotReady evicts re
 Volume 5, Chapter 8's promised payoff lands here: database failover false positives are not a
 database problem — they are this chapter's curve surfacing in the replication layer, the same late
 heartbeat promoted into a promotion.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d7efb0e1a639.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d7efb0e1a639.png" alt="diagram"></div></p>
 <p>Because the detector sits under all of them, its error rate does not add through the stack — it
 <em>multiplies</em>. One flapping node convicted five times a day, in a cluster where conviction triggers
 an election, a lease sweep, and a rebalance, is not five small events; it is five cluster-wide
@@ -6314,9 +6314,9 @@ to be wrong sometimes. The ones that survive production budgeted for it.</p>
   orchestration — so its false-positive rate multiplies through the stack. Detector storms cause
   outages bigger than the failures; detector quality is amortized leverage.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4077a95ba317.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1b60ff3c2174.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b46ae988080c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4077a95ba317.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1b60ff3c2174.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b46ae988080c.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Das, A., Gupta, I., and Motivala, A., "SWIM: Scalable Weakly-consistent Infection-style Process
@@ -6469,7 +6469,7 @@ climbs a single shared lattice, and two replicas that have absorbed the same set
 at the join of those updates — the <em>same point</em>, regardless of the path taken to it. Divergence
 cannot persist because there is nowhere for it to live: any two states, however they came about,
 have a defined meeting point above them, and anti-entropy pushes both there.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5448d9ec7eb2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5448d9ec7eb2.png" alt="diagram"></div></p>
 <h3 id="strong-eventual-consistency-precisely">Strong Eventual Consistency, precisely</h3>
 <p>Chapter 3 defined eventual consistency and was candid about its weakness: "if updates stop,
 replicas eventually agree" says nothing about <em>what</em> they agree on, <em>when</em>, or what happens
@@ -6518,7 +6518,7 @@ sense. Removing an element before its add has arrived is the canonical disaster.
 broadcast is buildable (vector clocks plus buffering, per Chapter 2) and libraries provide it,
 but it is genuine infrastructure with genuine failure modes, and it is the tax op-based designs
 pay for their small messages and low latency of propagation.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7d3c7d0885cb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7d3c7d0885cb.png" alt="diagram"></div></p>
 <p>The two formulations are a <strong>duality</strong>, not a rivalry: Shapiro et al. prove each can emulate the
 other (ship operations that describe state deltas; ship states that carry operation logs), so
 they are equally expressive. The choice is an engineering one about where you would rather pay —
@@ -6554,7 +6554,7 @@ This is the whole design in one decision, and it is worth checking the lattice p
 against it: states ordered entrywise, join = entrywise max — commutative, associative,
 idempotent by inspection, and increment is an inflation. Convergence follows from the theory
 with nothing further to prove.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_850d2b73ee63.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_850d2b73ee63.png" alt="diagram"></div></p>
 <p>Now pay the Volume 4 debt in full. <code>LongAdder</code> replaced one contended <code>AtomicLong</code> with striped
 per-thread cells summed on read, trading an instantaneously exact value for contention-free
 writes. The G-Counter is <em>the same object</em> with the sharing assumption removed. In-process, the
@@ -6619,7 +6619,7 @@ remove of the same element therefore resolve <strong>add-wins</strong>, determin
 <p>The state (entries ∪ tombstones ordered by inclusion, with tombstones dominating) is a lattice;
 merge is unions with tombstone subtraction; all three properties hold. Walk the case that breaks
 naive sets:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_64c8558bb33a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_64c8558bb33a.png" alt="diagram"></div></p>
 <p>Contrast every alternative: plain union resurrects the deletion permanently; 2P-Set kills the
 concurrent add it never saw; LWW flips a coin weighted by clock skew. The OR-Set gives a
 <em>chosen</em> answer — an add concurrent with a remove survives — and applies it deterministically
@@ -6935,9 +6935,9 @@ the lattice is free.</p>
   Chapter 4's PACELC, and the data-structure face of <strong>CALM</strong> — monotone logic needs no
   coordination. Coordinate only where a non-confluent invariant forces it.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f1c0c046aa9.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a70a1d18396b.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_00390972af4c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4f1c0c046aa9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a70a1d18396b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_00390972af4c.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Shapiro, M., Preguiça, N., Baquero, C., Zawirski, M., "Conflict-free Replicated Data Types,"
@@ -7094,7 +7094,7 @@ legal register cannot return 0 after 1 was written with no intervening write. No
 the history is not linearizable. This exact shape, a <strong>stale read after a completed write</strong>, is
 the most common real-world verdict: it is what a replica serving reads behind a partition looks
 like from the outside.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eba20dc3a247.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eba20dc3a247.png" alt="diagram"></div></p>
 <p>The search is expensive in principle: deciding linearizability of an arbitrary history is
 <strong>NP-complete</strong> (Gibbons and Korach, 1997), because concurrent operations can be permuted
 combinatorially and each choice constrains the rest. Practical checkers survive on three
@@ -7141,7 +7141,7 @@ trade being that it checks for known anomaly patterns rather than proving full c
 <p>Jepsen is famous for its findings; what deserves study is the method, because it is reusable by
 any team against any stateful system, and because each stage embodies a decision you will face
 when you build your own harness.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3c3060455843.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3c3060455843.png" alt="diagram"></div></p>
 <p>The pipeline: a <strong>generator</strong> emits a randomized stream of operations — for a register test,
 reads, writes, and compare-and-sets on a small set of hot keys; for a transactional test, Elle's
 list-append transactions. <strong>Clients</strong> — real client libraries, speaking the system's real wire
@@ -7301,7 +7301,7 @@ than a model of the code. On top, the simulator injects faults at rates no physi
 approaches, including <em>buggify</em> points: deliberate rare-behavior amplifiers the production code
 carries (buffer this write, return this error early, pick the worst timeout) that only activate
 in simulation.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d8ed94304a7c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d8ed94304a7c.png" alt="diagram"></div></p>
 <p>The payoff is an inversion of the flaw of averages that governs all probabilistic testing. A
 Jepsen run samples the fault space at wall-clock speed and cannot rerun a hit. A simulation fleet
 runs <em>hundreds of thousands of seeded universes per night</em>, each one faster than real time, each
@@ -7501,7 +7501,7 @@ and conflating the two produces teams that kill pods for sport and learn nothing
 <h2 id="the-pyramid-assembled">The pyramid, assembled</h2>
 <p>The synthesis: six layers, cheap where bugs are cheap, each covering the blind spots of its
 neighbors.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3c02cf8cb97e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3c02cf8cb97e.png" alt="diagram"></div></p>
 <p>Read it economically. The bug-cost curve is the steepest in software: a protocol bug found in TLC
 costs a counterexample trace and an afternoon; the same bug found by a component test costs a
 debugging session; found in simulation, a seed and a day; found by Jepsen, a week of
@@ -7592,9 +7592,9 @@ that have merely worked so far.</p>
   most expensive place to learn anything. A conjecture becomes a system through adversarial
   verification against explicit models — nothing else promotes it.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc88e97acf94.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da43d9ea52b4.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b5b811c08cdc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dc88e97acf94.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_da43d9ea52b4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b5b811c08cdc.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Kingsbury, K., the Jepsen analyses and methodology docs — https://jepsen.io/analyses — the

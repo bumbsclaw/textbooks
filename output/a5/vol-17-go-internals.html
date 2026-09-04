@@ -313,7 +313,7 @@ hr {
 <p>There is no <code>ld</code> on the happy path. The Go linker is written in Go, understands Go's object format, and links everything — your code, <code>GOROOT/src/runtime</code>, <code>net</code>, <code>crypto</code> — into one file. The exception is <code>cgo</code> (Section 9): when a package imports <code>"C"</code>, <code>cmd/go</code> delegates final linking to the external C toolchain (<code>CC</code>, typically <code>gcc</code>/<code>clang</code>) and the binary becomes dynamically linked against <code>libc</code>.</p>
 <h3 id="how-go-build-actually-runs">How <code>go build</code> actually runs</h3>
 <p>A single <code>go build ./...</code> is not one compiler invocation — it is a DAG of <em>actions</em> executed in parallel and cached:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0cb1af28fdf0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0cb1af28fdf0.png" alt="diagram"></div></p>
 <p>Key points for backend work:</p>
 <ul>
 <li><strong>Parallelism is automatic.</strong> <code>cmd/go</code> topologically schedules package compiles across <code>GOMAXPROCS</code> workers. A 200-package service compiles packages in parallel where the import DAG allows it.</li>
@@ -429,7 +429,7 @@ $<span class="w"> </span>go<span class="w"> </span>version<span class="w"> </spa
 <p><code>go version -m</code> is your binary's SBOM-lite: it is the only reliable way to answer "what did we ship?" for a Go binary without external metadata. It is populated automatically since Go 1.18 (embed via <code>runtime/debug.ReadBuildInfo</code> and the <code>GODEBUG</code> buildinfo section). Strip it with <code>-ldflags="-buildvcs=false"</code> and you lose auditability — do not.</p>
 <h3 id="mvs-minimal-version-selection">MVS — Minimal Version Selection</h3>
 <p>Go's version selection is <strong>not</strong> SAT solving, ranges, or "latest wins." It is <em>Minimal Version Selection</em> (MVS): for each module path, pick the <em>minimum</em> version that satisfies every <code>require</code> in the transitive closure. Conceptually:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f5f7c0985b6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8f5f7c0985b6.png" alt="diagram"></div></p>
 <p>Consequences that matter in a polyrepo fleet:</p>
 <ul>
 <li>Builds are <em>reproducible</em> given the same <code>go.mod</code>/<code>go.sum</code> — the same inputs always select the same versions, even years later, unlike range-based resolvers.</li>
@@ -437,7 +437,7 @@ $<span class="w"> </span>go<span class="w"> </span>version<span class="w"> </spa
 <li>Diamond conflicts resolve deterministically to the <em>highest minimum</em>, not the latest — which can pin you to an older minor than the registry's latest. <code>go list -m all</code> is the truth; <code>go get -u ./...</code> is the upgrade path (review with <code>go mod tidy</code> + <code>go test ./...</code>).</li>
 </ul>
 <h3 id="proxies-sumdb-and-the-supply-chain-boundary">Proxies, sumdb, and the supply-chain boundary</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2a5caea6e504.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2a5caea6e504.png" alt="diagram"></div></p>
 <p>The three knobs:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Proxy chain — first success wins; &#39;direct&#39; means fetch from origin VCS</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">GOPROXY</span><span class="o">=</span><span class="s2">&quot;https://proxy.example.com,https://proxy.golang.org,direct&quot;</span>
@@ -561,7 +561,7 @@ cp<span class="w"> </span><span class="nv">$WORK</span>/b002/_pkg_.a<span class=
 <hr />
 <h2 id="4-the-build-pipeline-parse-to-binary">4. The build pipeline — parse to binary</h2>
 <h3 id="stage-by-stage">Stage by stage</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_45b348d2d221.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_45b348d2d221.png" alt="diagram"></div></p>
 <p>A single package flows: <strong>parse → type-check → IR → SSA → optimize → generate → object</strong>. The driver repeats this per package, respecting import order, then links once.</p>
 <p><strong>Parser.</strong> <code>go/parser</code> is fast and non-allocating where possible; it handles build constraints (<code>//go:build</code> expressions, filename suffixes) by <em>excluding</em> files before they enter type-check. A file that does not match the current <code>GOOS</code>/<code>GOARCH</code>/tags is as if it does not exist.</p>
 <p><strong>Type-check / IR.</strong> The type-checker (<code>types2</code>, unified IR since Go 1.18) resolves every identifier, checks assignability, expands generics via type instantiation (see Ch 2), and validates <code>//go:embed</code> directives. The result is a typed IR that is lowered to SSA.</p>
@@ -621,7 +621,7 @@ $<span class="w"> </span>nm<span class="w"> </span>-D<span class="w"> </span>/tm
 nm:<span class="w"> </span>/tmp/payments:<span class="w"> </span>no<span class="w"> </span>symbols<span class="w">  </span><span class="c1"># no dynamic symbol table either (unless -buildmode=pie with external link)</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6c9bf6e8b8ea.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6c9bf6e8b8ea.png" alt="diagram"></div></p>
 <p><strong>The <code>cgo</code> exception.</strong> As soon as any imported package (transitively) contains <code>import "C"</code>, the build sets <code>CGO_ENABLED=1</code> (unless forced to <code>0</code>, which then <em>fails</em> the build rather than silently producing a different binary) and final linking is delegated to <code>CC</code>:</p>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>go<span class="w"> </span>list<span class="w"> </span>-f<span class="w"> </span><span class="s1">&#39;{{.ImportPath}}: CGO={{.CgoFiles}}&#39;</span><span class="w"> </span>./...<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;CGO=\[\]&quot;</span>
 net:<span class="w"> </span><span class="nv">CGO</span><span class="o">=[</span>cgo_linux.go<span class="o">]</span>
@@ -865,7 +865,7 @@ go<span class="w"> </span>env<span class="w"> </span>GOTOOLCHAIN<span class="w">
 <li>Flags (<code>-tags</code>, <code>-ldflags</code>, <code>-trimpath</code>, <code>GOOS</code>/<code>GOARCH</code>, <code>CGO_ENABLED</code>)</li>
 <li>Hashes of dependency actions (transitive)</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6e99921460cc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6e99921460cc.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># The cache in practice</span>
 go<span class="w"> </span>env<span class="w"> </span>GOCACHE
 <span class="c1"># /home/ubuntu/.cache/go-build</span>
@@ -887,7 +887,7 @@ go<span class="w"> </span>list<span class="w"> </span>-m<span class="w"> </span>
 <hr />
 <h2 id="7-cross-compilation-goosgoarch-and-when-cgo-breaks-it">7. Cross-compilation — <code>GOOS</code>/<code>GOARCH</code> and when <code>cgo</code> breaks it</h2>
 <p>Cross-compilation is a first-class feature <em>because</em> the default path has no C toolchain:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b0d3f8432c9b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b0d3f8432c9b.png" alt="diagram"></div></p>
 <h3 id="the-two-modes">The two modes</h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># Pure Go — cross-compile from anywhere, no toolchain needed</span>
 <span class="nv">GOOS</span><span class="o">=</span>linux<span class="w"> </span><span class="nv">GOARCH</span><span class="o">=</span>arm64<span class="w"> </span><span class="nv">CGO_ENABLED</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>go<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </span>/tmp/payments-linux-arm64<span class="w"> </span>./cmd/api
@@ -1220,7 +1220,7 @@ slsa-verifier<span class="w"> </span>verify-artifact<span class="w"> </span>/tmp
 </code></pre></div>
 
 <p><strong>Underlying type and <code>~T</code> preview:</strong> <code>~int</code> in a constraint means "any type whose underlying type is <code>int</code>" — so both <code>int</code> and <code>type MyInt int</code> match <code>~int</code>, but only <code>int</code> matches <code>int</code>. This distinction drives generics constraints (Section 7).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d79dbb3b6ddf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d79dbb3b6ddf.png" alt="diagram"></div></p>
 <h3 id="13-named-vs-unnamed-comparable-and-ordered">1.3 Named vs. unnamed, comparable, and ordered</h3>
 <p>The spec calls out two derived properties:</p>
 <ul>
@@ -1297,7 +1297,7 @@ slsa-verifier<span class="w"> </span>verify-artifact<span class="w"> </span>/tmp
 </code></pre></div>
 
 <p>On <code>linux/amd64</code>, a <code>bool</code> followed by an <code>int64</code> costs 7 padding bytes. In a slice of 1M <code>Bad</code> structs, that is ~14 MB wasted plus extra cache-line traffic. For a backend service holding millions of session or row structs, this translates directly to higher heap, more GC scanning, and more cache misses.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2036a165814d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2036a165814d.png" alt="diagram"></div></p>
 <p>General reordering rule for minimal size: <strong>sort fields by descending alignment</strong> (8 → 4 → 2 → 1). The compiler does <em>not</em> reorder for you — field order is part of the type's identity and affects <code>reflect</code>, <code>unsafe.Offsetof</code>, and binary compatibility.</p>
 <hr />
 <h2 id="3-struct-layout-measuring-packing-and-fieldalignment">3. Struct Layout: Measuring, Packing, and <code>fieldalignment</code></h2>
@@ -1401,7 +1401,7 @@ go<span class="w"> </span>vet<span class="w"> </span>-fieldalignment<span class=
 </code></pre></div>
 
 <p><strong>Caveats:</strong> reordering can break <code>reflect</code> code that assumes field indices, <code>encoding/json</code> output order, <code>unsafe</code> offset arithmetic, and cgo struct overlays. Always review the suggested order — do not apply blindly to exported API types or types with <code>//go:align</code> implications.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dd0bae2e601b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dd0bae2e601b.png" alt="diagram"></div></p>
 <h3 id="33-zero-size-and-empty-struct-subtleties">3.3 Zero-size and empty-struct subtleties</h3>
 <ul>
 <li><code>struct{}</code> has size 0. Useful as a set value (<code>map[string]struct{}</code>) — no per-entry value storage.</li>
@@ -1517,7 +1517,7 @@ go<span class="w"> </span>vet<span class="w"> </span>-fieldalignment<span class=
 <li><strong>String interning does not exist by default</strong> — every <code>string(b)</code> where <code>b</code> is <code>[]byte</code> copies. For high-cardinality string keys (request IDs, headers), avoid repeated <code>string()</code> conversions on the hot path; keep <code>[]byte</code> or use <code>unsafe.String</code> / <code>strings.Clone</code> deliberately.</li>
 <li><strong>Capacity growth</strong> interacts with allocator size classes: appending one element past cap may allocate a backing array larger than <code>cap+1</code> suggests. Pre-size with <code>make([]T, 0, knownCap)</code> when you know the final length.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0757ad71d5bf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0757ad71d5bf.png" alt="diagram"></div></p>
 <h3 id="44-maps-hmap-bmap-and-buckets">4.4 Maps — <code>hmap</code>, <code>bmap</code>, and buckets</h3>
 <p>Go maps are hash tables with a single level of indirection: a <code>map[K]V</code> value is an 8-byte pointer to a runtime <code>hmap</code> struct. The <code>hmap</code> owns an array of buckets; each bucket (<code>bmap</code>) holds up to 8 key/value pairs plus overflow linkage. High-level layout (from <code>src/runtime/map.go</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="k">map</span><span class="o">[</span><span class="n">K</span><span class="o">]</span><span class="n">V</span><span class="w"> </span><span class="p">(</span><span class="mi">8</span><span class="w"> </span><span class="n">bytes</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">hmap</span><span class="p">)</span>
@@ -1572,12 +1572,12 @@ go<span class="w"> </span>vet<span class="w"> </span>-fieldalignment<span class=
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d5db6a85ec91.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d5db6a85ec91.png" alt="diagram"></div></p>
 <p><strong>Backend lens on maps:</strong> map overhead is significant for small entries — each bucket holds 8 slots, plus overflow pointers, plus hash seeds. A <code>map[string]int64</code> with 1M entries uses substantially more than <code>8M * (key+val)</code> due to bucket array, <code>tophash</code>, overflow buckets, and per-key string backing stores. For high-cardinality, high-throughput lookups (feature flags, routing tables, session caches), consider <code>swiss.Map</code> (Go 1.24 experiment), <code>sync.Map</code>, or sorted slices with binary search for read-mostly workloads.</p>
 <hr />
 <h2 id="5-escape-relevant-layout-stack-vs-heap-and-cache-lines">5. Escape-Relevant Layout: Stack vs. Heap and Cache Lines</h2>
 <p>Where a value lives (stack vs. heap) is decided by escape analysis (Chapter 9), but layout determines the cost of that decision:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a4b59794ec74.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a4b59794ec74.png" alt="diagram"></div></p>
 <p><strong>Cache-line awareness:</strong> a 64-byte cache line fits less than two <code>SessionNaive</code> values (56 B each) but can hold one <code>SessionPacked</code> plus head of the next. More importantly, if a hot loop accesses only <code>ID</code> and <code>Score</code>, placing those fields adjacent (same 64-B line) halves cache misses vs. scattering them across the struct. For slice-of-struct iteration, the stride is <code>Sizeof(T)</code> — smaller stride means more elements per cache line.</p>
 <p><strong>Pointer density:</strong> a struct with many pointer/string/slice/map fields has high GC scan cost (each pointer is a mark edge). For large in-memory tables, prefer value types or indices over pointers where possible, and prefer <code>string</code> interning / <code>[]byte</code> reuse to reduce distinct allocations.</p>
 <hr />
@@ -1663,7 +1663,7 @@ go<span class="w"> </span>vet<span class="w"> </span>-fieldalignment<span class=
 <li><code>~T</code> (tilde) matches underlying type — without <code>~</code>, only the exact type matches. <code>int | MyInt</code> matches only <code>int</code> and <code>MyInt</code>; <code>~int</code> matches <code>int</code>, <code>MyInt</code>, <code>type Foo int</code>, etc.</li>
 <li>Union elements must be type terms (<code>T</code>, <code>~T</code>, <code>A|B</code>); you cannot union two interfaces with methods in certain positions — the spec restricts this to keep type sets decidable.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_13b410a8c8a0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_13b410a8c8a0.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Constraint composition — real backend example</span>
 <span class="kd">type</span><span class="w"> </span><span class="nx">Number</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">~</span><span class="kt">int</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">~</span><span class="kt">int64</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">~</span><span class="kt">float64</span><span class="w"> </span><span class="p">}</span>
 
@@ -1718,7 +1718,7 @@ go<span class="w"> </span>vet<span class="w"> </span>-fieldalignment<span class=
 <span class="w">  </span><span class="n">shape</span><span class="w"> </span><span class="ss">&quot;iface-2&quot;</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="p">(</span><span class="mi">16</span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">ptrs</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ec30c1ba7bf5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ec30c1ba7bf5.png" alt="diagram"></div></p>
 <p><strong>Practical consequences:</strong></p>
 <table>
 <thead>
@@ -2091,7 +2091,7 @@ go<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </span
 </table>
 <p>Remaining arguments spill to the stack. Aggregates (structs, arrays) are flattened: a <code>struct{X,Y int}</code> occupies two integer register slots, a <code>struct{A float64; B int}</code> one float and one integer. Larger/irregular types go to stack. On <code>arm64</code>, integer args use <code>R0</code>–<code>R8</code> and floats <code>F0</code>–<code>F7</code>; the principle is identical.</p>
 <p>Caller-saved vs. callee-saved: the Go ABI is <strong>caller-saved</strong> for most general-purpose registers. The caller must spill live values around a call; the callee may clobber <code>AX</code>–<code>R11</code> and <code>X0</code>–<code>X14</code>. Only <code>SP</code>, <code>BP</code>, <code>g</code> (<code>R14</code> on amd64, the current <code>g</code> pointer), and a handful of runtime-reserved registers are preserved. This is cheaper than C's callee-saved convention for Go's many-leaf-call pattern.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c3cacce722a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5c3cacce722a.png" alt="diagram"></div></p>
 <p>Post-1.17 assembly for the same function:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Go 1.21 — register ABI (go tool compile -S output, amd64)</span>
 <span class="nf">TEXT</span><span class="w"> </span><span class="err">·</span><span class="no">Add</span><span class="p">(</span><span class="no">SB</span><span class="p">),</span><span class="w"> </span><span class="no">$0-0</span>
@@ -2185,7 +2185,7 @@ go<span class="w"> </span>build<span class="w"> </span>-gcflags<span class="o">=
 <span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="nx">Counter</span><span class="p">)</span><span class="w"> </span><span class="nx">String</span><span class="p">()</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprint</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">n</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f1588c8f4892.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f1588c8f4892.png" alt="diagram"></div></p>
 <p>Formal rule:</p>
 <table>
 <thead>
@@ -2296,7 +2296,7 @@ go<span class="w"> </span>build<span class="w"> </span>-gcflags<span class="o">=
 <li>A top-level <code>func Foo()</code> value is just <code>&amp;funcval{fn: Foo}</code> — no captured data, no allocation beyond the funcval itself (often optimized away).</li>
 <li>A closure <code>func() { use(x, y) }</code> is <code>&amp;funcval{fn: closure$1, x, y}</code> — the funcval is heap-allocated if it escapes.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a411a859c214.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a411a859c214.png" alt="diagram"></div></p>
 <p>On <code>amd64</code>, the closure context pointer is passed in <code>DX</code> (the first argument register is repurposed). The function body loads captures via <code>DX</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// func makeAdder(base int) func(int) int { return func(x int) int { return base + x } }</span>
 <span class="c1">// Closure body (from go tool compile -S):</span>
@@ -2397,7 +2397,7 @@ staticcheck<span class="w"> </span>./...<span class="w">     </span><span class=
 <h3 id="52-two-implementations-linked-list-defers-vs-open-coded-defers">5.2 Two implementations: linked-list defers vs. open-coded defers</h3>
 <p>Before Go 1.14, every <code>defer</code> allocated a <code>_defer</code> record (on heap or stack) and pushed it onto a per-goroutine linked list. At function exit the runtime walked the list.</p>
 <p>Since Go 1.14, the compiler <strong>open-codes</strong> defers in common cases: it inlines the defer logic as conditional calls at each return point, with no heap allocation and no linked list. Fallback to the linked list remains for loops, condition-guarded defers that can't be proven unconditional at compile time, and functions with many defers.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_56a101a9313f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_56a101a9313f.png" alt="diagram"></div></p>
 <p>Runtime struct (simplified from <code>runtime/runtime2.go</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">_defer</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nx">started</span><span class="w"> </span><span class="kt">bool</span>
@@ -2590,8 +2590,8 @@ staticcheck<span class="w"> </span>./...<span class="w">     </span><span class=
 <li>If a deferred function calls <code>recover()</code>, the runtime marks that <code>_panic</code> as <code>recovered</code> and stops unwinding — execution resumes at the <code>recover</code>ing frame after its defers finish.</li>
 <li>If no deferred function recovers, the goroutine dies and the runtime prints a stack trace; if it is the last goroutine, the program exits with code 2.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a5a168b3fb7.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bb495fe03a79.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6a5a168b3fb7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bb495fe03a79.png" alt="diagram"></div></p>
 <h3 id="62-recover-only-works-in-a-deferred-function">6.2 <code>recover</code> only works in a deferred function</h3>
 <p>This is the single most misunderstood rule. <code>recover</code> returns non-nil <strong>only</strong> when called directly inside a deferred function that is running during unwinding. In any other position it returns <code>nil</code> and does nothing.</p>
 <div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">brokenRecover</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -2753,7 +2753,7 @@ staticcheck<span class="w"> </span>./...<span class="w">     </span><span class=
 <h2 id="7-stack-frames-caller-saved-registers-and-the-vet-layer">7. Stack frames, caller-saved registers, and the vet layer</h2>
 <h3 id="71-stack-frame-layout">7.1 Stack frame layout</h3>
 <p>Every goroutine has a contiguous, growable stack (initial 2–8 KB, doubling on overflow since Go 1.4). Each frame's layout on <code>amd64</code>:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bc6f6a24dcd3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bc6f6a24dcd3.png" alt="diagram"></div></p>
 <p>Concrete example with frame size <code>$32-0</code> (32 bytes of frame, 0 bytes of stack-arg area in register ABI):</p>
 <div class="highlight"><pre><span></span><code><span class="nf">TEXT</span><span class="w"> </span><span class="err">·</span><span class="no">example</span><span class="p">(</span><span class="no">SB</span><span class="p">),</span><span class="w"> </span><span class="no">$32-8</span><span class="w">   </span><span class="c1">// 32 bytes locals, 8 bytes for callee overflow arg</span>
 <span class="w">    </span><span class="nf">SUBQ</span><span class="w"> </span><span class="no">$32</span><span class="p">,</span><span class="w"> </span><span class="no">SP</span><span class="w">            </span><span class="c1">// reserve locals (compiler does this)</span>
@@ -3256,7 +3256,7 @@ kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w
 <li><strong><code>sched.runq</code> + <code>sched.runqsize</code></strong> — the global queue (protected by <code>sched.lock</code>), overflow for new Gs when local queues fill, and the rendezvous for work-stealing.</li>
 </ul>
 <p><code>mcache</code> on <code>P</code> is why <code>GOMAXPROCS</code> also shapes allocator scalability (see Chapter 5): each <code>P</code> has its own <code>mspan</code> cache so small allocations avoid locks.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2d8a3ab28aa3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2d8a3ab28aa3.png" alt="diagram"></div></p>
 <p><em>Diagram 1 — G-M-P overview. Ms execute Gs only while holding a P. Network-blocked Gs live on the netpoller with no M/P; syscall-blocked Gs keep their M but release the P so another M can pick it up.</em></p>
 <hr />
 <h2 id="3-the-scheduling-loop-queues-stealing-and-sysmon">3. The scheduling loop: queues, stealing, and sysmon</h2>
@@ -3343,7 +3343,7 @@ kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w
 </code></pre></div>
 
 <p>Stealing half balances load quickly and keeps locality: a <code>P</code> that just produced many goroutines (e.g., a fan-out loop) sheds half to an idle peer without global lock contention. In production, stealing accounts for a large share of <code>findRunnable</code> successes under uneven load.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_71cfe0bd4b99.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_71cfe0bd4b99.png" alt="diagram"></div></p>
 <p><em>Diagram 2 — Per-P local queues + global queue + work stealing. New goroutines fill the local queue; overflow goes global; idle Ps steal half from busy peers.</em></p>
 <h3 id="33-sysmon-and-the-scheduler-tick-who-watches-the-watchers">3.3 <code>sysmon</code> and the scheduler tick — who watches the watchers</h3>
 <p><code>sysmon</code> is a dedicated <code>M</code> (no <code>P</code> needed) that wakes every 20 µs–10 ms and does housekeeping that cannot be done inline:</p>
@@ -3390,7 +3390,7 @@ kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w
 <li><strong>Netpoll when idle.</strong> If all <code>P</code>s are idle but netpoller has waiters, <code>sysmon</code> polls to avoid starvation where no <code>M</code> is in <code>findRunnable</code>.</li>
 <li><strong>GC and scavenging.</strong> <code>sysmon</code> also triggers GC pacing (<code>gcTrigger</code>), heap scavenging (<code>scavenge</code>), and timer checking.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2356367b5919.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2356367b5919.png" alt="diagram"></div></p>
 <p><em>Diagram 6 — sysmon tick interaction with Ps and Ms. sysmon reclaims Ps from blocked syscalls, requests preemption of long-running Gs, and polls netpoll when the system is idle. Not on the scheduler hot path — a background monitor.</em></p>
 <hr />
 <h2 id="4-blocking-syscalls-p-handoff-and-lockosthread">4. Blocking: syscalls, P-handoff, and <code>LockOSThread</code></h2>
@@ -3432,7 +3432,7 @@ kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w
 <li>If the syscall returns quickly (&lt;10 ms and before <code>sysmon</code> retakes), fast-path reclaim succeeds with a single CAS — no queue hop, p99-friendly.</li>
 <li>If <code>sysmon</code> already handed the <code>P</code> away, <code>exitsyscall</code> parks the <code>G</code> globally and the <code>M</code> goes idle or is reused.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_86a62b151028.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_86a62b151028.png" alt="diagram"></div></p>
 <p><em>Diagram 3 — Syscall park/handoff. Fast syscalls reclaim their P with a single CAS; long syscalls lose the P to sysmon and re-enter via the global queue.</em></p>
 <h3 id="42-runtimelockosthread-unlockosthread">4.2 <code>runtime.LockOSThread</code> / <code>UnlockOSThread</code></h3>
 <div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">LockOSThread</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -3534,7 +3534,7 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-t
 go<span class="w"> </span>tool<span class="w"> </span>trace<span class="w"> </span>trace.out
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4cdf0ff3fe83.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4cdf0ff3fe83.png" alt="diagram"></div></p>
 <p><em>Diagram 5 — Async preemption signal flow. sysmon detects a long-running G, signals its M with SIGURG, the handler redirects execution to the preempt trampoline, and g0 re-queues the G.</em></p>
 <hr />
 <h2 id="6-the-netpoller-epollkqueueiocp-behind-gopark">6. The netpoller — <code>epoll</code>/<code>kqueue</code>/<code>IOCP</code> behind <code>gopark</code></h2>
@@ -3675,7 +3675,7 @@ go<span class="w"> </span>tool<span class="w"> </span>trace<span class="w"> </sp
 </code></pre></div>
 
 <p>The <code>epoll</code> edge list (<code>pd</code> per fd) persists across connections; only <code>gopark</code>/<code>goready</code> transitions the <code>G</code>. The <code>netpollBreak</code> pipe (<code>eventfd</code>) wakes <code>epoll_wait</code> when a new <code>G</code> parks with no <code>M</code> currently polling — preventing indefinite sleep when a write makes a reader ready while every <code>M</code> is busy.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_64272225b23f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_64272225b23f.png" alt="diagram"></div></p>
 <p><em>Diagram 4 — Netpoller epoll + gopark/goready. The G parks with no M/P; epoll_wait observes readiness and re-queues the G without ever blocking an OS thread.</em></p>
 <p><strong>Sync vs. async netpoller modes.</strong> <code>netpoll(block=true)</code> is the blocking <code>epoll_wait</code> path used when <code>findRunnable</code> has nothing else to do (it parks the <code>M</code>). <code>netpoll(block=false)</code> is the non-blocking poll used each scheduler iteration to drain ready events. On Linux the blocking wait timeout adapts to the next timer deadline so timers and netpoll share the same wakeup.</p>
 <p><strong>Windows deviation.</strong> On Windows the netpoller uses IOCP: <code>WSARecv</code> with <code>OVERLAPPED</code> posts a completion; <code>GetQueuedCompletionStatus</code> in <code>netpoll</code> dequeues it and wakes the <code>G</code>. There is no <code>epoll</code> fd; <code>pollDesc</code> holds an <code>OVERLAPPED</code> entry.</p>
@@ -4226,10 +4226,10 @@ runtime.GOMAXPROCS<span class="o">(</span><span class="m">0</span><span class="o
 <p>A <strong>span class</strong> encodes size class <em>and</em> whether the class needs scanning. <code>spanClass = (sizeclass &lt;&lt; 1) | noscanBit</code>. So there are <code>67 × 2 = 134</code> logical span classes (including <code>noscan</code> variants). <code>noscan</code> spans hold objects with no pointers (e.g., <code>[]byte</code>, <code>[]int32</code> backing arrays, <code>string</code> bytes) and are skipped during marking — a significant throughput win for buffer-heavy services.</p>
 <p>The heap tracks spans in <code>mheap.spans</code> (indexed by page number) and in <code>mheap.allSpans</code> / <code>mheap.sweepSpans</code> for GC iteration. Each page knows which span owns it via <code>mheap.spans[pageID]</code>.</p>
 <h4 id="diagram-1-allocator-hierarchy-mcache-mcentral-mheap-os">Diagram 1 — Allocator hierarchy (mcache → mcentral → mheap → OS)</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dfdbe1e2133b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dfdbe1e2133b.png" alt="diagram"></div></p>
 <p><strong>Reading the diagram.</strong> The fast path never leaves <code>mcache</code>. The slow path escalates one level at a time: <code>mcache</code> asks <code>mcentral</code> for a new span of the right class; <code>mcentral</code> asks <code>mheap</code> for pages; <code>mheap</code> asks the OS for arenas (64 MiB chunks on 64-bit). Returns flow the other way when sweeps free spans.</p>
 <h4 id="diagram-2-span-and-size-class-layout">Diagram 2 — Span and size-class layout</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_63176b99fab4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_63176b99fab4.png" alt="diagram"></div></p>
 <h3 id="24-the-three-layers-in-detail">2.4 The three layers in detail</h3>
 <p><strong><code>mcache</code> (per-P, <code>runtime/mcache.go</code>).</strong> A private allocation cache for each <code>P</code> (logical processor, <code>GOMAXPROCS</code>). No locks — safe because only the <code>M</code> bound to the <code>P</code> mutates it. Contains:</p>
 <ul>
@@ -4389,7 +4389,7 @@ runtime.GOMAXPROCS<span class="o">(</span><span class="m">0</span><span class="o
 </ol>
 <p><strong>Shrinking.</strong> When a goroutine blocks and its stack is largely empty (usage &lt; 1/4 of capacity), <code>runtime.shrinkstack</code> may copy it down to a smaller allocation. This happens at GC safe points and is rate-limited to avoid ping-pong.</p>
 <h4 id="diagram-3-stack-growth-and-guards">Diagram 3 — Stack growth and guards</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f4d058edc0e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8f4d058edc0e.png" alt="diagram"></div></p>
 <h3 id="44-tuning-stacks-for-backend-scale">4.4 Tuning stacks for backend scale</h3>
 <table>
 <thead>
@@ -4472,7 +4472,7 @@ runtime.GOMAXPROCS<span class="o">(</span><span class="m">0</span><span class="o
 <p>Effect: any pointer stored into the heap during marking is shaded, and any pointer removed from the heap is also shaded. This permits <strong>concurrent marking of the heap while stacks are scanned without barriers</strong> (stacks are rescanned at STW mark termination to catch missed edges — §5.3). Hybrid barrier cost is ~1–3% of mutator CPU during mark (a few nanoseconds per heap pointer store; no barrier for <code>noscan</code> stores).</p>
 <p>Barrier elision: stores to <code>noscan</code> objects, stack slots during concurrent mark, and <code>typ.PtrBytes == 0</code> stores skip the barrier — identified via <code>writeBarrier</code> need checks in the compiler's SSA pass.</p>
 <h4 id="diagram-4-tri-color-phases-and-the-hybrid-barrier">Diagram 4 — Tri-color phases and the hybrid barrier</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c73dae2404e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5c73dae2404e.png" alt="diagram"></div></p>
 <hr />
 <h2 id="6-gc-phases-the-cycle-from-trigger-to-sweep">6. GC phases: the cycle from trigger to sweep</h2>
 <p>A Go GC cycle has four externally visible phases. Two include short stop-the-world (STW) pauses; marking itself is concurrent.</p>
@@ -4556,7 +4556,7 @@ next_gc = goal   (often noted as heapGoal)
 
 <p><code>triggerRatio</code> (~0.6–0.87 depending on heap size and <code>GOGC</code>) ensures marking starts early enough to finish before <code>heapGoal</code>. The pacer continuously revises assist ratio: if <code>heapLive</code> approaches <code>heapGoal</code> but marking is behind, each allocating goroutine's assist debt grows and allocation slows — backpressure you can see as increased allocation latency during mark.</p>
 <h4 id="diagram-5-gc-cycle-pacing-timeline">Diagram 5 — GC cycle pacing timeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f24b950e9ab6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f24b950e9ab6.png" alt="diagram"></div></p>
 <p>Reading it: heap grows via mutator; when it hits <code>next_gc</code> (≈ trigger), concurrent mark starts; heap keeps growing while marking; mark termination happens before <code>heapGoal</code>; sweep reclaims white objects so heap drops toward <code>live</code>. If <code>GOMEMLIMIT</code> sits below the <code>GOGC</code> goal, the <code>next_gc</code> line shifts left and cycles compress.</p>
 <hr />
 <h2 id="8-observability-gctrace-pprof-heap-and-runtimemetrics">8. Observability: gctrace, pprof heap, and runtime/metrics</h2>
@@ -4657,7 +4657,7 @@ go<span class="w"> </span>tool<span class="w"> </span>pprof<span class="w"> </sp
 
 <p>Four sample indices exist: <code>alloc_space</code>, <code>alloc_objects</code>, <code>inuse_space</code>, <code>inuse_objects</code>. For GC tuning, <code>inuse_space</code> tells you what survives GC (sets <code>live</code>); <code>alloc_space</code> tells you where allocation volume comes from (drives GC frequency). Optimize <code>alloc_space</code> hot spots to reduce GC CPU; optimize <code>inuse_space</code> hot spots to reduce peak heap.</p>
 <h4 id="diagram-6-heap-profile-anatomy">Diagram 6 — Heap profile anatomy</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb5024ed7c9d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cb5024ed7c9d.png" alt="diagram"></div></p>
 <p>Example <code>pprof</code> excerpt (trimmed; <code>top</code> on <code>alloc_space</code> for an HTTP service):</p>
 <div class="highlight"><pre><span></span><code>(pprof) top 10 --cum --sample_index=alloc_space
       flat  flat%   sum%        cum   cum%
@@ -5225,8 +5225,8 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-b
 - A buffered send does not hb the receive until the receive actually dequeues. Filling a buffered channel and then reading a shared variable without receiving is still racy.</p>
 </blockquote>
 <h3 id="31-happens-before-edges-between-goroutines-end-to-end">3.1 Happens-before edges between goroutines — end to end</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1e5f8247faa7.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_73d975da896b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1e5f8247faa7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_73d975da896b.png" alt="diagram"></div></p>
 <hr />
 <h2 id="4-atomics-syncatomic-in-depth">4. Atomics: <code>sync/atomic</code> in depth</h2>
 <p>Atomics are the lightest-weight synchronization: a single word, no kernel wait queue, no goroutine parking — but also the easiest to misuse.</p>
@@ -5332,7 +5332,7 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-b
 <li>On <code>amd64</code> (TSO), <code>seq_cst</code> is almost free — stores are already ordered except StoreLoad, which needs <code>MFENCE</code> or <code>XCHG</code>. Go's atomic <code>Store</code> on amd64 uses <code>XCHG</code> (locked exchange) which is a full barrier.</li>
 <li>On <code>arm64</code> (weak), every atomic op needs explicit barriers. Go emits <code>DMB</code>/<code>LDA</code>/<code>STL</code> sequences. A plain (non-atomic) write has no barrier, so another core's plain read can be reordered arbitrarily.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e44ea6f37b2c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e44ea6f37b2c.png" alt="diagram"></div></p>
 <p><strong>Practical consequence for backend code:</strong> Do not reason about atomics as "it will be fast enough to use plain loads on x86." The Go spec does not bless x86-only reasoning. Code that omits atomics because "amd64 is TSO" breaks when you deploy to Graviton (<code>arm64</code>) — which is increasingly the default in cost-optimized fleets. Use atomics for cross-goroutine visibility; let the compiler emit the barrier.</p>
 <h3 id="43-alignment-requirements">4.3 Alignment requirements</h3>
 <p><code>sync/atomic</code> on 64-bit values requires 64-bit alignment. The failure mode is not a race — it is a panic on some platforms and silent tearing on others.</p>
@@ -5482,7 +5482,7 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-b
 <li>When the last starving waiter acquires, or a waiter acquires within the threshold, the mutex re-enters <strong>normal mode</strong> (spinning allowed, barging allowed).</li>
 </ul>
 <p>Starvation mode trades throughput for fairness and bounds the maximum wait time — exactly what you want for p99.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4671f47012d2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4671f47012d2.png" alt="diagram"></div></p>
 <p><strong>Mutex tips that follow from the internals:</strong></p>
 <ul>
 <li>Hold time matters more than lock frequency. A mutex held for 10 µs with 100 contenders causes more parking than one held for 100 ns with 1000 contenders that spin.</li>
@@ -5572,7 +5572,7 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-b
 <span class="c1">// FIX: func good(wg *sync.WaitGroup) { wg.Done() }</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bb563f03a9fd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bb563f03a9fd.png" alt="diagram"></div></p>
 <h3 id="54-synconce-done-flag-plus-mutex-with-a-correctness-guarantee">5.4 <code>sync.Once</code> — done flag plus mutex, with a correctness guarantee</h3>
 <div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">Once</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nx">done</span><span class="w"> </span><span class="kt">uint32</span>
@@ -5599,7 +5599,7 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-b
 <li><code>Once</code> does not handle panics inside <code>f</code> specially — if <code>f</code> panics, <code>done</code> is not set, and a later <code>Do</code> will retry <code>f</code>. This is intentional; a half-initialized singleton should not be cached.</li>
 <li><code>Once</code> is not reusable — there is no <code>Reset</code>. If you need resettable once, you need a different primitive (often <code>atomic.Pointer</code> + <code>CompareAndSwap</code>).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d976d3d1b698.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d976d3d1b698.png" alt="diagram"></div></p>
 <h3 id="55-synccond-the-one-primitive-most-backends-should-not-use">5.5 <code>sync.Cond</code> — the one primitive most backends should not use</h3>
 <p><code>Cond</code> is a condition variable: <code>Wait</code> atomically unlocks, parks, and re-locks; <code>Signal</code> wakes one waiter, <code>Broadcast</code> wakes all. It exists for pipelines where a goroutine must wait for a predicate over shared state:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">type</span><span class="w"> </span><span class="nx">Queue</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
@@ -5658,7 +5658,7 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-b
 <li><strong>Write path (<code>Store</code>):</strong> If key in <code>read</code>, try <code>entry.tryStore</code> (atomic). Otherwise lock <code>mu</code>, double-check, write to <code>dirty</code> (creating it from <code>read</code> if needed), set <code>read.amended=true</code>.</li>
 <li><strong><code>expunged</code>:</strong> A sentinel pointer meaning "deleted from <code>read</code> and not yet resurrected in <code>dirty</code>." Deleting a key in <code>read</code> sets <code>entry.p = nil</code>; deleting a key already expunged is a no-op. This avoids dirtying <code>read</code> on deletes of absent keys.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a4b9566388f0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a4b9566388f0.png" alt="diagram"></div></p>
 <p><strong>Consequences for backend choice:</strong></p>
 <ul>
 <li><code>sync.Map</code> has no snapshot, no <code>Len</code> without locking, no iteration ordering, and <code>Range</code> may observe a mix of read and dirty. It is not a drop-in for <code>map</code>.</li>
@@ -5688,7 +5688,7 @@ go<span class="w"> </span><span class="nb">test</span><span class="w"> </span>-b
 <li><strong><code>Put</code>:</strong> Store in <code>private</code> if empty, otherwise push to <code>shared</code>.</li>
 <li><strong>GC interaction:</strong> On each GC, the runtime calls <code>poolCleanup</code>: <code>victim = local; victimSize = localSize; local = nil; localSize = 0</code>. So objects survive at most <strong>two GCs</strong> — one as <code>local</code>, one as <code>victim</code> — then are dropped. This bounds memory without explicit sizing, but means a <code>Pool</code> that is not used between GCs appears empty.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bc469045797c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bc469045797c.png" alt="diagram"></div></p>
 <p><strong>Backend pitfalls with <code>Pool</code>:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Correct: request-scoped scratch with size cap and reset.</span>
 <span class="kd">var</span><span class="w"> </span><span class="nx">bufPool</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">sync</span><span class="p">.</span><span class="nx">Pool</span><span class="p">{</span>
@@ -6225,11 +6225,11 @@ go<span class="w"> </span>tool<span class="w"> </span>trace<span class="w"> </sp
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_47d909b8609b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_47d909b8609b.png" alt="diagram"></div></p>
 <p><strong>Small-value optimization.</strong> For values that fit in a pointer (e.g., <code>int</code>, <code>*T</code>), the compiler may store them directly in the <code>data</code> word or avoid allocation. For larger values (<code>struct { a, b int64 }</code>), boxing copies the value to the heap so <code>data</code> has a stable address after the stack frame returns. Whether boxing allocates is an escape-analysis outcome you can read with <code>go build -gcflags=-m</code> — see Chapter 9.</p>
 <h3 id="22-how-the-itab-is-built-and-cached">2.2 How the <code>itab</code> is built and cached</h3>
 <p>The first time a concrete type is assigned to an interface type, the runtime must produce the <code>itab</code> that witnesses "type <code>T</code> implements interface <code>I</code>." At compile time the compiler emits a static <code>interfacetype</code> for <code>I</code> and a <code>_type</code> for <code>T</code>; at runtime <code>getitab</code> (in <code>src/runtime/iface.go</code>) either finds a cached entry or builds one.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cf5aac131b34.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cf5aac131b34.png" alt="diagram"></div></p>
 <p>The global itab table is a hash map keyed by <code>(inter, _type)</code> hashed from <code>inter</code> and <code>_type</code> pointers, chain-probed. Once published, an <code>itab</code> is immutable and never freed — interfaces share it across goroutines without locking on the hit path. The copy of <code>_type.hash</code> in the <code>itab</code> lets type switches compare a single <code>uint32</code> before chasing pointers.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Demonstrating the cache — repeated assignments share the same itab pointer.</span>
 <span class="kd">func</span><span class="w"> </span><span class="nx">itabCacheDemo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -6367,7 +6367,7 @@ go<span class="w"> </span>tool<span class="w"> </span>trace<span class="w"> </sp
 </code></pre></div>
 
 <p>Why this happens — the second diagram the task requires in full:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b331bcb36413.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b331bcb36413.png" alt="diagram"></div></p>
 <p><strong>Rules to avoid the bug:</strong></p>
 <ol>
 <li>Never <code>return errVal</code> where <code>errVal</code> is a typed nil variable. Check <code>if errVal == nil { return nil }</code> before returning an <code>error</code>.</li>
@@ -6399,7 +6399,7 @@ go<span class="w"> </span>tool<span class="w"> </span>trace<span class="w"> </sp
 <span class="n">call</span><span class="w"> </span><span class="n">fun</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w">    </span><span class="o">//</span><span class="w"> </span><span class="mi">4</span><span class="p">:</span><span class="w"> </span><span class="n">indirect</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="n">receiver</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="n">arg</span><span class="w"> </span><span class="p">(</span><span class="n">register</span><span class="w"> </span><span class="n">ABI</span><span class="p">:</span><span class="w"> </span><span class="n">AX</span><span class="o">/</span><span class="n">DX</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">Ch</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_19cc317ce1f6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_19cc317ce1f6.png" alt="diagram"></div></p>
 <p>Three loads and an indirect branch versus a direct <code>CALL</code> immediate. The indirect branch is the expensive part: it defeats the branch predictor on first encounter, prevents inlining, and blocks devirtualization (the compiler cannot inline through an interface call except via PGO-guided or guarded devirtualization in Go 1.21+).</p>
 <p><code>go tool compile -S</code> shows the difference (amd64, Go 1.22, simplified):</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Direct: CALL is immediate, inlineable</span>
@@ -6517,7 +6517,7 @@ BenchmarkGeneric-8   1000000000    0.65 ns/op    0 B/op    0 allocs/op   // gene
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_98e9efe2520a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_98e9efe2520a.png" alt="diagram"></div></p>
 <p>The distinction between <code>Type</code>/<code>Kind</code> matters: <code>Kind</code> is the broad category (<code>Struct</code>, <code>Slice</code>, <code>Ptr</code>, <code>Interface</code>, <code>Chan</code>, … 27 values); <code>Type</code> is the specific type (<code>User</code>, <code>[]User</code>, <code>*User</code>, <code>map[string]User</code>). Two different named struct types both have <code>Kind() == Struct</code> but different <code>Type</code> — never switch on <code>Kind</code> when you mean <code>Type</code>.</p>
 <h3 id="52-struct-tags-and-structtag">5.2 Struct tags and <code>StructTag</code></h3>
 <p>Tags are raw strings on struct fields, parsed by <code>reflect.StructTag</code>:</p>
@@ -6757,7 +6757,7 @@ $<span class="w"> </span>go<span class="w"> </span><span class="nb">test</span><
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_367d6251157c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_367d6251157c.png" alt="diagram"></div></p>
 <h3 id="63-uintptr-vs-unsafepointer-the-gc-line">6.3 <code>uintptr</code> vs <code>unsafe.Pointer</code> — the GC line</h3>
 <div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">uintptrPitfall</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Safe — conversion back in same expression:</span>
@@ -6931,7 +6931,7 @@ $<span class="w"> </span>staticcheck<span class="w"> </span>./...
 <li><code>runtime.Pinner</code> (Go 1.21) is stronger: it pins the object so a future moving GC will not relocate it. Every <code>Pin</code> must be paired with <code>Unpin</code>; pinning many objects has GC cost — pin only around the narrow unsafe window.</li>
 <li><code>uintptr</code>-only references never keep anything alive — they are integers. Any <code>uintptr</code> that is the sole reference to heap memory is a bug unless <code>KeepAlive</code>/<code>Pinner</code> spans its use.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_409fea7ce1b1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_409fea7ce1b1.png" alt="diagram"></div></p>
 <hr />
 <h2 id="7-backend-lens-where-the-costs-land-in-real-services">7. Backend lens — where the costs land in real services</h2>
 <h3 id="71-interfaces-for-testability-vs-generics-for-speed">7.1 Interfaces for testability vs generics for speed</h3>
@@ -7235,7 +7235,7 @@ $<span class="w"> </span>staticcheck<span class="w"> </span>./...
 </code></pre></div>
 
 <p>Three allocation shapes: unbuffered or zero-sized element (header only), pointer-free element (header+buffer in one allocation — fewer GC objects), pointer-bearing element (header and buffer separate so the buffer's bitmap can be typed).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3b04e54010d0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3b04e54010d0.png" alt="diagram"></div></p>
 <p><em>Diagram 1 — hchan layout: circular buffer indexed by sendx/recvx, occupancy in qcount, FIFO sudog queues for blocked senders/receivers, single mutex.</em></p>
 <h3 id="22-nil-vs-unbuffered-vs-buffered-semantics-precisely">2.2 Nil vs. unbuffered vs. buffered — semantics precisely</h3>
 <table>
@@ -7511,7 +7511,7 @@ $<span class="w"> </span>staticcheck<span class="w"> </span>./...
 </li>
 </ul>
 <p>The <code>sudog</code> itself is the rendezvous record. It lives on the <em>waiter's stack</em> (acquired from <code>p.sudogcache</code> via <code>acquireSudog</code>, returned via <code>releaseSudog</code> — no GC pressure on the hot path). <code>sudog.elem</code> points into the waiter's stack frame where the value should be copied. This is why channel operations can be allocation-free even for large structs — the copy is <code>typedmemmove</code> directly between stacks (or stack↔buffer), with no intermediate heap object.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2ee677dc32ed.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2ee677dc32ed.png" alt="diagram"></div></p>
 <p><em>Diagram 2 — Send/receive flow: fast paths (buffer copy) vs. slow paths (sudog enqueue, gopark, goready, direct stack-to-stack copy).</em></p>
 <hr />
 <h2 id="4-select-randomized-choice-over-channels">4. Select — randomized choice over channels</h2>
@@ -7608,7 +7608,7 @@ $<span class="w"> </span>staticcheck<span class="w"> </span>./...
 <li><strong><code>lockorder</code></strong> — sorted by <code>hchan</code> address. Channels are locked in a globally consistent order to prevent deadlock when two goroutines <code>select</code> over overlapping channel sets in opposite order. The sort is <code>O(k log k)</code> for <code>k</code> distinct channels; <code>k</code> is usually small (2–5 in backend code).</li>
 </ul>
 <p>The locking protocol is subtle: <code>selectgo</code> locks <em>all</em> distinct channels in <code>lockorder</code> before probing any case. This is the price of atomic choice — the runtime must ensure that the decision to take one case and the act of taking it are not interleaved with another goroutine's conflicting operation. The fast path therefore holds multiple channel locks simultaneously, which is why <code>select</code> over many channels contends more than individual channel ops.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8994faa1de76.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8994faa1de76.png" alt="diagram"></div></p>
 <p><em>Diagram 3 — selectgo: randomization (pollorder), deadlock-free multi-lock (lockorder), fast-path probe, and blocking enqueue/park.</em></p>
 <h3 id="43-fairness-demo-and-the-default-trap">4.3 Fairness demo and the default trap</h3>
 <p>Randomization is per-<code>selectgo</code> invocation, not per-channel. A single <code>select</code> with two ready cases picks uniformly. Over many iterations, counts converge, but any single iteration is a coin flip. This is <em>statistical</em> fairness, not round-robin.</p>
@@ -7712,7 +7712,7 @@ $<span class="w"> </span>staticcheck<span class="w"> </span>./...
 <li>The netpoller (<code>runtime.netpoll</code>) also checks timer heaps when computing its <code>epoll_wait</code> timeout — <code>netpoll</code> returns early when the next timer deadline is sooner than the next I/O event, allowing a single <code>epoll_wait</code> to serve both I/O and timer wakeups without a separate timer thread.</li>
 </ul>
 <p>Why 4-heap? A 4-ary heap has ~½ the height of a binary heap, so <code>siftup</code>/<code>siftdown</code> touches fewer cache lines, and the fanout fits a cache line of timer pointers. For the common case (few timers per <code>P</code>), the heap is tiny and linear scan would also be fast; the heap wins when a service has thousands of concurrent <code>context.WithTimeout</code>s.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_855de6d6983d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_855de6d6983d.png" alt="diagram"></div></p>
 <p><em>Diagram 4 — Timer subsystem: per-P 4-heaps, sysmon and netpoller as drivers, Timer/Ticker channel sends vs. AfterFunc direct callbacks.</em></p>
 <h3 id="53-correct-use-reuse-and-the-after-trap">5.3 Correct use, reuse, and the <code>After</code> trap</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// Trap: time.After in a hot loop allocates a new Timer every iteration.</span>
@@ -7898,7 +7898,7 @@ $<span class="w"> </span>staticcheck<span class="w"> </span>./...
 <li><strong>Lazy <code>Done</code> channel</strong> — <code>done</code> is <code>atomic.Value</code> holding <code>chan struct{}</code>. Until someone calls <code>Done()</code>, no channel is allocated. <code>Background().Done()</code> is <code>nil</code> — <code>select</code> with a nil <code>Done</code> case disables cancellation, which is why <code>context.Background()</code> never cancels.</li>
 <li><strong>Removal</strong> — when a child cancels itself (not via parent), it removes itself from the parent's <code>children</code> map to avoid holding the parent's map entry forever (which would be a memory leak for long-lived parents like <code>Background()</code>).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_22dd3d47cd92.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_22dd3d47cd92.png" alt="diagram"></div></p>
 <p><em>Diagram 5 — Context tree: Background root, cancelCtx/timerCtx/valueCtx children, recursive cancel via close(Done) broadcast, delegation edges.</em></p>
 <h3 id="63-value-chain-lookup">6.3 Value chain lookup</h3>
 <p><code>WithValue</code> is not a map — it is a linked list. Each <code>valueCtx</code> holds one <code>key</code>/<code>val</code> pair and a pointer to its parent. <code>Value(key)</code> walks the chain:</p>
@@ -7918,7 +7918,7 @@ $<span class="w"> </span>staticcheck<span class="w"> </span>./...
 </code></pre></div>
 
 <p>Lookup cost is <code>O(depth)</code> — every <code>Value</code> call walks the chain comparing keys with <code>==</code>. For a chain depth of <code>d</code>, <code>d</code> comparisons plus <code>d</code> interface dispatches.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1c65394a329f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1c65394a329f.png" alt="diagram"></div></p>
 <p><em>Diagram 6 — Context value chain: linked list of valueCtx nodes, linear walk on Value(), delegation through cancelCtx/timerCtx.</em></p>
 <p>Backend guidance on <code>WithValue</code>:</p>
 <ul>
@@ -8264,7 +8264,7 @@ go<span class="w"> </span>vet<span class="w"> </span>-lostcancel<span class="w">
 <hr />
 <h2 id="1-the-pipeline-in-one-picture">1. The Pipeline in One Picture</h2>
 <p>A <code>go build</code> invocation for a single package runs <code>cmd/compile</code> once per package. Inside that process, each function traverses the same pipeline. Understanding the stage boundaries tells you which diagnostics belong where and which flags illuminate which stage.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_73a1566205db.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_73a1566205db.png" alt="diagram"></div></p>
 <p><strong>Key invariants.</strong> Parsing is file-scoped; type checking is package-scoped (needs the whole import graph for that package); IR→SSA is function-scoped (each <code>ir.Func</code> becomes one <code>ssa.Func</code>). That scoping is why most optimizations cannot see across function boundaries <em>unless</em> inlining first collapses them.</p>
 <table>
 <thead>
@@ -8474,10 +8474,10 @@ bad.go:4:15:<span class="w"> </span>syntax<span class="w"> </span>error:<span cl
 </code></pre></div>
 
 <p>The SSA CFG (simplified):</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_93682cdf8bd1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_93682cdf8bd1.png" alt="diagram"></div></p>
 <p>In the HTML dump, phi nodes appear as <code>Phi &lt;int&gt; v1 v2</code> with predecessor annotations — <code>(b1)</code> and <code>(b2)</code>. Values are numbered globally (<code>v1</code>, <code>v2</code>, ...), types are printed in angle brackets, and the Op name is the generic SSA op before lowering (<code>Add64</code>, <code>Less64</code>, <code>Phi</code>, <code>Load</code>, <code>Store</code>, <code>CallStatic</code>, etc.).</p>
 <h3 id="33-ir-ssa-blockvalue-graph-generalized">3.3 IR → SSA Block/Value Graph (Generalized)</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d8de487282cc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d8de487282cc.png" alt="diagram"></div></p>
 <p>Notice:</p>
 <ul>
 <li><strong>Slice <code>b</code> is exploded.</strong> One <code>ir</code> OINDEX becomes three SSA values: <code>SlicePtr</code>, <code>SliceLen</code>/<code>IsInBounds</code>, <code>PtrIndex</code>/<code>Load</code>. This explosion is what lets BCE, CSE, and nil-check elimination reason precisely about each sub-operation.</li>
@@ -8531,7 +8531,7 @@ bad.go:4:15:<span class="w"> </span>syntax<span class="w"> </span>error:<span cl
 <h2 id="4-ssa-passes-the-optimizer">4. SSA Passes: The Optimizer</h2>
 <p><code>src/cmd/compile/internal/ssa/compile.go</code> defines <code>passes</code> — an ordered slice of <code>pass</code> structs, each with a name and a function <code>func(*Func)</code>. The ordering is load-bearing: some passes create opportunities for others, and <code>prove</code> must run early so later passes can drop redundant checks.</p>
 <h3 id="41-pass-ordering">4.1 Pass Ordering</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_36693d04df73.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_36693d04df73.png" alt="diagram"></div></p>
 <p>The actual <code>passes</code> slice (≈45 entries in Go 1.22+) interleaves generic and machine-dependent passes. The high-level phases are:</p>
 <ol>
 <li><strong>early</strong> — <code>phielim</code>, <code>copyelim</code>: clean up construction artifacts.</li>
@@ -8610,7 +8610,7 @@ v35 = SliceLen &lt;int&gt; v10   # same slice, no intervening store to it
 <p>Escape analysis answers: <em>does the storage for this value need to outlive the function frame?</em> If not, it can live on the stack (cheap bump-pointer allocation, freed by moving <code>SP</code>, no GC). If it must outlive the frame — returned to caller, stored in heap, sent on channel, captured by closure that escapes, passed to unknown callee that retains it — it is <strong>heap-allocated</strong> (via <code>runtime.newobject</code> / <code>runtime.makeslice</code> etc.) and becomes GC-tracked.</p>
 <p>The analysis lives in <code>src/cmd/compile/internal/escape/</code>. It is <em>interprocedural</em> within a package (builds a call graph) but conservative across packages whose bodies are not visible (unless inlined or via export data escape summaries).</p>
 <h3 id="52-leaking-vs-not-the-flow">5.2 Leaking vs. Not: The Flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_893f2287f5a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_893f2287f5a4.png" alt="diagram"></div></p>
 <p>Terminologically, the escape dump uses <code>leaking param</code> to mean "content reachable from this parameter may leak to heap" — i.e., a function parameter that <em>allows</em> its argument to escape if the caller passes a pointer that the callee retains.</p>
 <h3 id="53-reading-gcflags-m-output">5.3 Reading <code>-gcflags="-m"</code> Output</h3>
 <div class="highlight"><pre><span></span><code>go<span class="w"> </span>build<span class="w"> </span>-gcflags<span class="o">=</span><span class="s2">&quot;-m&quot;</span><span class="w"> </span>./mypkg<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
@@ -8761,7 +8761,7 @@ go<span class="w"> </span>build<span class="w"> </span>-gcflags<span class="o">=
 </ul>
 <p>Since Go 1.12, inlining is <strong>mid-stack</strong>: the compiler can inline <em>into</em> already-inlined bodies (not just leaf calls), so a chain <code>A→B→C</code> can collapse entirely if each link is cheap.</p>
 <h3 id="62-the-cost-model">6.2 The Cost Model</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1dd5f4cb5739.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1dd5f4cb5739.png" alt="diagram"></div></p>
 <p>Cost is abstract, not instruction count. Reference: <code>src/cmd/compile/internal/inline/inl.go:func inlineCost</code>. Rough weights:</p>
 <table>
 <thead>
@@ -8919,7 +8919,7 @@ go<span class="w"> </span>build<span class="w"> </span>-gcflags<span class="o">=
 </code></pre></div>
 
 <h3 id="73-insertion-vs-elimination-flow">7.3 Insertion vs. Elimination Flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c473d5bbd026.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c473d5bbd026.png" alt="diagram"></div></p>
 <h3 id="74-isinbounds-hints-and-inspecting-bce">7.4 <code>isInBounds</code> Hints and Inspecting BCE</h3>
 <p>The internal helper <code>isInBounds</code> (in <code>prove.go</code>) is not a user API — but you can force the compiler to surface its reasoning:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Debug BCE specifically (Go 1.21+)</span>
@@ -9420,7 +9420,7 @@ benchstat<span class="w"> </span>/tmp/bench.txt<span class="w">  </span><span cl
 <p>Stack variables that provably never escape are <em>not</em> instrumented. Map and slice internals get extra checks (concurrent map read/write still panics even without <code>-race</code>).</p>
 <h3 id="22-instrumentation-vector-clocks-and-shadow-memory">2.2 Instrumentation: vector clocks and shadow memory</h3>
 <p>TSan assigns each goroutine a <strong>vector clock</strong> — a logical timestamp that advances at every synchronization point. On <code>ch &lt;- v</code>, the sender's clock is piggybacked to the receiver; on <code>mu.Unlock()</code> → <code>mu.Lock()</code>, the unlocker's clock flows to the next locker. Two accesses conflict if they touch the same word, at least one is a write, and neither's clock dominates the other's.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8736494f779b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8736494f779b.png" alt="diagram"></div></p>
 <p>Key properties to internalize:</p>
 <ul>
 <li><strong>Coverage is dynamic.</strong> The detector only sees executions that actually happened. A race on an error path your test never hits is invisible — hence the imperative to race-test under realistic concurrency and load.</li>
@@ -9692,7 +9692,7 @@ Found<span class="w"> </span><span class="m">1</span><span class="w"> </span>dat
 </tbody>
 </table>
 <p>Optional Go 1.21+ <strong>execution-trace profile</strong> (<code>trace</code>) is covered in Section 4 — not a pprof profile but often exposed on the same <code>net/http/pprof</code> surface.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fe0207155bea.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fe0207155bea.png" alt="diagram"></div></p>
 <p>Sampling parameters you control:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="s">&quot;runtime&quot;</span>
 
@@ -9719,7 +9719,7 @@ Found<span class="w"> </span><span class="m">1</span><span class="w"> </span>dat
 <li><strong>Inlining and <code>//go:noinline</code> matter.</strong> Inlined functions may not appear as distinct frames unless you disable inlining for investigation.</li>
 </ul>
 <h3 id="33-the-pipeline-collection-symbolization-aggregation">3.3 The pipeline: collection → symbolization → aggregation</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ab53e98a202e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ab53e98a202e.png" alt="diagram"></div></p>
 <p>The profile file (<code>profile.proto</code>, usually <code>*.pb.gz</code>) is self-contained for stacks but <strong>not for symbols</strong> — <code>go tool pprof</code> needs the binary that produced it (or a local build at the same commit) to map addresses to <code>func/file:line</code>. In CI, archive the binary alongside the profile.</p>
 <h3 id="34-nethttppprof-the-prod-sampling-surface">3.4 <code>net/http/pprof</code> — the prod sampling surface</h3>
 <p>The standard library registers HTTP handlers when you import <code>net/http/pprof</code>. No init needed beyond the import.</p>
@@ -10036,9 +10036,9 @@ go<span class="w"> </span>tool<span class="w"> </span>pprof<span class="w"> </sp
 </table>
 <h3 id="43-walkthrough-reading-the-timeline">4.3 Walkthrough: reading the timeline</h3>
 <p>The timeline has <strong>horizontal tracks</strong> (y = goroutines and Ps) vs. time (x, nanoseconds). Color encodes goroutine state.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_953366a57bc3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_953366a57bc3.png" alt="diagram"></div></p>
 <p>More precise mental model as a flowchart:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aefd9bc8bbfd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aefd9bc8bbfd.png" alt="diagram"></div></p>
 <p>Step-by-step reading:</p>
 <ol>
 <li><strong>Set the window.</strong> Drag to zoom to the slow request (e.g., a 12 ms p99 span). The minimap at the top shows the full capture.</li>
@@ -10076,7 +10076,7 @@ go<span class="w"> </span>tool<span class="w"> </span>trace<span class="w"> </sp
 <p>The race detector and profilers are <em>dynamic</em> — they see what ran. <code>go vet</code> and <code>staticcheck</code> are <em>static</em> — they see what <em>could</em> go wrong without running, by analyzing the typed AST/SSA.</p>
 <h3 id="51-go-vet-the-analyzer-pipeline">5.1 <code>go vet</code> — the analyzer pipeline</h3>
 <p><code>go vet</code> is a driver that runs a suite of <strong>analyzers</strong> from <code>golang.org/x/tools/go/analysis</code>. Each analyzer declares the facts it needs, the files it inspects, and the diagnostics it produces. The driver builds an analysis graph, runs analyzers in dependency order, and prints <code>file:line:col: message</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e4bb8597e17e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e4bb8597e17e.png" alt="diagram"></div></p>
 <p>Running:</p>
 <div class="highlight"><pre><span></span><code>go<span class="w"> </span>vet<span class="w"> </span>./...<span class="w">                          </span><span class="c1"># all analyzers</span>
 go<span class="w"> </span>vet<span class="w"> </span>-vettool<span class="o">=</span><span class="k">$(</span>which<span class="w"> </span>shadow<span class="k">)</span><span class="w"> </span>./...<span class="w"> </span><span class="c1"># include shadow (not on by default — see note)</span>
@@ -10240,7 +10240,7 @@ staticcheck<span class="w"> </span>-checks<span class="w"> </span><span class="s
 <h2 id="6-backend-lens-ci-continuous-profiling-and-latency-playbooks">6. Backend lens — CI, continuous profiling, and latency playbooks</h2>
 <h3 id="61-the-ci-tooling-dag">6.1 The CI tooling DAG</h3>
 <p>Backend CI should run cheap static checks first, then functional tests, then expensive dynamic checks, then artifacts that depend on a green build.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9f505ec98c8d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9f505ec98c8d.png" alt="diagram"></div></p>
 <p>Practical notes:</p>
 <ul>
 <li><strong>Gate <code>vet</code> before <code>race</code>.</strong> A <code>printf</code> bug that <code>vet</code> catches in 2 s should not wait for a 10 min race job.</li>
@@ -10730,7 +10730,7 @@ file<span class="w"> </span>/tmp/app-pure
 <hr />
 <h2 id="5-calling-c-from-go-the-cgocall-path">5. Calling C from Go — the <code>cgocall</code> path</h2>
 <p>The hello example in §2 already showed the shape. The interesting part is what happens <em>between</em> the Go call and the C function:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8519b03b15d9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8519b03b15d9.png" alt="diagram"></div></p>
 <p>In <code>runtime</code> terms (see <code>src/runtime/cgocall.go</code>):</p>
 <ul>
 <li><code>runtime.cgocall(fn, arg)</code> is the entry. It calls <code>entersyscall</code> so the scheduler knows this <code>M</code> is blocked in C and can hand its <code>P</code> to another <code>M</code>.</li>
@@ -10855,7 +10855,7 @@ file<span class="w"> </span>/tmp/app-pure
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e9fbc983248c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e9fbc983248c.png" alt="diagram"></div></p>
 <h3 id="runtimekeepalive-the-minimal-guarantee"><code>runtime.KeepAlive</code> — the minimal guarantee</h3>
 <p>The compiler may consider a Go value dead <em>before</em> the <code>C.foo</code> call returns if it can prove the value is not used afterward. That allows the GC to reclaim the backing array while C still reads it.</p>
 <div class="highlight"><pre><span></span><code><span class="kd">func</span><span class="w"> </span><span class="nx">UseAfterFreeRisk</span><span class="p">(</span><span class="nx">data</span><span class="w"> </span><span class="p">[]</span><span class="kt">byte</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -10901,7 +10901,7 @@ valgrind<span class="w"> </span>--leak-check<span class="o">=</span>full<span cl
 <hr />
 <h2 id="8-threading-the-m-the-os-thread-and-__cgo_thread_start">8. Threading: the <code>M</code>, the OS thread, and <code>__cgo_thread_start</code></h2>
 <p>Go's scheduler multiplexes <code>G</code>s onto <code>M</code>s onto OS threads onto <code>P</code>s (see Chapter 4). C knows only OS threads and thread-local storage. <code>cgo</code> reconciles them:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2a5f8ed5d188.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2a5f8ed5d188.png" alt="diagram"></div></p>
 <p>Key mechanics:</p>
 <ul>
 <li><strong>Go → C (<code>cgocall</code>)</strong>: the calling <code>M</code> stays bound to its OS thread for the duration. <code>entersyscall</code> releases the <code>P</code> so another <code>M</code> can use it. The thread may switch to the <strong>system stack</strong> (<code>g0</code>) and, on some platforms, to a dedicated C stack. Signals and <code>cgo</code> traceback use <code>g0</code>.</li>
@@ -10959,7 +10959,7 @@ valgrind<span class="w"> </span>--leak-check<span class="o">=</span>full<span cl
 <span class="n">BenchmarkCgoWork</span><span class="o">-</span><span class="mi">8</span><span class="w">          </span><span class="mi">10000000</span><span class="w">  </span><span class="mf">138.0</span><span class="w"> </span><span class="n">ns</span><span class="o">/</span><span class="n">op</span><span class="w">    </span><span class="mi">0</span><span class="w"> </span><span class="n">B</span><span class="o">/</span><span class="n">op</span><span class="w">  </span><span class="mi">0</span><span class="w"> </span><span class="n">allocs</span><span class="o">/</span><span class="n">op</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="n">overhead</span><span class="w"> </span><span class="nl">amortized</span><span class="p">:</span><span class="w"> </span><span class="o">~</span><span class="mf">1.2</span><span class="err">×</span><span class="w"> </span><span class="n">slower</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_894af2a1ddb0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_894af2a1ddb0.png" alt="diagram"></div></p>
 <p>Lesson: the overhead is <strong>per call</strong>, not per unit of work. If each call does microseconds of real work (crypto, compression, syscall), the 100 ns tax is noise. If each call does nanoseconds (a tiny helper in a tight loop), the tax dominates — batch, or rewrite in Go.</p>
 <p><strong>Mitigations:</strong></p>
 <ul>
@@ -11060,7 +11060,7 @@ valgrind<span class="w"> </span>--leak-check<span class="o">=</span>full<span cl
 </ul>
 <h3 id="funcdata-and-pcdata-gc-and-stack-traces"><code>FUNCDATA</code> and <code>PCDATA</code> — GC and stack traces</h3>
 <p>Two pseudo-instructions the runtime needs but humans rarely write by hand — the compiler emits them, and hand-written assembly must preserve them when it calls Go or allocates:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e357888a95fb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e357888a95fb.png" alt="diagram"></div></p>
 <ul>
 <li><strong><code>FUNCDATA $0, &lt;sym&gt;</code></strong> — pointer to GC metadata (stack map) for the function. Without it, the GC cannot tell which words in the frame are pointers — it would either miss live objects or retain garbage.</li>
 <li><strong><code>PCDATA $0, $N</code></strong> — maps program counters to values (line numbers, stack-map indices, <code>pctab</code> for <code>pprof</code>). Each <code>CALL</code> site needs correct <code>PCDATA</code> so stack unwinding and profiling attribute samples correctly.</li>
@@ -11364,7 +11364,7 @@ cat<span class="w"> </span>ztypes_linux_amd64.go
 <h2 id="15-pure-go-ffi-syscall-vs-xsysunix-and-plugin">15. Pure-Go FFI: <code>syscall</code> vs. <code>x/sys/unix</code> and <code>plugin</code></h2>
 <p>Not every foreign call needs <code>cgo</code>. The Go project has been migrating <em>away</em> from <code>cgo</code> for syscalls for years.</p>
 <h3 id="syscall-stdlib-frozen-vs-xsysunix-active"><code>syscall</code> (stdlib, frozen) vs. <code>x/sys/unix</code> (active)</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8a21df9973fd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8a21df9973fd.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -11475,7 +11475,7 @@ cat<span class="w"> </span>ztypes_linux_amd64.go
 </ul>
 <p>Where it is used: narrow cases like <code>Caddy</code> modules, <code>Traefik</code> plugins, or research systems that need hot-reload of Go code without restarting the process. For most backends, <strong>ship a new binary</strong> (fast Go builds, immutable deploys) or use <strong>Wasm/RPC</strong> for isolation instead.</p>
 <h3 id="ffi-decision-tree">FFI decision tree</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e558d4ccc8f5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e558d4ccc8f5.png" alt="diagram"></div></p>
 <p>General rule: <strong>prefer <code>x/sys/unix</code> for syscalls, pure Go for everything else, <code>cgo</code> only when certification or a large irreplaceable C library forces it, and assembly only for small numeric kernels where <code>cgo</code> overhead would dominate.</strong></p>
 <hr />
 <h2 id="16-backend-lens-boringcrypto-libz-static-binaries-and-leak-auditing">16. Backend lens: <code>boringcrypto</code>, <code>libz</code>, static binaries, and leak auditing</h2>
@@ -11774,7 +11774,7 @@ $<span class="w"> </span>go<span class="w"> </span>version<span class="w"> </spa
 <span class="kd">func</span><span class="w"> </span><span class="nx">Mlockall</span><span class="p">()</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// no mlockall on darwin</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_691d772940c8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_691d772940c8.png" alt="diagram"></div></p>
 <p><em>Diagram 1 — Cross-compilation matrix: every GOOS/GOARCH pair is one env prefix with CGO_ENABLED=0; the CGO_ENABLED=1 path (highlighted) breaks the hermetic model and requires an external cross-compiler.</em></p>
 <h3 id="12-the-cgo-boundary">1.2 The cgo boundary</h3>
 <p>When any package in the transitive closure imports <code>"C"</code>, the build sets <code>CGO_ENABLED=1</code> (or fails if you forced <code>CGO_ENABLED=0</code>). At that point <code>cmd/go</code> no longer self-contains the build:</p>
@@ -11993,7 +11993,7 @@ $<span class="w"> </span>go<span class="w"> </span>work<span class="w"> </span>s
 <li><code>go.work</code> and <code>go.work.sum</code> should be committed if you want <code>git clone &amp;&amp; go build ./...</code> to work. Exclude them if you want every consumer to build each module independently — but then developers must create their own <code>go.work</code>.</li>
 <li><code>go list -m all</code> inside a workspace shows the <em>workspace-resolved</em> versions, not any single module's <code>go.mod</code> view. Use <code>GOWORK=off go list -m all</code> to see the single-module view when debugging version conflicts.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1a3f6877b23f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1a3f6877b23f.png" alt="diagram"></div></p>
 <p><em>Diagram 2 — go.work workspace graph: the workspace resolves the union of all members' dependencies; external consumers ignore go.work entirely.</em></p>
 <h3 id="22-monorepo-vs-multi-module-vs-polyrepo">2.2 Monorepo vs. multi-module vs. polyrepo</h3>
 <p>There are three repository shapes for a Go fleet, each with a different <code>go.work</code> role:</p>
@@ -12228,7 +12228,7 @@ $<span class="w"> </span>diffoscope<span class="w"> </span>payments-a<span class
 <span class="c1"># Without -trimpath, you will see DWARF paths differing: /home/alice/... vs /home/bob/...</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1be2841af2c1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1be2841af2c1.png" alt="diagram"></div></p>
 <p><em>Diagram 3 — Reproducibility pipeline: pinned inputs + -trimpath + SOURCE_DATE_EPOCH → deterministic binary; verification closes the loop.</em></p>
 <h3 id="32-reproducible-containers-ko-apko-goreleaser">3.2 Reproducible containers — <code>ko</code>, <code>apko</code>, <code>goreleaser</code></h3>
 <p>A reproducible binary is not enough if the container that carries it is not reproducible. Traditional <code>Dockerfile</code> builds embed timestamps, package-manager nondeterminism, and base-image drift. Three tools address this for Go:</p>
@@ -12859,7 +12859,7 @@ gc<span class="w"> </span><span class="m">2</span><span class="w"> </span>@0.189
 </code></pre></div>
 
 <p><code>GODEBUG</code> values are also available inside the binary via <code>runtime/debug.ReadBuildInfo</code> and <code>debug.SetGCPercent</code> / <code>debug.SetMemoryLimit</code> for programmatic control — but prefer <code>GOMEMLIMIT</code> env (Section 5.3) for memory tuning.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b4d7c6202935.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b4d7c6202935.png" alt="diagram"></div></p>
 <p><em>Diagram 4 — Observability stack: one binary emits metrics, logs, traces, and profiles; each plane is scraped independently and converges in Grafana.</em></p>
 <hr />
 <h2 id="5-deployment-images-signing-sbom-kubernetes">5. Deployment — images, signing, SBOM, Kubernetes</h2>
@@ -13002,7 +13002,7 @@ $<span class="w"> </span>cosign<span class="w"> </span>verify-attestation<span c
 </code></pre></div>
 
 <p><strong>What <code>go version -m</code> already gives you:</strong> For Go binaries, the SBOM-lite is embedded — <code>go version -m</code> lists every <code>dep</code> with version and <code>h1:</code> hash, plus <code>vcs.revision</code> and <code>build</code> settings. <code>syft</code> enriches this with base-image packages and a standard SPDX/CycloneDX envelope that vulnerability scanners (<code>grype</code>, <code>osv-scanner</code>) consume.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6ac1ea5cba8d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6ac1ea5cba8d.png" alt="diagram"></div></p>
 <p><em>Diagram 5 — Build → sign → SBOM → deploy supply chain: every artifact is hashed, signed keylessly, attested, and verified at admission.</em></p>
 <h3 id="54-kubernetes-deployment-resources-probes-gomaxprocsgomemlimit-admin-endpoints">5.4 Kubernetes deployment — resources, probes, GOMAXPROCS/GOMEMLIMIT, admin endpoints</h3>
 <p>The Go runtime must be told about its cgroup limits. By default, <code>GOMAXPROCS</code> is <code>runtime.NumCPU()</code> of the <em>host</em>, not the pod's <code>cpu</code> limit, and <code>GOMEMLIMIT</code> is unset (GC targets 100% of host memory). On a 96-core node with a <code>cpu: 500m</code> pod, Go will schedule 96 <code>P</code>s and GC as if it has 96 cores — burning CPU on preemption and scheduling. On a <code>memory: 256Mi</code> pod, it will GC too late and get OOMKilled.</p>
@@ -13342,7 +13342,7 @@ $<span class="w"> </span>cosign<span class="w"> </span>verify-attestation<span c
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_66bd21a40899.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_66bd21a40899.png" alt="diagram"></div></p>
 <p><em>Diagram 6 — Graceful shutdown sequence: SIGTERM → stop readiness → drain HTTP → close downstream → flush telemetry → exit, all within terminationGracePeriodSeconds.</em></p>
 <h3 id="62-common-mistakes-at-scale">6.2 Common mistakes at scale</h3>
 <table>

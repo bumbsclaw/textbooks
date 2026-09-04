@@ -333,7 +333,7 @@ build.</strong> The artifact inherits the trustworthiness of the <em>least</em> 
 one of source, a single transitive dependency, the compiler, a Gradle plugin, an environment
 variable, or a build-server process is adversary-controlled, the output is
 adversary-influenced — and it is signed and shipped as if it were not.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_985879e82ea3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_985879e82ea3.png" alt="diagram"></div></p>
 <p>The dashed line on the right is the trust that flows <em>out</em>. A registry accepts the artifact;
 a deployment system rolls it out; another team's build depends on it; an end user installs
 it. Every one of them is trusting the build function to have been honest. That is the trust
@@ -391,7 +391,7 @@ narrow and hard to spot.</p>
    bytes, leaking the signing key, or pushing to a registry the attacker controls.</p>
 </li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ed5622084e39.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ed5622084e39.png" alt="diagram"></div></p>
 <p>The parenthetical letters are SLSA v1.0 threat identifiers, which the next section defines.
 The point of the diagram is spatial: the threats are not clustered at "the end" where you
 sign — they are smeared across every stage, and several of them (dependency resolution,
@@ -592,7 +592,7 @@ hold the signing key. Your developer laptops do not (or should not) hold product
 credentials <em>and</em> the ability to emit signed releases. The build host holds all of it at
 once. It is, in the language of Book 1, Chapter 9, a <strong>concentration point</strong>: a node whose
 compromise yields disproportionate reward.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f2f44f0713e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8f2f44f0713e.png" alt="diagram"></div></p>
 <p>The reason this concentration is <em>fatal</em> rather than merely risky is that build compromise
 defeats the two controls organizations invest in most heavily and trust most deeply: <strong>source
 review</strong> and <strong>code signing</strong>. Consider what each control actually proves:</p>
@@ -621,7 +621,7 @@ developers' checkouts were clean, and yet the <em>shipped</em> Orion binaries co
 which SolarWinds' build then signed with SolarWinds' code-signing key and distributed through
 SolarWinds' official update channel. Customers' update clients verified the signature — a
 valid signature, over the tampered artifact — and installed it exactly as designed.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2736c218b6dd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2736c218b6dd.png" alt="diagram"></div></p>
 <p>Read the diagram as a checklist of every defense that did its job faithfully and still failed
 to help: source control served the honest source; code review approved honest source; the
 signing key signed; the customer verified. Each control answered the question it was designed
@@ -874,9 +874,9 @@ transform the source?" becomes a question you can actually answer.</p>
   platform from a single point of catastrophic failure into a single point of leverage.</li>
 </ul>
 <h3 id="slsa-threats-a-h-mapped-to-build-pipeline">SLSA threats A-H mapped to build pipeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c1869f6ca7af.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c1869f6ca7af.png" alt="diagram"></div></p>
 <h3 id="build-as-a-pure-function-ideal-vs-reality">Build as a pure function: ideal vs reality</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_de3acc8f3f16.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_de3acc8f3f16.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SLSA v1.0</strong>, <em>Supply-chain Levels for Software Artifacts</em> — the specification, the
@@ -1026,8 +1026,8 @@ pin.</p>
 </ul>
 <p>So: pursue hermeticity to control what goes in and to make reproducibility <em>achievable</em>; pursue
 reproducibility to make what comes out <em>verifiable</em>. They compose, but you have to do both.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2e6e9227b6a4.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4306bf115dab.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2e6e9227b6a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4306bf115dab.png" alt="diagram"></div></p>
 <h3 id="why-each-matters-for-security">Why each matters for security</h3>
 <p><strong>Hermeticity shrinks the attack surface and underpins provenance.</strong> Chapter 1 called the
 build the most over-privileged node in the pipeline. A non-hermetic build multiplies that
@@ -1054,7 +1054,7 @@ infrastructure at all.</p>
 still yield different bytes. This is unglamorous, empirical work — the Reproducible Builds
 project has spent a decade cataloguing these — but the categories are finite and well
 understood. Here is the taxonomy.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e95f78f13976.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e95f78f13976.png" alt="diagram"></div></p>
 <h3 id="timestamps">Timestamps</h3>
 <p>The single most common source. Compilers embed build dates via <code>__DATE__</code>/<code>__TIME__</code> macros;
 archive formats store per-entry modification times; documentation tools stamp "generated on…";
@@ -1388,7 +1388,7 @@ key matches, the cached output is <em>guaranteed</em> to be the output this acti
 because nothing outside the declared inputs can influence it. Hermeticity and cache correctness
 are the same property viewed from two angles (we return to this under the distributed-systems
 lens).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f10d882387db.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f10d882387db.png" alt="diagram"></div></p>
 <h4 id="nix-the-derivation">Nix: the derivation</h4>
 <p>Nix takes hermeticity furthest, treating the entire build as a <strong>pure function</strong> in a
 purpose-built functional language. The unit is a <strong>derivation</strong>: a complete, serialized
@@ -1403,7 +1403,7 @@ inputs land at the same path and can be shared. NixOS builds an entire operating
 way, which is why Nix is frequently called the gold standard for hermeticity: there is no
 <code>/usr</code> for a build to accidentally depend on — everything, down to <code>libc</code> and the compiler, is
 an explicit input in the store.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c6a6728c4074.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c6a6728c4074.png" alt="diagram"></div></p>
 <p>The distinction between Bazel and Nix is largely one of scope. Bazel is a <em>build tool</em> whose
 hermeticity is strong within a workspace and whose toolchains you configure. Nix is a <em>package
 manager and build system</em> whose hermeticity extends to the entire dependency closure including
@@ -1440,7 +1440,7 @@ rebuild the same source with the same declared inputs and publish the hash of wh
 consumer (or a distribution) collects these attestations and accepts the artifact only if
 enough independent rebuilders agree on the hash — and, crucially, if that agreed hash matches
 the officially published artifact.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6848170528ef.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6848170528ef.png" alt="diagram"></div></p>
 <p>The security property is powerful: to slip a backdoor past this, an attacker must either
 compromise the <em>source</em> (which is watched, reviewed, and public) or simultaneously compromise
 <em>enough independent rebuilders on independent infrastructure</em> to forge a consensus — a far
@@ -1551,9 +1551,9 @@ laptop build was not.</p>
   hermetic reproducible release builds.</li>
 </ul>
 <h3 id="hermetic-vs-reproducible-venn-and-payoff">Hermetic vs reproducible: Venn and payoff</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_95ba7adf5874.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_95ba7adf5874.png" alt="diagram"></div></p>
 <h3 id="sources-of-non-determinism-and-fixes">Sources of non-determinism and fixes</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ee02184c4f03.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ee02184c4f03.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>Reproducible Builds project</strong> — https://reproducible-builds.org/ — the definitions, the
@@ -1666,7 +1666,7 @@ the organizing spine of the whole schema:</p>
   verifier enforce policy on <em>how</em> the build was invoked (e.g., "only from the <code>main</code> branch
   via the release workflow").</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_754257f50440.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_754257f50440.png" alt="diagram"></div></p>
 <h3 id="the-slsa-v10-provenance-predicate-schema">The SLSA v1.0 provenance predicate schema</h3>
 <p>The v1.0 provenance is identified by the predicate type <strong><code>https://slsa.dev/provenance/v1</code></strong>.
 Its predicate object has exactly <strong>two top-level fields</strong>: <code>buildDefinition</code> and <code>runDetails</code>.
@@ -1752,7 +1752,7 @@ platform obtains a short-lived certificate from <strong>Fulcio</strong> bound to
 the DSSE, and records the signature in the <strong>Rekor</strong> transparency log. The <code>builder.id</code> in
 <code>runDetails</code> and the OIDC identity in the signing certificate should <em>agree</em> — that agreement is
 what makes the provenance unforgeable by anyone who is not that builder.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9ef0458f27eb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9ef0458f27eb.png" alt="diagram"></div></p>
 <p>The payoff of this layering is <em>generality</em>: the signing and transport machinery (in-toto +
 DSSE + Sigstore) is predicate-agnostic. Provenance is "just" the predicate type
 <code>https://slsa.dev/provenance/v1</code>. The same pipeline that signs and stores provenance stores
@@ -1848,7 +1848,7 @@ forged provenance would fail.</p>
 everything in L2. The progression is not "more provenance fields" — it is <em>increasing
 trustworthiness of the same provenance</em>, driven by <em>who generates it</em> and <em>how well the build
 is isolated from tampering with its own attestation</em>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eebba292e7c5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eebba292e7c5.png" alt="diagram"></div></p>
 <h3 id="build-l0-no-guarantees">Build L0 — no guarantees</h3>
 <p>L0 is the absence of any SLSA claim: no provenance is produced. This is where most software in
 the world sits today. There is nothing to verify, so a consumer has no machine-checkable basis
@@ -2053,7 +2053,7 @@ That is the point of the paved road.</p>
   signer</em> — is precisely the L3 property, expressed in Kubernetes terms. Chains can store the
   attestation in an OCI registry (as a referring artifact) or a transparency log.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f497c20eaea7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f497c20eaea7.png" alt="diagram"></div></p>
 <h2 id="verifying-provenance-the-consumer-side">Verifying provenance: the consumer side</h2>
 <p>Producing provenance is inert without verification — an unverified attestation is a comment
 field. Verification is where provenance <em>does work</em>, and it is the subject of Book 5, Chapter 8
@@ -2199,11 +2199,11 @@ hopeful assertion.</p>
   team's job, not a per-repo one.</li>
 </ul>
 <h3 id="slsa-provenance-generation-to-verification">SLSA provenance: generation to verification</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5f7c7bfdf127.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5f7c7bfdf127.png" alt="diagram"></div></p>
 <h3 id="provenance-fields-what-is-attested">Provenance fields: what is attested</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_57129ca4335e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_57129ca4335e.png" alt="diagram"></div></p>
 <h3 id="provenance-verification-decision">Provenance verification decision</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a6cabb62cb2c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a6cabb62cb2c.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SLSA v1.0</strong> — the specification, especially <em>Build track / levels</em> and the <em>Provenance</em>
@@ -2290,7 +2290,7 @@ source and you still face review and signing. Compromise production directly and
 face the source of truth. Compromise CI/CD and you have both ends of the pipe at once — which
 is exactly why, as Chapter 1 argued with SolarWinds, this node's compromise is uniquely
 catastrophic.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b6c8bac9d38.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6b6c8bac9d38.png" alt="diagram"></div></p>
 <p>The picture is a bowtie: many partly-trusted inputs on the left, a small set of
 highly-trusted outputs on the right, and the platform as the knot in the middle holding the
 credentials that make the right side possible. Everything an attacker wants is reachable <em>if</em>
@@ -2384,7 +2384,7 @@ is the vocabulary.</p>
   untrusted PR code with real privileges (the <code>pull_request_target</code> footgun below, or a
   non-ephemeral self-hosted runner), the fork PR becomes remote code execution inside CI.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10003877f492.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_10003877f492.png" alt="diagram"></div></p>
 <p>The defining feature is step 3: the platform runs code that an attacker influenced, holding
 credentials the attacker wants. Everything else is consequence. The rest of this chapter is,
 in effect, a survey of <em>how each platform makes step 3 reachable</em> and <em>what it hands you when
@@ -2426,7 +2426,7 @@ public PPE. The correct pattern is: use <code>pull_request</code> for anything t
 and reserve <code>pull_request_target</code> for jobs that do <em>not</em> check out or execute PR content, or
 split into a trusted labelling job and an unprivileged build job. Chapter 5 details the safe
 patterns.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f91196b76ab7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f91196b76ab7.png" alt="diagram"></div></p>
 <p><strong><code>GITHUB_TOKEN</code> permissions.</strong> Each workflow run gets an automatically-minted <code>GITHUB_TOKEN</code>
 scoped to the repository. Its permissions are configurable per-workflow or per-job with a
 <code>permissions:</code> block. Historically the default was broadly read-write; GitHub now lets orgs
@@ -2876,11 +2876,11 @@ in Chains.</p>
   kingdom — as tightly and short-lived as possible.</li>
 </ul>
 <h3 id="cicd-platform-attack-surface">CI/CD platform attack surface</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5ecbaeba845.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c5ecbaeba845.png" alt="diagram"></div></p>
 <h3 id="self-hosted-vs-hosted-runner-risk-tradeoff">Self-hosted vs hosted runner risk tradeoff</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_704dae3611ac.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_704dae3611ac.png" alt="diagram"></div></p>
 <h3 id="secrets-sprawl-in-cicd">Secrets sprawl in CI/CD</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c821dda84ae2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c821dda84ae2.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>OWASP</strong>, <em>Top 10 CI/CD Security Risks</em> (2022) — the canonical taxonomy used throughout this
@@ -2960,7 +2960,7 @@ on the <code>on:</code> key at the top, because the event determines three thing
 </ol>
 <p>Hold those three variables in your head; the rest of this chapter is largely about how each
 trigger sets them.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b72ca36c0675.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b72ca36c0675.png" alt="diagram"></div></p>
 <h3 id="the-github_token">The <code>GITHUB_TOKEN</code></h3>
 <p>At the start of every workflow run, GitHub mints a fresh installation access token for the
 repository and exposes it as the <code>GITHUB_TOKEN</code> secret (and as <code>github.token</code>). It is scoped
@@ -3067,7 +3067,7 @@ attacker's code executes <strong>in that privileged context</strong>. The <code>
 uses the write token to push a commit, publish a package, or open a PR that adds a backdoor.
 The attacker never needed commit access; opening a fork PR was enough. This is remote code
 execution with your secrets.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_864b4b96fa80.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_864b4b96fa80.png" alt="diagram"></div></p>
 <h3 id="the-safe-patterns">The safe patterns</h3>
 <p>There are three defensible options, in rough order of preference.</p>
 <p><strong>1. Use <code>pull_request</code> and do without secrets for untrusted PRs.</strong> If the job only needs to
@@ -3106,7 +3106,7 @@ vulnerable pattern.</p>
 <span class="w">        </span><span class="c1"># labeler reads changed paths from the API, does not run PR code</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eccf8b9194c8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eccf8b9194c8.png" alt="diagram"></div></p>
 <h2 id="script-injection-untrusted-input-into-run">Script injection: untrusted input into <code>run:</code></h2>
 <p>The second endemic class of Actions vulnerability needs no privileged trigger at all — only a
 <code>run:</code> step that interpolates attacker-controlled data. GitHub Actions expression
@@ -3175,7 +3175,7 @@ credential used to retarget the tags is believed to have been obtained via an ea
 compromise of another action (<code>reviewdog/action-setup</code>) that leaked a token belonging to the
 <code>tj-actions</code> automation. That is the transitive-graph risk made concrete — a compromise two
 hops away from your workflow.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_58c2934742a7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_58c2934742a7.png" alt="diagram"></div></p>
 <h3 id="pin-by-commit-sha">Pin by commit SHA</h3>
 <p>The fix is to pin every third-party action by its <strong>full 40-character commit SHA</strong>, not a tag:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Tag — mutable, resolved fresh every run</span>
@@ -3273,7 +3273,7 @@ provider, which <strong>validates GitHub's signature and checks the claims again
 if they match, it issues <strong>short-lived</strong> cloud credentials (an AWS STS session, a GCP access
 token, an Azure token). No secret is stored anywhere; the trust is rooted in GitHub's signed
 assertion of <em>which workflow is running</em>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8023846fa774.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8023846fa774.png" alt="diagram"></div></p>
 <p>Here is the AWS shape — federate into a role instead of storing keys:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">permissions</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">id-token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">write</span><span class="w">     </span><span class="c1"># REQUIRED to request the OIDC token</span>
@@ -3551,7 +3551,7 @@ them once, let Dependabot bump them thereafter.</p>
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a18d21ae876b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a18d21ae876b.png" alt="diagram"></div></p>
 <h2 id="distributed-systems-lens-the-org-config-is-a-fleet-control-plane">Distributed-systems lens: the org config is a fleet control plane</h2>
 <p>Everything above is written as if one engineer hardens one workflow. At fleet scale — hundreds
 of repos, dozens of teams, thousands of workflow files — that model fails. You cannot rely on
@@ -3628,9 +3628,9 @@ and <strong>Book 8's</strong> governance chapters.</p>
   YAML.</li>
 </ul>
 <h3 id="github-actions-hardening-checklist-flow">GitHub Actions hardening checklist flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b463b2a0ec0b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b463b2a0ec0b.png" alt="diagram"></div></p>
 <h3 id="pinned-action-tag-vs-sha">Pinned action: tag vs SHA</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_999ac4943a5b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_999ac4943a5b.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>GitHub Docs</strong>, <em>Security hardening for GitHub Actions</em> — the authoritative reference on
@@ -3727,7 +3727,7 @@ untrusted-adjacent input, and its runtime environment is stuffed with credential
 properties should never coexist, and in a naive CI setup they always do.</p>
 <p>The exposure is not one surface but many. It is worth enumerating them, because a mitigation
 that closes one leaves the others open.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_94468867fb16.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_94468867fb16.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Environment variables</strong> are the default injection mechanism and the worst one. An env var
   is process-global: every step in the job, every subprocess, and every dependency's lifecycle
@@ -3769,7 +3769,7 @@ ladder climbs toward.</p>
 <p>Frame everything that follows as four rungs. Each rung is a strict improvement in blast radius
 and exposure window over the one below it. You do not need to reach the top for every credential
 on day one, but you should know which rung each secret is on and be climbing.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bdd0f8d38d71.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bdd0f8d38d71.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -3928,7 +3928,7 @@ the CI provider, then everything above it inherits the weaknesses of rung 1: it 
 the leak surfaces, it is useful indefinitely if stolen, and it is exactly what a provider breach
 hands the attacker. Wrapping a thousand dynamic secrets behind one static bootstrap token means
 your real attack surface is that one token.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2fe3a94598c4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2fe3a94598c4.png" alt="diagram"></div></p>
 <p>The resolution is to replace the <em>stored bearer secret</em> with a <em>proof of identity that is minted
 fresh for each run and verified cryptographically</em>. The CI platform signs a token asserting "I am
 a job from repo X, branch Y, environment Z," and the resource verifies that assertion against a
@@ -3949,7 +3949,7 @@ cloud provider or secret manager is configured with a <strong>trust policy</stro
 object an OIDC identity provider plus an IAM role's trust relationship; GCP calls it a Workload
 Identity Federation pool) that says: "I trust tokens from this issuer, and if the claims match
 these conditions, I will exchange the token for a short-lived credential to this role."</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7179e223354a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7179e223354a.png" alt="diagram"></div></p>
 <p>The trust chain has three verifiable links. First, the cloud verifies the <strong>JWT signature</strong>
 against the CI provider's published JWKS (JSON Web Key Set) at a well-known URL — this proves the
 token was minted by the genuine CI OIDC provider and not forged. Second, it checks the <strong>audience</strong>
@@ -4209,7 +4209,7 @@ learned of their exposure months after the fact).</p>
 response is governed by the concentration property: you must rotate <em>everything the pipeline could
 touch</em>, not just the one credential you noticed. This is the instruction Codecov and CircleCI both
 gave their customers, and it is correct precisely because CI holds the whole drawer.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4592e7677fca.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4592e7677fca.png" alt="diagram"></div></p>
 <p>The blast-radius reasoning is the payoff of the whole chapter. On rung 1, the "inventory" step is
 enormous and the "rotate everything" step is a multi-day cross-team scramble touching every system
 the pipeline ever authenticated to — because the leaked credential was long-lived and broadly
@@ -4285,9 +4285,9 @@ notifications and had almost nothing to rotate.</p>
   long-lived secret; the payoff is super-linear in fleet size.</li>
 </ul>
 <h3 id="secret-exfiltration-paths-in-ci">Secret exfiltration paths in CI</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_337ed1b4774d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_337ed1b4774d.png" alt="diagram"></div></p>
 <h3 id="oidc-federation-short-lived-tokens">OIDC federation: short-lived tokens</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aa858fdd7b71.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aa858fdd7b71.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>HashiCorp Vault</strong>, <em>Dynamic Secrets</em>, <em>Database Secrets Engine</em>, and <em>JWT/OIDC Auth Method</em>
@@ -4377,7 +4377,7 @@ direct, indirect, public — comes from the CI/CD attack research originally pub
 Security (later Palo Alto Networks / Prisma Cloud), which also seeded the OWASP Top 10 CI/CD
 Security Risks. The three flavours differ only in <em>which</em> node of the tree the attacker
 influences and <em>how</em> they trigger execution; the payoff is identical.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ee396bf51c6e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ee396bf51c6e.png" alt="diagram"></div></p>
 <h2 id="direct-ppe-d-ppe-editing-the-pipeline-definition">Direct PPE (D-PPE): editing the pipeline definition</h2>
 <p>Direct PPE is the obvious case. The attacker modifies the pipeline definition itself and the
 platform runs the modified version. The subtlety is not the concept but the <em>triggering
@@ -4508,7 +4508,7 @@ who trusts it.</p>
 <strong>ephemeral, isolated</strong> runners, and never on a runner or in a job that can reach production
 credentials. Public PPE is simply the trusted/untrusted split failing at the repository's outer
 boundary.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4200f33539dc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4200f33539dc.png" alt="diagram"></div></p>
 <h3 id="ppe-at-a-glance">PPE at a glance</h3>
 <table>
 <thead>
@@ -4619,7 +4619,7 @@ and tooling exists to automate planting poisoned entries; GitHub's scope restric
 not eliminate the readable-upward path, and fork PRs are more constrained (they cannot write into
 the base repo's cache scope). The residual risk lives in the <em>same-repo lower-trust</em> write that a
 higher-trust read consumes.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9686fba8695b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9686fba8695b.png" alt="diagram"></div></p>
 <p>The defense is <strong>trust-scoping</strong>: the cache namespace a trusted build reads must be writable <em>only</em>
 by equally-trusted contexts. Concretely — separate cache keys or separate cache backends for
 PR/untrusted builds versus protected-branch builds; never let a build that runs untrusted code
@@ -4708,7 +4708,7 @@ provenance at every trust transition</strong> — publish, admission, deploy. Pr
 <em>digest</em>; signing binds that digest to a builder identity. Any post-build swap changes the digest,
 so the signature no longer verifies and the provenance subject no longer matches — the substitution
 is caught at the gate.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0dc95dabaa47.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0dc95dabaa47.png" alt="diagram"></div></p>
 <p>This is why provenance and signing are framed throughout this suite as <em>detection</em> controls, not
 prevention: they do not stop a privileged actor from replacing the artifact, but they guarantee the
 replacement cannot pass as the original. The detection is only as strong as the isolation of the
@@ -4801,7 +4801,7 @@ subsumes the others. The single structural defense against pipeline poisoning is
 execution into an untrusted zone that runs repo/PR/fork code with no secrets and no deploy path,
 and a trusted zone that holds privilege but never executes unreviewed input</strong> — with a hard
 boundary, and only vetted data crossing it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1cab3405efaf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1cab3405efaf.png" alt="diagram"></div></p>
 <p>Everything else in the chapter is an attack that <em>violates</em> this boundary: PPE runs untrusted code
 in the trusted zone; cross-context cache poisoning lets untrusted-zone writes flow into
 trusted-zone reads; artifact tampering slips modified bytes across the boundary without
@@ -4874,9 +4874,9 @@ rather than something each team must instrument itself.</p>
   split in the paved-road pipeline so no team can accidentally opt out of it.</li>
 </ul>
 <h3 id="cache-poisoning-attack">Cache poisoning attack</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_90ea84b97822.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_90ea84b97822.png" alt="diagram"></div></p>
 <h3 id="pipeline-injection-via-untrusted-input">Pipeline injection via untrusted input</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d0cac30507e0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d0cac30507e0.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>OWASP Top 10 CI/CD Security Risks (2022)</strong> — especially CICD-SEC-4 (Poisoned Pipeline
@@ -4985,7 +4985,7 @@ weak isolation can fail the other way: the job is destroyed after, but <em>durin
 escape reached a co-tenant on the same host. Neither property substitutes for the other. SLSA L3's
 isolation requirement and the anti-persistence goal are two axes, and a serious build platform sits
 in the corner where both are satisfied.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_52695a13a08d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_52695a13a08d.png" alt="diagram"></div></p>
 <h2 id="the-isolation-spectrum">The isolation spectrum</h2>
 <p>"Isolated" is not binary. It is a spectrum of mechanisms with a hard trade-off: stronger isolation
 costs more startup latency, more memory, and often more operational complexity. The single most
@@ -5065,7 +5065,7 @@ of anything above the hypervisor with other tenants. It is also the heaviest: se
 OS image, a whole guest to schedule. At fleet scale you amortize this with warm pools and image
 snapshots, but the cold-start and per-VM memory cost is real. When a build is fully untrusted and you
 want the least clever, most auditable boundary, a fresh VM per job is it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3d3e72738e3a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3d3e72738e3a.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -5160,7 +5160,7 @@ layered tarball with a manifest. That does not intrinsically require host-level 
   privileged daemon.</li>
 <li><strong><code>img</code></strong> is a further daemonless, rootless BuildKit frontend in the same family.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a30d3aac9b60.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a30d3aac9b60.png" alt="diagram"></div></p>
 <p>The security win is direct: none of these need <code>--privileged</code>, none need the host Docker socket, and
 all run as (or close to) an unprivileged user. You keep the container-build capability without
 punching the isolation hole. On stronger substrates you can go further — run the rootless builder
@@ -5205,7 +5205,7 @@ Each job therefore gets a clean pod with clean volumes, and the isolation is wha
 sandbox provides (namespace container by default; gVisor via a <code>RuntimeClass</code>, or a microVM runtime, if
 you want a stronger boundary). ARC is the canonical "ephemeral isolated runners as a platform capability"
 implementation for GitHub-centric orgs.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e47c639768d5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e47c639768d5.png" alt="diagram"></div></p>
 <h3 id="gitlab-and-jenkins">GitLab and Jenkins</h3>
 <p>The same pattern appears everywhere the ecosystem runs at scale:</p>
 <ul>
@@ -5397,7 +5397,7 @@ distinction from Chapter 5, backed by <em>physically separate runner groups</em>
 more important than any single isolation technology: perfect microVM isolation on a pool that
 nonetheless holds production secrets <em>and</em> runs fork code has still handed the fork code a shot at those
 secrets during the build.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4b28b3b413f2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4b28b3b413f2.png" alt="diagram"></div></p>
 <h2 id="achieving-slsa-l3-through-the-build-environment">Achieving SLSA L3 through the build environment</h2>
 <p>Now tie it together. Chapter 3 defined SLSA Build L3 as adding, on top of L2's signed provenance from a
 hosted platform, two requirements: the build must be <strong>isolated</strong> (builds cannot influence one another,
@@ -5421,7 +5421,7 @@ on; it is what you get when the environment is built correctly.</p>
   isolated context using GitHub's OIDC identity — the ephemeral, isolated hosted runner is the substrate
   that makes the attestation trustworthy.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_50100b8dab29.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_50100b8dab29.png" alt="diagram"></div></p>
 <p>This is why L3 is achievable "for free" on a well-designed hosted platform and painful to bolt onto a
 persistent self-hosted runner: on the hosted platform the ephemerality, isolation, and out-of-band
 signing are structural; on the persistent runner you have to <em>recreate</em> all three, and if the build
@@ -5501,9 +5501,9 @@ the only way it survives contact with a hundred teams shipping continuously.</p>
   onto persistent self-hosted runners.</li>
 </ul>
 <h3 id="ephemeral-runner-lifecycle">Ephemeral runner lifecycle</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0ac689603897.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0ac689603897.png" alt="diagram"></div></p>
 <h3 id="persistent-vs-ephemeral-blast-radius">Persistent vs ephemeral: blast radius</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6add50b14b42.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6add50b14b42.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SLSA v1.0 — Build track requirements and Threats.</strong> The normative L3 isolation and provenance-
@@ -5658,7 +5658,7 @@ to at least one of them.</p>
 <p>Detection is only as good as its inputs. A build has six telemetry sources worth collecting, each
 answering a different question and each catching a different attack. Treat them as a portfolio: no
 single source is sufficient, and the strongest detections correlate across two or more.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3d50416d2f0b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3d50416d2f0b.png" alt="diagram"></div></p>
 <h3 id="1-build-and-ci-audit-logs-who-changed-the-machine">1. Build and CI audit logs — who changed the machine</h3>
 <p>The control plane of your CI system emits an audit stream, and it is the cheapest, highest-value
 telemetry you are probably already ignoring. GitHub emits an <strong>organization and enterprise audit
@@ -5824,7 +5824,7 @@ until anomalies have nowhere to hide.</strong> The more hermetic the build, the 
 higher the signal-to-noise of any deviation. A build that should only ever contact your internal
 proxy, caught contacting an external IP, is not a subtle statistical anomaly requiring machine
 learning — it is a boolean rule with near-zero false positives.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_208a171aa14d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_208a171aa14d.png" alt="diagram"></div></p>
 <p>Operationally: run in <strong>audit mode</strong> first to <em>learn</em> the legitimate set (this is how
 Harden-Runner's "recommended policy" is generated), review the learned set, promote it to an
 allowlist, then move to <strong>block mode</strong>. Audit mode is itself detection — you are watching what the
@@ -5835,7 +5835,7 @@ model.</p>
 for a pipeline is the learned answer to: what hosts does this build contact? what processes does it
 run? what files does it read and write? Build the profile from a window of known-good runs, then
 alert on deviation.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd50b55aa57d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fd50b55aa57d.png" alt="diagram"></div></p>
 <p>Baselining is more powerful than a single allowlist dimension and correspondingly more work: you
 must handle <em>legitimate</em> drift (a new dependency that adds a compiler, a new registry mirror) without
 drowning in false positives every time a <code>package.json</code> changes. Two things make it survivable.
@@ -5935,7 +5935,7 @@ long-lived runners.</p>
 <strong>independent rebuild and compare.</strong> If a build is reproducible — same source, same inputs, byte-for-byte
 same output — then you can detect tampering <em>without ever inspecting the builder</em> by rebuilding the
 artifact on independent infrastructure and comparing digests.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_78a4d93ea1aa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_78a4d93ea1aa.png" alt="diagram"></div></p>
 <p>This is not theoretical. Debian's reproducible-builds effort and the <em>rebuilderd</em> project operate
 exactly this pipeline at distribution scale: rebuild published packages independently and flag any
 that do not reproduce. Applied to your own build, an independent rebuilder that disagrees with your
@@ -5950,7 +5950,7 @@ have caught Codecov?</p>
 <p>The malicious behavior, stripped to its network essence, was: the tampered Bash Uploader, running
 inside a customer's CI job, read the job's environment variables (secrets) and sent them via an
 outbound connection to an attacker-controlled host that the legitimate uploader never contacted.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_29fcf3c05515.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_29fcf3c05515.png" alt="diagram"></div></p>
 <p>Every layer of this chapter would have caught it independently:</p>
 <ul>
 <li><strong>Egress allowlisting</strong> (Approach 1): the uploader contacted a host outside the tiny set a coverage
@@ -5977,7 +5977,7 @@ investigate later. On an ephemeral runner <strong>there is no later</strong>: th
 is destroyed and every process list, every open-file record, every connection log dies with it. The
 telemetry must be <strong>streamed out in real time, during the job</strong>, to a central platform, or it does not
 exist when you need it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8c7bd39c316b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8c7bd39c316b.png" alt="diagram"></div></p>
 <p>Concretely: run the eBPF agent (Falco, Tetragon, Harden-Runner) as a sidecar or DaemonSet co-located
 with the runner, and have it push events continuously to a collector — a Fluent Bit / Vector /
 OpenTelemetry pipeline, or the agent's native sink — that lands them in a SIEM (Splunk, Elastic,
@@ -6129,9 +6129,9 @@ platform</strong>, and it has the same shape as production observability:</p>
   not a customer's incident two months later.</li>
 </ul>
 <h3 id="build-observability-pillars">Build observability pillars</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_edb72535300c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_edb72535300c.png" alt="diagram"></div></p>
 <h3 id="detecting-anomalous-builds">Detecting anomalous builds</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1e3ff406f0f1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1e3ff406f0f1.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>CISA / Mandiant (FireEye) — SolarWinds SUNBURST and SUNSPOT analysis.</strong> CrowdStrike's technical
@@ -6266,7 +6266,7 @@ and no amount of policy enforcement saves you.</p>
 <h2 id="the-reference-architecture">The reference architecture</h2>
 <p>Here is the whole book, composed into one system. Every stage maps to a chapter; the platform's job
 is to own each stage so the tenant inherits it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a9c448d759d7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a9c448d759d7.png" alt="diagram"></div></p>
 <p>Read the diagram left to right as a chain of custody, and notice that the tenant's contribution is
 tiny: signed source and a one-line build config. Everything inside the platform boundary is provided.</p>
 <p><strong>Source integrity (Book 7).</strong> The chain begins before the platform: the platform builds only from
@@ -6442,7 +6442,7 @@ individual pipeline, can quietly grant untrusted code the privileges of trusted 
 <p>A platform nobody uses secures nothing. Adoption is the whole game, and adoption is an
 organizational problem at least as much as a technical one. The technical lever is to make the
 secure path <em>dramatically</em> easier than rolling your own.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e2fc0f821576.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e2fc0f821576.png" alt="diagram"></div></p>
 <h3 id="the-build-abstraction">The <code>build</code> abstraction</h3>
 <p>The unit of adoption is a <strong>thin abstraction</strong> that hides the security machinery. On GitHub Actions
 this is a <strong>reusable workflow</strong> or a small set of composite actions the platform team owns and
@@ -6687,7 +6687,7 @@ Ken Thompson's <em>Reflections on Trusting Trust</em> (Book 7, Chapter 5; Book 1
 6) at the level of an entire organization: a compromised builder can produce clean-looking
 attestations for backdoored artifacts, and the attestation machinery cannot detect its own
 subversion.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_33863f246b89.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_33863f246b89.png" alt="diagram"></div></p>
 <p>You cannot escape the recursion — every builder is built by <em>some</em> prior builder — but you can
 <strong>bottom it out</strong> in a small, well-defended, externally-verifiable trust anchor, and you can shrink
 the trusted computing base you must take on faith:</p>
@@ -6720,7 +6720,7 @@ center of its supply chain.</p>
 <p>You do not build all of this at once, and you should not try. Book 1, Chapter 10 framed supply-chain
 programs as a maturity progression, and the build platform follows the same crawl/walk/run arc. Each
 level is independently valuable, shippable, and a prerequisite for the next.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2f5e1509c479.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2f5e1509c479.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -6932,9 +6932,9 @@ for everything you ship.</p>
   Trusting Trust.</li>
 </ul>
 <h3 id="secure-build-platform-reference-architecture">Secure build platform reference architecture</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_142cd9778024.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_142cd9778024.png" alt="diagram"></div></p>
 <h3 id="platform-hardening-layers">Platform hardening layers</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_83465462e92d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_83465462e92d.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><strong>SLSA v1.0 — Build track and Threats &amp; mitigations.</strong> The normative basis for "everything built

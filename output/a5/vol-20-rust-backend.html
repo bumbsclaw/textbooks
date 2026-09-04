@@ -391,7 +391,7 @@ stable-x86_64-unknown-linux-gnu<span class="w"> </span><span class="o">(</span>d
 </tbody>
 </table>
 <p>For CI pipelines, the typical sequence is: <code>cargo fmt --check</code> → <code>cargo clippy --workspace</code> → <code>cargo test --workspace</code> → <code>cargo build --release</code>. Each step is independent and can be parallelized across CI runners for faster feedback.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4eb418667f1e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4eb418667f1e.png" alt="diagram"></div></p>
 <p>Cargo resolves the full dependency graph, downloads crates from the registry, executes any <code>build.rs</code> scripts, invokes <code>rustc</code> once per crate in topological order, and links the final artifact. The <code>target/</code> directory caches all intermediate artifacts — <code>rlib</code> files for library crates, object files, and dependency metadata — enabling incremental rebuilds.</p>
 <h3 id="14-cratesio-the-registry">1.4 crates.io: The Registry</h3>
 <p>crates.io is the official package registry, hosting over 150,000 crates. Each crate is a versioned tarball containing <code>Cargo.toml</code> and source. Cargo downloads crates via HTTPS from static file endpoints and indexes them via a sparse Git protocol.</p>
@@ -412,7 +412,7 @@ stable-x86_64-unknown-linux-gnu<span class="w"> </span><span class="o">(</span>d
 <p>The resolver produces a single <code>Cargo.lock</code> for the entire workspace, ensuring that all crates in the project use the same versions of shared dependencies. This is a significant advantage over ecosystems like npm, where each package can have its own nested <code>node_modules</code> with different versions of the same library.</p>
 <h2 id="2-crate-types-what-the-compiler-produces">2. Crate Types: What the Compiler Produces</h2>
 <p>The <code>crate-type</code> field in <code>Cargo.toml</code> (or the <code>--crate-type</code> flag to <code>rustc</code>) controls what kind of artifact the compiler produces. This matters enormously in backend systems where you may need a shared library for FFI, a static library for embedded targets, or a binary for a container image.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a143cf3e15a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6a143cf3e15a.png" alt="diagram"></div></p>
 <h3 id="21-binary-crates-bin">2.1 Binary Crates (<code>bin</code>)</h3>
 <p>A binary crate produces an executable. The crate root must contain a <code>fn main()</code>. In a workspace, you declare a binary crate like this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Cargo.toml</span>
@@ -578,7 +578,7 @@ $<span class="w"> </span>cargo<span class="w"> </span><span class="nb">test</spa
 <p>Features are additive — enabling a feature can only add code, never remove it. This is a deliberate design choice that prevents dependency conflicts when two crates enable different features of the same dependency.</p>
 <h3 id="42-feature-unification">4.2 Feature Unification</h3>
 <p>Feature unification is one of the most misunderstood aspects of Cargo's dependency resolution. When two crates in the same build depend on the same library with different features, Cargo enables <em>the union</em> of all requested features — not the intersection, and not independent resolutions.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b2beca5136a1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b2beca5136a1.png" alt="diagram"></div></p>
 <p>In this example, <code>my-lib</code> is used by both <code>my-service</code> (with the <code>json</code> feature) and <code>my-tool</code> (with the <code>grpc</code> feature). Cargo resolves <code>my-lib</code> with <em>both</em> features enabled for the entire build graph. This means <code>my-service</code> — which only requested <code>json</code> — will also pull in <code>tonic</code> and <code>prost</code> as transitive dependencies.</p>
 <p>This has real consequences for backend builds: feature unification can pull in unexpected transitive dependencies, increasing compilation time and binary size. The mitigation is to structure workspaces so that feature-gated dependencies are separated into distinct crates, and to use <code>cargo tree -e features</code> to inspect the resolved feature graph.</p>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>cargo<span class="w"> </span>tree<span class="w"> </span>-e<span class="w"> </span>features<span class="w"> </span>-p<span class="w"> </span>my-lib
@@ -610,7 +610,7 @@ my-lib<span class="w"> </span>v0.1.0
 <span class="n">thiserror</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4cf155cce5f2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4cf155cce5f2.png" alt="diagram"></div></p>
 <p>Workspaces solve several backend engineering problems:</p>
 <ul>
 <li><strong>Atomic dependency updates:</strong> <code>cargo update</code> updates a single <code>Cargo.lock</code> for all crates, ensuring that inter-crate dependencies are consistent.</li>
@@ -620,7 +620,7 @@ my-lib<span class="w"> </span>v0.1.0
 </ul>
 <h2 id="5-the-compilation-pipeline-source-to-binary">5. The Compilation Pipeline: Source to Binary</h2>
 <p>Understanding what <code>rustc</code> does between reading your source and producing a binary is critical for diagnosing build failures, understanding error messages, and tuning performance.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_73405cb8c699.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_73405cb8c699.png" alt="diagram"></div></p>
 <h3 id="51-source-to-hir">5.1 Source to HIR</h3>
 <p>The compiler first parses source text into a concrete syntax tree (CST), expands macros (including procedural macros), resolves names, and then lowers the resulting AST into HIR (High-Level IR). HIR is similar to the AST but with some desugaring already applied — <code>for</code> loops become <code>loop</code>/<code>match</code>, <code>?</code> becomes <code>match</code> on <code>Result</code>, and closures are represented uniformly.</p>
 <p>You can inspect HIR with <code>rustc --emit hir</code>, but it is rarely useful in practice. HIR exists primarily as the input to the type checker.</p>
@@ -695,7 +695,7 @@ start:
 <h3 id="55-codegen-units">5.5 Codegen Units</h3>
 <p>After monomorphization, the compiler partitions the resulting functions into codegen units (CGUs). Each CGU is compiled to LLVM IR independently and then to an object file. Multiple CGUs are then linked together.</p>
 <p>The number of codegen units is controlled by <code>-C codegen-units=N</code> (default: 16 in debug, 1 in release with LTO). More CGUs mean more parallelism during compilation, but LLVM has less opportunity to optimize across CGU boundaries.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a2d9c33fed11.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a2d9c33fed11.png" alt="diagram"></div></p>
 <p>For backend CI pipelines, CGU count is a knob for build speed: <code>codegen-units = 1</code> produces a faster binary but takes longer to compile, while <code>codegen-units = 16</code> compiles faster but produces a slower binary. The default is a reasonable trade-off for development, but release builds should use LTO (see §7).</p>
 <h3 id="56-linking">5.6 Linking</h3>
 <p>The final step is linking — combining all object files and system libraries into the output artifact. Rust uses <code>cc</code> (the system C compiler) as the linker on Unix, or <code>link.exe</code> on Windows. The linker resolves symbols, performs relocations, and produces the final ELF/PE/Mach-O binary.</p>
@@ -790,7 +790,7 @@ start:
 
 <h3 id="72-incremental-compilation">7.2 Incremental Compilation</h3>
 <p>Rust's incremental compilation system caches intermediate results of the compilation pipeline so that changes to one function do not require recompiling unrelated functions. The incremental query system works by tracking which compilation queries (e.g., type-checking a function, computing the MIR of a function, monomorphizing a generic call) were invoked during the previous build, and re-running only the queries whose inputs changed.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2abaa2c7a30c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2abaa2c7a30c.png" alt="diagram"></div></p>
 <p>Incremental compilation is enabled by default in debug builds and disabled in release builds (because release optimizations are not incremental-friendly). The cache lives in <code>target/debug/incremental/</code> and can be several gigabytes for large workspaces.</p>
 <p>Key facts for backend teams:</p>
 <ul>
@@ -1217,7 +1217,7 @@ help: consider cloning the value if the performance cost is acceptable
 <hr />
 <h2 id="5-the-borrowing-rules-visualized-the-borrow-state-machine">5. The Borrowing Rules Visualized — The Borrow State Machine</h2>
 <p>The borrow checker can be understood as a state machine tracking each place (variable, field, index) through its lifetime.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_78d3eed86c6c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_78d3eed86c6c.png" alt="diagram"></div></p>
 <p><strong>Diagram 2 — Borrow state machine.</strong> Each place moves between uninitialized, owned, shared-borrowed, exclusively-borrowed, and moved. NLL returns a place to <code>Owned</code> when the loan's last use passes, not when the lexical scope ends.</p>
 <p>The rules in their canonical form:</p>
 <ol>
@@ -1281,7 +1281,7 @@ help: consider cloning the value if the performance cost is acceptable
 </code></pre></div>
 
 <p>NLL is implemented as a <strong>liveness + loan invalidation</strong> analysis. The compiler computes where each reference is live and where each loan (the permission to access a place) is active, then checks that conflicting loans do not overlap.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_774bef75e5a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_774bef75e5a4.png" alt="diagram"></div></p>
 <p><strong>Diagram 3 — Lexical vs. NLL region diagram.</strong> Identical source, different region computation. NLL shrinks the loan to the last use of the reference, accepting strictly more programs.</p>
 <p>A more realistic NLL example — conditional control flow:</p>
 <div class="highlight"><pre><span></span><code><span class="k">fn</span><span class="w"> </span><span class="nf">get_or_insert</span><span class="p">(</span><span class="n">map</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">collections</span><span class="p">::</span><span class="n">HashMap</span><span class="o">&lt;</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kp">&amp;</span><span class="nb">String</span><span class="w"> </span><span class="p">{</span>
@@ -1361,7 +1361,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 <div class="highlight"><pre><span></span><code><span class="nv">RUSTFLAGS</span><span class="o">=</span><span class="s2">&quot;-Z polonius&quot;</span><span class="w"> </span>cargo<span class="w"> </span>+nightly<span class="w"> </span>check
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a58690d32b03.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a58690d32b03.png" alt="diagram"></div></p>
 <p><strong>Diagram 4 — Borrow checker generations.</strong> Each generation shrinks the computed borrow region while preserving soundness. Polonius is the first to be path-sensitive.</p>
 <hr />
 <h2 id="7-reborrowing-the-implicit-you-did-not-write">7. Reborrowing — The Implicit <code>&amp;*</code> You Did Not Write</h2>
@@ -1390,7 +1390,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eceab795c746.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eceab795c746.png" alt="diagram"></div></p>
 <p><strong>Diagram 5 — Reborrowing desugaring.</strong> <code>write_byte(r, …)</code> is sugar for <code>write_byte(&amp;mut *r, …)</code> — a shorter loan derived from <code>r</code> that ends at the call, leaving <code>r</code> intact.</p>
 <p>Reborrowing also applies to shared references, but there it is <code>&amp;*r</code> producing a new shared loan that can coexist. The key properties:</p>
 <ul>
@@ -1439,7 +1439,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 </code></pre></div>
 
 <p>General rule: when a method call has the form <code>receiver.method(args...)</code> and <code>receiver</code> is an exclusive borrow, the compiler splits that borrow into a <strong>reservation</strong> (checked for conflicts but not yet exclusive) and an <strong>activation</strong> (becomes exclusive at the call). Shared borrows of the same place are allowed between reservation and activation — but not after activation.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c9af55f89dbc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c9af55f89dbc.png" alt="diagram"></div></p>
 <p><strong>Diagram 6 — Two-phase borrow timeline.</strong> Reservation permits shared borrows for argument evaluation; activation makes the borrow exclusive for the call itself. Without this split, <code>v.push(v.len())</code> would be ill-formed.</p>
 <p>Two-phase borrows only apply to the <strong>receiver</strong> of a method call. This still fails:</p>
 <div class="highlight"><pre><span></span><code><span class="k">fn</span><span class="w"> </span><span class="nf">print_and_push</span><span class="p">(</span><span class="n">v</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u32</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">u32</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -1515,7 +1515,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 <span class="c1">// dropping listener</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7f27d3ade3f0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7f27d3ade3f0.png" alt="diagram"></div></p>
 <p><strong>Diagram 7 — Drop order graph.</strong> Variables drop in reverse declaration order; struct fields drop in reverse declaration order after the struct's own <code>Drop::drop</code> body.</p>
 <p>Drop order matters for correctness: a <code>ConnectionPool</code> that holds <code>TcpStream</code>s must drop streams before the runtime handle they depend on. Declaration order encodes this dependency — and getting it wrong produces a use-after-free that <code>Drop</code> ordering prevents, or a panic during drop that aborts the process.</p>
 <p>Panics during drop are abortive — <code>Drop::drop</code> must not panic. If a drop panics while already unwinding from another panic, the process aborts (<code>double panic → abort</code>). Backend services should keep <code>Drop</code> implementations infallible.</p>
@@ -1914,7 +1914,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 <span class="c1">// The return type is &amp;&#39;a, the shorter of the two</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9dd236c7018c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9dd236c7018c.png" alt="diagram"></div></p>
 <p><strong>Diagram 1 — Lifetime region graph.</strong> <code>'static</code> outlives every other region. <code>'outer</code> (the function body) outlives any parameter lifetimes. <code>'a: 'b</code> means <code>'a</code> is at least as long as <code>'b</code>.</p>
 <h3 id="12-static-not-a-guarantee-of-eternal-life">1.2 <code>'static</code> — Not a Guarantee of Eternal Life</h3>
 <p><code>'static</code> means the reference is valid for the entire program execution. It does <strong>not</strong> mean the data lives forever — it means the reference <em>could</em> live that long. A <code>String</code> moved into a <code>static</code> variable has <code>'static</code> lifetime. A <code>&amp;'static str</code> points to data baked into the binary (string literals). But a reference to a <code>String</code> on the stack is <em>never</em> <code>'static</code>, no matter how long the stack frame lives.</p>
@@ -1926,7 +1926,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 <li><strong>If there is exactly one input lifetime parameter, that lifetime is assigned to all output references.</strong> <code>fn foo(x: &amp;str) -&gt; &amp;str</code> becomes <code>fn foo&lt;'a&gt;(x: &amp;'a str) -&gt; &amp;'a str</code>.</li>
 <li><strong>If the input is a method reference (<code>&amp;self</code> or <code>&amp;mut self</code>), the lifetime of <code>self</code> is assigned to all output references.</strong> <code>fn foo(&amp;self) -&gt; &amp;str</code> becomes <code>fn foo&lt;'a&gt;(&amp;'a self) -&gt; &amp;'a str</code>.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9c2494478583.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9c2494478583.png" alt="diagram"></div></p>
 <p><strong>Diagram 2 — Lifetime elision rules flowchart.</strong> Rules are applied in order. If none produce a unique output lifetime, the compiler rejects the signature.</p>
 <p>Elision fails when the function has multiple input lifetimes and no <code>&amp;self</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// This fails — two input lifetimes, no &amp;self:</span>
@@ -2040,7 +2040,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 </table>
 <h3 id="21-variance-in-rust-the-full-matrix">2.1 Variance in Rust — The Full Matrix</h3>
 <p>Rust applies variance rules to two positions: <strong>type parameters</strong> and <strong>lifetime parameters</strong>. The rules for common types:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_860524410ddb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_860524410ddb.png" alt="diagram"></div></p>
 <p><strong>Diagram 3 — Variance table matrix.</strong> Covariant positions preserve subtyping direction; contravariant positions reverse it; invariant positions block it entirely.</p>
 <p><code>*mut T</code> vs <code>&amp;mut T</code> — why raw pointers are special: <code>&amp;mut T</code> is <strong>invariant</strong> in <code>T</code> (aliasing XOR mutability must hold), but <code>*mut T</code> is <strong>covariant</strong> in <code>T</code>. A <code>*mut &amp;'long str</code> can coerce to <code>*mut &amp;'short str</code> because raw pointers carry no aliasing guarantee — the compiler does not assume exclusive access, so shortening the lifetime is sound. This is why <code>unsafe</code> code that converts <code>&amp;mut T</code> to <code>*mut T</code> can perform lifetime coercions that safe code cannot — and why getting that conversion wrong is a soundness hole.</p>
 <p>The full matrix:</p>
@@ -2207,7 +2207,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aa3bbee59ae9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aa3bbee59ae9.png" alt="diagram"></div></p>
 <p><strong>Diagram 4 — HRTB closure capture.</strong> Without <code>for&lt;'a&gt;</code>, the compiler picks a single concrete lifetime for the closure's reference arguments. HRTB says "for all lifetimes," which is what closures that return their input actually need.</p>
 <h3 id="32-hrtb-in-backend-code-iterator-adapters-and-middleware">3.2 HRTB in Backend Code — Iterator Adapters and Middleware</h3>
 <p>HRTB appears in practice when building iterator adapters, middleware chains, and filter functions:</p>
@@ -2248,7 +2248,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 <h2 id="4-interior-mutability-the-sound-escape-hatches">4. Interior Mutability — The Sound Escape Hatches</h2>
 <p>Interior mutability lets you mutate data through a shared reference. This violates AXM at the language level but is sound because each variant enforces a different <strong>runtime or structural invariant</strong> that prevents data races.</p>
 <h3 id="41-the-interior-mutability-spectrum">4.1 The Interior Mutability Spectrum</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aa4efd6b7020.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aa4efd6b7020.png" alt="diagram"></div></p>
 <p><strong>Diagram 5 — Interior mutability decision tree.</strong> Choose the type based on <code>T: Copy</code>, thread safety requirements, and access patterns.</p>
 <h3 id="42-cellt-zero-cost-mutation-for-copy-types">4.2 <code>Cell&lt;T&gt;</code> — Zero-Cost Mutation for <code>Copy</code> Types</h3>
 <p><code>Cell&lt;T&gt;</code> provides <code>get()</code> and <code>set()</code> without creating any references to the interior. Since <code>T: Copy</code>, <code>get()</code> returns a bitwise copy — no borrow is ever held on the data inside the <code>Cell</code>.</p>
@@ -2343,7 +2343,7 @@ error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immu
 <span class="c1">// let b2 = data.borrow(); // PANIC: already borrowed: BorrowMutError</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_15bb79bd9e1f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_15bb79bd9e1f.png" alt="diagram"></div></p>
 <p><strong>Diagram 6 — RefCell state machine.</strong> Runtime enforcement of the same aliasing rules the borrow checker enforces at compile time. Violations produce panics, not compilation errors.</p>
 <h3 id="44-oncelockt-write-once-read-many">4.4 <code>OnceLock&lt;T&gt;</code> — Write-Once, Read-Many</h3>
 <p><code>OnceLock&lt;T&gt;</code> (stabilized in Rust 1.70) and its lazy variant <code>LazyLock&lt;T&gt;</code> provide a one-time initialization primitive. After the first successful <code>set()</code> or <code>get_or_init()</code>, the value is frozen — all subsequent access is immutable.</p>
@@ -2471,7 +2471,7 @@ cargo<span class="w"> </span>clippy<span class="w"> </span>--<span class="w"> </
 </code></pre></div>
 
 <h3 id="53-the-interior-mutability-thread-safety-matrix">5.3 The Interior Mutability + Thread Safety Matrix</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5ffa1eea00cd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5ffa1eea00cd.png" alt="diagram"></div></p>
 <p><strong>Diagram 7 — Interior mutability and thread safety matrix.</strong> Single-threaded types are <code>!Sync</code>; cross-thread types are <code>Sync + Send</code>. The transition is not just adding a lock — it changes the trait implementation entirely.</p>
 <hr />
 <h2 id="6-variance-footguns-in-practice">6. Variance Footguns in Practice</h2>
@@ -2503,7 +2503,7 @@ cargo<span class="w"> </span>clippy<span class="w"> </span>--<span class="w"> </
 </code></pre></div>
 
 <p>The type of <code>PhantomData</code> determines variance. This matters when building custom wrappers:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5198b04c6b91.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5198b04c6b91.png" alt="diagram"></div></p>
 <p><strong>Diagram 8 — PhantomData variance control.</strong> The type parameter of <code>PhantomData</code> directly controls the variance of the containing struct in each lifetime and type position. Choosing the wrong <code>PhantomData</code> variant can either block legitimate coercions or permit unsound ones.</p>
 <h3 id="62-invariance-preventing-legitimate-coercions">6.2 Invariance Preventing Legitimate Coercions</h3>
 <p>Sometimes invariance is too strict. A common pattern in backend code is a struct that contains a <code>Cell&lt;T&gt;</code> where you want to coerce the inner type:</p>
@@ -3236,7 +3236,7 @@ impl LocalTrait for ForeignType { ... }    // OK — LocalTrait is local
 impl ForeignTrait for LocalType { ... }    // OK — LocalType is local
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0a898a975fcc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0a898a975fcc.png" alt="diagram"></div></p>
 <p>The orphan rule is one of the most contentious design decisions in Rust. It prevents the "diamond problem" of overlapping impls across crate boundaries, but it also forces the newtype pattern when you want to impl a foreign trait for a foreign type:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Wrapping Vec&lt;u8&gt; to impl Codec — the newtype pattern</span>
 <span class="k">struct</span><span class="w"> </span><span class="nc">WireBuffer</span><span class="p">(</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="kt">u8</span><span class="o">&gt;</span><span class="p">);</span>
@@ -3252,7 +3252,7 @@ impl ForeignTrait for LocalType { ... }    // OK — LocalType is local
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dd13eca66d2d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dd13eca66d2d.png" alt="diagram"></div></p>
 <h3 id="13-associated-types-vs-generic-parameters">1.3 Associated Types vs. Generic Parameters</h3>
 <p>A trait can express polymorphism in two ways: through an associated type or through generic parameters on the method. The choice has real ergonomic consequences.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Associated type: one implementation per type</span>
@@ -3292,7 +3292,7 @@ impl ForeignTrait for LocalType { ... }    // OK — LocalType is local
 </code></pre></div>
 
 <p>The general rule: use an associated type when there is one "natural" output per input type (e.g., <code>Iterator::Item</code> — you cannot implement <code>Iterator</code> for <code>Vec&lt;T&gt;</code> twice with different <code>Item</code> types). Use generic parameters when you want multiple implementations for different target types (e.g., <code>Convert&lt;T&gt;</code>).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4e06337395b3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4e06337395b3.png" alt="diagram"></div></p>
 <h3 id="14-supertraits-and-trait-bounds">1.4 Supertraits and Trait Bounds</h3>
 <p>Supertraits express dependency: a trait that requires another trait to be implemented first. This is the Rust analog of interface inheritance.</p>
 <div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">fmt</span><span class="p">;</span>
@@ -3490,7 +3490,7 @@ impl ForeignTrait for LocalType { ... }    // OK — LocalType is local
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c6bdc335c68d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c6bdc335c68d.png" alt="diagram"></div></p>
 <p>This is impossible with runtime generics (Java, Go) — the dimension mismatch would only be caught when the multiplication loop runs. With const generics, the Rust compiler rejects the program before any machine code is generated.</p>
 <h3 id="23-generic-associated-types-gats">2.3 Generic Associated Types (GATs)</h3>
 <p>GATs — stabilized in Rust 1.65 — let you parameterize an associated type by a lifetime or generic parameter. They enable patterns that were previously impossible without boxing.</p>
@@ -3565,7 +3565,7 @@ process_WireBuffer(item: &amp;WireBuffer, buf: &amp;mut Vec&lt;u8&gt;) {
 </code></pre></div>
 
 <p>No dynamic dispatch, no vtable lookup, no type check at runtime. The call site is replaced with a direct call to the monomorphized function.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b991345dd58.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6b991345dd58.png" alt="diagram"></div></p>
 <h3 id="32-binary-size-the-monomorphization-tax">3.2 Binary Size: The Monomorphization Tax</h3>
 <p>Monomorphization is zero-cost <em>at runtime</em> but costs <em>at compile time and in binary size</em>. Each monomorphization produces a new copy of the function body. For deeply nested generic code (common in serialization libraries like <code>serde</code>), this can produce megabytes of redundant machine code.</p>
 <p>Let's demonstrate with a real example:</p>
@@ -3596,7 +3596,7 @@ cargo<span class="w"> </span>install<span class="w"> </span>cargo-bloat
 cargo<span class="w"> </span>bloat<span class="w"> </span>--release<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ccbd4f682a31.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ccbd4f682a31.png" alt="diagram"></div></p>
 <p>The mitigation strategy is layered:</p>
 <ol>
 <li><strong><code>#[inline(never)]</code></strong> on large generic functions that are called with many type parameters. This forces the compiler to emit a single function body with indirect calls instead of inlining.</li>
@@ -3771,7 +3771,7 @@ struct VTable {
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_04b9dd603097.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_04b9dd603097.png" alt="diagram"></div></p>
 <p>When you call <code>formatter.format()</code>, the compiler:</p>
 <ol>
 <li>Loads the vtable pointer from the fat pointer.</li>
@@ -3860,7 +3860,7 @@ note: for a trait to be &quot;object safe&quot; it needs to allow building a vta
 </code></pre></div>
 
 <p>The compiler rejects overlapping impls because it cannot determine, for <code>dyn Render</code>, whether to use the <code>impl Render for Widget</code> (if the trait object happens to contain a <code>Widget</code>) or <code>impl Render for dyn Render</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_69671cad9d1c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_69671cad9d1c.png" alt="diagram"></div></p>
 <h3 id="52-negative-impls-and-the-blanket-impl-pattern">5.2 Negative Impls and the Blanket Impl Pattern</h3>
 <p>Rust does not support negative impls (<code>impl !Send for MyType</code>), but it uses the orphan rule and blanket impls to achieve similar effects. The <code>Send</code> and <code>Sync</code> traits are automatically implemented by the compiler for types whose fields are all <code>Send</code>/<code>Sync</code>. <code>Rc&lt;T&gt;</code> is <code>!Send</code> because the compiler simply does not implement <code>Send</code> for it.</p>
 <p>Blanket impls extend a trait to all types satisfying a bound:</p>
@@ -4284,7 +4284,7 @@ note: for a trait to be &quot;object safe&quot; it needs to allow building a vta
 <li><strong>Race between poll and wake.</strong> If the timer fires <em>after</em> we check <code>fired</code> but <em>before</em> we store the waker, the wake is lost. The implementation above handles this because the timer thread checks <code>state.waker</code> under the same lock — if it fires before we store, it sees <code>None</code> and does nothing, but by then <code>fired</code> is <code>true</code>, so the <em>next</em> poll returns <code>Ready</code>. More efficient implementations use an atomic flag plus <code>Waker</code> registration in a loop.</li>
 <li><strong>Why not <code>async fn</code> here?</strong> Because you cannot implement custom wake logic inside <code>async fn</code>. Any time you need to interface with a non-async callback, kernel event, or cross-thread signal, you write a manual <code>Future</code>.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7e83817958b8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7e83817958b8.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-pin-and-unpin-why-self-referential-futures-need-a-guarantee">2. <code>Pin</code> and <code>Unpin</code> — Why Self-Referential Futures Need a Guarantee</h2>
 <h3 id="21-the-problem-pin-solves">2.1 The Problem <code>Pin</code> Solves</h3>
@@ -4430,7 +4430,7 @@ note: for a trait to be &quot;object safe&quot; it needs to allow building a vta
 </code></pre></div>
 
 <p><code>#[pin_project]</code> generates a <code>project()</code> method that respects <code>#[pin]</code> annotations: pinned fields project to <code>Pin&lt;&amp;mut Field&gt;</code>, unpinned fields project to <code>&amp;mut Field</code>. It also generates <code>project_replace</code> and <code>project_ref</code> variants.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3c3fe8199074.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3c3fe8199074.png" alt="diagram"></div></p>
 <p><strong>Rules of thumb for backend code:</strong></p>
 <ul>
 <li>If your type contains a <code>#[pin]</code> field, it should usually be <code>!Unpin</code> itself. <code>pin-project</code> handles this.</li>
@@ -4690,7 +4690,7 @@ note: for a trait to be &quot;object safe&quot; it needs to allow building a vta
 <li><strong>Load balancing without a central coordinator.</strong> Busy workers keep their hot tasks local; idle workers steal, smoothing utilization. No single lock on a global queue in the hot path.</li>
 <li><strong>Cache locality.</strong> LIFO local pops mean a task that just woke (likely with hot cache lines from the I/O that woke it) runs immediately on the same core.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_60c9d190420c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_60c9d190420c.png" alt="diagram"></div></p>
 <h3 id="45-current_thread-when-single-threaded-wins">4.5 <code>current_thread</code> — When Single-Threaded Wins</h3>
 <p><code>current_thread</code> runs all tasks on the calling thread. No work-stealing, no cross-thread synchronization in the scheduler hot path, and <code>!Send</code> futures are allowed via <code>LocalSet</code>.</p>
 <p>Use it when:</p>
@@ -4909,7 +4909,7 @@ io_uring model:  submit read request      → wait → completion (data already 
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5434e3b1a060.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5434e3b1a060.png" alt="diagram"></div></p>
 <p><strong>Practical guidance for backend teams:</strong> do not adopt <code>io_uring</code> for a standard microservice because it sounds faster. The <code>epoll</code> path in Tokio is heavily optimized and the bottleneck in most services is serialization, business logic, or downstream latency — not syscall count. Adopt <code>io_uring</code> when profiling shows <code>epoll_wait</code>/<code>read</code>/<code>write</code> syscall overhead in the hot path, typically in proxies, storage engines, or services doing &gt;100K IOPS per core with large buffers.</p>
 <hr />
 <h2 id="7-combinators-select-join-try_join-and-cancellation">7. Combinators — <code>select!</code>, <code>join!</code>, <code>try_join!</code>, and Cancellation</h2>
@@ -5005,7 +5005,7 @@ io_uring model:  submit read request      → wait → completion (data already 
 </table>
 <p>For a backend fan-out where the number of downstream calls is known at compile time, <code>join!</code> is zero-overhead (no allocation, no spawn). For dynamic fan-out (fan out to N replicas where N comes from config), <code>JoinSet</code> is correct — it actually spawns tasks so they run concurrently on the work-stealing scheduler, whereas <code>join_all</code> polls them cooperatively on the current task.</p>
 <h3 id="73-timing-and-semantics-compared">7.3 Timing and Semantics Compared</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_881e0fe20e42.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_881e0fe20e42.png" alt="diagram"></div></p>
 <h3 id="74-distributed-systems-patterns">7.4 Distributed-Systems Patterns</h3>
 <p><strong>Deadline racing — hedged requests:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">tokio</span><span class="p">::</span><span class="n">time</span><span class="p">::{</span><span class="n">sleep</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">};</span>
@@ -5107,7 +5107,7 @@ io_uring model:  submit read request      → wait → completion (data already 
 <hr />
 <h2 id="8-putting-it-together-a-production-task-topology">8. Putting It Together — A Production Task Topology</h2>
 <p>A typical backend service combines every primitive in this chapter. The diagram below shows a <code>multi_thread</code> Tokio runtime serving an HTTP API that fans out to downstream services with hedged reads, bounded concurrency, and graceful shutdown.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_74bd5989fd29.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_74bd5989fd29.png" alt="diagram"></div></p>
 <p>Operational checklist for backend teams running Tokio at scale:</p>
 <ul>
 <li><strong>Size <code>worker_threads</code> explicitly</strong> for noisy-neighbor isolation. Default <code>num_cpus</code> is usually right, but if the host runs sidecars, leave cores for them. Measure with <code>tokio-metrics</code>.</li>
@@ -5116,7 +5116,7 @@ io_uring model:  submit read request      → wait → completion (data already 
 <li><strong>Use <code>JoinSet</code> for request-scoped concurrency</strong> and <code>CancellationToken</code> for shutdown. Avoid <code>Vec&lt;JoinHandle&gt;</code> + manual abort — it is easy to forget a handle and leak a task.</li>
 <li><strong>Audit <code>select!</code> for cancellation safety</strong> whenever the losing branch holds a protocol step. If in doubt, wrap the critical section in a dedicated task and <code>select!</code> on its <code>JoinHandle</code> instead — dropping a <code>JoinHandle</code> does not cancel the inner future.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_96fe8f667db0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_96fe8f667db0.png" alt="diagram"></div></p>
 <hr />
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
@@ -5166,7 +5166,7 @@ io_uring model:  submit read request      → wait → completion (data already 
 <hr />
 <h2 id="1-the-ownership-spectrum-from-unique-to-shared">1. The Ownership Spectrum: From Unique to Shared</h2>
 <p>Every value in Rust has a single owner. The smart pointers in <code>std</code> and <code>alloc</code> do not change that invariant — they change <em>what</em> owns the value and <em>how</em> ownership is shared. For backend services the decision is not stylistic; it determines atomic traffic, allocator pressure, and lock contention on every request.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f49b93081379.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f49b93081379.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -5609,7 +5609,7 @@ $<span class="w"> </span><span class="nv">MIMALLOC_SHOW_STATS</span><span class=
 </code></pre></div>
 
 <h3 id="52-allocator-architectures">5.2 Allocator Architectures</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1655309aee02.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1655309aee02.png" alt="diagram"></div></p>
 <h4 id="system-allocator-glibc-ptmalloc2">System Allocator (glibc ptmalloc2)</h4>
 <ul>
 <li><strong>Design:</strong> Multiple arenas (default 8 × CPU cores), each arena protected by a mutex. Small allocations use bins (fastbins for very small, unsorted/small/large bins for others). Large allocations go directly to <code>mmap</code>.</li>
@@ -5687,7 +5687,7 @@ $<span class="w"> </span><span class="nv">MIMALLOC_SHOW_STATS</span><span class=
 <li><strong>Weaknesses:</strong> Harder to integrate in Rust (no first-class <code>tcmalloc</code> crate — typically via <code>tcmalloc-sys</code> or linking <code>libtcmalloc</code>). Central free list can contend under extreme thread counts. RSS retention similar to jemalloc defaults.</li>
 </ul>
 <h3 id="53-allocator-comparison-matrix">5.3 Allocator Comparison Matrix</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_457936d1e8d5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_457936d1e8d5.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -6109,7 +6109,7 @@ $<span class="w"> </span>cargo<span class="w"> </span>bench<span class="w"> </sp
 <p><code>Arc&lt;[u8]&gt;</code> is simple and correct for shared immutable payloads. Its limitation: no slicing without allocation. <code>Arc&lt;[u8]&gt;::clone</code> clones the whole buffer; you cannot create a zero-copy sub-slice that shares the backing allocation. <code>Bytes</code> solves this.</p>
 <h3 id="75-bytesbytes-reference-counted-sliceable-zero-copy">7.5 <code>bytes::Bytes</code> — Reference-Counted, Sliceable, Zero-Copy</h3>
 <p><code>bytes::Bytes</code> is the standard zero-copy primitive for Rust network services. It is used by <code>tokio</code>, <code>hyper</code>, <code>tonic</code>, <code>axum</code>, and <code>warp</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_95bd3ca49e4a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_95bd3ca49e4a.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">bytes</span><span class="p">::{</span><span class="n">Bytes</span><span class="p">,</span><span class="w"> </span><span class="n">BytesMut</span><span class="p">,</span><span class="w"> </span><span class="n">Buf</span><span class="p">};</span>
 
 <span class="k">fn</span><span class="w"> </span><span class="nf">bytes_zero_copy_demo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -6273,7 +6273,7 @@ $<span class="w"> </span>cargo<span class="w"> </span>bench<span class="w"> </sp
 <h2 id="8-arena-allocation-bumpalo-and-typed-arena">8. Arena Allocation: <code>bumpalo</code> and <code>typed-arena</code></h2>
 <p>General-purpose allocators handle arbitrary lifetimes — any allocation can be freed at any time. Arenas exploit a simpler lifetime pattern: many allocations, one deallocation point. A request handler that builds a dozen temporary strings, vectors, and parsed structs that all die when the response is sent is a perfect arena candidate.</p>
 <h3 id="81-bump-allocator-mechanics">8.1 Bump Allocator Mechanics</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3ea34a512b32.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3ea34a512b32.png" alt="diagram"></div></p>
 <p>A bump allocator keeps a single pointer into a contiguous chunk. Allocation is <code>ptr = bump; bump += size; return ptr</code> — one addition and a bounds check, ~2–3 ns. There is no free for individual objects — <code>reset()</code> moves the bump pointer back to zero, freeing everything at once. This is faster than any general-purpose allocator and has zero fragmentation within the arena.</p>
 <h3 id="82-bumpalo">8.2 <code>bumpalo</code></h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// Cargo.toml: bumpalo = { version = &quot;3&quot;, features = [&quot;collections&quot;] }</span>
@@ -6422,7 +6422,7 @@ $<span class="w"> </span>cargo<span class="w"> </span>bench<span class="w"> </sp
 <li><strong>Internal fragmentation:</strong> wasted bytes <em>inside</em> an allocation (allocator rounds 65 bytes up to 128-byte size class — 63 bytes wasted per object).</li>
 <li><strong>External fragmentation:</strong> wasted bytes <em>between</em> allocations (free blocks exist but are not contiguous, so a 1 MiB request cannot be satisfied even though 2 MiB is free in scattered 4 KiB blocks).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_55bc8fbe5f0b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_55bc8fbe5f0b.png" alt="diagram"></div></p>
 <h3 id="91-size-classes-and-internal-fragmentation">9.1 Size Classes and Internal Fragmentation</h3>
 <p>All three custom allocators use size classes to reduce external fragmentation:</p>
 <table>
@@ -6517,7 +6517,7 @@ heap:<span class="w"> </span>pages:<span class="w"> </span><span class="m">128</
 <hr />
 <h2 id="10-rss-vs-heap-what-the-kernel-sees-vs-what-you-allocated">10. RSS vs. Heap: What the Kernel Sees vs. What You Allocated</h2>
 <p>A backend service's memory is bounded by the cgroup limit (Kubernetes <code>resources.limits.memory</code>), not by the allocator's <code>allocated</code> counter. The kernel kills the process when <strong>RSS</strong> (resident set size) exceeds the limit — and RSS includes pages the allocator retains but your code has freed.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bd58c52d8276.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bd58c52d8276.png" alt="diagram"></div></p>
 <h3 id="101-the-retention-problem">10.1 The Retention Problem</h3>
 <p>When you <code>drop</code> a <code>Vec&lt;u8&gt;</code> of 1 MiB, the allocator's <code>allocated</code> counter drops by 1 MiB immediately. But the underlying pages may remain mapped and counted in RSS:</p>
 <ul>
@@ -6579,7 +6579,7 @@ retained:<span class="w"> </span><span class="m">10485760</span><span class="w">
 </code></pre></div>
 
 <h3 id="103-tuning-decision-flow">10.3 Tuning Decision Flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_614300b36555.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_614300b36555.png" alt="diagram"></div></p>
 <h3 id="104-kubernetes-specific-tuning">10.4 Kubernetes-Specific Tuning</h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># Kubernetes deployment — set both request and limit with headroom for retention</span>
 <span class="nt">resources</span><span class="p">:</span>
@@ -6881,7 +6881,7 @@ $<span class="w"> </span>bytehound<span class="w"> </span>server<span class="w">
 </code></pre></div>
 
 <p>The <code>collect()</code> trick deserves emphasis: <code>Iterator&lt;Item = Result&lt;T, E&gt;&gt;</code> collected into <code>Result&lt;Vec&lt;T&gt;, E&gt;</code> short-circuits on the first <code>Err</code>. This is the idiomatic way to validate a batch and fail fast — exactly what you want when parsing a Raft log segment or a Kafka batch where one corrupt record should reject the batch.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fb9309192ffc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fb9309192ffc.png" alt="diagram"></div></p>
 <p><strong>Three paths for the same operation.</strong> Path A and B are <code>?</code>-driven control flow — visible in the function signature and amenable to <code>From</code> conversions. Path C stays in value space, composing without early return. Prefer <code>?</code> for sequential fallible steps in a function body and combinators inside iterators and adapters where early return would exit the closure rather than the outer function.</p>
 <h3 id="13-distributed-systems-lens-errors-at-service-boundaries">1.3 Distributed-Systems Lens: Errors at Service Boundaries</h3>
 <p>In a microservices call graph, every RPC can fail in at least four ways: transport error, timeout, application error, and poisoned response that deserializes but violates invariants. Encoding each layer in the type system prevents conflation:</p>
@@ -7034,7 +7034,7 @@ $<span class="w"> </span>bytehound<span class="w"> </span>server<span class="w">
 </code></pre></div>
 
 <p>Do not use <code>anyhow::Error</code> in library return types — it forces every consumer to depend on <code>anyhow</code> and destroys the ability to match on error kind without stringly-typed downcasts.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d70a18ce8e6a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d70a18ce8e6a.png" alt="diagram"></div></p>
 <h3 id="24-the-source-chain-and-backtraces">2.4 The <code>source</code> Chain and Backtraces</h3>
 <p>Both crates participate in <code>std::error::Error::source()</code>. Walking the chain is how structured loggers (e.g., <code>tracing-error</code>, <code>eyre</code>) render root causes. On Rust 1.65+, <code>std::backtrace::Backtrace</code> is stable; <code>anyhow</code> with the <code>backtrace</code> feature captures it automatically. For <code>thiserror</code>, attach a <code>Backtrace</code> field:</p>
 <div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">backtrace</span><span class="p">::</span><span class="n">Backtrace</span><span class="p">;</span>
@@ -7114,7 +7114,7 @@ $<span class="w"> </span>bytehound<span class="w"> </span>server<span class="w">
 <li><code>abort</code> gives you a clean crash, a core dump, and a fast restart via the kubelet. The process supervisor handles recovery — not in-process unwinding.</li>
 <li>Remove the distinction between "expected error" and "bug" by making bugs crash loudly and immediately.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4783c13a15cb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4783c13a15cb.png" alt="diagram"></div></p>
 <p>The two bars per group compare <code>unwind</code> (tall) against <code>abort</code> (short). The takeaway: both strategies cost nothing on the happy path — the difference is entirely on the panic path, in binary size, and in FFI correctness.</p>
 <h3 id="33-catch_unwind-panic-hooks-and-poisoning">3.3 <code>catch_unwind</code>, Panic Hooks, and Poisoning</h3>
 <p><code>std::panic::catch_unwind</code> catches an unwinding panic and returns <code>Result&lt;T, Box&lt;dyn Any + Send&gt;&gt;</code>. It requires <code>UnwindSafe</code> — a marker that the closure does not hold invariants that would be broken by unwinding.</p>
@@ -7344,7 +7344,7 @@ $<span class="w"> </span>bytehound<span class="w"> </span>server<span class="w">
 </code></pre></div>
 
 <p>The <code>unsafe impl</code> is a promise: <em>every</em> method on <code>SharedCell</code> upholds thread safety for all possible call interleavings. If <code>set</code> races with <code>get</code>, that is UB — not a data race the sanitizer catches in safe code, but immediate UB. This is why <code>unsafe impl Sync</code> is rare and must carry a <code>SAFETY</code> comment that states the exact invariant.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_600a73a9bca3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_600a73a9bca3.png" alt="diagram"></div></p>
 <p>A sound safe wrapper around an unsafe core must establish every precondition before entering <code>unsafe</code>. If any input can reach the unsafe block with a violated invariant, the wrapper is unsound — and the UB is blamed on the wrapper, not the caller, even though the caller wrote only safe code.</p>
 <h3 id="15-distributed-systems-lens-unsafe-in-hot-path-infrastructure">1.5 Distributed-Systems Lens: <code>unsafe</code> in Hot-Path Infrastructure</h3>
 <p>Production backend crates that legitimately need <code>unsafe</code> include: <code>bytes</code> (reference-counted slices with atomic refcounts), <code>tokio</code>/<code>mio</code> (epoll/kqueue dispatch via raw fd), <code>serde</code> (zero-copy deserialization), <code>parking_lot</code> (custom mutex without poisoning), and <code>crossbeam</code> (epoch-based reclamation). In each case the unsafe code is encapsulated behind a safe API whose invariants are documented and tested with Miri and Loom. When you add a new <code>unsafe</code> block to a service, ask: can this be replaced by an existing crate whose unsafe has already been audited? The answer is usually yes.</p>
@@ -7382,7 +7382,7 @@ cargo<span class="w"> </span>miri<span class="w"> </span><span class="nb">test</
 <p>Miri cannot run code that calls arbitrary C FFI, inline assembly, or performs I/O beyond what its shim implements. For those, isolate the unsafe core behind a trait and test a pure-Rust double under Miri.</p>
 <h3 id="53-stacked-borrows-and-tree-borrows">5.3 Stacked Borrows and Tree Borrows</h3>
 <p>Rust's aliasing model says: at any point, you may have either one <code>&amp;mut T</code> or many <code>&amp;T</code>, never both. Raw pointers inherit provenance from the reference they were derived from. Stacked Borrows tracks a stack of borrows per allocation; a read or write through a pointer invalidates incompatible borrows atop the stack.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b39fae02b387.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b39fae02b387.png" alt="diagram"></div></p>
 <p>Tree Borrows refines this: borrows form a tree keyed by provenance, with permissions (<code>Reserved</code>, <code>Active</code>, <code>Frozen</code>, <code>Disabled</code>) that transition on access. It permits some patterns Stacked Borrows rejects (notably, certain <code>UnsafeCell</code> and <code>Box</code> aliasing idioms used by <code>std</code>). Both models catch the same class of bug — aliasing that the optimizer assumes cannot happen.</p>
 <h3 id="54-reading-a-miri-diagnostic">5.4 Reading a Miri Diagnostic</h3>
 <p>Consider this buggy function that creates two <code>&amp;mut</code> to the same <code>u32</code>:</p>
@@ -7468,7 +7468,7 @@ cargo<span class="w"> </span>miri<span class="w"> </span><span class="nb">test</
 <p>Miri finds UB on code paths you already exercise. Fuzzing finds new paths — by feeding pseudo-random, coverage-guided inputs into a harness and crashing on panics, assertions, ASan violations, and UB.</p>
 <h3 id="61-architecture">6.1 Architecture</h3>
 <p>libFuzzer (LLVM's coverage-guided fuzzer) instruments every branch and tracks which inputs discover new coverage. <code>cargo-fuzz</code> wires it into Cargo: it builds a <code>fuzz_target!</code> harness with <code>-Zsanitizer=address</code> and repeatedly calls the harness with mutated inputs, keeping a corpus of coverage-maximizing cases.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f3dcd70c57ea.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f3dcd70c57ea.png" alt="diagram"></div></p>
 <h3 id="62-writing-a-fuzz-target">6.2 Writing a Fuzz Target</h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># Cargo.toml — fuzz crate (cargo fuzz init creates this)</span>
 <span class="k">[package]</span>
@@ -7537,7 +7537,7 @@ cargo<span class="w"> </span>fuzz<span class="w"> </span>coverage<span class="w"
 
 <h3 id="63-corpus-design-and-ci-integration">6.3 Corpus Design and CI Integration</h3>
 <p>A good corpus starts with a handful of hand-written valid inputs plus edge cases (empty, truncated, max-size, all-zeros, all-0xFF). libFuzzer mutates from there, but seeding matters — a <code>parse_frame</code> fuzzer seeded only with random bytes takes orders of magnitude longer to discover valid-frame paths than one seeded with three well-formed frames.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_39f633748edf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_39f633748edf.png" alt="diagram"></div></p>
 <p>For CI, you do not run open-ended fuzzing — you <em>replay</em> the minimized corpus plus a short bounded run:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/fuzz.yml</span>
 <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fuzz</span>
@@ -7851,7 +7851,7 @@ cargo<span class="w"> </span>fuzz<span class="w"> </span>coverage<span class="w"
 <li><code>T: Sync</code> means <code>&amp;T</code> can be <strong>shared</strong> across threads. Equivalent to <code>&amp;T: Send</code>. If <code>T: Sync</code>, multiple threads can hold <code>&amp;T</code> concurrently without additional synchronization beyond what <code>T</code> itself provides.</li>
 </ul>
 <p>Every type falls into one of four quadrants:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1a23ecff4ec9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1a23ecff4ec9.png" alt="diagram"></div></p>
 <p>In practice the <code>!Send + Sync</code> quadrant is almost empty. The interesting partitions are <code>Send+Sync</code> (shared state), <code>Send+!Sync</code> (channel endpoints, future-local handles), and <code>!Send+!Sync</code> (thread-local caches, <code>Rc</code>-based graphs).</p>
 <h3 id="12-how-the-compiler-uses-send-and-sync">1.2 How the Compiler Uses Send and Sync</h3>
 <p><code>Send</code> and <code>Sync</code> bounds appear on every concurrency API. They are not documentation — they are enforced:</p>
@@ -7992,7 +7992,7 @@ cargo<span class="w"> </span>fuzz<span class="w"> </span>coverage<span class="w"
 <p>Available types: <code>AtomicBool</code>, <code>AtomicI8</code>/<code>U8</code>/<code>I16</code>/<code>U16</code>/<code>I32</code>/<code>U32</code>/<code>I64</code>/<code>U64</code>/<code>Isize</code>/<code>Usize</code>, <code>AtomicPtr&lt;T&gt;</code>. 64-bit atomics are lock-free on x86-64 and aarch64; on 32-bit ARM, <code>AtomicU64</code>/<code>AtomicI64</code> may use a spinlock fallback — check <code>AtomicU64::is_lock_free()</code> if you target 32-bit.</p>
 <h3 id="22-the-ordering-lattice">2.2 The Ordering Lattice</h3>
 <p>Memory ordering controls <strong>which memory effects become visible in which order</strong> to other threads. The C++ / Rust memory model defines five orderings that form a strength lattice:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d7cb629bcfe3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d7cb629bcfe3.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -8380,7 +8380,7 @@ cargo<span class="w"> </span>fuzz<span class="w"> </span>coverage<span class="w"
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_573f6eb93b8e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_573f6eb93b8e.png" alt="diagram"></div></p>
 <p><strong>Bounded vs unbounded for backend services:</strong></p>
 <table>
 <thead>
@@ -8854,7 +8854,7 @@ cargo<span class="w"> </span>fuzz<span class="w"> </span>coverage<span class="w"
 </table>
 <p>Production spinlock crates (<code>spin = "0.9"</code>, <code>lock_api</code>) add ticket fairness, backoff, and <code>no_std</code> support. Never use a hand-rolled spinlock in production without auditing the <code>UnsafeCell</code> and <code>Sync</code> impl.</p>
 <h3 id="44-rwlock-vs-mutex-contention-under-read-heavy-workloads">4.4 RwLock vs Mutex — Contention Under Read-Heavy Workloads</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1b7e81e8cc44.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1b7e81e8cc44.png" alt="diagram"></div></p>
 <p>Benchmark intuition for a read-heavy backend (95% reads, 5% writes, 100 ns critical section, 16 threads):</p>
 <table>
 <thead>
@@ -8992,7 +8992,7 @@ tokio-console<span class="w">  </span><span class="c1"># look for tasks stuck in
 <p>For backend services, lock-free is usually sufficient. True wait-free structures are rare and often slower in practice due to the helping mechanisms they require.</p>
 <h3 id="52-the-treiber-stack-the-canonical-lock-free-structure">5.2 The Treiber Stack — The Canonical Lock-Free Structure</h3>
 <p>The Treiber stack (R. Kent Treiber, 1986) is a singly-linked stack where <code>push</code> and <code>pop</code> operate via CAS on the head pointer. It is the simplest non-trivial lock-free structure and the foundation for understanding all others.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_94c28f39b2b5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_94c28f39b2b5.png" alt="diagram"></div></p>
 <p><strong>Implementation with <code>Box</code> and <code>AtomicPtr</code> (simplified — reclamation deferred to Section 6):</strong></p>
 <div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">ptr</span><span class="p">;</span>
 <span class="k">use</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">sync</span><span class="p">::</span><span class="n">atomic</span><span class="p">::{</span><span class="n">AtomicPtr</span><span class="p">,</span><span class="w"> </span><span class="n">Ordering</span><span class="p">};</span>
@@ -9419,7 +9419,7 @@ tokio-console<span class="w">  </span><span class="c1"># look for tasks stuck in
 <p>Tagged pointers alone are not sufficient in the presence of arbitrary allocator reuse — they reduce the window but do not eliminate it without additional reclamation. Production lock-free code uses hazard pointers or epochs.</p>
 <h3 id="62-hazard-pointers">6.2 Hazard Pointers</h3>
 <p>Hazard pointers (Maged Michael, 2004) let each thread publish the pointers it is currently dereferencing. A thread that wants to free a node must first verify no hazard pointer protects it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4a4d4ddee022.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4a4d4ddee022.png" alt="diagram"></div></p>
 <p>The critical <strong>publish-then-verify</strong> step closes the race: after publishing the hazard, the thread re-reads the atomic to confirm the pointer is still the head. If another thread changed <code>head</code> between the initial load and the hazard publish, the thread retries. This ensures the hazard was published before any concurrent <code>pop</code> could retire the node.</p>
 <p>In Rust, hazard pointers are available via <code>haphazard</code> or <code>crossbeam</code>'s internal hazard-pointer implementation. The API shape:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Conceptual hazard-pointer API (haphazard crate style):</span>
@@ -9443,7 +9443,7 @@ tokio-console<span class="w">  </span><span class="c1"># look for tasks stuck in
 <p>Hazard pointers have <strong>O(T)</strong> reclamation cost where T is the number of threads (scan all hazard slots per retire), and each <code>protect</code> requires a store-release + load-acquire. They are precise (only truly protected nodes are deferred) but have higher per-operation overhead than epochs.</p>
 <h3 id="63-epoch-based-reclamation-how-crossbeam-epoch-works">6.3 Epoch-Based Reclamation — How crossbeam-epoch Works</h3>
 <p>Epoch-based reclamation amortizes the cost by grouping retired nodes into per-epoch garbage bags and freeing entire bags when the global epoch advances.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8620d3f04e6f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8620d3f04e6f.png" alt="diagram"></div></p>
 <p>The protocol:</p>
 <ol>
 <li><strong>Global epoch</strong> — a monotonic counter (0, 1, 2, ...) stored in an <code>AtomicUsize</code>.</li>
@@ -9839,7 +9839,7 @@ tokio-console<span class="w">  </span><span class="c1"># look for tasks stuck in
 </tbody>
 </table>
 <p>Choosing the wrong layer produces needless complexity or silent staleness. The rest of this chapter teaches you to choose correctly and implement each one.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fe33d0454592.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fe33d0454592.png" alt="diagram"></div></p>
 <p><em>The compilation pipeline with code generation. Declarative and procedural macros expand token trees before AST construction. Build scripts run before the compiler even starts, writing Rust source into <code>OUT_DIR</code> that is then included and subject to the same expansion and checking as hand-written code.</em></p>
 <hr />
 <h2 id="2-declarative-macros-macro_rules-pattern-matching-on-token-trees">2. Declarative Macros: <code>macro_rules!</code> — Pattern Matching on Token Trees</h2>
@@ -10077,7 +10077,7 @@ tokio-console<span class="w">  </span><span class="c1"># look for tasks stuck in
 <hr />
 <h2 id="3-declarative-vs-procedural-a-spectrum">3. Declarative vs. Procedural: A Spectrum</h2>
 <p>Not every code-generation problem fits <code>macro_rules!</code>. The decision comes down to how much syntactic and semantic understanding the generator needs:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c4f7880a1beb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c4f7880a1beb.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -10205,11 +10205,11 @@ tokio-console<span class="w">  </span><span class="c1"># look for tasks stuck in
 <span class="k">fn</span><span class="w"> </span><span class="nf">expand_sql</span><span class="p">(</span><span class="n">input</span><span class="p">:</span><span class="w"> </span><span class="nc">TokenStream</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">TokenStream</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="fm">todo!</span><span class="p">()</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eead82b4c35e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eead82b4c35e.png" alt="diagram"></div></p>
 <hr />
 <h2 id="5-syn-and-quote-ast-surgery-for-derive-macros">5. <code>syn</code> and <code>quote</code>: AST Surgery for Derive Macros</h2>
 <p>Almost every non-trivial proc macro uses two crates: <strong><code>syn</code></strong> (parses <code>TokenStream</code> into a typed AST) and <strong><code>quote</code></strong> (turns AST fragments back into <code>TokenStream</code> via quasi-quoting). Together they let you perform precise surgery on Rust's syntax tree.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_98f2632a0906.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_98f2632a0906.png" alt="diagram"></div></p>
 <h3 id="51-derive-macro-derivebuilder-end-to-end">5.1 Derive Macro: <code>#[derive(Builder)]</code> End-to-End</h3>
 <p>The goal: given a struct, generate a builder that enforces required fields at compile time and produces a fluent API.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// ── Consumer code — what the user writes ─────────────────────</span>
@@ -10622,7 +10622,7 @@ $<span class="w"> </span>cargo<span class="w"> </span>expand<span class="w"> </s
 <p>Hygiene is Rust's answer to a classic macro problem: how to prevent identifiers introduced by a macro from colliding with identifiers at the call site, and vice versa. Every identifier in Rust carries a <code>Span</code> that tracks where it was written and how it should be resolved.</p>
 <h3 id="71-what-span-carries">7.1 What <code>Span</code> Carries</h3>
 <p>A <code>Span</code> is not just a source location (file, line, column). It also carries a <strong>SyntaxContext</strong> — an opaque ID that determines name resolution:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_83ea1e32e2b9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_83ea1e32e2b9.png" alt="diagram"></div></p>
 <p>Three <code>Span</code> constructors matter:</p>
 <table>
 <thead>
@@ -10732,7 +10732,7 @@ $<span class="w"> </span>cargo<span class="w"> </span>expand<span class="w"> </s
 <h2 id="8-build-scripts-buildrs-out_dir-and-pre-compilation-code-generation">8. Build Scripts: <code>build.rs</code>, <code>OUT_DIR</code>, and Pre-Compilation Code Generation</h2>
 <p>When code generation needs to read files, inspect environment variables, invoke external tools, or produce artifacts larger than a single <code>TokenStream</code>, macros are insufficient. <strong>Build scripts</strong> fill this gap. A <code>build.rs</code> file at the crate root runs before <code>rustc</code> compiles the crate, can emit arbitrary Rust source into <code>OUT_DIR</code>, and communicates with Cargo through <code>cargo:</code> directives on stdout.</p>
 <h3 id="81-how-buildrs-runs">8.1 How <code>build.rs</code> Runs</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1287e42c521f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1287e42c521f.png" alt="diagram"></div></p>
 <p>Cargo sets these environment variables for the build script:</p>
 <table>
 <thead>
@@ -11063,7 +11063,7 @@ $<span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><
 <hr />
 <h2 id="9-compile-time-vs-build-time-vs-run-time-choosing-the-right-phase">9. Compile-Time vs. Build-Time vs. Run-Time: Choosing the Right Phase</h2>
 <p>Code generation can happen at three distinct phases, each with different trade-offs for build time, debuggability, and operational control:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9eeb348bc9be.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9eeb348bc9be.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -11197,7 +11197,7 @@ $<span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><
 </code></pre></div>
 
 <p><code>const fn</code> is evaluated at compile time and produces no runtime overhead, but it cannot generate new types, impl blocks, or match arms — only values. When you need to generate <em>structure</em> (new structs, trait impls, enum variants), macros or build scripts are required.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_76e6a6391ff0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_76e6a6391ff0.png" alt="diagram"></div></p>
 <hr />
 <h2 id="10-distributed-systems-lens-code-generation-at-fleet-scale">10. Distributed-Systems Lens: Code Generation at Fleet Scale</h2>
 <p>In a single-service repository, code generation is a convenience. In a fleet of 50+ services sharing protobuf definitions, gRPC clients, and FFI bridges, it is load-bearing infrastructure. Getting it wrong produces version skew, non-reproducible builds, and phantom incidents that evade local reproduction.</p>
@@ -11346,7 +11346,7 @@ $<span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><
 </ol>
 <p>The alternative to native interop is RPC — put the Rust code behind a sidecar or microservice and call it over gRPC/HTTP. That works, but adds a network hop, serialization, deployment coupling, and failure modes of its own. FFI keeps the call in-process: nanoseconds, not milliseconds, with no extra service to operate.</p>
 <p>The cost is complexity at the boundary. Two type systems, two memory managers, two error models, two runtimes, sometimes two event loops. This chapter is about managing that complexity without introducing soundness holes.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a4350ee869c8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a4350ee869c8.png" alt="diagram"></div></p>
 <p><strong>Diagram 1 — Polyglot deployment topology.</strong> A single Rust core compiled to different crate types fans out to three language edges. Each edge has its own toolchain, packaging, and runtime contract, but shares the same correctness-critical logic.</p>
 <hr />
 <h2 id="2-c-ffi-fundamentals-the-universal-foreign-interface">2. C FFI Fundamentals: The Universal Foreign Interface</h2>
@@ -11599,7 +11599,7 @@ $<span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_440d43512705.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_440d43512705.png" alt="diagram"></div></p>
 <p><strong>Diagram 3 — String ownership across the C ABI boundary.</strong> Every conversion has an ownership implication. <code>into_raw</code>/<code>from_raw</code> is a transfer; <code>as_ptr</code>/<code>from_ptr</code> is a borrow. Mixing them is a leak or a double-free.</p>
 <h3 id="24-ownership-across-the-boundary-who-frees-what">2.4 Ownership Across the Boundary: Who Frees What</h3>
 <p>Rust's ownership system stops at the FFI boundary. On the other side, there is no borrow checker — only documentation and discipline. Four patterns cover most cases:</p>
@@ -11671,7 +11671,7 @@ $<span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><
 <blockquote>
 <p><strong>Pitfall: <code>Box::from_raw</code> must pair with <code>Box::into_raw</code> exactly once, with the same type and allocator.</strong> Calling <code>from_raw</code> twice on the same pointer is a double-free. Calling it with the wrong type is type confusion. Passing a pointer allocated by <code>malloc</code> to <code>Box::from_raw</code> mixes allocators — undefined behavior. In production FFI layers, consider adding a magic field to the struct and checking it in <code>engine_free</code> to detect double-free and use-after-free during development.</p>
 </blockquote>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6913ca6fba84.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6913ca6fba84.png" alt="diagram"></div></p>
 <p><strong>Diagram 4 — Memory ownership across the C ABI boundary.</strong> The raw pointer is an ownership limbo — neither Rust nor C owns it until the contract says who reclaims. Every <code>into_raw</code> must have exactly one <code>from_raw</code>.</p>
 <h3 id="25-bindgen-and-cbindgen-generating-bindings">2.5 <code>bindgen</code> and <code>cbindgen</code> — Generating Bindings</h3>
 <p>Hand-writing <code>extern "C"</code> blocks for a 500-header C library is error-prone. Two tools automate the translation in opposite directions:</p>
@@ -12231,7 +12231,7 @@ $<span class="w"> </span>maturin<span class="w"> </span>build<span class="w"> </
 <li><strong><code>allow_threads</code> releases the GIL</strong> for the duration of the closure. Use it for any Rust work that does not touch Python objects: hashing, compression, I/O, or <code>tokio::block_on</code>. Failing to release the GIL during a 100 ms Rust computation blocks every other Python thread in the process.</li>
 <li><strong><code>Bound&lt;'py, T&gt;</code> vs <code>Py&lt;T&gt;</code>.</strong> <code>Bound</code> is a GIL-bound reference (like <code>&amp;T</code> — must not outlive the GIL hold). <code>Py&lt;T&gt;</code> is a GIL-independent smart pointer (like <code>Arc&lt;T&gt;</code> — holds a refcount, can be sent between threads, but must re-acquire the GIL to dereference). For data that outlives a single <code>with_gil</code> call, use <code>Py&lt;T&gt;</code>.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ad953898c7b6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ad953898c7b6.png" alt="diagram"></div></p>
 <p><strong>Diagram 5 — Python GIL acquire/release cycle.</strong> The <code>Python&lt;'py&gt;</code> token is a compile-time proof of GIL ownership. <code>allow_threads</code> drops the proof for CPU-bound work, letting other Python threads make progress.</p>
 <h3 id="44-error-mapping-and-pyclass-design-notes">4.4 Error Mapping and <code>#[pyclass]</code> Design Notes</h3>
 <ul>
@@ -12480,7 +12480,7 @@ $<span class="w"> </span>node<span class="w"> </span>-e<span class="w"> </span><
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_529016aec21a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_529016aec21a.png" alt="diagram"></div></p>
 <p><strong>Diagram 6 — Async FFI bridging Tokio and libuv.</strong> The JS thread never blocks. The Rust future runs on Tokio's pool; completion is marshaled back to libuv as a Promise resolution. <code>AbortSignal</code> propagates cancellation in the reverse direction.</p>
 <p>Key constraints:</p>
 <ul>
@@ -12702,7 +12702,7 @@ pkg/package.json
 <li><strong>Marshals types</strong> — <code>&amp;str</code> / <code>String</code> ↔ JS <code>string</code>, <code>&amp;[u8]</code> / <code>Vec&lt;u8&gt;</code> ↔ <code>Uint8Array</code>, <code>Result&lt;T, JsValue&gt;</code> ↔ thrown exception, <code>Option&lt;T&gt;</code> ↔ <code>undefined</code>, closures ↔ <code>js-sys::Function</code>.</li>
 <li><strong>Handles lifetimes</strong> — JS objects passed to Rust are tracked in a heap table (<code>heap[]</code> in the glue) with manual refcounting, because WASM cannot directly hold JS GC references.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1003ccd1acf3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1003ccd1acf3.png" alt="diagram"></div></p>
 <p><strong>Diagram 7 — WASM compile and JS glue pipeline.</strong> Rust source is compiled to WASM bytecode and separately to JS glue that handles memory, type marshaling, and module instantiation. <code>wasm-pack</code> orchestrates the entire pipeline.</p>
 <h3 id="64-strings-and-binary-data-in-wasm">6.4 Strings and Binary Data in WASM</h3>
 <p>The JS ↔ WASM string boundary is a copy — there is no zero-copy string sharing because JS strings are UTF-16 and WASM linear memory is bytes:</p>
@@ -12887,7 +12887,7 @@ $<span class="w"> </span>cargo<span class="w"> </span>fuzz<span class="w"> </spa
 <hr />
 <h2 id="8-performance-ffi-overhead-inlining-loss-and-serialization-cost">8. Performance: FFI Overhead, Inlining Loss, and Serialization Cost</h2>
 <p>FFI is not free. The cost has three components: call overhead, optimization loss, and data marshaling.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b789618b29c8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b789618b29c8.png" alt="diagram"></div></p>
 <p><strong>Diagram 9 — Cost ladder: native vs FFI vs serialization vs RPC.</strong> Each step adds an order of magnitude. FFI's advantage is staying at the second rung; its cost is the loss of inlining and the marshaling work.</p>
 <h3 id="81-call-overhead">8.1 Call Overhead</h3>
 <p>A native Rust call is often inlined — zero call overhead, with cross-function optimization (constant propagation, dead-code elimination). An <code>extern "C"</code> call is an opaque indirect call: the optimizer cannot see across the boundary, cannot inline, and must spill registers per the C calling convention.</p>
@@ -12985,7 +12985,7 @@ $<span class="w"> </span>cargo<span class="w"> </span>fuzz<span class="w"> </spa
 <li><strong>Thin, auditable wrappers.</strong> Each wrapper is small enough to review in full — the <code>unsafe</code> is confined to a few functions.</li>
 <li><strong>Independent versioning and rollout.</strong> A bug fix in the core is published as one Rust release and then rebuilt into three artifacts (wheel, <code>.node</code>, WASM) with no logic changes in the wrappers.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_49862db344aa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_49862db344aa.png" alt="diagram"></div></p>
 <p><strong>Diagram 10 — Polyglot release pipeline.</strong> One Rust core, three thin wrappers, three artifact types, three fleets. A single version tag rebuilds all edges without logic duplication.</p>
 <h3 id="92-versioning-abi-stability-and-rollout">9.2 Versioning, ABI Stability, and Rollout</h3>
 <table>
@@ -13087,7 +13087,7 @@ $<span class="w"> </span>cargo<span class="w"> </span>fuzz<span class="w"> </spa
 <h2 id="2-testing-at-scale-cargo-test-vs-cargo-nextest-fixtures-and-property-testing">2. Testing at Scale: <code>cargo test</code> vs <code>cargo nextest</code>, Fixtures, and Property Testing</h2>
 <h3 id="21-how-cargo-test-actually-executes">2.1 How <code>cargo test</code> Actually Executes</h3>
 <p><code>cargo test</code> is a thin orchestrator around the <code>libtest</code> harness compiled into every <code>#[test]</code> binary.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_57fc452ac03d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_57fc452ac03d.png" alt="diagram"></div></p>
 <p>Mechanism:</p>
 <ul>
 <li><code>cargo test</code> builds one test binary per crate (plus one per <code>[[test]]</code> integration file and one for doctests). Each binary embeds every <code>#[test]</code> function discovered by macro expansion.</li>
@@ -13423,7 +13423,7 @@ cargo<span class="w"> </span>nextest<span class="w"> </span>run<span class="w"> 
 <h3 id="31-architecture-how-clippy-sees-your-code">3.1 Architecture: How Clippy Sees Your Code</h3>
 <p><code>rustc</code> proceeds: source → macro expansion → HIR → type check → MIR → LLVM IR. Clippy interposes after HIR/MIR construction: Cargo invokes <code>cargo clippy</code>, which calls <code>clippy-driver</code> (a <code>rustc</code> wrapper) instead of <code>rustc</code>. The driver loads clippy's lint passes as callbacks — each pass visits HIR nodes (expressions, items, patterns) and emits diagnostics. Because it runs as a compiler plugin, clippy has full type information — it can tell <code>Vec&lt;u8&gt;</code> from <code>Bytes</code> and flag <code>clone()</code> calls that are actually expensive.</p>
 <h3 id="32-lint-levels-and-the-pyramid">3.2 Lint Levels and the Pyramid</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c592084c8cd4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c592084c8cd4.png" alt="diagram"></div></p>
 <p>The default <code>cargo clippy</code> enables: <code>correctness</code>, <code>suspicious</code>, <code>complexity</code>, <code>perf</code>, <code>style</code>, and <code>cargo</code>. It does <strong>not</strong> enable <code>pedantic</code>, <code>nursery</code>, or <code>restriction</code>. This is intentional — pedantic alone adds ~180 lints, many with high false-positive rates on backend idioms (e.g., <code>module_name_repetitions</code>, <code>missing_errors_doc</code>).</p>
 <p>Recommended production posture for a backend workspace:</p>
 <table>
@@ -13860,7 +13860,7 @@ cargo<span class="w"> </span>audit<span class="w"> </span>--json<span class="w">
 <p>Backend Rust is often chosen for performance. Without continuous benchmarking, performance is a rumor. This section builds a benchmarking harness that produces stable, statistically sound measurements and gates regressions in CI.</p>
 <h3 id="61-criterion-statistical-benchmarking-with-html-reports">6.1 <code>criterion</code> — Statistical Benchmarking with HTML Reports</h3>
 <p><code>criterion</code> (the successor to <code>bencher</code>) is the standard Rust benchmarking crate. Unlike <code>cargo bench</code>'s built-in <code>#[bench]</code> harness (nightly-only, no statistics), <code>criterion</code> runs each benchmark many times, applies warmup, measures with statistical analysis (mean, median, standard deviation, outlier detection), and produces an HTML report with violin plots and regression detection against a saved baseline.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7fd8836bb22a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7fd8836bb22a.png" alt="diagram"></div></p>
 <h4 id="setting-up-criterion">Setting Up <code>criterion</code></h4>
 <div class="highlight"><pre><span></span><code><span class="c1"># Cargo.toml</span>
 <span class="k">[dev-dependencies]</span>
@@ -14049,7 +14049,7 @@ cargo<span class="w"> </span>bench<span class="w"> </span>--bench<span class="w"
 <h2 id="7-correctness-beyond-the-type-system-miri-loom-and-shuttle">7. Correctness Beyond the Type System: <code>Miri</code>, <code>loom</code>, and <code>shuttle</code></h2>
 <p>Rust's borrow checker eliminates data races in safe code and the compiler rejects use-after-free — but <code>unsafe</code> blocks, <code>UnsafeCell</code>, raw pointers, and concurrent <code>Atomics</code> escape those guarantees. Three tools close the gap.</p>
 <h3 id="71-miri-an-interpreter-that-catches-undefined-behavior">7.1 <code>Miri</code> — An Interpreter That Catches Undefined Behavior</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_64dad2b1ec72.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_64dad2b1ec72.png" alt="diagram"></div></p>
 <p>Miri is a MIR interpreter inside <code>rustc</code> that executes your code abstractly, tracking every allocation, borrow, and pointer provenance. When your code does anything that is UB per the Rust Abstract Machine — even if it "works" on x86 — Miri reports it with a precise trace.</p>
 <p><strong>What Miri catches:</strong></p>
 <ul>
@@ -14135,7 +14135,7 @@ cargo<span class="w"> </span>+nightly<span class="w"> </span>miri<span class="w"
 
 <h3 id="72-loom-and-shuttle-deterministic-concurrency-testing">7.2 <code>loom</code> and <code>shuttle</code> — Deterministic Concurrency Testing</h3>
 <p><code>Miri</code> catches UB in single-threaded execution plus some data races. <code>loom</code> and <code>shuttle</code> explore <strong>all possible thread interleavings</strong> of concurrent code, deterministically.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7764042e3fbf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7764042e3fbf.png" alt="diagram"></div></p>
 <p><strong><code>loom</code></strong> — for <code>std</code> synchronization primitives. You rewrite your concurrent data structure to use <code>loom::sync::*</code> types behind a <code>cfg(loom)</code> gate, then <code>loom::model</code> exhaustively explores interleavings.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Cargo.toml</span>
 <span class="c1">// [target.&#39;cfg(loom)&#39;.dependencies]</span>
@@ -14257,7 +14257,7 @@ cargo<span class="w"> </span>+nightly<span class="w"> </span>miri<span class="w"
 </tbody>
 </table>
 <h4 id="concurrency-test-matrix-choosing-the-right-tool">Concurrency Test Matrix — Choosing the Right Tool</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_17e89df0967d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_17e89df0967d.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Rule:</strong> If your concurrent code contains <code>unsafe</code>, run <em>both</em> <code>Miri</code> (for UB) and <code>loom</code>/<code>shuttle</code> (for interleaving). Miri does not explore interleavings; loom/shuttle do not detect aliasing UB. They are complementary.</p>
 </blockquote>
@@ -14267,7 +14267,7 @@ cargo<span class="w"> </span>+nightly<span class="w"> </span>miri<span class="w"
 <h3 id="81-caching-swatinemrust-cache-and-sccache">8.1 Caching — <code>Swatinem/rust-cache</code> and <code>sccache</code></h3>
 <p>Compiling a Rust workspace is dominated by <code>rustc</code> invocations — each crate compiles to an <code>rlib</code>/<code>rmeta</code> in <code>target/</code>. Caching <code>target/</code> naively causes stale or poisoned builds; the correct cache keys on <code>rustc</code> version, <code>Cargo.lock</code>, and <code>rust-toolchain.toml</code>.</p>
 <p><code>Swatinem/rust-cache</code> (the community standard, used by the Rust project itself) handles this correctly out of the box:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_be69fa557da8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_be69fa557da8.png" alt="diagram"></div></p>
 <p>Correct configuration:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/ci.yml — the complete gate</span>
 <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ci</span>
@@ -14399,7 +14399,7 @@ cargo<span class="w"> </span>install<span class="w"> </span>sccache<span class="
 
 <h3 id="82-putting-it-all-together-pipeline-ordering">8.2 Putting It All Together — Pipeline Ordering</h3>
 <p>The gate order matters for cost and latency:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e73de8af64ee.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e73de8af64ee.png" alt="diagram"></div></p>
 <ul>
 <li><strong>PR pipeline:</strong> <code>fmt</code> → <code>clippy</code> → <code>deny</code> → <code>nextest</code> (sharded) → <code>bench</code> comparison. Fastest, cheapest first; <code>miri</code>/<code>loom</code> excluded from PR to keep latency under 5 minutes.</li>
 <li><strong>Main + nightly pipeline:</strong> all of the above plus <code>miri</code>, <code>loom</code>/<code>shuttle</code>, <code>cargo audit</code> (scheduled, because new advisories appear without code changes), and full <code>criterion</code> baselines saved as artifacts.</li>
@@ -14555,7 +14555,7 @@ wasm32-wasip1                   # WASI preview 1
 <li><strong>Tier 3:</strong> no guarantees; you must build <code>std</code> yourself with <code>-Z build-std</code>.</li>
 </ul>
 <p>For backend work the tier-1 Linux and macOS triples cover almost everything. The moment you need <code>musl</code> static binaries or a tier-2/3 embedded triple, you need <code>build-std</code>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0945df80bdfe.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0945df80bdfe.png" alt="diagram"></div></p>
 <h3 id="12-the-two-hard-problems-std-and-the-linker">1.2 The Two Hard Problems: <code>std</code> and the Linker</h3>
 <p>Cross-compiling a Rust crate involves two pieces the host cannot provide by default:</p>
 <ol>
@@ -14811,7 +14811,7 @@ cargo<span class="w"> </span>build<span class="w"> </span>-Z<span class="w"> </s
 <span class="n">metrics</span><span class="p">.</span><span class="n">workspace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1dd639ff62ed.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1dd639ff62ed.png" alt="diagram"></div></p>
 <h3 id="22-the-shared-cargolock-and-why-it-matters">2.2 The Shared <code>Cargo.lock</code> and Why It Matters</h3>
 <p>A workspace produces <strong>one <code>Cargo.lock</code> at the root</strong>. Every member resolves to the same version of every shared dependency. This is a correctness property, not just convenience:</p>
 <ul>
@@ -14962,7 +14962,7 @@ cargo<span class="w"> </span>audit<span class="w"> </span>--manifest-path<span c
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_40d78a2540d4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_40d78a2540d4.png" alt="diagram"></div></p>
 <p>Spans compose. The <code>#[instrument]</code> macro creates and enters a span for the function body, capturing arguments as fields and recording the return/error automatically:</p>
 <div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">tracing</span><span class="p">::</span><span class="n">instrument</span><span class="p">;</span>
 <span class="k">use</span><span class="w"> </span><span class="n">anyhow</span><span class="p">::</span><span class="nb">Result</span><span class="p">;</span>
@@ -15092,7 +15092,7 @@ cargo<span class="w"> </span>audit<span class="w"> </span>--manifest-path<span c
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_06f61211197d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_06f61211197d.png" alt="diagram"></div></p>
 <p>Deployment note: always run the OTel Collector as a sidecar or DaemonSet, never have services export directly to Jaeger/Tempo over the network — the Collector handles batching, retries, tail sampling, and backpressure so your service does not.</p>
 <h3 id="33-prometheus-metrics-via-the-metrics-crate">3.3 Prometheus Metrics via the <code>metrics</code> Crate</h3>
 <p>For counters, gauges, and histograms that feed dashboards and alerting, the <code>metrics</code> facade (from the <code>metrics-rs</code> ecosystem) is the Rust equivalent of Prometheus client libraries in Go/Java — with the advantage that instrumentation is decoupled from the exporter:</p>
@@ -15258,7 +15258,7 @@ http_request_duration_seconds_count{route=&quot;/orders/:id&quot;,status=&quot;2
 <span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/usr/local/bin/api-gateway&quot;</span><span class="p">]</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fc24f2daa6b4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fc24f2daa6b4.png" alt="diagram"></div></p>
 <p>Without <code>cargo-chef</code>, a one-line fix triggers a full <code>cargo build --release</code> that recompiles <code>tokio</code>, <code>serde</code>, <code>axum</code>, and every other dependency — easily 8-15 minutes. With <code>cargo-chef</code>, the same fix recompiles only your crates (30-90 seconds) because the dependency layer is cache-hit. In a monorepo with fifty services, this is the difference between a 10-minute PR pipeline and a 45-minute one.</p>
 <p>Alternative without <code>cargo-chef</code> (simpler, less cache-efficient):</p>
 <div class="highlight"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">rust:1.82-bookworm</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
@@ -15418,7 +15418,7 @@ http_request_duration_seconds_count{route=&quot;/orders/:id&quot;,status=&quot;2
 <span class="w">        </span><span class="nt">target</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> type</span><span class="p">:</span><span class="w"> </span><span class="nv">AverageValue</span><span class="p p-Indicator">,</span><span class="nt"> averageValue</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w">  </span><span class="c1"># 100ms p50 budget</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_410e5c3c30ac.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_410e5c3c30ac.png" alt="diagram"></div></p>
 <p>Key operational details:</p>
 <ul>
 <li><strong><code>maxUnavailable: 0</code> + <code>maxSurge: 1</code></strong> guarantees at least <code>replicas</code> pods are always available during a rollout — no capacity dip.</li>

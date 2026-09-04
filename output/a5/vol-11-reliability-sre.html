@@ -294,7 +294,7 @@ hr {
 </tbody>
 </table>
 <p>The critical distinction: the <strong>SLI is the measurement</strong>, the <strong>SLO is the target</strong>, the <strong>SLA is the contract</strong>, and the <strong>error budget is the consequence</strong>. Teams confuse these constantly. An SLI without an SLO is a dashboard. An SLO without an error budget policy is a poster. An SLA without an SLO underneath it is a promise you cannot verify.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ebf5b28d4d67.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ebf5b28d4d67.png" alt="diagram"></div></p>
 <p><em>Figure 1-1: The SLO chain. SLIs are measured, SLOs set the target, error budgets drive decisions, and SLAs are the outward contract built on top.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> This chapter defines reliability targets and how to enforce them. How those targets are <em>observed</em> — metrics pipelines, Prometheus internals, log aggregation, distributed tracing — is covered in Chapters 2–4. How budget exhaustion translates into <em>operational</em> response — incident management, on-call, and postmortems — is covered in Chapters 5–6. Deployment safety mechanisms that consume error budgets are covered in Chapter 9.</p>
@@ -493,7 +493,7 @@ SLI          = good_events / valid_events
 <li>Internal services that sit on many critical paths need <strong>tighter SLOs</strong> than the user-facing services that depend on them. A common pattern is to set internal SLOs one nine tighter than the external SLO (external 99.9%, internal 99.95%).</li>
 <li>Dependency budgets must account for <strong>fan-out</strong>. A frontend that calls 10 microservices, each at 99.99%, still has a theoretical ceiling of 99.9% if any single dependency failure fails the request. Reducing critical-path fan-out, adding fallbacks, and making dependencies non-blocking are reliability strategies that directly improve the achievable SLO.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e5f8e50ba590.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e5f8e50ba590.png" alt="diagram"></div></p>
 <p><em>Figure 1-2: SLO composition. Internal dependencies need tighter SLOs than the frontend they support. A non-critical dependency like the cache can have a looser SLO if the service degrades gracefully without it.</em></p>
 <hr />
 <h2 id="error-budgets-the-mechanism-that-makes-slos-actionable">Error budgets: the mechanism that makes SLOs actionable</h2>
@@ -800,7 +800,7 @@ burn_rate = consumed / elapsed_budget  (are we burning faster than the SLO allow
 <li>Alerting on a long window alone is <strong>accurate but slow</strong> — by the time the 6-hour average confirms the problem, significant budget has already been consumed.</li>
 </ul>
 <p>Requiring both windows to exceed the threshold gives fast detection (the 1-hour window) with confirmation (the 6-hour window), dramatically reducing false positives while preserving responsiveness.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd6df37e699b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fd6df37e699b.png" alt="diagram"></div></p>
 <p><em>Figure 1-3: Multi-window burn-rate alerting. Both the short and long window must agree before paging, suppressing transient spikes without sacrificing detection speed.</em></p>
 <h3 id="pyrra-kubernetes-native-alternative">Pyrra (Kubernetes-native alternative)</h3>
 <p>Pyrra manages SLOs as Kubernetes custom resources and auto-generates both Prometheus rules and Grafana dashboards:</p>
@@ -866,11 +866,11 @@ kubectl<span class="w"> </span>get<span class="w"> </span>prometheusrule<span cl
 <p><strong>Setting SLOs before measuring.</strong> An SLO set without historical data is a guess. Measure the current SLI for at least one full window before setting the target. The initial SLO should usually be set at or slightly below the current measured value, then tightened as reliability improves.</p>
 <hr />
 <h4 id="sli-to-error-budget">SLI to Error Budget</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5db6f616a725.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5db6f616a725.png" alt="diagram"></div></p>
 <h4 id="burn-rate-alerting">Burn Rate Alerting</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3474223dc066.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3474223dc066.png" alt="diagram"></div></p>
 <h4 id="slo-window-types">SLO Window Types</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8c29ade8c0fb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8c29ade8c0fb.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>An SLI measures the user's experience as <code>good_events / valid_events</code> over a window; an SLO is the target for that ratio; the error budget (<code>1 - SLO</code>) is the allowed fraction of bad events; an SLA is the contractual promise built on top.</li>
@@ -1080,7 +1080,7 @@ rpc_duration_seconds_count 40000
 </code></pre></div>
 
 <p>Native histograms are the future for latency measurement but require compatible visualization (Grafana ≥ 10.4) and careful migration — you cannot mix classic and native histogram queries without handling both.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_84eebc132c7f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_84eebc132c7f.png" alt="diagram"></div></p>
 <p><em>Figure 2-1: Choosing the metric type. Counters for events, gauges for state, histograms for distributions that need fleet-wide quantiles, summaries only when aggregation is not needed.</em></p>
 <hr />
 <h2 id="the-golden-signals">The Golden Signals</h2>
@@ -1128,7 +1128,7 @@ rpc_duration_seconds_count 40000
 <li><strong>RED</strong> (Rate, Errors, Duration) — Tom Wilkie's method for <strong>request-driven services</strong>. For each service endpoint: what is the request rate, error rate, and duration distribution?</li>
 </ul>
 <p>In practice you need all three lenses: Golden Signals for service health, USE for infrastructure, RED for per-endpoint service behavior.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1ba77bb9f0ca.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1ba77bb9f0ca.png" alt="diagram"></div></p>
 <p><em>Figure 2-2: Three complementary lenses. Golden Signals give the service-level health check, RED breaks it down per endpoint, and USE explains saturation by drilling into each resource.</em></p>
 <h3 id="latency-in-detail">Latency in detail</h3>
 <p>Latency is the most nuanced Golden Signal because a single number cannot represent a distribution. At minimum, track three percentiles:</p>
@@ -1343,7 +1343,7 @@ sum(rate(http_requests_total[5m]))           # scalar (if no by/without) or inst
 <p><strong>Label aggregation traps.</strong> <code>sum(metric)</code> without <code>by</code> collapses all labels. <code>sum by (handler) (metric)</code> preserves the <code>handler</code> dimension. Forgetting <code>by</code> when you need per-handler breakdown, or including it when you need a fleet total, are among the most common PromQL errors. Always verify which labels survive the aggregation.</p>
 <hr />
 <h2 id="prometheus-architecture-scrape-store-query">Prometheus architecture: scrape, store, query</h2>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c01acebcd1c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5c01acebcd1c.png" alt="diagram"></div></p>
 <p><em>Figure 2-3: Prometheus pull architecture. Targets expose metrics, Prometheus scrapes them, evaluates rules, and fans out to Alertmanager and long-term storage. Service discovery automates target management.</em></p>
 <h3 id="scrape-configuration">Scrape configuration</h3>
 <p>Prometheus <strong>pulls</strong> metrics over HTTP. Each target exposes a text endpoint (default <code>/metrics</code>) in the Prometheus exposition format. The scrape configuration controls what to scrape, how often, and how to discover targets:</p>
@@ -1532,7 +1532,7 @@ sum(rate(http_requests_total[5m]))           # scalar (if no by/without) or inst
 
 <h3 id="cardinality-the-cost-model">Cardinality: the cost model</h3>
 <p>Every unique combination of label values creates a new time series in the TSDB. Cardinality is the dominant cost driver for Prometheus — in storage, memory, and query latency. A single metric with 3 labels, each with 100 values, can produce up to 1,000,000 series.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_491adc0e93d8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_491adc0e93d8.png" alt="diagram"></div></p>
 <p><em>Figure 2-4: Cardinality is the cost model. Each label value multiplies the series count. High-cardinality labels like user_id or request_id must never appear on metrics.</em></p>
 <p>Rules for cardinality hygiene:</p>
 <ul>
@@ -1581,7 +1581,7 @@ sum(rate(http_requests_total[5m]))           # scalar (if no by/without) or inst
 </code></pre></div>
 
 <p><strong>Thanos / Mimir / Cortex</strong> provide global query, downsampling, and object-storage-backed retention (S3/GCS) so that dashboards can query months of data without keeping it all in Prometheus local TSDB.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4cc9f161671c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4cc9f161671c.png" alt="diagram"></div></p>
 <p><em>Figure 2-5: HA Prometheus with long-term storage. Two replicas scrape identically, remote-write to durable storage, and a global query layer deduplicates and fans out.</em></p>
 <hr />
 <h2 id="instrumentation-exposing-metrics-from-application-code">Instrumentation: exposing metrics from application code</h2>
@@ -1742,9 +1742,9 @@ cat<span class="w"> </span><span class="s">&lt;&lt;EOF | curl --data-binary @- h
 <p><strong>Pushgateway staleness.</strong> Metrics pushed to the Pushgateway never expire automatically. A batch job that stops running leaves its last push visible forever, making dashboards and alerts believe the job is still succeeding. Always include a <code>push_time_seconds</code> gauge and alert when it goes stale.</p>
 <hr />
 <h4 id="red-vs-use-decision">RED vs USE Decision</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_95cd14d83aba.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_95cd14d83aba.png" alt="diagram"></div></p>
 <h4 id="metrics-pipeline">Metrics Pipeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e91d4ec90d56.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e91d4ec90d56.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Four metric types cover all use cases: <strong>counters</strong> for events (monotonically increasing, queried via <code>rate</code>/<code>increase</code>), <strong>gauges</strong> for state (up/down, queried directly), <strong>histograms</strong> for distributions that need fleet-wide aggregation, and <strong>summaries</strong> only for single-instance quantiles.</li>
@@ -1830,7 +1830,7 @@ cat<span class="w"> </span><span class="s">&lt;&lt;EOF | curl --data-binary @- h
 <p><strong>Security and compliance.</strong> Logs routinely contain PII, credentials, and business-sensitive data. At scale, manual review is impossible — redaction, access control, and retention enforcement must be automated.</p>
 </li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3191415c38dd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3191415c38dd.png" alt="diagram"></div></p>
 <p><em>Figure 3-1: The logging pipeline. Every stage — collection, buffering, processing, storage, query — must handle scale, backpressure, and failure independently.</em></p>
 <hr />
 <h2 id="structured-logging-the-foundation">Structured logging: the foundation</h2>
@@ -2097,7 +2097,7 @@ cat<span class="w"> </span><span class="s">&lt;&lt;EOF | curl --data-binary @- h
 </code></pre></div>
 
 <p>Each line is a JSON object with <code>log</code> (the raw application output), <code>stream</code> (stdout/stderr), and <code>time</code>. The collection agent runs as a <strong>DaemonSet</strong> (one pod per node) that tails these files.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dd74a038dffd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dd74a038dffd.png" alt="diagram"></div></p>
 <p><em>Figure 3-2: Kubernetes log collection. The DaemonSet agent tails kubelet-managed log files, enriches with Kubernetes metadata, and ships with disk buffering for reliability.</em></p>
 <h3 id="filebeat-elastic-stack">Filebeat (Elastic stack)</h3>
 <p>Filebeat is the Elastic-recommended lightweight shipper for the ELK stack. It tails files, handles rotation, maintains a registry of read offsets, and ships to Logstash or directly to Elasticsearch:</p>
@@ -2593,7 +2593,7 @@ cat<span class="w"> </span><span class="s">&lt;&lt;EOF | curl --data-binary @- h
 <li>You already use Grafana and Prometheus — Loki integrates natively with the same label model and query UX.</li>
 <li>You need long retention (weeks to months) at manageable cost — Loki's S3-backed chunk storage with compaction is designed for this.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_baef8bfbec89.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_baef8bfbec89.png" alt="diagram"></div></p>
 <p><em>Figure 3-3: Indexing trade-off. Elasticsearch indexes everything for fast arbitrary queries at high cost; Loki indexes only labels and scans chunk content, trading query flexibility for 10× lower cost.</em></p>
 <p><strong>Loki / Grafana Alloy production configuration:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># loki-config.yaml — production Loki deployment (monolithic or microservices)</span>
@@ -2904,7 +2904,7 @@ cat<span class="w"> </span><span class="s">&lt;&lt;EOF | curl --data-binary @- h
 
 <h3 id="correlating-logs-metrics-and-traces">Correlating logs, metrics, and traces</h3>
 <p>The most powerful incident workflow connects all three pillars via shared identifiers:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_88992ce472ec.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_88992ce472ec.png" alt="diagram"></div></p>
 <p><em>Figure 3-4: The incident workflow across pillars. An alert on a metric leads to log investigation via trace_id correlation, then to a trace waterfall that pinpoints the failing span.</em></p>
 <p>Grafana exemplars make this automatic — a Prometheus histogram can carry trace IDs as exemplars, and Grafana renders them as clickable links from the metrics dashboard directly to the relevant trace and logs:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># prometheus.yml — enable exemplars</span>
@@ -3185,11 +3185,11 @@ cat<span class="w"> </span><span class="s">&lt;&lt;EOF | curl --data-binary @- h
 <p><strong>Retaining everything forever.</strong> The default should be short retention (7–14 days) for bulk logs with selective long retention for errors and audit logs. Teams that retain all logs at full fidelity for 90 days without sampling or tiering routinely discover that logging is their largest infrastructure cost.</p>
 <hr />
 <h4 id="structured-logging-pipeline">Structured Logging Pipeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_026759861363.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_026759861363.png" alt="diagram"></div></p>
 <h4 id="log-aggregation-architecture">Log Aggregation Architecture</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7cd0d697e8ea.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7cd0d697e8ea.png" alt="diagram"></div></p>
 <h4 id="correlation-id-propagation">Correlation ID Propagation</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6891d86230bf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6891d86230bf.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Every log line at scale must be <strong>structured JSON</strong> with a consistent schema — <code>timestamp</code>, <code>level</code>, <code>service</code>, <code>message</code>, <code>request_id</code>, <code>trace_id</code>, and relevant domain fields — so that downstream stages can query without per-service parsing.</li>
@@ -3266,7 +3266,7 @@ cat<span class="w"> </span><span class="s">&lt;&lt;EOF | curl --data-binary @- h
 <li><strong>Ownership is distributed.</strong> When each service is owned by a different team, a trace is the shared artifact that lets teams collaborate without passing log snippets back and forth.</li>
 <li><strong>Async work is involved.</strong> Queues, background jobs, and event-driven workflows break the request/response model that logs assume. Traces with span links connect the async pieces.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6f3a0e093ba9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6f3a0e093ba9.png" alt="diagram"></div></p>
 <p><em>Figure 4-1: A single checkout request as a trace. The trace reveals that 60 ms of the 85 ms in payment-service was spent in fraud-check — the obvious place to investigate a latency regression. Without the trace you would see only that payment-service is slow.</em></p>
 <hr />
 <h2 id="the-trace-data-model">The trace data model</h2>
@@ -3286,7 +3286,7 @@ cat<span class="w"> </span><span class="s">&lt;&lt;EOF | curl --data-binary @- h
 </ul>
 <p><strong>Trace</strong> — the tree (or DAG, when links are used) of all spans sharing a <code>trace_id</code>. The trace is the unit of storage and query — you fetch an entire trace to understand one request.</p>
 <p><strong>Span context</strong> — the triple <code>(trace_id, span_id, trace_flags)</code> that must be propagated from caller to callee so the callee can create a child span linked to its parent.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9d8ed7bd87be.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9d8ed7bd87be.png" alt="diagram"></div></p>
 <p><em>Figure 4-2: Context propagation across a request. Each hop forwards the W3C traceparent header carrying trace_id, parent span_id, and sampling flags so the callee can join the same trace.</em></p>
 <h3 id="span-kinds">Span kinds</h3>
 <p>OTel defines five span kinds that give structure to the trace graph:</p>
@@ -3472,7 +3472,7 @@ X-B3-Sampled: 1
 <hr />
 <h2 id="opentelemetry-architecture">OpenTelemetry: architecture</h2>
 <p>OpenTelemetry (OTel) is the CNCF project that unifies tracing, metrics, and logs under one set of APIs, SDKs, and a collector. It is the successor to OpenTracing and OpenCensus (both now deprecated) and is the industry standard for instrumentation.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc3e9a7e7847.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dc3e9a7e7847.png" alt="diagram"></div></p>
 <p><em>Figure 4-3: OpenTelemetry end-to-end architecture. Application code calls the API, the SDK batches and samples, the Collector receives/processes/exports, and storage backends serve queries. The API/SDK split means uninstrumented code has near-zero overhead.</em></p>
 <h3 id="api-vs-sdk-separation">API vs SDK separation</h3>
 <p>This split is deliberate and important:</p>
@@ -3919,7 +3919,7 @@ opentelemetry-instrument<span class="w"> </span><span class="se">\</span>
 <hr />
 <h2 id="sampling">Sampling</h2>
 <p>Tracing every request at full fidelity is rarely affordable. A service handling 10,000 req/s that creates 5 spans per request produces 50,000 spans/s. At ~1 KB per span, that is ~4 TB/day for one service. Sampling is how you bound that cost.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f698cce95864.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f698cce95864.png" alt="diagram"></div></p>
 <p><em>Figure 4-4: Head sampling (cheap, early decision, may drop errors) vs tail sampling (expensive, late decision, keeps all interesting traces). In practice most production systems use tail sampling at the gateway with a head-sampling fallback.</em></p>
 <h3 id="sampling-strategies-compared">Sampling strategies compared</h3>
 <table>
@@ -4185,7 +4185,7 @@ Limit: 20
 
 <h3 id="service-map">Service map</h3>
 <p>Both Jaeger and Grafana derive a <strong>service map</strong> from traces — the directed graph of which services call which:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7fe243493079.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7fe243493079.png" alt="diagram"></div></p>
 <p><em>Figure 4-5: Service map derived from traces. The Collector's servicegraph connector or Tempo's metrics-generator builds this automatically — no manual topology definition needed.</em></p>
 <hr />
 <h2 id="operating-tracing-in-production">Operating tracing in production</h2>
@@ -4280,9 +4280,9 @@ Limit: 20
 </ul>
 <hr />
 <h4 id="sampling-decision">Sampling Decision</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9f1265d493e9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9f1265d493e9.png" alt="diagram"></div></p>
 <h4 id="trace-context-propagation">Trace Context Propagation</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a8cd9a40caa7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a8cd9a40caa7.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>A <strong>trace</strong> is the causal graph of one request across all services; a <strong>span</strong> is one timed operation within that graph. Parent-child relationships and W3C <code>traceparent</code> propagation stitch isolated per-service spans into a single distributed trace.</li>
@@ -4381,7 +4381,7 @@ Limit: 20
 <hr />
 <h2 id="the-incident-lifecycle">The incident lifecycle</h2>
 <p>Every incident moves through the same phases, though the boundaries blur and phases may overlap or repeat:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3bdaafdccbc3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3bdaafdccbc3.png" alt="diagram"></div></p>
 <p><em>Figure 5-1: The incident lifecycle. Mitigation and coordination loop until the bleeding stops; resolution follows only when the fix is verified. Many teams merge mitigation and resolution — the critical distinction is that mitigation restores service even if the root cause is not yet fixed.</em></p>
 <h3 id="phase-1-detection">Phase 1: Detection</h3>
 <p>Detection is either <strong>automated</strong> (an alert fires when an SLI breaches its SLO, see Chapter 1) or <strong>human-reported</strong> (a customer, support engineer, or internal user notices something wrong).</p>
@@ -4509,7 +4509,7 @@ Limit: 20
 </table>
 <p>Severity is assessed by <strong>impact</strong>, not cause. A one-line config typo that takes down the entire API is Sev1 regardless of how trivial the fix is. Conversely, a complex distributed systems bug that affects 0.1% of requests and has a workaround may be Sev3 even though the investigation is hard.</p>
 <p>Severity can change during an incident. An incident that starts as Sev3 ("one availability zone showing elevated latency") may escalate to Sev1 ("latency is actually caused by a database failover that is now affecting all zones"). The IC owns severity assessment and re-classification.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_421da17626ec.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_421da17626ec.png" alt="diagram"></div></p>
 <p><em>Figure 5-2: Severity classification as a decision tree. Start from user impact, not technical cause. Arrows show escalation and de-escalation paths that the IC manages.</em></p>
 <hr />
 <h2 id="roles">Roles</h2>
@@ -4550,7 +4550,7 @@ Limit: 20
 <p>SMEs are <strong>not</strong> expected to manage the incident. Their job is to answer "what is happening in your system and what can we do about it" and then do what the IC decides.</p>
 <h3 id="stakeholders-and-observers">Stakeholders and observers</h3>
 <p>Everyone else — managers, product, support, executives — are observers. They belong in a separate communication channel (or the status page), not in the war room. The Comms Lead bridges the two. This is not about secrecy — it is about protecting the responders' ability to focus.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c46b9cb6554.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5c46b9cb6554.png" alt="diagram"></div></p>
 <p><em>Figure 5-3: Incident role structure. The IC sits above the technical and communication tracks; SMEs report through Ops Lead; stakeholders are shielded from the war room by the Comms Lead.</em></p>
 <hr />
 <h2 id="on-call">On-call</h2>
@@ -5059,7 +5059,7 @@ business days.
 </code></pre></div>
 
 <p>For larger organizations, platforms like FireHydrant or Rootly automate the full lifecycle — severity classification, role assignment, timeline capture, stakeholder notifications, and postmortem scheduling — so the IC can focus on the technical response rather than tooling.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7834b43c705c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7834b43c705c.png" alt="diagram"></div></p>
 <p><em>Figure 5-4: Incident tooling flow. The alert triggers the paging system, which opens the war room; diagnosis and mitigation loop until verified; the incident record captures the timeline automatically throughout.</em></p>
 <hr />
 <h2 id="distributed-systems-lens">Distributed-systems lens</h2>
@@ -5071,11 +5071,11 @@ business days.
 <p><strong>On-call load scales with service count.</strong> An organization with 100 services and one on-call rotation per service has 100 on-call slots to fill. At 5 engineers per team, that means every engineer is on call roughly every 5 weeks — sustainable. But if each service has separate primary and secondary rotations, or if platform teams are on call for shared infrastructure plus their own services, the load concentrates on a few teams. On-call design must account for the total burden across the organization, not just per-team fairness.</p>
 <hr />
 <h4 id="severity-decision">Severity Decision</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_78c67c9dea75.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_78c67c9dea75.png" alt="diagram"></div></p>
 <h4 id="on-call-escalation">On-Call Escalation</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_570681b75a58.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_570681b75a58.png" alt="diagram"></div></p>
 <h4 id="war-room-comms">War Room Comms</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d4ae58bbf6d3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d4ae58bbf6d3.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Incident response is about <strong>minimizing duration and blast radius</strong>, not preventing incidents — prevention is covered by resilience and deployment practices (Chapters 7–10), but every system will still have incidents that require practiced response.</li>
@@ -5159,7 +5159,7 @@ business days.
 </table>
 <h3 id="the-reliability-feedback-loop">The reliability feedback loop</h3>
 <p>Postmortems are one component of a larger reliability system:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7273746eca21.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7273746eca21.png" alt="diagram"></div></p>
 <p><em>Figure 6-1: Postmortems close the reliability loop. The fixes they produce improve detection (new SLIs/alerts), response (new runbooks), and prevention (architectural changes) — making every future incident through the same path less likely.</em></p>
 <hr />
 <h2 id="blameless-culture">Blameless culture</h2>
@@ -5483,7 +5483,7 @@ the config without range validation.
 <li>Premature closure — once "the" cause is found, investigation stops even though other important factors remain.</li>
 </ul>
 <p>Instead, think in terms of <strong>contributing factors</strong> and <strong>defense layers</strong>:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3e6447e0070c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3e6447e0070c.png" alt="diagram"></div></p>
 <p><em>Figure 6-2: Defense in depth. The incident required every layer to fail simultaneously. Fixing any single layer prevents recurrence through that path — fixing multiple layers provides resilience even when one fix is incomplete or regresses.</em></p>
 <p>Each layer that failed is an independent action item. Even if one fix is imperfect (e.g., range validation has a gap for a new config param), the other layers still protect.</p>
 <h3 id="five-whys">Five Whys</h3>
@@ -5527,7 +5527,7 @@ the config without range validation.
 <p>Use Five Whys as a starting point for one causal chain, then complement it with broader contributing-factor analysis.</p>
 <h3 id="fishbone-ishikawa-diagram">Fishbone (Ishikawa) diagram</h3>
 <p>For incidents with multiple contributing factor categories, a fishbone diagram organizes them:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fbdee514e0fa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fbdee514e0fa.png" alt="diagram"></div></p>
 <p><em>Figure 6-3: Fishbone categorization of contributing factors. Each category suggests a different type of fix — process, tooling, monitoring, architecture, or human factors (where the fix is always tooling or process, not telling humans to be more careful).</em></p>
 <h3 id="the-counterfactual-trap">The counterfactual trap</h3>
 <p>A common postmortem anti-pattern is the counterfactual: "If Alice had been more careful, this would not have happened" or "If the reviewer had caught the typo, we would have been fine." Counterfactuals that depend on humans being more careful are not useful — they do not produce fixes that work when humans are tired, rushed, or new to the team.</p>
@@ -5723,7 +5723,7 @@ the config without range validation.
 <p>Storing postmortems in a searchable, centralized location (wiki, dedicated postmortem tool, or simply a well-organized document repository) ensures they are findable when a similar incident occurs. Tag postmortems by service, failure mode, and contributing factor category so trends can be analyzed.</p>
 <h3 id="trend-analysis">Trend analysis</h3>
 <p>Individual postmortems fix individual incidents. Trend analysis across many postmortems reveals systemic patterns:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b9fc37811832.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b9fc37811832.png" alt="diagram"></div></p>
 <p><em>Figure 6-4: Trend analysis across postmortems. Individual action items fix individual holes; trend analysis identifies where to make systemic investments that prevent whole classes of incidents.</em></p>
 <p>Quarterly, review all postmortems for:</p>
 <ul>
@@ -5757,11 +5757,11 @@ the config without range validation.
 <p><strong>Near-misses in distributed systems are especially valuable.</strong> A near-miss where a network partition <em>almost</em> caused data inconsistency, or where a failover <em>almost</em> did not complete, reveals a distributed correctness gap that testing (Chapter 12, Volume 6) may not have covered. These near-misses deserve postmortems even though no user was affected — the next partition may not be so lucky.</p>
 <hr />
 <h4 id="postmortem-timeline">Postmortem Timeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aee4f4a92639.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aee4f4a92639.png" alt="diagram"></div></p>
 <h4 id="five-whys_1">Five Whys</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1b30ec3488ac.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1b30ec3488ac.png" alt="diagram"></div></p>
 <h4 id="action-item-lifecycle">Action Item Lifecycle</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_af8eaf4b1269.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_af8eaf4b1269.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Postmortems convert the <strong>cost of an incident into durable improvement</strong> — without them, the same failure recurs with larger blast radius as the system grows, and knowledge leaves with the responders who hold it tacitly.</li>
@@ -5818,7 +5818,7 @@ the config without range validation.
 </ul>
 <p>Each of these would have been caught by a load test that modeled realistic traffic — not just high request volume.</p>
 <h3 id="where-load-testing-sits-in-the-reliability-lifecycle">Where load testing sits in the reliability lifecycle</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_43d7c10e5f19.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_43d7c10e5f19.png" alt="diagram"></div></p>
 <p><em>Figure 7-1: Load testing closes the loop between design-time estimates and production reality. Results feed the capacity model, which drives provisioning — and production SLO data triggers the next round of testing as traffic and architecture evolve.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> Back-of-envelope estimation and system-level capacity math are introduced in Volume 7, Chapter 2; this chapter applies them with measured data. Autoscaling mechanics for Kubernetes workloads are covered in Volume 12, Chapter 3; this chapter covers how to <em>validate</em> that those scalers behave correctly under load. Resilience under failure is Chapter 8 (chaos) and Chapter 10 (patterns) in this volume.</p>
@@ -5843,7 +5843,7 @@ the config without range validation.
 <h3 id="why-it-matters-the-queueing-trap">Why it matters: the queueing trap</h3>
 <p>Under a closed model, the classic test pattern is "ramp VUs from 10 to 500 and measure throughput." As VUs increase, throughput rises until the system saturates — then latency increases but throughput <em>plateaus</em> because VUs are blocked waiting. The tester concludes "system handles 500 VUs, throughput is X." But under an open model with the same throughput, latency would have grown unboundedly as the queue backed up — a qualitatively different result. If your production traffic is open (and for internet-facing services it almost always is), a closed-model test <em>underestimates tail latency by hiding queueing</em>.</p>
 <p>The fix is not to always use open — both models are valid for different scenarios — but to <em>match the model to production traffic</em> and to use open models when testing backend APIs where callers do not synchronize on responses.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_34d42fb65afe.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_34d42fb65afe.png" alt="diagram"></div></p>
 <p><em>Figure 7-2: Closed versus open workload models. Closed models self-throttle when latency rises, hiding queueing. Open models expose queue growth — which is why they are preferred for backend API testing.</em></p>
 <p>Most modern tools support both: k6 supports open (constant arrival rate via <code>ramping-arrival-rate</code> executor) and closed (VU-based) executors; Vegeta is inherently open (rate-driven); Gatling supports both via injection profiles.</p>
 <hr />
@@ -5905,7 +5905,7 @@ the config without range validation.
 </tbody>
 </table>
 <h3 id="how-they-compose-into-a-test-suite">How they compose into a test suite</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_224613b39e57.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_224613b39e57.png" alt="diagram"></div></p>
 <p><em>Figure 7-3: Progressive load test suite. Fast smoke tests gate every commit; heavier tests run on progressively longer cadences. Each type answers a different capacity question.</em></p>
 <p><strong>Breakpoint testing</strong> deserves special attention because it produces the most actionable output: a curve of throughput versus latency and error rate as load increases. The <em>knee</em> (where latency starts rising superlinearly) is the practical capacity limit; the <em>cliff</em> (where errors spike) is the hard failure point. Capacity planning targets the knee, not the cliff.</p>
 <hr />
@@ -5933,7 +5933,7 @@ the config without range validation.
 <li><strong>β-dominated systems</strong> exhibit <em>retrograde</em> scalability — beyond some <code>N</code>, throughput <em>decreases</em> as concurrency increases (common with contended locks, cache coherency traffic, or distributed consensus).</li>
 </ul>
 <p><strong>Practical use:</strong> Run a breakpoint test that measures throughput at increasing concurrency levels, fit the USL, and identify whether your next scaling investment should target contention reduction (faster locks, sharding) or coherency reduction (less cross-node coordination). If β is significant, adding more replicas may make things worse, not better.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aea73d6a3b1b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aea73d6a3b1b.png" alt="diagram"></div></p>
 <p><em>Figure 7-4: Two systems measured at increasing concurrency. Blue (high β) shows retrograde scaling — throughput collapses past 40 concurrent workers due to coherency costs. Green (low β) plateaus gracefully. Fitting the USL to these curves tells you which regime you are in and where to invest.</em></p>
 <h3 id="queueing-intuition-without-the-heavy-math">Queueing intuition without the heavy math</h3>
 <p>You do not need full queueing theory to make capacity decisions — one result suffices: for an M/M/1 queue (Poisson arrivals, exponential service), mean response time is:</p>
@@ -6342,7 +6342,7 @@ vegeta<span class="w"> </span>report<span class="w"> </span>-type<span class="o"
 </table>
 <h3 id="reading-the-results">Reading the results</h3>
 <p><strong>The throughput-latency curve</strong> is the primary output:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fbc1813dafc0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fbc1813dafc0.png" alt="diagram"></div></p>
 <p><em>Figure 7-5: Breakpoint test result. The knee at ~1500 RPS (where p95 jumps from 55 ms to 120 ms) is the practical capacity limit. Beyond ~2000 RPS the system is saturated — queueing dominates and latency grows without bound. Provision for the knee, not the cliff.</em></p>
 <p><strong>Red flags that invalidate a test:</strong></p>
 <ul>
@@ -6423,7 +6423,7 @@ vegeta<span class="w"> </span>report<span class="w"> </span>-type<span class="o"
 <li>Translate replicas to cost (instances × hours × price) and compare scaling strategies: larger instances versus more small instances versus different instance families (Volume 12, Chapters 8–9 cover cloud cost engineering).</li>
 </ul>
 <h3 id="headroom-and-the-danger-zone">Headroom and the danger zone</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_96f881938c8f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_96f881938c8f.png" alt="diagram"></div></p>
 <p><em>Figure 7-6: Headroom model. The target operating range is the safe zone, with autoscaling configured to keep the system there. The danger zone is where utilization law predicts superlinear latency — alert here, not at the cliff.</em></p>
 <h3 id="continuous-load-testing">Continuous load testing</h3>
 <p>Capacity planning is not a one-time exercise — every significant change can shift the knee:</p>
@@ -6496,9 +6496,9 @@ vegeta<span class="w"> </span>report<span class="w"> </span>-type<span class="o"
 </table>
 <hr />
 <h4 id="load-test-lifecycle">Load Test Lifecycle</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1d6781eca041.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1d6781eca041.png" alt="diagram"></div></p>
 <h4 id="littles-law-and-saturation">Little's Law and Saturation</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d7c6d2fa7981.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d7c6d2fa7981.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Load testing answers <strong>how much, how gracefully, and for how long</strong> a system can handle demand — questions that functional tests cannot answer and that capacity planning depends on. Without measured data, provisioning is guesswork and autoscaling is hope.</li>
@@ -6596,7 +6596,7 @@ vegeta<span class="w"> </span>report<span class="w"> </span>-type<span class="o"
 <li><strong>Minimize blast radius.</strong> Scope experiments so the cost of an unexpected result is contained — one service, one AZ, a percentage of traffic.</li>
 </ol>
 <h3 id="the-lifecycle">The lifecycle</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5dafdfb7e144.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5dafdfb7e144.png" alt="diagram"></div></p>
 <p><em>Figure 8-1: The chaos experiment lifecycle. Each experiment is a loop — hypothesis, steady state, injection, observation, learning — that either verifies resilience or surfaces a gap to fix. Verified fixes become automated regression experiments.</em></p>
 <p><strong>Each stage in detail:</strong></p>
 <p><strong>1. Hypothesis</strong> — A falsifiable statement: "If we inject fault F scoped to S, then steady-state metric M will remain within bounds B because mechanism R will activate." Example: "If we kill one of three payment-service pods, checkout p95 will remain &lt; 400 ms because the service mesh will remove the dead endpoint within 2 s and the remaining pods have headroom."</p>
@@ -7097,7 +7097,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 <li><strong>Timeout abort.</strong> Every experiment has a hard duration after which the fault is removed automatically — even if observation is still in progress.</li>
 </ul>
 <h3 id="guardrails">Guardrails</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ab02f8fc9818.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ab02f8fc9818.png" alt="diagram"></div></p>
 <p><em>Figure 8-2: Safety gates for a production chaos experiment. No experiment runs without passing scope, window, health, and budget checks — and every experiment has both automated and manual abort paths.</em></p>
 <p><strong>Additional guardrails:</strong></p>
 <ul>
@@ -7303,13 +7303,13 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 </table>
 <hr />
 <h4 id="fault-injection-taxonomy">Fault Injection Taxonomy</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_37705a805493.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_37705a805493.png" alt="diagram"></div></p>
 <h4 id="safety-gates-sequence">Safety Gates Sequence</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6349b31d6945.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6349b31d6945.png" alt="diagram"></div></p>
 <h4 id="steady-state-hypothesis">Steady-State Hypothesis</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10a49ba9102f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_10a49ba9102f.png" alt="diagram"></div></p>
 <h4 id="game-day-timeline">Game Day Timeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6c80e82ecc93.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6c80e82ecc93.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Chaos engineering is <strong>hypothesis-driven experimentation on the system's ability to withstand realistic failures</strong> — not random destruction. Every experiment has a falsifiable hypothesis with a specific metric, bound, and named resilience mechanism, plus defined steady state, scope, duration, and abort conditions.</li>
@@ -7421,7 +7421,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 </ul>
 <h3 id="bluegreen">Blue/Green</h3>
 <p>Run two full environments — blue (current) and green (new) — and switch traffic atomically from one to the other. Both environments run simultaneously during verification; rollback is an instant traffic switch back to blue.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7b4af4cc32df.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7b4af4cc32df.png" alt="diagram"></div></p>
 <p><em>Figure 9-1: Blue/green. Both versions run at full scale; traffic switches atomically via label selector or load balancer. Rollback is an instant switch back — but the resource cost is 2× during the transition window.</em></p>
 <ul>
 <li><strong>Blast radius:</strong> All-or-nothing at the switch point — 0% then 100%. Verification happens before the switch (smoke tests against green), but green has not served production traffic, so load-related bugs are not caught until the switch.</li>
@@ -7506,7 +7506,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 <p>Promotion is manual (<code>kubectl argo rollouts promote checkout-api</code>) or triggered by CI after preview verification. Rollback is <code>kubectl argo rollouts undo checkout-api</code> — flips the active service back to the previous ReplicaSet instantly without pod churn.</p>
 <h3 id="canary">Canary</h3>
 <p>Shift a small percentage of traffic to the new version, evaluate metrics, and progressively increase the percentage — aborting and rolling back automatically if metrics breach thresholds. The canonical safe-deploy strategy for tier 0.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_14a26c7e531f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_14a26c7e531f.png" alt="diagram"></div></p>
 <p><em>Figure 9-2: Canary. Traffic splits by weight; the canary is evaluated at each step. Automated analysis gates promotion — if metrics breach, the canary is removed without human intervention. The blast radius at any point is the canary weight.</em></p>
 <ul>
 <li><strong>Blast radius:</strong> Proportional to canary weight at each step — 5% canary means at most 5% of users see a bad version.</li>
@@ -7523,7 +7523,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 <h2 id="progressive-delivery-automated-canary-analysis">Progressive delivery: automated canary analysis</h2>
 <p>A canary without automated analysis is just a slow manual deploy — a human watches dashboards and decides whether to promote. Progressive delivery automates that loop: metric queries, success criteria, and promotion/rollback decisions.</p>
 <h3 id="how-it-works">How it works</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4b53362204c5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4b53362204c5.png" alt="diagram"></div></p>
 <p><em>Figure 9-3: Automated canary progression. Each step runs a fixed analysis window of metric queries against the canary. Any failure aborts the rollout and removes canary traffic — no human in the loop for the failure path.</em></p>
 <h3 id="what-to-analyze">What to analyze</h3>
 <p>Canary analysis queries fall into three categories:</p>
@@ -8018,7 +8018,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 </table>
 <p>The critical distinction: <strong>release and experiment flags are temporary</strong> (they accumulate debt if not removed); <strong>ops and permission flags are permanent</strong> (they are part of the system's control plane).</p>
 <h3 id="flag-lifecycle">Flag lifecycle</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7ac4954fbd9d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7ac4954fbd9d.png" alt="diagram"></div></p>
 <p><em>Figure 9-4: Feature flag lifecycle. Code ships with the flag off (no risk), is validated internally, rolls out progressively by flag targeting, and the flag is removed after full rollout. The kill switch provides instant rollback at any stage without a redeploy.</em></p>
 <p>Flag debt is real — every flag adds a code branch that must be tested, reasoned about, and eventually removed. Teams that do not enforce flag removal accumulate combinatorial complexity: 10 flags means 1024 potential code path combinations, most untested. Track flag age, alert on flags older than their intended lifetime, and make flag removal part of the definition of done for the feature.</p>
 <h3 id="openfeature-the-vendor-neutral-flag-standard">OpenFeature: the vendor-neutral flag standard</h3>
@@ -8112,7 +8112,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 </code></pre></div>
 
 <p><strong>Flag evaluation architecture — local vs. remote:</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bee559dfeefe.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bee559dfeefe.png" alt="diagram"></div></p>
 <p><em>Figure 9-5: Flag evaluation architecture. The SDK evaluates against a local cache that syncs from the provider — evaluation is local and fast (&lt; 1 ms), not a network call per request. On cache miss or error, the safe default is returned.</em></p>
 <p>Key design decisions for flag infrastructure:</p>
 <ul>
@@ -8273,7 +8273,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 </code></pre></div>
 
 <p>Each phase is a separate deploy — never combine a breaking schema change with a code deploy in one step. Tools that enforce this: <code>golang-migrate</code>, <code>Flyway</code>, <code>Alembic</code>, <code>Atlas</code>, or managed solutions (PlanetScale branching, Neon branching).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_59915eb2e6b5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_59915eb2e6b5.png" alt="diagram"></div></p>
 <p><em>Figure 9-6: Expand/contract for zero-downtime schema changes. Both versions coexist during the canary window — the schema must be compatible with both. Contract only after the old version is fully drained.</em></p>
 <h3 id="cross-service-deploy-ordering">Cross-service deploy ordering</h3>
 <p>When service A depends on a new API in service B, the deploy order matters:</p>
@@ -8357,7 +8357,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 
 <hr />
 <h2 id="choosing-a-strategy-decision-framework">Choosing a strategy: decision framework</h2>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_34ffcee6491b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_34ffcee6491b.png" alt="diagram"></div></p>
 <p><em>Figure 9-7: Deployment strategy decision framework. Risk and tier determine the strategy; feature flags and canary compose — the safest tier-0 deploys use both.</em></p>
 <hr />
 <h2 id="distributed-systems-lens">Distributed-systems lens</h2>
@@ -8422,7 +8422,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 </table>
 <hr />
 <h4 id="canary-analysis-and-auto-rollback">Canary Analysis and Auto-Rollback</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_187a612a28ad.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_187a612a28ad.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Deployment strategy determines <strong>blast radius</strong> (how much traffic sees the new version), <strong>signal</strong> (how the new version is evaluated), and <strong>rollback</strong> (how quickly a bad version is removed). The strategy is the primary lever for deployment safety — more impactful than code review or testing alone for containing bad deploys.</li>
@@ -8474,7 +8474,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 <li>Autoscaling adds pods, but new pods immediately saturate too — scaling does not help when the bottleneck is a downstream.</li>
 </ol>
 <p>Total time from degraded downstream to full outage: often under 60 seconds. Every pattern in this chapter exists to interrupt this chain at a different link.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3a3b01724ac5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3a3b01724ac5.png" alt="diagram"></div></p>
 <p><em>Figure 10-1: A slow downstream without resilience cascades through thread pools and is amplified by retries. With timeouts, bulkheads, breakers, and fallbacks the failure is contained and partially degraded rather than total.</em></p>
 <h3 id="the-prerequisites">The prerequisites</h3>
 <p>Two mechanisms are prerequisites for every other pattern:</p>
@@ -8722,7 +8722,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 <h2 id="circuit-breakers">Circuit breakers</h2>
 <p>A circuit breaker prevents a caller from hammering a downstream that is clearly failing. It tracks recent failure rate and, when a threshold is breached, <em>opens</em> — failing fast without making the downstream call at all — for a cooldown period. After the cooldown, it allows a probe request (<em>half-open</em>); success closes the breaker, failure re-opens it.</p>
 <h3 id="the-state-machine">The state machine</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2faaf3556f19.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2faaf3556f19.png" alt="diagram"></div></p>
 <p><em>Figure 10-2: Circuit breaker state machine. The breaker opens when failure rate in the sliding window exceeds the threshold, fast-fails for a cooldown, then probes in half-open before closing.</em></p>
 <h3 id="resilience4j-circuit-breaker">Resilience4j circuit breaker</h3>
 <div class="highlight"><pre><span></span><code><span class="n">CircuitBreakerConfig</span><span class="w"> </span><span class="n">cbConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CircuitBreakerConfig</span><span class="p">.</span><span class="na">custom</span><span class="p">()</span>
@@ -8814,7 +8814,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 <h2 id="bulkheads">Bulkheads</h2>
 <p>A bulkhead isolates failure domains so that a slow or failing downstream cannot exhaust the resources needed to serve other requests. The name comes from ship compartments: one flooded compartment does not sink the ship.</p>
 <p>Two isolation strategies dominate in backend services:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f1a32bc4fa87.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f1a32bc4fa87.png" alt="diagram"></div></p>
 <p><em>Figure 10-3: Without bulkheads a slow downstream exhausts the shared thread pool. Thread-pool bulkheads isolate but add thread-hopping overhead. Semaphore bulkheads (preferred) limit concurrency without extra threads and fail fast.</em></p>
 <h3 id="semaphore-bulkhead-preferred">Semaphore bulkhead (preferred)</h3>
 <p>Modern services on non-blocking runtimes (Netty, virtual threads) should prefer semaphore bulkheads — they limit concurrency without dedicating threads, avoid context-switch overhead, and compose naturally with circuit breakers.</p>
@@ -9047,7 +9047,7 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 <span class="w">    </span><span class="p">.</span><span class="na">decorate</span><span class="p">();</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_28d10ea6facb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_28d10ea6facb.png" alt="diagram"></div></p>
 <p><em>Figure 10-4: Decorator ordering for composing resilience patterns. TimeLimiter bounds total time, Retry heals transient faults, CircuitBreaker fast-fails when the downstream is clearly unhealthy, Bulkhead isolates concurrency, and Fallback provides degraded responses.</em></p>
 <p>Timeout is the foundation — without it, bulkhead permits are held indefinitely, breakers never see failures promptly, and retries wait forever. Verify every layer has a timeout before adding any other pattern.</p>
 <hr />
@@ -9302,11 +9302,11 @@ aws<span class="w"> </span>fis<span class="w"> </span>start-experiment<span clas
 
 <hr />
 <h4 id="circuit-breaker-states">Circuit Breaker States</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bc31401e7c6f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bc31401e7c6f.png" alt="diagram"></div></p>
 <h4 id="timeout-and-retry-budget">Timeout and Retry Budget</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9b0f53e71476.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9b0f53e71476.png" alt="diagram"></div></p>
 <h4 id="bulkhead-isolation">Bulkhead Isolation</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_275fc59ec985.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_275fc59ec985.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Every outbound call needs an explicit timeout strictly less than the remaining inbound deadline — without this, no other resilience pattern can function. Propagate deadlines via gRPC context or HTTP headers so downstream work that cannot be returned in time is never started.</li>

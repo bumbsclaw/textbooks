@@ -440,7 +440,7 @@ corresponding public key, and this holds even though the public key is known to 
 asymmetry — sign with private, verify with public — is what makes signatures <em>broadcast
 authentication</em>: you can hand your public key to the entire world, and any of them can verify
 your signatures, but none of them can forge one.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b70f9034a5a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6b70f9034a5a.png" alt="diagram"></div></p>
 <h3 id="what-a-signature-proves-and-what-it-does-not">What a signature proves — and what it does not</h3>
 <p>A valid signature under a public key you trust establishes three things:</p>
 <ul>
@@ -635,7 +635,7 @@ store, a container base image's <code>ca-certificates</code>, a private corporat
 <strong>intermediate</strong> CAs, which issue the <strong>leaf</strong> (end-entity) certificates that actually bind
 service identities. Each certificate is signed by the one above it, forming a chain from leaf to
 root.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0bad5ccd81e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a0bad5ccd81e.png" alt="diagram"></div></p>
 <p><strong>Chain validation</strong>, which every TLS client and signature verifier performs, walks from the
 leaf up to a trusted root and checks, at each link: (1) the signature on this certificate
 verifies under the issuer's public key; (2) the current time is within the certificate's
@@ -732,7 +732,7 @@ concatenation of its two children; the <strong>root</strong> hash therefore depe
 leaf and the root changes. (In RFC 6962's construction, leaves are hashed with a <code>0x00</code> prefix
 and internal nodes with a <code>0x01</code> prefix — <em>domain separation</em> that prevents an attacker from
 passing off an internal node as a leaf, a second-preimage defense worth knowing exists.)</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_56c08a626a72.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_56c08a626a72.png" alt="diagram"></div></p>
 <p>An <strong>inclusion proof</strong> (audit proof) demonstrates that a specific item is a leaf under a known
 root, <em>without</em> revealing the other items, using only the sibling hashes along the path from the
 leaf to the root — about <strong>log₂(n)</strong> hashes for <code>n</code> leaves. In the diagram, to prove <code>d3</code> is in
@@ -765,7 +765,7 @@ attestations (Chapter 6) and SLSA provenance (Book 4, Chapter 3) travel in.</p>
 <li><code>signatures</code> — a list, each with a <code>sig</code> value and an optional <code>keyid</code>. A list because a
   payload may carry multiple signatures (multi-sig, below).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bc6d6ce8dcfc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bc6d6ce8dcfc.png" alt="diagram"></div></p>
 <p>The subtle and important part is <strong>PAE — Pre-Authentication Encoding</strong>. The signature is <em>not</em>
 computed over the raw payload bytes. It is computed over:</p>
 <div class="highlight"><pre><span></span><code>PAE(payloadType, payload) = &quot;DSSEv1&quot; SP LEN(payloadType) SP payloadType SP LEN(payload) SP payload
@@ -890,11 +890,11 @@ two-year key matches a fleet of ephemeral runners. The arc of the rest of this b
 part, the story of trading long-lived keys for short-lived, verifiable, logged identity — and
 every primitive in this chapter is a piece of how that trade is made sound.</p>
 <h3 id="hash-agility-migration-plan">Hash agility migration plan</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_609abf5335a8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_609abf5335a8.png" alt="diagram"></div></p>
 <h3 id="signature-vs-mac-when-to-use-which">Signature vs MAC: when to use which</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4332127d2fe8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4332127d2fe8.png" alt="diagram"></div></p>
 <h3 id="revocation-vs-short-lived-certs">Revocation vs short-lived certs</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ca2651a5a9dc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ca2651a5a9dc.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Hashes give you three separable properties</strong> — preimage, second-preimage, and collision
@@ -1006,7 +1006,7 @@ three-party arrangement, inherited more or less directly from the X.509 web PKI 
   the signature and walks the certificate chain up to a <strong>trust anchor</strong> (a root certificate)
   it already trusts, typically shipped in the OS or a program-managed root store.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_de105f461d4f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_de105f461d4f.png" alt="diagram"></div></p>
 <p>The system delivers exactly two properties, and it is worth stating them with pedantic
 precision because almost every failure in this chapter comes from someone assuming a third:</p>
 <ol>
@@ -1275,7 +1275,7 @@ a build server, occasionally an HSM), and for its entire lifetime it is a single
 catastrophic failure. This is the observation that drives Fulcio's design (Chapter 3): issue
 a certificate that lives for <em>ten minutes</em>, so there is essentially no long-lived key to
 steal.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_653b3a619feb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_653b3a619feb.png" alt="diagram"></div></p>
 <h3 id="failure-mode-2-signed-but-malicious-the-central-lesson">Failure mode 2: signed-but-malicious (the central lesson)</h3>
 <p>Key theft at least involves a stolen key. The deeper problem needs no theft at all: <strong>a
 legitimate publisher, using its own genuine key, signs malware — because the publisher's
@@ -1298,7 +1298,7 @@ build produced a trojanized 3CXDesktopApp — itself the downstream result of an
 software-supply-chain compromise (a poisoned dependency, X_TRADER) — and the malicious build
 was <strong>signed with 3CX's legitimate certificate</strong>. Three incidents, years apart, identical
 lesson.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4fb19eccab0c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4fb19eccab0c.png" alt="diagram"></div></p>
 <p>State the lesson as bluntly as possible, because it is the thesis of the entire book:</p>
 <blockquote>
 <p><strong>Classic code signing verifies the signer, not the software's integrity relative to its
@@ -1529,7 +1529,7 @@ why organizations move to <strong>keyless / workload-identity signing</strong> (
   they live in an HSM/KMS under hardware custody and tight access policy (Chapter 9), not in
   a CI secret store — the distro model, applied internally.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3c10fb52739d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3c10fb52739d.png" alt="diagram"></div></p>
 <p>The through-line: classic signing's model of "durable secret, held by the publisher, verified
 against a root" was designed for a world of a few publishers shipping a few products on
 release cycles measured in months. It does not survive contact with a continuous-delivery
@@ -1537,11 +1537,11 @@ fleet of thousands of artifacts and hundreds of pipelines. The rest of Book 5 is
 survives contact — and each piece of it is a named answer to a named failure from this
 chapter.</p>
 <h3 id="long-lived-key-compromise-timeline">Long-lived key compromise timeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_496a2b858bd3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_496a2b858bd3.png" alt="diagram"></div></p>
 <h3 id="classic-verification-and-where-it-fails">Classic verification and where it fails</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1174d2c3e31b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1174d2c3e31b.png" alt="diagram"></div></p>
 <h3 id="hardware-protection-maturity-model">Hardware protection maturity model</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_064e3833d367.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_064e3833d367.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>The classic model provides exactly two things: integrity and signer authenticity.</strong> It
@@ -1698,7 +1698,7 @@ consequences of running private Sigstore; for now, hold the fact that every arch
 component below is <strong>self-hostable</strong>, and the public instance is one deployment of it, not the
 system itself.</p>
 <h2 id="the-components">The components</h2>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_75665af32b5e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_75665af32b5e.png" alt="diagram"></div></p>
 <p>Read the numbers as the signing path; the dashed edges are the trust infrastructure that makes
 the numbered steps verifiable. We now take each box apart.</p>
 <h3 id="cosign-the-client">Cosign — the client</h3>
@@ -1864,7 +1864,7 @@ by a certificate that expired 525,000 minutes ago?</p>
 requires proof that the signature was made <strong>while the certificate was valid</strong> — and Rekor
 provides exactly that proof, in the form of the <strong><code>integratedTime</code></strong> carried inside the
 Rekor-signed <strong>SET</strong>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bd66e6f3d144.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bd66e6f3d144.png" alt="diagram"></div></p>
 <p>The logic the verifier runs is:</p>
 <ol>
 <li>The signing <strong>certificate</strong> carries a validity window: <code>NotBefore</code> (t0) to <code>NotAfter</code> (t0 + ~10
@@ -1893,7 +1893,7 @@ for what that identity signed.")</p>
 <h2 id="the-end-to-end-keyless-flow">The end-to-end keyless flow</h2>
 <p>We can now assemble the components into the two flows an engineer actually cares about.</p>
 <h3 id="signing">Signing</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fa46255e866a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fa46255e866a.png" alt="diagram"></div></p>
 <p>Step by step:</p>
 <ol>
 <li>The developer or CI job runs <code>cosign sign</code> on an image <em>digest</em>.</li>
@@ -1919,7 +1919,7 @@ for what that identity signed.")</p>
    Rekor.</li>
 </ol>
 <h3 id="verifying">Verifying</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_17b40ca8a8c3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_17b40ca8a8c3.png" alt="diagram"></div></p>
 <p>Step by step:</p>
 <ol>
 <li>The verifier loads Sigstore's <strong>trusted keys</strong> from the <strong>TUF</strong> root (Fulcio root CA, Rekor's
@@ -2092,11 +2092,11 @@ and logs them so a deploy gate can trust them later. Sigstore is that something.
 cryptographic transport that carries every other attestation in this suite from the platform that
 produces it to the gate that enforces it (Chapter 10; Book 6).</p>
 <h3 id="tuf-secured-trust-root-distribution">TUF-secured trust root distribution</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8bf1549228b8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8bf1549228b8.png" alt="diagram"></div></p>
 <h3 id="signature-storage-tag-vs-referrers-api">Signature storage: tag vs referrers API</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_97bd2020f422.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_97bd2020f422.png" alt="diagram"></div></p>
 <h3 id="failure-mode-coverage-matrix">Failure-mode coverage matrix</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d8201e59d8d2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d8201e59d8d2.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Sigstore</strong> (OpenSSF / Linux Foundation, launched ~2021) makes signing free and easy. Its
@@ -2227,7 +2227,7 @@ of the same structural fact: <strong>a durable secret is a durable liability.</s
 build server, an HSM, a developer laptop, a CI secret store — for the entire time it is valid, and
 that entire time is a window of theft.</p>
 <p>Keyless signing closes the window by making it a few seconds wide and leaving nothing behind.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_00353578b105.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_00353578b105.png" alt="diagram"></div></p>
 <p>The trade is not "no keys" but <strong>"key you keep" for "identity you prove."</strong> The durable thing you now
 protect is not a secret file — it is an <strong>account with an identity provider</strong> and the integrity of a
 public log. That is a different, and for automated systems a far better, thing to defend, because
@@ -2325,7 +2325,7 @@ and to <strong>assert those facts in a signed, short-lived token</strong> minted
 delivered only to it. The job proves its identity not by holding a secret but by holding a token the
 platform made about it, on the fly, that expires in minutes. There is nothing durable to steal
 because the credential <em>is created per-run and dies with the run</em>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2c2118dd6fe4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2c2118dd6fe4.png" alt="diagram"></div></p>
 <p>The signer, at the end of this, is provably and specifically <strong>the workload</strong> — not "someone with a
 key", not "the acme org", but <em>that exact build context</em>. Let us see how each platform produces that
 token.</p>
@@ -2451,7 +2451,7 @@ the org that calls that shared workflow signs under the same, verifiable identit
 can require <em>that</em> identity and be certain the signing was done by the trusted shared workflow, not
 by arbitrary code in some tenant repo. This is the mechanism that turns "we have a golden signing
 pipeline" from an aspiration into an enforceable fact.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0e822815f3c9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0e822815f3c9.png" alt="diagram"></div></p>
 <p>The Fulcio certificate that comes out embeds the issuer in the OID extension <code>1.3.6.1.4.1.57264.1.8</code>
 and maps a whole family of claims into further extensions in the same arc — the source repository URI
 and digest, the ref, the runner environment, the build trigger, and the run invocation URI. So the
@@ -2589,7 +2589,7 @@ Document)</strong>, which comes in two forms, mirroring Sigstore's X.509-and-JWT
 </ul>
 <p>The security rests on <strong>two-stage attestation</strong>, and this answers the question the CI platforms
 answered implicitly ("how does the issuer <em>know</em> the workload is what it claims?"):</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a7a2b182137e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a7a2b182137e.png" alt="diagram"></div></p>
 <ul>
 <li><strong>Node attestation</strong> proves <em>which node</em> an agent runs on, without a pre-shared node secret. The
   agent presents platform evidence the server can independently verify: an <strong>AWS/GCP/Azure instance
@@ -2658,7 +2658,7 @@ cosign<span class="w"> </span>verify<span class="w"> </span><span class="se">\</
 </code></pre></div>
 
 <p>The verify-by-identity flow, end to end:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_521c43f7ac01.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_521c43f7ac01.png" alt="diagram"></div></p>
 <p>The cryptographic checks (signature valid, chains to Fulcio, logged in Rekor, <code>integratedTime</code> inside
 the cert window — Chapter 3's verify-after-expiry) are necessary but <strong>not sufficient</strong>. They prove
 "a real Sigstore signature by <em>some</em> identity." The <strong>identity/issuer match</strong> is what turns that into
@@ -2781,9 +2781,9 @@ the same question in its own dialect: <em>"is this the identity my policy allows
 (the footgun section) and the fleet has a single, coherent, keyless identity story from <code>git push</code> to
 production traffic. Get it loose and you have spent a lot of cryptography to check almost nothing.</p>
 <h3 id="workload-identity-federation-oidc">Workload identity federation (OIDC)</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4dc54a45eabb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4dc54a45eabb.png" alt="diagram"></div></p>
 <h3 id="keyless-vs-keyed-decision-tree">Keyless vs keyed decision tree</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_19a7c0366cbd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_19a7c0366cbd.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>"Keyless" is a misnomer.</strong> There <em>is</em> an ephemeral keypair per signing — generated in memory,
@@ -2981,7 +2981,7 @@ present. Write <code>a_i = HASH(0x00 || d_i)</code> for the leaf hashes, and bui
 <li>Level 2: <code>c0123 = HASH(0x01 || b01 || b23)</code>, <code>c4567 = HASH(0x01 || b45 || b67)</code></li>
 <li>Root: <code>r = HASH(0x01 || c0123 || c4567)</code></li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2d4ff7c34215.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2d4ff7c34215.png" alt="diagram"></div></p>
 <p>The proof for <code>d3</code> is exactly <strong>three</strong> hashes — the siblings encountered climbing from <code>a3</code> to
 the root:</p>
 <ol>
@@ -3024,7 +3024,7 @@ complete left subtree <code>c0123</code> (over <code>d0…d3</code>) and a right
 <p>At size 8 the tree is the perfect tree from before, with <code>R8 = r = HASH(0x01 || c0123 || c4567)</code>
 and <code>c4567 = HASH(0x01 || b45 || b67)</code>. The RFC 6962 consistency proof from 6 to 8 is the three
 nodes <strong><code>[b45, b67, c0123]</code></strong>.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f0dd630e111.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4f0dd630e111.png" alt="diagram"></div></p>
 <p>The verifier does two reconstructions from the proof nodes:</p>
 <ul>
 <li><strong>Old root:</strong> <code>HASH(0x01 || c0123 || b45)</code> and checks it equals the trusted <code>R6</code>. This proves
@@ -3166,7 +3166,7 @@ not logged is not trusted.</p>
   <strong>appear</strong> in the tree within the MMD (inclusion proofs check out). Lightweight auditing is
   built into browsers; standalone auditors and the log operators' peers do the heavier checking.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8c5dc773490a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8c5dc773490a.png" alt="diagram"></div></p>
 <p>The <strong>monitor and auditor roles are both essential, and they answer different questions</strong>. The
 auditor asks "is the log honest and append-only?" The monitor asks "did anything <em>bad for me</em> get
 logged?" A log that is perfectly append-only but that <strong>nobody monitors</strong> provides transparency
@@ -3223,7 +3223,7 @@ things that matter:</p>
 <p>Here is where Rekor earns its place in the architecture. Fulcio certificates live for <strong>about ten
 minutes</strong> (Chapter 3). A naïve verifier checking a certificate that expired months ago would
 reject the signature — the certificate is long dead. Rekor's timestamp resolves the paradox.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_97d30c11dba8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_97d30c11dba8.png" alt="diagram"></div></p>
 <p>The reasoning: the verifier trusts Rekor's SET as a <strong>timestamping authority</strong>. The SET says the
 entry — including the certificate and signature — existed in the log at <code>integratedTime = t0+2m</code>.
 That time falls <strong>inside</strong> the certificate's validity window (<code>t0 .. t0+10m</code>). Therefore the
@@ -3475,11 +3475,11 @@ particularly elegant one, which is why it rewards a backend engineer's attention
   depends on it, it is production infrastructure.</li>
 </ul>
 <h3 id="rekor-shard-and-monitor-architecture">Rekor shard and monitor architecture</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7de20c424ff9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7de20c424ff9.png" alt="diagram"></div></p>
 <h3 id="consistency-proof-verification">Consistency proof verification</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e80e72fd7306.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e80e72fd7306.png" alt="diagram"></div></p>
 <h3 id="log-backed-verification-end-to-end">Log-backed verification end-to-end</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9f6b8da87d2b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9f6b8da87d2b.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Transparency logs convert silent abuse into detectable abuse.</strong> They do not stop a stolen key
@@ -3624,7 +3624,7 @@ guarantees for bytes and binaries"). It is a <strong>Cloud Native Computing Foun
 (it entered the CNCF in 2019) and has become the substrate for the broader attestation ecosystem:
 SLSA provenance (Book 4, Chapter 3) is <em>defined as</em> an in-toto attestation, and Sigstore's
 <code>cosign attest</code> speaks the in-toto Statement format natively.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7de8fed50ad7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7de8fed50ad7.png" alt="diagram"></div></p>
 <h2 id="the-in-toto-attestation-framework">The in-toto Attestation Framework</h2>
 <p>Modern in-toto splits into two related but distinct things. The <strong>layout/link</strong> model (covered later)
 verifies a full pipeline against a signed policy — it is the original 2019 design. The <strong>Attestation
@@ -3680,7 +3680,7 @@ framework, one parser, one verification pipeline, arbitrarily many claim types.<
 <p>A Statement is just JSON; on its own it is unsigned and unauthenticated. in-toto attestations are
 <strong>always</strong> wrapped and signed, and the signing envelope is <strong>DSSE</strong> — the Dead Simple Signing
 Envelope from Chapter 1. The full stack, from innermost claim to outermost log record:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_66b9f6f74dd8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_66b9f6f74dd8.png" alt="diagram"></div></p>
 <ul>
 <li><strong>DSSE</strong> wraps the Statement. Its <code>payloadType</code> is the constant
   <code>application/vnd.in-toto+json</code>, its <code>payload</code> is the base64-encoded Statement, and <code>signatures</code> is
@@ -3707,7 +3707,7 @@ is the single most common error in this area. They are a container and one of it
 <h3 id="one-framework-many-predicate-types">One framework, many predicate types</h3>
 <p>The predicate ecosystem is where the generality pays off. A handful of standardized predicate types
 cover most of the secure-supply-chain metadata you will emit, and custom types cover the rest:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_65af8f16f6ee.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_65af8f16f6ee.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -3928,7 +3928,7 @@ between clone and build (a SUNSPOT-style substitution), the digests diverge, the
 verification rejects the chain. The trailing <code>DISALLOW *</code> forbids any <em>unexpected</em> input from
 sneaking in. Chaining <code>MATCH</code> rules across every adjacent pair of steps encodes the full artifact flow:
 clone→test→build→package, each link pinned by hash to its predecessor.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7c2fa42f2ad.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e7c2fa42f2ad.png" alt="diagram"></div></p>
 <h3 id="verification-checking-the-chain-against-the-layout">Verification: checking the chain against the layout</h3>
 <p>The verifier's algorithm, given the owner's public key, the layout, and the collected link metadata:</p>
 <ol>
@@ -3985,7 +3985,7 @@ they trust</em> exist for this artifact, with <code>verificationResult: PASSED</
 <code>verifiedLevels</code>? They trust the summary rather than re-deriving it. This is exactly the kind of
 tiered trust that scales: verify deeply in one place, propagate a cheap signed assertion everywhere
 else.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3f9e61e5974f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3f9e61e5974f.png" alt="diagram"></div></p>
 <h2 id="tooling">Tooling</h2>
 <p>The attestation ecosystem has several reference and production implementations; you will mix them
 depending on where you sit in the pipeline.</p>
@@ -4021,7 +4021,7 @@ metadata and start being enforcement. It previews Chapters 8 and 10 and Book 6, 
 Build-Level-3 provenance from our build platform's identity, (2) an SBOM, (3) a passing vulnerability
 scan no older than 24 hours, and (4) all of the above logged in Rekor.</em> An admission controller
 evaluates that at deploy time against the attestations attached to the image:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b199ce701c70.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b199ce701c70.png" alt="diagram"></div></p>
 <p>The controller does not care <em>how</em> the attestations were produced — Witness, cosign, a bespoke signer —
 only that they are the right <em>types</em>, from the right <em>identities</em>, logged in the right <em>place</em>, and
 that their <em>content</em> satisfies policy. That uniformity is the entire reason the in-toto container is
@@ -4068,9 +4068,9 @@ make "attested" mean "benign." Provenance and policy tell you <em>how</em> somet
 whether that <em>how</em> is trustworthy is the subject of build-integrity levels (SLSA, Book 4) and of the
 policies you write at the gate.</p>
 <h3 id="in-toto-layout-verification-flow">In-toto layout verification flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_00a25873efbe.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_00a25873efbe.png" alt="diagram"></div></p>
 <h3 id="provenance-types-slsa-vs-in-toto-statement">Provenance types: SLSA vs in-toto statement</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3a33fb47ccd1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3a33fb47ccd1.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Signing the final artifact proves who signed a blob; it says nothing about the process.</strong>
@@ -4412,7 +4412,7 @@ the offline targets key, which timestamp compromise does not grant.</p>
 </tbody>
 </table>
 <h3 id="the-picture">The picture</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_92e5ee19f681.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_92e5ee19f681.png" alt="diagram"></div></p>
 <p>Read the arrows as trust flow. Root authorizes the keys for every role (including itself, for
 rotation). Targets delegates sub-namespaces to delegated targets roles. Snapshot commits <em>which
 version</em> of every targets file is current. Timestamp commits which version of snapshot is current.
@@ -4437,7 +4437,7 @@ but not arbitrary code execution. To get (1), they must reach the <strong>offlin
 offline delegated key, whose damage is confined to that delegation's path scope). And for the
 absolute worst case — re-delegating everything — they must reach a <strong>threshold</strong> of the <strong>offline</strong>
 root keys held by multiple people.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2b5a1c375b66.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2b5a1c375b66.png" alt="diagram"></div></p>
 <p>This is a strict improvement over flat single-key signing on two axes. First, <strong>the easy-to-steal
 keys are the low-power keys</strong>: online exposure is inversely correlated with the damage a stolen key
 does. Second, <strong>the high-power keys require multi-party, offline, threshold compromise</strong>: there is
@@ -4449,7 +4449,7 @@ you need m of them, from m different holders' hardware, before the anchor moves.
 <p>A TUF client does not just "download and check a signature." It runs a fixed, ordered algorithm
 over the metadata, and the <strong>order is part of the security argument</strong>. The client begins with a
 locally trusted <code>root.json</code> (shipped with the client, pinned) and proceeds:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_424cb80ccecc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_424cb80ccecc.png" alt="diagram"></div></p>
 <p>Step by step, and why the order is what it is:</p>
 <ol>
 <li><strong>Update root first (authority before anything).</strong> The client repeatedly fetches the next
@@ -4580,7 +4580,7 @@ validity metadata. The root role was established in a <strong>public root-signin
 threshold of community keyholders across multiple organizations, using <strong>go-tuf</strong> and the
 <code>sigstore/root-signing</code> repository. Cosign ships a pinned copy of this TUF root and refreshes it
 through the normal TUF update workflow (<code>cosign initialize</code> fetches the latest trust root).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f485e1674ee5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f485e1674ee5.png" alt="diagram"></div></p>
 <p>The layering is worth stating plainly because it is easy to get tangled. Sigstore is a root of
 trust for <em>artifact signatures</em> (Chapter 3). But Sigstore's own trust anchors — the keys that make
 Fulcio and Rekor trustworthy — need their own secure distribution and rotation, and <em>that</em> is what
@@ -4645,11 +4645,11 @@ infrastructure a senior backend engineer owns.</p>
   signing is partly owned.</em></li>
 </ul>
 <h3 id="tuf-role-hierarchy-and-thresholds">TUF role hierarchy and thresholds</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6db76abe8ff7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6db76abe8ff7.png" alt="diagram"></div></p>
 <h3 id="tuf-client-update-workflow">TUF client update workflow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a2fee95061aa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a2fee95061aa.png" alt="diagram"></div></p>
 <h3 id="tuf-vs-transparency-log-complementary-guarantees">TUF vs transparency log: complementary guarantees</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1476cfbd43a6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1476cfbd43a6.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>TUF secures <strong>software update/distribution systems</strong>, not just individual artifacts. Its goal is
@@ -4833,7 +4833,7 @@ attestations and comparing it against policy. That is the work.</p>
 <p>Verification is not one check; it is an ordered gate of them. Each layer answers a different
 question, and skipping any one leaves a specific, exploitable hole. Run them in this order — cheap
 cryptographic checks first, then identity, then content — and deny on the first failure.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6d1e54e99550.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6d1e54e99550.png" alt="diagram"></div></p>
 <h3 id="1-signature-validity">1. Signature validity</h3>
 <p>The cheapest and most fundamental check: does the signature verify against the public key or
 certificate? For keyed signing this is a raw signature verification (Chapter 1); for keyless
@@ -4859,7 +4859,7 @@ five minutes ago with their own throwaway identity. The signature is real. The i
 <li>For <strong>keyed / KMS</strong> signing: the signature must verify against the <em>specific</em> public key you
   trust, and that key's identity in your KMS must be the expected one.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c150278d549.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5c150278d549.png" alt="diagram"></div></p>
 <p>This is the load-bearing layer. Everything else is defense in depth around it. If you take one
 operational lesson from this chapter: <strong>pin the identity.</strong></p>
 <h3 id="3-subject-digest-match">3. Subject / digest match</h3>
@@ -5095,7 +5095,7 @@ that a final artifact is signed.</p>
 "untrusted/external" to "trusted/will-run." Each gate defends a <strong>trust boundary</strong> — the point
 where an artifact crosses from a lower-trust zone to a higher-trust one. The rule of thumb:
 <strong>verify at every boundary crossing, and treat admission as the non-negotiable backstop.</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc51a0e83878.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dc51a0e83878.png" alt="diagram"></div></p>
 <ul>
 <li><strong>At pull / in CI</strong> — verify the provenance of <em>dependencies</em> before consuming them (e.g.,
   <code>slsa-verifier</code> on a downloaded release, <code>cosign verify</code> on a base image). This is the most
@@ -5169,7 +5169,7 @@ choice with no good universal answer: <strong>fail-open</strong> (admit despite 
 <strong>fail-closed</strong> (deny). This is the security-versus-availability tension in its rawest form, and
 pretending it doesn't exist is how you get either a self-inflicted outage or a gate that quietly
 stops gating.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_590df7204eb3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_590df7204eb3.png" alt="diagram"></div></p>
 <p>The reasoning framework:</p>
 <ul>
 <li><strong>Match the mode to the blast radius.</strong> For high-sensitivity workloads — production, regulated
@@ -5229,11 +5229,11 @@ automated, identity-pinned, digest-anchored, enforced at admission, failing clos
 matters — is the half that actually stops attacks. Everything in Chapters 1–6 is potential energy.
 The gate in this chapter is where it converts to work.</p>
 <h3 id="verification-layers-pyramid">Verification layers pyramid</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e1ca839bb6e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5e1ca839bb6e.png" alt="diagram"></div></p>
 <h3 id="dsse-envelope-anatomy-and-verification">DSSE envelope anatomy and verification</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8b7da8d6bf3c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8b7da8d6bf3c.png" alt="diagram"></div></p>
 <h3 id="admission-time-verification-with-policy-engine">Admission-time verification with policy engine</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a824d282799b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a824d282799b.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Produce AND verify.</strong> Signatures, provenance, and SBOMs that nothing checks are security
@@ -5365,7 +5365,7 @@ all keys the same.</p>
 to an attacker of extracting the key material</strong>. Think of storage options as a spectrum from
 "trivially copyable file" to "non-exportable hardware," and read the whole spectrum as a campaign
 to raise that extraction cost until it exceeds the value of the key.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_36631d38c64b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_36631d38c64b.png" alt="diagram"></div></p>
 <h3 id="software-keys-the-worst-option">Software keys — the worst option</h3>
 <p>A private key in a file is a private key one <code>cat</code>, one misconfigured S3 bucket, one leaked CI log,
 or one <code>docker history</code> away from being someone else's. Book 4, Chapter 6 (secrets in CI) is a
@@ -5549,7 +5549,7 @@ separates the key that <em>anchors</em> trust from the keys that <em>do</em> the
 7), where the offline <strong>root</strong> role delegates to online <strong>targets/snapshot/timestamp</strong> roles so
 that the keys touched by automation every few minutes are never the keys that anchor trust. Same
 threat model, same solution: keep the anchor cold, delegate the hot path.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_933b61341749.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_933b61341749.png" alt="diagram"></div></p>
 <p>Compromise of an intermediate is <em>recoverable</em> (revoke at the root, rotate); compromise of the
 root is <em>catastrophic</em> (re-establish trust everywhere) — which is precisely why the root does
 almost nothing and lives offline.</p>
@@ -5674,7 +5674,7 @@ The human never touches a <code>.pem</code>, and there is no expiry to forget.</
 <p>Storage and PKI are two facets of a single discipline: managing a key across its whole life. Every
 key — signing, root, mTLS, TUF — moves through the same stages, and the operational quality of your
 program is how deliberately you handle each one.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b8ffa85f4826.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b8ffa85f4826.png" alt="diagram"></div></p>
 <p><strong>Generation.</strong> Keys must come from a cryptographically secure RNG, and the strongest form is
 <strong>generation inside the HSM/KMS</strong> so the private material never exists outside the hardware
 boundary — no "generate on a laptop and import" step, which briefly creates the exportable file you
@@ -5765,7 +5765,7 @@ distribution model from the lifecycle section, elevated to a platform.</p>
 The build's <em>workload identity</em> — its OIDC token — is presented to Fulcio, which issues a
 ~10-minute certificate, the build signs with an ephemeral key, and the signature plus certificate
 go to Rekor. There is no key custody problem because there is no durable key.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb057ff139f6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eb057ff139f6.png" alt="diagram"></div></p>
 <p>Compare them directly:</p>
 <table>
 <thead>
@@ -5830,7 +5830,7 @@ good instance:</p>
   to internal identities rather than public providers.</li>
 </ul>
 <p>A self-hosted Sigstore is a set of cooperating services, each of which you now operate:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_549b82782232.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_549b82782232.png" alt="diagram"></div></p>
 <p>The components, and what operating each entails:</p>
 <ul>
 <li><strong>Fulcio</strong> (the CA) — backed by your KMS/HSM signing key and chaining to your internal root
@@ -5888,9 +5888,9 @@ protecting <em>a</em> key and becomes about a fleet-wide policy for <em>all</em>
   audit stream is as valuable as the access control.</li>
 </ul>
 <h3 id="key-hierarchy-from-root-to-workload">Key hierarchy from root to workload</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_591110e5ca27.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_591110e5ca27.png" alt="diagram"></div></p>
 <h3 id="key-rotation-lifecycle">Key rotation lifecycle</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5b7f86a3aa58.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5b7f86a3aa58.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>Keyless does not abolish keys; it relocates them.</strong> Someone runs Fulcio's CA, the TUF root, and
@@ -6047,7 +6047,7 @@ they <em>can</em> be bypassed, and you make the platform itself refuse to run an
 CI is fully compromised and pushes a malicious image with a valid-looking but wrong-identity
 signature, admission — running in the cluster, evaluating against central policy, checking the
 <em>expected</em> signer identity — still says no.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_506e09496aaa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_506e09496aaa.png" alt="diagram"></div></p>
 <p>Notice the shape: the two upstream gates have side entrances (direct <code>kubectl</code>, operators, Jobs) that
 route <em>around</em> them straight to the API server. Only admission sits astride every path. That is the
 whole argument for centering your enforcement there. Books 6 (Chapters 5–6 on admission control and
@@ -6342,7 +6342,7 @@ first and you get a free, complete inventory of exactly which images, namespaces
 fail, <em>before</em> you break anyone. Then you drive the would-deny count to zero (fix the pipelines,
 onboard the stragglers, write the exceptions) and only then flip to enforce — and even then, flip it
 per-namespace or per-tier, not everywhere at once.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e47047cb7f1f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e47047cb7f1f.png" alt="diagram"></div></p>
 <p>The state you must resist is jumping straight to <code>EnforceFleet</code>. The would-deny signal from audit is
 the cheapest risk assessment you will ever get; spend it.</p>
 <h3 id="break-glass-and-time-boxed-exceptions">Break-glass and time-boxed exceptions</h3>
@@ -6369,7 +6369,7 @@ private instances), the registry it fetches attestations from, the policy servic
 <em>cannot decide</em>, does it admit or deny? This is the availability-vs-security decision, and Chapter 8
 framed it: the honest default for a security control is <strong>fail-closed</strong> — if you cannot prove the
 artifact meets policy, do not run it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7695abdd04c7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7695abdd04c7.png" alt="diagram"></div></p>
 <p>But fail-closed has a brutal corollary: <strong>if the gate is down, no deploy anywhere succeeds.</strong> A
 crashing admission webhook with <code>failurePolicy: Fail</code> can wedge your entire platform — you cannot even
 deploy the fix to the gate. So fail-closed is only <em>safe</em> if the gate infrastructure is highly
@@ -6389,7 +6389,7 @@ attestation from <em>your</em> build platform — you did not build it. Requirin
 blocking half your workloads or granting so many exceptions that the policy is meaningless. The
 answer is <strong>tiered policy: required checks as a function of environment × criticality × artifact
 source.</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_29298afa57a6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_29298afa57a6.png" alt="diagram"></div></p>
 <p>The tiers, concretely:</p>
 <ul>
 <li><strong>First-party, prod tier-0:</strong> the full worked policy — identity, SLSA L3 provenance from an approved
@@ -6440,7 +6440,7 @@ structural "no" is the deliverable of this entire book.</p>
 <h2 id="capstone-bringing-books-35-together">Capstone: bringing Books 3–5 together</h2>
 <p>Step back and look at the whole machine. The three books you have worked through describe two halves
 of one loop, closed by the gate.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0b5f010a08ab.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0b5f010a08ab.png" alt="diagram"></div></p>
 <p>Trace one artifact through it. A commit lands on a protected <code>main</code> in an approved repo (Book 7 on
 source security). The <strong>paved-road build platform</strong> (Book 4, Chapter 10) builds it in an isolated,
 hosted builder — SLSA Build L3 — and emits, alongside the image, a <strong>SLSA provenance</strong> attestation
@@ -6490,9 +6490,9 @@ problem.</p>
   identity is an attempted intrusion or a serious misconfiguration, and either way IR wants to know.</li>
 </ul>
 <h3 id="deployment-gate-stack-defense-in-depth">Deployment gate stack (defense in depth)</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5005f623b4ca.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5005f623b4ca.png" alt="diagram"></div></p>
 <h3 id="break-glass-procedure">Break-glass procedure</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2d4b91f5ffb2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2d4b91f5ffb2.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li><strong>The gate is the enforcement point.</strong> All of Books 3–5's signing, provenance, and attestation

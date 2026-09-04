@@ -310,7 +310,7 @@ hr {
 </blockquote>
 <h3 id="scalability-is-an-economic-claim">Scalability is an economic claim</h3>
 <p>Every scalability argument is implicitly an economic one. "We scale horizontally" means "we can add capacity in small, commodity increments whose cost is predictable." Vertical scaling — a bigger machine — is not wrong; it is often the cheapest path to 5–10× growth. It becomes wrong when the cost curve goes vertical: the next-larger instance type costs 4× for 1.6× performance, or the largest available machine is simply not large enough. The inflection point is where the economics flip, and the architecture must already be ready for horizontal scaling before that point arrives. Retrofitting statelessness onto a stateful system under load is the most expensive migration most teams will ever attempt.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cd6eec3c5905.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cd6eec3c5905.png" alt="diagram"></div></p>
 <p><em>Figure 1-1: The scaling decision loop. Most systems cycle through "absorb → vertical → horizontal" as they grow; the key is detecting the cost inflection before it becomes an emergency.</em></p>
 <hr />
 <h2 id="principle-1-scale-horizontally-with-stateless-services">Principle 1 — Scale horizontally with stateless services</h2>
@@ -496,7 +496,7 @@ hr {
 <li><strong>If the answer is "nothing bad"</strong> (session cache, precomputed recommendations, CDN content): use asynchronous, eventually consistent replication. Availability wins.</li>
 <li><strong>If the answer is "we double-charge or lose money"</strong> (ledger, inventory, seat reservation): use synchronous replication or consensus, and accept higher latency and lower availability during partitions.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3eb4ed611d51.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3eb4ed611d51.png" alt="diagram"></div></p>
 <p><em>Figure 1-2: Synchronous versus asynchronous replication. The same three replicas make radically different trade-offs depending on when the client is acknowledged.</em></p>
 <p>Real systems mix both. A common pattern:</p>
 <div class="highlight"><pre><span></span><code>                    ┌─────────────┐
@@ -643,7 +643,7 @@ Background: Email worker ← queue, Analytics worker ← queue (retries independ
 </li>
 <li>
 <p><strong>Circuit breakers and bulkheads.</strong> When a downstream is failing, stop calling it for a while (circuit open) and shed load gracefully rather than queuing indefinitely. Bulkheads isolate failure domains so one slow dependency does not starve all threads.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_175b5e7ca360.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_175b5e7ca360.png" alt="diagram"></div></p>
 <p><em>Figure 1-3: Circuit breaker state machine. Without it, a failing downstream turns every caller into a thread-pool exhaustion incident.</em></p>
 </li>
 </ol>
@@ -773,7 +773,7 @@ Strategy:<span class="w">        </span>Canary
 </tbody>
 </table>
 <p>The practical rule: <strong>target 60–70% utilization for latency-sensitive services</strong>. The remaining headroom is not waste; it is the buffer that absorbs bursts without queueing. Autoscaling thresholds should fire at ~65% so new capacity is ready before the knee.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0220af191414.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0220af191414.png" alt="diagram"></div></p>
 <p><em>Figure 1-4: Reference architecture that embodies all six principles — stateless app tier, partitioned cache, replicated database with async read path, decoupled async workers, and observability as a sidecar concern.</em></p>
 <hr />
 <h2 id="common-antipatterns">Common antipatterns</h2>
@@ -837,9 +837,9 @@ Strategy:<span class="w">        </span>Canary
 <li>Little's Law (L = λW) and the utilization knee are the two quantitative intuitions that prevent most capacity misjudgments. Target 60–70% utilization and autoscale before the knee, not after.</li>
 <li>Know the boundaries: wire-level load balancing is Vol 3, consistency theory is Vol 6, observability and SRE practice is Vol 11, and API contracts are Vol 8. This chapter is the map; those volumes are the territories.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4ab1ab4d5b95.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_90ed876ee34d.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f85156fe12ee.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4ab1ab4d5b95.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_90ed876ee34d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f85156fe12ee.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Kleppmann, M. <em>Designing Data-Intensive Applications</em> (O'Reilly, 2017), Chapters 1–2, 5–6, 8–9, 12 — the most complete single treatment of partitioning, replication, and consistency for practitioners. https://dataintensive.net/</li>
@@ -1045,7 +1045,7 @@ Strategy:<span class="w">        </span>Canary
 <hr />
 <h2 id="the-four-quantities">The four quantities</h2>
 <p>Every estimation decomposes into four quantities. Compute them in order — each constrains the next.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d749e500accf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d749e500accf.png" alt="diagram"></div></p>
 <p><em>Figure 2-1: Estimation flow. Assumptions are explicit inputs; each quantity is derived, not guessed. Changing an assumption ripples forward automatically.</em></p>
 <h3 id="1-qps-queries-per-second">1. QPS (queries per second)</h3>
 <div class="highlight"><pre><span></span><code><span class="nx">QPS</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="nx">DAU</span><span class="w"> </span><span class="err">×</span><span class="w"> </span><span class="nx">avg</span><span class="w"> </span><span class="nx">requests</span><span class="w"> </span><span class="nx">per</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="nx">per</span><span class="w"> </span><span class="nx">day</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">86</span><span class="p">,</span><span class="mi">400</span>
@@ -1349,7 +1349,7 @@ Check: does per-instance demand exceed NIC, disk, or memory?
 </code></pre></div>
 
 <p>If it does, the tier needs sharding or a different instance family, not just more replicas.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f80917945975.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f80917945975.png" alt="diagram"></div></p>
 <p><em>Figure 2-2: Fleet sizing pipeline. Each step is multiplicative; skipping AZ redundancy or headroom is the most common capacity error in practice.</em></p>
 <h3 id="a-complete-worked-example-url-shortener-interview-sized">A complete worked example — URL shortener (interview-sized)</h3>
 <p>Prompt: "Design a URL shortener like TinyURL. 100M new URLs per month, 10B redirects per month, 500-byte average URL record, 5-year retention."</p>
@@ -1466,7 +1466,7 @@ Status<span class="w"> </span>Codes<span class="w">  </span><span class="o">[</s
 </code></pre></div>
 
 <p>The load test found the knee: at 20k RPS, p99 is 188 ms (healthy); at 30k it will likely breach. That validates headroom and tells you where to set the HPA threshold — information no whiteboard can provide.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_82dd479eaa9c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_82dd479eaa9c.png" alt="diagram"></div></p>
 <p><em>Figure 2-3: The estimation → validation → revision loop. Whiteboard numbers are hypotheses; load tests and production metrics are evidence.</em></p>
 <hr />
 <h2 id="key-takeaways">Key takeaways</h2>
@@ -1479,10 +1479,10 @@ Status<span class="w"> </span>Codes<span class="w">  </span><span class="o">[</s
 <li>Latency budgets compose: allocate an SLO across tiers and enforce timeout budgets that sum to less than the SLO. Fan-out amplifies tails — a request waiting for 10 shards has ~10× the chance of hitting a slow shard.</li>
 <li>Estimation cannot predict tail latency, hit ratios, or contention effects. Use it to prune the design space and produce a load-test plan, then let measurement close the gap. The loop is estimate → load test → revise → ship with headroom → observe → iterate.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_97567bc5ea69.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9cc87deebaa6.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f6ec6db08a02.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d532cd87a52e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_97567bc5ea69.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9cc87deebaa6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f6ec6db08a02.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d532cd87a52e.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Dean, J. "Designs, Lessons and Advice from Building Large Distributed Systems" (2009) — the original "numbers every engineer should know" talk and paper; latency and throughput constants with Google's production context. https://research.google/pubs/designs-lessons-and-advice-from-building-large-distributed-systems/</li>
@@ -1569,7 +1569,7 @@ cache= 1000  alpha=1.2  hit=71.8%
 <hr />
 <h2 id="where-caches-live">Where caches live</h2>
 <p>A request traverses multiple caching layers. Each has different scope, coherence cost, and blast radius:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b355596f1b3f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b355596f1b3f.png" alt="diagram"></div></p>
 <p><em>Figure 3-1: Caching layers from client to storage. Lower layers are larger and more shared; upper layers are smaller and closer to the user. Most latency wins come from the top; most hit-ratio wins come from the middle.</em></p>
 <table>
 <thead>
@@ -2106,7 +2106,7 @@ min:<span class="w"> </span><span class="m">0</span>,<span class="w"> </span>max
 </tbody>
 </table>
 <p>Many teams run both: Memcached for large, low-value caches (rendered HTML, API responses) and Redis for small, high-value caches that need persistence or data structures (sessions, locks, counters for rate limiting — Chapter 9).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a99c84110d0f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a99c84110d0f.png" alt="diagram"></div></p>
 <p><em>Figure 3-2: Read path with coalesced cache-aside, TTL with jitter, and background refresh. The single-flight prevents herds; the TTL bounds staleness; the jitter desynchronizes expirations.</em></p>
 <hr />
 <h2 id="sizing-and-hit-ratio-math">Sizing and hit-ratio math</h2>
@@ -2166,7 +2166,7 @@ management.metrics.cache.enabled<span class="o">=</span><span class="nb">true</s
 <li>[ ] <strong>Consistency</strong>: If multiple caches hold the same data (in-process + Redis + CDN), what is the maximum divergence window? Is it acceptable?</li>
 <li>[ ] <strong>Security</strong>: Are cached entries scoped correctly (no cross-tenant leakage via shared cache keys)? Are cache keys constructed to prevent injection?</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_05023df3e3ef.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_05023df3e3ef.png" alt="diagram"></div></p>
 <p><em>Figure 3-3: Complete read path with layered caching, single-flight, and negative caching. Every branch has bounded latency; no path hammers the database without coalescing.</em></p>
 <hr />
 <h2 id="key-takeaways">Key takeaways</h2>
@@ -2179,10 +2179,10 @@ management.metrics.cache.enabled<span class="o">=</span><span class="nb">true</s
 <li>Distributed cache topology is a trade-off: Memcached is simpler and scales linearly but has no replication; Redis Cluster provides replication and richer data structures but has more operational complexity. Many teams run both for different tiers.</li>
 <li>Hit ratio is the metric that drives economics. Going from 85% to 95% hit ratio halves database load. Monitor it continuously, alert on drops, and treat cache tuning as high-ROI work. Size the cache to the working set with headroom; beyond that, policy matters more than bytes.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7a829e3041c7.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_47ed95a34a6c.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1ad499a38b98.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_575d6104ed1c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7a829e3041c7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_47ed95a34a6c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1ad499a38b98.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_575d6104ed1c.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Caffeine cache design — Ben Manes, "Caffeine: A High Performance Caching Library for Java" — the W-TinyLFU paper and implementation that replaced Guava cache; explains segmented LRU and TinyLFU admission with benchmarks. https://github.com/ben-manes/caffeine</li>
@@ -2209,7 +2209,7 @@ management.metrics.cache.enabled<span class="o">=</span><span class="nb">true</s
 <hr />
 <h2 id="the-contract-of-a-load-balancer">The contract of a load balancer</h2>
 <p>A load balancer promises five things, rarely all perfectly: <strong>distribution</strong> (spread load evenly), <strong>availability</strong> (skip failed backends without client impact), <strong>observability</strong> (know where traffic went), <strong>controllability</strong> (shift traffic deliberately — canary, blue/green, drain), and <strong>performance</strong> (add negligible latency and handle failures faster than clients can). Every design choice trades among them.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ef98c7aab24a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ef98c7aab24a.png" alt="diagram"></div></p>
 <p><em>Figure 4-1: The load balancing stack. Global steering picks a region; L4 picks a node without parsing HTTP; L7 picks an instance with full request semantics; the Service abstraction picks a pod. Each layer sees less traffic and makes a more informed decision.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> Wire-level mechanics (ECMP, Maglev consistent hashing, GUE/DSR encapsulation, QUIC connection migration) are covered in Vol 3, Chapter 9 — Load Balancing: L4, L7, and Algorithms and Chapter 10 — Proxies, Mesh, and CDNs. This chapter uses those mechanisms as <em>system-design primitives</em> and focuses on algorithm choice, configuration, and failure behavior at the fleet level.</p>
@@ -2363,7 +2363,7 @@ management.metrics.cache.enabled<span class="o">=</span><span class="nb">true</s
 <p>Under heterogeneity (one AZ has noisy neighbors, one instance is on a degraded host), p2c + EWMA sheds load from slow hosts within seconds, while round-robin keeps hammering them.</p>
 <h3 id="consistent-hashing-and-bounded-loads">Consistent hashing and bounded loads</h3>
 <p>When affinity matters — cache locality (Chapter 3), shard ownership — consistent hashing (Vol 1, Chapter 3) is correct. The operational concern is <em>imbalance under failure</em>: if a node dies, its keys redistribute to neighbors, spiking them. <strong>Bounded-load consistent hashing</strong> caps each node's share (e.g., at <code>1.25 × mean</code>) and spills excess to the next node, trading a few extra cache misses for overload protection. Google's Maglev and Cloudflare's consistent hash both implement bounded variants.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3ff47e0222c4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3ff47e0222c4.png" alt="diagram"></div></p>
 <p><em>Figure 4-2: Bounded-load consistent hashing. Affinity is preserved when possible, but an explicit load cap prevents a hot shard from cascading into neighbor overload.</em></p>
 <hr />
 <h2 id="health-checking-outlier-detection-and-slow-start">Health checking, outlier detection, and slow start</h2>
@@ -2636,7 +2636,7 @@ api::membership_healthy::2/3
 <p><strong>DNS-based GSLB</strong> (Route 53 latency/routing, GCP Cloud DNS routing policies, NS1). Health checks drive DNS answers; clients cache them for TTL seconds. TTL is the agility knob — 10 s gives fast failover but 10× more DNS QPS and resolver variance; 60 s is the common compromise. DNS cannot steer mid-connection and is blind to client-to-edge latency (it sees the resolver, not the client — EDNS Client Subnet partially fixes this).</p>
 <p><strong>Anycast</strong> advertises the same VIP from every PoP via BGP; the internet's routing picks the nearest (fewest AS hops). Latency-optimal and instant failover (BGP reconvergence in seconds), but all PoPs must serve the same content and capacity planning is harder — traffic follows BGP, not load.</p>
 <p><strong>GSLB with health and load feedback</strong> (Cloudflare Load Balancing, F5 BIG-IP DNS, Aviatrix). A control plane pushes region weights based on health, latency, and capacity; data-plane proxies or DNS answer accordingly. The distributed-systems concern is <strong>split-brain steering</strong> — if the GSLB control plane partitions, two regions may both believe they are primary.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5a88bee7ed51.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5a88bee7ed51.png" alt="diagram"></div></p>
 <p><em>Figure 4-3: Global to local traffic path and health propagation. A failing pod is ejected locally (outlier), a failing region is drained globally (GSLB), and anycast provides sub-second PoP failover without DNS TTL delay.</em></p>
 <hr />
 <h2 id="capacity-aware-and-latency-aware-routing">Capacity-aware and latency-aware routing</h2>
@@ -2725,10 +2725,10 @@ api::membership_healthy::2/3
 <li>Capacity-aware routing (EWMA, bounded-load hashing, retry budgets) and slow-start are not optimizations — they are stability requirements. Without them, a single slow host or a single bad deploy cascades.</li>
 <li>The load balancer fleet itself must be highly available (N+1, ECMP, draining). A deploy that does not drain connections is a partial outage.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_820981a70e8c.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_251d881aee94.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_025d824d9c6c.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b0aae173fd1a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_820981a70e8c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_251d881aee94.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_025d824d9c6c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b0aae173fd1a.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Envoy Proxy documentation — Load balancing, outlier detection, circuit breaking, health checking (Envoy 1.30 — April 2024). https://www.envoyproxy.io/docs/envoy/v1.30/</li>
@@ -2786,7 +2786,7 @@ api::membership_healthy::2/3
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4426c8b0d559.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4426c8b0d559.png" alt="diagram"></div></p>
 <p><em>Figure 5-1: Access-pattern-driven modeling. The hot queries select the partition key and indexes; those choices select the store family and shape; the evolution plan protects the shape over time.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> Storage-engine internals — B-tree versus LSM-tree, WAL, compaction, buffer pools, and physical partitioning mechanics — are in Vol 5 — Databases and Storage Systems. This chapter treats the <em>modeling</em> decision — what shape to store and how it maps to queries — and references those internals only as they constrain the model.</p>
@@ -2882,7 +2882,7 @@ api::membership_healthy::2/3
 <p>Trade-off made explicit: the denormalized table duplicates item data, costs more on write (two writes, CDC or outbox), but serves <code>GET /users/42/orders?status=paid</code> as a single partition-local range scan with no join — p99 8 ms versus 45 ms under load.</p>
 <h3 id="partition-keys-and-hot-partitions">Partition keys and hot partitions</h3>
 <p>The partition key is the single most consequential modeling decision. A good key has three properties: <strong>high cardinality</strong> (many distinct values), <strong>uniform distribution</strong> (no single key dominates), and <strong>query locality</strong> (the hot query filters on it).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6cd22ecc1b9c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6cd22ecc1b9c.png" alt="diagram"></div></p>
 <p><em>Figure 5-2: Partition key selection. The hot query's filter dictates the key; skew dictates the mitigation. A key that is perfect for one query is pessimal for another — that tension is why secondary indexes and CQRS exist.</em></p>
 <p>Hot-partition antipattern — <code>status</code> as a partition key with three values (<code>pending</code>, <code>paid</code>, <code>shipped</code>) — puts one-third of all data on one node and makes every write contend on the same partition. Cardinality matters.</p>
 <h3 id="indexing-for-the-hot-path">Indexing for the hot path</h3>
@@ -3092,7 +3092,7 @@ api::membership_healthy::2/3
 <hr />
 <h2 id="secondary-indexes-materialized-views-and-cqrs">Secondary indexes, materialized views, and CQRS</h2>
 <p>A secondary index answers "the same data, different key" without duplicating application logic. A materialized view pre-joins or pre-aggregates for a specific query. CQRS generalizes both: separate read models, each optimized for one query, populated asynchronously from the write model.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b50f604c3017.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b50f604c3017.png" alt="diagram"></div></p>
 <p><em>Figure 5-3: CQRS with CDC. The write model is normalized and transactional; each read model is denormalized for one hot query and lags the write model by milliseconds to seconds. The API picks the right read model per endpoint.</em></p>
 <p>The cost is <strong>lag and divergence</strong>. Each read model is eventually consistent with the write model; a user who writes and immediately reads via a different model may see stale data. Mitigations: read-after-write routing (read the primary for the writer's own data for N seconds), version vectors, or <code>read-your-writes</code> via a cache that the writer populates.</p>
 <p>Materialized views inside the database (Postgres <code>MATERIALIZED VIEW</code>, Cassandra MV — the latter notoriously problematic in production) are simpler but couple the read model to the primary's availability and scaling. External read models scale independently at the cost of operational complexity.</p>
@@ -3252,7 +3252,7 @@ api::membership_healthy::2/3
 <li><strong>Derived stores are populated via CDC/stream</strong>, not dual writes. Dual writes without a transaction (or outbox) lose data on partial failure.</li>
 <li><strong>Shared-nothing by default.</strong> If two services <em>must</em> share a database (rare, e.g., legacy), they share nothing at the table level — separate schemas, no cross-service joins, no foreign keys across service boundaries — so the split can be completed later.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1c70d9eb964f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1c70d9eb964f.png" alt="diagram"></div></p>
 <p><em>Figure 5-4: Polyglot persistence with strong ownership. Each service owns its store; derived stores are populated via streams, not shared tables. The anti-pattern — a shared database with cross-service joins — couples deploy, scale, and failure.</em></p>
 <hr />
 <h2 id="distributed-systems-lens">Distributed-systems lens</h2>
@@ -3272,9 +3272,9 @@ api::membership_healthy::2/3
 <li>Evolve schemas via expand-contract with forward/backward compatibility (Avro/Protobuf rules, Schema Registry enforcement). No flag-day migrations; old and new code must coexist during rolling deploys.</li>
 <li>One service, one primary store, sole writer. Derived stores via CDC/stream, not dual writes or shared tables. Cross-service table access is a distributed monolith.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8eb2631cb4f3.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9026785d6ebf.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a73b52c58497.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8eb2631cb4f3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9026785d6ebf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a73b52c58497.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Kleppmann, M. <em>Designing Data-Intensive Applications</em> (O'Reilly, 2017), Chapters 2–4, 6 — data models, encoding/evolution, partitioning, replication. https://dataintensive.net/</li>
@@ -3357,7 +3357,7 @@ api::membership_healthy::2/3
 </tbody>
 </table>
 <p>The distributed monolith is not a shape you choose — it is a shape you <em>get</em> when you split a monolith along the wrong boundaries, keep a shared database, or make every service synchronously call every other service on the hot path. It has the worst of both: the coupling of a monolith and the failure modes of a distributed system.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d84cc61acdf8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d84cc61acdf8.png" alt="diagram"></div></p>
 <p><em>Figure 6-1: The architecture spectrum and the cliff. Movement right increases team autonomy but also operational cost; the distributed monolith is the failure mode of moving right without fixing data ownership or boundaries.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> Service communication wire mechanics (HTTP/2, gRPC streaming, REST semantics, versioning) are in Vol 8 — APIs and Service Design. Transactional outbox, CDC, and exactly-once stream processing are in Vol 10 — Messaging, Streaming, and Event Systems. This chapter treats the <em>packaging and ownership</em> decision; those volumes treat the <em>communication and consistency</em> mechanisms.</p>
@@ -3407,7 +3407,7 @@ api::membership_healthy::2/3
 <li><strong>Rate and scale mismatch</strong> — a write-heavy ingest path and a read-heavy serving path want different stores and scaling policies — separate them even if the entities overlap.</li>
 <li><strong>Team ownership</strong> — if two teams will own the data on either side of a boundary, make the boundary explicit and contractual (API + events), not a shared table.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5c3599e66043.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5c3599e66043.png" alt="diagram"></div></p>
 <p><em>Figure 6-2: Bounded contexts for an e-commerce slice. Ordering, inventory, fulfillment, and identity each own their data and invariants; cross-context communication is via events (eventual) or bounded sync calls (with cache and timeout). The <code>Order</code> aggregate appears only in ordering — other contexts see projections.</em></p>
 <p>Boundaries that chatter — a service calling another in a tight loop per request — are a sign the boundary is wrong. If service A <em>always</em> calls service B to complete a request, they may be one service, or the data B owns should be replicated to A via CDC.</p>
 <hr />
@@ -3415,7 +3415,7 @@ api::membership_healthy::2/3
 <p>Big-bang rewrites fail at a rate approaching certainty. Three patterns make strangulation incremental and reversible.</p>
 <h3 id="strangler-fig">Strangler fig</h3>
 <p>Incrementally intercept traffic at the edge and route it to the new service, while the monolith continues to serve the rest. Over months, the monolith shrinks.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c11fe8e37df3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c11fe8e37df3.png" alt="diagram"></div></p>
 <p>Edge routing for strangulation is a Gateway API or Envoy route — the same primitive as Chapter 4's traffic management:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># strangler-gateway.yaml — Gateway API v1.1, strangling /orders/* to new service</span>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gateway.networking.k8s.io/v1</span>
@@ -3532,7 +3532,7 @@ api::membership_healthy::2/3
 </tbody>
 </table>
 <p>Saga example — orchestrated, with compensations:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b9c77ba45f27.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b9c77ba45f27.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># saga_orchestrator.py — orchestrated saga (Python 3.11, durable via DB + outbox)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span><span class="o">,</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">psycopg</span>
 
@@ -3735,9 +3735,9 @@ api::membership_healthy::2/3
 <li>Operate the fleet with a mesh (mTLS, outlier detection, traffic splitting), contract testing (Pact), and progressive delivery (Argo Rollouts with automated analysis). A deploy without draining and canary analysis is a partial outage.</li>
 <li>The monolith is often the correct starting point. A modular monolith with enforced boundaries is the pragmatic default for most teams; services are extracted when a boundary earns its operational cost.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ba4be1c26b6a.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_567b2aeb5d88.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ac77dace9b61.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ba4be1c26b6a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_567b2aeb5d88.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ac77dace9b61.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Evans, E. <em>Domain-Driven Design</em> (Addison-Wesley, 2003), Chapters 1–3, 14 — bounded contexts, ubiquitous language, anti-corruption layers.</li>
@@ -3814,7 +3814,7 @@ api::membership_healthy::2/3
 <li><strong>Version decoupling</strong> — with schema evolution rules, producers can add optional fields without breaking consumers — if the contract discipline holds.</li>
 </ul>
 <p>The cost is that the system becomes <em>eventually consistent</em> by construction. After <code>order.placed</code> is emitted, inventory, payments, recommendations, and the read model each converge at different times. Clients must be taught that "order placed" does not mean "order ready" — a UX and API contract change, not just an infrastructure change.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1a6edf0d98d3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1a6edf0d98d3.png" alt="diagram"></div></p>
 <p><em>Figure 7-1: Synchronous fan-out couples availability and latency across services; event-driven fan-out decouples them but introduces eventual consistency and consumer autonomy.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> This chapter treats EDA as a <em>system-design pattern</em> — when to use events, how to scope them to service boundaries, and how to choose choreography vs. orchestration. The <em>mechanisms</em> underneath — queue vs. log internals, delivery semantics (at-most/at-least/exactly-once), Kafka broker architecture, stream processing, the outbox pattern in depth, and backpressure — are the subject of Volume 10 — Messaging, Streaming, and Event Systems. Consistency models that constrain what events can guarantee are in Volume 6. Wire-level reliability primitives (timeouts, retries, hedging) are in Volume 3, Chapter 11.</p>
@@ -3995,7 +3995,7 @@ api::membership_healthy::2/3
 </code></pre></div>
 
 <p><code>read_committed</code> hides aborted transactional messages. <code>enable.auto.commit=false</code> with manual <code>commitSync()</code> (or transactional commit as above) prevents committing an offset before processing succeeded — otherwise a crash after commit but before processing loses the event.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_870ff4f7f3ed.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_870ff4f7f3ed.png" alt="diagram"></div></p>
 <p><em>Figure 7-2: Kafka replication and transactional consume-transform-produce. The <code>acks=all</code> + idempotence + transaction trio is the only path to no-loss, no-duplicate semantics without application-level deduplication.</em></p>
 <hr />
 <h2 id="change-data-capture-and-the-outbox-eliminating-dual-writes">Change Data Capture and the outbox — eliminating dual writes</h2>
@@ -4087,7 +4087,7 @@ api::membership_healthy::2/3
 <li><strong>Exactly-once to Kafka</strong> — Debezium's Kafka sink is at-least-once by default; consumers must be idempotent (see below). Debezium with Kafka transactions is possible but adds coordinator overhead; most teams accept at-least-once + idempotent consumers.</li>
 <li><strong>Ordering</strong> — CDC preserves commit order per table; the <code>aggregate_id</code> as Kafka key preserves per-aggregate order end-to-end if the producer partitions by that key.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_afe21c63f4ef.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_afe21c63f4ef.png" alt="diagram"></div></p>
 <p><em>Figure 7-3: Transactional outbox with Debezium CDC. The database transaction is the atomic boundary; WAL tailing provides at-least-once, ordered relay to Kafka without polling or dual writes.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> Full CDC operational detail — snapshot modes, schema history topics, handling DDL, backfilling, and the interaction with logical replication slots — is in Volume 10, Chapter 6 — The Outbox Pattern and the Dual-Write Problem. Volume 5, Chapter 8 covers physical vs. logical replication as a storage-engine primitive.</p>
@@ -4135,7 +4135,7 @@ Cons: orchestrator is a stateful component to run. At very high scale, it can be
 </tbody>
 </table>
 <p><strong>Rule of thumb:</strong> fan-out notifications → choreography; multi-step transactions that must be rolled back → orchestration.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_14c8b194dc56.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_14c8b194dc56.png" alt="diagram"></div></p>
 <p><em>Figure 7-4: Choreographed workflow with compensation events. Each service is autonomous but the end-to-end trace must be reconstructed from correlated events; a poison message is isolated to a dead-letter topic rather than blocking the partition.</em></p>
 <p>Compensation example (orchestrated saga with Temporal — Go SDK):</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// saga_orchestrator.go — Temporal workflow (temporal.io/sdk-go v1.30)</span>
@@ -4329,9 +4329,9 @@ curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>
 <li>At-least-once delivery is the reality; every consumer must be idempotent (key table or dedup window). Ordering is per-partition only — partition by aggregate key when order matters.</li>
 <li>Schema evolution with a registry and backward compatibility is the only way to keep decoupled services actually decoupled — breaking schema changes are silent distributed outages.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_64b7ae935373.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_420fb147f5ae.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3acb23bf2e44.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_64b7ae935373.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_420fb147f5ae.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3acb23bf2e44.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Kleppmann, M. <em>Designing Data-Intensive Applications</em>, Chapters 11–12 (stream processing, future of data systems) — O'Reilly, 2017.</li>
@@ -4371,7 +4371,7 @@ curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>
 <li>Long-lived business transactions.</li>
 </ul>
 <p>The anti-pattern is the "gateway monolith" — a gateway that accumulates business logic because it was the easiest place to add a new endpoint. It becomes the most coupled, most frequently deployed, and most fragile component in the system. The test: if removing the gateway (routing directly to services with mesh auth) would break business invariants, logic has leaked into the wrong layer.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_af5e27f0ce4a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_af5e27f0ce4a.png" alt="diagram"></div></p>
 <p><em>Figure 8-1: Gateway, BFF, mesh, and edge. The gateway enforces policy once at the perimeter; BFFs reshape per client; the mesh enforces policy inside; the edge enforces and serves before traffic reaches the origin.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> Wire-level proxying, L4/L7 algorithms, and service mesh data-plane mechanics (Envoy sidecar, xDS, mTLS) are in Volume 3, Chapters 9–10 and Volume 12. API contract design, versioning, and schema evolution are in Volume 8. Rate-limiting algorithms at system scale are in Chapter 9 of this volume; algorithmic analysis of those same algorithms is in Volume 14, Chapter 8. This chapter treats the <em>gateway/BFF/edge as system-design components</em> — their responsibilities, configuration, and failure modes.</p>
@@ -4641,7 +4641,7 @@ curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>
 </code></pre></div>
 
 <p>Trade-offs: Kong's plugin model is simpler to operate than Envoy's filter chain, but less expressive for header-based routing and outlier detection. Both delegate rate-limit state to Redis or an external gRPC service — local counters diverge across gateway replicas.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_daa9d086a019.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_daa9d086a019.png" alt="diagram"></div></p>
 <p><em>Figure 8-2: Gateway filter chain. Authentication runs first (fail fast, no upstream cost), rate limiting second (protect backends), routing last. Each filter can short-circuit with an error response without reaching upstream.</em></p>
 <hr />
 <h2 id="backend-for-frontend-one-facade-per-client-not-one-facade-for-all">Backend for Frontend — one facade per client, not one facade for all</h2>
@@ -4760,7 +4760,7 @@ curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>
 <li><strong>Deadline propagation</strong> — without it, downstream services use their own default timeouts (often 5–30s) and the BFF waits long after the client has given up. gRPC propagates deadlines automatically via <code>grpc-timeout</code>; HTTP requires an explicit header and callee cooperation.</li>
 <li><strong>No shared BFF</strong> — if one BFF serves web, mobile, and partners, it becomes the gateway monolith again. Split by client class; share nothing except observability and deploy tooling.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5335308f1f5f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5335308f1f5f.png" alt="diagram"></div></p>
 <p><em>Figure 8-3: BFF fan-out with deadline propagation and graceful degradation. The BFF's deadline is the client's budget; downstream calls share it and degrade individually rather than failing the entire aggregation.</em></p>
 <hr />
 <h2 id="edge-serve-and-protect-before-the-origin">Edge — serve and protect before the origin</h2>
@@ -4959,7 +4959,7 @@ curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>
 </code></pre></div>
 
 <p>Access logs must be structured JSON with <code>route</code>, <code>upstream_host</code>, <code>duration</code>, <code>response_code</code>, <code>trace_id</code>, and <code>x-user-id</code> (if authenticated) — otherwise debugging "why did tenant-a see 429?" requires correlating N log formats.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_139429e93c03.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_139429e93c03.png" alt="diagram"></div></p>
 <p><em>Figure 8-4: From users to origin through edge and gateway. Anycast/GSLB picks the PoP; the edge caches and authenticates; the gateway fleet (per AZ, stateless) routes to BFFs and services. No single box is special; every layer is horizontally scaled and independently deployable.</em></p>
 <p>The distributed-systems lens:</p>
 <ul>
@@ -4978,9 +4978,9 @@ curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>
 <li>Gateway fleets must be stateless, per-AZ, behind anycast/GSLB, with no per-request DB on the data path, progressive delivery for config changes, and per-route SLOs — otherwise the gateway is the single point of failure it was meant to eliminate.</li>
 <li>Policy placement is a consistency trade-off: enforce coarsely at the gateway (valid token? over quota?) and finely at the owning service (can this user mutate this resource?).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3dd732b3f047.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8d9b018d70a6.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_21409b95f278.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3dd732b3f047.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8d9b018d70a6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_21409b95f278.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Envoy 1.30 documentation — listeners, filter chains, JWT and rate-limit filters, outlier detection: https://www.envoyproxy.io/docs/envoy/v1.30.0/</li>
@@ -5042,7 +5042,7 @@ curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>
 <li><strong>Quota</strong> — "at most Q requests per hour/day/month." A <em>business contract</em> that may span multiple rate-limit windows and may be enforced asynchronously.</li>
 <li><strong>Fairness</strong> — "when demand exceeds capacity, who is throttled first and who is protected." A <em>policy</em> that composes limits with priority.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f997a009b2e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8f997a009b2e.png" alt="diagram"></div></p>
 <p><em>Figure 9-1: The enforcement stack. Rate limits protect per-second capacity, quotas enforce business budgets over longer windows, and fairness decides who is shed when both are saturated. Each layer returns distinct headers so clients can distinguish "slow down" from "out of budget."</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> This chapter treats rate limiting as a <em>system-design mechanism</em> — algorithm choice, gateway/service placement, quota composition, and fairness policy at fleet scale. The <em>algorithmic analysis</em> of the same structures — amortized cost, probabilistic structures for sliding windows, consistent hashing for sharded limits, and scheduling theory (WFQ, deficit round-robin) — is in Volume 14, Chapter 8 — Rate-Limiting and Scheduling Algorithms. Wire-level reliability that interacts with throttling (timeouts, retries, backoff, hedging) is in Volume 3, Chapter 11 — Network Reliability. Client-side retry discipline after receiving 429/503 is covered there; this chapter covers the server-side enforcement and header contract.</p>
@@ -5120,7 +5120,7 @@ Cons: burst size must be tuned — too large and bursts still overwhelm backends
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_97ec69b3651d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_97ec69b3651d.png" alt="diagram"></div></p>
 <p><em>Figure 9-2: Burst behavior of the four algorithms. Fixed window's boundary spike is the hazard; sliding-window counter smooths it; token bucket explicitly bounds bursts; leaky bucket eliminates them.</em></p>
 <hr />
 <h2 id="local-limiter-correct-token-bucket-in-application-code">Local limiter — correct token bucket in application code</h2>
@@ -5569,7 +5569,7 @@ redis-cli<span class="w"> </span>--eval<span class="w"> </span>token_bucket.lua<
 <li><strong>Priority lanes</strong> — classify requests by criticality: <code>priority: interactive</code> (user-facing), <code>priority: batch</code> (backfill, analytics), <code>priority: internal</code> (cron). When saturated, shed batch first, then internal, then interactive last. Envoy supports this via <code>priority</code> on routes and <code>overload_manager</code> with shedding thresholds.</li>
 <li><strong>Queue vs. shed</strong> — queuing (buffer and drain at capacity) trades latency for throughput; shedding (immediate 429) trades throughput for latency. For user-facing APIs, shedding is almost always correct — a queued request that takes 8 seconds is worse than a fast 429 the client can retry. For background work (webhooks, queue consumers), queuing with bounded depth and backpressure (Volume 10, Chapter 7) is appropriate.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d817f9d65592.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d817f9d65592.png" alt="diagram"></div></p>
 <p><em>Figure 9-3: Priority lanes. Each lane has a weighted share of capacity; borrowing allows high-priority lanes to use idle capacity from lower lanes, but not vice versa. Shedding order is the inverse of priority.</em></p>
 <h3 id="global-limits-the-consistency-availability-trade-off">Global limits — the consistency-availability trade-off</h3>
 <p>A truly global limit ("at most 1000 RPS across all 20 gateway replicas") is a distributed consensus problem. Options and their error bounds:</p>
@@ -5622,7 +5622,7 @@ redis-cli<span class="w"> </span>--eval<span class="w"> </span>token_bucket.lua<
 </tbody>
 </table>
 <p>For most products, <strong>local with periodic sync</strong> hits the sweet spot: each replica allows <code>limit/N</code> locally and reconciles every 100ms via Redis. The worst-case over-allowance is <code>sync_interval × RPS</code> — at 100 RPS and 100ms, at most 10 extra requests per window, negligible for capacity protection. At 10k RPS, the error grows and synchronous global may be warranted for the tighter abstraction.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1fd9d0267fcd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1fd9d0267fcd.png" alt="diagram"></div></p>
 <p><em>Figure 9-4: Hierarchical rate limiting with periodic reconciliation. Local buckets admit with zero added latency; an async flush reconciles the global view and adjusts the next window's local caps. Redis failure degrades to local enforcement — availability over precision.</em></p>
 <hr />
 <h2 id="observability-and-tuning-what-to-measure-and-alert-on">Observability and tuning — what to measure and alert on</h2>
@@ -5685,9 +5685,9 @@ redis-cli<span class="w"> </span>--eval<span class="w"> </span>token_bucket.lua<
 <li>Fairness requires weighted limits, priority lanes, and a shed-vs-queue decision — shed for user-facing (fast 429 beats slow queue), queue with bounded depth for background work.</li>
 <li>Global limits are a consistency-availability trade-off: local is available but N× imprecise, synchronous global is precise but adds latency and a single point of failure, periodic sync bounds the error to <code>sync_interval × RPS</code> and is the right default for most fleets.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_298eabdc18f7.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_292c38c90f46.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0d5f62b3cbee.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_298eabdc18f7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_292c38c90f46.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0d5f62b3cbee.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Envoy 1.30 — external rate limiting and <code>enable_x_ratelimit_headers</code>: https://www.envoyproxy.io/docs/envoy/v1.30.0/configuration/http/http_filters/rate_limit_filter</li>
@@ -5740,7 +5740,7 @@ redis-cli<span class="w"> </span>--eval<span class="w"> </span>token_bucket.lua<
 </tbody>
 </table>
 <p>The cost of going multi-region is coordination over a wide-area network. Inside a region, p99 RTT between AZs is 1–3 ms; across regions it is 20–200 ms. That two-order-of-magnitude gap is where consistency, latency, and availability trade-offs live, and where naive "just replicate everything synchronously" designs collapse.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_522ba1ec1338.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_522ba1ec1338.png" alt="diagram"></div></p>
 <p><em>Figure 10-1: The three drivers and the per-dataset decision they force. Most systems use all three strategies for different datasets in the same architecture.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> Consistency models, linearizability, and consensus (Paxos/Raft) are in Volume 6, Chapters 3–6. Caching and edge delivery are in Chapter 3 and Chapter 8 (this volume). Replication mechanics inside a single region (leader-follower, quorum, WAL shipping) are in Volume 5, Chapter 8. This chapter treats those primitives as building blocks and asks what changes when the replication link is a WAN: latency budgets, conflict resolution at distance, and global traffic steering. Sovereignty as a security/compliance control is referenced here for architecture; the regulatory detail is in Companion Book 8 and Volume 9, Chapter 11. Capacity math for cross-region bandwidth is introduced here and analyzed formally in Volume 14.</p>
@@ -5772,9 +5772,9 @@ redis-cli<span class="w"> </span>--eval<span class="w"> </span>token_bucket.lua<
 <p>This is the dominant pattern for user-facing data at scale (Google, Meta, Uber) and the basis for cells.</p>
 <h3 id="cell-based-architecture">Cell-based architecture</h3>
 <p>A <em>cell</em> is a self-contained regional stack (compute + storage + async workers) that serves a subset of traffic. Cells are replicated across regions, and a global control plane assigns tenants/users to cells. Failure is contained to a cell; rollout is cell-by-cell.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_84fac980cfa5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_84fac980cfa5.png" alt="diagram"></div></p>
 <p><em>Figure 10-2: The topology spectrum. Complexity and isolation increase to the right; most mature platforms converge on sharded active-active or cells.</em></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cf62ff08f2ff.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cf62ff08f2ff.png" alt="diagram"></div></p>
 <p><em>Figure 10-3: Cell-based architecture. The control plane (strongly consistent, multi-region) assigns each tenant/key to a cell; data planes are isolated so a cell failure does not cascade. Cross-cell replication is async and limited to DR/analytics — not on the write path.</em></p>
 <p>The control plane / data plane split is the key insight: the thing that decides <em>where</em> traffic goes must itself be strongly consistent and survive a region loss, but it is small and low-write-rate. Data planes can then be simple, regional, and eventually consistent. AWS, Google, and Meta all converge on this shape.</p>
 <hr />
@@ -6118,7 +6118,7 @@ aws<span class="w"> </span>rds<span class="w"> </span>create-db-cluster<span cla
 </tbody>
 </table>
 <p>The single-writer-per-key rule eliminates conflicts by construction and is why sharded active-active is preferred whenever feasible. Reserve CRDTs/LWW for data where true multi-writer is required.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_216b01933172.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_216b01933172.png" alt="diagram"></div></p>
 <p><em>Figure 10-4: Conflict resolution options when async replication allows concurrent writes. The cheapest is to avoid the conflict by routing.</em></p>
 <hr />
 <h2 id="sharding-and-placement-for-the-global-dataset">Sharding and placement for the global dataset</h2>
@@ -6140,7 +6140,7 @@ aws<span class="w"> </span>rds<span class="w"> </span>create-db-cluster<span cla
 <p><strong>Split-brain prevention.</strong> Two regions must not both believe they are primary for the same shard. Use a strongly consistent control plane (Spanner, etcd, or Route 53 health checks with quorum) to elect/assign primaries. Fencing tokens (monotonic epoch per shard) reject stale writers after failover.</p>
 <p><strong>Failover drills and thundering herds.</strong> A failover that has never been exercised will not work. Run quarterly region-evacuation drills (drain, fail over, measure RTO/RPO, fail back). Pre-warm the receiving region (autoscaling, cache, DB connections) — a cold standby that receives 100% of global traffic will collapse. Shed or degrade non-critical traffic during evacuation.</p>
 <p><strong>Observability across regions.</strong> Trace context must propagate across regions (W3C <code>traceparent</code> over replication and RPC). Correlate replication lag, error rate, and latency per region pair. Alert on <code>replication_lag &gt; SLO</code> before clients notice stale reads.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_02f3569cd16e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_02f3569cd16e.png" alt="diagram"></div></p>
 <p><em>Figure 10-5: Read locality vs. write locality. Stale-tolerant reads stay local; writes and strong reads go to the home region. The routing policy is per request, not per service.</em></p>
 <hr />
 <h2 id="choosing-per-workload">Choosing per workload</h2>
@@ -6188,8 +6188,8 @@ aws<span class="w"> </span>rds<span class="w"> </span>create-db-cluster<span cla
 <li>Avoid conflicts by construction with single writer per key (home region per principal); reserve LWW/CRDTs for data where true multi-writer is required.</li>
 <li>Operability determines survival: cell-by-cell deploys, clock-offset SLOs, fencing tokens against split-brain, pre-warmed failover targets, and quarterly region-evacuation drills that measure real RTO/RPO.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0c8e33df0fa.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_68b8b7d794e9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a0c8e33df0fa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_68b8b7d794e9.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Google Spanner — TrueTime and externally consistent transactions. https://research.google/pubs/pub39966/</li>
@@ -6253,7 +6253,7 @@ aws<span class="w"> </span>rds<span class="w"> </span>create-db-cluster<span cla
 </tbody>
 </table>
 <p>Fail-slow is the killer. A dependency that fails fast costs one timeout; a dependency that responds in 5 s instead of 50 ms holds every caller's thread for 5 s. With a 200-thread pool and 100 RPS, 10 concurrent slow calls consume 5% of the pool for 5 s — and the next 500 requests queue behind them. This is <em>cascading failure</em>: healthy services become unhealthy because they wait on an unhealthy one.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ffae891d834a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ffae891d834a.png" alt="diagram"></div></p>
 <p><em>Figure 11-1: Cascading failure via fail-slow. A slow replica holds Order Service threads, which hold Gateway threads, which starve even healthy paths (User Service). One slow dependency makes the whole graph unavailable.</em></p>
 <p>Resilience patterns all answer one question: <strong>how do you bound the blast radius of a slow or failing dependency?</strong></p>
 <blockquote>
@@ -6264,7 +6264,7 @@ aws<span class="w"> </span>rds<span class="w"> </span>create-db-cluster<span cla
 <p>A timeout says "do not wait longer than X." A deadline says "this entire causal chain must finish by wall-clock time T." Without deadlines, timeouts compose badly.</p>
 <p>Suppose Gateway calls Order (timeout 500 ms), Order calls Inventory (timeout 500 ms) and Payments (timeout 500 ms) sequentially. Gateway's timeout is 1 s, but Order's two calls can take up to 1 s total — Gateway times out while Order is still waiting, and Order's work is wasted (and may have side effects). Worse, retries from Gateway create duplicate work in Order that is still running.</p>
 <p><strong>Deadline propagation</strong> fixes this: Gateway sets <code>deadline = now + 800 ms</code> and passes it to Order; Order passes <code>deadline - elapsed</code> to each downstream, so the whole tree respects one budget.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ea3a45a1403d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ea3a45a1403d.png" alt="diagram"></div></p>
 <p><em>Figure 11-2: Deadline propagation. Each hop forwards the remaining budget so no downstream outlives its caller.</em></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Go — deadline propagation via context (server side)</span>
 <span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">s</span><span class="w"> </span><span class="o">*</span><span class="nx">OrderService</span><span class="p">)</span><span class="w"> </span><span class="nx">CreateOrder</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">req</span><span class="w"> </span><span class="o">*</span><span class="nx">CreateOrderRequest</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="nx">Order</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -6394,7 +6394,7 @@ aws<span class="w"> </span>rds<span class="w"> </span>create-db-cluster<span cla
 <hr />
 <h2 id="circuit-breakers-stop-calling-what-is-already-down">Circuit breakers — stop calling what is already down</h2>
 <p>A circuit breaker wraps a downstream call and tracks its health. Three states:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_60e59615450e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_60e59615450e.png" alt="diagram"></div></p>
 <p><em>Figure 11-3: Circuit-breaker state machine. The breaker fails fast in Open, giving the downstream time to recover and the caller time to shed or fallback.</em></p>
 <p>Why not just rely on timeouts? A timeout still pays the timeout duration and still sends load to an overloaded dependency. An open breaker rejects in microseconds and sheds load — the downstream gets breathing room, the caller preserves threads.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Resilience4j — circuit breaker around a downstream call (Java)</span>
@@ -6496,7 +6496,7 @@ aws<span class="w"> </span>rds<span class="w"> </span>create-db-cluster<span cla
 </code></pre></div>
 
 <p>The anti-pattern: creating one bulkhead for "all external calls" — that is just a smaller global pool, not isolation. Bulkheads must be per dependency and per criticality.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_15b2ecb8e47d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_15b2ecb8e47d.png" alt="diagram"></div></p>
 <p><em>Figure 11-4: Bulkheads partition the caller's concurrency. Inventory slowness can at most consume 30 slots; Payments and Search remain available.</em></p>
 <hr />
 <h2 id="load-shedding-choose-what-to-drop">Load shedding — choose what to drop</h2>
@@ -6747,9 +6747,9 @@ aws<span class="w"> </span>rds<span class="w"> </span>create-db-cluster<span cla
 <li>Hedging trades duplicate load for lower p99 — only for idempotent reads, guarded by a budget, with hedge delay ≈ p90.</li>
 <li>Compose at the call site (bulkhead → breaker → timeout → retry/hedge → fallback) and verify with fault injection from unit test through production chaos.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_066dddf2b228.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd0d02389e88.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bf9b137250ce.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_066dddf2b228.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fd0d02389e88.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bf9b137250ce.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Nygard — Release It! (2nd ed.), Stability patterns (Circuit Breaker, Bulkhead, Timeout).</li>
@@ -6865,7 +6865,7 @@ aws<span class="w"> </span>rds<span class="w"> </span>create-db-cluster<span cla
 </tbody>
 </table>
 <p>Pure push collapses on celebrities (a 100M-follower account would require 100M inserts per post, 100M × 25K peaks is impossible). Pure pull collapses on reads (merging 200 outboxes per read at 200K RPS is 40M outbox reads/s). Every real feed is hybrid.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_669d9c2ccd1f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_669d9c2ccd1f.png" alt="diagram"></div></p>
 <p><em>Figure 12-1: Hybrid fan-out. Normal posts are pushed; celebrity posts are pulled at read time. Ranking merges both sources.</em></p>
 <h3 id="architecture-and-data-flow">Architecture and data flow</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Client</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Gateway</span><span class="w"> </span><span class="p">(</span><span class="n">auth</span><span class="p">,</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="kr">limit</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Feed</span><span class="w"> </span><span class="kr">Service</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">Timeline</span><span class="w"> </span><span class="n">Cache</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Timeline</span><span class="w"> </span><span class="kr">Store</span><span class="p">]</span>
@@ -7036,7 +7036,7 @@ func<span class="w"> </span>onPostCreated<span class="o">(</span>ev<span class="
 </table>
 <h3 id="the-defining-trade-off-ordering-and-delivery-vs-availability">The defining trade-off: ordering and delivery vs. availability</h3>
 <p>Chat needs per-conversation total order and at-least-once delivery with client-visible exactly-once (dedup). Strong cross-region ordering would require synchronous replication on every send — too slow. The standard choice: <strong>single writer per conversation</strong> (homed to a region or partition leader) gives total order without global sync; cross-region is async with ordering preserved per conversation via sequence numbers. Availability is per-conversation, not global — a partition affects only conversations homed to the partitioned region.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9bb8442f89eb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9bb8442f89eb.png" alt="diagram"></div></p>
 <p><em>Figure 12-2: Chat architecture. Single-writer sequencer gives per-conversation order; connection service shards WebSockets and routes via a presence/routing table.</em></p>
 <h3 id="architecture-and-data-flow_1">Architecture and data flow</h3>
 <p><strong>Send path (ordered, exactly-once):</strong></p>
@@ -7234,7 +7234,7 @@ func<span class="w"> </span>onPostCreated<span class="o">(</span>ev<span class="
 </table>
 <h3 id="the-defining-trade-off-immediacy-vs-batching-and-preference-filtering">The defining trade-off: immediacy vs. batching and preference filtering</h3>
 <p>Sending every event immediately is simple but noisy (a viral post would generate thousands of pushes per follower) and wasteful (user in quiet hours, digest preference). Batching and filtering reduce load and improve UX but add latency and state (pending batches, preference cache). The architecture must support both on the same pipeline — per-event routing that decides <em>whether</em>, <em>when</em>, and <em>via which channel</em> each notification is delivered.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8251475b2c61.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8251475b2c61.png" alt="diagram"></div></p>
 <p><em>Figure 12-3: Notification pipeline. Preferences filter early; priority decides lane; digests batch; every channel has retry/DLQ.</em></p>
 <h3 id="architecture-and-data-flow_2">Architecture and data flow</h3>
 <div class="highlight"><pre><span></span><code><span class="nf">Event</span><span class="w"> </span><span class="n">Producers</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Kafka</span><span class="w"> </span><span class="p">(</span><span class="n">events</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Intake</span><span class="w"> </span><span class="p">(</span><span class="nf">dedup</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">schema</span><span class="w"> </span><span class="n">validation</span><span class="p">)</span>
@@ -7415,11 +7415,11 @@ func<span class="w"> </span>onPostCreated<span class="o">(</span>ev<span class="
 <h3 id="the-defining-trade-off-consistency-per-operation">The defining trade-off: consistency per operation</h3>
 <p>A global KV cannot be strongly consistent, highly available, and low-latency all at once (CAP/PACELC, Chapter 10). The answer is tunable quorums: the client chooses <code>W</code> + <code>R</code> per operation and the system guarantees <code>R + W &gt; N</code> for strong consistency when needed, eventual otherwise. Dynamo-style systems push this choice to the caller; Spanner-style systems hide it behind TrueTime and transactions.</p>
 <p>We design the Dynamo-style core (the pattern behind Cassandra, DynamoDB, Riak) because it exposes the trade-off most clearly and scales linearly. We then show where Spanner/CockroachDB diverge.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_45092b1ca28b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_45092b1ca28b.png" alt="diagram"></div></p>
 <p><em>Figure 12-4: Dynamo-style KV. Consistent hashing places keys; coordinator routes to N replicas; gossip + hinted handoff + read repair converge.</em></p>
 <h3 id="architecture-and-data-flow_3">Architecture and data flow</h3>
 <p><strong>Ring and placement:</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_18c6b60c763a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_18c6b60c763a.png" alt="diagram"></div></p>
 <p><em>Figure 12-5: From key to replicas. Virtual nodes balance load; rack-aware placement survives rack/DC loss; quorum choice determines consistency.</em></p>
 <h3 id="deep-dive_3">Deep dive</h3>
 <p><strong>Consistent hashing (Vol 14, Ch 5):</strong></p>
@@ -7615,7 +7615,7 @@ func<span class="w"> </span>onPostCreated<span class="o">(</span>ev<span class="
 <hr />
 <h2 id="cross-cutting-lessons">Cross-cutting lessons</h2>
 <p>These four cases share structure that generalizes:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_841e36f00580.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_841e36f00580.png" alt="diagram"></div></p>
 <p><em>Figure 12-6: Every case is estimation → one defining trade-off → composition of the same patterns → operational hardening. The patterns repeat; the trade-off is what makes each system distinct.</em></p>
 <table>
 <thead>
@@ -7678,8 +7678,8 @@ func<span class="w"> </span>onPostCreated<span class="o">(</span>ev<span class="
 <li>Every case composes the same patterns (cache, LB, events, gateway, rate limit, multi-region, resilience) — the defining trade-off per case is what makes the composition distinct.</li>
 <li>Operability is the design — hot-key, herd, lag, and partition mitigations must be built in and drilled, not added after an outage.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a75a02ae40a5.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3d2516eb3254.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a75a02ae40a5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3d2516eb3254.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Feed — Twitter (now X) Manhattan and home-timeline architecture; Instagram feed ranking. https://blog.twitter.com/engineering/en_us/topics/infrastructure/2021/processing-billions-of-events-in-real-time-at-twitter and https://instagram-engineering.com/</li>

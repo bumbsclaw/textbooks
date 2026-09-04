@@ -266,7 +266,7 @@ hr {
 <p>This chapter treats the engine as a distributed-systems component: it is a JIT-compiled runtime with adaptive optimization, speculative assumptions, and fallback paths — not unlike a database query planner that picks execution strategies based on observed statistics.</p>
 <h2 id="2-the-universal-pipeline">2. The Universal Pipeline</h2>
 <p>Every modern engine follows the same high-level pipeline. Implementations differ in naming and number of tiers, but the stages are structurally identical.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ebcb47f371be.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ebcb47f371be.png" alt="diagram"></div></p>
 <p>Key idea: the engine does not compile JavaScript once. It compiles it <em>repeatedly</em>, each time with more information and more aggressive assumptions. The interpreter is not a legacy fallback — it is the profiling tier that makes optimization safe.</p>
 <table>
 <thead>
@@ -403,10 +403,10 @@ FUNC at 0
 </code></pre></div>
 
 <p>Both <code>p1</code> and <code>p2</code> share the same Map because they added properties in the same order. The Map says: offset 0 is <code>x</code>, offset 1 is <code>y</code>, both writable data properties, stored inline. Property access <code>p1.x</code> becomes a single indexed load — no hash lookup — guarded by a Map check.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_92b0253de859.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_92b0253de859.png" alt="diagram"></div></p>
 <h3 id="42-transition-trees">4.2 Transition Trees</h3>
 <p>Maps form a <em>transition tree</em> (a trie). Each edge is labeled by the property being added and its attributes.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb648ee7f829.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cb648ee7f829.png" alt="diagram"></div></p>
 <p>Critical property: objects that follow the same transition path <em>share</em> Maps. The engine can then optimize for a specific Map — if <code>p1.map === p2.map</code>, the offset of <code>x</code> is a compile-time constant. If a third object <code>p3</code> adds <code>y</code> before <code>x</code>, it takes a different branch and gets a different Map. Code that handles both <code>p1</code> and <code>p3</code> becomes polymorphic.</p>
 <p>Concrete example showing the cost:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// monomorphic — one Map</span>
@@ -495,7 +495,7 @@ FUNC at 0
 <p>Hidden classes make property access fast <em>if</em> the engine knows which Map to expect. Inline caches are the mechanism that remembers.</p>
 <h3 id="51-how-an-ic-works">5.1 How an IC Works</h3>
 <p>Every property access site in bytecode has an IC slot. The first time the code runs, the slot is <strong>uninitialized</strong>. On the first execution it records the Map it saw and the offset. On subsequent executions, it compares the object's Map against the cached one — a single pointer comparison — and if it matches, loads at the cached offset immediately.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_56cbafc58f34.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_56cbafc58f34.png" alt="diagram"></div></p>
 <p>V8's thresholds (as of mid-2025, subject to tuning): monomorphic is 1 Map, polymorphic caches up to 4 Maps (configurable), beyond that → megamorphic. SpiderMonkey and JSC have similar cutoffs but different constants.</p>
 <h3 id="52-observing-ics-with-d8">5.2 Observing ICs with d8</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// ic-demo.js</span>
@@ -551,7 +551,7 @@ FUNC at 0
 <p>This is why a single megamorphic site in a hot function can prevent the entire function from being optimized, or force it to deoptimize repeatedly. The IC state is the canary.</p>
 <h2 id="6-v8-ignition-maglev-and-turbofan">6. V8 — Ignition, Maglev, and TurboFan</h2>
 <p>V8 (Chrome, Node.js, Deno, Cloudflare Workers) has the most documented and most tiered architecture. As of 2024–2025, production V8 uses three execution tiers plus the parser:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6fe200082b20.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6fe200082b20.png" alt="diagram"></div></p>
 <h3 id="61-ignition-the-interpreter">6.1 Ignition — The Interpreter</h3>
 <p>Ignition is a register-based bytecode interpreter with an accumulator model. Bytecode handlers are hand-written in a DSL called CodeStubAssembler and compiled ahead of time. Every bytecode dispatches through a jump table; feedback is collected inline in <code>FeedbackVector</code> slots.</p>
 <ul>
@@ -652,7 +652,7 @@ FUNC at 0
 
 <h2 id="7-spidermonkey-baseline-ion-and-warp">7. SpiderMonkey — Baseline, Ion, and Warp</h2>
 <p>SpiderMonkey (Firefox, SpiderNode) has converged on a similar shape but with different naming and history.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c53c6af57a07.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c53c6af57a07.png" alt="diagram"></div></p>
 <h3 id="71-baseline-interpreter-and-baseline-jit">7.1 Baseline Interpreter and Baseline JIT</h3>
 <p>SpiderMonkey's Baseline tier is split: a Baseline Interpreter (the default execution tier since ~2022) and a Baseline JIT that compiles bytecode to machine code using generated IC stubs. The key abstraction is <strong>CacheIR</strong>: instead of emitting machine code directly for each IC, the engine emits a portable CacheIR sequence (a linear IR describing the cache logic). CacheIR is then compiled to machine code by the Baseline JIT or consumed by Warp/Ion for optimization. This makes IC logic shareable across tiers.</p>
 <h3 id="72-warp-and-ionmonkey">7.2 Warp and IonMonkey</h3>
@@ -674,7 +674,7 @@ FUNC at 0
 
 <h2 id="8-javascriptcore-llint-baseline-dfg-and-ftl">8. JavaScriptCore — LLInt, Baseline, DFG, and FTL</h2>
 <p>JavaScriptCore (Safari, Bun) has <em>four</em> execution tiers — the most of any engine — betting that finer granularity wins on heterogeneous Apple hardware (high-efficiency vs. high-performance cores).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ff3524b4647d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ff3524b4647d.png" alt="diagram"></div></p>
 <h3 id="81-llint-the-assembly-interpreter">8.1 LLInt — The Assembly Interpreter</h3>
 <p>LLInt is not a bytecode loop in C — it is hand-written assembly (generated from <code>offlineasm</code> templates) that dispatches bytecode with computed <code>goto</code> / jump tables. Its job is to start executing immediately (no JIT compile delay) and to profile values flowing through each bytecode: what types appear at each <code>GetById</code>, what callees appear at each <code>Call</code>.</p>
 <h3 id="82-baseline-jit">8.2 Baseline JIT</h3>
@@ -999,7 +999,7 @@ node<span class="w"> </span>--prof<span class="w"> </span>app.js<span class="w">
 <h2 id="22-the-browser-event-loop">2.2 The Browser Event Loop</h2>
 <h3 id="221-the-html-standard-event-loop">2.2.1 The HTML Standard event loop</h3>
 <p>The <a href="https://html.spec.whatwg.org/#event-loops">HTML Standard §8.1.4</a> defines an <strong>event loop</strong> per <em>agent</em> (roughly, per browsing context group) and a <strong>task queue</strong> per <em>task source</em> (DOM manipulation, user interaction, networking, history traversal, etc.). The loop is conceptually:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ea7ad1130c47.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ea7ad1130c47.png" alt="diagram"></div></p>
 <p>In prose:</p>
 <ol>
 <li>Pick the oldest <strong>task</strong> (macrotask) from any task queue and run it.</li>
@@ -1009,7 +1009,7 @@ node<span class="w"> </span>--prof<span class="w"> </span>app.js<span class="w">
 </ol>
 <p>Every browser vendor maps this onto a platform message pump (Chromium: <code>base::MessageLoop</code> / <code>SequenceManager</code>, Firefox: <code>nsThread</code> + <code>PrioritizedEventQueue</code>, WebKit: <code>RunLoop</code>). The observable semantics are standardized; the internal scheduling is not.</p>
 <h3 id="222-tasks-vs-microtasks-the-two-queues">2.2.2 Tasks vs microtasks — the two queues</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7abf79064288.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7abf79064288.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -1102,7 +1102,7 @@ node<span class="w"> </span>--prof<span class="w"> </span>app.js<span class="w">
 <p>In browsers, <code>postMessage</code> on <code>window</code> and <code>MessageChannel</code> both enqueue tasks, but <code>MessageChannel</code> is preferred for scheduling because it avoids the origin-check overhead and does not collide with application <code>message</code> listeners.</p>
 <h3 id="225-rendering-where-raf-fits">2.2.5 Rendering: where rAF fits</h3>
 <p>The rendering steps run <em>between</em> tasks — after microtasks drain and before the next task — but only when the browser decides to render (aligned to vsync). The pipeline is:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cdd68abff528.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cdd68abff528.png" alt="diagram"></div></p>
 <p>Key points senior engineers often get wrong:</p>
 <ul>
 <li><strong><code>requestAnimationFrame</code> (rAF) runs <em>before</em> style/layout/paint</strong>, not after. Mutate the DOM in your rAF callback and the browser will include those mutations in the same frame. Read layout in rAF <em>before</em> you write and you avoid an extra reflow.</li>
@@ -1189,7 +1189,7 @@ node<span class="w"> </span>--prof<span class="w"> </span>app.js<span class="w">
 <h2 id="23-the-nodejs-event-loop-libuv">2.3 The Node.js Event Loop — libuv</h2>
 <p>Browser JavaScript has one loop with rendering interleaved. Node has a different loop — no rendering, but <strong>I/O polling</strong>, a <strong>thread pool</strong>, and extra phase queues. The engine is still V8, but the event loop is provided by <strong><a href="https://libuv.org/">libuv</a></strong>, the same cross-platform async I/O library behind Node, Deno (partially), and Julia.</p>
 <h3 id="231-libuv-phases">2.3.1 libuv phases</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_44f72da48810.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_44f72da48810.png" alt="diagram"></div></p>
 <p>In the actual C implementation (<code>uv_run</code> in <code>src/unix/core.c</code>), the order is:</p>
 <div class="highlight"><pre><span></span><code>while (r != 0 &amp;&amp; loop alive) {
   uv__update_time(loop);          // (1) sample loop time
@@ -1255,7 +1255,7 @@ node<span class="w"> </span>--prof<span class="w"> </span>app.js<span class="w">
 <p>Between <em>every</em> phase transition, Node drains two special queues — <strong><code>process.nextTick</code></strong> and <strong>Promise microtasks</strong> — which is why Node ordering differs from the browser.</p>
 <h3 id="232-nexttick-vs-microtasks-the-ordering-that-surprises-everyone">2.3.2 nextTick vs microtasks — the ordering that surprises everyone</h3>
 <p>This is the single most tested distinction in Node interviews and the single most common source of real bugs.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_291b8ea4691f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_291b8ea4691f.png" alt="diagram"></div></p>
 <p>Rules:</p>
 <ol>
 <li><strong><code>process.nextTick</code> has its own queue, drained <em>before</em> Promise microtasks.</strong> It is not a microtask — it is a <em>next-tick queue</em> that runs at higher priority.</li>
@@ -1424,7 +1424,7 @@ node<span class="w"> </span>--prof<span class="w"> </span>app.js<span class="w">
 <span class="c1">// setTimeout inside I/O      ← timers phase on the following iteration</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e32bdd973079.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e32bdd973079.png" alt="diagram"></div></p>
 <h3 id="242-asyncawait-ordering-await-is-promisethen">2.4.2 async/await ordering — await is Promise.then</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// await-ordering.js — identical in browser and Node (no nextTick)</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">);</span>
@@ -1506,7 +1506,7 @@ node<span class="w"> </span>--prof<span class="w"> </span>app.js<span class="w">
 <span class="c1">// depth 7 → next fires after 4.10ms</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c3c47eabb779.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c3c47eabb779.png" alt="diagram"></div></p>
 <h3 id="252-timer-coalescing-and-drift">2.5.2 Timer coalescing and drift</h3>
 <p>libuv does not maintain a sorted timer heap with absolute precision. Each iteration it samples <code>loop-&gt;time</code> once and fires <em>all</em> timers whose expiry ≤ that sampled time. Timers that become due during the poll phase all fire together in the next timers phase — they <strong>coalesce</strong>.</p>
 <p><code>setInterval</code> drift compounds: if a callback takes longer than the interval, libuv does not queue multiple invocations — it fires once per iteration and scheduling is based on <em>start time</em>, not <em>end time</em>. A 10 ms interval callback that takes 25 ms will visibly skip beats.</p>
@@ -1655,7 +1655,7 @@ node<span class="w"> </span>--prof<span class="w"> </span>app.js<span class="w">
 </code></pre></div>
 
 <p>If the guard (<code>n &lt; 5</code>) were missing, <code>setTimeout</code> and <code>setImmediate</code> would <strong>never</strong> fire — the loop never leaves the nextTick drain. The same applies to unbounded promise recursion, though Node's <code>process.maxTickDepth</code>-style mitigations and V8's microtask handling make it slightly harder to accidentally starve with promises alone.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6fb9f763038e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6fb9f763038e.png" alt="diagram"></div></p>
 <h3 id="262-microtask-starvation-the-subtler-variant">2.6.2 Microtask starvation — the subtler variant</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// Promise recursion starvation — works in BOTH browser and Node</span>
 <span class="kd">let</span><span class="w"> </span><span class="nx">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
@@ -2020,7 +2020,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <hr />
 <h2 id="31-the-node-layer-cake">3.1 The Node Layer Cake</h2>
 <p>Node is four layers. Every call crosses at least two of them. Understanding which layer does what is the prerequisite for every performance investigation, every native addon, and every production tuning decision.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_69e4724049b9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_69e4724049b9.png" alt="diagram"></div></p>
 <p><strong>Layer 1 — JavaScript (V8).</strong> Your code and Node's JavaScript standard library (<code>lib/*.js</code>). <code>lib/fs.js</code> does not perform I/O; it validates arguments, creates a request object, and forwards to the binding. For example, <code>fs.readFile</code> in <code>lib/fs.js</code> normalizes the path and options, allocates a <code>FSReqCallback</code>, and calls <code>binding.open</code> / <code>binding.read</code> — which are C++ functions exposed via <code>internalBinding('fs')</code>.</p>
 <p><strong>Layer 2 — C++ bindings (<code>src/*.cc</code>).</strong> Each subsystem has a corresponding C++ file: <code>src/node_file.cc</code> for <code>fs</code>, <code>src/node_net.cc</code> for <code>net</code>, <code>src/node_crypto.cc</code> for <code>crypto</code>, <code>src/node_zlib.cc</code> for <code>zlib</code>. The binding's job is strictly translation: convert V8 values (<code>v8::String</code>, <code>v8::Function</code>, <code>node::Buffer</code>) into C structs (<code>uv_fs_t</code>, <code>uv_work_t</code>, <code>uv_buf_t</code>), enqueue work with libuv, and convert results back into V8 values when the callback fires. The binding owns no I/O logic — that belongs to libuv.</p>
 <p><strong>Layer 3 — libuv (<code>deps/uv/</code>).</strong> A standalone C library (~30K lines) that provides three things: (a) the event loop (<code>uv_loop_t</code>, <code>uv_run</code>), (b) the thread pool, and (c) cross-platform handles and requests (<code>uv_tcp_t</code>, <code>uv_udp_t</code>, <code>uv_fs_t</code>, <code>uv_getaddrinfo_t</code>, <code>uv_timer_t</code>). Node links libuv statically. The libuv version is pinned per Node release (e.g., Node 20 ships libuv 1.44, Node 22 ships libuv 1.48). libuv knows nothing about V8 or JavaScript; it operates on C callbacks.</p>
@@ -2087,7 +2087,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <hr />
 <h2 id="32-libuv-and-the-event-loop-six-phases">3.2 libuv and the Event Loop: Six Phases</h2>
 <p>The libuv event loop is not a single queue. It is a deterministic sequence of phases, each draining a different set of handles and requests. Node adds two extra micro-queues (<code>process.nextTick</code> and the V8 Promise microtask queue) that interleave between every phase transition — which is why Node ordering diverges from the browser.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a134828ce8be.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a134828ce8be.png" alt="diagram"></div></p>
 <p>The C implementation in <code>deps/uv/src/unix/core.c</code> is approximately:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// deps/uv/src/unix/core.c — uv_run (simplified, error handling omitted)</span>
 <span class="kt">int</span><span class="w"> </span><span class="nf">uv_run</span><span class="p">(</span><span class="n">uv_loop_t</span><span class="o">*</span><span class="w"> </span><span class="n">loop</span><span class="p">,</span><span class="w"> </span><span class="n">uv_run_mode</span><span class="w"> </span><span class="n">mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -2223,7 +2223,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <h2 id="33-the-thread-pool">3.3 The Thread Pool</h2>
 <p>Not all operations can be non-blocking. Filesystem I/O on Linux has no uniformly non-blocking interface (prior to <code>io_uring</code>), DNS resolution via <code>getaddrinfo</code> is blocking, and CPU-bound work like <code>crypto.pbkdf2</code> and <code>zlib</code> compression must run somewhere. libuv's answer is a fixed-size thread pool.</p>
 <h3 id="architecture">Architecture</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_455751fbec08.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_455751fbec08.png" alt="diagram"></div></p>
 <h3 id="uv_queue_work-the-core-primitive"><code>uv_queue_work</code> — the core primitive</h3>
 <p>Every thread-pool operation goes through one function:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// deps/uv/include/uv.h</span>
@@ -2508,7 +2508,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <hr />
 <h2 id="35-native-addons-four-tiers-of-extensibility">3.5 Native Addons: Four Tiers of Extensibility</h2>
 <p>When JavaScript is not fast enough or must interface with a native library, Node provides four tiers of native addon abstraction — each trading raw control for ergonomics and ABI stability.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a604ea4c2356.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a604ea4c2356.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -2816,7 +2816,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <p>N-API's handle system is the most common source of addon bugs — leaks, use-after-free, and GC surprises. Understanding it precisely is non-optional.</p>
 <h3 id="handles-and-scopes">Handles and scopes</h3>
 <p>Every <code>napi_value</code> is a handle — an indirection through V8's handle table, not a direct pointer to a JS object. Handles are only valid within their handle scope.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_725be7aac29c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_725be7aac29c.png" alt="diagram"></div></p>
 <p><strong>Handle scopes — the rules:</strong></p>
 <ol>
 <li>Every N-API callback (<code>napi_callback</code>, <code>napi_async_execute_callback</code>, finalizer) enters with an implicit handle scope. All handles created inside the callback belong to that scope.</li>
@@ -2969,7 +2969,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <hr />
 <h2 id="37-async-addons-getting-off-the-main-thread">3.7 Async Addons: Getting Off the Main Thread</h2>
 <p>A synchronous addon that does CPU work blocks the event loop — no I/O callbacks fire, no timers fire, no other JS runs. The fix is <code>napi_create_async_work</code>, which dispatches work to the libuv thread pool and calls back on the main thread when done.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b290eedbd6bf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b290eedbd6bf.png" alt="diagram"></div></p>
 <h3 id="raw-n-api-async-work-complete-example">Raw N-API async work — complete example</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// async_addon.c — async hash via napi_create_async_work</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;node_api.h&gt;</span>
@@ -3123,7 +3123,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <hr />
 <h2 id="38-parallelism-in-node-worker_threads-vs-cluster-vs-child_process">3.8 Parallelism in Node: worker_threads vs cluster vs child_process</h2>
 <p>Node offers three ways to use more than one OS thread or process. They differ in isolation, memory sharing, startup cost, and failure semantics — choosing wrong is a common source of production incidents.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3a8655c4a0aa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3a8655c4a0aa.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -3411,7 +3411,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 </code></pre></div>
 
 <h3 id="how-it-works-async_hooks-under-the-hood">How it works — async_hooks under the hood</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_266f92e386f8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_266f92e386f8.png" alt="diagram"></div></p>
 <p>Every asynchronous operation in Node creates an <strong>async resource</strong> with a unique <code>asyncId</code> and a <code>triggerAsyncId</code> (the <code>asyncId</code> of the context that created it). <code>async_hooks</code> emits lifecycle events:</p>
 <div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nx">async_hooks</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:async_hooks&#39;</span><span class="p">;</span>
 <span class="k">import</span><span class="w"> </span><span class="nx">fs</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:fs&#39;</span><span class="p">;</span>
@@ -3739,7 +3739,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <p>Coercion is not random. It is a set of precisely specified abstract operations. Once you read them as algorithms, every "wat" puzzle becomes deterministic.</p>
 <h3 id="31-toprimitive-the-gateway">3.1 ToPrimitive — The Gateway</h3>
 <p>Almost every coercion passes through <code>ToPrimitive(input, hint)</code>. The hint is <code>"string"</code> or <code>"number"</code> (default is <code>"number"</code> except <code>Date</code> defaults to <code>"string"</code>).</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7f80cca7af3a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7f80cca7af3a.png" alt="diagram"></div></p>
 <p><code>OrdinaryToPrimitive</code> order matters: for <code>"number"</code> hint, <code>valueOf</code> is tried first; for <code>"string"</code> hint, <code>toString</code> first.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// ToPrimitive in action</span>
 <span class="kd">const</span><span class="w"> </span><span class="nx">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
@@ -3965,7 +3965,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="ow">typeof</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">__proto__</span><span class="p">);</span><span class="w">         </span><span class="c1">// &quot;object&quot;</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9bfba505789e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9bfba505789e.png" alt="diagram"></div></p>
 <h3 id="42-walking-the-chain-the-code-you-must-be-able-to-read">4.2 Walking the Chain — The Code You Must Be Able to Read</h3>
 <p>Every property access follows this walk. The engine optimizes it with hidden classes and inline caches (Chapter 1), but the semantics are a loop:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Manual prototype walk — what the engine does on every property read</span>
@@ -4164,7 +4164,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <span class="c1">// 3. Returns the initialized `this` — now Dog constructor can assign breed</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_97a21afb52f7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_97a21afb52f7.png" alt="diagram"></div></p>
 <p>If <code>extends</code> only wired the instance chain, <code>Dog.kind()</code> would not find <code>Animal.kind()</code>. The static chain (<code>Dog.__proto__ === Animal</code>) is what makes static inheritance work — and what makes <code>instanceof</code> walk the <code>prototype</code> chain rather than the <code>__proto__</code> chain of the constructor.</p>
 <h3 id="53-private-fields-static-blocks-and-what-they-cost">5.3 Private Fields, Static Blocks, and What They Cost</h3>
 <div class="highlight"><pre><span></span><code><span class="kd">class</span><span class="w"> </span><span class="nx">Counter</span><span class="w"> </span><span class="p">{</span>
@@ -4375,7 +4375,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <li><code>getPrototypeOf</code> must return the target's actual prototype if the target is non-extensible.</li>
 </ul>
 <p>Violating invariants is not a lint warning — it is a runtime <code>TypeError</code> that crashes the request.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d9b65a135c63.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d9b65a135c63.png" alt="diagram"></div></p>
 <h3 id="72-minimal-proxy-logging-and-validation">7.2 Minimal Proxy — Logging and Validation</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// Logging proxy — observe every operation without changing behavior</span>
 <span class="kd">function</span><span class="w"> </span><span class="nx">loggingProxy</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span><span class="w"> </span><span class="nx">label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;obj&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -4638,7 +4638,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">logger1</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">logger3</span><span class="p">);</span><span class="w">              </span><span class="c1">// false — different object now</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4b881e1fb568.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4b881e1fb568.png" alt="diagram"></div></p>
 <h4 id="circular-dependencies-the-half-initialized-trap">Circular Dependencies — The Half-Initialized Trap</h4>
 <p>CJS handles cycles by returning the <em>partially populated</em> <code>module.exports</code> object. This is the most common source of <code>undefined</code> exports in large codebases.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// a.js</span>
@@ -4744,7 +4744,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <span class="c1">// The getter makes it *look* live, but it&#39;s a manual pattern, not language semantics</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d74afdcc9051.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d74afdcc9051.png" alt="diagram"></div></p>
 <p>Live bindings also fix CJS's circular-dependency problem: ESM cycles link bindings before evaluation, so every module in the cycle sees live (possibly uninitialized, TDZ-checked) bindings rather than a half-populated exports object.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// ESM cycles — live bindings, TDZ instead of half-initialized objects</span>
 <span class="c1">// a.mjs</span>
@@ -4763,7 +4763,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 <h3 id="83-module-resolution-and-packagejson-exports">8.3 Module Resolution and <code>package.json</code> <code>exports</code></h3>
 <p>Node's resolver has grown from a simple <code>node_modules</code> walk to a conditional-exports-aware algorithm. The <code>exports</code> field (Node 12.7+) is now the authoritative entry-point map; <code>main</code> is the legacy fallback.</p>
 <h4 id="the-resolution-flowchart">The Resolution Flowchart</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3b30a300ffc2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3b30a300ffc2.png" alt="diagram"></div></p>
 <h4 id="packagejson-exports-the-right-way"><code>package.json</code> <code>exports</code> — The Right Way</h4>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@company/utils&quot;</span><span class="p">,</span>
@@ -4913,7 +4913,7 @@ node<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;</s
 
 <h3 id="85-the-dual-package-hazard">8.5 The Dual-Package Hazard</h3>
 <p>When a package provides both CJS and ESM entry points (via <code>exports</code> <code>import</code>/<code>require</code>), Node may load <strong>two separate instances</strong> of the same package — one per module system. They share no state.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5ed0d1524fd0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5ed0d1524fd0.png" alt="diagram"></div></p>
 <p>Concrete failure:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// node_modules/counter-pkg/dist/index.js (ESM)</span>
 <span class="k">export</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
@@ -5191,7 +5191,7 @@ import<span class="w"> </span>config<span class="w"> </span>from<span class="w">
 </table>
 <p>A fourth slot, <code>[[PromiseIsHandled]]</code>, tracks whether a rejection has ever had a handler — the basis for <code>unhandledrejection</code> detection.</p>
 <h3 id="21-the-one-way-one-time-transition">2.1 The one-way, one-time transition</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f6c1dca48a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4f6c1dca48a4.png" alt="diagram"></div></p>
 <p>Two invariants make Promises reliable as a coordination primitive:</p>
 <ul>
 <li>
@@ -5280,7 +5280,7 @@ import<span class="w"> </span>config<span class="w"> </span>from<span class="w">
 <hr />
 <h2 id="3-executor-reaction-queue-how-then-really-works">3. Executor → Reaction Queue — How <code>.then</code> Really Works</h2>
 <p>Calling <code>.then</code> does not execute anything immediately. It creates a <em>new</em> Promise and registers a <em>PromiseReaction</em> that will enqueue a PromiseJob when the original settles.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e6ffb6282022.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e6ffb6282022.png" alt="diagram"></div></p>
 <h3 id="31-the-promisereaction-record">3.1 The PromiseReaction record</h3>
 <p>Each <code>.then(onFulfilled, onRejected)</code> call allocates:</p>
 <div class="highlight"><pre><span></span><code><span class="n">PromiseReaction</span><span class="w"> </span><span class="err">{</span>
@@ -5405,7 +5405,7 @@ import<span class="w"> </span>config<span class="w"> </span>from<span class="w">
 <hr />
 <h2 id="4-the-promise-job-queue-microtask-drain-mechanics">4. The Promise Job Queue — Microtask Drain Mechanics</h2>
 <p>ECMA-262 does not say "microtask queue" directly. It says <em>PromiseJobs</em> are enqueued via <em>HostEnqueuePromiseJob</em> and drained by <em>PerformMicrotaskCheckpoint</em>. In browsers this is the HTML Standard microtask queue; in Node it is the <code>nextTick</code> + promise microtask queue drained between libuv phases (see Chapter 2, §2.4). The observable behavior is identical: <strong>PromiseJobs run before the next task, and they drain exhaustively — a PromiseJob that enqueues another PromiseJob causes that new job to run in the same drain.</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b2d97c776968.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b2d97c776968.png" alt="diagram"></div></p>
 <h3 id="41-microtask-drain-demo-the-log-order-that-proves-the-queue">4.1 Microtask drain demo — the log order that proves the queue</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// microtask-drain-demo.js — run with `node microtask-drain-demo.js`</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;1 — script start&quot;</span><span class="p">);</span>
@@ -5518,7 +5518,7 @@ import<span class="w"> </span>config<span class="w"> </span>from<span class="w">
 <h2 id="5-error-propagation-rejection-unhandled-rejections-and-aggregateerror">5. Error Propagation — Rejection, Unhandled Rejections, and AggregateError</h2>
 <h3 id="51-how-errors-travel-through-a-promise-chain">5.1 How errors travel through a Promise chain</h3>
 <p>Every <code>.then</code> handler is wrapped so that a thrown exception becomes a rejection of the chained promise. This is the sole error-propagation mechanism for asynchronous code — there is no cross-microtask stack unwind.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f7f7018aae5e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f7f7018aae5e.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Error bubbling through a realistic chain</span>
 <span class="kd">function</span><span class="w"> </span><span class="nx">fetchUser</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">id</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">Promise</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s2">&quot;invalid id&quot;</span><span class="p">));</span>
@@ -5702,7 +5702,7 @@ import<span class="w"> </span>config<span class="w"> </span>from<span class="w">
 <h2 id="6-generators-suspendable-functions-with-a-bidirectional-channel">6. Generators — Suspendable Functions with a Bidirectional Channel</h2>
 <p>Generators are the suspension primitive that <code>async</code>/<code>await</code> is built on. A generator function (<code>function*</code>) does not execute when called. It returns a <em>Generator</em> object — an iterator with a state machine — whose body advances only when the caller drives it via <code>.next()</code>, <code>.return()</code>, or <code>.throw()</code>.</p>
 <h3 id="61-states-and-the-yieldnext-handshake">6.1 States and the yield/next handshake</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c784f41bb4f6.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c784f41bb4f6.png" alt="diagram"></div></p>
 <p>The critical insight: <code>yield</code> is a <em>bidirectional</em> channel. The value <em>after</em> <code>yield</code> goes out to the caller; the value <em>passed to</em> the next <code>next()</code> call comes <em>in</em> as the result of the <code>yield</code> expression.</p>
 <div class="highlight"><pre><span></span><code><span class="kd">function</span><span class="o">*</span><span class="w"> </span><span class="nx">bidirectional</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">);</span>
@@ -5830,7 +5830,7 @@ import<span class="w"> </span>config<span class="w"> </span>from<span class="w">
 <h2 id="7-asyncawait-generators-wrapped-in-promises">7. async/await — Generators Wrapped in Promises</h2>
 <p>An <code>async</code> function is not a new execution model. It is a generator that the engine automatically drives to completion, with each <code>yield</code> replaced by <code>await</code>, and with the driving loop implemented as PromiseJobs. The desugaring below is semantically faithful — what V8 actually runs is more optimized, but the state transitions are identical.</p>
 <h3 id="71-the-desugaring">7.1 The desugaring</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e76367655098.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e76367655098.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// What you write:</span>
 <span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">fetchWithRetry</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span><span class="w"> </span><span class="nx">retries</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">attempt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">attempt</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">retries</span><span class="p">;</span><span class="w"> </span><span class="nx">attempt</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -6103,7 +6103,7 @@ import<span class="w"> </span>config<span class="w"> </span>from<span class="w">
 
 <h3 id="82-top-level-await-blocking-the-module-graph">8.2 Top-level await — blocking the module graph</h3>
 <p>Top-level <code>await</code> (ES2022, supported in ESM — not in CommonJS or classic scripts) allows a module to <code>await</code> at the top level. The module's evaluation becomes asynchronous, and any importer waits for it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_245423b2d7d3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_245423b2d7d3.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// db.mjs — top-level await for connection setup</span>
 <span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">createPool</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;./pool.mjs&quot;</span><span class="p">;</span>
 <span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">pool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">createPool</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">DATABASE_URL</span><span class="p">);</span>
@@ -6516,9 +6516,9 @@ import<span class="w"> </span>config<span class="w"> </span>from<span class="w">
 <hr />
 <h2 id="2-the-universal-bundler-pipeline">2. The Universal Bundler Pipeline</h2>
 <p>Every bundler, regardless of language or API, implements the same pipeline. Differences are in <em>when</em> stages run, how much is parallelized, and what is cached.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_51a6eaa3b984.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_51a6eaa3b984.png" alt="diagram"></div></p>
 <p>The pipeline executes differently per tool:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f7bc12ab3515.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f7bc12ab3515.png" alt="diagram"></div></p>
 <p>Key architectural distinction for backend engineers: esbuild and RSPack are <strong>eager bundlers</strong> — they produce a complete bundle for every mode. Vite in development is a <strong>lazy transformer</strong> — it serves native ESM and transforms files on request, only pre-bundling <code>node_modules</code> dependencies that would otherwise trigger hundreds of waterfall requests.</p>
 <hr />
 <h2 id="3-esbuild-go-parallelism-and-incremental-builds">3. esbuild — Go, Parallelism, and Incremental Builds</h2>
@@ -6681,7 +6681,7 @@ $<span class="w"> </span>node<span class="w"> </span>build.mjs
 
 <p>Migration from Webpack is typically mechanical: change <code>webpack</code> imports to <code>@rspack/core</code>, replace <code>babel-loader</code> with <code>builtin:swc-loader</code>, and remove <code>thread-loader</code> / <code>cache-loader</code> (unnecessary — RSPack parallelizes and caches natively). The <a href="https://www.rspack.dev/guide/migration/webpack">RSPack migration guide</a> tracks remaining incompatibilities; most Webpack 5 plugins work, though plugins that reach into Webpack's internal <code>Compilation</code> asset pipeline may need shims.</p>
 <h3 id="43-caching-at-scale">4.3 Caching at scale</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_faf203bada42.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_faf203bada42.png" alt="diagram"></div></p>
 <p>The persistent cache stores per-module build results keyed by content hash of the input file plus the hash of loader options and resolver config. Changing a single source file invalidates only that module and modules that transitively import it. In a 1500-module app, a one-line edit typically rebuilds in 200-400 ms on a warm cache — competitive with Vite's ESM HMR for many workloads, with the advantage that production and development use the same bundler.</p>
 <p>For distributed CI, RSPack's cache directory (<code>node_modules/.cache/rspack</code> by default) can be persisted across CI runs via actions/cache or BuildKit cache mounts. Remote cache sharing across machines is not yet built-in (unlike Turborepo or Bazel), so teams often layer a content-addressed cache on top.</p>
 <h3 id="44-rsbuild-the-higher-level-wrapper">4.4 Rsbuild — the higher-level wrapper</h3>
@@ -6690,7 +6690,7 @@ $<span class="w"> </span>node<span class="w"> </span>build.mjs
 <h2 id="5-vite-esbuild-pre-bundle-native-esm-dev-rollup-production">5. Vite — esbuild Pre-Bundle, Native ESM Dev, Rollup Production</h2>
 <h3 id="51-the-two-phase-architecture">5.1 The two-phase architecture</h3>
 <p>Vite's central insight: browsers already understand ESM, so the dev server does not need to bundle. Instead, it serves each source file as a native ESM module and lets the browser's import graph drive loading. The only bundling required in dev is for <code>node_modules</code> dependencies that are authored as CJS or that would otherwise trigger a waterfall of hundreds of small requests.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f825bfecf632.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f825bfecf632.png" alt="diagram"></div></p>
 <p>This split is why Vite cold start is fast (esbuild pre-bundles ~100 deps in ~300 ms) and HMR is near-instant (only the changed file is re-transformed and pushed over WebSocket). Production still does a full Rollup bundle because native ESM delivery with hundreds of modules is not optimal for HTTP/1.1/2 without bundling, and Rollup's treeshaking and chunking are more mature than esbuild's for production optimization.</p>
 <h3 id="52-vite-config">5.2 Vite config</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// vite.config.ts</span>
@@ -6794,7 +6794,7 @@ $<span class="w"> </span>node<span class="w"> </span>build.mjs
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e599f050e6d9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e599f050e6d9.png" alt="diagram"></div></p>
 <p>The dev/prod split is Vite's main trade-off: dev and prod use different bundlers, so behavior can diverge (e.g., a CJS interop edge case that works in dev via esbuild's CJS→ESM transform but breaks in Rollup's prod build). Vite 6+ narrows this with the experimental <code>rolldown</code> (Rollup in Rust) unification, but the two-phase model remains the default.</p>
 <hr />
 <h2 id="6-treeshaking-dead-code-elimination-at-the-module-boundary">6. Treeshaking — Dead Code Elimination at the Module Boundary</h2>
@@ -6819,7 +6819,7 @@ $<span class="w"> </span>node<span class="w"> </span>build.mjs
 </code></pre></div>
 
 <h3 id="62-the-treeshaking-pipeline">6.2 The treeshaking pipeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d296303d1ca2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d296303d1ca2.png" alt="diagram"></div></p>
 <p>Three layers cooperate:</p>
 <ol>
 <li>
@@ -6880,7 +6880,7 @@ $<span class="w"> </span>node<span class="w"> </span>-e<span class="w"> </span><
 <h2 id="7-code-splitting-partitioning-the-graph-into-cacheable-chunks">7. Code Splitting — Partitioning the Graph into Cacheable Chunks</h2>
 <p>Code splitting partitions the module graph into multiple chunks that can be loaded on demand and cached independently. Without it, every deploy invalidates a single monolithic bundle and every user downloads code for routes they never visit.</p>
 <h3 id="71-chunk-graph">7.1 Chunk graph</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d809d4d38735.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d809d4d38735.png" alt="diagram"></div></p>
 <p>Solid edges are <strong>initial chunks</strong> loaded with the HTML. Dashed edges are <strong>async chunks</strong> loaded via <code>import()</code> at runtime. The browser fetches async chunks only when the import is executed — typically on route navigation or user interaction.</p>
 <h3 id="72-dynamic-import">7.2 Dynamic <code>import()</code></h3>
 <p>The primitive behind all code splitting is the dynamic <code>import()</code> expression. Unlike static <code>import</code>, it is asynchronous, returns a Promise, and creates a split point in the chunk graph.</p>
@@ -7000,7 +7000,7 @@ $<span class="w"> </span>npx<span class="w"> </span>esbuild<span class="w"> </sp
 <h2 id="8-hot-module-replacement-the-hmr-protocol">8. Hot Module Replacement — The HMR Protocol</h2>
 <p>HMR updates modules in a running application without a full page reload, preserving application state (form inputs, scroll position, in-memory caches). It is a development-only feature — production builds never include the HMR runtime.</p>
 <h3 id="81-hmr-update-flow">8.1 HMR update flow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_22bf57d7d624.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_22bf57d7d624.png" alt="diagram"></div></p>
 <h3 id="82-websocket-message-flow-vite">8.2 WebSocket message flow (Vite)</h3>
 <p>Vite's dev server (Koa-based) maintains a WebSocket connection to each browser tab. The protocol is JSON over WebSocket, with a small set of message types.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Server → Client: HMR update payload (Vite)</span>
@@ -7561,7 +7561,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <span class="p">};</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fa406fea2b15.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fa406fea2b15.png" alt="diagram"></div></p>
 <p>The three tree pointers are deliberate. React stores children as a <strong>linked list</strong>, not an array:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// JSX</span>
 <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
@@ -7583,7 +7583,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <li><strong><code>workInProgress</code></strong> (WIP) — the tree being built. Created by cloning <code>current</code> fibers (via <code>createWorkInProgress</code>), mutated freely, and either committed or discarded.</li>
 </ul>
 <p>This is <strong>double buffering</strong> in the graphics sense, or <strong>MVCC</strong> in the database sense: readers (the commit phase, the browser paint) see a consistent snapshot (<code>current</code>) while writers (the render phase) build the next version (<code>workInProgress</code>) off to the side. Only at commit does React swap the pointers.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_95f1e60d8c94.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_95f1e60d8c94.png" alt="diagram"></div></p>
 <p>Lifecycle of one update:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// 1. An update is scheduled (e.g., setState, event handler, transition)</span>
 <span class="nx">dispatchSetState</span><span class="p">(</span><span class="nx">fiber</span><span class="p">,</span><span class="w"> </span><span class="nx">action</span><span class="p">);</span><span class="w"> </span><span class="c1">// → enqueueUpdate → scheduleUpdateOnFiber</span>
@@ -7704,7 +7704,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 
 <h3 id="32-the-work-loop-an-iterative-depth-first-walk">3.2 The work loop — an iterative depth-first walk</h3>
 <p>React does not recurse. It walks fibers iteratively using <code>child</code>/<code>sibling</code>/<code>return</code>, yielding to the browser scheduler when its time slice expires.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_226a525d9753.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_226a525d9753.png" alt="diagram"></div></p>
 <p>Concrete walk for a small tree — note how the reconciler visits each fiber <strong>twice</strong> (once going down, once coming up), exactly like a tree traversal that builds and then finalizes:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Tree:</span>
 <span class="c1">//   App</span>
@@ -7845,7 +7845,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <span class="c1">//    3c. Remaining new elements → Placement; remaining old fibers → Deletion</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_41fac71b1e6e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_41fac71b1e6e.png" alt="diagram"></div></p>
 <p>Concrete demo — an instrumented reconciler trace for a reorder:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">function</span><span class="w"> </span><span class="nx">Item</span><span class="p">({</span><span class="w"> </span><span class="nx">value</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="c1">// Each Item has local state (e.g., input), tied to fiber identity</span>
@@ -8047,7 +8047,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1837b8f95a8d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1837b8f95a8d.png" alt="diagram"></div></p>
 <p>Batched updates: multiple <code>setState</code> calls inside the same event handler are coalesced into one render. Before React 18, batching only happened inside React event handlers; since React 18, <strong>all</strong> updates — including <code>setTimeout</code>, promises, and native event handlers — are batched via <code>batchedUpdates</code> and the lane system. The circular queue naturally handles this: N dispatches enqueue N updates, but only one <code>scheduleUpdateOnFiber</code> triggers one render that replays all N updates in order.</p>
 <h3 id="43-useeffect-mount-update-unmount">4.3 <code>useEffect</code> — mount, update, unmount</h3>
 <p>Effects are not part of the render phase. They are <strong>registered</strong> during render and <strong>executed</strong> after commit. This separation is what keeps rendering pure and interruptible.</p>
@@ -8216,7 +8216,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 </code></pre></div>
 
 <p>What happens frame-by-frame:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_deac547d96b1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_deac547d96b1.png" alt="diagram"></div></p>
 <p>Internally (simplified from <code>ReactFiberThrow.js</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="kd">function</span><span class="w"> </span><span class="nx">throwException</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span><span class="w"> </span><span class="nx">returnFiber</span><span class="p">,</span><span class="w"> </span><span class="nx">sourceFiber</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="p">,</span><span class="w"> </span><span class="nx">rootRenderLanes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="c1">// value is the thrown Promise</span>
@@ -8337,7 +8337,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <p>For backend engineers: this is the <code>N+1 query</code> problem transposed to the client. The waterfall pattern is the frontend analog of a service that fetches a user, then for each user fetches posts in a loop. The fix is the same — batch or parallelize initiations, and use a cache (React <code>cache</code>, or a framework data layer) so repeated <code>read()</code> calls do not re-fetch.</p>
 <h3 id="54-server-suspense-selective-hydration-and-cache">5.4 Server Suspense, selective hydration, and <code>cache</code></h3>
 <p>On the server (React 18+ with streaming SSR), Suspense boundaries are <strong>streaming commit points</strong>. The server renders to HTML, and each Suspense boundary that suspends emits its fallback HTML immediately, then streams the resolved content as an inline <code>&lt;script&gt;</code> that patches the HTML when the Promise settles. The client <strong>selectively hydrates</strong>: it can make a suspended subtree interactive before the rest of the page has hydrated.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a6dbde7118b9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a6dbde7118b9.png" alt="diagram"></div></p>
 <p>Selective hydration semantics:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Server</span>
 <span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">renderToPipeableStream</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;react-dom/server&quot;</span><span class="p">;</span>
@@ -8437,7 +8437,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <span class="c1">// User never sees a frozen input — keystrokes commit eagerly, results commit when ready</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a1ec93a52666.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a1ec93a52666.png" alt="diagram"></div></p>
 <h3 id="63-usedeferredvalue-debouncing-without-timers">6.3 <code>useDeferredValue</code> — debouncing without timers</h3>
 <p><code>useDeferredValue</code> is <code>useTransition</code> for a value rather than an update. It returns a deferred copy that lags behind the real value, rendered at <code>TransitionLane</code> priority:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">function</span><span class="w"> </span><span class="nx">SearchWithDeferred</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
@@ -8663,7 +8663,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 </tbody>
 </table>
 <p>For a senior backend engineer, the analogy is direct: Vue is like an ORM with change tracking — it wraps your objects, intercepts mutations, and flushes diffs. Svelte is like a code generator — it rewrites your source at build time so no tracking layer is needed at runtime. Both achieve fine-grained updates; they differ in <em>when</em> the work happens and <em>where</em> the complexity lives.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0a3140116e1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a0a3140116e1.png" alt="diagram"></div></p>
 <hr />
 <h2 id="2-vue-3-reactivity-a-proxy-around-plain-objects">2. Vue 3 Reactivity — A Proxy Around Plain Objects</h2>
 <h3 id="21-reactive-and-the-proxy-trap-layer">2.1 <code>reactive()</code> and the Proxy Trap Layer</h3>
@@ -8726,7 +8726,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <p><strong>Array instrumentation.</strong> Arrays get special handling in <code>collectionHandlers.ts</code>. Methods like <code>push</code>, <code>pop</code>, <code>splice</code> are wrapped to pause tracking during internal reads (otherwise <code>push</code> would trigger spurious <code>length</code> tracking) and to trigger correctly for index and length changes. Without this, <code>arr.push(1)</code> would both track and trigger <code>length</code> in the same synchronous frame, causing infinite loops.</p>
 </li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_130742a7000c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_130742a7000c.png" alt="diagram"></div></p>
 <h3 id="22-ref-vs-reactive-why-primitives-need-a-box">2.2 <code>ref</code> vs <code>reactive</code> — Why Primitives Need a Box</h3>
 <p><code>Proxy</code> only wraps objects. A bare <code>let count = 0</code> has no object identity to proxy, so Vue cannot intercept <code>count = 1</code>. The solution is <code>ref</code> — a single-property reactive box:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// packages/reactivity/src/ref.ts — simplified</span>
@@ -8905,7 +8905,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <span class="nx">state</span><span class="p">.</span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">100</span><span class="p">;</span><span class="w">   </span><span class="c1">// now triggers</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_db9f8c2ec768.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_db9f8c2ec768.png" alt="diagram"></div></p>
 <p>Key production detail: effects are <strong>not</strong> re-run synchronously inside <code>trigger</code>. The scheduler batches them into a microtask queue (<code>queueJob</code> in <code>runtime-core/src/scheduler.ts</code>), deduped by effect identity. Ten synchronous mutations to the same reactive object produce one component re-render, not ten. This is the same coalescing principle behind write-ahead log batching.</p>
 <h3 id="24-computed-and-watch-lazy-effects-and-schedulers">2.4 <code>computed</code> and <code>watch</code> — Lazy Effects and Schedulers</h3>
 <div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">reactive</span><span class="p">,</span><span class="w"> </span><span class="nx">computed</span><span class="p">,</span><span class="w"> </span><span class="nx">watch</span><span class="p">,</span><span class="w"> </span><span class="nx">watchEffect</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vue&#39;</span><span class="p">;</span>
@@ -9126,7 +9126,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 </table>
 <p>Additional runes: <code>$state.raw</code> (no deep reactivity — only reassignment triggers, like <code>shallowRef</code>), <code>$derived.by(() =&gt; { ... })</code> for multi-statement derivations, <code>$effect.pre</code> (runs before DOM update, like Vue <code>flush: 'pre'</code>), and <code>$inspect</code> (dev-only logging without subscribing).</p>
 <p><strong>The array/object caveat.</strong> <code>$state</code> with objects/arrays in Svelte 5 uses a Proxy internally for deep reactivity — <code>history.push(count)</code> does trigger. But <code>$state.raw</code> does not: you must reassign (<code>history = [...history, count]</code>). This parallels Vue's <code>reactive</code> vs <code>shallowReactive</code> distinction. Svelte's proxy for <code>$state</code> is an implementation detail of the signal, not the primary reactivity mechanism — the signal graph still drives scheduling, not <code>track</code>/<code>trigger</code> on arbitrary objects.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_608f4bc00160.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_608f4bc00160.png" alt="diagram"></div></p>
 <p>What the Svelte 5 compiler actually emits (simplified from real output, <code>svelte/internal/client</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Svelte 5 compiled output — Counter.svelte → Counter.svelte.js (simplified)</span>
 <span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">source</span><span class="p">,</span><span class="w"> </span><span class="nx">derived</span><span class="p">,</span><span class="w"> </span><span class="nx">effect</span><span class="p">,</span><span class="w"> </span><span class="nx">get</span><span class="p">,</span><span class="w"> </span><span class="nx">set</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;svelte/internal/client&#39;</span><span class="p">;</span>
@@ -9155,7 +9155,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <h3 id="33-why-svelte-needs-no-runtime-proxy-mostly">3.3 Why Svelte Needs No Runtime Proxy (Mostly)</h3>
 <p>In Vue, <code>Proxy</code> is the <em>mechanism</em> — it is how the framework discovers dependencies at runtime. In Svelte, the compiler is the mechanism — it <em>knows</em> at build time that <code>count</code> is read inside <code>derived(() =&gt; count * 2)</code> and inside <code>set_text(...)</code>, so it emits <code>get(count)</code> calls that subscribe to the signal. For primitives and reassigned variables, no Proxy is needed at all.</p>
 <p>The Proxy that Svelte 5 <em>does</em> use for <code>$state({ ... })</code> and <code>$state([...])</code> is an optimization for ergonomic deep mutation — it lets <code>obj.nested.x = 1</code> trigger without requiring <code>obj = { ...obj, nested: { ...obj.nested, x: 1 } }</code>. But the scheduling still flows through the signal graph, not through <code>track</code>/<code>trigger</code> on arbitrary keys. The Proxy is a convenience wrapper around the signal, not the signal itself.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f1eaa201c6c4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f1eaa201c6c4.png" alt="diagram"></div></p>
 <hr />
 <h2 id="4-vue-virtual-dom-compiler-informed-diffing">4. Vue Virtual DOM — Compiler-Informed Diffing</h2>
 <p>Vue <em>does</em> use a Virtual DOM — but not the naive kind that diffs every node. The template compiler and the runtime conspire to make patching cheap.</p>
@@ -9261,7 +9261,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e3771052122.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5e3771052122.png" alt="diagram"></div></p>
 <p>The keyed children diff (<code>patchKeyedChildren</code> in <code>runtime-core/src/renderer.ts</code>) uses the classic longest-increasing-subsequence (LIS) optimization to minimize DOM moves — identical to the algorithm described in Chapter 7 for React's reconciler, but applied only to the dynamic fragment, not the whole tree.</p>
 <p>Static hoisting deserves a concrete measurement. For a typical admin dashboard template with ~150 nodes and ~15 dynamic bindings, block optimization reduces patch work by roughly 10x — from visiting 150 VNodes to visiting 15. The compiler pays once at build time to save work on every frame at runtime. This is the same trade-off as building an index to avoid a full table scan.</p>
 <hr />
@@ -9330,7 +9330,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_79226d94b6a3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_79226d94b6a3.png" alt="diagram"></div></p>
 <p>The <code>each</code> block is the one place Svelte <em>does</em> diff — but it diffs a flat keyed list of DOM nodes directly, not a Virtual DOM tree. The algorithm is a keyed reconciler specialized to a single <code>{#each}</code> scope, with no cross-component Virtual DOM.</p>
 <h3 id="52-fine-grained-updates-without-diffing">5.2 Fine-Grained Updates Without Diffing</h3>
 <p>Because each reactive value's DOM update is its own <code>effect</code>, Svelte achieves O(1) updates per changed value — not O(d) like Vue's block patch, and not O(n) like a naive Virtual DOM. Changing <code>filter</code> from <code>""</code> to <code>"a"</code> triggers:</p>
@@ -9587,7 +9587,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <span class="p">});</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e5e450d6b528.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e5e450d6b528.png" alt="diagram"></div></p>
 <p>The distributed-systems parallel is request cancellation in any concurrent system: without explicit invalidation, stale responses race with fresh ones and the last writer wins — which is not necessarily the freshest data. Both Vue's <code>onCleanup</code> and Svelte's <code>return () =&gt; ...</code> are cooperative cancellation tokens scoped to the effect lifetime.</p>
 <hr />
 <h2 id="8-the-distributed-systems-lens">8. The Distributed-Systems Lens</h2>
@@ -9772,7 +9772,7 @@ $<span class="w"> </span>diff<span class="w"> </span>/tmp/hash1<span class="w"> 
 <p>There is no globally optimal strategy. A marketing landing page, a personalized feed, and a real-time dashboard have different freshness, cardinality, and compute requirements. Scale forces you to mix them — often on the same route.</p>
 <h3 id="11-csr-vs-ssr-the-waterfall-that-users-actually-experience">1.1 CSR vs SSR: The Waterfall That Users Actually Experience</h3>
 <p>In CSR the browser downloads a near-empty shell, then JavaScript, then data, then renders. In SSR the server does the data fetch and render before the first byte reaches the browser. The network waterfall differs fundamentally:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cfc1dc5395e8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cfc1dc5395e8.png" alt="diagram"></div></p>
 <p>Two observations matter at scale:</p>
 <ol>
 <li><strong>TTFB vs completeness trade-off.</strong> CSR TTFB is fast (CDN serves a tiny shell) but <em>meaningful</em> paint is late — after JS and data fetches. SSR TTFB is slower (origin must fetch data and render) but first contentful paint (FCP) arrives with that first byte. Users perceive SSR as faster even when total bytes are larger, because the browser can paint and the user can read before JavaScript arrives.</li>
@@ -10013,7 +10013,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 <p>The scaling constraint is cardinality. Pre-rendering 10 million product pages at build time is infeasible — build duration, storage, and the fact that most pages are never visited make exhaustive SSG wasteful. ISR exists to solve this.</p>
 <h3 id="32-isr-stale-while-revalidate-as-a-consistency-model">3.2 ISR — Stale-While-Revalidate as a Consistency Model</h3>
 <p>ISR borrows directly from HTTP's <code>stale-while-revalidate</code> (RFC 5861). The first request after a page becomes stale is served <strong>immediately</strong> from the stale cache while a background regeneration is triggered. Subsequent requests get the fresh page once regeneration completes.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8236d3c1c889.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8236d3c1c889.png" alt="diagram"></div></p>
 <p>This is an <strong>eventually consistent</strong> model with bounded staleness. Readers never block on writes. The write path (revalidation) is asynchronous and decoupled from the read path — the same pattern as a database read replica with async replication or a CQRS projection that lags behind the write model. The bound is <code>revalidate</code> seconds plus regeneration time.</p>
 <p>Three <code>fallback</code> modes handle the case where a path was not generated at build time:</p>
 <table>
@@ -10082,7 +10082,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 <h2 id="4-streaming-ssr-suspense-chunks-and-selective-hydration">4. Streaming SSR: Suspense, Chunks, and Selective Hydration</h2>
 <h3 id="41-why-streaming-exists">4.1 Why Streaming Exists</h3>
 <p>Without streaming, the SSR waterfall is serial: fetch all data → render → send. The 95th-percentile API dominates TTFB. With streaming, Suspense boundaries let the server send the shell early and fill holes as data arrives — overlapping data fetching, rendering, and network transfer.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7f9db6b95241.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7f9db6b95241.png" alt="diagram"></div></p>
 <p>The key mechanism is the <strong>template + inline script</strong> pattern. Each Suspense boundary emits a fallback with a unique ID and, when its data resolves, an inline <code>&lt;script&gt;</code> that moves the resolved HTML into place. The client React runtime listens for these swaps and hydrates each boundary independently — this is <em>selective hydration</em>.</p>
 <h3 id="42-suspense-boundaries-as-scheduling-primitives">4.2 Suspense Boundaries as Scheduling Primitives</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// app/products/[id]/page.tsx — streaming with prioritized Suspense</span>
@@ -10133,7 +10133,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 <li>Each Suspense boundary resolves independently — no head-of-line blocking.</li>
 <li>On the client, React hydrates boundaries in priority order (user-interacted boundaries first via selective hydration) rather than top-to-bottom.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_395d39f59360.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_395d39f59360.png" alt="diagram"></div></p>
 <h3 id="43-operational-realities-of-streaming">4.3 Operational Realities of Streaming</h3>
 <p>Streaming is not free. Validate these before committing a route to it:</p>
 <ul>
@@ -10217,7 +10217,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 </tbody>
 </table>
 <p><strong>Debugging workflow:</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_188fabd32d63.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_188fabd32d63.png" alt="diagram"></div></p>
 <p>Concrete fix — the most common mismatch, a timestamp:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// ❌ Mismatches — server and client render different strings</span>
 <span class="kd">function</span><span class="w"> </span><span class="nx">LastUpdated</span><span class="p">({</span><span class="w"> </span><span class="nx">ts</span><span class="w"> </span><span class="p">}</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ts</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
@@ -10361,7 +10361,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 </table>
 <p>The scaling win is multiplicative: each <code>client:visible</code> island below the fold saves JS download, parse, and hydration on initial load. For a content-heavy page with one critical island (add-to-cart) and five deferred islands, the initial JS payload can drop by 70-80% — directly improving TTI and INP.</p>
 <h3 id="62-islands-architecture-how-it-fits-together">6.2 Islands Architecture — How It Fits Together</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6c954935e18a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6c954935e18a.png" alt="diagram"></div></p>
 <p>Key differences from full-page hydration:</p>
 <ul>
 <li><strong>Failure isolation.</strong> A JS error in the Reviews island does not break AddToCart. With full-page <code>hydrateRoot</code>, an uncaught error during hydration can leave the entire page non-interactive.</li>
@@ -10371,7 +10371,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 <p>Fresh (Deno) follows the same model with <code>islands/</code> directory convention — any component under <code>islands/</code> is an island, everything else is static.</p>
 <h3 id="63-resumability-qwiks-alternative-to-hydration">6.3 Resumability: Qwik's Alternative to Hydration</h3>
 <p>Hydration — even partial, even selective — re-executes component code on the client to rebuild the state that was already computed on the server. Qwik observes that this is wasted work: the server already knew the component tree, props, and listeners. Instead of re-executing, Qwik <em>serializes</em> that knowledge into HTML and <em>resumes</em> on the client without re-execution.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_524105b136ac.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_524105b136ac.png" alt="diagram"></div></p>
 <p>In Qwik, every event handler is a <strong>QRL</strong> (Qwik URL) — a lazy reference to a code chunk, serialized as an attribute:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Qwik component — looks like React, behaves differently</span>
 <span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">component$</span><span class="p">,</span><span class="w"> </span><span class="nx">useSignal</span><span class="p">,</span><span class="w"> </span><span class="nx">$</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@builder.io/qwik&quot;</span><span class="p">;</span>
@@ -10479,7 +10479,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fb5a9e526146.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fb5a9e526146.png" alt="diagram"></div></p>
 <p>Three lessons from the timeline:</p>
 <ol>
 <li><strong>Streaming moves TTFB left</strong> (shell streams before slow data) and <strong>islands move TTI left</strong> (only critical islands hydrate before interactive). Together they close the TTFB–TTI gap that pure SSR leaves open.</li>
@@ -10604,7 +10604,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 </li>
 </ol>
 <p>The rule is mechanical: <strong>if the data has an authoritative copy on the server and can change without this tab acting, it is server state and belongs in a server-state cache. Otherwise it is client state and belongs in a store or component state.</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0f483ce33a97.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0f483ce33a97.png" alt="diagram"></div></p>
 <p>A practical test when reviewing a PR: look at each <code>useState</code> and each store slice and ask <em>would this value be wrong if another user mutated the same entity one second ago?</em> If yes, it should be a query, not state. Conversely, if a query key contains UI-only concerns (sort order, selected tab, ephemeral form draft), it should be a store atom that <em>parameterizes</em> the query, not part of the cached value.</p>
 <h3 id="11-where-the-old-patterns-break">1.1 Where the old patterns break</h3>
 <p>The naive fetch-in-effect pattern fails on every property a cache must provide:</p>
@@ -10726,7 +10726,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c4589db4e70c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c4589db4e70c.png" alt="diagram"></div></p>
 <p>Configuration guidance for backend-minded teams:</p>
 <div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">QueryClient</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@tanstack/react-query&quot;</span><span class="p">;</span>
 
@@ -10778,7 +10778,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 <p>The back-nav case is why <code>gcTime</code> matters. With <code>gcTime: 0</code>, navigating from a list to a detail and back triggers a full refetch and a loading spinner — even though <code>staleTime</code> was satisfied. With <code>gcTime: 5m</code>, the list data is still in the cache and renders synchronously on back-nav, then revalidates in the background if stale. This is the same trade-off as a CPU cache vs. main memory: <code>staleTime</code> is the coherence window, <code>gcTime</code> is the eviction policy.</p>
 <h3 id="23-deduplication-and-request-coalescing">2.3 Deduplication and Request Coalescing</h3>
 <p>When three components mount simultaneously and call <code>useQuery({ queryKey: ["users"], queryFn: fetchUsers })</code>, TanStack Query issues <strong>one</strong> network request. The mechanism is straightforward: the first subscriber triggers <code>fetch</code>, subsequent subscribers with the same key within the same tick attach to the in-flight <code>Promise</code> stored on the cache entry.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d6396e72a615.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d6396e72a615.png" alt="diagram"></div></p>
 <p>This replaces the manual <code>let inflight: Promise | null</code> singleton that teams otherwise scatter across service modules. It also handles the race where a component unmounts mid-fetch: the fetch continues (it is a cache-level operation, not a component-level one), and the result is still cached for the next subscriber.</p>
 <p>Key detail: deduplication is keyed on the <strong>hashed queryKey</strong>, not on the <code>queryFn</code> reference. Two hooks with the same key but different <code>queryFn</code> still deduplicate to one fetch — the first <code>queryFn</code> wins. This is why <code>queryFn</code> should always be a pure function of the key.</p>
 <p>Beyond single-key dedup, <code>useQueries</code> and prefetching handle fan-out without waterfalling:</p>
@@ -10992,7 +10992,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2f2892fcbe92.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2f2892fcbe92.png" alt="diagram"></div></p>
 <p>Key invariants:</p>
 <ul>
 <li><strong>Always <code>cancelQueries</code> before <code>setQueryData</code>.</strong> Without cancellation, an in-flight background refetch can resolve after the optimistic patch and overwrite it with stale server data — a lost-update bug.</li>
@@ -11404,7 +11404,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_950fcead4c2b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_950fcead4c2b.png" alt="diagram"></div></p>
 <p>How Jotai's subscription model differs from Zustand's:</p>
 <table>
 <thead>
@@ -11531,7 +11531,7 @@ framework-*.js<span class="w">  </span>lib-*.js<span class="w">  </span>app-*.js
 <p>Tune <code>refetchOnWindowFocus</code> per query, not globally. Global <code>refetchOnWindowFocus: false</code> silences the most useful staleness recovery mechanism for data that is cheap to refetch. Global <code>true</code> with many active queries causes a thundering herd on focus — each stale query fires simultaneously. TanStack Query batches focus refetches in a single microtask, but the server still sees N concurrent requests. Mitigate with staggered <code>staleTime</code> or by disabling focus refetch for expensive queries.</p>
 <h3 id="53-the-invalidation-cascade">5.3 The Invalidation Cascade</h3>
 <p>A single mutation often affects multiple cache entries: creating a project invalidates the project list, the team dashboard, and the user's recent-activity feed. The cascade must be explicit — the cache does not know about entity relationships.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fc444213a29e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fc444213a29e.png" alt="diagram"></div></p>
 <p>Encapsulate the cascade in the mutation, not in the component:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">function</span><span class="w"> </span><span class="nx">useCreateProject</span><span class="p">(</span><span class="nx">teamId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">qc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useQueryClient</span><span class="p">();</span>
@@ -11701,7 +11701,7 @@ Normalized (Apollo Client):
 <hr />
 <h2 id="8-offline-mutations-queue-a-write-ahead-log-for-the-frontend">8. Offline Mutations Queue — A Write-Ahead Log for the Frontend</h2>
 <p>When the user mutates data while offline (or during a transient partition), the frontend must not lose the write. The solution is an <strong>outbox</strong> — a persistent queue of mutations that replays when connectivity returns. This is the frontend analog of a write-ahead log (WAL) in a database: writes are durably recorded before they are acknowledged, and replay is idempotent.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0c7163eeca34.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0c7163eeca34.png" alt="diagram"></div></p>
 <h3 id="81-implementation">8.1 Implementation</h3>
 <p>The queue must survive page reload and tab close, so it cannot live in memory. <code>IndexedDB</code> (via <code>idb-keyval</code> or similar) or <code>localStorage</code> with a size cap are the durable stores. Each entry carries an idempotency key so replay is safe.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Offline queue — durable outbox with replay and conflict handling</span>
@@ -11846,7 +11846,7 @@ Normalized (Apollo Client):
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2954dc181970.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2954dc181970.png" alt="diagram"></div></p>
 <p>Backend contract the queue depends on:</p>
 <ul>
 <li><strong>Idempotency-Key header.</strong> The server must store the key and return the original response on replay (or <code>409</code>/<code>200</code> with the existing entity). Without this, replay creates duplicates. This is the same contract as Stripe's <code>Idempotency-Key</code> or S3's multipart upload idempotency.</li>
@@ -12015,7 +12015,7 @@ Normalized (Apollo Client):
 <p>Backend engineers will recognize every row as a distributed-systems problem: work that was serial must become parallel, shared state must be isolated, and feedback loops must be incremental and cacheable.</p>
 <h3 id="11-the-frontend-test-pyramid">1.1 The frontend test pyramid</h3>
 <p>The pyramid for frontend is not the classic backend unit → integration → e2e. The middle layer is component tests — a mounted React/Vue/Svelte component asserted with DOM queries — and the cost curve is steeper because real browsers are involved.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7b426861afb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e7b426861afb.png" alt="diagram"></div></p>
 <p>The rule of thumb: if a bug can be caught below the browser boundary, catch it there. Reserve Playwright for flows that require navigation, auth, cross-origin iframes, or real layout. Everything else belongs in Vitest.</p>
 <hr />
 <h2 id="2-vitest-a-vite-native-test-runner">2. Vitest — A Vite-Native Test Runner</h2>
@@ -12089,7 +12089,7 @@ Normalized (Apollo Client):
 <p>Browser mode itself deserves attention. Vitest's <code>browser.enabled: true</code> launches a real browser via Playwright or WebDriver and executes tests inside it. The test file still imports from <code>vitest</code>, but <code>expect</code> and DOM APIs run in the browser context and results are serialized back. This closes the fidelity gap without moving the test to a separate Playwright project.</p>
 <h3 id="23-workers-threads-forks-vmthreads-vmforks">2.3 Workers: threads, forks, vmThreads, vmForks</h3>
 <p>Vitest parallelizes at the file level. Each test file is assigned to a worker; inside a file, tests run serially by default (configurable). Four pool strategies exist:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0ecb9c1ab853.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0ecb9c1ab853.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -12420,7 +12420,7 @@ npx<span class="w"> </span>playwright<span class="w"> </span>merge-reports<span 
 <li>Source location of each <code>expect</code></li>
 <li>Timeline with action durations</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_80493149c8a9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_80493149c8a9.png" alt="diagram"></div></p>
 <p>Open with <code>npx playwright show-trace trace.zip</code> or from the HTML report. At scale, upload traces as CI artifacts so any engineer can debug a flaky failure without re-running locally. Never set <code>trace: 'on'</code> globally — it doubles artifact size and slows every test.</p>
 <h3 id="45-authoritative-playwrightconfigts">4.5 Authoritative playwright.config.ts</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// playwright.config.ts</span>
@@ -12507,7 +12507,7 @@ npx<span class="w"> </span>playwright<span class="w"> </span>merge-reports<span 
 <h2 id="5-eslint-flat-config-and-typescript-eslint-at-scale">5. ESLint — Flat Config and typescript-eslint at Scale</h2>
 <p>ESLint's legacy <code>.eslintrc</code> system cascaded configs by directory and merged <code>extends</code> arrays with opaque precedence. The flat config (<code>eslint.config.ts</code> / <code>eslint.config.js</code>, ESLint 9+) replaces it with a single ordered array of config objects, each declaring its own <code>files</code>, <code>ignores</code>, <code>languageOptions</code>, <code>rules</code>, and <code>plugins</code>. Order matters: later entries override earlier ones for matching files.</p>
 <h3 id="51-flat-config-graph">5.1 Flat config graph</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a38bd8d90d2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6a38bd8d90d2.png" alt="diagram"></div></p>
 <p>The key insight for backend engineers: flat config is a middleware chain, not a tree. There is no implicit parent lookup. A file's config is the merge of every array entry whose <code>files</code> glob matches it, in array order. This makes the system predictable and debuggable — <code>npx eslint --print-config path/to/file.ts</code> prints the resolved config for a file.</p>
 <h3 id="52-typescript-eslint-parser-plugin-and-project-service">5.2 typescript-eslint — parser, plugin, and project service</h3>
 <p><code>typescript-eslint</code> is the monorepo that replaces <code>@typescript-eslint/parser</code> + <code>@typescript-eslint/eslint-plugin</code> (the old split). It provides:</p>
@@ -12653,7 +12653,7 @@ npx<span class="w"> </span>playwright<span class="w"> </span>merge-reports<span 
 <p>TypeScript's value at scale is not syntax — it is the type checker as a distributed build system. The features that matter beyond a single package are project references, incremental builds, <code>isolatedModules</code>, and the interaction between type-aware lint and the checker.</p>
 <h3 id="61-project-references-the-monorepo-build-graph">6.1 Project references — the monorepo build graph</h3>
 <p>A single <code>tsconfig.json</code> that includes every file in the monorepo typechecks correctly but is serial and uncacheable: any file change invalidates the whole program. Project references partition the program into composite projects with explicit <code>references</code> edges. <code>tsc -b</code> (build mode) walks the DAG, builds leaves first, and skips projects whose inputs have not changed.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9d336cc7486b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9d336cc7486b.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// tsconfig.json — root, no files of its own</span>
 <span class="p">{</span>
 <span class="w">  </span><span class="s">&quot;files&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
@@ -12762,7 +12762,7 @@ tsc<span class="w"> </span>--noEmit
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_831fd55decfa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_831fd55decfa.png" alt="diagram"></div></p>
 <p>The <code>.tsbuildinfo</code> file stores the shape of every source file, its dependencies, and the emit output so the next <code>tsc -b</code> can skip projects whose inputs hash identically. On the second <code>tsc -b</code>, only the dirty project rebuilds — dependents whose <code>.d.ts</code> output hash has not changed are skipped. Cache <code>.tsbuildinfo</code> in CI (<code>actions/cache</code> keyed on <code>pnpm-lock.yaml</code> + <code>tsconfig</code> hashes) to cut typecheck from 90 s to ~15 s on no-op PRs:</p>
 <h3 id="63-type-aware-lint-as-a-second-checker">6.3 Type-aware lint as a second checker</h3>
 <p>Type-aware ESLint rules run the same type checker as <code>tsc</code>, but per file via <code>projectService</code>. They catch:</p>
@@ -12888,7 +12888,7 @@ npx<span class="w"> </span>percy<span class="w"> </span><span class="nb">exec</s
 <h2 id="8-ci-matrix-shard-merge-gate">8. CI Matrix — Shard, Merge, Gate</h2>
 <p>At scale, CI is a distributed system: a DAG of jobs that must be parallel, cacheable, and whose outputs merge deterministically. The pattern below keeps typecheck + lint + unit + component + E2E + visual under 10 minutes for a 4000-test monorepo.</p>
 <h3 id="81-the-dag">8.1 The DAG</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_35c4133161d4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_35c4133161d4.png" alt="diagram"></div></p>
 <h3 id="82-sharding-vitest-and-playwright">8.2 Sharding Vitest and Playwright</h3>
 <p>Both runners shard deterministically by hashing spec file paths, so shard 1/4 on one runner is disjoint from shard 2/4 on another without coordination.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/ci.yml — excerpt, Vitest sharding</span>
@@ -13011,7 +13011,7 @@ npx<span class="w"> </span>percy<span class="w"> </span><span class="nb">exec</s
 <span class="w">          </span><span class="nt">fail_on_failure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ce17b70353f3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ce17b70353f3.png" alt="diagram"></div></p>
 <p>Key details:</p>
 <ul>
 <li><code>--reporter=blob</code> writes a binary report per shard that includes traces and attachments. Do not use <code>html</code> per shard — shards overwrite each other's HTML.</li>
@@ -13367,10 +13367,10 @@ Event fires    JS handler runs    Layout + Paint + Composite
 </tr>
 </tbody>
 </table>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c9fcfa38f32c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c9fcfa38f32c.png" alt="diagram"></div></p>
 <h3 id="14-lab-vs-field-why-the-numbers-differ">1.4 Lab vs. Field — Why the Numbers Differ</h3>
 <p>A backend engineer is familiar with this distinction: synthetic benchmarks (lab) vs. production traffic (field). Core Web Vitals have the same split.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6d74d860a947.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6d74d860a947.png" alt="diagram"></div></p>
 <table>
 <thead>
 <tr>
@@ -13554,9 +13554,9 @@ Event fires    JS handler runs    Layout + Paint + Composite
 <span class="c1">// correlating frontend and backend traces</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fba3e435d392.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fba3e435d392.png" alt="diagram"></div></p>
 <p><strong>The RUM collection pipeline:</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_60f27192d2c2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_60f27192d2c2.png" alt="diagram"></div></p>
 <p><strong>RUM sampling:</strong> You cannot send telemetry from 100% of sessions — the overhead (network, CPU, storage) is prohibitive. The standard approach is deterministic sampling: assign each session a hash, and send telemetry for sessions where <code>hash(session_id) % 100 &lt; sample_rate</code>. For high-traffic sites, 1–10% is typical. For error replays, <code>onErrorSampleRate: 1.0</code> ensures you capture every error session regardless of the general sample rate.</p>
 <hr />
 <h2 id="3-lighthouse-and-chrome-ux-report">3. Lighthouse and Chrome UX Report</h2>
@@ -13946,7 +13946,7 @@ Event fires    JS handler runs    Layout + Paint + Composite
 <li><strong>RSC payload</strong> is appended as a series of "rows" in a custom format (not HTML, not JSON — a streaming binary protocol). Each row represents a component boundary, a suspense boundary resolution, or a reference to a client component.</li>
 <li><strong>Client hydration</strong> reads the RSC payload, resolves client component references, and attaches event handlers — but does <em>not</em> re-render server components.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cf494a51cc06.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cf494a51cc06.png" alt="diagram"></div></p>
 <p><strong>Server Component that streams:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// app/dashboard/page.tsx — Server Component by default</span>
 <span class="c1">// This runs on the server, NOT in the browser</span>
@@ -14087,7 +14087,7 @@ Event fires    JS handler runs    Layout + Paint + Composite
 <h2 id="6-canary-deployments-and-rollback">6. Canary Deployments and Rollback</h2>
 <h3 id="61-canary-rollout-topology">6.1 Canary Rollout Topology</h3>
 <p>A canary deploy sends a small percentage of traffic to the new version before rolling out to everyone. For frontend, this is typically done at the CDN or edge layer — the edge worker or CDN configuration routes requests based on a hash of the user ID or session.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a9671ca9ea40.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a9671ca9ea40.png" alt="diagram"></div></p>
 <p><strong>Cloudflare Workers canary implementation:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Edge worker with canary routing</span>
 <span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="p">{</span>
@@ -14185,7 +14185,7 @@ Event fires    JS handler runs    Layout + Paint + Composite
 </table>
 <p><strong>The critical insight for frontend rollback:</strong> Because static assets are content-hashed and immutable, rolling back means serving the old HTML shell (which references the old hashed bundles). The old bundles are still in the CDN cache (or can be re-fetched from the origin). This is why the <code>stale-while-revalidate</code> strategy for the HTML shell is so important — it lets you swap the shell in seconds without purging CDN caches.</p>
 <p><strong>Rollback without downtime:</strong></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1092ded68954.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1092ded68954.png" alt="diagram"></div></p>
 <hr />
 <h2 id="7-lighthouse-ci-integration">7. Lighthouse CI Integration</h2>
 <h3 id="71-full-cicd-pipeline">7.1 Full CI/CD Pipeline</h3>
@@ -14318,7 +14318,7 @@ Event fires    JS handler runs    Layout + Paint + Composite
 <hr />
 <h2 id="8-putting-it-all-together-the-production-frontend-stack">8. Putting It All Together — The Production Frontend Stack</h2>
 <p>A backend engineer will recognize this architecture as the same layered approach you use for backend observability and deployment: instrument, measure, deploy safely, rollback quickly.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_82699caa8c38.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_82699caa8c38.png" alt="diagram"></div></p>
 <p><strong>The production frontend feedback loop:</strong></p>
 <ol>
 <li><strong>Instrument</strong> — <code>web-vitals</code>, OTel, and Sentry collect metrics, traces, and errors from real user sessions.</li>

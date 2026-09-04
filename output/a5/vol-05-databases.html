@@ -563,7 +563,7 @@ orders since a date, for customers in a given region.</p>
 <span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">name</span><span class="p">;</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dd7a7eb95e50.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dd7a7eb95e50.png" alt="diagram"></div></p>
 <p>Read bottom-up: base relations at the leaves, result at the root. Notice the tree already
 shows one rewrite the optimizer will always make — the selections have been <em>pushed down</em>
 below the join, so the join sees only EMEA customers and completed recent orders rather than
@@ -595,7 +595,7 @@ keys. The operational consequences:</p>
 <p>A SELECT statement is written in one order and <em>means</em> another. The standard defines a logical
 evaluation order — every conforming implementation must behave <em>as if</em> it evaluated clauses in
 this sequence (the optimizer will do something cleverer, but observably equivalent):</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b07aa68d9d16.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b07aa68d9d16.png" alt="diagram"></div></p>
 <p>This one diagram resolves a whole family of "why won't SQL let me…" questions mechanically:</p>
 <ul>
 <li><strong>Why can't WHERE see a SELECT alias?</strong> <code>SELECT price * qty AS total … WHERE total &gt; 100</code>
@@ -688,7 +688,7 @@ explicit:</p>
 <span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="p">;</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b1af07545ecb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b1af07545ecb.png" alt="diagram"></div></p>
 <p>The frame is where the bites are. When you write <code>ORDER BY</code> in a window and <em>omit</em> the frame,
 the default is <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> — and <code>RANGE</code> includes all
 <em>peers</em> of the current row (rows equal under the ORDER BY). If two orders share a timestamp,
@@ -865,7 +865,7 @@ violating it above); <strong>3NF</strong> — no non-key attribute depends on an
 dependency); <strong>BCNF</strong> — the clean unifying statement: <em>for every nontrivial FD X → Y, X is a
 superkey</em>. Every arrow comes from a key. The decomposition, guided by the FDs — one relation
 per determinant:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_264c5cc40649.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_264c5cc40649.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">customers</span><span class="w"> </span><span class="p">(</span>
 <span class="w">  </span><span class="n">id</span><span class="w">    </span><span class="nb">bigint</span><span class="w"> </span><span class="k">GENERATED</span><span class="w"> </span><span class="n">ALWAYS</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">IDENTITY</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
 <span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">UNIQUE</span>
@@ -1081,9 +1081,9 @@ merged dataset as maximally nullable until proven otherwise.</p>
   partition boundaries become expensive or impossible; the logical layer determines later
   shardability.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d920c7857007.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4985d7ac908e.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4f66f3c3ba62.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d920c7857007.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4985d7ac908e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4f66f3c3ba62.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Codd, E. F., "A Relational Model of Data for Large Shared Data Banks," <em>Communications of
@@ -1264,7 +1264,7 @@ parent routes to it via separator 12. Insert key 27:</p>
    the only way a B+ tree ever grows taller. Growth at the root is why every leaf stays at the
    same depth — the tree is self-balancing by construction.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_64da587809c3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_64da587809c3.png" alt="diagram"></div></p>
 <p>Amortized, splits are rare — with fanout 100+, fewer than a percent of inserts split — but they
 are not free, and their placement is workload-dependent. Monotonically increasing keys (an
 auto-increment ID, a timestamp) always split the rightmost leaf, which engines special-case into
@@ -1366,7 +1366,7 @@ bulk, in the background.</p>
 memtable takes over, and a background thread <strong>flushes</strong> the immutable memtable to disk as an
 <strong>SSTable</strong> — a Sorted String Table, an immutable file of key-ordered entries — into level 0. The
 WAL segment covering that memtable can then be discarded.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_607b7393f30b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_607b7393f30b.png" alt="diagram"></div></p>
 <p>Note what the design bought: every byte of I/O on the write path is sequential, writes are batched
 by the memtable into large flushes, and a burst of writes to the same key collapses into one entry
 at flush time. This — not magic — is why LSM ingest throughput embarrasses B-trees.</p>
@@ -1400,7 +1400,7 @@ so a range read must open a <strong>merging iterator</strong> across the memtabl
 every level, doing a heap-merge as it advances. Range-heavy workloads feel LSM read amplification
 with full force; prefix bloom filters (RocksDB <code>prefix_extractor</code>) claw some of it back for
 prefix-bounded scans.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7eaa67b60f8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c7eaa67b60f8.png" alt="diagram"></div></p>
 <h3 id="compaction-the-heart-of-the-machine">Compaction: the heart of the machine</h3>
 <p>Left alone, flushes would pile up files forever and reads would drown. <strong>Compaction</strong> is the
 background process that merges SSTables into fewer, larger, sorted runs, dropping overwritten
@@ -1424,7 +1424,7 @@ low</strong> (steady-state space overhead around 10%, since ~90% of data sits in
 cost: a file pushed into the next level overlaps ~10 files there and rewrites them all, so each
 key is rewritten roughly the multiplier per level transit — <strong>write amplification on the order of
 the multiplier times the level count</strong>, commonly cited in the tens for a large store.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_12eb3af0dd94.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_12eb3af0dd94.png" alt="diagram"></div></p>
 <p>This three-way tension is not an artifact of these two algorithms; it is the <strong>RUM conjecture</strong>
 (Athanassoulis et al., 2016): for Read, Update (write), and Memory/space overheads, an access
 method can be excellent on two only by paying on the third. B-trees minimize read amplification
@@ -1690,9 +1690,9 @@ them, you will be reading this chapter's diagrams with a network drawn through t
   segments and lakehouse files, and compaction debt and stall behavior are fleet-level
   operational inputs, not node-level trivia.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_075bd0e7e1af.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5595632856c.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f51a5a03bed.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_075bd0e7e1af.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c5595632856c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8f51a5a03bed.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>O'Neil, P., Cheng, E., Gawlick, D., and O'Neil, E., "The Log-Structured Merge-Tree
@@ -1872,7 +1872,7 @@ ANALYZE</code> reports <code>Heap Fetches</code> for an index-only scan, and why
 freshly-loaded, never-vacuumed table performs like a plain index scan: the visibility map is
 empty until vacuum runs. If you are counting on index-only scans, you are also counting on vacuum
 keeping up.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_375c4fcd7623.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_375c4fcd7623.png" alt="diagram"></div></p>
 <h3 id="which-model-when">Which model when</h3>
 <p>Neither model dominates. Clustering makes PK-range scans superb — <code>WHERE user_id = ? ORDER BY
 created_at</code> on a PK of <code>(user_id, created_at)</code> reads physically contiguous pages, which is why
@@ -1956,7 +1956,7 @@ describe a contiguous range of the index's sort order?</strong></p>
 note the tension it hides: when different queries need different orders, one index cannot serve
 both seek shapes, and you must decide whether the second query merits a second index — which is a
 write-cost question, not an indexing question.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4e61598756ce.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4e61598756ce.png" alt="diagram"></div></p>
 <p><strong>Skip scans, briefly.</strong> The "not a prefix, therefore useless" verdict has a qualified exception.
 If the leading column has very few distinct values, the engine can iterate over each distinct
 value of <code>a</code> and perform a seek on <code>(a, b)</code> for each — logically rewriting <code>WHERE b = ?</code> into "for
@@ -2222,7 +2222,7 @@ clustered InnoDB PK, that means the whole table must be cache-resident to insert
 I/O, and a table that outgrows the buffer pool hits a throughput cliff — each insert becomes a
 random disk read (to fetch the target leaf) plus dirty-page writeback. This failure mode is
 gradual, then sudden, and it has a name in most InnoDB shops: "we used UUIDv4 primary keys."</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6b7775ac550c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6b7775ac550c.png" alt="diagram"></div></p>
 <p>Mitigations, in order of preference: use sequential keys (<strong>UUIDv7</strong> gives you a time-ordered
 prefix with UUID's coordination-free generation — the practical best-of-both since its 2024
 standardization in RFC 9562); if random keys are imposed, keep them <em>out of the InnoDB PK</em> (make
@@ -2345,7 +2345,7 @@ lands on exactly the index partition holding the value. The pain moves to writes
 synchronous and you have bought a distributed transaction — two-phase commit on every base-table
 write (Chapter 10). Make it asynchronous and the index is maintained eventually, meaning it can
 return stale or phantom results.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7ad11086ee9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c7ad11086ee9.png" alt="diagram"></div></p>
 <p><strong>DynamoDB's GSIs are the canonical async design, and worth describing precisely.</strong> A DynamoDB
 global secondary index is a separate physical table with its own partition (and optional sort)
 key and its own provisioned throughput. Writes to the base table are replicated to each GSI
@@ -2409,9 +2409,9 @@ constraint is not arbitrary; it is the cost accounting of this chapter, applied 
   externalized global indexes; Cassandra's query-driven modeling is this trade-off adopted as
   doctrine.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_db8584b02418.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_99571ab6c647.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_704ad199d466.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_db8584b02418.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_99571ab6c647.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_704ad199d466.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>PostgreSQL documentation, Chapter 11 "Indexes" — index types, partial and expression indexes,
@@ -2479,7 +2479,7 @@ errors get amplified by network data movement.</p>
 <h2 id="the-pipeline-from-text-to-executable-plan">The pipeline: from text to executable plan</h2>
 <p>Every mature SQL engine processes a query in the same four stages. The names vary by vendor; the
 structure does not.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd9fc59bff53.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fd9fc59bff53.png" alt="diagram"></div></p>
 <p><strong>Parse</strong> is ordinary compiler front-end work: tokenize, check the grammar, build a syntax tree.
 The only decisions here are syntactic. Binding (PostgreSQL calls this <em>analysis</em>) then resolves
 every name against the catalog — which table is <code>orders</code>, what type is <code>created_at</code>, does the
@@ -2597,7 +2597,7 @@ the seq scan is the fastest available plan.</p>
 <p>Every relational engine implements essentially three join algorithms. Each has a shape of input
 for which it is clearly best, which is precisely why the optimizer's choice — driven by row-count
 estimates — matters so much.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0f878f67ca7a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0f878f67ca7a.png" alt="diagram"></div></p>
 <p><strong>Nested loop join</strong> is the simplest and, in its naive form, the worst: for each of N outer rows,
 scan all M inner rows — O(N·M), which at 10⁵ × 10⁵ is 10¹⁰ comparisons and a query that never
 comes back. The redeemed form is the <strong>indexed nested loop</strong>: for each outer row, probe an index
@@ -3026,7 +3026,7 @@ and data movement joins I/O and CPU as a first-class cost term — usually the <
 <li><strong>Distribution strategy for joins.</strong> When the join's two inputs are not partitioned on the join
   key, rows must move, and there are two ways to move them:</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_57963c00cd88.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_57963c00cd88.png" alt="diagram"></div></p>
 <p>A <strong>broadcast</strong> join replicates the smaller input to every node holding the larger one; cost is
   |S| × number of nodes, and the big table never moves. A <strong>shuffle</strong> (repartition) join re-hashes
   <em>both</em> inputs on the join key so matching rows land on the same node; cost is |A| + |B| crossing
@@ -3096,10 +3096,10 @@ adaptivity (stop trusting estimates once real numbers exist).</p>
   failure mode — broadcasting a "small" table that isn't — takes down clusters, not queries. The
   same EXPLAIN-reading skill applies to fragments and stages.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fe6429b210fa.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d6f854fe00d1.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e138870abaf3.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a5118f44a887.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fe6429b210fa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d6f854fe00d1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e138870abaf3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a5118f44a887.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Selinger, P. G., Astrahan, M. M., Chamberlin, D. D., Lorie, R. A., and Price, T. G., "Access
@@ -3363,7 +3363,7 @@ sensibly while the knobs let you trade honestly when a workload justifies it.</p
 <h3 id="the-transactions-life">The transaction's life</h3>
 <p>The classical state machine ties A and D together and is worth having in your head, because every
 error your driver surfaces corresponds to an edge in it:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_34a1310374b2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_34a1310374b2.png" alt="diagram"></div></p>
 <p>The interesting state is <em>partially committed</em>: <code>COMMIT</code> has been issued but the log is not yet on
 disk. A crash there aborts the transaction — which is correct, because the client never received
 the acknowledgment. The commit <em>point</em> is the instant the commit record reaches stable storage;
@@ -3413,7 +3413,7 @@ concrete: the interleaving is harmless because every conflict points the same wa
 <p>Now <code>r1(x)→w2(x)</code> gives T1 → T2, but <code>r2(x)→w1(x)</code> gives T2 → T1. Cycle. In serial order T1, T2,
 T2 would have read T1's write; in serial order T2, T1, vice versa; in this schedule <em>each read the
 initial value</em>, which no serial order produces. Two increments, counter goes up by one.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_20745fdce77c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_20745fdce77c.png" alt="diagram"></div></p>
 <p>Two caveats to keep you honest. Conflict-serializability is <em>sufficient</em>, not <em>necessary</em>: a
 strictly larger class (view-serializability) exists but is NP-hard to test, so every practical
 scheduler enforces the conflict flavor and cheerfully rejects a few schedules that were actually
@@ -3509,7 +3509,7 @@ and degrades by queueing; optimism is free until it degrades by burning CPU on d
 You also run OCC yourself, at application level, whenever you use a version-column
 (<code>UPDATE ... WHERE id = ? AND version = ?</code>, checking the row count) — the "optimistic locking" of
 ORMs — which is OCC with the database's own update atomicity as the validator.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8395a3595622.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8395a3595622.png" alt="diagram"></div></p>
 <h3 id="multiversion-mvcc">Multiversion: MVCC</h3>
 <p>The dominant modern design — Postgres, InnoDB, Oracle, and most newcomers — refuses the premise
 that readers and writers must fight at all. Writers never overwrite: each write creates a new
@@ -3641,7 +3641,7 @@ preference:</p>
    write time instead: <code>UPDATE ... SET ..., version = version + 1 WHERE id = ? AND version = ?</code> and
    treat zero rows updated as "someone else got there first."</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e0ee927807f1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e0ee927807f1.png" alt="diagram"></div></p>
 <h3 id="savepoints-partial-rollback-inside-the-unit">Savepoints: partial rollback inside the unit</h3>
 <p>Atomicity is all-or-nothing at transaction granularity, but <strong>savepoints</strong> let you mark points
 within a transaction and roll back to them without abandoning the whole:</p>
@@ -3774,9 +3774,9 @@ problem. It was, and remains, the thing worth paying for.</p>
   is the honest name for "the anomalies are now your application's job" — sometimes the right
   purchase, never a free one.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aa9b709c6f4e.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_767e34e7dafa.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d9d36b3c88ce.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aa9b709c6f4e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_767e34e7dafa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d9d36b3c88ce.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Härder, T. and Reuter, A., "Principles of Transaction-Oriented Database Recovery," <em>ACM Computing
@@ -4013,7 +4013,7 @@ simultaneously, requests to go off call. Each transaction runs the same logic:</
 survives their own departure, and both commit — <strong>their write sets are disjoint</strong> (Alice's row
 versus Bob's row), so no write-write conflict detection fires. The roster is now empty. No serial
 execution could produce this: whichever transaction ran second would have counted 1 and refused.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1491c6fd5a61.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1491c6fd5a61.png" alt="diagram"></div></p>
 <p>The general shape: <strong>read a predicate, decide based on it, write something the <em>other</em>
 transaction's predicate depends on.</strong> Each transaction's write invalidates the other's read, but
 neither writes what the other wrote. Once you know the shape you see it everywhere: enforcing
@@ -4134,7 +4134,7 @@ cheaper depends on whether your conflicts are real (pessimism wastes less work) 
 <p><strong>Oracle: caveat emptor.</strong> <code>SERIALIZABLE</code> is snapshot isolation. Write skew is possible at
 Oracle's maximum level; if you carry an invariant of that shape, you need <code>SELECT ... FOR UPDATE</code>
 or a materialized conflict, below.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9a12558ba084.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9a12558ba084.png" alt="diagram"></div></p>
 <h2 id="mvcc-mechanics">MVCC mechanics</h2>
 <p>Every level above READ UNCOMMITTED in a modern engine is built on <strong>multi-version concurrency
 control</strong>: instead of updating data in place and making readers wait, the engine keeps multiple
@@ -4164,7 +4164,7 @@ rollback is expensive (undo records must actually be applied to restore the pre-
 garbage problem moves from the table to the undo/history subsystem. Oracle pioneered this
 architecture (undo segments); SQL Server's snapshot modes use a version store in tempdb, a
 cousin.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ec334db1a021.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ec334db1a021.png" alt="diagram"></div></p>
 <p>Neither architecture dominates. PostgreSQL pays on the write path (full-row versions, index
 amplification, VACUUM) and gets cheap aborts and simple reads; InnoDB pays on rollback and on
 old-snapshot reads and keeps its tables compact. The operational failure modes below are the same
@@ -4184,7 +4184,7 @@ and then cached on the tuple itself as <strong>hint bits</strong> so subsequent 
 reason the first scan after a bulk load is slow and writes pages. In full detail the rules run to
 hundreds of lines (<code>heapam_visibility.c</code> repays reading), handling subtransactions, your own
 uncommitted work, and in-progress edge cases, but the skeleton is this:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_23e173ce121e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_23e173ce121e.png" alt="diagram"></div></p>
 <p>InnoDB's <strong>ReadView</strong> is the same idea with the same fields under different names: a low-water
 mark (<code>up_limit_id</code>), a high-water mark (<code>low_limit_id</code>), and the list of active transaction IDs
 at creation. The mechanical difference is what happens on a miss: PostgreSQL simply skips an
@@ -4451,9 +4451,9 @@ spend it.</strong></p>
   replica still serves stale reads. Isolation between transactions and consistency between
   replicas are separate axes — ask about both.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_aed6ff2799fe.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cc2083ea71fd.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5e3080dcf4db.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_aed6ff2799fe.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cc2083ea71fd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5e3080dcf4db.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Berenson, H., Bernstein, P., Gray, J., Melton, J., O'Neil, E., O'Neil, P., "A Critique of ANSI
@@ -4704,7 +4704,7 @@ uniforms. A senior engineer who has internalized group commit already understand
 <h2 id="one-commit-end-to-end">One commit, end to end</h2>
 <p>The pieces assemble into a sequence worth having fully explicit in your head. An <code>UPDATE</code> followed
 by <code>COMMIT</code>, on a healthy single-node Postgres with default settings:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a839ae16412.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6a839ae16412.png" alt="diagram"></div></p>
 <p>Three observations. First, the only synchronous disk write is the sequential log flush; the random
 data-page write happens minutes later, off the critical path, and may cover hundreds of accumulated
 changes to that page. Second, the WAL record was appended <em>before</em> commit but only <em>flushed</em> at
@@ -4730,7 +4730,7 @@ checkpoint's location where recovery can find it. A checkpoint is not a promise 
 clean; it is a photograph of exactly <em>how dirty</em> things were, so recovery can bound how far back it
 must look.</p>
 <p>Recovery after a crash makes three passes:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9081fc67bb57.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9081fc67bb57.png" alt="diagram"></div></p>
 <p><strong>Analysis</strong> scans forward from the last checkpoint, replaying the <em>bookkeeping</em>: the checkpoint's
 ATT and DPT snapshots are loaded, then updated per record — new transactions enter the ATT, commit
 and abort records retire them, updates to pages absent from the DPT add entries. At the crash
@@ -4787,7 +4787,7 @@ an old version — it is garbage with a plausible header. Its pageLSN might read
 half its contents are stale; per-record redo, applied to garbage, produces garbage. Checksums
 (<code>data_checksums</code> in Postgres, mandatory page checksums in InnoDB) <em>detect</em> the tear; something
 else must repair it. The two production answers bracket the design space:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_089f98d75033.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_089f98d75033.png" alt="diagram"></div></p>
 <p><strong>Postgres: full-page writes.</strong> With <code>full_page_writes = on</code> (the default, and effectively
 mandatory on ordinary storage), the <em>first</em> modification of each page after a checkpoint logs a
 complete image of the page instead of a delta. Redo then never needs the on-disk page's prior
@@ -4891,7 +4891,7 @@ durability became fact.</p>
 been forced to build in order to recover: a totally ordered, durable, replayable stream of every
 change to the database. That artifact is too useful to leave to crashes, and mature systems expose
 it in four directions:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_574970c4ca87.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_574970c4ca87.png" alt="diagram"></div></p>
 <p><strong>Physical replication is recovery, running forever.</strong> A streaming standby is a server that starts
 in recovery mode and never leaves it: the primary ships WAL as it is generated, and the standby's
 apply process is the same redo loop this chapter described, running continuously against a live
@@ -5029,9 +5029,9 @@ and how they agree on its contents; they do not differ in what the log <em>is</e
   Kafka serves the log as a product, event sourcing applies it at the application layer.
   Recovery-by-replay is the universal pattern.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_182b275db77e.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2bc800d771aa.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bbfbc3b76f17.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_182b275db77e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2bc800d771aa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bbfbc3b76f17.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Mohan, C., Haderle, D., Lindsay, B., Pirahesh, H., and Schwarz, P., "ARIES: A Transaction
@@ -5210,7 +5210,7 @@ changes, replicas' I/O threads pull it into a relay log, and applier threads exe
 <code>binlog_format = ROW</code> (the default since 5.7.7), events carry before/after row images — the same
 species of stream as <code>pgoutput</code>, and the reason the MySQL ecosystem grew change-data-capture
 tooling a decade before PostgreSQL's became mainstream.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_70ad32918496.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_70ad32918496.png" alt="diagram"></div></p>
 <h3 id="statement-based-replication-the-cautionary-tale">Statement-based replication: the cautionary tale</h3>
 <p>The historically obvious design — replay the SQL text itself on each replica — was MySQL's
 original and, until 5.7.7, default mode. It is compact and human-readable, and it is wrong,
@@ -5324,7 +5324,7 @@ is the deliberate opposite of PostgreSQL's hang: MySQL chooses availability, Pos
 durability, and both are defensible — but you must know which contract you hold. A semi-sync
 deployment is only RPO = 0 <em>while the light is green</em>, so monitoring
 <code>Rpl_semi_sync_source_status</code> is part of the durability story, not an optional nicety.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8d1566b5a761.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8d1566b5a761.png" alt="diagram"></div></p>
 <h2 id="replication-lag-the-production-discipline">Replication lag: the production discipline</h2>
 <p>Lag is not an edge case; it is the steady-state property that defines what an async replica is.
 The question is never "is there lag" but "how much, how variable, and what does your application
@@ -5398,7 +5398,7 @@ Volume 6, Chapter 3 treats formally:</p>
   question that does not exist. The write dependency — B read A's post before writing — is
   invisible to per-object replication.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7201fcea5d83.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7201fcea5d83.png" alt="diagram"></div></p>
 <h3 id="the-mitigation-toolkit">The mitigation toolkit</h3>
 <p>In escalating order of machinery:</p>
 <p><strong>Route by semantics.</strong> The oldest fix: reads that follow the user's own write, or that gate a
@@ -5483,7 +5483,7 @@ can remain plain leader-follower replication, but the decision of who leads is d
 consensus system</strong> — a small, rarely-written, strongly-consistent kernel governing a large,
 fast, weakly-replicated body. Volume 6, Chapter 8 covers these coordination services in depth;
 Chapters 5–6 cover the consensus protocols inside them.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f40a30294bf0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f40a30294bf0.png" alt="diagram"></div></p>
 <p>One number closes the topic: with async replication, failover RPO is the lag at the moment of
 death. Your steady-state p99 lag <em>is</em> your data-loss budget, which is why the lag graphs from
 the previous section belong on the same dashboard as your durability SLO (Volume 11).</p>
@@ -5610,9 +5610,9 @@ configuration actually implements.</p>
 <li>A <strong>delayed replica</strong> is cheap insurance against the leading cause of data loss — humans —
   because normal replication propagates the mistake faithfully everywhere else.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eea5b86db20e.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_af61cd36e146.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8f4cbc029788.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eea5b86db20e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_af61cd36e146.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8f4cbc029788.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>PostgreSQL documentation, <em>High Availability, Load Balancing, and Replication</em> — streaming
@@ -5851,7 +5851,7 @@ value stay ACID; transactions spanning key values become distributed transaction
 The shard key is load-bearing for performance, correctness, and operations simultaneously, and it
 is expensive to change — so it deserves more design scrutiny than any other schema decision you
 make. There are four basic schemes.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_881518578e14.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_881518578e14.png" alt="diagram"></div></p>
 <h3 id="hash-sharding">Hash sharding</h3>
 <p>Route each key by a hash of its value. The virtue is statistical: a decent hash spreads any key
 population — sequential IDs, timestamps, hot prefixes — uniformly across shards, so you get even
@@ -5956,7 +5956,7 @@ is the unit at which the system fails.</p>
   operationally sanest answer: the whale gets its own capacity, its own SLO, and its own blast
   radius, and the shared shards return to statistics that hashing can handle.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_58fa8ffd8a18.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_58fa8ffd8a18.png" alt="diagram"></div></p>
 <p>If this section feels familiar, it should: it is the hot-stripe problem from Volume 4, Chapter 2,
 where a striped lock degenerates to a global lock when one key dominates. The failure and every
 mitigation have exact in-process ancestors.</p>
@@ -5979,7 +5979,7 @@ anything: it picks whole virtual shards and moves them, updating one map entry p
 node means transferring it a fair share of vshards from the others — each move is independent,
 incremental, throttleable, and abortable, and routing stays unambiguous for every key not
 currently in a moving vshard.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dbb2bb7d204f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dbb2bb7d204f.png" alt="diagram"></div></p>
 <p>This design is ubiquitous because it is right:</p>
 <ul>
 <li><strong>Redis Cluster</strong> fixes the slot space at <strong>16,384 slots</strong> (<code>CRC16(key) mod 16384</code>); every node
@@ -6007,7 +6007,7 @@ online data migration is the same five-phase pipeline. The enabling technology i
 capture</strong> — tailing the source's WAL or binlog as a stream of row changes (Chapter 7 built the
 log; Volume 10, Chapter 6 treats CDC as infrastructure) — or, lacking that, application-level
 dual-writes.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_824307015860.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_824307015860.png" alt="diagram"></div></p>
 <ol>
 <li><strong>Backfill.</strong> Snapshot the source at a consistent point (an MVCC snapshot, Chapter 6) and bulk-
    copy rows to their new homes, throttled so the source's live traffic is not degraded.</li>
@@ -6191,9 +6191,9 @@ sure you never mistake it for two.</p>
 <li><strong>Shard late; design keys early.</strong> A shardable schema — tenant ID everywhere, compound keys, no
   cross-tenant invariants — is cheap insurance; retrofitting one is the multi-year horror story.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f6bf8e2c898e.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7fb83c72e8e0.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_98a56c26f8f8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f6bf8e2c898e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7fb83c72e8e0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_98a56c26f8f8.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Kleppmann, M., <em>Designing Data-Intensive Applications</em> (O'Reilly, 2017), Chapter 6
@@ -6340,7 +6340,7 @@ distributed transaction</strong> — and then sends <code>COMMIT</code> to all p
 it writes and sends <code>ABORT</code> instead. Each participant applies the decision locally, writes its
 own outcome record, releases locks, and acknowledges. When all acknowledgments arrive, the
 coordinator writes an <em>end</em> record and forgets the transaction.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b3c900ca21b4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b3c900ca21b4.png" alt="diagram"></div></p>
 <h3 id="prepared-means-promised-the-durability-obligations">Prepared means promised: the durability obligations</h3>
 <p>The protocol's correctness hangs entirely on two forced writes, and it is worth dwelling on each
 because both are Chapter 7 in action.</p>
@@ -6470,7 +6470,7 @@ coordinator eventually comes back. That proviso is the next section.</p>
 participant has surrendered the right to decide. Now let the coordinator crash — or become
 unreachable, which is indistinguishable — after the votes are in but before the decision reaches
 anyone.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_45a92bac2072.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_45a92bac2072.png" alt="diagram"></div></p>
 <p>The prepared participants are <strong>in doubt</strong>. Each one reasons: "I voted YES, so the coordinator
 <em>may</em> have logged COMMIT — I cannot abort. But some other participant <em>may</em> have voted NO — I
 cannot commit." Both inferences are sound, so the participant can do nothing but wait.
@@ -6568,7 +6568,7 @@ undoes it. The guarantee: either the saga runs <code>T1 … Tn</code> to complet
 every step's effect eventually cancelled. (The paper also defines <em>forward recovery</em> — persist
 enough state to retry onward from the failure point rather than unwinding — which is what modern
 workflow engines call "just retry the activity.")</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b22c59934860.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b22c59934860.png" alt="diagram"></div></p>
 <h3 id="what-a-saga-is-not-the-missing-i">What a saga is not: the missing I</h3>
 <p>Here is the sentence to tattoo somewhere visible: <strong>a saga is not a transaction.</strong> It preserves
 a weak form of atomicity — eventually, all-or-compensated — and each step is individually
@@ -6720,7 +6720,7 @@ broker, marking them as sent. If the process crashes after commit, the event is 
 sitting durably in the outbox, and the relay publishes it after recovery. If the transaction
 aborts, the outbox row aborts with it and no event escapes. Both dual-write interleavings are
 dead: the event and the state change share a single commit.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_981c2af7d8a0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_981c2af7d8a0.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">outbox</span><span class="w"> </span><span class="p">(</span>
 <span class="w">    </span><span class="n">id</span><span class="w">              </span><span class="nb">bigint</span><span class="w"> </span><span class="k">GENERATED</span><span class="w"> </span><span class="n">ALWAYS</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="k">IDENTITY</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
 <span class="w">    </span><span class="n">event_id</span><span class="w">        </span><span class="n">uuid</span><span class="w">        </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">gen_random_uuid</span><span class="p">(),</span><span class="w">  </span><span class="c1">-- consumer dedup key</span>
@@ -6878,9 +6878,9 @@ invariants are.</p>
   tolerance — different problems that compose. And exactly-once is a fiction at the boundary:
   the real contract everywhere is at-least-once delivery plus idempotent effects.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_14cfd6ecfa54.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_472d271b4d83.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e4721fac83a4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_14cfd6ecfa54.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_472d271b4d83.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e4721fac83a4.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Gray, J., "Notes on Data Base Operating Systems," in <em>Operating Systems: An Advanced Course</em>,
@@ -7009,7 +7009,7 @@ serializability. The SQL:2016 standard even added JSON operators.</p>
 — what shape your data takes and what operations are native to that shape — bundled with
 <strong>trade-off points</strong> — what the exemplar systems chose about consistency, distribution, and
 indexing. They are not ideologies, and choosing among them is engineering, not tribal affiliation.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c4d4fe4eb9bb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c4d4fe4eb9bb.png" alt="diagram"></div></p>
 <p>The ordering in the diagram is the useful mental model: from key-value to graph, the store
 understands progressively more of your data's structure, and in exchange for that understanding it
 can execute progressively richer queries natively — at the cost of progressively harder
@@ -7185,7 +7185,7 @@ Chapter 1's normalization question. Embedding is denormalization: one read fetch
 one atomic write updates it all, at the cost of duplication and growth. Referencing is
 normalization: one copy of shared data, at the cost of application-side joins (<code>$lookup</code> exists
 but is deliberately limited, especially across shards) and multi-document update surfaces.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9e14f7be8488.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9e14f7be8488.png" alt="diagram"></div></p>
 <p>The rules of thumb the tree encodes: data read together should live together; unbounded arrays
 (comments on a viral post, events on a long-lived entity) must be referenced or bucketed, both
 because of MongoDB's 16 MB document cap and because rewriting an ever-growing document gets
@@ -7212,7 +7212,7 @@ sequential read of one contiguous region on a handful of replicas — this is th
 is very fast. Any query that does not supply the partition key is a cluster-wide scatter
 (<code>ALLOW FILTERING</code> — the clause whose name is a warning). The table <em>is</em> the index, and there is
 exactly one of it per table.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_186468b7255a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_186468b7255a.png" alt="diagram"></div></p>
 <p>This makes <strong>query-first modeling</strong> not a style preference but a discipline the architecture
 enforces. You do not model your entities and then write queries; you enumerate your queries and
 then create one table <em>per query</em>, denormalizing the same data into as many layouts as you have
@@ -7394,7 +7394,7 @@ divergence, because the second write fails independently of the first and nothin
 Cache invalidation is the same problem in miniature, and even the CDC-driven form only bounds the
 inconsistency window; it never removes it. Every derived read is a stale read of some age, and the
 age must be acceptable <em>by design</em>, not by luck.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8206ed92bb22.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8206ed92bb22.png" alt="diagram"></div></p>
 <h2 id="the-distributed-systems-lens">The distributed-systems lens</h2>
 <p>The deepest legacy of the NoSQL era is not any database; it is that <strong>the trade-offs were always
 there, and NoSQL made them visible</strong>. A single-node RDBMS is a machine for hiding distributed
@@ -7462,9 +7462,9 @@ you — and Volume 7, Chapter 5 returns to modeling with the full toolbox in han
 <li><strong>Partition-key design is distributed-systems design handed to you.</strong> Everything from
   Chapters 9 and 10 — skew, hot keys, cross-partition invariants — now lives in your schema.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_40088283a314.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d69d1c72ee4c.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0f90240b15cb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_40088283a314.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d69d1c72ee4c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0f90240b15cb.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Chang, F., et al., "Bigtable: A Distributed Storage System for Structured Data," <em>OSDI</em>, 2006 —
@@ -7606,7 +7606,7 @@ leader, which reads the decision (or its absence) from the replicated log and co
 protocol. 2PC's atomicity structure survives; its availability defect is repaired by putting
 consensus underneath every participant, coordinator included. The cost also survives: a cross-group
 commit is 2PC's extra round trips, each leg itself a consensus commit.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f3dc298a1a34.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f3dc298a1a34.png" alt="diagram"></div></p>
 <h3 id="truetime-bounded-uncertainty-as-an-api">TrueTime: bounded uncertainty as an API</h3>
 <p>Every distributed database needs to order transactions. Chapter 10's systems used a coordinator;
 TiDB (below) uses a centralized timestamp oracle; classic Lamport machinery (Volume 6, Chapter 2)
@@ -7655,7 +7655,7 @@ transaction that starts afterward — anywhere on the planet, through any replic
 <code>TT.now()</code> and receive an interval entirely above <code>s</code>, so its own timestamp must exceed <code>s</code>, and the
 real-time order and the timestamp order agree. No communication established that agreement. The
 machines never exchanged a message to order these two transactions; they consulted physics.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_653a270d1072.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_653a270d1072.png" alt="diagram"></div></p>
 <p>Sit with the trade, because it is the profound one and this chapter's version of Volume 4,
 Chapter 3's arc that stronger consistency costs performance: <strong>clock uncertainty becomes commit
 latency, linearly.</strong> Better clocks (smaller ε) mean faster commits; degraded clocks mean Spanner
@@ -7700,7 +7700,7 @@ reads from local state <em>without a Raft round trip</em>, because the lease (ti
 against the clock-skew failure modes Volume 6, Chapter 2 warns about) guarantees no other replica
 is concurrently committing writes it hasn't seen. This is the fencing-token discipline productized:
 reads cost one machine, writes cost a Raft quorum.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dc31e873942e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dc31e873942e.png" alt="diagram"></div></p>
 <h3 id="hlcs-and-the-uncertainty-window-honesty-without-truetime">HLCs and the uncertainty window: honesty without TrueTime</h3>
 <p>CockroachDB timestamps transactions with <strong>hybrid logical clocks</strong> (Kulkarni et al., 2014). An HLC
 is a physical clock reading welded to a logical counter: it stays close to wall time, but on every
@@ -7916,7 +7916,7 @@ distributed SQL engine</strong>, paying quorum latency on every write, running r
 and operating (or renting) a consensus fleet — for a workload one Postgres node with a replica would
 serve with lower latency, richer features, and two decades of operational folklore. Distributed SQL
 is a rung you climb <em>to</em>, under pressure, not a default.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_590f4b0258d2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_590f4b0258d2.png" alt="diagram"></div></p>
 <p>Climb it in order. Chapter 14's operating levers first — a well-tuned single node with connection
 pooling handles more than most teams believe, with the simplest possible semantics. Read replicas
 next, accepting Chapter 8's documented anomalies for read scale. If write volume or data size
@@ -7986,9 +7986,9 @@ implementations — a lesson worth carrying well beyond databases.</p>
 <li>The meta-lesson: SQL and ACID survived the distribution transition because they specify <em>what</em>,
   not <em>how</em> — data independence proved portable to planet scale.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7c1426f39e2.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f4e401c2447e.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_55a54936ddd1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c7c1426f39e2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f4e401c2447e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_55a54936ddd1.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Corbett, J. C., Dean, J., et al., "Spanner: Google's Globally-Distributed Database," <em>OSDI</em>,
@@ -8151,7 +8151,7 @@ row, running a substring search over every document — O(corpus) per query, plu
 the wrong question, because <code>LIKE</code> knows nothing about word boundaries ("quorums"?
 "Quorum,"?), morphology ("leasing" vs "lease"), or ranking. The inverted index is not a
 faster <code>LIKE</code>; it is a different question answered by a different structure.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_dbfd54c83dd8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_dbfd54c83dd8.png" alt="diagram"></div></p>
 <h3 id="the-analysis-pipeline">The analysis pipeline</h3>
 <p>Between raw text and the index sits the <strong>analyzer</strong>, and it is where most real-world search
 quality problems live. Analysis turns a string into a token stream through a pipeline that
@@ -8371,7 +8371,7 @@ scraped every 60 s, that second difference is almost always exactly zero — and
 encodes a zero delta-of-delta as a <strong>single bit</strong>. Nonzero values are encoded with a short
 prefix code selecting a width bucket sized to hold them. In Facebook's measurements, about
 96% of timestamps compressed to one bit.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bed2cddca499.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bed2cddca499.png" alt="diagram"></div></p>
 <p><strong>Values: XOR of adjacent floats.</strong> Successive samples of one series are usually close in
 value, so the IEEE-754 bit patterns share their sign, exponent, and high mantissa bits, and
 <code>current XOR previous</code> is a word that is mostly zeros. If the XOR is exactly zero (value
@@ -8442,7 +8442,7 @@ for 100 columns and uses 3. A <strong>column store</strong> lays each column con
 reads exactly the three columns it needs: a ~33× raw I/O reduction on this example before
 compression is even mentioned — and analytical tables are routinely wider and the queried
 subset routinely this narrow.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a29ad964b284.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a29ad964b284.png" alt="diagram"></div></p>
 <p>Compression is the second, larger win, and it falls out of homogeneity: a column is a run
 of values of one type, often sorted or clustered, with low local entropy. Four encoding
 families do most of the work. <strong>Run-length encoding (RLE)</strong>: a sorted or clustered column
@@ -8600,7 +8600,7 @@ application ("save to Postgres, then also POST to Elasticsearch") is the anti-pa
 name and ban: the second write fails independently, ordering across writers is undefined,
 and nothing reconciles the drift. The log gives every consumer the same ordered history and
 an offset to resume from.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3d0915233e4e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3d0915233e4e.png" alt="diagram"></div></p>
 <p>Two properties make the architecture safe rather than merely fashionable, and both are
 design obligations on you:</p>
 <p><strong>Rebuildability.</strong> Every derived store must be reconstructible from the source of truth
@@ -8696,9 +8696,9 @@ of truth and the teams owning the views, and lag SLOs are the contract between t
   store is data loss rather than an incident, it has silently become a second source of
   truth.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c1c2fa68a5f5.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1044c0419ab0.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b330c9d3dd6c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c1c2fa68a5f5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1044c0419ab0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b330c9d3dd6c.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Stonebraker, M. and Çetintemel, U., "'One Size Fits All': An Idea Whose Time Has Come
@@ -8867,7 +8867,7 @@ standard for Postgres: a single-threaded, event-driven proxy that speaks the Pos
 wire protocol, accepts thousands of client connections cheaply (each is just a socket
 and a small struct, not a process), and multiplexes them onto a small set of real
 server connections.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6f164c714c8d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6f164c714c8d.png" alt="diagram"></div></p>
 <p>PgBouncer has three pooling modes, and the mode determines both the multiplexing win
 and what it silently breaks:</p>
 <ul>
@@ -8992,7 +8992,7 @@ choreography.</p>
 schema additively compatible with both old and new code, move the data and the traffic,
 then remove the old shape. Each phase is a <strong>separate deploy</strong>, verified before the
 next begins. Compressing phases is how zero-downtime migrations cause downtime.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f40c85722773.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f40c85722773.png" alt="diagram"></div></p>
 <p>Worked example — replacing a <code>numeric</code> money column with integer cents:</p>
 <ol>
 <li><strong>Expand.</strong> <code>ALTER TABLE orders ADD COLUMN total_cents bigint;</code> — nullable, no
@@ -9141,7 +9141,7 @@ plug: the ALTER waits on the report, every query on the table queues behind the 
 the connection pool fills with waiters, checkout timeouts fire fleet-wide, and you have
 a full outage caused by a DDL that "doesn't lock anything." This is among the most
 common self-inflicted database outages in industry.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_bba3ff120ef7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_bba3ff120ef7.png" alt="diagram"></div></p>
 <p>The safety net is mechanical and should be baked into your migration tooling, not left
 to memory: set a short <code>lock_timeout</code> for every DDL statement, and retry with backoff.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># lock_timeout + retry: the DDL either gets the lock fast or gets out of the way.</span>
@@ -9200,7 +9200,7 @@ transactions per second. Most systems that "outgrew Postgres" outgrew an untuned
 Postgres, and bought distributed-systems complexity (Chapter 10's coordination costs,
 Chapter 9's cross-shard queries) to avoid an afternoon of profiling. Climb the ladder
 in order:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_598f16ae8ccb.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_598f16ae8ccb.png" alt="diagram"></div></p>
 <p><strong>Step zero is query optimization</strong>, because it is the only step that <em>removes</em> load
 rather than redistributing it. <code>pg_stat_statements</code> (MySQL: <code>performance_schema</code> /
 <code>sys.statement_analysis</code>) aggregates every query by normalized fingerprint; the top ten
@@ -9457,9 +9457,9 @@ individual heroics or paved road.</p>
   deployments</strong> governed by the same compatibility rules as APIs; platform teams
   should productize all of it as paved road.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_3ae020715894.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_03cfda3c6d8d.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_43fd6672c98d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_3ae020715894.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_03cfda3c6d8d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_43fd6672c98d.png" alt="diagram"></div></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li>Wooldridge, B., "About Pool Sizing," HikariCP wiki — the pool-sizing argument, the

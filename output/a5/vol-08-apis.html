@@ -326,7 +326,7 @@ hr {
 <p>The first version of any API is wrong. The question is how expensive being wrong will be. Contracts that reserve extension points — optional fields, <code>additionalProperties: false</code> only where intentional, enumerated strings that consumers treat as open, <code>repeated</code> rather than fixed-arity — make the second version cheap. Contracts that require coordinated upgrades for every additive change make it expensive.</p>
 <h3 id="6-operability-expose-what-operators-need">6. Operability — expose what operators need</h3>
 <p>Every contract should answer, before it is used in production: How is it authenticated? How is it rate-limited and what does <code>429</code> look like? What does pagination do under concurrent mutation? What is the timeout budget and is the operation retry-safe? An API whose happy-path example works but whose pagination is undefined under writes will cause correctness bugs at scale that no unit test catches.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_30da8afacaf3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_30da8afacaf3.png" alt="diagram"></div></p>
 <p><em>Figure 1-1: Six principles as review gates. Each principle maps to one question a reviewer can answer from the contract alone, before reading any implementation.</em></p>
 <hr />
 <h2 id="contracts-and-schemas-choosing-the-description-language">Contracts and schemas: choosing the description language</h2>
@@ -376,7 +376,7 @@ hr {
 <hr />
 <h2 id="the-contract-lifecycle">The contract lifecycle</h2>
 <p>A contract is a living artifact with a lifecycle longer than any single deployment. Treating it as a file that is edited and forgotten is how breaking changes slip into production.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_77cfa448124c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_77cfa448124c.png" alt="diagram"></div></p>
 <p><em>Figure 1-2: Contract lifecycle. Every transition has a gate; the most important gates are automated (lint, breaking-change detection) because human review alone does not scale.</em></p>
 <p>Each stage has a concrete meaning:</p>
 <ul>
@@ -388,7 +388,7 @@ hr {
 <li><strong>Sunset.</strong> Traffic has dropped below an agreed threshold (often &lt;1% or zero for internal surfaces after a migration deadline). The route is removed; the schema is archived, not deleted, so historical data can still be decoded.</li>
 </ul>
 <p>The lifecycle matters for distributed systems because <strong>multiple versions are in production simultaneously</strong>. When you deprecate <code>GET /v1/orders</code>, the old and new versions will be served by different revisions of the same service — or by different services — for weeks or months. Your routing, documentation, and observability must all handle that.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_da2792da1cb3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_da2792da1cb3.png" alt="diagram"></div></p>
 <p><em>Figure 1-3: Automated contract gate in CI. Breaking changes are rejected unless the version bump and migration guide match policy; additive changes flow through.</em></p>
 <hr />
 <h2 id="design-first-versus-code-first">Design-first versus code-first</h2>
@@ -658,13 +658,13 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 </blockquote>
 <hr />
 <h4 id="api-lifecycle-state-machine">API Lifecycle State Machine</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_18009383ee23.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_18009383ee23.png" alt="diagram"></div></p>
 <h4 id="design-first-workflow">Design-First Workflow</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4259976a022e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4259976a022e.png" alt="diagram"></div></p>
 <h4 id="api-maturity-model">API Maturity Model</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b48d31e9ea8e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b48d31e9ea8e.png" alt="diagram"></div></p>
 <h4 id="consumer-driven-contract-flow">Consumer-Driven Contract Flow</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5543fba32491.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5543fba32491.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>The contract, not the implementation, is the unit of coupling. Invest design effort where the blast radius is largest.</li>
@@ -723,7 +723,7 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <h3 id="from-domain-to-resources">From domain to resources</h3>
 <p>A resource is not a database row, though it often maps to one. It is a <strong>concept with identity that a client wants to interact with over time</strong>. Start from the domain language and ask: "What nouns do product and support use when they talk about this area? What lifecycle do those nouns have?"</p>
 <p>For an e-commerce ordering domain, the nouns are <code>Order</code>, <code>OrderItem</code> (not independently addressable outside an order), <code>Payment</code>, <code>Shipment</code>, and <code>Customer</code>. That suggests:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f07af3e848da.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f07af3e848da.png" alt="diagram"></div></p>
 <p><em>Figure 2-1: Resource model for an Orders domain. Collections are top-level; line items and nested entities are sub-resources scoped to their parent; state transitions that do not map to CRUD become custom actions.</em></p>
 <h3 id="uri-design">URI design</h3>
 <p>URIs identify resources; they are not an encoding of query logic. Conventions that survive review:</p>
@@ -1064,7 +1064,7 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <hr />
 <h2 id="caching-and-conditional-requests">Caching and conditional requests</h2>
 <p>REST's cacheability constraint is not optional decoration — it is a scalability mechanism. A <code>GET /v1/orders/{id}</code> served with correct <code>Cache-Control</code> and <code>ETag</code> can be cached at three layers without any application change: browser, CDN, and service-mesh sidecar.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a42b53d4bfcf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a42b53d4bfcf.png" alt="diagram"></div></p>
 <p><em>Figure 2-2: Conditional GET with ETag. The 304 saves bandwidth and origin work; with stale-while-revalidate the CDN can serve stale while refreshing in the background.</em></p>
 <p>Headers that matter:</p>
 <ul>
@@ -1080,7 +1080,7 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <p><strong>Long-running operations.</strong> When <code>POST /v1/orders/{id}:cancel</code> triggers a workflow that takes minutes (refund, inventory restock), return <code>202 Accepted</code> with <code>Location: /v1/operations/abc123</code> and a <code>Retry-After</code>. The client polls <code>GET /v1/operations/abc123</code> (or subscribes via webhook/event) until <code>done: true</code>. Google's AIP-151 (<code>google.longrunning.Operation</code>) is a good template even outside Google.</p>
 <p><strong>Batch.</strong> <code>POST /v1/orders:batchGet { "ids": ["01H8X1...", "01H8X2..."] }</code> returning <code>{ "orders": [...], "not_found": [...] }</code> avoids N round-trips. Keep batch size bounded (e.g., max 100) and document partial-failure semantics — does one missing ID fail the whole batch, or return per-item status?</p>
 <p><strong>HATEOAS.</strong> Include <code>_links</code> where they carry state-machine information — e.g., an order with <code>status: "pending"</code> advertises <code>{"rel":"cancel","href":"/v1/orders/{id}:cancel","method":"POST"}</code> but not <code>refund</code> — and <code>Link</code> headers for pagination (<code>Link: &lt;...?page_token=...&gt;; rel="next"</code> per RFC 8288). Do not force clients to navigate solely via links; most REST consumers still construct URIs from an OpenAPI spec and treat links as hints.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e317617dd8fa.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e317617dd8fa.png" alt="diagram"></div></p>
 <p><em>Figure 2-3: Resource lifecycle with hypermedia links and an asynchronous cancel operation. Links advertise valid transitions; the operation resource decouples the HTTP request from the workflow.</em></p>
 <hr />
 <h2 id="where-rest-fits-in-a-distributed-system">Where REST fits in a distributed system</h2>
@@ -1102,13 +1102,13 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 </blockquote>
 <hr />
 <h4 id="rest-constraints-applied">REST Constraints Applied</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0210785b2122.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0210785b2122.png" alt="diagram"></div></p>
 <h4 id="resource-lifecycle">Resource Lifecycle</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b49fce8e99ff.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b49fce8e99ff.png" alt="diagram"></div></p>
 <h4 id="http-caching-and-conditional-requests">HTTP Caching and Conditional Requests</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e886b43f65e9.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e886b43f65e9.png" alt="diagram"></div></p>
 <h4 id="richardson-maturity-model">Richardson Maturity Model</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e881c48c4cf8.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e881c48c4cf8.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Model domains as resources with clear ownership; use sub-resources for scoped children and colon-actions for operations that are not CRUD.</li>
@@ -1564,12 +1564,12 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 </table>
 <p>* Enum addition is safe only if every consumer handles the unknown value. This is why <code>STATUS_UNSPECIFIED = 0</code> exists and why server code must treat unknown enum integers as errors or defaults, not panics.</p>
 <h3 id="the-evolution-workflow">The evolution workflow</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_698e74469e07.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_698e74469e07.png" alt="diagram"></div></p>
 <p><em>Figure 3-1: Schema evolution gate. Breaking changes require a new package version, not a justification comment.</em></p>
 <hr />
 <h2 id="the-four-call-shapes-when-to-use-each">The four call shapes — when to use each</h2>
 <p>gRPC defines four shapes distinguished by whether the client and server sides stream. All ride on one HTTP/2 stream; the difference is how many length-prefixed messages flow each way.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e0101321edbc.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e0101321edbc.png" alt="diagram"></div></p>
 <p>Each shape has a distinct fit:</p>
 <table>
 <thead>
@@ -1606,7 +1606,7 @@ npx<span class="w"> </span>@redocly/cli@1.14.0<span class="w"> </span>bundle<spa
 <hr />
 <h2 id="grpc-service-flow-from-stub-to-handler">gRPC service flow — from stub to handler</h2>
 <p>A gRPC call traverses more layers than a typical REST handler because the framework owns framing, status mapping, and cross-cutting concerns via interceptors.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f02e2c72f596.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f02e2c72f596.png" alt="diagram"></div></p>
 <p><em>Figure 3-2: gRPC service flow. Interceptors on both sides are the seam for auth, tracing, metrics, and retries without touching handler logic. The channel owns load balancing and deadline propagation.</em></p>
 <h3 id="deadlines-metadata-and-error-details">Deadlines, metadata, and error details</h3>
 <p><strong>Deadlines</strong> propagate as <code>grpc-timeout</code> (an absolute point in time, not a per-hop timeout). When service A calls B with a 300 ms deadline and B must call C, B passes the <em>same</em> deadline context to C — if 250 ms have elapsed, C sees ~50 ms remaining. This is the primary defence against cascading overload: work that cannot finish in the global budget is cancelled everywhere, rather than piling up.</p>
@@ -1765,13 +1765,13 @@ buf<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </spa
 </ul>
 <hr />
 <h4 id="grpc-call-types">gRPC Call Types</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_516436210683.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_516436210683.png" alt="diagram"></div></p>
 <h4 id="protobuf-build-pipeline">Protobuf Build Pipeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ef6bb3807c20.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ef6bb3807c20.png" alt="diagram"></div></p>
 <h4 id="interceptor-chain">Interceptor Chain</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0d0ae2a06ec7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0d0ae2a06ec7.png" alt="diagram"></div></p>
 <h4 id="streaming-backpressure">Streaming Backpressure</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_eb5d3bf7ec40.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_eb5d3bf7ec40.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Use gRPC/Protobuf for interior service-to-service traffic where throughput, typing, and streaming outweigh REST's debuggability and cacheability; use REST at the edge.</li>
@@ -2032,7 +2032,7 @@ buf<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </spa
 <hr />
 <h2 id="execution-from-query-to-resolvers-to-dataloader">Execution — from query to resolvers to DataLoader</h2>
 <p>A GraphQL request's lifecycle is more work than a REST handler's because the server must <em>plan</em> execution from the query shape:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e7b2cacfc626.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e7b2cacfc626.png" alt="diagram"></div></p>
 <p><em>Figure 4-1: GraphQL execution lifecycle. The DataLoader batch window collapses N per-entity loads into one query — the critical optimisation for any non-trivial graph.</em></p>
 <h3 id="the-n1-problem-measured">The N+1 problem — measured</h3>
 <p>The classic failure mode: a query asks for 20 orders and each order's customer. A naive resolver does:</p>
@@ -2041,7 +2041,7 @@ buf<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </spa
 </code></pre></div>
 
 <p>At 20 orders this is 21 queries; at 200 (a large page or a nested traversal) it is 201. Under load, this is not merely slow — it exhausts connection pools and amplifies tail latency. At 1,000 RPS, 21 queries per request is 21,000 DB queries per second where 2,000 would suffice.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f6d1bc34f423.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f6d1bc34f423.png" alt="diagram"></div></p>
 <p><em>Figure 4-2: N+1 versus batched execution. DataLoader's batch window turns N sequential point queries into one IN query, and its per-request memoisation prevents duplicate loads for the same entity within one operation.</em></p>
 <h3 id="solving-it-dataloader">Solving it — DataLoader</h3>
 <p>Facebook's <code>dataloader@2.2.2</code> is the standard solution. It provides two guarantees per request: <strong>batching</strong> (collect <code>load()</code> calls within one tick, dispatch as one function call) and <strong>memoisation</strong> (duplicate <code>load(id)</code> within one request hits cache, not the data source). Both are scoped to a single GraphQL operation — a new request gets a fresh loader, so cross-request staleness is not a concern.</p>
@@ -2268,7 +2268,7 @@ buf<span class="w"> </span>build<span class="w"> </span>-o<span class="w"> </spa
 </tbody>
 </table>
 <p>For most organisations beyond ~5 subgraphs, <strong>Federation 2</strong> is the right default: composition is validated in CI, entity ownership is explicit, and teams deploy subgraphs independently.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f0e034aa5b5f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f0e034aa5b5f.png" alt="diagram"></div></p>
 <p><em>Figure 4-3: Federated graph. Each subgraph owns its entities; the gateway's query planner fans out one client query into subgraph queries and joins the results.</em></p>
 <p>Minimal federated subgraph (orders) — <code>@apollo/subgraph@2.5.2</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c"># orders subgraph — federation v2.5</span>
@@ -2379,7 +2379,7 @@ npx<span class="w"> </span>@apollo/composition<span class="w"> </span>compose<sp
 <span class="p">};</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2ae9a37e7f35.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2ae9a37e7f35.png" alt="diagram"></div></p>
 <p><em>Figure 4-4: Production query lifecycle. Validation rejects abusive queries before execution; auth is field-level; DataLoader and timeouts bound the cost of what remains.</em></p>
 <hr />
 <h2 id="caching-where-graphql-pays-a-price">Caching — where GraphQL pays a price</h2>
@@ -2453,11 +2453,11 @@ npx<span class="w"> </span>@apollo/composition<span class="w"> </span>compose<sp
 </blockquote>
 <hr />
 <h4 id="graphql-execution-pipeline">GraphQL Execution Pipeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_feaedaf31137.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_feaedaf31137.png" alt="diagram"></div></p>
 <h4 id="federation-gateway">Federation Gateway</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_72cf4ae452be.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_72cf4ae452be.png" alt="diagram"></div></p>
 <h4 id="n1-and-dataloader">N+1 and DataLoader</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_5296e65aaa13.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_5296e65aaa13.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>GraphQL's strength is client-shaped fetches over a unified graph; its cost is a gateway that must plan, batch, and bound arbitrary queries. Choose it for heterogeneous frontend consumers, not for interior service-to-service traffic.</li>
@@ -2492,7 +2492,7 @@ npx<span class="w"> </span>@apollo/composition<span class="w"> </span>compose<sp
 <h2 id="why-apis-version-the-distributed-systems-reason">Why APIs version — the distributed-systems reason</h2>
 <p>In a monolith, changing a function signature is a single commit: the compiler enumerates every call site and you fix them. In a distributed system, there is no global compiler. A service may have 40 consumers, three of which are outside your organisation, five of which cache a client binary on a mobile device you cannot force-upgrade, and two of which are batch jobs that deploy quarterly. Changing <code>status</code> from a string to an enum, or renaming <code>customer_id</code> to <code>customerId</code>, is not a rename — it is a deserialization failure in a process you did not build, running in a region you do not operate, at 03:00 when you are asleep.</p>
 <p>Versioning is the answer to a single question: <em>how does a producer ship a change without requiring every consumer to ship at the same time?</em> The mechanisms differ, but the invariant is the same: at any moment, multiple versions of the contract are <em>in flight</em> — in different clients, different gateway routes, and different service revisions doing a rolling deploy.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c705455a8f1f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c705455a8f1f.png" alt="diagram"></div></p>
 <p><em>Figure 5-1: Version timeline. Additive changes ship as MINOR without coordination; breaking changes ship as MAJOR with a sunset window; old and new versions are served concurrently.</em></p>
 <blockquote>
 <p><strong>Boundary note.</strong> This chapter covers <em>API contract</em> versioning and evolution — how URIs, headers, and schemas change safely. <em>Storage</em> versioning — how tables, indexes, and serialized payloads evolve without downtime — is covered in Volume 5, Chapters 4 (Query Optimization), 7 (WAL/Recovery), and 14 (Pooling/Migrations). Where this chapter shows a SQL migration, it is to illustrate the wire-storage coordination point, not to re-derive storage internals. The wire-format compatibility matrix for Protobuf field types is detailed in Volume 8, Chapter 8 (Compatibility and Wire Formats).</p>
@@ -2538,7 +2538,7 @@ npx<span class="w"> </span>@apollo/composition<span class="w"> </span>compose<sp
 <li><strong>Changing validation (tightening) is MAJOR.</strong> Adding <code>minLength: 1</code> to a field that previously accepted <code>""</code> rejects payloads that previously succeeded.</li>
 <li><strong>Deprecation is MINOR; removal is MAJOR.</strong> Marking <code>legacyPriority</code> as <code>deprecated</code> warns consumers; removing it breaks them (see § Deprecation below).</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9ef1e40780ba.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9ef1e40780ba.png" alt="diagram"></div></p>
 <p><em>Figure 5-2: SemVer decision tree for API contracts. \"Remove or rename\" includes tightening validation and making an optional field required.</em></p>
 <h3 id="versioning-the-artifact-not-just-the-url">Versioning the artifact, not just the URL</h3>
 <p>A disciplined setup versions the spec artifact alongside the route:</p>
@@ -2629,7 +2629,7 @@ buf<span class="w"> </span>push<span class="w"> </span>--tag<span class="w"> </s
 <li><strong>Contract</strong> — remove the old representation.</li>
 </ol>
 <p>At no point is there a state where a writer has stopped writing the old field but a reader still needs it.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4b690f3e680f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4b690f3e680f.png" alt="diagram"></div></p>
 <p><em>Figure 5-3: Expand-contract. Each phase is independently deployable and rollback-safe; no phase requires producer and consumer to deploy simultaneously.</em></p>
 <h3 id="example-1-renaming-a-restjson-field">Example 1 — Renaming a REST/JSON field</h3>
 <p><strong>Goal:</strong> Rename <code>customer_id</code> (snake_case) to <code>customerId</code> (camelCase) in <code>POST /v1/orders</code> and <code>GET /v1/orders/{id}</code>.</p>
@@ -2745,7 +2745,7 @@ buf<span class="w"> </span>push<span class="w"> </span>--tag<span class="w"> </s
 <h2 id="deprecation-and-sunset-retiring-old-behaviour">Deprecation and sunset — retiring old behaviour</h2>
 <p>A breaking change without a deprecation period is a coordination failure. Consumers need three things: notice, time, and a migration path.</p>
 <h3 id="the-lifecycle">The lifecycle</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_9e2bd279c449.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_9e2bd279c449.png" alt="diagram"></div></p>
 <p><em>Figure 5-4: Deprecation lifecycle. Each transition is gated on traffic metrics and consumer notification, not on a calendar alone.</em></p>
 <h3 id="headers-rfc-8594-sunset-and-rfc-9745-deprecation">Headers — RFC 8594 (Sunset) and RFC 9745 (Deprecation)</h3>
 <p>Two standard headers signal lifecycle state on every response that serves deprecated behaviour:</p>
@@ -2875,11 +2875,11 @@ buf<span class="w"> </span>lint<span class="w"> </span><span class="o">&amp;&amp
 <p><strong>Version-aware routing is infrastructure.</strong> At scale, <code>/v1/</code> and <code>/v2/</code> may be different capacity pools. The gateway's route table must be versioned and deployed atomically with the contract. A canary that routes 1% of <code>/v2/</code> traffic to a new <code>orders-v2</code> deployment while 99% stays on <code>orders-v1</code> is a standard technique for validating a MAJOR before full cutover — the same pattern as deployment strategies in Volume 11, Chapter 9, applied to API versions.</p>
 <hr />
 <h4 id="versioning-strategy-decision">Versioning Strategy Decision</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4e766b0b8a45.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4e766b0b8a45.png" alt="diagram"></div></p>
 <h4 id="deprecation-timeline">Deprecation Timeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_16da6183499a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_16da6183499a.png" alt="diagram"></div></p>
 <h4 id="semver-state-transitions">SemVer State Transitions</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_72e48de72a58.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_72e48de72a58.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>SemVer for contracts: MAJOR = breaking (remove/rename/tighten), MINOR = additive (new optional field/endpoint), PATCH = non-behavioural. Adding an optional field is MINOR only if consumers ignore unknown fields — document that requirement.</li>
@@ -2964,7 +2964,7 @@ Did the order get created? Retry or not?
 <li><strong>Key expires</strong> after a TTL (24 hours is conventional; Stripe uses 24h). After expiry, the same key is treated as new.</li>
 </ol>
 <p>Critically, the key must be <strong>scoped to the caller</strong> (API key, user, tenant). Two different users sending the same UUID must not collide. And the server must handle <strong>concurrent duplicate requests</strong> — two identical <code>POST</code>s arriving within milliseconds, before either has stored a result.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a49c0104b290.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a49c0104b290.png" alt="diagram"></div></p>
 <p><em>Figure 6-1: Idempotency-Key lifecycle. The <code>processing</code> state is the concurrency guard; the fingerprint check prevents key reuse for a different operation; TTL bounds storage.</em></p>
 <h3 id="real-code-idempotency-key-handler-node-20110-express-4182-pg-8113-redis-72-ioredis-532">Real code — Idempotency-Key handler (Node 20.11.0, Express 4.18.2, pg 8.11.3, Redis 7.2 / ioredis 5.3.2)</h3>
 <p>This handler is production-shaped: concurrent-safe via <code>INSERT ... ON CONFLICT</code>, fingerprint-validated, TTL-bounded, and scoped to the authenticated principal. Two storage options are shown — Postgres (durable, transactional with the domain write) and Redis (lower latency, suitable when the idempotency store is separate from the domain store).</p>
@@ -3301,7 +3301,7 @@ Did the order get created? Retry or not?
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fbb56358e5cf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fbb56358e5cf.png" alt="diagram"></div></p>
 <p><em>Figure 6-2: Cursor pagination walk. Each page fetches one extra row to determine <code>has_more</code> without a separate count query; the cursor encodes the last seen sort key and tie-breaker.</em></p>
 <p>Key choices:</p>
 <ul>
@@ -3449,7 +3449,7 @@ Did the order get created? Retry or not?
 <p><strong>Boundary note.</strong> <em>Which</em> filters can be served efficiently depends on the indexes that exist and how the planner uses them — composite indexes, partial indexes, and index-only scans. The storage-engine reasoning for why <code>filter[status]=paid AND created_at &gt;= ...</code> needs a composite index on <code>(status, created_at, id)</code> versus two single-column indexes is covered in Volume 5, Chapters 3 (Indexing) and 4 (Query Processing). The API contract here is the seam: it declares <em>which</em> filters are supported, and the storage layer must honour that declaration with an index. If the contract advertises a filter without a backing index, the API is correct but slow — a bug that surfaces as a latency regression, not a functional failure.</p>
 </blockquote>
 <h3 id="combining-pagination-filtering-and-sorting-the-full-pipeline">Combining pagination, filtering, and sorting — the full pipeline</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_d341ee150723.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_d341ee150723.png" alt="diagram"></div></p>
 <p><em>Figure 6-3: Combined list pipeline. Validation rejects unsupported filters/sorts before touching the database; the keyset condition and filters share the same WHERE clause so one index can cover both when designed correctly.</em></p>
 <hr />
 <h2 id="idempotency-meets-pagination-the-retry-story">Idempotency meets pagination — the retry story</h2>
@@ -3463,13 +3463,13 @@ Did the order get created? Retry or not?
 </blockquote>
 <hr />
 <h4 id="idempotency-key-flow">Idempotency Key Flow</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2667aa7de114.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2667aa7de114.png" alt="diagram"></div></p>
 <h4 id="cursor-pagination-sequence">Cursor Pagination Sequence</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_4a2b466a41c0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_4a2b466a41c0.png" alt="diagram"></div></p>
 <h4 id="offset-vs-cursor-tradeoff">Offset vs Cursor Tradeoff</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b91ae473c3f2.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b91ae473c3f2.png" alt="diagram"></div></p>
 <h4 id="retry-with-idempotency-safety">Retry with Idempotency Safety</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a76fd6f8ee1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6a76fd6f8ee1.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Make every <code>POST</code> that creates or mutates state idempotent via <code>Idempotency-Key</code>. The server must handle concurrent duplicate arrivals (<code>INSERT ... ON CONFLICT</code> / <code>SET NX</code>), distinguish replay (same fingerprint → return stored response) from misuse (different fingerprint → <code>422</code>), scope keys to the principal, and expire them on a bounded TTL (24h).</li>
@@ -3517,7 +3517,7 @@ Did the order get created? Retry or not?
 <blockquote>
 <p><strong>Invariant.</strong> An error response is part of the API's versioned contract exactly like a success response. Changing a machine-readable error <code>code</code>, reclassifying a <code>400</code> as <code>404</code>, or removing a detail field is a breaking change — see Chapter 8 (Compatibility). Treat errors with the same versioning discipline you give resources.</p>
 </blockquote>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6bdb10d4b6f1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6bdb10d4b6f1.png" alt="diagram"></div></p>
 <hr />
 <h2 id="http-status-semantics-what-rfc-9110-actually-says">HTTP status semantics — what RFC 9110 actually says</h2>
 <p>HTTP status codes are not marketing labels ("we use <code>200</code> for everything and put the real status in the JSON"). They are routing and retry signals read by every intermediary between client and server: CDNs, API gateways, service meshes, and <code>fetch</code> itself.</p>
@@ -4129,7 +4129,7 @@ Did the order get created? Retry or not?
 <span class="p">}</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b91898512581.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b91898512581.png" alt="diagram"></div></p>
 <hr />
 <h2 id="mapping-http-and-grpc-without-losing-meaning">Mapping HTTP and gRPC without losing meaning</h2>
 <p>Most systems are not pure REST or pure gRPC — a gRPC service sits behind an HTTP gateway (Envoy, <code>grpc-gateway</code>, <code>Connect</code>) that transcodes <code>google.api.http</code> bindings to JSON, or a REST service is called by a gRPC client via <code>grpc-status</code> trailers. The mapping must preserve two things: the <em>category</em> (<code>4xx</code> vs <code>5xx</code>, retryable vs not) and the <em>retry hint</em>.</p>
@@ -4232,7 +4232,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 </code></pre></div>
 
 <p>Both say the same thing: "retry after 37 seconds."</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_b31a0895278f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_b31a0895278f.png" alt="diagram"></div></p>
 <h3 id="googleapihttp-transcoding-where-the-mapping-is-declared"><code>google.api.http</code> transcoding (where the mapping is declared)</h3>
 <div class="highlight"><pre><span></span><code><span class="c1">// orders.proto — the mapping lives in the proto, not in ad-hoc gateway config</span>
 <span class="k">syntax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;proto3&quot;</span><span class="p">;</span>
@@ -4270,7 +4270,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <li><strong>Not retryable without changing the request:</strong> <code>INVALID_ARGUMENT</code>/<code>400</code>, <code>NOT_FOUND</code>/<code>404</code>, <code>PERMISSION_DENIED</code>/<code>403</code>, <code>UNAUTHENTICATED</code>/<code>401</code>, <code>ALREADY_EXISTS</code>/<code>409</code> (idempotency conflict — see Ch 6), <code>FAILED_PRECONDITION</code>/<code>400</code>/<code>412</code>, <code>OUT_OF_RANGE</code>/<code>400</code>, <code>UNIMPLEMENTED</code>/<code>501</code>.</li>
 <li><strong><code>INTERNAL</code>/<code>500</code>:</strong> Treat as non-retryable by default. If a specific <code>INTERNAL</code> is known transient (brief invariant violation during a deploy), mark it with an <code>ErrorInfo</code> reason that the retry layer whitelists — don't make all <code>500</code>s retryable.</li>
 </ul>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_527a8b2710ec.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_527a8b2710ec.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Critical.</strong> Non-idempotent <code>POST</code> without an <code>Idempotency-Key</code> must not be retried automatically on <code>UNAVAILABLE</code>/<code>DEADLINE_EXCEEDED</code>. The caller's retry turns a transient error into a duplicate order. Gateways that retry blindly on <code>503</code> must check <code>Idempotency-Key</code> or the operation's idempotency claim (Ch 6) before retrying.</p>
 </blockquote>
@@ -4339,11 +4339,11 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 </table>
 <hr />
 <h4 id="error-taxonomy">Error Taxonomy</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_e68412bbd112.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_e68412bbd112.png" alt="diagram"></div></p>
 <h4 id="retry-with-backoff-and-jitter">Retry with Backoff and Jitter</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_7cbbd3da97ea.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_7cbbd3da97ea.png" alt="diagram"></div></p>
 <h4 id="problemdetails-propagation">ProblemDetails Propagation</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_94cb90293154.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_94cb90293154.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Treat every error response as versioned contract. Stable <code>code</code>/<code>ErrorInfo.reason</code> values are what clients switch on; <code>detail</code>/<code>message</code> are for humans. Changing a code is a breaking change.</li>
@@ -4413,7 +4413,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <blockquote>
 <p><strong>Distributed-systems lens.</strong> Every rolling deploy, blue/green cut, and Kafka topic has a window where <em>both</em> versions coexist. If the new producer's bytes break the old consumer, the rollout turns into an incident the moment 1% of traffic hits the new version. Backward compatibility is what lets you roll forward; forward compatibility is what lets you roll back or replay. Full compatibility is what lets you do either without coordination — and it is the invariant a schema registry <em>enforces</em> (see Vol 6, Ch 7 — Quorum Systems, on why coordination-free evolution matters, and Vol 10, Ch 3 — Kafka Architecture, on log immutability).</p>
 </blockquote>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0e2ff4543ec4.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0e2ff4543ec4.png" alt="diagram"></div></p>
 <p>The rest of the chapter shows how each wire format answers this question — and how to verify the answer mechanically.</p>
 <hr />
 <h2 id="wire-formats-compared-what-to-use-where">Wire formats compared — what to use where</h2>
@@ -4512,7 +4512,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <li><strong>Ultra-low-latency or zero-copy (feature store, game, device):</strong> FlatBuffers/Cap'n Proto — only if profiling shows serialization is the bottleneck.</li>
 <li><strong>Cache/memoization payloads (Redis, Memcached):</strong> MessagePack/CBOR if size matters and the reader is controlled; otherwise JSON for debuggability.</li>
 </ol>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_f1fc214f39db.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_f1fc214f39db.png" alt="diagram"></div></p>
 <hr />
 <h2 id="protobuf-wire-format-the-bytes-that-make-compatibility-work">Protobuf wire format — the bytes that make compatibility work</h2>
 <p>Protobuf's compatibility story is not magic — it falls out of the wire encoding. Understanding the bytes explains <em>why</em> unknown fields are ignored, why field numbers must never be reused, and why <code>reserved</code> exists.</p>
@@ -4656,7 +4656,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <span class="c1">// message Order { string promo_code = 2; }  // reuse of number 2</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_95939ce77913.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_95939ce77913.png" alt="diagram"></div></p>
 <h3 id="json-openapi-compatibility-additive-is-safe-everything-else-is-suspect">JSON / OpenAPI compatibility — additive is safe, everything else is suspect</h3>
 <p>JSON has no wire-level field numbers — compatibility is purely conventional and must be enforced by tooling.</p>
 <table>
@@ -4729,7 +4729,7 @@ HTTP:  429 Too Many Requests + Retry-After: 37 + problem+json { code: &quot;RATE
 <hr />
 <h2 id="expand-contract-the-only-safe-migration">Expand-contract — the only safe migration</h2>
 <p>When the change <em>is</em> breaking (rename, type change, tighten), the flag-day alternative — "everyone upgrades at once" — fails at any non-trivial consumer count. Expand-contract (also called parallel change) is the mechanical alternative.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_33cc0385485e.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_33cc0385485e.png" alt="diagram"></div></p>
 <p>Concrete storage + wire example:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">-- Phase 1 — Expand (backward compatible). Old code still reads customer_id; new code writes both.</span>
 <span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">customer_id_v2</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">;</span><span class="w">  </span><span class="c1">-- nullable</span>
@@ -4823,7 +4823,7 @@ openapi-diff<span class="w"> </span>--fail-on-incompatible<span class="w"> </spa
 </code></pre></div>
 
 <p>Publishing a schema that reuses a field number, tightens <code>required</code>, or narrows an <code>enum</code> is rejected at <code>POST /subjects/orders-value/versions</code> with a compatibility error — before any bytes hit the topic. Apicurio's <code>FULL_TRANSITIVE</code> and Buf Schema Registry's <code>breaking</code> check are the same idea: the registry is the compatibility gate for the log.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_70875e3eeedf.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_70875e3eeedf.png" alt="diagram"></div></p>
 <hr />
 <h2 id="the-distributed-systems-lens-living-with-mixed-versions">The distributed-systems lens — living with mixed versions</h2>
 <h3 id="rolling-deploys-and-the-two-invariants">Rolling deploys and the two invariants</h3>
@@ -4893,11 +4893,11 @@ openapi-diff<span class="w"> </span>--fail-on-incompatible<span class="w"> </spa
 </table>
 <hr />
 <h4 id="compatibility-matrix">Compatibility Matrix</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cdced163e39a.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cdced163e39a.png" alt="diagram"></div></p>
 <h4 id="breaking-change-detection-pipeline">Breaking Change Detection Pipeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_cb99862651db.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_cb99862651db.png" alt="diagram"></div></p>
 <h4 id="consumer-upgrade-safe-path">Consumer Upgrade Safe Path</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_6a8604c68217.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_6a8604c68217.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Compatibility is about <em>mixed versions in flight</em>, not single-version correctness. Backward (old ← new) lets you roll forward; forward (new ← old) lets you roll back and replay; full (both) lets you do either without deploy ordering.</li>
@@ -4999,7 +4999,7 @@ openapi-diff<span class="w"> </span>--fail-on-incompatible<span class="w"> </spa
 <p>Standards are proposed as RFCs, discussed in an API guild (a cross-team community of practice), and adopted by consensus. Each domain team enforces the standard locally. Scales socially — ownership is distributed — but without automated enforcement, adoption is uneven. The team that disagreed with the pagination RFC quietly ignores it.</p>
 <h3 id="platform-enabled-the-model-that-scales">Platform-enabled — the model that scales</h3>
 <p>Standards are codified as machine-checkable rules (Spectral, buf lint) and shipped as a shared config package. CI enforces the rules automatically. Human review is reserved for the cases automation cannot judge — novel resource modeling, cross-domain consistency, deprecation planning. The platform team owns the <em>tooling</em>, not every decision.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c5ba8c56a534.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c5ba8c56a534.png" alt="diagram"></div></p>
 <p><strong>Recommendation for a senior backend engineer:</strong> start centralized if you are under ~30 services, federate socially as you grow, and invest in platform-enabled automation the moment the API review queue has a wait time. The automation is not optional at scale — it is the only way to keep review latency flat while service count grows.</p>
 <p>The canonical artifact is an <strong>API style guide</strong> — not a wiki page, but a lintable config. The next two sections build it.</p>
 <hr />
@@ -5455,8 +5455,8 @@ buf<span class="w"> </span>breaking<span class="w"> </span>proto<span class="w">
 <hr />
 <h2 id="the-governance-pipeline-from-proposal-to-sunset">The governance pipeline — from proposal to sunset</h2>
 <p>Linting and breaking-change detection are gates. The lifecycle that connects them is:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1527579995e3.png" alt="diagram"></div></p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a874a7530a5f.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1527579995e3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a874a7530a5f.png" alt="diagram"></div></p>
 <p><strong>The <code>Sunset</code> / <code>Deprecation</code> lifecycle in HTTP headers</strong> (RFC 8594 + <code>draft-ietf-httpapi-deprecation-header</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
 <span class="na">Deprecation</span><span class="o">:</span> <span class="l">true</span>
@@ -5672,13 +5672,13 @@ buf<span class="w"> </span>breaking<span class="w"> </span>proto<span class="w">
 </table>
 <hr />
 <h4 id="governance-council-flow">Governance Council Flow</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_c7d74fba69d3.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_c7d74fba69d3.png" alt="diagram"></div></p>
 <h4 id="ci-governance-pipeline">CI Governance Pipeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8d72093ac1ef.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8d72093ac1ef.png" alt="diagram"></div></p>
 <h4 id="catalog-discovery">Catalog Discovery</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1907e7dd57f1.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1907e7dd57f1.png" alt="diagram"></div></p>
 <h4 id="style-guide-enforcement-levels">Style Guide Enforcement Levels</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_41d357c44a59.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_41d357c44a59.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>Governance at scale is platform-enabled, not committee-driven. Codify standards as machine-checkable rules (Spectral, buf lint), ship them as versioned packages, enforce them in CI, and reserve human review for breaking or novel changes — the fast path keeps review latency flat as service count grows.</li>
@@ -5933,7 +5933,7 @@ buf<span class="w"> </span>push<span class="w"> </span>--label<span class="w"> <
 <span class="c1">#     track: main</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_91b8f2382ebd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_91b8f2382ebd.png" alt="diagram"></div></p>
 <hr />
 <h2 id="wiring-producers-and-consumers">Wiring producers and consumers</h2>
 <h3 id="kafka-confluent-serializers-java-go-python">Kafka — Confluent serializers (Java, Go, Python)</h3>
@@ -6260,7 +6260,7 @@ npx<span class="w"> </span>@openapitools/openapi-generator-cli<span class="w"> <
 </code></pre></div>
 
 <h3 id="publishing-one-workflow-every-registry">Publishing — one workflow, every registry</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_2e35bcc11384.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_2e35bcc11384.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/sdk-publish.yaml — publish SDKs on spec merge (Node 20, Java 17, Python 3.12, buf 1.40)</span>
 <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sdk-publish</span>
 <span class="nt">on</span><span class="p">:</span>
@@ -6454,13 +6454,13 @@ npx<span class="w"> </span>@openapitools/openapi-generator-cli<span class="w"> <
 </table>
 <hr />
 <h4 id="sdk-generation-pipeline">SDK Generation Pipeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a85431c055af.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a85431c055af.png" alt="diagram"></div></p>
 <h4 id="schema-registry-publish-and-pin">Schema Registry Publish and Pin</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_fd101d0350d5.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_fd101d0350d5.png" alt="diagram"></div></p>
 <h4 id="sdk-versioning">SDK Versioning</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_a0ae32b2b6dd.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_a0ae32b2b6dd.png" alt="diagram"></div></p>
 <h4 id="thin-facade-pattern">Thin Facade Pattern</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_36321a60405b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_36321a60405b.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>A schema in Git is a promise; a schema in a registry is an invariant. The registry — Confluent/Apicurio for Kafka (Avro/Protobuf/JSON Schema), BSR for Protobuf/gRPC, Apicurio for OpenAPI — makes the schema versioned, compatibility-checked, and discoverable, and refuses incompatible publishes before any bytes hit the wire.</li>
@@ -6527,7 +6527,7 @@ npx<span class="w"> </span>@openapitools/openapi-generator-cli<span class="w"> <
 </tbody>
 </table>
 <p>Contract tests fill the precise gap: they prove the <em>consumer's expectation</em> and the <em>provider's behavior</em> agree on the <em>contract</em> — without requiring both to run together.</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_10e4d574b366.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_10e4d574b366.png" alt="diagram"></div></p>
 <blockquote>
 <p><strong>Distributed-systems lens.</strong> Independent deployability is the invariant. In a system with fifty services, the cost of coordinating deploys ("deploy the provider, then deploy all ten consumers in order") is untenable. Contract tests preserve the ability for any service to deploy at any time — the consumer's contract is a <em>versioned expectation</em> that the provider verifies against every version it still serves. The provider does not need to be at the same commit as the consumer; it needs to satisfy every <em>published</em> contract that has not yet sunset.</p>
 </blockquote>
@@ -6812,7 +6812,7 @@ pact-broker<span class="w"> </span>record-deployment<span class="w"> </span><spa
 <span class="c1"># Broker UI: http://localhost:9292  — matrix view: which consumer versions are verified by which provider versions</span>
 </code></pre></div>
 
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_0e482454a26d.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_0e482454a26d.png" alt="diagram"></div></p>
 <p><strong>Version-aware verification</strong> is the key insight for distributed systems: the provider does not verify against "the consumer" — it verifies against <em>every pact version that is still deployed or released</em>. A consumer that ships weekly will have several versions in prod (canary, blue/green, mobile binaries). <code>DeployedOrReleased: true</code> (or <code>Tag: production</code> + <code>Tag: main</code>) ensures the provider cannot break an older consumer that has not yet upgraded.</p>
 <hr />
 <h2 id="provider-driven-contracts-the-spec-as-the-test">Provider-driven contracts — the spec as the test</h2>
@@ -6952,13 +6952,13 @@ npx<span class="w"> </span>@useoptic/optic@0.40.0<span class="w"> </span>diff<sp
 <hr />
 <h2 id="the-verification-matrix-contracts-at-fleet-scale">The verification matrix — contracts at fleet scale</h2>
 <p>With N consumers and M provider versions, naive E2E needs N×M environments. Contracts collapse it to a verification matrix that CI evaluates without running both sides together:</p>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_babe1174ce18.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_babe1174ce18.png" alt="diagram"></div></p>
 <p>The key property: the matrix grows <em>additively</em> (one more pact per consumer release, one more verification per provider release), not <em>multiplicatively</em> (one more E2E environment per N×M combination). At ten consumers with five versions in prod, E2E needs fifty environments; contracts need ten pacts and one provider verification that iterates over ten pacts.</p>
 <hr />
 <h2 id="api-evolution-in-practice-the-daily-discipline">API evolution in practice — the daily discipline</h2>
 <p>Contract tests make evolution a merge-time concern. The workflow that keeps the system moving without flag-days:</p>
 <h3 id="1-expand-contract-additive-first-removal-last-see-chapter-8">1) Expand-contract — additive first, removal last (see Chapter 8)</h3>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_1d644d17a1a0.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_1d644d17a1a0.png" alt="diagram"></div></p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Consumer contract during expand — both fields expected during the window</span>
 <span class="nx">willRespondWith</span><span class="p">({</span>
 <span class="w">  </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="kt">200</span><span class="p">,</span>
@@ -7105,11 +7105,11 @@ npx<span class="w"> </span>@useoptic/optic@0.40.0<span class="w"> </span>diff<sp
 </table>
 <hr />
 <h4 id="pact-consumer-driven-flow">Pact Consumer-Driven Flow</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_8db27aad89b7.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_8db27aad89b7.png" alt="diagram"></div></p>
 <h4 id="contract-test-ci-pipeline">Contract Test CI Pipeline</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_59a3aa26ae7c.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_59a3aa26ae7c.png" alt="diagram"></div></p>
 <h4 id="provider-verification-states">Provider Verification States</h4>
-<p><div class="mermaid-img"><img src="file:///home/ubuntu/textbooks/output/.mermaid-cache/mm_ca331194b46b.png" alt="diagram"></div></p>
+<p><div class="mermaid-img"><img src="file:///home/ubuntu/code/textbooks/backend-engineer-library/output/.mermaid-cache/mm_ca331194b46b.png" alt="diagram"></div></p>
 <h2 id="key-takeaways">Key takeaways</h2>
 <ul>
 <li>A schema proves the <em>specification</em> is compatible; a contract test proves the <em>implementation</em> honors it. Schemas catch evolution errors in the spec; contracts catch drift between spec and handler — neither replaces the other, and the registry cannot catch a handler that returns <code>string</code> where the spec promises <code>integer</code>.</li>
