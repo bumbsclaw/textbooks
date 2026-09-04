@@ -25,7 +25,7 @@ No BLOCKER: no invented CVEs/specs/stats, no marketing language, no security ant
 
 ## 2. Methodology
 
-1. Enumerated all `ch*.md` under `~/textbooks/book-0{5,6,7,8}` — 36 files.
+1. Enumerated all `ch*.md` under `~/code/textbooks/backend-engineer-library/book-0{5,6,7,8}` — 36 files.
 2. Computed per-file `split()` word count, `grep -c '```mermaid'`, regex checks for title / covers / goals / takeaways / Further reading / distributed-systems lens, code-fence inventory with language tags, heading counts, trailing-`>` link scan, marketing-language scan, CVE/percent scan.
 3. Selected 8 samples to cover all four books and the four mandated theme areas:
    - **Book 5 — Signing & Attestation:** `ch03-sigstore-architecture` (cosign/Fulcio/Rekor, ~10-min certs, verify-after-expiry, TUF) and `ch07-tuf` (TUF roles/thresholds/PEP 458/480, Sigstore TUF root)

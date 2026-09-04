@@ -21,7 +21,7 @@ No BLOCKER demands mass rollback. The recommended gate before new writing is a *
 
 ## 2. Methodology
 
-1. Enumerated all `ch*.md` under `~/textbooks` (145 files, `find`/`rglob`).
+1. Enumerated all `ch*.md` under `~/code/textbooks/backend-engineer-library` (145 files, `find`/`rglob`).
 2. Selected 14 samples to cover every completed volume and both sub-series:
    - Supply-chain (Vol-0): `book-01/ch01`, `book-01/ch05`, `book-02/ch01`, `book-04/ch03`, `book-05/ch03`, `book-07/ch02`
    - Backend core (Vol-1..6): `vol-01/ch01`, `vol-01/ch04`, `vol-02/ch07`, `vol-03/ch03`, `vol-03/ch06`, `vol-04/ch03`, `vol-05/ch02`, `vol-06/ch06`

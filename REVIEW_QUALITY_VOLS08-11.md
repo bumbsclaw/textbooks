@@ -21,7 +21,7 @@ No BLOCKER. Two systemic fixes are required before the next writing pass (Mermai
 
 ## 2. Methodology
 
-1. Enumerated all `ch*.md` under `~/textbooks/vol-08-apis`, `vol-09-security-auth`, `vol-10-messaging-streaming`, `vol-11-reliability-sre` (40 files).
+1. Enumerated all `ch*.md` under `~/code/textbooks/backend-engineer-library/vol-08-apis`, `vol-09-security-auth`, `vol-10-messaging-streaming`, `vol-11-reliability-sre` (40 files).
 2. Selected 8 samples to cover each volume's risk spine:
    - Vol-08: `ch09-governance` (API governance, linting, breaking-change detection — required), `ch03-grpc-protobuf` (Protobuf/gRPC schema design)
    - Vol-09: `ch06-oauth-oidc` (auth flows — required), `ch05-authentication` (sessions/JWT — second auth flow)

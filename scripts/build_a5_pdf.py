@@ -7,7 +7,7 @@ Usage:
   python3 scripts/build_a5_pdf.py vol-07-system-design  # one volume
   python3 scripts/build_a5_pdf.py --companion          # companion series only
 
-Output: ~/textbooks/output/a5/<volume-slug>.pdf
+Output: ~/code/textbooks/backend-engineer-library/output/a5/<volume-slug>.pdf
 """
 
 import sys, os, re, subprocess, tempfile, hashlib, shutil, time
